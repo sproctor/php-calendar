@@ -1,0 +1,12 @@
+NEWS
+-----
+
+0.11:
+        - fix security vulnerability with regard to loading any any PHP file
+          (Thanks to James Bercegay of the GulfTech Security Research Team)
+        - add a modified version of adodb to the distribution (it's version
+          4.54 w/ day of week functions added for postgresql and mysql)
+        - fix a few scattered bugs
+        - make PostgreSQL work for new installations again
+
+Prior versions didn't have a NEWS file.

@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 Sean Proctor
+   Copyright 2002 - 2005 Sean Proctor, Nathan Poiro
 
    This file is part of PHP-Calendar.
 
@@ -22,6 +22,10 @@
 /*
    this file contains all the re-usable functions for the calendar
 */
+
+if ( !defined('IN_PHPC') ) {
+       die("Hacking attempt");
+}
 
 include($phpc_root_path . 'includes/html.php');
 
@@ -192,8 +196,7 @@ function event_type($num)
 			//return _('Daily');
 			return false;
 		case 5:
-			//return _('Weekly');
-                        return false;
+			return _('Weekly');
 		case 6:
 			return _('Monthly');
 	}
@@ -258,8 +261,11 @@ function link_bar()
 			tag('a',
 				attributes('href="http://validator.w3.org/'
 				.'check?url='
-				.rawurlencode("http://$_SERVER[SERVER_NAME]"
-                                ."$_SERVER[SCRIPT_NAME]?$_SERVER[QUERY_STRING]")
+				.rawurlencode((empty($_SERVER['HTTPS']) ? 'http'
+                                                : 'https')
+                                        ."://$_SERVER[SERVER_NAME]"
+                                        ."$_SERVER[SCRIPT_NAME]"
+                                        ."?$_SERVER[QUERY_STRING]")
                                 .'"'), 'Valid XHTML 1.1'),
 			'] [',
 			tag('a', attributes('href="http://jigsaw.w3.org/'
@@ -279,22 +285,19 @@ function get_events_by_date($day, $month, $year)
 2 - full day event
 3 - unknown time event
 4 - reserved
-5 - weekly event - disabled until supported by adodb
+5 - weekly event
 6 - monthly event
 */
         $startdate = $db->SQLDate('Y-m-d', 'startdate');
         $enddate = $db->SQLDate('Y-m-d', 'enddate');
-        $date = sprintf('%4d-%02d-%02d', $year, $month, $day);
+        $date = $db->DBDate("$year-$month-$day");
+        $dow_startdate = $db->SQLDate('w', 'startdate');
+        $dow_date = $db->SQLDate('w', "DATE $date");
 	$query = 'SELECT * FROM '.SQL_PREFIX."events\n"
-		."WHERE ($startdate <= '$date'\n"
-		."AND $enddate >= '$date'"
-//		."AND (eventtype = 4 OR eventtype = 5"
-//		." OR eventtype = 6)"
-//		." OR startdate = '$year-$month-$day')\n"
-		.")\n"
+		."WHERE ($startdate <= $date\n"
+		."AND $enddate >= $date)\n"
 		."AND calendar = '$calendar_name'\n"
-//		."AND (eventtype != 5 OR DAYOFWEEK(startdate) = "
-//		."DAYOFWEEK(DATE '$date'))\n"
+		."AND (eventtype != 5 OR $dow_startdate = $dow_date)\n"
 		."AND (eventtype != 6 OR ".$db->SQLDate('d')." = '$day')\n"
 		."ORDER BY starttime";
 
@@ -316,10 +319,10 @@ function get_event_by_id($id)
 		.$db->SQLDate('Y', "$events_table.startdate")." AS year,\n"
 		.$db->SQLDate('m', "$events_table.startdate")." AS month,\n"
 		.$db->SQLDate('d', "$events_table.startdate")." AS day,\n"
-		.$db->SQLDate('H', "$events_table.startdate")." AS hour,\n"
-		.$db->SQLDate('h', "$events_table.startdate")." AS hour12,\n"
-		.$db->SQLDate('i', "$events_table.startdate")." AS minute,\n"
-		.$db->SQLDate('a', "$events_table.startdate")." AS ampm,\n"
+		.$db->SQLDate('H', "$events_table.starttime")." AS hour,\n"
+		.$db->SQLDate('h', "$events_table.starttime")." AS hour12,\n"
+		.$db->SQLDate('i', "$events_table.starttime")." AS minute,\n"
+		.$db->SQLDate('a', "$events_table.starttime")." AS ampm,\n"
 		.$db->SQLDate('Y', "$events_table.enddate")." AS end_year,\n"
 		.$db->SQLDate('m', "$events_table.enddate")." AS end_month,\n"
 		.$db->SQLDate('d', "$events_table.enddate")." AS end_day,\n"
@@ -390,24 +393,36 @@ function weeks_in_month($month, $year)
 // creates a link with text $text and GET attributes corresponding to the rest
 // of the arguments.
 // returns XHTML data for the link
-function create_action_link($text, $action, $id = false, $year = false,
-                $month = false, $day = false, $attribs = false)
+function create_id_link($text, $action, $id = -1, $attribs = -1)
 {
 	$url = "href=\"$_SERVER[SCRIPT_NAME]?action=$action";
-	if($id) {
+	if($id != -1) {
 		$url .= "&amp;id=$id";
 	}
-	if($year) {
+	$url .= '"';
+        if($attribs != -1) {
+                $as = attributes($url, $attribs);
+        } else {
+                $as = attributes($url);
+        }
+	return tag('a', $as, $text);
+}
+
+function create_date_link($text, $action, $year = -1, $month = -1, $day = -1,
+                $attribs = -1)
+{
+	$url = "href=\"$_SERVER[SCRIPT_NAME]?action=$action";
+	if($year != -1) {
 		$url .= "&amp;year=$year";
 	}
-	if($month) {
+	if($month != -1) {
 		$url .= "&amp;month=$month";
 	}
-	if($day) {
+	if($day != -1) {
 		$url .= "&amp;day=$day";
 	}
 	$url .= '"';
-        if($attribs) {
+        if($attribs != -1) {
                 $as = attributes($url, $attribs);
         } else {
                 $as = attributes($url);
@@ -416,20 +431,20 @@ function create_action_link($text, $action, $id = false, $year = false,
 }
 
 // takes a menu $html and appends an entry
-function menu_item_append(&$html, $name, $action, $year = false, $month = false,
-		$day = false)
+function menu_item_append(&$html, $name, $action, $year = -1, $month = -1,
+		$day = -1)
 {
 	$html = array_append(array_append($html,
-				create_action_link($name, $action, false, $year,
-					$month, $day)), "\n");
+				create_date_link($name, $action, $year, $month,
+                                        $day)), "\n");
 }
 
 // same as above, but prepends the entry
-function menu_item_prepend(&$html, $name, $action, $year = false,
-		$month = false, $day = false)
+function menu_item_prepend(&$html, $name, $action, $year = -1,
+		$month = -1, $day = -1)
 {
-	$html = array_cons(create_action_link($name, $action, false, $year,
-				$month, $day), array_cons("\n", $html));
+	$html = array_cons(create_date_link($name, $action, $year, $month,
+                                $day), array_cons("\n", $html));
 }
 
 // creates a hidden input for a form
@@ -450,10 +465,10 @@ function create_submit($value)
 
 // creates a text entry for a form
 // returns XHTML data for the entry
-function create_text($name, $value = false)
+function create_text($name, $value = -1)
 {
 	$attributes = attributes("name=\"$name\"", 'type="text"');
-	if($value != false) {
+	if($value != -1) {
 		$attributes[] = "value=\"$value\"";
 	}
 	return tag('input', $attributes);
@@ -468,12 +483,21 @@ function create_password($name)
 
 // creates a checkbox for a form
 // returns XHTML data for the checkbox
-function create_checkbox($name, $value = false, $checked = false)
+function create_checkbox($name, $value = -1, $checked = -1)
 {
 	$attributes = attributes("name=\"$name\"", 'type="checkbox"');
-	if($value) $attributes[] = "value=\"$value\"";
-	if($checked) $attributes[] = 'checked="checked"';
+	if($value != -1) $attributes[] = "value=\"$value\"";
+	if($checked != -1) $attributes[] = 'checked="checked"';
 	return tag('input', $attributes);
+}
+
+// WARNING: this is a non-authoritative answer. don't rely on this to be
+// correct, but it's good enough for setting up the UI.
+function can_add_event ()
+{
+        global $user, $config;
+
+        return $config['anon_permission'] || isset($user);
 }
 
 // creates the navbar for the top of the calendar
@@ -484,7 +508,7 @@ function navbar()
 
 	$html = array();
 
-	if(($config['anon_permission'] || isset($user)) && $action != 'add') { 
+	if(can_add_event() && $action != 'add') { 
 		menu_item_append($html, _('Add Event'), 'event_form', $year,
 				$month, $day);
 	}

@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 Sean Proctor, Nathan Poiro
+   Copyright 2002 - 2005 Sean Proctor, Nathan Poiro
 
    This file is part of PHP-Calendar.
 
@@ -22,6 +22,10 @@
 /*
    This file has the functions for the main displays of the calendar
 */
+
+if ( !defined('IN_PHPC') ) {
+       die("Hacking attempt");
+}
 
 // picks which view to show based on what data is given
 // returns the appropriate view
@@ -121,14 +125,25 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 			$current_era = 'future';
 		}
 
-		$html_day = tag('td', attributes('valign="top"',
-					"class=\"$current_era\""),
-                                create_action_link('+', 'event_form', false,
-                                        $year, $month, $day_of_month,
-                                        array('class="phpc-add"')),
-                                create_action_link($day_of_month, 'display',
-                                        false, $year, $month, $day_of_month,
-                                        array('class="date"')));
+                if(can_add_event()) {
+		        $html_day = tag('td', attributes('valign="top"',
+                                                "class=\"$current_era\""),
+                                        create_date_link('+', 'event_form',
+                                                $year, $month,
+                                                $day_of_month,
+                                                array('class="phpc-add"')),
+                                        create_date_link($day_of_month,
+                                                'display', $year, $month,
+                                                $day_of_month,
+                                                array('class="date"')));
+                } else {
+		        $html_day = tag('td', attributes('valign="top"',
+                                                "class=\"$current_era\""),
+                                        create_date_link($day_of_month,
+                                                'display', $year, $month,
+                                                $day_of_month,
+                                                array('class="date"')));
+                }
 
 		$result = get_events_by_date($day_of_month, $month, $year);
 
@@ -243,13 +258,14 @@ function display_day($day, $month, $year)
                                                 $row['id']);
                         }
 
-			$html_subject[] = create_action_link(tag('strong',
+			$html_subject[] = create_id_link(tag('strong',
                                                 $subject),
 					'display', $row['id']);
 
 			if($admin) {
 				$html_subject[] = ' (';
-				$html_subject[] = create_action_link(_('Modify'), 'event_form', $row['id']);
+				$html_subject[] = create_id_link(_('Modify'),
+                                        'event_form', $row['id']);
 				$html_subject[] = ')';
 			}
 
@@ -303,8 +319,9 @@ function display_id($id)
 	return tag('div', attributes('class="phpc-main"'),
 			tag('h2', $subject),
 			tag('div', 'by ', tag('cite', $name)),
-			tag('div', create_action_link(_('Modify'), 'event_form', $id), "\n",
-				create_action_link(_('Delete'), 'event_delete', $id)),
+			tag('div', create_id_link(_('Modify'), 'event_form',
+                                        $id), "\n", create_id_link(_('Delete'),
+                                                'event_delete', $id)),
 			tag('div', tag('div', _('Time').": $time_str"),
 				tag('div', _('Duration').": $dur_str")),
 			tag('p', $desc));

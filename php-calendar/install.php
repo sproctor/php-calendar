@@ -33,17 +33,8 @@ define('IN_PHPC', 1);
 define('BEGIN_TRANSACTION', 1);
 define('END_TRANSACTION', 2);
 
-// include adodb from the local path
-if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-        ini_set ('include_path', ini_get ('include_path').';'.$phpc_root_path
-                        .'adodb');
-} else {
-        ini_set ('include_path', ini_get ('include_path').':'.$phpc_root_path
-                        .'adodb');
-}
-
 require_once($phpc_root_path . 'includes/calendar.php');
-require_once('adodb.inc.php');
+require_once($phpc_root_path . 'adodb/adodb.inc.php');
 
 echo '<html>
 <head>
@@ -54,7 +45,7 @@ echo '<html>
 ';
 
 foreach($_POST as $key => $value) {
-	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">";
+	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">\n";
 }
 
 if(!isset($_POST['config'])) {

@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 Sean Proctor
+   Copyright 2002 - 2005 Sean Proctor, Nathan Poiro
 
    This file is part of PHP-Calendar.
 
@@ -25,13 +25,8 @@
 
 /* FIXME: This file is a fucking mess, clean it up */
 
-// include adodb from the local path
-if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-        ini_set ('include_path', ini_get ('include_path').';'.$phpc_root_path
-                        .'adodb');
-} else {
-        ini_set ('include_path', ini_get ('include_path').':'.$phpc_root_path
-                        .'adodb');
+if ( !defined('IN_PHPC') ) {
+       die("Hacking attempt");
 }
 
 require_once($phpc_root_path . 'config.php');

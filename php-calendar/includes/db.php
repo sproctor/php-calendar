@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 Sean Proctor, Nathan Poiro
+   Copyright 2002 - 2005 Sean Proctor, Nathan Poiro
 
    This file is part of PHP-Calendar.
 
@@ -28,7 +28,7 @@ if ( !defined('IN_PHPC') ) {
 	die("Hacking attempt");
 }
 
-require_once('adodb.inc.php');
+require_once($phpc_root_path . 'adodb/adodb.inc.php');
 
 if ( !defined('SQL_TYPE') ) {
         die("Error loading DB");

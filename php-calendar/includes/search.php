@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 Sean Proctor, Nathan Poiro
+   Copyright 2002 - 2005 Sean Proctor, Nathan Poiro
 
    This file is part of PHP-Calendar.
 
@@ -20,6 +20,9 @@
 
  */
 
+if ( !defined('IN_PHPC') ) {
+       die("Hacking attempt");
+}
 
 function search_results()
 {
@@ -68,7 +71,7 @@ function search_results()
 		$html[] = tag('tr',
 				tag('td', attributes('class="phpc-list"'),
 					tag('strong',
-						create_action_link($subject,
+						create_id_link($subject,
 							'display', $row['id'])
 					   )),
 				tag('td', attributes('class="phpc-list"'),
