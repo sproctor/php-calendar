@@ -19,7 +19,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include("config.inc");
+include('config.inc');
 
 function soft_error($str)
 {
@@ -81,9 +81,9 @@ function connect_to_database()
   global $sql_hostname, $sql_username, $sql_password, $sql_database;
 
   $database = mysql_connect($sql_hostname, $sql_username, $sql_password)
-     or die("couldn't connect to database");
+     or soft_error('Couldn\'t connect to database');
   mysql_select_db($sql_database, $database)
-     or die("Couldn't select database");
+     or soft_error('Couldn\'t select database');
 
   return $database;
 }
@@ -159,11 +159,11 @@ function top()
   if($BName == 'MSIE') {
     $output .= '<link rel="stylesheet" type="text/css" href="style-ie.css" />';
   }
-  $output .= '</head>
+
+  return $output . '</head>
 <body>
   <h1>' . $header . '</h1>
 ';
-  return $output;
 }
 
 function lang_link($lang)

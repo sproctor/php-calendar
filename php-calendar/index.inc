@@ -19,7 +19,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include("calendar.inc");
+include('calendar.inc');
 
 function navbar($year, $month, $day)
 {
@@ -30,16 +30,16 @@ function navbar($year, $month, $day)
   $nextyear = $year + 1;
   $lastyear = $year - 1;
 
-  $output = "<table id=\"navbar\"";
-  if($BName == "MSIE") { $output .= " cellspacing=1"; }
+  $output = '<table id="navbar"';
+  if($BName == "MSIE") { $output .= ' cellspacing="1"'; }
 
-  $output .= ">
+  $output .= '>
   <colgroup><col /></colgroup>
-  <colgroup span=\"12\" width=\"30\" />
+  <colgroup span="12" width="30" />
   <colgroup><col /></colgroup>
 <thead>
   <tr>
-    <th colspan=\"14\">" . month_name($month) . " $year</th>
+    <th colspan="14">' . month_name($month) . " $year</th>
   </tr>
 </thead>
 <tbody>

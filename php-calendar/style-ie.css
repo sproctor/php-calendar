@@ -1,0 +1,21 @@
+#navbar a {
+  width: 100%;
+}
+
+#calendar {
+  table-layout: auto;
+}
+
+#calendar table a {
+  width: 100%;
+}
+
+#navbar {
+  table-layout: auto;
+}
+
+#calendar table a:hover {
+  background-color: maroon;
+  color: black;
+}
+
