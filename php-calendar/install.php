@@ -80,13 +80,13 @@ function get_config()
 			<p>your config file is writable</p>
 			<input type="submit" value="continue">';
 	} else {
-		echo '<p>your config file is not writeable.  I suggest logging in with a shell and typing:</p>
+		echo '<p>I could not write your configuration file. This file probably does not yet exist. If that is the case then I need to create it, but I could not. You need to give me permission to write to this file. I suggest logging in with a shell and typing:</p>
 			<p><code>
 			touch config.php<br>
 			chmod 666 config.php
 			</code></p>
-			<p>or if you only have ftp access, upload a blank file named config.php then use the chmod command to change the permissions of config.php to 666</p>
-			<input type="submit" value="retry">';
+			<p>or if you only have ftp access, upload a blank file named config.php then use the chmod command to change the permissions of config.php to 666.</p>
+			<input type="submit" value="Retry">';
 	}
 }
 
