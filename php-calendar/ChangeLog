@@ -1,14 +1,13 @@
-php-calendar: php + mysql + html 4 + CSS 2
+php-calendar: php + mysql + html 4 + CSS 2 (+ gettext)
 
 Version 0.6:
         * LOTS of code clean-ups.
         * moved to xhtml
-        * starting to drop netscape 4 support again
+        * dropped netscape 4 support
         * added configuration to start week on monday
         * separated out style sheets, css clean ups
-        * started to add multiple language support with gettext
-        * moved modify into a link for each item
-        * made delete into checkboxes
+        * UI clean-ups
+        * multiple language support
 
 Version 0.5 (3/15/02):
 	* remove some warnings
@@ -20,7 +19,7 @@ Version 0.5 (3/15/02):
 	  eventually, and I never used or tested the current one.
 	* added checking to mysql, reloading modify and add pages doesn't give
 	  the same entry many times.  deleting a non-existant item displays a 
-	  failure
+	  failure 
 	* added an update script for version 0.3 and below
 
 Version 0.4 (2/20/2002):
