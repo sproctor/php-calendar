@@ -215,12 +215,7 @@ for ($week_index = 0;; $week_index++) {
       <a href=\"display.php?day=$day_of_month&amp;month=$month&amp;year=$year\" 
         class=\"date\">$day_of_month</a>";
 
-    $result = mysql_query("SELECT UNIX_TIMESTAMP(stamp) as start_since_epoch,
-        eventtype, subject FROM " . $sql_tableprefix . "events
-        WHERE stamp >= \"$year-$month-$day_of_month 00:00:00\" 
-        AND stamp <= \"$year-$month-$day_of_month 23:59:59\" ORDER BY stamp")
-      or die("couldn't select item");
-    
+    $result = get_events_by_date($day_of_month, $month, $year);
 
     /* Start off knowing we don't need to close the event table
        loop through each event for the day

@@ -26,7 +26,13 @@ function remove_event($id)
   global $sql_tableprefix;
 
   $database = connect_to_database();
-  if(mysql_query("DELETE FROM " . $sql_tableprefix . "events WHERE id = '$id'"))
+
+  $result = mysql_query("DELETE FROM " . $sql_tableprefix . "events
+      WHERE id = '$id'", $database)
+    or soft_error('MySQL error ' . mysql_errno($result) . ': '
+      . mysql_error($result));
+
+  if(mysql_affected_rows($result) > 0)
     return true;
   else
     return false;
@@ -34,9 +40,7 @@ function remove_event($id)
 
 function event_form($action)
 {
-  global $BName, $sql_tableprefix, $HTTP_GET_VARS;
-
-  $database = connect_to_database();
+  global $BName, $HTTP_GET_VARS;
 
   if(!isset($HTTP_GET_VARS['day'])) $day = date("j");
   else $day = $HTTP_GET_VARS['day'];
@@ -47,27 +51,30 @@ function event_form($action)
   if(!isset($HTTP_GET_VARS['year'])) $year = date("Y");
   else $year = $HTTP_GET_VARS['year'];
 
-  $output = '';
-  if($action == "modify") {
+  $output = '<form method="get" action="eventsub.php">
+<table class="box"';
+  if($BName == 'MSIE') {
+    $output .= ' cellspacing="0"';
+  }
+
+  $output .= '>
+  <thead>
+  <tr>
+    <th colspan="2">';
+
+  if($action == 'modify') {
     if (!isset($HTTP_GET_VARS['id'])) {
-      $output .= "<div class=\"box\">"
+      $output .= '<div class="box">'
         . _("Nothing to modify.")
-        . "</div>";
+        . '</div>';
       return;
     } else {
       $id = $HTTP_GET_VARS['id'];
     }
 
-    $headerstring = sprintf(_("Modifying id %d from %s\n"), $id,
-      $sql_tableprefix . "events");
-    $result = mysql_query('SELECT UNIX_TIMESTAMP(stamp) AS start_since_epoch,
-        UNIX_TIMESTAMP(duration) AS end_since_epoch, username, subject,
-        description, eventtype FROM ' . $sql_tableprefix . "events
-        WHERE id = '$id'")
-      or die("couldn't get items from table");
-    if(mysql_num_rows($result) == 0) {
-      soft_error("item doesn't exist!");
-    }
+    $output .= sprintf(_("Modifying id #%d"), $id);
+
+    $result = get_event_by_id($id);
 
     $row = mysql_fetch_array($result);
     $username = stripslashes($row['username']);
@@ -95,16 +102,7 @@ function event_form($action)
 
   } else {
     // case "add":
-    $headerstring = _("Adding item to calendar");
-
-    $result = mysql_query("SELECT max(id) as id FROM " . $sql_tableprefix
-        . "events");
-    if($result) {
-      $row = mysql_fetch_array($result);
-      $id = $row['id'] + 1;
-    } else {
-      $id = 1;
-    }
+    $output .= _("Adding item to calendar");
 
     $username = "";
     $subject = "";
@@ -125,21 +123,12 @@ function event_form($action)
     $typeofevent = 1;
   }
 
-  $output .= "<form method=\"get\" action=\"eventsub.php\">
-<table class=\"box\"";
-  if($BName == "MSIE") {
-    $output .= " cellspacing=\"0\"";
-  }
-
-  $output .= ">
-  <thead>
-  <tr>
-    <th colspan=\"2\">$headerstring</th>
+  $output .= '</th>
   </tr>
   </thead>
   <tbody>
   <tr>
-    <td>"
+    <td>'
   . _("Name")
   . "</td>
     <td><input type=\"text\" name=\"username\" size=\"20\" value=\"$username\" /></td>
@@ -161,7 +150,7 @@ function event_form($action)
 
   $output .= "      </select>\n      <select size=\"1\" name=\"month\">\n";
 
-  for ($i=1; $i<13; $i++) {
+  for ($i = 1; $i <= 12; $i++) {
     $nm = month_name($i);
     if ($i == $month) {
       $output .= "        <option value=\"$i\" selected=\"selected\">$nm</option>\n";
@@ -333,11 +322,12 @@ _("Description")
   </tr>
   <tr>
     <td colspan=\"2\" style=\"text-align:center\">
-      <input type=\"hidden\" name=\"action\" value=\"doadd\" />
-      <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
+      <input type=\"hidden\" name=\"action\" value=\"doadd\" />";
    
     if($action == "modify") {
-      $output .= "<input type=\"hidden\" name=\"modify\" value=\"1\" />\n";
+      $output .= "
+      <input type=\"hidden\" name=\"modify\" value=\"1\" />
+      <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
     }
 
     $output .= "<input type=\"submit\" value=\"" . 

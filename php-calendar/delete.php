@@ -21,8 +21,6 @@
 
 include("delete.inc");
 
-// FIXME: view date points to the current date, not the date of the deleted 
-//  items
 echo top() . del() . back_to_calendar() . bottom();
 
 ?>

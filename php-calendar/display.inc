@@ -118,14 +118,8 @@ _("Delete Selected")
   </tfoot>
   <tbody>";
 
-  $database = connect_to_database();
+  $result = get_events_by_date($day, $month, $year);
 
-  $result = mysql_query("SELECT UNIX_TIMESTAMP(stamp) AS start_since_epoch,
-    UNIX_TIMESTAMP(duration) AS end_since_epoch, username, id,
-    subject, description, eventtype FROM " . $sql_tableprefix . "events
-  WHERE stamp >= \"$year-$month-$day 00:00:00\" 
-  AND stamp <= \"$year-$month-$day 23:59:59\" ORDER BY stamp")
-     or die("could not run query");
   $i = 0;
   while ($row = mysql_fetch_array($result)) {
     $i++;
@@ -178,6 +172,9 @@ _("Delete Selected")
 
   $output .= "</tbody>
 </table>
+<input type=\"hidden\" name=\"day\" value=\"$day\" />
+<input type=\"hidden\" name=\"month\" value=\"$month\" />
+<input type=\"hidden\" name=\"year\" value=\"$year\" />
 </form>
 <div>
   <a class=\"box\" href=\"index.php?month=$month&amp;day=$day&amp;year=$year\">

@@ -34,12 +34,10 @@ function del()
 
     if(preg_match("/delete$/", $drop) == 0) continue;
 
-    remove_event($id) or soft_error("MySQL error: " . mysql_error());
-
-    if(mysql_affected_rows() == 0) {
-      $output .= sprintf(_("Could not remove item: %d"), $id) . "<br />\n";
-    } else {        
+    if(remove_event($id)) {
       $output .= sprintf(_("Removed item: %d"), $id) . "<br />\n";
+    } else {        
+      $output .= sprintf(_("Could not remove item: %d"), $id) . "<br />\n";
     }
   }
 

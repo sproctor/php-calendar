@@ -156,7 +156,9 @@ function top()
   $output .= '<link rel="stylesheet" type="text/css" href="generic.css" />
 <link rel="stylesheet" type="text/css" href="style0.css" />
 ';
-
+  if($BName == 'MSIE') {
+    $output .= '<link rel="stylesheet" type="text/css" href="style-ie.css" />';
+  }
   $output .= '</head>
 <body>
   <h1>' . $header . '</h1>
@@ -203,10 +205,37 @@ function bottom()
 </html>";
 }
 
-function print_style()
+function get_events_by_date($day, $month, $year)
 {
+  global $sql_tableprefix;
 
-  global $BName, $BVersion;
+  $database = connect_to_database();
+
+  $result = mysql_query("SELECT UNIX_TIMESTAMP(stamp) as start_since_epoch,
+      UNIX_TIMESTAMP(duration) as end_since_epoch, username, subject,
+      description, eventtype, id
+      FROM " . $sql_tableprefix . "events
+      WHERE duration >= \"$year-$month-$day 00:00:00\" 
+      AND stamp <= \"$year-$month-$day 23:59:59\" ORDER BY stamp", $database)
+    or soft_error("get_events_by_date failed");
+
+  return $result;
+}
+
+function get_event_by_id($id)
+{
+  global $sql_tableprefix;
+
+  $result = mysql_query('SELECT UNIX_TIMESTAMP(stamp) AS start_since_epoch,
+      UNIX_TIMESTAMP(duration) AS end_since_epoch, username, subject,
+      description, eventtype FROM ' . $sql_tableprefix . "events
+      WHERE id = '$id'")
+    or die("couldn't get items from table");
+  if(mysql_num_rows($result) == 0) {
+    soft_error("item doesn't exist!");
+  }
+
+  return $result;
 }
 
 function back_to_calendar()
