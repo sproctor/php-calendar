@@ -175,9 +175,14 @@ function add_sql_user_db()
 	$string = "";
 
 	if($create_user) {
-		$db->Connect($my_hostname, $my_adminname, $my_adminpasswd, '');
+		$ok = $db->Connect($my_hostname, $my_adminname, $my_adminpasswd,
+				'');
 	} else {
-		$db->Connect($my_hostname, $my_username, $my_passwd, '');
+		$ok = $db->Connect($my_hostname, $my_username, $my_passwd, '');
+	}
+
+	if(!$ok) {
+		db_error(_('Could not connect to server.'));
 	}
 
 	if($create_db) {
