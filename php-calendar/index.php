@@ -14,28 +14,34 @@ mysql_select_db($mysql_database)
      or die("Couldn't select database");
 
 
-if (empty($_GET['month'])) {
+if (!isset($_GET['month'])) {
     $month = $currentmonth;
 } else {
-    $month = $_GET['month'];
+  $month = $_GET['month'];
+}
+
+if(empty($_GET['year'])) {
+    $year = $currentyear;
+} else {
+    $year = date("Y", mktime(0,0,0,$month,1,$_GET['year']));
 }
 
 if(empty($_GET['day'])) {
     if($month == $currentmonth) $day = $currentday;
     else $day = 1;
 } else {
-    $day = $_GET['day'];
+    $day = ($_GET['day'] - 1) % date("t", mktime(0,0,0,$month,1,$year)) + 1;
 }
 
-if(empty($_GET['year'])) {
-    $year = $currentyear;
-} else {
-    $year = $_GET['year'];
-}
+while($month < 1) $month += 12;
+$month = ($month - 1) % 12 + 1;
 
 $firstday = date("w", mktime(0,0,0,$month,1,$year));
-$lastday = date("t", mktime(0,0,0,$month,$day,$year));
-	
+$lastday = date("t", mktime(0,0,0,$month,1,$year));
+
+$nextmonth = $month + 1;
+$lastmonth = $month - 1;
+
 $nextyear = $year + 1;
 $lastyear = $year - 1;
 
@@ -59,7 +65,7 @@ echo "      $year
 <tbody>
   <tr>
     <td>
-      <a href=\"?month=$nextmonth&amp;year=$year\">" . _("last month") . "</a>
+      <a href=\"?month=$lastmonth&amp;year=$year\">" . _("last month") . "</a>
     </td>
     <td>
       <a href=\"?month=1&amp;year=$year\">" . _("Jan") . "</a>
@@ -106,7 +112,7 @@ echo "      $year
       <a href=\"?month=$month&amp;year=$lastyear\">" . _("last year") . "</a>
     </td> 
     <td colspan=\"12\">
-      <a href=\"operate.php?action=Add+Item&amp;month=$month&amp;year=$year&amp;day=$day\">" . _("Add Item") . "</a>
+      <a href=\"operate.php?action=add&amp;month=$month&amp;year=$year&amp;day=$day\">" . _("Add Item") . "</a>
     </td>
     <td>
       <a href=\"?month=$month&amp;year=$nextyear\">" . _("next year") . "</a>
@@ -197,7 +203,7 @@ END;
       if($typeofevent == 3) {
         $event_time = "??:??";
       } elseif($typeofevent == 2) {
-        $event_time = "FULL DAY";
+        $event_time = _("FULL DAY");
       } else {
         $event_time = date("g:i A", strtotime($row['stamp']));
       }

@@ -15,8 +15,6 @@ else $year = $_GET['year'];
 
 $tablename = date('Fy', mktime(0,0,0,$month,1,$year));
 $monthname = date('F', mktime(0,0,0,$month,1,$year));
-$lastmonthname = $monthname;
-$nextmonthname = $monthname;
 
 $lasttime = mktime(0,0,0,$month,$day-1,$year);
 $lastday = date("j", $lasttime);
@@ -42,10 +40,14 @@ echo <<<END
     <td>
       <a href="display.php?month=$lastmonth&amp;day=$lastday&amp;year=$lastyear">$lastmonthname $lastday</a>
     </td>
-	<td>
-      <a href=".?month=$month&amp;day=$day&amp;year=$year">Back to Calendar</a>
+    <td>
+      <a href="operate.php?month=$month&amp;year=$year&amp;day=$day&amp;action=add">
+END;
+echo _("Add Item");
+echo <<<END
+</a>
     </td>
-	<td>
+    <td>
       <a href="display.php?month=$nextmonth&amp;day=$nextday&amp;year=$nextyear">$nextmonthname $nextday</a>
     </td>
   </tr>
@@ -64,27 +66,26 @@ echo <<<END
   </colgroup>
   <thead>
   <tr>
-    <th>Select</th>
-    <th>Username</th>
-    <th>Time</th>
-    <th>Duration</th>
-    <th>Subject</th>
-    <th>Description</th>
+END;
+echo "
+    <th>" . _("Select")      . "</th>
+    <th>" . _("Modify")      . "</th>
+    <th>" . _("Username")    . "</th>
+    <th>" . _("Time")        . "</th>
+    <th>" . _("Duration")    . "</th>
+    <th>" . _("Subject")     . "</th>
+    <th>" . _("Description") . "</th>
   </tr>
   </thead>
   <tfoot>
   <tr>
-    <td colspan="6">
-      <input type="hidden" name="day" value="$day" />
-      <input type="hidden" name="month" value="$month" />
-      <input type="hidden" name="year" value="$year" />
-      <input type="submit" name="action" value="Delete Selected" />
-      <input type="submit" name="action" value="Modify Selected" />
+    <td colspan=\"7\">
+      <input type=\"hidden\" name=\"action\" value=\"delete\" />
+      <input type=\"submit\" value=\"" . _("Delete Selected") . "\" />
     </td>
   </tr>
   </tfoot>
-  <tbody>
-END;
+  <tbody>";
 
 $database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password)
      or die("could not connect to database");
@@ -104,43 +105,38 @@ while ($row = mysql_fetch_array($result)) {
     if($typeofevent == 3) $time = date("j F Y, ??:?? ??", $temp_time);
     else if($typeofevent == 2) $time = date("j F Y, \F\U\L\L \D\A\Y", $temp_time);
     else $time = date("j F Y, h:i A", $temp_time);
-    $durtime = strtotime($row['duration']);
-    $durmin = date("i", $durtime) - date("i", $temp_time);
-    $durhr = date("H", $durtime) - date("H", $temp_time);
-    $durday = date("j", $durtime) - date("j", $temp_time);
-    $durmon = date("n", $durtime) - date("n", $temp_time);
-    if($durmin < 0) {
-        $durmin = $durmin + 60;
-        $durhr = $durhr - 1;
-    }
-    if($durhr < 0) {
-        $durhr = $durhr + 24;
-        $durday = $durday - 1;
-    }
-    if($durmon > 0) $durday = $durday + date("t", $temp_time);
-    if($typeofevent == 2) $temp_dur = "FULL DAY";
+    $durtime = strtotime($row['duration']) - $temp_time;
+    $durmin = ($durtime / 60) % 60;     //seconds per minute
+    $durhr  = ($durtime / 3600) % 24;   //seconds per hour
+    $durday = floor($durtime / 86400);  //seconds per day
+
+    if($typeofevent == 2) $temp_dur = _("FULL DAY");
     else $temp_dur = "$durday days, $durhr hours, $durmin minutes";
-    if(isold()) {
-        if(empty($name)) $name = "&nbsp;";
-        if(empty($subject)) $subject = "&nbsp";
-        if(empty($desc)) $desc = "&nbsp;";
-    }
-    echo "
+
+  echo <<<END
   <tr>
-    <td><input type=\"radio\" name=\"id\" value=\"$row[id]\" /></td>
-	  <td>$name</td>
+    <td><input type="checkbox" name="delete" value="$row[id]" /></td>
+    <td><a href="operate.php?action=modify&amp;id=$row[id]">
+END;
+  echo _("Modify");
+  echo <<<END
+</a></td>
+    <td>$name</td>
     <td>$time</td>
     <td>$temp_dur</td>
-	  <td>$subject</td>
-    <td class=\"description\">$desc</td>
-  </tr>";
-}
+    <td>$subject</td>
+    <td class="description">$desc</td>
+  </tr>
+END;
+  }
 
 echo "
   </tbody>
 </table>
 <div>
-  <a class=\"box\" href=\"operate.php?month=$month&amp;year=$year&amp;day=$day&amp;action=Add+Item\">Add Item</a>
+  <a class=\"box\" href=\".?month=$month&amp;day=$day&amp;year=$year\">
+    " . _("Back to Calendar") . "
+  </a>
 </div>
 </form>";
 
