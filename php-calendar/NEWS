@@ -1,4 +1,13 @@
-php-calendar: php + mysql + xhtml 1.1 + CSS 2 [+ gettext]
+php-calendar: php + sql + xhtml 1.1 + CSS 2 [+ gettext]
+
+Version 0.9.1 (4/1/04):
+        * add quick event add link
+        * fix bug adding an events
+
+Version 0.9 (3/30/04):
+        * move to adodb
+        * require php 4.1 or greater
+        * many bug fixes
 
 Version 0.8 (3/11/03):
 	* Change config file to use defines rather than variables.

@@ -415,7 +415,7 @@ function create_password($name)
 	return tag('input', attributes("name=\"$name\"", 'type="password"'));
 }
 
-function create_checkbox($name, $value = NULL, $checked = false)
+function create_checkbox($name, $value = false, $checked = false)
 {
 	$attributes = attributes("name=\"$name\"", 'type="checkbox"');
 	if($value) $attributes[] = "value=\"$value\"";

@@ -110,7 +110,7 @@ function display_days($day_of_week, $week_of_month, $month, $year)
                                         $year, $month, $day_of_month,
                                         array('class="phpc-add"')),
                                 create_action_link($day_of_month, 'display',
-                                        false, $year, $month, $day,
+                                        false, $year, $month, $day_of_month,
                                         array('class="date"')));
 
 		$result = get_events_by_date($day_of_month, $month, $year);
@@ -215,11 +215,16 @@ function display_day($day, $month, $year)
 			$dur_str = get_duration($row['duration'],
 					$row['eventtype']);
 
-			$html_subject = tag('td', attributes('class="phpc-list"'));
+			$html_subject = tag('td',
+                                        attributes('class="phpc-list"'));
 
-			if($admin) $html_subject[] = create_checkbox('id', $row['id']);
+			if($admin) {
+                                $html_subject[] = create_checkbox('id',
+                                                $row['id']);
+                        }
 
-			$html_subject[] = create_action_link(tag('strong', $subject),
+			$html_subject[] = create_action_link(tag('strong',
+                                                $subject),
 					'display', $row['id']);
 
 			if($admin) {

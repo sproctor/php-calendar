@@ -24,6 +24,11 @@ function login()
 	global $vars, $day, $month, $year, $user, $password;
 
 	$html = tag('div');
+        if(array_key_exists('lastaction', $vars)) {
+                $lastaction = $vars['lastaction'];
+        } else {
+                $lastaction = 'display';
+        }
 
 	//Check password and username
 	if(isset($vars['username'])){
@@ -39,7 +44,7 @@ function login()
                                 $day_string = '';
                         }
 			header("Location: $_SERVER[SCRIPT_NAME]?"
-                                        ."action=$vars[lastaction]$day_string"
+                                        ."action=$lastaction$day_string"
                                         ."&month=$month&year=$year");
 			return tag('h2', _('Loggin in...'));
 		}
@@ -48,7 +53,7 @@ function login()
 
 	}
 
-	$html[] = login_form($vars['lastaction']);
+	$html[] = login_form($lastaction);
 	return $html;
 }
 

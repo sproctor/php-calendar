@@ -97,11 +97,11 @@ function event_submit()
 	$uid = check_user();
 
 	$startstamp = mktime($hour, $minute, 0, $month, $day, $year);
-	$startdate = $db->DBDate('Y-m-d', $startstamp);
+	$startdate = $db->DBDate($startstamp);
 	$starttime = date('H:i:s', $startstamp);
 
 	$endstamp = mktime(0, 0, 0, $end_month, $end_day, $end_year);
-	$enddate = $db->DBDate('Y-m-d', $endstamp);
+	$enddate = $db->DBDate($endstamp);
 	$duration = $duration_hour * 60 + $duration_min;
 
 	$table = SQL_PREFIX . 'events';
@@ -111,8 +111,8 @@ function event_submit()
 			soft_error('You do not have permission to modify events.');
 		}
 		$query = "UPDATE $table\n"
-			."SET startdate='$startdate',\n"
-			."enddate='$enddate',\n"
+			."SET startdate=$startdate,\n"
+			."enddate=$enddate,\n"
 			."starttime='$starttime',\n"
 			."duration='$duration',\n"
 			."subject='$subject',\n"
@@ -127,7 +127,7 @@ function event_submit()
 		$query = "INSERT INTO $table\n"
 			."(id, uid, startdate, enddate, starttime, duration,"
 			." subject, description, eventtype, calendar)\n"
-			."VALUES ($id, '$uid', '$startdate', '$enddate',"
+			."VALUES ($id, '$uid', $startdate, $enddate,"
 			."'$starttime', '$duration', '$subject',"
 			."'$description', '$typeofevent', '$calendar_name')";
 	}
