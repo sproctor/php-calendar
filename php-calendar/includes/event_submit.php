@@ -120,7 +120,7 @@ function event_submit()
 	$startstamp = mktime($hour, $minute, 0, $month, $day, $year);
 	$endstamp = mktime(0, 0, 0, $end_month, $end_day, $end_year);
 
-        if($endstamp < $startstamp) {
+        if($endstamp < mktime(0, 0, 0, $month, $day, $year)) {
                 soft_error(_('The start of the event cannot be after the end of the event.'));
         }
 	$startdate = $db->DBDate($startstamp);
