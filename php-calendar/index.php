@@ -33,8 +33,6 @@ $user = $HTTP_SESSION_VARS['user'];
 
 list($BName, $BVersion) = browser();
 
-$db_events = new sql_db(SQL_HOSTNAME, SQL_USERNAME, SQL_PASSWORD, SQL_DATABASE);
-
 /*
    echo "<pre>get vars:</pre>";
    foreach ($HTTP_GET_VARS as $key=>$val){

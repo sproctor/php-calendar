@@ -48,7 +48,7 @@ function month_navbar()
 
 function calendar()
 {
-	global $BName, $day, $month, $year, $db_events;
+	global $BName, $day, $month, $year, $db;
 
 	$currentday = date('j');
 	$currentmonth = date('n');
@@ -114,7 +114,7 @@ function calendar()
 			 *  list.  loop through each event for the day
 			 */
 			$have_events = 0;
-			while($row = $db_events->sql_fetchrow($result)) {
+			while($row = $db->sql_fetchrow($result)) {
 				// if we didn't start the event table yet, do so
 				if($have_events == 0) {
 					$output .= "<ul>\n";

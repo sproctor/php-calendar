@@ -21,16 +21,16 @@
 
 function remove_event($id)
 {
-	global $db_events;
+	global $db;
 
-	$result = $db_events->sql_query('DELETE FROM '.SQL_PREFIX
+	$result = $db->sql_query('DELETE FROM '.SQL_PREFIX
 			."events WHERE id = '$id'");
 	if(!$result) {
-		$error = $db_events->sql_error();
+		$error = $db->sql_error();
 		soft_error("SQL error $error[code]: $error[message]");
 	}
 
-	if($db_events->sql_affectedrows($result) > 0)
+	if($db->sql_affectedrows($result) > 0)
 		return true;
 	else
 		return false;

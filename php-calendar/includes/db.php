@@ -59,10 +59,10 @@ switch($dbms)
 }
 
 // Make the database connection.
-$db = new sql_db($dbhost, $dbuser, $dbpasswd, $dbname, false);
+$db = new sql_db(SQL_HOSTNAME, SQL_USER, SQL_PASSWD, SQL_DATABASE, false);
 if(!$db->db_connect_id)
 {
-   message_die(CRITICAL_ERROR, "Could not connect to the database");
+   message_die("Could not connect to the database");
 }
 
 ?>

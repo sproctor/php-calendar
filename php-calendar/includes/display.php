@@ -56,7 +56,7 @@ function display()
 
 function display_date()
 {
-	global $day, $month, $year, $user, $db_events;
+	global $day, $month, $year, $user, $db;
 
 	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
 	$monthname = month_name($month);
@@ -100,7 +100,7 @@ function display_date()
 	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
 
 	$i = 0;
-	while($row = $db_events->sql_fetchrow($result)) {
+	while($row = $db->sql_fetchrow($result)) {
 		$i++;
 		//$name = stripslashes($row['username']);
 		$subject = stripslashes($row['subject']);
@@ -145,14 +145,14 @@ function display_date()
 
 function display_id($id)
 {
-	global $user, $db_events;
+	global $user, $db;
 
 	$result = get_event_by_id($id);
 
 	if(!empty($user) || ANON_PERMISSIONS >= 2) $admin = 1;
 	else $admin = 0;
 
-	$row = $db_events->sql_fetchrow($result);
+	$row = $db->sql_fetchrow($result);
 
 	$time_str = formatted_time_string($row['starttime'], $row['eventtype'])
 		.' '.$row['startdate'];

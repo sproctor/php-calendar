@@ -151,7 +151,7 @@ function short_month_name($month)
 
 function check_user()
 {
-	global $user, $password, $db_events, $calno;
+	global $user, $password, $db, $calno;
 
 	if(empty($user)) return false;
 
@@ -160,13 +160,13 @@ function check_user()
 		."AND password = PASSWORD('$password') "
 		."AND calno = '$calno'";
 
-	$result = $db_events->sql_query($query);
+	$result = $db->sql_query($query);
 	if(!$result) {
-		$error = $db_events->sql_error();
+		$error = $db->sql_error();
 		soft_error("$error[code]: $error[message]");
 	}
 
-	if($db_events->sql_numrows($result)) return true;
+	if($db->sql_numrows($result)) return true;
 	else return false;
 }
 
@@ -284,7 +284,7 @@ function bottom()
 
 function get_events_by_date($day, $month, $year)
 {
-	global $calno, $db_events;
+	global $calno, $db;
 
 	$query = 'SELECT * FROM '.SQL_PREFIX."events\n"
 		."WHERE (startdate <= '$year-$month-$day'\n"
@@ -298,19 +298,19 @@ function get_events_by_date($day, $month, $year)
 		."AND (eventtype != 6 OR DAYOFMONTH(startdate) = '$day')\n"
 		."ORDER BY starttime";
 
-	$result = $db_events->sql_query($query);
+	$result = $db->sql_query($query);
 
 	return $result;
 }
 
 function get_event_by_id($id)
 {
-	global $calno, $db_events;
+	global $calno, $db;
 
-	$result = $db_events->sql_query('SELECT * FROM '.SQL_PREFIX."events\n"
+	$result = $db->sql_query('SELECT * FROM '.SQL_PREFIX."events\n"
 			."WHERE id = '$id' AND calno = '$calno'");
 
-	if($db_events->sql_numrows() == 0) {
+	if($db->sql_numrows() == 0) {
 		soft_error("item doesn't exist!");
 	}
 

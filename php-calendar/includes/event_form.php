@@ -21,7 +21,7 @@
 
 function event_form($action)
 {
-	global $BName, $vars, $day, $month, $year, $db_events;
+	global $BName, $vars, $day, $month, $year, $db;
 
 	$output = "<form action=\"index.php\">\n"
 		.'<table class="phpc-main"';
@@ -43,7 +43,7 @@ function event_form($action)
 
 		$result = get_event_by_id($id);
 
-		$row = $db_events->sql_fetchrow($result);
+		$row = $db->sql_fetchrow($result);
 		$username = stripslashes($row['username']);
 		$subject = stripslashes($row['subject']);
 		$desc = htmlspecialchars(stripslashes($row['description']));

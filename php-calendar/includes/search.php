@@ -28,7 +28,7 @@ function search()
 
 function search_results()
 {
-	global $vars, $calno, $database, $day, $month, $year, $db_events;
+	global $vars, $calno, $database, $day, $month, $year, $db;
 
 	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
 	$monthname = month_name($month);
@@ -59,13 +59,16 @@ function search_results()
 			."AND startdate <= '$toyear-$tomonth-$today'"
 			."ORDER BY $sort $order";
 
-		$result = $db_events->sql_query($query)
-			or soft_error($db_events->sql_error($result));
+		$result = $db->sql_query($query);
+		if(!$result) {
+			$error = $db->sql_error();
+			soft_error("$error[code]: $error[message]");
+		}
 
 		$output = "<a href=\"index.php?action=search&amp;month=$month&amp;year=$year&amp;day=$day\">" . _('New Search') . 
 			'</a><table class="phpc-main"><caption>Search Results</caption>';
 
-		while ($row = $db_events->sql_fetchrow($result)) {
+		while ($row = $db->sql_fetchrow($result)) {
 			$i++;
 			$name = stripslashes($row['username']);
 			$subject = stripslashes($row['subject']);

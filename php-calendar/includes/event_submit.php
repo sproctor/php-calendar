@@ -21,7 +21,7 @@
 
 function submit_event()
 {
-	global $calno, $day, $month, $year, $db_events, $vars;
+	global $calno, $day, $month, $year, $db, $vars;
 
 	if(isset($vars['modify'])) {
 		if(!isset($vars['id'])) {
@@ -137,16 +137,16 @@ function submit_event()
 			."'$description', '$typeofevent', '$calno')";
 	}
 
-	$result = $db_events->sql_query($query);
+	$result = $db->sql_query($query);
 
 	if(!$result) {
-		$error = $db_events->sql_error();
+		$error = $db->sql_error();
 		soft_error(_('Error updating event')
 				." $error[code]: $error[message]\n"
 				."sql:\n$query");
 	}
 
-	$affected = $db_events->sql_affectedrows($result);
+	$affected = $db->sql_affectedrows($result);
 	if($affected < 1) soft_error(_('No changes made')."\nsql:\n$query");
 
 	return '<div class="box">'._('Date updated').": $affected</div>\n";
