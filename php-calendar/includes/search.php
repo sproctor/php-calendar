@@ -48,28 +48,20 @@ function search_results()
 		."WHERE ($where) "
 		."AND calendar = '$calendar_name' "
 		."AND enddate >= DATE '$start' "
-		."AND startdate <= DATE '$end'"
+		."AND startdate <= DATE '$end' "
 		."ORDER BY $sort $order";
 
 	$result = $db->Execute($query)
 		or db_error(_('Encountered an error while searching.', $query));
 
-
-	$html =  tag('table',
-                        attributes('class="phpc-main"'),
-			tag('caption', _('Search Results')),
-			tag('thead',
-				tag('tr',
-					tag('th', _('Subject')),
-					tag('th', _('Date Time')),
-					tag('th', _('Description')))));
+        $tags = array();
 	while ($row = $result->FetchRow()) {
 		$name = stripslashes($row['uid']);
 		$subject = stripslashes($row['subject']);
 		$desc = nl2br(stripslashes($row['description']));
 		$desc = parse_desc($desc);
 
-		$html[] = tag('tr',
+		$tags[] = tag('tr',
 				tag('td', attributes('class="phpc-list"'),
 					tag('strong',
 						create_id_link($subject,
@@ -83,11 +75,19 @@ function search_results()
                                         $desc));
 	}
 
-	if(sizeof($html) == 0) {
-		$html[] = tag('tr',
-				tag('td', attributes('colspan="3"'),
-					tag('strong', _('No events.'))));
-	}
+	if(sizeof($tags) == 0) {
+		$html = tag('div', tag('strong', _('No events matched your search criteria.')));
+	} else {
+                $html = tag('table',
+                                attributes('class="phpc-main"'),
+                                tag('caption', _('Search Results')),
+                                tag('thead',
+                                        tag('tr',
+                                                tag('th', _('Subject')),
+                                                tag('th', _('Date Time')),
+                                                tag('th', _('Description')))));
+                foreach($tags as $tag) $html[] = $tag;
+        }
 
 	return $html;
 }
