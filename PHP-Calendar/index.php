@@ -22,7 +22,7 @@
 	}
 	mysql_select_db($mysql_database, $database);
 	
-	$firstday = date( 'w', mktime(0,0,0,$month,1,$year));
+	$firstday = date("w", mktime(0,0,0,$month,1,$year));
 	$lastday = date("t", mktime(0,0,0,$month,$day,$year));
 	
 	$nextyear = $year+1;
@@ -130,7 +130,7 @@
                                	echo "<td valign=top class=future" . ifold(" height=80>", ">");
                         }
 			echo "<a href=\"display.php?day=$nextday&amp;month=$month&amp;year=$year\" class=date>" . ifold("<b>$nextday</b></a>", "$nextday</a>");
-			$query3 = mysql_query("SELECT subject, stamp FROM $mysql_tablename WHERE stamp >= \"$year-$month-$nextday 00:00:00\" AND stamp <= \"$year-$month-$nextday 23:59:59\" ORDER BY stamp");
+			$query3 = mysql_query("SELECT subject, stamp, eventtype FROM $mysql_tablename WHERE stamp >= \"$year-$month-$nextday 00:00:00\" AND stamp <= \"$year-$month-$nextday 23:59:59\" ORDER BY stamp");
 			$tabling = 0;
 			for ($i = 0; $i<mysql_num_rows($query3); $i++)
 			{
@@ -146,7 +146,10 @@ else echo "\n<table class=list>";
 						$tabling = 1;
 					}
 					$subject = htmlspecialchars(stripslashes($results2['subject']));
-					$temp_time = date("g:i A", strtotime($results2['stamp']));
+					$typeofevent = $results2['eventtype'];
+					if($typeofevent == 3) $temp_time = "??:??";
+					else if($typeofevent == 2) $temp_time = "FULL DAY";
+					else $temp_time = date("g:i A", strtotime($results2['stamp']));
 					echo "<tr><td>" . ifold("<font size=1>", "") . "<a href=\"display.php?day=$nextday&amp;month=$month&amp;year=$year\">$temp_time - $subject</a>" . ifold("</font>", "") . "</td></tr>";
 				}
 			}

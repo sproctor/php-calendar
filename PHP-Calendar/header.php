@@ -62,6 +62,7 @@ body {
   background-color: <? echo "$bgcolor" ?>;
   text-align: center;
   font-size: 12pt;
+  font-family: "Times New Roman", serif, sans-serif;
   padding: 0 2%;
 }
 
@@ -74,7 +75,8 @@ a {
 }
 
 a:active {
-  color: <? echo "$tablebgcolor" ?>;
+  color: <? echo "$bgcolor" ?>;
+  background-color: inherit;
 }
 
 a.plain {
@@ -82,7 +84,7 @@ a.plain {
 }
 
 a:hover {
-  color: <? echo "$tablebgcolor" ?>;
+  color: <? echo "$bgcolor" ?>;
 }
 
 table {
@@ -157,7 +159,7 @@ table.calendar {
 }
 
 table.nav {
-  font-size: 10pt;
+  font-size: 12pt;
   text-align: center;
   background-color: <? echo "$bordercolor" ?>;
   margin: 4px 0;
@@ -221,12 +223,14 @@ table.list { <? if(!isold()) echo "  padding: 0;
   background-color: <? echo "$bordercolor" ?>;
   color: inherit;
   border-spacing: 1px;
+  width: 100%;
 }
 
 table.list td {
-  font-size: 8pt;
+  font-size: 9pt;
   font-weight: normal;
   padding: 0;
+  width: 100%;
 }
 
 table.list a {
@@ -237,12 +241,12 @@ table.list a {
 }
 
 td.past table.list a:hover {
-  color: <? echo "$textcolor" ?>;
+  color: <? echo "$bgcolor" ?>;
   background-color: <? echo "$futurecolor" ?>;
 }
 
 td.future table.list a:hover {
-  color: <? echo "$textcolor" ?>;
+  color: <? echo "$bgcolor" ?>;
   background-color: <? echo "$pastcolor" ?>;
 }
 

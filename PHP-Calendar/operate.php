@@ -1,58 +1,49 @@
 <?
-	include ("config.php");
-	include ("header.php");
+include ("config.php");
+include ("header.php");
 
-	$database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
-	mysql_select_db($mysql_database, $database);
+$database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
+mysql_select_db($mysql_database, $database);
 
-	$lastday = date("t", mktime(0,0,0,$month,1,$year));
+$lastday = date("t", mktime(0,0,0,$month,1,$year));
 
-	switch ($action)
-	{
-		case "Delete Selected":
-			if (!isset($id))
-			{
-				echo "<p>You can't delete nothing from the table.";
-				break;
-			}
-			echo "<p>We are about to delete id $id from $mysql_tablename";
+switch ($action) {
+case "Delete Selected":
+	if (!isset($id)) {
+		echo "<p>You can't delete nothing from the table.";
+		break;
+	}
+	echo "<p>We are about to delete id $id from $mysql_tablename";
 
-			$query = mysql_query("SELECT username FROM $mysql_tablename WHERE id = $id");
-			$row = mysql_fetch_array($query);
+	$query = mysql_query("SELECT username FROM $mysql_tablename WHERE id = $id");
+	$row = mysql_fetch_array($query);
 		
-			if (!isset($REMOTE_USER))
-			{
-				mysql_query("DELETE FROM $mysql_tablename WHERE id = '$id'");
-				echo "<p>Item Deleted";
-			}
-			else
-			{
-				if ( strcmp($row['username'], $REMOTE_USER) == 0 )
-				{
-					mysql_query("DELETE FROM $mysql_tablename WHERE id = '$id'");
-					echo "<p>Item Deleted";
-				}
-				else
-				{
-					echo "<p>You aren't the original user, you can't delete this";
-				}
-			}
+	if (!isset($REMOTE_USER)) {
+		mysql_query("DELETE FROM $mysql_tablename WHERE id = '$id'");
+		echo "<p>Item Deleted";
+	} else {
+		if ( strcmp($row['username'], $REMOTE_USER) == 0 ) {
+			mysql_query("DELETE FROM $mysql_tablename WHERE id = '$id'");
+			echo "<p>Item Deleted";
+		} else {
+			echo "<p>You aren't the original user, you can't delete this";
+		}
+	}
 					
 
-			break;
+	break;
 
-		case "Modify Selected":
-			$modify = "Modify";
-			if (!isset($id))
-			{
-				echo "Nothing to modify.";
-				break;
-			}
-			echo "<p>We are about to modify id $id from $mysql_tablename</p>\n";
-			$query = mysql_query("SELECT *, RIGHT(stamp, 8) AS thetime, SUBSTRING(stamp FROM 9 FOR 2) AS theday FROM $mysql_tablename WHERE id = '$id'");
-			$row = mysql_fetch_array($query);
+case "Modify Selected":
+	$modify = "Modify";
+	if (!isset($id)) {
+		echo "Nothing to modify.";
+		break;
+	}
+	echo "<p>We are about to modify id $id from $mysql_tablename</p>\n";
+	$query = mysql_query("SELECT *, RIGHT(stamp, 8) AS thetime, SUBSTRING(stamp FROM 9 FOR 2) AS theday FROM $mysql_tablename WHERE id = '$id'");
+	$row = mysql_fetch_array($query);
 
-			if ( !isset($REMOTE_USER) )
+	if ( !isset($REMOTE_USER) )
 			{
 				$username = stripslashes($row['username']);
 			}
@@ -67,12 +58,29 @@
 			$subject = stripslashes($row['subject']);
 			$desc = htmlspecialchars(stripslashes($row['description']));
 			$thetime = strtotime($row['stamp']);
-			$hour = date("g", $thetime);
+			$hour = date("G", $thetime);
 			$minute = date("i", $thetime);
 			$month = date("n", $thetime);
 			$year = date("Y", $thetime);
 			$day = date("j", $thetime);
-			if(strcmp(date("A", $thetime), "AM")) $pm = 1;
+			$durtime = strtotime($row['duration']);
+			$durhr = date("G", $durtime) - $hour;
+			$durmin = date("i", $durtime) - $minute;
+			$durday = date("j", $durtime) - $day;
+			$durmon = date("n", $durtime) - $month;
+			if($durmin < 0) {
+				$durmin = $durmin + 60;
+				$durhr = $durhr - 1;
+			}
+			if($durhr < 0) {
+				$durhr = $durhr + 24;
+				$durday = $durday - 1;
+			}
+			if($durmon > 0) $durday = $durday + date("t", $thetime);
+			if($hour >= 12) {
+				$pm = 1;
+				$hour = $hour - 12;
+			}
 			else $pm = 0;
 
 		case "Add Item":
@@ -96,13 +104,20 @@
 				if(!isset($month)) $month = date("n");
 				if(!isset($year)) $year = date("Y");
 				if($day == date("j") && $month == date("n") 
-				  && $year == date("Y")) $hour = date("h") + 1;
-				else $hour = 6;
-				$pm = 1;
+				  && $year == date("Y")) {
+				  $hour = date("G") + 1;
+				  if($hour >= 12) {
+				    $hour = $hour - 12;
+				    $pm = 1;
+				  } else $pm = 0;
+				} else { $hour = 6; $pm = 1; }
 				$minute = 0;
+				$durhr = 1;
+				$durday = 0;
+				$durmin = 0;
 			}
 
-			echo "<form method=post action=operate.php>\n";
+			echo "<form method=\"get\" action=operate.php>\n";
 			if(isold()) echo "<table cellspacing=0 cellpadding=1 border=0 width=\"96%\"><tr><td bgcolor=\"$bordercolor\">
 <table class=edit cellspacing=0 border=0 cellpadding=2 width=\"100%\"";
 			else echo "<table class=edit";
@@ -152,14 +167,29 @@
 			echo "      </select></td>
   </tr>
   <tr>
+    <td>Event Type:</td>
+    <td>
+<select name=\"typeofevent\" size=1>
+<option value=1 selected>Normal Event</option>
+<option value=2>Full Day Event</option>
+<option value=3>Unkown Time of Event</option>
+</select>
+    </td>
+  </tr>
+  <tr>
     <td>Time:</td>
-    <td><select name=hour size=1>\n";
-	for($i = 1; $i <= 12; $i++) {
+    <td>
+<select name=hour size=1>\n";
+	for($i = 1; $i < 12; $i++) {
 		echo "<option value='$i'";
 		if($hour == $i) echo " selected";
 		echo ">$i</option>\n";
 	}
-	echo "</select><span class=bold>:</span><select name=minute size=1>\n";
+	echo "<option value='0'";
+	if($hour == 0) echo " selected";
+	echo ">12</option>
+</select>
+<span class=bold>:</span><select name=minute size=1>\n";
 	for($i = 0; $i <= 59; $i = $i + 5) {
 		echo "<option value='$i'";
 		if($minute >= $i && $i > $minute - 5) echo " selected";
@@ -173,6 +203,35 @@ echo ">AM</option>
 if($pm) echo " selected";
 echo ">PM</option>
 </select></td>
+  </tr>
+  <tr>
+    <td>Duration:</td>
+    <td>
+<select name=durationday size=1>";
+	for($i = 0; $i < 31; $i++) {
+		echo "<option value='$i'";
+		if($durday == $i) echo " selected";
+		echo ">$i</option>\n";
+	}
+echo "</select>
+days
+<select name=durationhour size=1>";
+	for($i = 0; $i < 24; $i++) {
+		echo "<option value='$i'";
+		if($durhr == $i) echo " selected";
+		echo ">$i</option>\n";
+	}
+echo "</select>
+hours
+<select name=durationminute size=1>";
+	for($i = 0; $i <= 59; $i = $i + 5) {
+		echo "<option value='$i'";
+		if($durmin >= $i && $i > $durmin - 5) echo " selected";
+		printf(">%02d</option>\n", $i);
+	}
+echo "</select>
+minutes
+</td>
   </tr>
   <tr>
     <td>Subject (255 chars max)</td>
@@ -204,8 +263,8 @@ echo ">PM</option>
 			$description = addslashes(ereg_replace("</?([^aA/]|[a-zA-Z_]{2,})[^>]*>", "", $description));
 			if($pm) $hour = $hour + 12;
 			$timestamp = date("Y-m-d H:i:s", mktime($hour,$minute,0,$month,$day,$year));
-
-			$temp = mysql_query("INSERT INTO $mysql_tablename (username, stamp, subject, description) VALUES ('$username', '$timestamp', '$subject', '$description')");
+			$durationstamp = date("Y-m-d H:i:s", mktime($hour+$durationhour,$minute+$durationminute,0,$month,$day+$durationday,$year));
+			$temp = mysql_query("INSERT INTO $mysql_tablename (username, stamp, subject, description, eventtype, duration) VALUES ('$username', '$timestamp', '$subject', '$description', '$typeofevent', '$durationstamp')");
 			if ($temp)
 				echo "Item added ...";
 			else

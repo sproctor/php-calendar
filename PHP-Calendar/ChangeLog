@@ -1,8 +1,5 @@
 PHPCalendar: php + mysql + html 4 + CSS 2
 
-Version 0.4alpha:
-	* fixed time menu so 12am is 12am not 12pm, and 12pm is 12pm not 12am of the next day.
-	
 Version 0.3 (02/15/2002):
 	* fix to make links work properly in IE
 	* minor color tweak
