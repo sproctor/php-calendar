@@ -252,7 +252,7 @@ table.display {
   text-align: center;
   font-size: 10pt;
   background-color: $bordercolor;
-  color: $headercolor;
+  color: $textcolor;
   border-style: none;
   border-spacing: 2px;
   padding: 0;
@@ -262,6 +262,8 @@ table.display {
 table.display th {
   font-weight: bold;
   font-size: 12pt;
+  color: $headercolor;
+  background-color: inherit;
 }
 
 table.display td {
@@ -280,7 +282,7 @@ table.display td {
   border-color: $bordercolor;
   border-style: solid;
   border-width: 1px;
-  color: $headercolor;  
+  color: $textcolor;  
 }
 
 table.box {
@@ -303,13 +305,23 @@ table.box th {
   font-size: 12pt;
 }
 
+div.box {
+  width: 96px;
+  text-align: center;
+  margin: 8px auto;
+  font-size: 12pt;
+  padding: 4px;
+}
+
 div.box a {
   text-decoration: none;
   display: block;
+  padding: 4px;
+  margin: -4px;
 }
 
 div.box a:hover {
-  background-color: $textcolor;
+  background-color: $bordercolor;
   color: $tablebgcolor;
 }
 

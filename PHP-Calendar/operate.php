@@ -185,7 +185,7 @@ switch ($action) {
      echo "      </select></td>
   </tr>
   <tr>
-    <td>Event Type:</td>
+    <td>Event Type</td>
     <td>
 <select name=\"typeofevent\" size=1>
 <option value=1";
@@ -213,7 +213,7 @@ switch ($action) {
     </td>
   </tr>
   <tr>
-    <td>Time:</td>
+    <td>Time</td>
     <td>
 <select name=hour size=1>\n";
 
@@ -256,7 +256,7 @@ switch ($action) {
 </select></td>
   </tr>
   <tr>
-    <td>Duration:</td>
+    <td>Duration</td>
     <td>
 <select name=durationday size=1>";
 
@@ -327,15 +327,15 @@ minutes
      $query = "INSERT INTO $mysql_tablename (username, stamp, subject, description, eventtype, duration) VALUES ('$username', '$timestamp', '$subject', '$description', '$typeofevent', '$durationstamp')";
      $result = mysql_query($query);
      if ($result)
-         echo "<p>Item added ...</p>";
+         echo "<div class=\"box\">Item added ...</div>";
      else {
-         echo "<p>Item may not have been added ...", mysql_error();
+         echo "<div class=\"box\">Item may not have been added ...", mysql_error(), "</div>";
      }
      
      break;
 }
 
-echo "<div style=\"width:80px;text-align:center;margin:0 auto\" class=\"box\">
+echo "<div class=\"box\">
   <a href=\"index.php?month=$month&amp;year=$year\">Back to Calendar</a>
 </div>";
 include("footer.php");
