@@ -19,8 +19,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include_once("calendar.inc");
-include_once("config.inc");
+include("calendar.inc");
 
 function navbar($year, $month, $day)
 {
@@ -211,11 +210,10 @@ for ($week_index = 0;; $week_index++) {
       $current_era = "future";
     }
 
-    $output .= <<<END
-    <td valign="top" class="$current_era">
-      <a href="display.php?day=$day_of_month&amp;month=$month&amp;year=$year" 
-        class="date">$day_of_month</a>
-END;
+    $output .= "
+    <td valign=\"top\" class=\"$current_era\">
+      <a href=\"display.php?day=$day_of_month&amp;month=$month&amp;year=$year\" 
+        class=\"date\">$day_of_month</a>";
 
     $result = mysql_query("SELECT subject, stamp, eventtype 
         FROM " . $sql_tableprefix . "events
@@ -258,15 +256,14 @@ END;
         $event_time = "BROKEN";
       }
 
-      $output .= <<<END
+      $output .= "
         <tr>
           <td>
-            <a href="display.php?day=$day_of_month&amp;month=$month&amp;year=$year">
+            <a href=\"display.php?day=$day_of_month&amp;month=$month&amp;year=$year\">
               $event_time - $subject
             </a>
           </td>
-        </tr>
-END;
+        </tr>";
     }
         
     // If we opened the event table, close it
