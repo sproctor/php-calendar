@@ -107,7 +107,7 @@ if(!$result) {
 
 $config = $db->sql_fetchrow($result);
 
-if($config['translate']) {
+if($config['translate'] && function_exists('_')) {
 
 	if(isset($vars['lang'])) {
 		$lang = substr($vars['lang'], 0, 2);
