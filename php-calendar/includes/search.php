@@ -23,25 +23,19 @@
 
 function search_results()
 {
-	global $vars, $calendar_name, $day, $month, $year, $db;
-
-	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
-	$monthname = month_name($month);
+	global $vars, $db, $calendar_name;
 
 	$searchstring = $vars['searchstring'];
-	$fromday = $vars['fromday'];
-	$frommonth = $vars['frommonth'];
-	$fromyear = $vars['fromyear'];
-	$today = $vars['today'];
-	$tomonth = $vars['tomonth'];
-	$toyear = $vars['toyear'];
+
+	$start = "$vars[syear]-$vars[smonth]-$vars[sday]";
+	$end = "$vars[eyear]-$vars[emonth]-$vars[eday]";
 	$sort = $vars['sort'];
 	$order = $vars['order'];
 
 	$keywords = explode(" ", $searchstring);
+
 	$where = '';
-	reset($keywords);
-	while(list(,$keyword) = each($keywords)) {
+	foreach($keywords as $keyword) {
 		$where .= "subject LIKE '%$keyword%' "
 			."OR description LIKE '%$keyword%'\n";
 	}
@@ -49,8 +43,8 @@ function search_results()
 	$query = 'SELECT * FROM '.SQL_PREFIX."events "
 		."WHERE ($where) "
 		."AND calendar = '$calendar_name' "
-		."AND enddate >= DATE '$fromyear-$frommonth-$fromday' "
-		."AND startdate <= DATE '$toyear-$tomonth-$today'"
+		."AND enddate >= DATE '$start' "
+		."AND startdate <= DATE '$end'"
 		."ORDER BY $sort $order";
 
 	$result = $db->sql_query($query);
@@ -59,9 +53,14 @@ function search_results()
 		soft_error("$error[code]: $error[message]");
 	}
 
-	$output = "<table class=\"phpc-main\"><caption>Search Results</caption>\n";
 
-	$i = 0;
+	$html =  tag('table', attributes('class="phpc-main"'),
+			tag('caption', _('Search Results')),
+			tag('thead',
+				tag('tr',
+					tag('th', _('Subject')),
+					tag('th', _('Date Time')),
+					tag('th', _('Description')))));
 	while ($row = $db->sql_fetchrow($result)) {
 		$i++;
 		$name = stripslashes($row['username']);
@@ -69,66 +68,83 @@ function search_results()
 		$desc = nl2br(stripslashes($row['description']));
 		$desc = parse_desc($desc);
 
-		$output .= "<tr><td><strong><a href=\"index.php?action=display"
-			."&amp;id=$row[id]\">$subject</a></strong></td>\n"
-			."<td>$row[startdate] "
-			.formatted_time_string($row['starttime'],
-					$row['eventtype'])."</td>\n"
-			."<td>$desc</td>
-			</tr>\n";
+		$html[] = tag('tr',
+				tag('td',
+					tag('strong',
+						create_action_link($subject,
+							'display', $row['id'])
+					   )),
+				tag('td', $row['startdate'] . ' ' .
+					formatted_time_string($row['starttime'],
+						$row['eventtype'])),
+				tag('td', $desc));
 	}
 
-	if(empty($i)) {
-		$output .= "<tr>\n"
-			.'<td colspan="3"><strong>'._('No events.')
-			."</strong></td>\n"
-			."</tr>\n";
-	}	
+	if(sizeof($html) == 0) {
+		$html[] = tag('tr',
+				tag('td', attributes('colspan="3"'),
+					tag('strong', _('No events.'))));
+	}
 
-	$output .= "</table>\n"
-		."</form>\n";
-
-	return $output;
+	return $html;
 }
 
 function search_form()
 {
-	global $day, $month, $year;
+	global $day, $month, $year, $SCRIPT_NAME;
 
-	$output = "<form action=\"index.php\" method=\"post\">"
-		."<table class=\"phpc-main\">\n"
-		."<tr>\n"
-		."<td>"._('Phrase').":</td>\n"
-		."<td>\n"
-		."<input type=\"text\" name=\"searchstring\""
-		." size=\"32\" />\n"
-		."<input type=\"hidden\" name=\"action\""
-		." value=\"search_results\" />\n"
-		."</td>\n"
-		."</tr>\n"
-		."<tr><td>"._('From').": </td><td>\n"
-		.create_select('fromday', 'day', $day)
-		.create_select('frommonth', 'month', $month)
-		.create_select('fromyear', 'year', $year)
-		."</td></tr>\n" 
-		."<tr><td>"._('To').": </td><td>\n"
-		.create_select('today', 'day', $day)
-		.create_select('tomonth', 'month', $month)
-		.create_select('toyear', 'year', $year)
-		."<tr><td>"._('Sort By').": </td>\n"
-		."<td><select name=\"sort\">\n"
-		."<option value=\"startdate\">"._('Start Date')."</option>\n"
-		."<option value=\"subject\">"._('Subject')."</option>\n"
-		."</select></td></tr>\n"
-		."<tr><td>"._('Order').": </td>\n"
-		."<td><select name=\"order\">"
-		."<option value=\"\">"._('Ascending')."</option>\n"
-		."<option value=\"DESC\">"._('Decending')."</option>\n"
-		."</select></td></tr>\n"
-		.'<tr><td colspan="2"><input type="submit" value="'._('Submit')
-		.'" /></td></tr></table>'
-		.'</form>';
-
-	return $output;
+	$html_table = tag('table', attributes('class="phpc-main"'),
+			tag('tr',
+				tag('td', _('Phrase') . ': '),
+				tag('td', tag('input', attributes('type="text"',
+							'name="searchstring"',
+							'size="32"')),
+					create_hidden('action', 'search'))),
+			tag('tr',
+				tag('td', _('From') . ': '),
+				tag('td',
+					create_select('sday', 'day', $day),
+					create_select('smonth', 'month', $month),
+					create_select('syear', 'year', $year))),
+			tag('tr',
+				tag('td', _('To') . ': '),
+				tag('td',
+					create_select('eday', 'day', $day),
+					create_select('emonth', 'month', $month),
+					create_select('eyear', 'year', $year))),
+			tag('tr',
+				tag('td', _('Sort By') . ': '),
+				tag('td',
+					tag('select', attributes('name="sort"'),
+						tag('option',
+							attributes('value="startdate"'),
+							_('Start Date')),
+						tag('option',
+							attributes('value="subject"'),
+							_('Subject'))))),
+			tag('tr',
+					tag('td', _('Order') . ': '),
+					tag('td',
+						tag('select',
+							attributes('name="order"'),
+							tag('option', attributes('value="ASC"'),
+								_('Ascending')),
+							tag('option', attributes('value="DES"'),
+								_('Decending'))))),
+			tag('tr',
+					tag('td', attributes('colspan="2"'),
+						tag('input', attributes('type="submit"',
+								'value="' . _('Submit') . '"')))));
+								return tag('form', attributes('action="index.php"', 'method="post"'),
+			$html_table);
 }
+
+function search()
+{
+	global $vars;
+
+	if(isset($vars['searchstring'])) return search_results();
+	return search_form();
+}
+
 ?>

@@ -21,54 +21,47 @@
 
 function month_navbar($month, $year)
 {
-	global $SCRIPT_NAME;
+	$html = tag('div', attributes('class="phpc-navbar"'));
+	menu_item_append($html, _('last year'), 'display', $year - 1, $month);
+	menu_item_append($html, _('last month'), 'display', $year, $month - 1);
 
-	$html = array('div', attributes('class="phpc-navbar"'),
-			array('a', attributes("href=\"$SCRIPT_NAME?month=$month&amp;year="
-					. $year - 1 . '"'),
-				_('last year')),
-			array('a', attributes("href=\"$SCRIPT_NAME?month="
-					. $month - 1 . "&amp;year=$year\""),
-				_('last month')));
 	for($i = 1; $i <= 12; $i++) {
-		$html[] = array('a', attributes('class="phpc-month"',
-					"href=\"$SCRIPT_NAME?month=$i&amp;year=$year\""),
-				short_month_name($i));
+		menu_item_append($html, short_month_name($i), 'display', $year,
+				$i);
 	}
-	$html[] = array('a', attributes("href=\"$SCRIPT_NAME?month=".$month + 1
-				."&amp;year=$year\""), _('next month'));
-	$html[] = array('a', attributes("href=\"$SCRIPT_NAME?month=$month&amp;year="
-				.$year + 1 . '"'), _('next year'));
+	menu_item_append($html,  _('next month'), 'display', $year, $month + 1);
+	menu_item_append($html,  _('next year'), 'display', $year + 1, $month);
 
 	return $html;
 }
 
 function display_month($month, $year)
 {
-	$days = array('tr');
+	$days = tag('tr');
 	for($i = 0; $i < 7; $i++) {
-		$days[] = array('th', day_name($i));
+		$days[] = tag('th', day_name($i));
 	}
 
-	return array('table', attributes('class="phpc-main"',
+	return tag('table', attributes('class="phpc-main"',
 				'id="calendar"'),
-			array('caption', month_name($month)." $year"),
-			array('colgroup', attributes('span="7"', 'width="1*"')),
-			array('thead', $days),
+			tag('caption', month_name($month)." $year"),
+			tag('colgroup', attributes('span="7"', 'width="1*"')),
+			tag('thead', $days),
+			month_navbar($month, $year),
 			create_month($month, $year));
 }
 
 function create_month($month, $year)
 {
 
-	return array_cons('tbody', create_weeks(1, $month, $year));
+	return array_merge(tag('tbody'), create_weeks(1, $month, $year));
 }
 
 function create_weeks($week_of_month, $month, $year)
 {
 	if($week_of_month > weeks_in_month($month, $year)) return array();
 
-	return array_cons(array_cons('tr', display_days(1, $week_of_month,
+	return array_cons(array_merge(tag('tr'), display_days(1, $week_of_month,
 					$month, $year)),
 			create_weeks($week_of_month + 1, $month, $year));
 }
@@ -83,7 +76,7 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 		- day_of_first($month, $year);
 
 	if($day_of_month <= 0 || $day_of_month > days_in_month($month, $year)) {
-		$html_day = array('td', attributes('class="none"'));
+		$html_day = tag('td', attributes('class="none"'));
 	} else {
 		$currentday = date('j');
 		$currentmonth = date('n');
@@ -100,19 +93,19 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 			$current_era = 'future';
 		}
 
-		$html_day = array('td', attributes('valign="top"',
+		$html_day = tag('td', attributes('valign="top"',
 					"class=\"$current_era\""),
-				array('a',
+				tag('a',
 					attributes("href=\"$SCRIPT_NAME?action=display&amp;day=$day_of_month&amp;month=$month&amp;year=$year&amp;display=day\"",
 						'class="date"'),
-					$day_of_month)
+					$day_of_month));
 
 		$result = get_events_by_date($day_of_month, $month, $year);
 
 		/* Start off knowing we don't need to close the event
 		 *  list.  loop through each event for the day
 		 */
-		$html_events = array('ul');
+		$html_events = tag('ul');
 		while($row = $db->sql_fetchrow($result)) {
 			$subject = stripslashes($row['subject']);
 
@@ -120,10 +113,10 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 					$row['starttime'],
 					$row['eventtype']);
 
-			$html_events[] = array('li',
-				array('a',
+			$html_events[] = tag('li',
+				tag('a',
 					attributes("href=\"$SCRIPT_NAME?action=display&amp;id=$row[id]\""),
-				"$event_time - $subject");
+				"$event_time - $subject"));
 		}
 		if(sizeof($html_events) != 1) $html_day[] = $html_events;
 	}
@@ -161,13 +154,13 @@ function display()
 {
 	global $vars, $day, $month, $year;
 
-	if(empty($vars['display'])) {
-		if(empty($vars['id'])) {
+	if(empty($vars['id'])) {
+		if(empty($vars['day'])) {
 			return display_month($month, $year);
 		}
-		return display_id($vars['id']);
+		return display_day($day, $month, $year);
 	}
-	return display_day($day, $month, $year);
+	return display_id($vars['id']);
 }
 
 function display_day($day, $month, $year)
@@ -185,46 +178,44 @@ function display_day($day, $month, $year)
 	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
 
 	if($row = $db->sql_fetchrow($result)) {
-		if($admin) $output = "<form action=\"index.php\">";
-		else $output = '';
 
-		$html_table = array('table', attributes('class="phpc-main"')
-				array('caption', "$day $monthname $year"),
-				array('thead',
-					array('tr',
-						array('th', _('Title')),
-						array('th', _('Time')),
-						array('th', _('Duration')),
-						array('th', _('Description'))
+		$html_table = tag('table', attributes('class="phpc-main"'),
+				tag('caption', "$day $monthname $year"),
+				tag('thead',
+					tag('tr',
+						tag('th', _('Title')),
+						tag('th', _('Time')),
+						tag('th', _('Duration')),
+						tag('th', _('Description'))
 					     )));
-		if($admin) 
-			$html_table[] = array('tfoot',
-					array('tr',
-						array('td',
+		if($admin) {
+			$html_table[] = tag('tfoot',
+					tag('tr',
+						tag('td',
 							attributes('colspan="4"'),
-							array('input',
+							tag('input',
 								attributes('type="hidden"',
 									'name="action"',
 									'value="event_delete"')),
-							array('input',
+							tag('input',
 								attributes('type="hidden"',
 								'name="day"',
 								"value=\"$day\"")),
-							array('input',
+							tag('input',
 								attributes('type="hidden"',
 									'name="month"',
 									"value=\"$month\"")),
-							array('input',
+							tag('input',
 								attributes('type="hidden"',
 									'name="year"',
 									"value=\"$year\"")),
-							array('input',
+							tag('input',
 								attributes('type="submit"',
 									'value="'
-									._('Delete Selected').'"'))
-								)));
+									._('Delete Selected').'"')))));
+		}
 
-		$ .= "<tbody>\n";
+		$html_body = tag('tbody');
 
 		for(; $row; $row = $db->sql_fetchrow($result)) {
 			//$name = stripslashes($row['username']);
@@ -234,32 +225,42 @@ function display_day($day, $month, $year)
 					$row['eventtype']);
 			$dur_str = get_duration($row['duration'],
 					$row['eventtype']);
-			$output .= "<tr>\n"
-				."<td>\n";
 
-			if($admin) $output .= "<input type=\"checkbox\""
-				." name=\"id\" value=\"$row[id]\" />\n";
+			$html_subject = tag('td');
 
-			$output .= "<a href=\"index.php?action=display&amp;id="
-				."$row[id]\"><strong>$subject</strong></a>\n";
+			if($admin) $html_subject[] = tag('input',
+					attributes('type="checkbox"',
+						'name="id"',
+						"value=\"$row[id]\""));
 
-			if($admin) $output .= " (<a href=\"index.php?action="
-				."event_form&amp;id=$row[id]\">"._('Modify')
-					."</a>)\n";
+			$html_subject[] = tag('a',
+					attributes("href=\"index.php?action=display&amp;id=$row[id]\""),
+					tag('strong', $subject));
 
-			$output .= "</td>\n"
-				."<td>$time_str</td>\n"
-				."<td>$dur_str</td>\n"
-				."<td>$desc</td>\n"
-				."</tr>\n";
+			if($admin) {
+				$html_subject[] = ' (';
+				$html_subject[] = tag('a',
+					attributes("href=\"index.php?action=event_form&amp;id=$row[id]\""),
+					_('Modify'));
+				$html_subject[] = ')';
+			}
+
+			$html_body[] = tag('tr',
+				$html_subject,
+				tag('td', $time_str),
+				tag('td', $dur_str),
+				tag('td', $desc));
 		}
 
-		$output .= "</tbody>\n"
-			."</table>\n";
-		if($admin) $output .= "</form>\n";
+		$html_table[] = $html_body;
+
+		if($admin) $output = tag('form',
+			attributes('action="index.php"'),
+			$html_table);
+		else $output = $html_table;
 
 	} else {
-		$output = "<h2>"._('No events on this day.')."</h2>\n";
+		$output = tag('h2', _('No events on this day.'));
 	}
 
 	return $output;

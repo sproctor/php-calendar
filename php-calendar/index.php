@@ -53,6 +53,6 @@ include($phpc_root_path . "includes/$action.php");
 
 eval("\$output = $action();");
 
-echo top() . navbar() . $output . bottom();
+echo create_xhtml($output);
 
 ?>

@@ -19,6 +19,8 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+include($phpc_root_path . 'includes/html.php');
+
 function soft_error($str)
 {
 	echo "<html><head><title>Error</title></head>\n"
@@ -168,24 +170,25 @@ function create_xhtml($rest)
 
 	$output = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
 		."\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
-	$html = array('html', attributes('xml:lang="en"'), 
-			array('head',
-				array('title', $config['calendar_title']),
-				array('meta',
+	$html = tag('html', attributes('xml:lang="en"'), 
+			tag('head',
+				tag('title', $config['calendar_title']),
+				tag('meta',
 					attributes('http-equiv="Content-Type"'
 						.' content="text/html;'
 						.' charset=iso-8859-1"')),
-				array('link',
+				tag('link',
 					attributes('rel="stylesheet"'
 						.' type="text/css"'
 						.' href="index.php?action='
 						.'style"'))),
-			array('body',
-				array('h1', $config['calendar_title']),
+			tag('body',
+				tag('h1', $config['calendar_title']),
+				navbar(),
 				$rest,
 				link_bar()));
 
-	return $output;
+	return $output . html_to_string($html);
 }
 
 function lang_link($lang)
@@ -198,33 +201,32 @@ function lang_link($lang)
 	}
 	$str .= "lang=$lang";
 
-	return array('a', attributes("href=\"$str\""), $lang);
+	return tag('a', attributes("href=\"$str\""), $lang);
 }
 
 function link_bar()
 {
 	global $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING, $config;
 
-	$html = array();
+	$html = tag('div', attributes('class="phpc-footer"'));
 
 	if($config['translate']) {
-		$html[] = array('p', '[', lang_link('en'), '] [',
+		$html[] = tag('p', '[', lang_link('en'), '] [',
 			lang_link('de'), ']');
 	}
 
-	$html[] = array('p', '[',
-			array('a',
+	$html[] = tag('p', '[',
+			tag('a',
 				attributes('href="http://validator.w3.org/'
 				.'check?url='
 				.rawurlencode("http://$SERVER_NAME$SCRIPT_NAME"
 				."?$QUERY_STRING") . '"'), 'Valid XHTML 1.1'),
 			'] [',
-			array('a', attributes('href="http://jigsaw.w3.org/'
+			tag('a', attributes('href="http://jigsaw.w3.org/'
 					.'css-validator/check/referer"'),
 					'Valid CSS2'),
 			']');
-
-	return array('div', attributes('class="phpc-footer"'), $html);
+	return $html;
 }
 
 function get_events_by_date($day, $month, $year)
@@ -336,49 +338,85 @@ function weeks_in_month($month, $year)
 				+ days_in_month($month, $year)) / 7);
 }
 
+function create_action_link($name, $action, $id = 0, $year = 0, $month = 0,
+		$day = 0)
+{
+	global $SCRIPT_NAME;
+	$url = "href=\"$SCRIPT_NAME?action=$action";
+	if($id) {
+		$url .= "&amp;id=$id";
+	}
+	if($year) {
+		$url .= "&amp;year=$year";
+	}
+	if($month) {
+		$url .= "&amp;month=$month";
+	}
+	if($day) {
+		$url .= "&amp;day=$day";
+	}
+	$url .= '"';
+	return tag('a', attributes($url), $name);
+}
+
+function menu_item_append(&$html, $name, $action, $year = 0, $month = 0,
+		$day = 0)
+{
+	$html = array_append(array_append($html,
+				create_action_link($name, $action, 0, $year,
+					$month, $day)), "\n");
+}
+
+function menu_item_prepend(&$html, $name, $action, $year = 0, $month = 0,
+		$day = 0)
+{
+	$html = array_cons(create_action_link($name, $action, 0, $year, $month,
+				$day), array_cons("\n", $html));
+}
+
+function create_hidden($name, $value)
+{
+	return tag('input', attributes("name=$name", "value=$value",
+				'type=hidden'));
+}
+
 function navbar()
 {
-	global $vars, $year, $month, $day, $user, $action, $config, $PHP_SELF;
+	global $vars, $user, $action, $config, $year, $month, $day;
 
 	$html = array();
 
 	if(($config['anon_permission'] || isset($user)) && $action != 'add') { 
-		$html[] = "<a href=\"index.php?action=event_form&amp;day=$day"
-			."&amp;month=$month&amp;year=$year\">"._('Add Item')
-			."</a>\n";
+		menu_item_append($html, _('Add Item'), 'event_form', $year,
+				$month, $day);
 	}
 
 	if($action != 'search') {
-		$output .= "<a href=\"index.php?action=search&amp;day=$day"
-			."&amp;month=$month&amp;year=$year\">"._('Search')
-			."</a>\n";
+		menu_item_append($html, _('Search'), 'search', $year, $month,
+				$day);
 	}
 
-	if($action != 'display' || !empty($vars['display'])
-			|| !empty($vars['id'])) {
-		$output .= "<a href=\"index.php?month=$month&amp;year=$year\">"
-			._('Back to Calendar')."</a>\n";
+	if(!empty($vars['day']) && ($action != 'display'
+				|| !empty($vars['id']))) {
+		menu_item_append($html, _('Back to Calendar'), 'display',
+				$year, $month);
 	}
 
 	if($action != 'display' || isset($vars['id'])) {
-		$output .= "<a href=\"index.php?action=display&amp;day=$day"
-			."&amp;month=$month&amp;year=$year\">"._('View date')
-			."</a>\n";
+		menu_item_append($html, _('View date'), 'display', $year,
+				$month, $day);
 	}
 
 	if(isset($user)) {
-		$output .= "<a href=\"index.php?action=logout&amp;"
-			."lastaction=$action&amp;day=$day&amp;month=$month&amp;"
-			."year=$year\">"._('Log out')."</a>\n";
+		menu_item_append($html, _('Log out'), 'logout', $year,
+				$month, $day);
 	} else {
-		$output .= "<a href=\"index.php?action=login&amp;"
-			."lastaction=$action&amp;day=$day&amp;month=$month&amp;"
-			."year=$year\">"._('Log in')."</a>\n";
+		menu_item_append($html, _('Log in'), 'login', $year, $month,
+				$day);
 	}
 
 	if(isset($user) && $action != 'options') {
-		$output .= "<a href=\"index.php?action=options\">"._('Options')
-			."</a>\n";
+		menu_item_append($html, _('Options'), 'options');
 	}
 
 	if(isset($var['display']) && $var['display'] == 'day') {
@@ -396,28 +434,20 @@ function navbar()
 		$nextyear = date('Y', $nexttime);
 		$nextmonthname = month_name($nextmonth);
 
-		$output = "<a href=\"index.php?action=display&amp;day=$lastday"
-			."&amp;month=$lastmonth&amp;year=$lastyear\">"
-			."$lastmonthname $lastday</a>\n"
-			.$output
-			."<a href=\"index.php?action=display&amp;day=$nextday"
-			."month=$nextmonth&amp;day=$nextday&amp;year=$nextyear"
-			."\">$nextmonthname $nextday</a>\n";
+		menu_item_prepend($html, "$lastmonthname $lastday",
+					'display', $lastyear, $lastmonth,
+					$lastday);
+		menu_item_append($html, "$nextmonthname $nextday",
+				'display', $nextyear, $nextmonth, $nextday);
 	}
 
-	$output = "<div class=\"phpc-navbar\">$output</div>\n";
-
-	if($action == 'display' && empty($vars['display'])
-			&& empty($vars['id'])) {
-		$output = month_navbar() . $output;
-	}
-
-	return $output;
+	return array_merge(tag('div', attributes('class="phpc-navbar"')),
+			$html);
 }
 
 function create_select($name, $type, $select)
 {
-	$output = "<select size=\"1\" name=\"$name\">\n";
+	$html = tag('select', attributes('size="1"', "name=\"$name\""));
 
 	switch($type){
 		case 'minute':
@@ -475,17 +505,13 @@ function create_select($name, $type, $select)
 			default:
 				$text = $i;
 		}
-		if ($i == $select) {
-			$output .= "<option value=\"$i\" selected="
-				."\"selected\">$text</option>\n";
-		} else {
-			$output .= "<option value=\"$i\">$text</option>\n";
-		}
+		$attributes = attributes("value=\"$i\"");
+		if ($i == $select) $attributes[] = 'selected="selected"';
+
+		$html[] = tag('option', $attributes, $text);
 	}
 
-	$output .= "</select>\n";
-
-	return $output;
+	return $html;
 }
 
 ?>

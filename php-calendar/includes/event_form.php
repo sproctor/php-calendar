@@ -21,19 +21,13 @@
 
 function event_form()
 {
-	global $BName, $vars, $day, $month, $year, $db, $config;
-
-	$output = "<form action=\"index.php\">\n"
-		.'<table class="phpc-main"'
-		.($BName == 'MSIE' ? ' cellspacing="0"' : '')
-		.">\n"
-		."<caption>\n";
+	global $BName, $vars, $day, $month, $year, $db, $config, $SCRIPT_NAME;
 
 	if(isset($vars['id'])) {
 		// modifying
 		$id = $vars['id'];
 
-		$output .= sprintf(_('Modifying id #%d'), $id);
+		$title = sprintf(_('Modifying id #%d'), $id);
 
 		$row = get_event_by_id($id);
 
@@ -69,7 +63,7 @@ function event_form()
 
 	} else {
 		// case "add":
-		$output .= _('Adding item to calendar');
+		$title = _('Adding item to calendar');
 
 		$subject = '';
 		$desc = '';
@@ -92,93 +86,81 @@ function event_form()
 		$typeofevent = 1;
 	}
 
-	$output .= "</caption>\n"
-		."<tfoot>\n"
-		."<tr>\n"
-		."<td colspan=\"2\">\n";
-
-	if(isset($id)) $output .= "<input type=\"hidden\" name=\"id\""
-		." value=\"$id\" />\n";
-
-	$output .= '<input type="submit" value="'._("Submit Item")."\" />\n"
-		."<input type=\"hidden\" name=\"action\""
-		." value=\"event_submit\" />\n"
-		."</td>\n"
-		."</tr>\n"
-		."</tfoot>\n"
-		."<tbody>\n"
-		."<tr><th>"._('Date of event')."</th>\n"
-		."<td>"
-		.create_select('day', 'day', $day)
-		.create_select('month', 'month', $month)
-		.create_select('year', 'year', $year)
-		."</td>\n"
-		."</tr>\n"
-		."<tr><th>"
-		._('Date multiple day event ends')
-		."</th>\n"
-		."<td>\n"
-		.create_select('endday', 'day', $end_day)
-		.create_select('endmonth', 'month', $end_month)
-		.create_select('endyear', 'year', $end_year)
-		."</td>\n"
-		."</tr>\n"
-		."<tr>\n"
-		.'<th>' . _('Event type') . "</th>\n"
-		."<td>\n"
-		.create_select('typeofevent', 'event', $typeofevent)
-		."</td>\n"
-		."</tr>\n"
-		."<tr>\n"
-		.'<th>' .  _('Time') . "</th>\n"
-		."<td>\n"
-		.create_select('hour',
-				$config['hours_24'] ? '24hour' : '12hour',
-				$hour)
-		."<b>:</b>\n"
-		.create_select('minute', 'minute', $minute);
+	$html_time = tag('td',
+			create_select('hour', $config['hours_24'] ?
+				'24hour' : '12hour', $hour),
+			tag('b', ':'),
+			create_select('minute', 'minute', $minute));
 
 	if(!$config['hours_24']) {
-		$output .= "<select name=\"pm\" size=\"1\">\n"
-			.'<option value="0"';
+		$attributes_am = attributes('value="0"');
+		$attributes_pm = attributes('value="1"');
 		if(empty($pm)) {
-			$output .= ' selected="selected"';
+			$attributes_am[] = 'selected="selected"';
+			$attributes_pm[] = 'selected="selected"';
 		}
-		$output .= ">AM</option>\n"
-			.'<option value="1"';
-		if($pm) {
-			$output .= ' selected="selected"';
-		}
-		$output .= ">PM</option>\n"
-			."</select>\n";
+		$html_time[] = tag('select',
+			attributes('name="pm"', 'size="1"'),
+			tag('option', $attributes_am, 'AM'),
+			tag('option', $attributes_pm, 'PM'));
 	}
 
-	$output .= "</td>\n"
-		."</tr>\n"
-		."<tr>\n"
-		.'<th>'._('Duration')."</th>\n"
-		."<td>\n"
-		.create_select('durationhour', '24hour', $durhr)
-		._('hours')."\n"
-		.create_select('durationmin', 'minute', $durmin)
-		._('minutes')
-		."\n</td>\n"
-		."</tr>\n"
-		."<tr>\n"
-		.'<th>'._('Subject').' '._('(255 chars max)')."</th>\n"
-		."<td><input type=\"text\" name=\"subject\" value=\"$subject\" "
-		."/></td>\n"
-		."</tr>\n"
-		."<tr>\n"
-		.'<th>' .  _('Description') . "</th>\n"
-		."<td>\n"
-		.'<textarea rows="5" cols="50" name="description">'
-		."$desc</textarea>\n"
-		."</td>\n"
-		."</tr>\n"
-		."</tbody>\n"
-		."</table>\n"
-		."</form>\n";
-	return $output;
+	if(isset($id)) $input = create_hidden('id', $id);
+	else $input = '';
+
+	$attributes = attributes('class="phpc-main"');
+	if($BName == 'MSIE') $attributes[] = 'cellspacing="0"';
+
+	return tag('form', attributes("action=\"$SCRIPT_NAME\""),
+			tag('table', $attributes,
+				tag('caption', $title),
+				tag('tfoot',
+					tag('tr',
+						tag('td', attributes( 'colspan="2"'),
+							$input,
+							tag('input', attributes('type="submit"',
+									'value="'._("Submit Item").'"')),
+							create_hidden('action', 'event_submit')))),
+				tag('tbody',
+					tag('tr',
+						tag('th', _('Date of event')),
+						tag('td',
+							create_select('day', 'day', $day),
+							create_select('month', 'month', $month),
+							create_select('year', 'year', $year))),
+					tag('tr',
+						tag('th', _('Date multiple day event ends')),
+						tag('td',
+							create_select('endday', 'day', $end_day),
+							create_select('endmonth', 'month', $end_month),
+							create_select('endyear', 'year', $end_year))),
+					tag('tr',
+						tag('th', _('Event type')),
+						tag('td',
+							create_select('typeofevent',
+								'event', $typeofevent))),
+					tag('tr',
+						tag('th',  _('Time')),
+						$html_time),
+					tag('tr',
+						tag('th', _('Duration')),
+						tag('td',
+							create_select('durationhour', '24hour', $durhr),
+							_('hours') . "\n",
+							create_select('durationmin', 'minute', $durmin),
+							_('minutes') . "\n")),
+					tag('tr',
+						tag('th', _('Subject').' '._('(255 chars max)')),
+						tag('td', tag('input', attributes('type="text"',
+									'name="subject"',
+									"value=\"$subject\"")))),
+					tag('tr',
+						tag('th',  _('Description')),
+						tag('td',
+							tag('textarea', attributes('rows="5"',
+									'cols="50"',
+									'name="description"'),
+								$desc))))));
 }
+
 ?>
