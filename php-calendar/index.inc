@@ -215,8 +215,8 @@ for ($week_index = 0;; $week_index++) {
       <a href=\"display.php?day=$day_of_month&amp;month=$month&amp;year=$year\" 
         class=\"date\">$day_of_month</a>";
 
-    $result = mysql_query("SELECT subject, stamp, eventtype 
-        FROM " . $sql_tableprefix . "events
+    $result = mysql_query("SELECT UNIX_TIMESTAMP(stamp) as start_since_epoch,
+        eventtype, subject FROM " . $sql_tableprefix . "events
         WHERE stamp >= \"$year-$month-$day_of_month 00:00:00\" 
         AND stamp <= \"$year-$month-$day_of_month 23:59:59\" ORDER BY stamp")
       or die("couldn't select item");
@@ -244,7 +244,7 @@ for ($week_index = 0;; $week_index++) {
        case 1:
         if(empty($hours_24)) $timeformat = "g:i A";
         else $timeformat = "G:i";
-        $event_time = date($timeformat, strtotime($row['stamp']));
+        $event_time = date($timeformat, $row['start_since_epoch']);
         break;
        case 2:
         $event_time = _("FULL DAY");
@@ -281,8 +281,7 @@ for ($week_index = 0;; $week_index++) {
   }
 }
 
-$output .= "  </tbody>
+  return $output . "  </tbody>
 </table>\n";
-  return $output;
 }
 ?>
