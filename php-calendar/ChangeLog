@@ -1,6 +1,6 @@
 php-calendar: php + mysql + xhtml 1.1 + CSS 2 [+ gettext]
 
-Version 0.8:
+Version 0.8 (3/05/03):
 	* Change config file to use defines rather than variables.
 	* You _need_ gettext-0.11.6-pre1 or later to parse with xgettext.  I
 	  have a copy of this if anyone needs it.  My language support is
@@ -13,15 +13,12 @@ Version 0.8:
 	  (Thanks Nate for the first part)
 	* cluster calendars. one base with a separate index file for each
 	  calendar. (thanks Nate)
-	* moved to requiring php 4.0 again (thanks Nate ;-) (as a note:
-	  this requirement might not last until 0.8 is released so ignore this
-	  message basically, I'm going to try to switch to phpBB sessions
-	  rather than php sessions)
+	* moved to requiring php 4.0 again (thanks Nate ;-)
 	* colors are again configurable through a calendar specific config
 	  file (miniconfig.php)
-	* We got a search function! (thanks Nate)
+	* We got a search function! (thanks Nate although I totally rewrote it)
 	* added weekly/monthly/daily events (thanks me)
-	* dropped the .inc from the files.
+	* changed the config files a lot, so old calendars will break
 	* support for SQL servers besides MySQL (thanks phpBB)
 
 Version 0.7 (10/5/02):

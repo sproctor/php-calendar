@@ -21,7 +21,7 @@ sproctor@rottenvegetable.org.
 ---------------
 
 -PHP 4.0 or higher
--MySQL or PostgreSQL
+-MySQL or PostgreSQL (or access to a server)
 -ssh (try putty for windows http://www.chiark.greenend.org.uk/~sgtatham/putty/)
   or an FTP program which can utilize the CHMOD command (try smartFTP for 
   windows http://www.smartftp.com/)
@@ -70,8 +70,8 @@ ERROR  create db:1044: Access denied for user: 'MySQLusername@localhost' to data
 --You may not have the abilty to create tables.  If not, try steps 7-11.
 
 ERROR  Software error  Couldn't select database
---Make sure the name of you MySQL database is correct in the config.inc.php file.  Contact your domain host if necessary.
---Make sure the $sql_tableprefix is set to 'phpc_' in the config.inc.php file
+--Make sure the name of you MySQL database is correct in the config.php file.  Contact your domain host if necessary.
+--Make sure the SQL_PREFIX is set to 'phpc_' in the config.php file
 
 ---------
 4 UPDATE

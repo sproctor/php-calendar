@@ -1,8 +1,7 @@
 add support for real users - started
 unbreak gettext
 switch to phpBB sessions - started
-check that the installer works properly.
-store modifiable parts of config in DB rather than text file - started
+thoroughly test the install, make it more robust
 write page to create new admins, etc.
 
 later:
