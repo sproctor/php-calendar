@@ -38,7 +38,7 @@ function login(){
 	//Check password and username
 	if (isset($HTTP_POST_VARS['submit'])){
 		//mysql_select_db($database_calendarDB, $calendarDB);
-		$query_rsAuthenticate = "SELECT * FROM phpc_admin WHERE UID = '$HTTP_POST_VARS[username]' AND password = PASSWORD('$HTTP_POST_VARS[password]') AND calno = $calno";
+		$query_rsAuthenticate = "SELECT * FROM ".SQL_PREFIX."admin WHERE UID = '$HTTP_POST_VARS[username]' AND password = PASSWORD('$HTTP_POST_VARS[password]') AND calno = $calno";
 		$rsAuthenticate = mysql_query($query_rsAuthenticate, $calendarDB) or die(mysql_error());
 		$row_rsAuthenticate = mysql_fetch_assoc($rsAuthenticate);
 		$totalRows_rsAuthenticate = mysql_num_rows($rsAuthenticate);
