@@ -218,7 +218,7 @@ function display_day($day, $month, $year)
 			$dur_str = get_duration($row['duration'],
 					$row['eventtype']);
 
-			$html_subject = tag('td');
+			$html_subject = tag('td', attributes('class="phpc-list"'));
 
 			if($admin) $html_subject[] = create_checkbox('id', $row['id']);
 
@@ -233,9 +233,12 @@ function display_day($day, $month, $year)
 
 			$html_body[] = tag('tr',
 				$html_subject,
-				tag('td', $time_str),
-				tag('td', $dur_str),
-				tag('td', $desc));
+				tag('td', attributes('class="phpc-list"'),
+                                        $time_str),
+				tag('td', attributes('class="phpc-list"'),
+                                        $dur_str),
+				tag('td', attributes('class="phpc-list"'),
+                                        $desc));
 		}
 
 		$html_table[] = $html_body;

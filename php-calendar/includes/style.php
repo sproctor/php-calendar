@@ -161,6 +161,10 @@ thead th {
   color: <?php echo $textcolor1 ?>;
 }
 
+thead {
+  border: 1px solid <?php echo $sepcolor ?>;
+}
+
 thead, tfoot {
   text-align: center;
 }
@@ -175,10 +179,6 @@ thead, tfoot {
 
 table.phpc-main tbody th {
   text-align: right;
-}
-
-table.phpc-main {
-  width: 100%;
 }
 
 #calendar {
@@ -234,6 +234,10 @@ table.phpc-main li a {
 table.phpc-main li a:hover {
   background-color: <?php echo $bgcolor2 ?>;
   color: <?php echo $textcolor2 ?>;
+}
+
+.phpc-list {
+  border: 1px solid <?php echo $sepcolor ?>;
 }
 
 .phpc-footer {

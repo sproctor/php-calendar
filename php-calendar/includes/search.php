@@ -53,7 +53,8 @@ function search_results()
 	}
 
 
-	$html =  tag('table', attributes('class="phpc-main"'),
+	$html =  tag('table',
+                        attributes('class="phpc-main"'),
 			tag('caption', _('Search Results')),
 			tag('thead',
 				tag('tr',
@@ -61,22 +62,23 @@ function search_results()
 					tag('th', _('Date Time')),
 					tag('th', _('Description')))));
 	while ($row = $result->FetchRow()) {
-		$i++;
-		$name = stripslashes($row['username']);
+		$name = stripslashes($row['uid']);
 		$subject = stripslashes($row['subject']);
 		$desc = nl2br(stripslashes($row['description']));
 		$desc = parse_desc($desc);
 
 		$html[] = tag('tr',
-				tag('td',
+				tag('td', attributes('class="phpc-list"'),
 					tag('strong',
 						create_action_link($subject,
 							'display', $row['id'])
 					   )),
-				tag('td', $row['startdate'] . ' ' .
+				tag('td', attributes('class="phpc-list"'),
+                                        $row['startdate'] . ' ' .
 					formatted_time_string($row['starttime'],
 						$row['eventtype'])),
-				tag('td', $desc));
+				tag('td', attributes('class="phpc-list"'),
+                                        $desc));
 	}
 
 	if(sizeof($html) == 0) {

@@ -97,11 +97,11 @@ function event_submit()
 	$uid = check_user();
 
 	$startstamp = mktime($hour, $minute, 0, $month, $day, $year);
-	$startdate = date('Y-m-d', $startstamp);
+	$startdate = $db->DBDate('Y-m-d', $startstamp);
 	$starttime = date('H:i:s', $startstamp);
 
 	$endstamp = mktime(0, 0, 0, $end_month, $end_day, $end_year);
-	$enddate = date('Y-m-d', $endstamp);
+	$enddate = $db->DBDate('Y-m-d', $endstamp);
 	$duration = $duration_hour * 60 + $duration_min;
 
 	$table = SQL_PREFIX . 'events';
