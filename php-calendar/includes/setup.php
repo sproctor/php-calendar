@@ -34,13 +34,13 @@ if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                         .'adodb');
 }
 
-include($phpc_root_path . 'config.php');
+require_once($phpc_root_path . 'config.php');
 
 // SQL codes
 define('BEGIN_TRANSACTION', 1);
 define('END_TRANSACTION', 2);
 
-include($phpc_root_path . 'includes/db.php');
+require_once($phpc_root_path . 'includes/db.php');
 
 foreach($_GET as $key => $value) {
 	$vars[$key] = $value;
