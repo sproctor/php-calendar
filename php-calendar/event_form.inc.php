@@ -24,7 +24,6 @@ function event_form($action)
 	global $BName, $HTTP_GET_VARS, $day, $month, $year;
 
 	$output = "<form action=\"index.php\">\n"
-		."<input type=\"hidden\" name=\"action\" value=\"submit\" />\n"
 		.'<table class="phpc-main"';
 	if($BName == 'MSIE') {
 		$output .= ' cellspacing="0"';
@@ -114,8 +113,10 @@ function event_form($action)
 	}
 
 	$output .= '<input type="submit" value="'._("Submit Item")."\" />\n"
+		."<input type=\"hidden\" name=\"action\" value=\"submit\" />\n"
 		."</td>\n"
 		."</tr>\n"
+		."</tfoot>\n"
 		."<tbody>\n"
 		."<tr>\n"
 		.'<td>'._('Name')."</td>\n"

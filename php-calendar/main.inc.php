@@ -59,7 +59,7 @@ function calendar()
 	else $firstday = (date('w', mktime(0, 0, 0, $month, 1, $year)) + 6) % 7;
 	$lastday = date('t', mktime(0, 0, 0, $month, 1, $year));
 
-	$output = "<table class=\"phpc-main\">\n"
+	$output = "<table class=\"phpc-main\" id=\"calendar\">\n"
 		.'<caption>'.month_name($month)." $year</caption>\n"
 		."<colgroup span=\"7\" width=\"1*\" />\n"
 		."<thead>\n"

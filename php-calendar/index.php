@@ -26,6 +26,8 @@ session_start();
 include 'miniconfig.inc.php';
 include "$basedir/calendar.inc.php";
 
+ini_set('arg_separator.output', "&amp;");
+
 unset($user);
 $user = $HTTP_SESSION_VARS['user'];
 

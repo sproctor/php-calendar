@@ -27,30 +27,41 @@ body {
 }
 
 a {
-color: <?php echo $textcolor1 ?>;
+  color: <?php echo $textcolor1 ?>;
+  background-color: inherit;
 }
 
 a:hover {
-color: <?php echo $bgcolor2 ?>;
+  color: <?php echo $bgcolor2 ?>;
+  background-color: inherit;
 }
 
 h1 {
+  font-size: 200%;
   text-align: center;
   font-family: sans-serif;
-  padding: 4px 0;
-  border: 1px solid <?php echo $sepcolor ?>;
-  background-color: <?php echo $bgcolor2 ?>;
-  color: <?php echo $textcolor2 ?>;
-  margin: 9px 0;
+  color: <?php echo $textcolor1 ?>;
+  background-color: inherit;
 }
 
-input[type="submit"], .phpc-navbar a {
+input[type="submit"] {
   background-color: <?php echo $bgcolor3 ?>;
   color: <?php echo $textcolor1 ?>;
   border: 1px solid <?php echo $sepcolor ?>;
 }
 
-input[type="submit"]:hover, .phpc-navbar a:hover {
+.phpc-navbar a {
+  background-color: <?php echo $bgcolor3 ?>;
+  color: <?php echo $textcolor1 ?>;
+  border: 1px solid <?php echo $sepcolor ?>;
+}
+
+input[type="submit"]:hover {
+  background-color: <?php echo $textcolor1 ?>;
+  color: <?php echo $bgcolor3 ?>;
+}
+
+.phpc-navbar a:hover {
   background-color: <?php echo $textcolor1 ?>;
   color: <?php echo $bgcolor3 ?>;
 }
@@ -75,18 +86,18 @@ a.month {
   width: 100%;
   font-size: 90%;
   font-weight: bold;
-  table-layout: fixed;
-  border-style: none;
-  background-color: <?php echo $sepcolor ?>;
+  border-style: solid;
+  border-collapse: collapse;
+  border-color: <?php echo $sepcolor ?>;
+  border-width: 2px;
   color: <?php echo $textcolor1 ?>;
+  background-color: inherit;
 }
 
 caption {
-  font-size: 140%;
-  border-width: 2px 2px 0 2px;
-  border-style: solid;
-  background-color: <?php echo $bgcolor2 ?>;
+  font-size: 175%;
   color: <?php echo $textcolor1 ?>;
+  background-color: inherit;
   padding: 2px;
   font-weight: bolder;
 }
@@ -96,65 +107,74 @@ th {
   color: <?php echo $textcolor1 ?>;
 }
 
-tbody > tr > th, table > tr > th {
+table tr th {
   text-align: left;
 }
 
-td {
-  background-color: <?php echo $bgcolor1 ?>;
-}
-
-tfoot {
+thead, tfoot {
   text-align: center;
 }
 
-.past, .future {
-  text-align: left;
-  height: 80px;
-}
-
-.past, .past td {
-  background-color: <?php echo $bgpast ?>;
-}
-
-.future, .future td {
-  background-color: <?php echo $bgfuture ?>;
-}
-
-.none {
-  background-color: <?php echo $bgcolor2 ?>;
+.phpc-main td, .phpc-main th {
+  border-style: solid;
+  border-collapse: collapse;
+  border-color: <?php echo $sepcolor ?>;
+  border-width: 2px;
 }
 
 .phpc-main td {
+  background-color: <?php echo $bgcolor1 ?>;
+  color: inherit;
+}
+
+#calendar {
+  table-layout: fixed;
+}
+
+#calendar td {
+  text-align: left;
+  height: 80px;
   overflow: hidden;
+}
+
+td.past, .past li {
+  background-color: <?php echo $bgpast ?>;
+  color: inherit;
+}
+
+td.future, .future li {
+  background-color: <?php echo $bgfuture ?>;
+  color: inherit;
+}
+
+td.none {
+  background-color: <?php echo $bgcolor2 ?>;
+  color: inherit;
 }
 
 .phpc-main ul {
   margin: 2px;
-  padding: 1px;
+  padding: 0;
   list-style-type: none;
+  border-color: <?php echo $sepcolor ?>;
+  border-style: solid;
+  border-width: 1px 1px 0 1px;
 }
 
 .phpc-main li {
   font-size: 80%;
   font-weight: normal;
   padding: 0;
-  background-color: <?php echo $bgcolor3 ?>;
   border-color: <?php echo $sepcolor ?>;
   border-style: solid;
-  border-width: 0 1px 1px 1px;
+  border-width: 0 0 1px 0;
   margin: 0;
-}
-
-.phpc-main ul > li:first-child {
-  border-width: 1px;
 }
 
 .phpc-main li a {
   display: block;
   text-decoration: none;
   padding: 2px;
-  margin: 0;
 }
 
 .phpc-main li a:hover {
@@ -176,12 +196,4 @@ tfoot {
 
 .description {
   text-align: justify;
-}
-
-b {
-  font-size: 140%;
-}
-
-img {
-  border-style: none;
 }

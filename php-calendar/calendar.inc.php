@@ -227,7 +227,7 @@ function lang_link($lang)
 
 	$str = '[<a href="' . $PHP_SELF . '?';
 	if(!empty($QUERY_STRING)) {
-		$str .= $QUERY_STRING . '&amp;';
+		$str .= htmlentities($QUERY_STRING) . '&amp;';
 	}
 
 	$str .= "lang=$lang\">$lang</a>]\n";
@@ -248,10 +248,10 @@ function print_footer()
 			."</p>\n";
 	}
 
-	$output .= "<p>\n";
-	//[<a href="http://validator.w3.org/check?url=' . rawurlencode("http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING") . '"> Valid XHTML 1.1</a>]
-	//[<a href="http://jigsaw.w3.org/css-validator/check/referer">Valid CSS2</a>]
-	//</p>';
+	$output .= "<p>\n
+	[<a href=\"http://validator.w3.org/check?url=" . rawurlencode("http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING") . "\"> Valid XHTML 1.1</a>]
+	[<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
+	</p>";
 	$output .= "<form action=\"index.php\">\n"
 		."<div class=\"phpc-button\">\n"
 		."<input type=\"hidden\" name=\"day\" value=\"$day\" />\n"
@@ -262,7 +262,7 @@ function print_footer()
 
 	if(empty($GLOBALS['user'])){
 		$output .= "<input type=\"hidden\" name=\"action\""
-			." value=\"login\">\n"
+			." value=\"login\" />\n"
 			.'<input type="submit" value="'._('Admin')."\" />\n";
 	} else {
 		$output .= "<input type=\"hidden\" name=\"action\""
@@ -271,7 +271,8 @@ function print_footer()
 	}
 
 	$output .= "</div>\n"
-		."</form>\n";
+		."</form>\n"
+		."</div>\n";
 
 	return $output;
 }
