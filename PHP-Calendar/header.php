@@ -1,68 +1,57 @@
-<? if(!isold()) { ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+<?php if(!isold()) { ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
         "http://www.w3.org/TR/html4/strict.dtd">
-<? } else { ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+<?php } else { ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
-<? } ?><html lang="en">
+<?php } ?><html lang="en">
 <head>
-<title><? echo "$title" ?></title>
+<title><?php echo "$title" ?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <?
-global $HTTP_USER_AGENT, $BName, $BVersion, $BPlatform;
+global $BName, $BVersion;
 
 // Browser
 if(eregi("(opera)([0-9]{1,2}.[0-9]{1,3}){0,1}",$HTTP_USER_AGENT,$match) || 
-eregi("(opera/)([0-9]{1,2}.[0-9]{1,3}){0,1}",$HTTP_USER_AGENT,$match))
-{
+   eregi("(opera/)([0-9]{1,2}.[0-9]{1,3}){0,1}",$HTTP_USER_AGENT,$match)) {
 	$BName = "Opera"; $BVersion=$match[2];
-}
-elseif(eregi("(konqueror)/([0-9]{1,2}.[0-9]{1,3})",$HTTP_USER_AGENT,$match))
-{
+} elseif(eregi("(konqueror)/([0-9]{1,2}.[0-9]{1,3})",$HTTP_USER_AGENT,$match)) {
 	$BName = "Konqueror"; $BVersion=$match[2];
-}
-elseif(eregi("(lynx)/([0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2})",$HTTP_USER_AGENT,$match))
-{
+} elseif(eregi("(lynx)/([0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2})",$HTTP_USER_AGENT,$match)) {
 	$BName = "Lynx"; $BVersion=$match[2];
-}
-elseif(eregi("(links)\(([0-9]{1,2}.[0-9]{1,3})",$HTTP_USER_AGENT,$match))
-{
+} elseif(eregi("(links)\(([0-9]{1,2}.[0-9]{1,3})",$HTTP_USER_AGENT,$match)) {
 	$BName = "Links"; $BVersion=$match[2];
-}
-elseif(eregi("(msie) ?([0-9]{1,2}.[0-9]{1,3})",$HTTP_USER_AGENT,$match))
-{
+} elseif(eregi("(msie) ?([0-9]{1,2}.[0-9]{1,3})",$HTTP_USER_AGENT,$match)) {
 	$BName = "MSIE"; $BVersion=$match[2];
-}
-elseif(eregi("(netscape6)/(6.[0-9]{1,3})",$HTTP_USER_AGENT,$match))
-{
+} elseif(eregi("(netscape6)/(6.[0-9]{1,3})",$HTTP_USER_AGENT,$match)) {
 	$BName = "Netscape"; $BVersion=$match[2];
-}
-elseif(eregi("(mozilla)/([0-9]{1,2}.[0-9]{1,3})",$HTTP_USER_AGENT,$match))
-{
+} elseif(eregi("(mozilla)/([0-9]{1,2}.[0-9]{1,3})",$HTTP_USER_AGENT,$match)) {
 	$BName = "Netscape"; $BVersion=$match[2];
-}
-elseif(eregi("w3m",$HTTP_USER_AGENT))
-{
+} elseif(eregi("w3m",$HTTP_USER_AGENT)) {
 	$BName = "w3m"; $BVersion="Unknown";
-}
-else{$BName = "Unknown"; $BVersion="Unknown";}
-
-function ifold($str1, $str2) {
-  if(isold()) return $str1;
-  return $str2;
+} else {
+    $BName = "Unknown"; $BVersion="Unknown";
 }
 
-function isold() {
-  global $BName, $BVersion;
-  if(($BName == "Netscape" || $BName == "MSIE") && $BVersion < 5) return true;
-  else return false;
+function ifold($str1, $str2)
+{
+    if(isold()) return $str1;
+    return $str2;
 }
-?>
-<style type="text/css">
+
+function isold()
+{
+    global $BName, $BVersion;
+    if(($BName == "Netscape" || $BName == "MSIE") && $BVersion < 5) return true;
+    else return false;
+}
+
+echo "<style type=\"text/css\">
+/* Your browser: $BName $BVersion */
 body {
-  color: <? echo "$headercolor" ?>;
-  background-color: <? echo "$bgcolor" ?>;
+  color: $headercolor;
+  background-color: $bgcolor;
   text-align: center;
   font-size: 12pt;
-  font-family: "Times New Roman", serif, sans-serif;
+  font-family: \"Times New Roman\", serif, sans-serif;
   padding: 0 2%;
 }
 
@@ -71,11 +60,11 @@ img {
 }
 
 a {
-  color: <? echo "$textcolor" ?>;
+  color: $textcolor;
 }
 
 a:active {
-  color: <? echo "$bgcolor" ?>;
+  color: $bgcolor;
   background-color: inherit;
 }
 
@@ -84,7 +73,8 @@ a.plain {
 }
 
 a:hover {
-  color: <? echo "$bgcolor" ?>;
+  color: $bgcolor;
+  background-color: inherit;
 }
 
 table {
@@ -93,23 +83,24 @@ table {
 
 td {
   vertical-align: top;
-  color: <? echo "$textcolor" ?>;
+  color: $textcolor;
+  background-color: inherit;
 }
 
 .header {
-  background-color: <? echo "$headerbgcolor" ?>;
-  color: <? echo "$headercolor" ?>;
+  background-color: $headerbgcolor;
+  color: $headercolor;
   font-size: 20pt;
   font-weight: bold;
   text-align: center;
   font-family: sans-serif;
   padding: 4px 0;
-  border: 1px solid <? echo "$bordercolor" ?>;
+  border: 1px solid $bordercolor;
 }
 
 .title {
-  background-color: <? echo "$headerbgcolor" ?>;
-  color: <? echo "$headercolor" ?>;
+  background-color: $headerbgcolor;
+  color: $headercolor;
   font-family: serif;
   font-size: 16pt;
   font-weight: bold;
@@ -135,99 +126,107 @@ ul {
 
 table.display {
   padding: 0px;
-  background-color: <? echo "$bordercolor" ?>;
+  margin-top: 4px 0 0 0;
+  background-color: $bordercolor;
   color: inherit;
 }
 
 table.display td {
-  background-color: <? echo "$tablebgcolor" ?>;
-  color: <? echo "$textcolor" ?>;
+  background-color: $tablebgcolor;
+  color: $textcolor;
   text-align: left;
 }
 
 table.display td.title {
   text-align: center;
-  background-color: <? echo "$headerbgcolor" ?>;
-  color: <? echo "$headercolor" ?>;
+  background-color: $headerbgcolor;
+  color: $headercolor;
 }
 
 table.calendar {
   text-align: center;
   font-size: 10pt;
-  background-color: <? echo "$bordercolor" ?>;
-  color: <? echo "$headercolor" ?>
+  ";
+  if($BName != "MSIE" || $BVersion >= 6) echo "table-layout: fixed;
+  "; echo "background-color: $bordercolor;
+  color: $headercolor;
 }
 
 table.nav {
   font-size: 12pt;
   text-align: center;
-  background-color: <? echo "$bordercolor" ?>;
+  background-color: $bordercolor;
   margin: 4px 0;
   border-style: none;
   padding: 0px;
   border-spacing: 1px;
   table-layout: fixed;
-  color: <? echo "$headercolor" ?>;
+  color: $headercolor;
+  font-size: 10pt;
 }
 
 table.nav td {
-  background-color: <? echo "$tablebgcolor" ?>;
+  background-color: $tablebgcolor;
   color: inherit;
   padding: 0;
 }
 
 table.nav .title {
-  background-color: <? echo "$headerbgcolor" ?>;
+  background-color: $headerbgcolor;
   color: inherit;
 }
 
 table.nav a {
   display: block;
-  background-color: <? echo "$tablebgcolor" ?>;
-  color: <? echo "$headercolor" ?>;
+  background-color: $tablebgcolor;
+  color: $headercolor;
   text-decoration: none;
-  padding: 2px;
-<? if($BName == "MSIE") echo "width: 100%;" ?>
+  padding: 2px 0;";
+  if($BName == "MSIE") echo "
+  width: 100%;";
+  echo "
 }
 
 table.nav a:hover {
-  color: <? echo "$tablebgcolor" ?>;
-  background-color: <? echo "$headercolor" ?>;
+  color: $tablebgcolor;
+  background-color: $headercolor;
 }
 
-table.calendar td {
+table.calendar {
   font-size: 12pt;
   font-weight: bold;
 }
 
 td.past {
   color: inherit;
-  background-color: <? echo "$pastcolor" ?>;
+  background-color: $pastcolor;
   text-align: left;
   height: 80px;
 }
 
 td.future {
   color: inherit;
-  background-color: <? echo "$futurecolor" ?>;
+  background-color: $futurecolor;
   text-align: left;
   height: 80px;
 }
 
 td.none {
-  background-color: <? echo "$nonecolor" ?>;
+  background-color: $nonecolor;
+  color: inherit;
 }
 
-table.list { <? if(!isold()) echo "  padding: 0;
-  margin: 2px 0 0 0;\n"; ?>
-  background-color: <? echo "$bordercolor" ?>;
+table.list {
+  "; if(!isold()) echo "padding: 0;
+  margin: 2px 0 0 0;
+  "; echo "background-color: $bordercolor;
   color: inherit;
   border-spacing: 1px;
   width: 100%;
 }
 
 table.list td {
-  font-size: 9pt;
+  font-size: 10pt;
   font-weight: normal;
   padding: 0;
   width: 100%;
@@ -236,39 +235,40 @@ table.list td {
 table.list a {
   display: block;
   text-decoration: none;
-  padding: 2px;
-<? if($BName == "MSIE") echo "width: 100%;" ?>
+  padding: 2px;";
+  if($BName == "MSIE" && $BVersion < 6) echo "  width: 100%;";
+  echo "
 }
 
 td.past table.list a:hover {
-  color: <? echo "$bgcolor" ?>;
-  background-color: <? echo "$futurecolor" ?>;
+  color: $bgcolor;
+  background-color: $futurecolor;
 }
 
 td.future table.list a:hover {
-  color: <? echo "$bgcolor" ?>;
-  background-color: <? echo "$pastcolor" ?>;
+  color: $bgcolor;
+  background-color: $pastcolor;
 }
 
 td.past table.list td {
-  background-color: <? echo "$pastcolor" ?>;
+  background-color: $pastcolor;
   color: inherit;
 }
 
 td.future table.list td {
-  background-color: <? echo "$futurecolor" ?>;
+  background-color: $futurecolor;
   color: inherit;
 }
 
 table.edit {
-  background-color: <? echo "$tablebgcolor" ?>;
-  color: <? echo "$textcolor" ?>;
-  border: 1px solid <? echo "$bordercolor" ?>;
+  background-color: $tablebgcolor;
+  color: $textcolor;
+  border: 1px solid $bordercolor;
   width: 100%;
 }
 
 table.calendar thead td {
-  background-color: <? echo "$headerbgcolor" ?>;
+  background-color: $headerbgcolor;
   font-weight: bold;
 }
 
@@ -284,7 +284,7 @@ table.edit td {
 tr.title {
   border-width: 0 0 1px 0;
   border-style: solid;
-  border-color: <? echo "$bordercolor" ?>;
+  border-color: $bordercolor;
 }
 
 TT, KBD, PRE { font-family: monospace; }
@@ -292,8 +292,8 @@ TT, KBD, PRE { font-family: monospace; }
 TH, TD { font-style: normal; }
 </style>
 </head>
-<body>
-<? if(isold()) { echo "<table width=\"96%\" cellspacing=0 cellpadding=0 border=0>
+<body>";
+if(isold()) { echo "<table width=\"96%\" cellspacing=0 cellpadding=0 border=0>
 <tr><td bgcolor=\"$bordercolor\">
 <table width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"0\">
 <tr><td bgcolor=\"$headerbgcolor\" class=\"title\">$header</td></tr>

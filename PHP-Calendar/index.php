@@ -1,29 +1,29 @@
 <?
-	include ("config.php");
-	include ("header.php");
+include("config.php");
+include ("header.php");
 
-	$currentday = date("j");
-	$currentmonth = date("n");
-	$currentyear = date("Y");
+$currentday = date("j");
+$currentmonth = date("n");
+$currentyear = date("Y");
 
-	$database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
+$database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
+mysql_select_db($mysql_database, $database);
 
-	if (!isset($month)) {
-		$month = $currentmonth;
-	}
+if (empty($month)) {
+  $month = $currentmonth;
+}
 
-	if(!isset($day)) {
-		if($month == $currentmonth) $day = $currentday;
-		else $day = 1;
-	}
+if(empty($day)) {
+  if($month == $currentmonth) $day = $currentday;
+  else $day = 1;
+}
 
-	if(!isset($year)) {
-		$year = $currentyear;
-	}
-	mysql_select_db($mysql_database, $database);
-	
-	$firstday = date("w", mktime(0,0,0,$month,1,$year));
-	$lastday = date("t", mktime(0,0,0,$month,$day,$year));
+if(empty($year)) {
+  $year = $currentyear;
+}
+
+$firstday = date("w", mktime(0,0,0,$month,1,$year));
+$lastday = date("t", mktime(0,0,0,$month,$day,$year));
 	
 	$nextyear = $year+1;
 	$prevyear = $year-1;
@@ -130,12 +130,12 @@
                                	echo "<td valign=top class=future" . ifold(" height=80>", ">");
                         }
 			echo "<a href=\"display.php?day=$nextday&amp;month=$month&amp;year=$year\" class=date>" . ifold("<b>$nextday</b></a>", "$nextday</a>");
-			$query3 = mysql_query("SELECT subject, stamp, eventtype FROM $mysql_tablename WHERE stamp >= \"$year-$month-$nextday 00:00:00\" AND stamp <= \"$year-$month-$nextday 23:59:59\" ORDER BY stamp");
+			$query = mysql_query("SELECT subject, stamp, eventtype FROM $mysql_tablename WHERE stamp >= \"$year-$month-$nextday 00:00:00\" AND stamp <= \"$year-$month-$nextday 23:59:59\" ORDER BY stamp");
 			$tabling = 0;
-			for ($i = 0; $i<mysql_num_rows($query3); $i++)
+			for ($i = 0; $i<mysql_num_rows($query); $i++)
 			{
-				$results2 = mysql_fetch_array($query3);
-				if ($results2['stamp'])
+				$results = mysql_fetch_array($query);
+				if ($results['stamp'])
 				{
 					if($i == 0) { if(isold()) { echo "
 <table cellspacing=0 cellpadding=0 border=0 width=\"100%\">
@@ -145,11 +145,11 @@ else if($BName == "MSIE") { echo "\n<table class=list cellspacing=1>"; }
 else echo "\n<table class=list>";
 						$tabling = 1;
 					}
-					$subject = htmlspecialchars(stripslashes($results2['subject']));
-					$typeofevent = $results2['eventtype'];
+					$subject = htmlspecialchars(stripslashes($results['subject']));
+					$typeofevent = $results['eventtype'];
 					if($typeofevent == 3) $temp_time = "??:??";
 					else if($typeofevent == 2) $temp_time = "FULL DAY";
-					else $temp_time = date("g:i A", strtotime($results2['stamp']));
+					else $temp_time = date("g:i A", strtotime($results['stamp']));
 					echo "<tr><td>" . ifold("<font size=1>", "") . "<a href=\"display.php?day=$nextday&amp;month=$month&amp;year=$year\">$temp_time - $subject</a>" . ifold("</font>", "") . "</td></tr>";
 				}
 			}
