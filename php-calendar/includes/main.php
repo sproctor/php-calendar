@@ -64,18 +64,18 @@ function calendar()
 		."<thead>\n"
 		."<tr>\n";
 
-	if(!START_MONDAY) $output .= "    <th>" .  _('Sunday') . "</th>\n";
+	if(!START_MONDAY) $output .= "<th>" .  _('Sunday') . "</th>\n";
 
-	$output .= '    <th>' .  _('Monday') . "</th>\n"
+	$output .= '<th>' .  _('Monday') . "</th>\n"
 		.'<th>' .  _('Tuesday') . "</th>\n"
 		.'<th>' .  _('Wednesday') . "</th>\n"
 		.'<th>' .  _('Thursday') . "</th>\n"
 		.'<th>' .  _('Friday') . "</th>\n"
 		.'<th>' .  _('Saturday') . "</th>\n";
 
-	if(START_MONDAY) $output .= '    <th>' .  _('Sunday') . "</th>\n";
+	if(START_MONDAY) $output .= '<th>' .  _('Sunday') . "</th>\n";
 
-	$output .= "  </tr>\n"
+	$output .= "</tr>\n"
 		."</thead>\n"
 		."<tbody>\n";
 
@@ -86,17 +86,17 @@ function calendar()
 
 		for ($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
 			$i = $week_index * 7 + $day_of_week;
-			$day_of_month = $i - $firstday + 1;
+			$day = $i - $firstday + 1;
 
-			if($i < $firstday || $day_of_month > $lastday) {
-				$output .= "    <td class=\"none\"></td>\n";
+			if($i < $firstday || $day > $lastday) {
+				$output .= "<td class=\"none\"></td>\n";
 				continue;
 			}
 
 			// set whether the date is in the past or future/present
 			if($currentyear > $year || $currentyear == $year
 					&& ($currentmonth > $month || $currentmonth == $month 
-						&& $currentday > $day_of_month)) {
+						&& $currentday > $day)) {
 				$current_era = 'past';
 			} else {
 				$current_era = 'future';
@@ -104,11 +104,11 @@ function calendar()
 
 			$output .= "<td valign=\"top\" class=\"$current_era\">\n"
 				."<a href=\"index.php?action=display&amp;"
-				."day=$day_of_month&amp;month=$month&amp;"
+				."day=$day&amp;month=$month&amp;"
 				."year=$year\" class=\"date\">"
-				."$day_of_month</a>\n";
+				."$day</a>\n";
 
-			$result = get_events_by_date($day_of_month, $month, $year);
+			$result = get_events_by_date($day, $month, $year);
 
 			/* Start off knowing we don't need to close the event
 			 *  list.  loop through each event for the day
@@ -128,7 +128,7 @@ function calendar()
 						$row['eventtype']);
 
 				$output .= "<li>\n"
-					."<a href=\"index.php?action=display&amp;day=$day_of_month&amp;month=$month&amp;year=$year&amp;id=".$row['id']."\">$event_time - $subject</a>\n"
+					."<a href=\"index.php?action=display&amp;id=$row[id]\">$event_time - $subject</a>\n"
 					."</li>";
 			}
 
@@ -142,14 +142,14 @@ function calendar()
 		$output .= "</tr>\n";
 
 		// If it's the last day, we're done
-		if($day_of_month >= $lastday) {
+		if($day >= $lastday) {
 			break;
 		}
 	}
 
-	return $output . '  </tbody>
-		</table>
-		';
-}
+	$output .= "</tbody>\n"
+		."</table>\n";
 
+	return $output;
+}
 ?>

@@ -122,7 +122,13 @@ switch($action) {
 	case 'search':
 
 		include($phpc_root_path . 'includes/search.php');
-		$output = search();
+		$output = search_form();
+		break;
+
+	case 'search_results':
+
+		include($phpc_root_path . 'includes/search.php');
+		$output = search_results();
 		break;
 
 	case 'login':

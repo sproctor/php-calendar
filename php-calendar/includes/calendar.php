@@ -313,7 +313,7 @@ function get_event_by_id($id)
 {
 	global $calno, $db;
 
-	$result = $db->sql_query('SELECT *,  FROM '.SQL_PREFIX."events\n"
+	$result = $db->sql_query('SELECT *, YEAR(startdate) AS year, MONTH(startdate) AS month, DAYOFMONTH(startdate) AS day FROM '.SQL_PREFIX."events\n"
 			."WHERE id = '$id' AND calno = '$calno'");
 
 	if($db->sql_numrows() == 0) {

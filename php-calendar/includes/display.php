@@ -155,6 +155,10 @@ function display_id($id)
 
 	$row = $db->sql_fetchrow($result);
 
+	$year = $row['year'];
+	$month = $row['month'];
+	$day = $row['day'];
+
 	$time_str = formatted_time_string($row['starttime'], $row['eventtype'])
 		.' '.$row['startdate'];
 	$dur_str = get_duration($row['duration'], $row['eventtype']);

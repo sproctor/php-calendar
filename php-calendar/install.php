@@ -230,6 +230,8 @@ function create_dependent($dbms)
 			$query[] = "CREATE SEQUENCE $sequence";
 			$query[] = "CREATE FUNCTION dayofweek(date) RETURNS double precision AS ' SELECT EXTRACT(DOW FROM \$1); ' LANGUAGE SQL;";
 			$query[] = "CREATE FUNCTION dayofmonth(date) RETURNS double precision AS ' SELECT EXTRACT(DAY FROM \$1); ' LANGUAGE SQL;";
+			$query[] = "CREATE FUNCTION year(date) RETURNS double precision AS ' SELECT EXTRACT(YEAR FROM \$1); ' LANGUAGE SQL;";
+			$query[] = "CREATE FUNCTION month(date) RETURNS double precision AS ' SELECT EXTRACT(MONTH FROM \$1); ' LANGUAGE SQL;";
 
 	}
 
