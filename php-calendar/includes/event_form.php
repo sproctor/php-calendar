@@ -24,12 +24,9 @@ function event_form()
 	global $BName, $vars, $day, $month, $year, $db, $config;
 
 	$output = "<form action=\"index.php\">\n"
-		.'<table class="phpc-main"';
-	if($BName == 'MSIE') {
-		$output .= ' cellspacing="0"';
-	}
-
-	$output .= ">\n"
+		.'<table class="phpc-main"'
+		.($BName == 'MSIE' ? ' cellspacing="0"' : '')
+		.">\n"
 		."<caption>\n";
 
 	if(isset($vars['id'])) {
@@ -104,12 +101,13 @@ function event_form()
 		." value=\"$id\" />\n";
 
 	$output .= '<input type="submit" value="'._("Submit Item")."\" />\n"
-		."<input type=\"hidden\" name=\"action\" value=\"submit\" />\n"
+		."<input type=\"hidden\" name=\"action\""
+		." value=\"event_submit\" />\n"
 		."</td>\n"
 		."</tr>\n"
 		."</tfoot>\n"
 		."<tbody>\n"
-		."<tr><th>"._('Event Date')."</th>\n"
+		."<tr><th>"._('Date of event')."</th>\n"
 		."<td>"
 		.create_select('day', 'day', $day)
 		.create_select('month', 'month', $month)
@@ -117,7 +115,7 @@ function event_form()
 		."</td>\n"
 		."</tr>\n"
 		."<tr><th>"
-		._('End Date (only for daily, weekly, and monthly event types)')
+		._('Date multiple day event ends')
 		."</th>\n"
 		."<td>\n"
 		.create_select('endday', 'day', $end_day)
@@ -126,7 +124,7 @@ function event_form()
 		."</td>\n"
 		."</tr>\n"
 		."<tr>\n"
-		.'<th>' . _('Event Type') . "</th>\n"
+		.'<th>' . _('Event type') . "</th>\n"
 		."<td>\n"
 		.create_select('typeofevent', 'event', $typeofevent)
 		."</td>\n"

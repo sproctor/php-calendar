@@ -47,7 +47,7 @@ function nextval()
 	return $db->sql_fetchfield('num');
 }
 
-function submit_event()
+function event_submit()
 {
 	global $calno, $day, $month, $year, $db, $vars, $config;
 

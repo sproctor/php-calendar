@@ -62,6 +62,10 @@ $password = $HTTP_SESSION_VARS['password'];
    foreach ($HTTP_POST_VARS as $key=>$val) {
    echo "<pre>$key: $val</pre>";
    }
+   echo "<pre>all vars:</pre>";
+   foreach ($vars as $key=>$val) {
+   echo "<pre>$key: $val</pre>";
+   }
  */
 
 $currentday = date('j');

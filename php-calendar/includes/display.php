@@ -51,7 +51,7 @@ function display()
 	if(empty($vars['display'])) {
 		if(empty($vars['id'])) {
 			include ($php_root_path . 'includes/main.php');
-			return month_navbar() . calendar();
+			return calendar();
 		}
 		return display_id($vars['id']);
 	}
@@ -91,15 +91,15 @@ function display_day()
 				."<tr>\n"
 				."<td colspan=\"4\">\n"
 				."<input type=\"hidden\" name=\"action\""
-				." value=\"delete\" />\n"
-				."<input type=\"hidden\" name=\"day\" value=\"$day\""
-				." />\n"
+				." value=\"event_delete\" />\n"
+				."<input type=\"hidden\" name=\"day\""
+				." value=\"$day\" />\n"
 				."<input type=\"hidden\" name=\"month\""
 				." value=\"$month\" />\n"
-				."<input type=\"hidden\" name=\"year\" value=\"$year\""
-				." />\n"
-				.'<input type="submit" value="'._('Delete Selected')
-				."\" />\n"
+				."<input type=\"hidden\" name=\"year\""
+				." value=\"$year\" />\n"
+				.'<input type="submit" value="'
+				._('Delete Selected')."\" />\n"
 				."</td>\n"
 				."</tr>\n"
 				."</tfoot>\n";
@@ -124,7 +124,7 @@ function display_day()
 				."$row[id]\"><strong>$subject</strong></a>\n";
 
 			if($admin) $output .= " (<a href=\"index.php?action="
-				."modify&amp;id=$row[id]\">"._('Modify')
+				."event_form&amp;id=$row[id]\">"._('Modify')
 				."</a>)\n";
 
 			$output .= "</td>\n"
@@ -169,10 +169,10 @@ function display_id($id)
 		."<h2>$subject</h2>\n"
 		."<div>by <cite>$name</cite></div>\n"
 		."<div>\n"
-		."<a href=\"index.php?action=modify&amp;id=$id\">"._('Modify')
-		."</a>\n"
-		."<a href=\"index.php?action=delete&amp;id=$id\">"._('Delete')
-		."</a>\n"
+		."<a href=\"index.php?action=event_form&amp;id=$id\">"
+		._('Modify')."</a>\n"
+		."<a href=\"index.php?action=event_delete&amp;id=$id\">"
+		._('Delete')."</a>\n"
 		."</div>\n"
 		."<div>Time: $time_str<br />\n"
 		."Duration: $dur_str</div>\n"

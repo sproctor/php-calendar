@@ -130,7 +130,8 @@ function event_type($num)
 		case 3:
 			return _('Unknown Time');
 		case 4:
-			return _('Daily');
+			//return _('Daily');
+			return false;
 		case 5:
 			return _('Weekly');
 		case 6:
@@ -192,8 +193,6 @@ function bottom()
 		[<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
 		</p>";
 	$output .= "</div>\n"
-		."</form>\n"
-		."</div>\n"
 		."</body>\n"
 		."</html>";
 
@@ -204,12 +203,21 @@ function get_events_by_date($day, $month, $year)
 {
 	global $calno, $db;
 
+/* event types:
+1 - Normal event
+2 - full day event
+3 - unknown time event
+4 - reserved
+5 - weekly event
+6 - monthly event
+*/
 	$query = 'SELECT * FROM '.SQL_PREFIX."events\n"
 		."WHERE (startdate <= '$year-$month-$day'\n"
-		."AND enddate >= '$year-$month-$day'\n"
-		."AND (eventtype = 4 OR eventtype = 5"
-		." OR eventtype = 6)"
-		." OR startdate = '$year-$month-$day')\n"
+		."AND enddate >= '$year-$month-$day'"
+//		."AND (eventtype = 4 OR eventtype = 5"
+//		." OR eventtype = 6)"
+//		." OR startdate = '$year-$month-$day')\n"
+		.")\n"
 		."AND calno = '$calno'\n"
 		."AND (eventtype != 5 OR DAYOFWEEK(startdate) = "
 		."DAYOFWEEK(DATE '$year-$month-$day'))\n"
@@ -349,7 +357,8 @@ function navbar()
 
 	$output = "<div class=\"phpc-navbar\">$output</div>\n";
 
-	if($action == 'main') {
+	if($action == 'display' && empty($vars['display'])
+			&& empty($vars['id'])) {
 		$output = month_navbar() . $output;
 	}
 
@@ -407,9 +416,12 @@ function create_select($name, $type, $select)
 				break;
 			case 'event':
 				$text = event_type($i) . ' ' . _('Event');
+				//nasty hack because 4 is reserved.
+				if($i == 4) continue(2);
 				break;
 			case 'minute':
 				$text = sprintf('%02d', $i);
+				break;
 			default:
 				$text = $i;
 		}
