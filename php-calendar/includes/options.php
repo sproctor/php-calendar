@@ -45,7 +45,10 @@ function options()
 		else
 			$query .= "translate = 0,\n";
 
-		$query .= "calendar_title = '$vars[calendar_title]';";
+		$calendar_title = $vars['calendar_title'];
+
+		$query .= "anon_permission = '$vars[anon_perm]',\n"
+			."calendar_title = '$calendar_title';";
 
 		if(check_user()){
 			$result = $db->sql_query($query);
@@ -97,6 +100,14 @@ function option_form()
 		."<th>"._('Calendar Title').":</th>\n"
 		."<td><input name=\"calendar_title\" type=\"text\" /></td>\n"
 		."</td>\n"
+		."<tr>\n"
+		."<th>"._('Anonymous Permission:')."</th>\n"
+		."<td><select name=\"anon_perm\" size=\"1\">\n"
+		."<option value=\"0\">Cannot add events</option>\n"
+		."<option value=\"1\">Can add but not modify events</option>\n"
+		."<option value=\"2\">Can add and modify events</option>\n"
+		."</select></td>\n"
+		."</tr>\n"
 		."</tbody>\n"
 		."</table>\n"
 		."</form>\n";

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-10-06 07:25-0400\n"
+"POT-Creation-Date: 2003-03-05 17:00-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,323 +15,473 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: calendar.inc.php:126
+#: index.php:156
+msgid "Invalid action"
+msgstr ""
+
+#: install.php:216
+msgid "error creating db"
+msgstr ""
+
+#: includes/calendar.php:35
 msgid "January"
 msgstr "Januar"
 
-#: calendar.inc.php:127
+#: includes/calendar.php:36
 msgid "February"
 msgstr "Februar"
 
-#: calendar.inc.php:128
+#: includes/calendar.php:37
 msgid "March"
 msgstr "M&auml;rz"
 
-#: calendar.inc.php:129
+#: includes/calendar.php:38
 msgid "April"
 msgstr "April"
 
-#: calendar.inc.php:130 calendar.inc.php:149
+#: includes/calendar.php:39 includes/calendar.php:58
 msgid "May"
 msgstr "Mai"
 
-#: calendar.inc.php:131
+#: includes/calendar.php:40
 msgid "June"
 msgstr "Juni"
 
-#: calendar.inc.php:132
+#: includes/calendar.php:41
 msgid "July"
 msgstr "Juli"
 
-#: calendar.inc.php:133
+#: includes/calendar.php:42
 msgid "August"
 msgstr "August"
 
-#: calendar.inc.php:134
+#: includes/calendar.php:43
 msgid "September"
 msgstr "September"
 
-#: calendar.inc.php:135
+#: includes/calendar.php:44
 msgid "October"
 msgstr "Oktober"
 
-#: calendar.inc.php:136
+#: includes/calendar.php:45
 msgid "November"
 msgstr "November"
 
-#: calendar.inc.php:137
+#: includes/calendar.php:46
 msgid "December"
 msgstr "Dezember"
 
-#: calendar.inc.php:145
+#: includes/calendar.php:54
 msgid "Jan"
 msgstr "Jan"
 
-#: calendar.inc.php:146
+#: includes/calendar.php:55
 msgid "Feb"
 msgstr "Feb"
 
-#: calendar.inc.php:147
+#: includes/calendar.php:56
 msgid "Mar"
 msgstr "M&auml;r"
 
-#: calendar.inc.php:148
+#: includes/calendar.php:57
 msgid "Apr"
 msgstr "Apr"
 
-#: calendar.inc.php:150
+#: includes/calendar.php:59
 msgid "Jun"
 msgstr "Jun"
 
-#: calendar.inc.php:151
+#: includes/calendar.php:60
 msgid "Jul"
 msgstr "Jul"
 
-#: calendar.inc.php:152
+#: includes/calendar.php:61
 msgid "Aug"
 msgstr "Aug"
 
-#: calendar.inc.php:153
+#: includes/calendar.php:62
 msgid "Sep"
 msgstr "Sep"
 
-#: calendar.inc.php:154
+#: includes/calendar.php:63
 msgid "Oct"
 msgstr "Okt"
 
-#: calendar.inc.php:155
+#: includes/calendar.php:64
 msgid "Nov"
 msgstr "Nov"
 
-#: calendar.inc.php:156
+#: includes/calendar.php:65
 msgid "Dec"
 msgstr "Dez"
 
-#: calendar.inc.php:276
-msgid "View date"
-msgstr ""
-
-#: calendar.inc.php:278 display.inc.php:152
-msgid "Back to Calendar"
-msgstr "Zur&uuml;ck zum Kalender"
-
-#: delete.inc.php:56
-#, fuzzy, php-format
-msgid "Removed item: %d"
-msgstr "Termin gel&ouml;scht: "
-
-#: delete.inc.php:58
-#, fuzzy, php-format
-msgid "Could not remove item: %d"
-msgstr "Termin gel&ouml;scht: "
-
-#: display.inc.php:58 index.inc.php:47
-msgid "Add Item"
-msgstr "Termin erstellen"
-
-#: display.inc.php:75
-msgid "Select"
-msgstr "Auswahl"
-
-#: display.inc.php:76 display.inc.php:132
-msgid "Modify"
-msgstr "&Auml;ndern"
-
-#: display.inc.php:77
-msgid "Username"
-msgstr "Benutzername"
-
-#: display.inc.php:78 event.inc.php:182
-msgid "Time"
-msgstr "Zeit"
-
-#: display.inc.php:79 event.inc.php:234
-msgid "Duration"
-msgstr "Dauer"
-
-#: display.inc.php:80 event.inc.php:270
-msgid "Subject"
-msgstr "Betreff"
-
-#: display.inc.php:81 event.inc.php:274
-msgid "Description"
-msgstr "Beschreibung"
-
-#: display.inc.php:87
-msgid "Delete Selected"
-msgstr "Bitte Termin zum l&ouml;schen auswhlen"
-
-#: display.inc.php:113 display.inc.php:127 index.inc.php:143
+#: includes/calendar.php:118 includes/display.php:29
 msgid "FULL DAY"
 msgstr "GANZT&Auml;GIG"
 
-#: display.inc.php:116
-msgid "??:??"
+#: includes/calendar.php:128
+#, fuzzy
+msgid "Normal"
+msgstr "Normaler Termin"
+
+#: includes/calendar.php:130
+#, fuzzy
+msgid "Full Day"
+msgstr "ganzt&auml;giger Termin"
+
+#: includes/calendar.php:132
+#, fuzzy
+msgid "Unknown Time"
+msgstr "unbekannter Zeitraum"
+
+#: includes/calendar.php:134
+#, fuzzy
+msgid "Daily"
+msgstr "Tag"
+
+#: includes/calendar.php:136
+msgid "Weekly"
 msgstr ""
 
-#: display.inc.php:143
+#: includes/calendar.php:138
+#, fuzzy
+msgid "Monthly"
+msgstr "Montag"
+
+#: includes/calendar.php:224
+msgid "Error in get_events_by_date"
+msgstr ""
+
+#: includes/calendar.php:248
+msgid "Error in get_event_by_id"
+msgstr ""
+
+#: includes/calendar.php:267
+msgid "Add Item"
+msgstr "Termin erstellen"
+
+#: includes/calendar.php:273
+#, fuzzy
+msgid "Search"
+msgstr "M&auml;rz"
+
+#: includes/calendar.php:279
+msgid "Back to Calendar"
+msgstr "Zur&uuml;ck zum Kalender"
+
+#: includes/calendar.php:284
+msgid "View date"
+msgstr ""
+
+#: includes/calendar.php:291
+msgid "Log out"
+msgstr ""
+
+#: includes/calendar.php:295 includes/login.php:60
+msgid "Log in"
+msgstr ""
+
+#: includes/calendar.php:299 includes/options.php:76
+msgid "Options"
+msgstr ""
+
+#: includes/display.php:34 includes/event_form.php:283
+msgid "hours"
+msgstr "Stunden"
+
+#: includes/display.php:38 includes/event_form.php:293
+msgid "minutes"
+msgstr "Minuten"
+
+#: includes/display.php:42
+#, fuzzy
+msgid "No duration"
+msgstr "Dauer"
+
+#: includes/display.php:80
+#, fuzzy
+msgid "Title"
+msgstr "Zeit"
+
+#: includes/display.php:81 includes/event_form.php:220
+msgid "Time"
+msgstr "Zeit"
+
+#: includes/display.php:82 includes/event_form.php:272
+msgid "Duration"
+msgstr "Dauer"
+
+#: includes/display.php:83 includes/event_form.php:302
+msgid "Description"
+msgstr "Beschreibung"
+
+#: includes/display.php:98
+msgid "Delete Selected"
+msgstr "Bitte Termin zum l&ouml;schen auswhlen"
+
+#: includes/display.php:128 includes/display.php:172
+msgid "Modify"
+msgstr "&Auml;ndern"
+
+#: includes/display.php:138
 msgid "No events on this day."
 msgstr ""
 
-#: event.inc.php:51
+#: includes/display.php:174
+#, fuzzy
+msgid "Delete"
+msgstr "Auswahl"
+
+#: includes/event_delete.php:61
+#, fuzzy
+msgid "Removed item"
+msgstr "Termin gel&ouml;scht: "
+
+#: includes/event_delete.php:63
+#, fuzzy
+msgid "Could not remove item"
+msgstr "Termin gel&ouml;scht: "
+
+#: includes/event_delete.php:68
+#, fuzzy
+msgid "No items selected."
+msgstr "Bitte Termin zum l&ouml;schen auswhlen"
+
+#: includes/event_form.php:37
 msgid "Nothing to modify."
 msgstr "Nichts zum &auml;ndern ausgew&auml;hlt."
 
-#: event.inc.php:58
+#: includes/event_form.php:42
 #, php-format
 msgid "Modifying id #%d"
 msgstr ""
 
-#: event.inc.php:88
+#: includes/event_form.php:79
 msgid "Adding item to calendar"
 msgstr "Termin zum Kalender hinzuf&uuml;gen"
 
-#: event.inc.php:114
-msgid "Name"
-msgstr "Name"
+#: includes/event_form.php:113
+msgid "Submit Item"
+msgstr ""
 
-#: event.inc.php:117
-msgid "Day"
-msgstr "Tag"
+#: includes/event_form.php:119
+#, fuzzy
+msgid "Event Date"
+msgstr "Terminart"
 
-#: event.inc.php:154
+#: includes/event_form.php:159
+msgid "End Date (only for daily, weekly, and monthly event types)"
+msgstr ""
+
+#: includes/event_form.php:202
 msgid "Event Type"
 msgstr "Terminart"
 
-#: event.inc.php:163
-msgid "Normal Event"
-msgstr "Normaler Termin"
+#: includes/event_form.php:213
+#, fuzzy
+msgid "Event"
+msgstr "Terminart"
 
-#: event.inc.php:170
-msgid "Full Day Event"
-msgstr "ganzt&auml;giger Termin"
+#: includes/event_form.php:297
+msgid "Subject"
+msgstr "Betreff"
 
-#: event.inc.php:177
-msgid "Unkown Time"
-msgstr "unbekannter Zeitraum"
-
-#: event.inc.php:246
-msgid "days"
-msgstr "Tage"
-
-#: event.inc.php:256
-msgid "hours"
-msgstr "Stunden"
-
-#: event.inc.php:266
-msgid "minutes"
-msgstr "Minuten"
-
-#: event.inc.php:270
+#: includes/event_form.php:297
 #, fuzzy
 msgid "(255 chars max)"
 msgstr " (255)"
 
-#: event.inc.php:287
-msgid "Submit Item"
-msgstr ""
+#: includes/event_submit.php:42
+#, fuzzy
+msgid "nextval error"
+msgstr "n&auml;chste Jahr"
 
-#: eventsub.inc.php:31
+#: includes/event_submit.php:56
 msgid "No ID given."
 msgstr ""
 
-#: eventsub.inc.php:68
+#: includes/event_submit.php:85
 msgid "No day was given."
 msgstr ""
 
-#: eventsub.inc.php:71
+#: includes/event_submit.php:87
 msgid "No month was given."
 msgstr ""
 
-#: eventsub.inc.php:74
+#: includes/event_submit.php:89
 msgid "No year was given"
 msgstr ""
 
-#: eventsub.inc.php:77
+#: includes/event_submit.php:92
 msgid "No hour was given."
 msgstr ""
 
-#: eventsub.inc.php:82
+#: includes/event_submit.php:97
 msgid "No minute was given."
 msgstr ""
 
-#: eventsub.inc.php:86
-msgid "No duration hour was given."
-msgstr ""
-
-#: eventsub.inc.php:90
+#: includes/event_submit.php:101
 msgid "No duration minute was given."
 msgstr ""
 
-#: eventsub.inc.php:94
-msgid "No duration day was given."
+#: includes/event_submit.php:105
+msgid "No duration hour was given."
 msgstr ""
 
-#: eventsub.inc.php:98
+#: includes/event_submit.php:109
 msgid "No type of event was given."
 msgstr ""
 
-#: eventsub.inc.php:120
-msgid "Date updated."
+#: includes/event_submit.php:113
+msgid "No end day was given"
 msgstr ""
 
-#: index.inc.php:34
+#: includes/event_submit.php:117
+msgid "No end month was given"
+msgstr ""
+
+#: includes/event_submit.php:121
+msgid "No end year was given"
+msgstr ""
+
+#: includes/event_submit.php:124
+msgid "Your subject was too long"
+msgstr ""
+
+#: includes/event_submit.php:170
+msgid "Error processing event"
+msgstr ""
+
+#: includes/event_submit.php:176
+msgid "No changes made"
+msgstr ""
+
+#: includes/event_submit.php:179
+msgid "Date updated"
+msgstr ""
+
+#: includes/login.php:67 includes/options.php:81 includes/search.php:158
+#, fuzzy
+msgid "Submit"
+msgstr "Betreff"
+
+#: includes/login.php:74
+msgid "Username"
+msgstr "Benutzername"
+
+#: includes/login.php:78
+msgid "Password"
+msgstr ""
+
+#: includes/main.php:33
 msgid "last year"
 msgstr "voheriger Jahr"
 
-#: index.inc.php:35
+#: includes/main.php:35
 msgid "last month"
 msgstr "voheriger Monat"
 
-#: index.inc.php:41
+#: includes/main.php:41
 msgid "next month"
 msgstr "n&auml;chste Monat"
 
-#: index.inc.php:43
+#: includes/main.php:43
 msgid "next year"
 msgstr "n&auml;chste Jahr"
 
-#: index.inc.php:72 index.inc.php:82
+#: includes/main.php:67 includes/main.php:76
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: index.inc.php:75
+#: includes/main.php:69
 msgid "Monday"
 msgstr "Montag"
 
-#: index.inc.php:76
+#: includes/main.php:70
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: index.inc.php:77
+#: includes/main.php:71
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: index.inc.php:78
+#: includes/main.php:72
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: index.inc.php:79
+#: includes/main.php:73
 msgid "Friday"
 msgstr "Freitag"
 
-#: index.inc.php:80
+#: includes/main.php:74
 msgid "Saturday"
 msgstr "Samstag"
 
-#: install.php:35
-msgid "MySQL hostname:"
+#: includes/options.php:60
+msgid "Updated options"
 msgstr ""
 
-#: install.php:41
-msgid "Database name:"
+#: includes/options.php:62
+msgid "Permission denied"
 msgstr ""
 
-#: install.php:47
-msgid "Table prefix:"
-msgstr ""
-
-#: install.php:53
+#: includes/options.php:88
 #, fuzzy
-msgid "Username:"
-msgstr "Benutzername"
+msgid "Start Monday"
+msgstr "Montag"
+
+#: includes/options.php:92
+#, fuzzy
+msgid "24 hour"
+msgstr "Stunden"
+
+#: includes/options.php:96
+msgid "Translate"
+msgstr ""
+
+#: includes/options.php:100
+msgid "Calendar Title"
+msgstr ""
+
+#: includes/options.php:104
+msgid "Anonymous Permission:"
+msgstr ""
+
+#: includes/search.php:81
+#, fuzzy
+msgid "No events."
+msgstr "Normaler Termin"
+
+#: includes/search.php:127
+msgid "Phrase"
+msgstr ""
+
+#: includes/search.php:135
+msgid "From"
+msgstr ""
+
+#: includes/search.php:145
+msgid "To"
+msgstr ""
+
+#: includes/search.php:155
+msgid "Sort By"
+msgstr ""
+
+#: includes/search.php:157
+msgid "Order"
+msgstr ""
+
+#: includes/setup.php:42
+msgid "Could not read configuration"
+msgstr ""
+
+#~ msgid "Name"
+#~ msgstr "Name"
+
+#~ msgid "days"
+#~ msgstr "Tage"
+
+#, fuzzy
+#~ msgid "Username:"
+#~ msgstr "Benutzername"

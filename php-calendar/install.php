@@ -82,7 +82,7 @@ function get_config()
 			touch config.php<br>
 			chmod 666 config.php
 			</code></p>
-			<p>or if you only have ftp access, upload a blank file named config.inc.php then use the chmod command to change the permissions of config.inc.php to 666</p>
+			<p>or if you only have ftp access, upload a blank file named config.php then use the chmod command to change the permissions of config.php to 666</p>
 			<input type="submit" value="retry">';
 	}
 }

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-03-05 15:45-0500\n"
+"POT-Creation-Date: 2003-03-05 17:00-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -175,7 +175,7 @@ msgstr ""
 msgid "Log in"
 msgstr ""
 
-#: includes/calendar.php:299 includes/options.php:73
+#: includes/calendar.php:299 includes/options.php:76
 msgid "Options"
 msgstr ""
 
@@ -344,7 +344,7 @@ msgstr ""
 msgid "Date updated"
 msgstr ""
 
-#: includes/login.php:67 includes/options.php:78 includes/search.php:158
+#: includes/login.php:67 includes/options.php:81 includes/search.php:158
 msgid "Submit"
 msgstr ""
 
@@ -400,28 +400,32 @@ msgstr ""
 msgid "Saturday"
 msgstr ""
 
-#: includes/options.php:57
+#: includes/options.php:60
 msgid "Updated options"
 msgstr ""
 
-#: includes/options.php:59
+#: includes/options.php:62
 msgid "Permission denied"
 msgstr ""
 
-#: includes/options.php:85
+#: includes/options.php:88
 msgid "Start Monday"
 msgstr ""
 
-#: includes/options.php:89
+#: includes/options.php:92
 msgid "24 hour"
 msgstr ""
 
-#: includes/options.php:93
+#: includes/options.php:96
 msgid "Translate"
 msgstr ""
 
-#: includes/options.php:97
+#: includes/options.php:100
 msgid "Calendar Title"
+msgstr ""
+
+#: includes/options.php:104
+msgid "Anonymous Permission:"
 msgstr ""
 
 #: includes/search.php:81
