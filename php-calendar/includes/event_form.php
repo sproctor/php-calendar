@@ -53,10 +53,17 @@ function event_form()
 		$durhr  = $row['duration'] / 60;
 
 		if(!$config['hours_24']) {
-			if($hour >= 12) {
-				$pm = 1;
+			if($hour > 12) {
+				$pm = true;
 				$hour = $hour - 12;
-			} else $pm = 0;
+			} if($hour == 12) {
+                                $pm = true;
+                        } if($hour == 0) {
+                                $pm = false;
+                                $hour = 12;
+                        } else {
+                                $pm = false;
+                        }
 		}
 
 		$typeofevent = $row['eventtype'];
@@ -71,12 +78,19 @@ function event_form()
 				&& $year == date('Y')) {
 			$hour = date('G') + 1;
 			if(!$config['hours_24']) {
-				if($hour >= 12) {
+				if($hour > 12) {
 					$hour = $hour - 12;
-					$pm = 1;
-				} else $pm = 0;
+					$pm = true;
+				} if($hour == 12) {
+                                        $pm = true;
+                                } if($hour == 0) {
+                                        $pm = false;
+                                        $hour = 12;
+                                } else {
+                                        $pm = false;
+                                }
 			}
-		} else { $hour = 6; $pm = 1; }
+		} else { $hour = 6; $pm = true; }
 		$minute = 0;
 		$end_day = $day;
 		$end_month = $month;
@@ -95,10 +109,11 @@ function event_form()
 	if(!$config['hours_24']) {
 		$attributes_am = attributes('value="0"');
 		$attributes_pm = attributes('value="1"');
-		if(empty($pm)) {
-			$attributes_am[] = 'selected="selected"';
+		if($pm) {
 			$attributes_pm[] = 'selected="selected"';
-		}
+		} else {
+			$attributes_am[] = 'selected="selected"';
+                }
 		$html_time[] = tag('select',
 			attributes('name="pm"', 'size="1"'),
 			tag('option', $attributes_am, 'AM'),

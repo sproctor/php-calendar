@@ -1,8 +1,9 @@
 php-calendar: php + sql + xhtml 1.1 + CSS 2 [+ gettext]
 
-Version 0.9.1 (4/1/04):
+Version 0.9.1:
         * add quick event add link
         * fix bug adding an events
+        * fix some bugs regarding 12 hour time
 
 Version 0.9 (3/30/04):
         * move to adodb

@@ -57,13 +57,26 @@ function event_submit()
 
 	if(empty($vars['year'])) soft_error(_('No year was given'));
 
-	if(isset($vars['hour'])) $hour = $vars['hour'];
-	else soft_error(_('No hour was given.'));
+	if(isset($vars['hour'])) {
+                $hour = $vars['hour'];
+	} else {
+                soft_error(_('No hour was given.'));
+        }
 
-	if(isset($vars['pm']) && $vars['pm'] == 1) $hour += 12;
+	if(!$config['hour_24'] && array_key_exists('pm', $vars)
+                        && $vars['pm']) {
+                if($hour < 12) {
+                        $hour += 12;
+                }
+        } elseif($hour == 12) {
+                $hour = 0;
+        }
 
-	if(isset($vars['minute'])) $minute = $vars['minute'];
-	else soft_error(_('No minute was given.'));
+	if(array_key_exists('minute', $vars)) {
+                $minute = $vars['minute'];
+        } else {
+                soft_error(_('No minute was given.'));
+        }
 
 	if(isset($vars['durationmin']))
 		$duration_min = $vars['durationmin'];
