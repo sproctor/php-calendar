@@ -31,6 +31,7 @@ include($phpc_root_path . 'includes/db.php');
 
 if(!function_exists('_')) {
 	function _($str) { return $str; }
+	$no_gettext = 1;
 }
 
 foreach($HTTP_GET_VARS as $key => $value) {
@@ -107,7 +108,7 @@ if(!$result) {
 
 $config = $db->sql_fetchrow($result);
 
-if($config['translate'] && function_exists('_')) {
+if($config['translate'] && empty($no_gettext)) {
 
 	if(isset($vars['lang'])) {
 		$lang = substr($vars['lang'], 0, 2);
