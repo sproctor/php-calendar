@@ -41,9 +41,8 @@ function event_form($action)
 
 		$output .= sprintf(_('Modifying id #%d'), $id);
 
-		$result = get_event_by_id($id);
+		$row = get_event_by_id($id);
 
-		$row = $db->sql_fetchrow($result);
 		$subject = stripslashes($row['subject']);
 		$desc = htmlspecialchars(stripslashes($row['description']));
 

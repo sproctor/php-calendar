@@ -118,7 +118,7 @@ function display_date()
 		$output .= "<tr>\n"
 			."<td>\n";
 
-		if($admin) $output .= "<input type=\"checkbox\" name=\"delete\""
+		if($admin) $output .= "<input type=\"checkbox\" name=\"id\""
 			." value=\"$row[id]\" />\n";
 
 		$output .= "<a href=\"index.php?action=display&amp;"
