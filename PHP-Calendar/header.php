@@ -305,7 +305,7 @@ table.box th {
   font-size: 12pt;
 }
 
-div.box {
+div.box, a.box {
   width: 96px;
   text-align: center;
   margin: 8px auto;
@@ -313,20 +313,17 @@ div.box {
   padding: 4px;
 }
 
-div.box a {
+a.box {
   text-decoration: none;
   display: block;
-  padding: 4px;
-  margin: -4px;
 }
 
-div.box a:hover {
+a.box:hover {
   background-color: $bordercolor;
   color: $tablebgcolor;
 }
 
-.bold {
-  font-weight: bolder;
+b {
   font-size: 16pt;
 }
 </style>

@@ -112,19 +112,30 @@ while ($row = mysql_fetch_array($result)) {
         if(empty($subject)) $subject = "&nbsp";
         if(empty($desc)) $desc = "&nbsp;";
     }
-    echo "<tr><td><input type=radio name=id value=$row[id]></td>
-			<td>$name</td><td>$time</td><td>$temp_dur</td>
-			<td>$subject</td><td class=\"description\">$desc</td></tr>";
+    echo "
+  <tr>
+    <td><input type=radio name=id value=$row[id]></td>
+	<td>$name</td><td>$time</td><td>$temp_dur</td>
+	<td>$subject</td><td class=\"description\">$desc</td>
+  </tr>";
 }
 
-echo "</table>" . ifold("</td></tr></table>", "") . "
-	<p>
-	<input type=hidden name=day value=\"$day\">
-	<input type=hidden name=month value=\"$month\">
-	<input type=hidden name=year value=\"$year\">
-	<input type=submit name=action value=\"Delete Selected\">
-	<input type=submit name=action value=\"Modify Selected\">
-	<input type=submit name=action value=\"Add Item\">
-	</form>";
+echo "
+  <tfoot>
+  <tr>
+    <td colspan=\"6\">
+	  <input type=hidden name=day value=\"$day\">
+	  <input type=hidden name=month value=\"$month\">
+	  <input type=hidden name=year value=\"$year\">
+	  <input type=submit name=action value=\"Delete Selected\">
+	  <input type=submit name=action value=\"Modify Selected\">
+	</td>
+  </tfoot>
+</table>" . ifold("</td></tr></table>", "") . "
+<div>
+  <a class=\"box\" href=\"index.php?month=$month&amp;year=$year&amp;day=$day\">Add Item</a>
+</div>
+</form>";
+
 include("footer.php");
 ?>

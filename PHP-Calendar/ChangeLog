@@ -3,9 +3,15 @@ php-calendar: php + mysql + html 4 + CSS 2
 Version 0.5:
 	* remove some warnings
 	* fixed up indentation
-	* minor style changes
+	* a number of minor style changes
 	* disallow remote access to config, header and footer files in apache
 	* added an install script
+	* removed $REMOTE_USER support, because I'll be adding my own 
+	eventually, and I never used or tested the current one.
+	* added checking to mysql, reloading modify and add pages doesn't give
+	the same entry many times.  deleting a non-existant item displays a 
+	failure
+	* added an update script for version 0.3 and below
 	
 Version 0.4 (2/20/2002):
 	* fix am/pm issues with new time input

@@ -13,29 +13,24 @@ if(empty($year)) $year = date("Y");
 switch ($action) {
  case "Delete Selected":
      if (empty($id)) {
-         echo "<p>You must select an item to delete</p>.";
+         echo "<div class=\"box\">You must select an item to delete</div>.";
          break;
      }
-
+     
      $headerstring =  "We are about to delete id $id from $mysql_tablename";
      
      $query = "SELECT username FROM $mysql_tablename WHERE id = $id";
      $result = mysql_query($query);
      $row = mysql_fetch_array($result);
-
+     
      $query = "DELETE FROM $mysql_tablename WHERE id = '$id'";
-     if (empty($REMOTE_USER)) {
-         mysql_query($query)
-             or die("couldn't delete item");
-         echo "<p>Item Deleted";
-     } else {
-         if (strcmp($row['username'], $REMOTE_USER) == 0) {
-             mysql_query($query)
-                 or die("couldn't delete item");
-             echo "<p>Item Deleted";
-         } else {
-             echo "<p>You aren't the original user, you can't delete this";
-         }
+     mysql_query($query)
+         or die("couldn't delete item");
+     
+     if(mysql_affected_rows() == 0) {
+         echo "<div class=\"box\">No item to delete</div>";
+     } else {        
+         echo "<div class=\"box\">Item Deleted</div>";
      }
      
      break;
@@ -43,7 +38,7 @@ switch ($action) {
  case "Modify Selected":
      $modify = "Modify";
      if (empty($id)) {
-         echo "<p>Nothing to modify.</p>";
+         echo "<div class=\"box\">Nothing to modify.</div>";
          break;
      }
      $headerstring = "We are about to modify id $id from $mysql_tablename";
@@ -51,17 +46,7 @@ switch ($action) {
      $result = mysql_query($query)
          or die("couldn't get items from table");
      $row = mysql_fetch_array($result);
-     
-     if (empty($REMOTE_USER)) {
-         $username = stripslashes($row['username']);
-     }
-     else {
-         if(strcmp($REMOTE_USER, $row['username']) != 0) {
-             echo "<p>Since you are not the original user, you can't change this</p>";
-             break;
-         }
-     }
-     
+     $username = stripslashes($row['username']);
      $subject = stripslashes($row['subject']);
      $desc = htmlspecialchars(stripslashes($row['description']));
      $thetime = strtotime($row['stamp']);
@@ -137,17 +122,9 @@ switch ($action) {
   </tr>
   </thead>
   <tr>
-    <td>Name</td>";
-   
-     if (empty($REMOTE_USER)) {
-         echo "
+    <td>Name</td>
     <td><input type=text name=username size=20 value=\"$username\"></td>
-  </tr>";
-     } else {
-         echo "<td>$REMOTE_USER<input type=hidden name=username value=\"$REMOTE_USER\"></td></tr>";
-     }
-   
-     echo "
+  </tr>
   <tr><td>Day</td>
     <td>
       <select name=day size=1>\n";
@@ -231,8 +208,7 @@ switch ($action) {
          echo " selected";
      }
      echo ">12</option>
-</select>
-<span class=bold>:</span><select name=minute size=1>\n";
+</select><b>:</b><select name=minute size=1>\n";
 
      for($i = 0; $i <= 59; $i = $i + 5) {
          echo "<option value='$i'";
@@ -300,10 +276,11 @@ minutes
     <td><textarea rows=5 cols=50 name=description>$desc</textarea></td>
   </tr>
   <tr>
-    <td colspan=2 " . ifold("align=center", "style=\"text-align:center\"") . "><input type=hidden name=action value=Addsucker>";
+    <td colspan=2 " . ifold("align=center", "style=\"text-align:center\"") . "><input type=hidden name=action value=Addsucker>
+<input type=hidden name=id value=\"$id\">\n";
    
-     if($modify) {
-         echo "<input type=hidden name=id value=\"$id\">\n<input type=hidden name=modify value=Modify>\n";
+     if(isset($modify)) {
+         echo "<input type=hidden name=modify value=Modify>\n";
      }
      
      echo "<input type=submit value=\"Submit item\"></td>
@@ -316,6 +293,20 @@ minutes
      if (isset($modify)) {
          mysql_query("DELETE FROM $mysql_tablename WHERE id = '$id'")
              or die("couldn't delete item");
+         if(mysql_affected_rows() == 0) {
+             echo "<div class=\"box\">Item already deleted.</div>";
+             break;
+         }
+     } else {
+         $query = "SELECT max(id) as id FROM $mysql_tablename";
+         $result = mysql_query($query);
+         if($result) {
+             $row = mysql_fetch_array($result);
+             if($id != $row['id'] + 1) {
+                 echo "<div class=\"box\">Item already created</div>";
+                 break;
+             }
+         }
      }
      $description = ereg_replace("<[bB][rR][^>]*>", "\n", $description);
      $subject = addslashes(ereg_replace("<[^>]*>", "", $subject));
@@ -335,8 +326,10 @@ minutes
      break;
 }
 
-echo "<div class=\"box\">
-  <a href=\"index.php?month=$month&amp;year=$year\">Back to Calendar</a>
+echo "<div>
+  <a class=\"box\" href=\"display.php?month=$month&amp;year=$year&amp;day=$day\">View date</a>
+  <a class=\"box\" href=\"index.php?month=$month&amp;year=$year\">Back to Calendar</a>
 </div>";
+
 include("footer.php");
 ?>
