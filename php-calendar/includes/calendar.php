@@ -223,7 +223,10 @@ function create_xhtml($rest)
                                         attributes('rel="stylesheet"'
                                                 .' type="text/css" href="'
 						.$_SERVER['SCRIPT_NAME']
-                                                .'?action=style"'))),
+                                                .'?action=style"')),
+				'<!--[if IE]><link rel="stylesheet" '
+				.'type="text/css" href="all-ie.css" />'
+				.'<![endif]-->'),
 			tag('body',
 				tag('h1', $config['calendar_title']),
 				navbar(),

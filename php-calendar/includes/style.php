@@ -126,7 +126,7 @@ table.phpc-main {
   width: 100%;
 }
 
-.phpc-main > h2 {
+.phpc-main h2 {
   margin: 0;
   text-align: left;
   background-color: <?php echo $bgcolor3 ?>;
@@ -136,12 +136,12 @@ table.phpc-main {
   border-width: 0 0 2px 0;
 }
 
-.phpc-main > div {
+.phpc-main div {
   margin: .5em;
   font-weight: bold;
 }
 
-.phpc-main > p {
+.phpc-main p {
   border-style: solid;
   border-width: 2px 0 0 0;
   border-color: <?php echo $sepcolor ?>;
