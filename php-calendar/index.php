@@ -37,9 +37,9 @@ $firstday = date("w", mktime(0,0,0,$month,1,$year));
 $lastday = date("t", mktime(0,0,0,$month,$day,$year));
 	
 $nextyear = $year + 1;
-$prevyear = $year - 1;
+$lastyear = $year - 1;
 
-echo "<table class=\"nav\"";
+echo "<table id=\"navbar\"";
 if($BName == "MSIE") { echo " cellspacing=1"; }
 
 echo <<<END
@@ -52,114 +52,141 @@ echo <<<END
     <th colspan="14">
 END;
 echo date('F', mktime(0,0,0,$month,1,$year));
-echo <<<END
-      $year
+echo "      $year
     </th>
   </tr>
 </thead>
 <tbody>
   <tr>
     <td>
-      <a href="?month=$month&amp;year=$prevyear">prev year</a>
+      <a href=\"?month=$nextmonth&amp;year=$year\">" . _("last month") . "</a>
     </td>
-	  <td>
-      <a href="?month=1&amp;year=$year">Jan</a>
+    <td>
+      <a href=\"?month=1&amp;year=$year\">" . _("Jan") . "</a>
     </td>
-	  <td>
-      <a href="?month=2&amp;year=$year">Feb</a>
+    <td>
+      <a href=\"?month=2&amp;year=$year\">" . _("Feb") . "</a>
     </td>
-	  <td>
-      <a href="?month=3&amp;year=$year">Mar</a>
+    <td>
+      <a href=\"?month=3&amp;year=$year\">" . _("Mar") . "</a>
     </td>
-	  <td>
-      <a href="?month=4&amp;year=$year">Apr</a>
+    <td>
+      <a href=\"?month=4&amp;year=$year\">" . _("Apr") . "</a>
     </td>
-	  <td>
-      <a href="?month=5&amp;year=$year">May</a>
+    <td>
+      <a href=\"?month=5&amp;year=$year\">" . _("May") . "</a>
     </td>
-	  <td>
-      <a href="?month=6&amp;year=$year">Jun</a>
+    <td>
+      <a href=\"?month=6&amp;year=$year\">" . _("Jun") . "</a>
     </td>
-	  <td>
-      <a href="?month=7&amp;year=$year">Jul</a>
+    <td>
+      <a href=\"?month=7&amp;year=$year\">" . _("Jul") . "</a>
     </td>
-	  <td>
-      <a href="?month=8&amp;year=$year">Aug</a>
+    <td>
+      <a href=\"?month=8&amp;year=$year\">" . _("Aug") . "</a>
     </td>
-	  <td>
-      <a href="?month=9&amp;year=$year">Sep</a>
+    <td>
+      <a href=\"?month=9&amp;year=$year\">" . _("Sep") . "</a>
     </td>
-	  <td>
-      <a href="?month=10&amp;year=$year">Oct</a>
+    <td>
+      <a href=\"?month=10&amp;year=$year\">" . _("Oct") . "</a>
     </td>
-	  <td>
-      <a href="?month=11&amp;year=$year">Nov</a>
+    <td>
+      <a href=\"?month=11&amp;year=$year\">" . _("Nov") . "</a>
     </td>
-	  <td>
-      <a href="?month=12&amp;year=$year">Dec</a>
+    <td>
+      <a href=\"?month=12&amp;year=$year\">" . _("Dec") . "</a>
     </td>
-	  <td>
-      <a href="?month=$month&amp;year=$nextyear">next year</a>
+    <td>
+      <a href=\"?month=$nextmonth&amp;year=$year\">" . _("next month") . "</a>
     </td>
   </tr>
   <tr>
-	  <td colspan="14">
-      <a href="operate.php?action=Add+Item&amp;month=$month&amp;year=$year&amp;day=$day">Add Item</a>
+    <td>
+      <a href=\"?month=$month&amp;year=$lastyear\">" . _("last year") . "</a>
+    </td> 
+    <td colspan=\"12\">
+      <a href=\"operate.php?action=Add+Item&amp;month=$month&amp;year=$year&amp;day=$day\">" . _("Add Item") . "</a>
+    </td>
+    <td>
+      <a href=\"?month=$month&amp;year=$nextyear\">" . _("next year") . "</a>
     </td>
   </tr>
 </tbody>
-</table>\n
-END;
+</table>
 
-echo <<<END
-<table class="calendar">
-  <colgroup span="7" width="1*" />
+<table id=\"calendar\">
+  <colgroup span=\"7\" width=\"1*\" />
   <thead>
-  <tr>
-    <th>Sunday</th>
-    <th>Monday</th>
-    <th>Tuesday</th>
-	  <th>Wednesday</th>
-    <th>Thursday</th>
-    <th>Friday</th>
-    <th>Saturday</th>
-  </tr>
-  </thead>
-  <tbody>
-END;
+  <tr>\n";
 
-for ($j = 0;; $j++) {
+  if(!$start_monday) {
+    echo "    <th>" . _("Sunday") . "</th>\n";
+  }
+echo "
+    <th>" . _("Monday") . "</th>
+    <th>" . _("Tuesday") . "</th>
+    <th>" . _("Wednesday") . "</th>
+    <th>" . _("Thursday") . "</th>
+    <th>" . _("Friday") . "</th>
+    <th>" . _("Saturday") . "</th>";
+  if($start_monday) {
+    echo "    <th>" . _("Sunday") . "</th>\n";
+  }
+echo "  </tr>
+  </thead>
+  <tbody>";
+
+// Loop to render the calendar
+for ($week_index = 0;; $week_index++) {
   echo "  <tr>\n";
-  for ($k = 0; $k<7; $k++) {
-    $i = $j * 7 + $k;
-    $nextday = $i - $firstday + 1;
-    if($i < $firstday || $nextday > $lastday) {
+
+  for ($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
+    // If we want to start on monday, then start on monday!
+    if($start_monday) {
+      $day_of_week = ($day_of_week + 1) % 7;
+    }
+    $i = $week_index * 7 + $day_of_week;
+    $day_of_month = $i - $firstday + 1;
+
+    if($i < $firstday || $day_of_month > $lastday) {
       echo "    <td class=\"none\"></td>";
       continue;
     }
+
+    // set whether the date is in the past or future/present
     if($currentyear > $year || $currentyear == $year
        && ($currentmonth > $month || $currentmonth == $month 
-           && $currentday > $nextday)) {
-      $pastorfuture = "past";
+           && $currentday > $day_of_month)) {
+      $current_era = "past";
     } else {
-      $pastorfuture = "future";
+      $current_era = "future";
     }
-    echo <<<END
-    <td valign="top" class="$pastorfuture">
-      <a href="display.php?day=$nextday&amp;month=$month&amp;year=$year" 
-        class="date">$nextday</a>
-END;
-    $query = "SELECT subject, stamp, eventtype FROM $mysql_tablename WHERE stamp >= \"$year-$month-$nextday 00:00:00\" AND stamp <= \"$year-$month-$nextday 23:59:59\" ORDER BY stamp";
-    $result = mysql_query($query)
-      or die("couldn't select item");
-    $tabling = 0;
 
+    echo <<<END
+    <td valign="top" class="$current_era">
+      <a href="display.php?day=$day_of_month&amp;month=$month&amp;year=$year" 
+        class="date">$day_of_month</a>
+END;
+
+    $result = mysql_query("SELECT subject, stamp, eventtype 
+        FROM $mysql_tablename 
+        WHERE stamp >= \"$year-$month-$day_of_month 00:00:00\" 
+        AND stamp <= \"$year-$month-$day_of_month 23:59:59\" ORDER BY stamp")
+      or die("couldn't select item");
+    
+
+    /* Start off knowing we don't need to close the event table
+       loop through each event for the day
+     */
+    $tabling = 0;
     while($row = mysql_fetch_array($result)) {
+      // if we didn't start the event table yet, do so
       if($tabling == 0) {
         if($BName == "MSIE") { 
-          echo "\n<table class=\"$pastorfuture\" cellspacing=\"1\">\n";
+          echo "\n<table cellspacing=\"1\">\n";
         } else {
-          echo "\n<table class=\"$pastorfuture\">\n";
+          echo "\n<table>\n";
         }
         $tabling = 1;
       }
@@ -168,32 +195,35 @@ END;
       $typeofevent = $row['eventtype'];
 
       if($typeofevent == 3) {
-        $temp_time = "??:??";
+        $event_time = "??:??";
       } elseif($typeofevent == 2) {
-        $temp_time = "FULL DAY";
+        $event_time = "FULL DAY";
       } else {
-        $temp_time = date("g:i A", strtotime($row['stamp']));
+        $event_time = date("g:i A", strtotime($row['stamp']));
       }
             
       echo <<<END
         <tr>
           <td>
-            <a href="display.php?day=$nextday&amp;month=$month&amp;year=$year">
-              $temp_time - $subject
+            <a href="display.php?day=$day_of_month&amp;month=$month&amp;year=$year">
+              $event_time - $subject
             </a>
           </td>
         </tr>
 END;
     }
         
-        
+    // If we opened the event table, close it
     if($tabling == 1) {
       echo "      </table>";
     }
+
     echo "    </td>";
   }
   echo "  </tr>\n";
-  if($nextday >= $lastday) {
+
+  // If it's the last day, we're done
+  if($day_of_month >= $lastday) {
     break;
   }
 }

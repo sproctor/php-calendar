@@ -26,7 +26,7 @@ switch ($action) {
          break;
      }
      
-     $headerstring =  "We are about to delete id $id from $mysql_tablename";
+     $headerstring =  _("About to delete $id from $mysql_tablename");
      
      $query = "SELECT username FROM $mysql_tablename WHERE id = $id";
      $result = mysql_query($query);

@@ -1,5 +1,12 @@
 php-calendar: php + mysql + html 4 + CSS 2
 
+Version 0.6:
+        * LOTS of code clean-ups.
+        * moved to xhtml
+        * starting to drop netscape 4 support again
+        * added configuration to start week on monday
+        * separated out style sheets, css clean ups
+
 Version 0.5:
 	* remove some warnings
 	* fixed up indentation
