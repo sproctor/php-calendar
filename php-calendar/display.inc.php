@@ -27,31 +27,27 @@
 
  */
 
-function get_duration($dur_secs)
+function get_duration($duration)
 {
-	$dur_mins = ($dur_secs / 60) % 60;     //minute per 60 seconds, 60 per hour
-	$dur_hrs  = ($dur_secs / 3600) % 24;   //hour per 3600 seconds, 24 per day
-	$dur_days = floor($dur_secs / 86400);  //day per 86400 seconds
+	$dur_mins = $duration % 60;
+	$dur_hrs  = $duration / 60;
 
 	$dur_str = '';
 
 	if($typeofevent == 2) $dur_str = _("FULL DAY");
 	else {
 		$comma = 0;
-		if($dur_days) {
-			$dur_str .= "$dur_days days";
+		if(!empty($dur_hrs)) {
 			$comma = 1;
-		}
-		if($dur_hrs) {
-			if($comma) $dur_str .= ', ';
-			else $comma = 1;
-			$dur_str .= "$dur_hrs hours";
+			$dur_str .= "$dur_hrs "._('hours');
 		}
 		if($dur_mins) {
 			if($comma) $dur_str .= ', ';
-			$dur_str .= "$durmin minutes";
+			$dur_str .= "$dur_mins "._('minutes');
 		}
 	}
+
+	if(empty($dur_str)) $dur_str = _('No duration');
 
 	return $dur_str;
 }
@@ -120,12 +116,10 @@ function display_date()
 				"<a href=\"\\0\">\\0</a>", $desc);
 		$event_epoch = $row['start_since_epoch'];
 
-		$time_str = formatted_time_string($event_epoch,
+		$time_str = formatted_time_string($row['starttime'],
 				$row['eventtype']);
-		if($event_epoch < $today_epoch)
-			$time_str = date('j F Y, ', $event_epoch) . $time_str;
 
-		$dur_str = get_duration($row['end_since_epoch'] - $event_epoch);
+		$dur_str = get_duration($row['duration']);
 		$output .= "<tr>\n"
 			."<th>\n";
 		if($admin) $output .= "<input type=\"checkbox\" name=\"delete\""
@@ -160,10 +154,10 @@ function display_id($id)
 	else $admin = 0;
 
 	$row = mysql_fetch_array($result);
-	$epoch_secs = $row['start_since_epoch'];
-	$time_str = formatted_time_string($epoch_secs, $row['eventtype'])
-		. date(', j F y', $epoch_secs);
-	$dur_str = get_duration($row['end_since_epoch'] - $epoch_secs);
+
+	$time_str = formatted_time_string($row['starttime'], $row['eventtype'])
+		.' '.$row['startdate'];
+	$dur_str = get_duration($row['duration']);
 	$subject = stripslashes($row['subject']);
 	$name = stripslashes($row['username']);
 	$desc = stripslashes($row['description']);

@@ -127,7 +127,7 @@ function calendar()
 				$subject = stripslashes($row['subject']);
 
 				$event_time = formatted_time_string(
-						$row['start_since_epoch'],
+						$row['starttime'],
 						$row['eventtype']);
 
 				// - Nate - Changed the QueryString from day, month, year to event_id

@@ -110,7 +110,7 @@ function submit_event()
 
 	$endstamp = mktime(0, 0, 0, $end_month, $end_day, $end_year);
 	$enddate = date('Y-m-d', $endstamp);
-	$duration = $duraction_hour * 60 + $duration_min;
+	$duration = $duration_hour * 60 + $duration_min;
 
 	if($modify) {
 		if(empty($user) && ANON_PERMISSIONS < 2) {

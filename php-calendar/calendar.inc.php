@@ -148,13 +148,26 @@ function short_month_name($month)
 	}
 }
 
-function formatted_time_string($secs, $type)
+function formatted_time_string($time, $type)
 {
 	switch($type) {
 		default:
-			if(!HOURS_24) $format = 'g:iA';
-			else $format = 'G:i';
-			return date($format, $secs);
+			preg_match('/(\d+):(\d+)/', $time, $matches);
+			$hour = $matches[1];
+			$minute = $match[2];
+
+			if(!HOURS_24) {
+				if($hour > 12) {
+					$hour -= 12;
+					$pm = ' PM';
+				} else {
+					$pm = ' AM';
+				}
+			} else {
+				$pm = '';
+			}
+
+			return sprintf('%d:%02d%s', $hour, $minute, $pm);
 		case 2:
 			return _('FULL DAY');
 		case 3:
@@ -332,7 +345,8 @@ function navbar()
 			._('Back to Calendar')."</a>\n";
 	}
 
-	if($action != 'display' && !empty($HTTP_GET_VARS['day'])) {
+	if(($action != 'display' || isset($HTTP_GET_VARS['event_id']))
+			&& isset($HTTP_GET_VARS['day'])) {
 		$output .= "<a href=\"index.php?action=display&amp;day=$day"
 			."&amp;month=$month&amp;year=$year\">"._('View date')
 			."</a>\n";
