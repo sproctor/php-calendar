@@ -180,6 +180,7 @@ function submit_event()
 	$affected = $db->sql_affectedrows($result);
 	if($affected < 1) soft_error(_('No changes made')."\nsql:\n$query");
 
+	header("Location: index.php?action=display&id=$id");
 	return '<div class="box">'._('Date updated').": $affected</div>\n";
 }
 ?>

@@ -63,51 +63,53 @@ function display_date()
 	if(empty($user) && ANON_PERMISSIONS < 2) $admin = 0;
 	else $admin = 1;
 
-	if($admin) $output = "<form action=\"index.php\">";
-	else $output = '';
-
-	$output .= "<table class=\"phpc-main\">\n"
-		."<caption>$day $monthname $year</caption>\n"
-		."<thead>\n"
-		."<tr>\n"
-		.'<th>'._('Title')."</th>\n"
-		.'<th>'._('Time')."</th>\n"
-		.'<th>'._('Duration')."</th>\n"
-		//.'<th>'._('Description')."</th>\n"
-		."</tr>\n"
-		."</thead>\n";
-	if($admin) 
-		$output .= "<tfoot>\n"
-			."<tr>\n"
-			."<td colspan=\"3\">\n"
-			."<input type=\"hidden\" name=\"action\""
-			." value=\"delete\" />\n"
-			."<input type=\"hidden\" name=\"day\" value=\"$day\""
-			." />\n"
-			."<input type=\"hidden\" name=\"month\""
-			." value=\"$month\" />\n"
-			."<input type=\"hidden\" name=\"year\" value=\"$year\""
-			." />\n"
-			.'<input type="submit" value="'._('Delete Selected')
-			."\" />\n"
-			."</td>\n"
-			."</tr>\n"
-			."</tfoot>\n";
-
-	$output .= "<tbody>\n";
-
 	$result = get_events_by_date($day, $month, $year);
 
 	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
 
 	$i = 0;
 	while($row = $db->sql_fetchrow($result)) {
+		if(!$i) {
+			if($admin) $output = "<form action=\"index.php\">";
+			else $output = '';
+
+			$output .= "<table class=\"phpc-main\">\n"
+				."<caption>$day $monthname $year</caption>\n"
+				."<thead>\n"
+				."<tr>\n"
+				.'<th>'._('Title')."</th>\n"
+				.'<th>'._('Time')."</th>\n"
+				.'<th>'._('Duration')."</th>\n"
+				.'<th>'._('Description')."</th>\n"
+				."</tr>\n"
+				."</thead>\n";
+			if($admin) 
+				$output .= "<tfoot>\n"
+					."<tr>\n"
+					."<td colspan=\"4\">\n"
+					."<input type=\"hidden\" name=\"action\""
+					." value=\"delete\" />\n"
+					."<input type=\"hidden\" name=\"day\" value=\"$day\""
+					." />\n"
+					."<input type=\"hidden\" name=\"month\""
+					." value=\"$month\" />\n"
+					."<input type=\"hidden\" name=\"year\" value=\"$year\""
+					." />\n"
+					.'<input type="submit" value="'._('Delete Selected')
+					."\" />\n"
+					."</td>\n"
+					."</tr>\n"
+					."</tfoot>\n";
+
+			$output .= "<tbody>\n";
+		}
 		$i++;
 		//$name = stripslashes($row['username']);
 		$subject = stripslashes($row['subject']);
-		$desc = nl2br(stripslashes($row['description']));
+
 		$desc = ereg_replace("[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]",
-				"<a href=\"\\0\">\\0</a>", $desc);
+				"<a href=\"\\0\">\\0</a>",
+				nl2br(stripslashes($row['description'])));
 
 		$time_str = formatted_time_string($row['starttime'],
 				$row['eventtype']);
@@ -123,23 +125,22 @@ function display_date()
 			."id=$row[id]\">$subject</a>\n";
 
 		if($admin) $output .= " (<a href=\"index.php?action=modify&amp;"
-				."id=$row[id]\">"._('Modify')."</a>)\n";
+			."id=$row[id]\">"._('Modify')."</a>)\n";
 
 		$output .= "</th>\n"
 			."<td>$time_str</td>\n"
 			."<td>$dur_str</td>\n"
-			//."<td>$desc</td>\n"
+			."<td>$desc</td>\n"
 			."</tr>\n";
 	}
 
 	if($i == 0) {
-		$output .= "<tr><td colspan=\"3\"><strong>"
-			._('No events on this day.')."</strong></td></tr>\n";
+		$output .= "<h2>"._('No events on this day.')."</h2>\n";
+	} else {
+		$output .= "</tbody>\n"
+			."</table>\n";
+		if($admin) $output .= "</form>\n";
 	}
-
-	$output .= "</tbody>
-		</table>";
-	if($admin) $output .= "</form>\n";
 
 	return $output;
 }
@@ -166,7 +167,8 @@ function display_id($id)
 	$name = stripslashes($row['username']);
 	$desc = stripslashes($row['description']);
 
-	$output = "<h2>$subject</h2>\n"
+	$output = "<div class=\"phpc-main\">\n"
+		."<h2>$subject</h2>\n"
 		."<div>\n"
 		."<a href=\"index.php?action=modify&amp;id=$id\">"._('Modify')
 		."</a>\n"
@@ -176,7 +178,8 @@ function display_id($id)
 		."<p>by $name</p>\n"
 		."<pre>Time: $time_str\n"
 		."Duration: $dur_str</pre>\n"
-		."<p>$desc</p>";
+		."<p>$desc</p>\n"
+		."</div>\n";
 
 	return $output;
 }

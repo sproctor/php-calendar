@@ -27,6 +27,38 @@ define('END_TRANSACTION', 2);
 
 include($phpc_root_path . 'includes/db.php');
 
+if(!function_exists('_')) {
+	function _($str) { return $str; }
+	return;
+}
+
+if(!TRANSLATE) {
+	return;
+}
+
+if(isset($vars['lang'])) {
+	$lang = substr($vars['lang'], 0, 2);
+	setcookie('lang', $lang);
+} elseif(isset($HTTP_COOKIE_VARS['lang'])) {
+	$lang = substr($HTTP_COOKIE_VARS['lang'], 0, 2);
+} elseif(isset($HTTP_ACCEPT_LANGUAGE)) {
+	$lang = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
+} else {
+	$lang = 'en';
+}
+
+switch($lang) {
+	case 'de':
+		setlocale(LC_ALL, 'de_DE');
+		break;
+	case 'en':
+		setlocale(LC_ALL, 'en_US');
+		break;
+}
+
+bindtextdomain('messages', './locale');
+textdomain('messages');
+
 function soft_error($str)
 {
 	echo "<html><head><title>Error</title></head>\n"
@@ -67,43 +99,6 @@ function browser()
 	}
 
 	return array($BName, $BVersion);
-}
-
-function translate()
-{
-	global $HTTP_ACCEPT_LANGUAGE, $vars, $HTTP_COOKIE_VARS;
-
-	if(!function_exists('_')) {
-		function _($str) { return $str; }
-		return;
-	}
-
-	if(!TRANSLATE) {
-		return;
-	}
-
-	if(isset($vars['lang'])) {
-		$lang = substr($vars['lang'], 0, 2);
-		setcookie('lang', $lang);
-	} elseif(isset($HTTP_COOKIE_VARS['lang'])) {
-		$lang = substr($HTTP_COOKIE_VARS['lang'], 0, 2);
-	} elseif(isset($HTTP_ACCEPT_LANGUAGE)) {
-		$lang = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
-	} else {
-		$lang = 'en';
-	}
-
-	switch($lang) {
-		case 'de':
-			setlocale(LC_ALL, 'de_DE');
-			break;
-		case 'en':
-			setlocale(LC_ALL, 'en_US');
-			break;
-	}
-
-	bindtextdomain('messages', './locale');
-	textdomain('messages');
 }
 
 function month_name($month)
@@ -163,10 +158,10 @@ function check_user()
 		soft_error("$error[code]: $error[message]");
 	}
 
-$rows = $db->sql_numrows($result);
-echo "<pre>check: $rows</pre>";
-echo "<pre>user: $user</pre>";
-echo "<pre>password: $password</pre>";
+	$rows = $db->sql_numrows($result);
+	echo "<pre>check: $rows</pre>";
+	echo "<pre>user: $user</pre>";
+	echo "<pre>password: $password</pre>";
 	if($db->sql_numrows($result)) return true;
 	else return false;
 }
@@ -222,7 +217,6 @@ function top()
 {
 	global $BName, $BVersion;
 
-	translate();
 	$output = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
 		."\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
 		."<html xml:lang=\"en\">\n"
@@ -271,9 +265,9 @@ function bottom()
 	}
 
 	$output .= "<p>\n
-	[<a href=\"http://validator.w3.org/check?url=" . rawurlencode("http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING") . "\"> Valid XHTML 1.1</a>]
-	[<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
-	</p>";
+		[<a href=\"http://validator.w3.org/check?url=" . rawurlencode("http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING") . "\"> Valid XHTML 1.1</a>]
+		[<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
+		</p>";
 	$output .= "</div>\n"
 		."</form>\n"
 		."</div>\n"
