@@ -29,7 +29,6 @@ include($phpc_root_path . 'includes/db.php');
 
 if(!function_exists('_')) {
 	function _($str) { return $str; }
-	return;
 }
 
 $query = "SELECT * from ".SQL_PREFIX."calendars "
