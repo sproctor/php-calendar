@@ -18,7 +18,8 @@
     along with PHP-Calendar; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-include("event.inc");
+
+include('event.inc.php');
 
 function del()
 {

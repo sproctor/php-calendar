@@ -27,12 +27,12 @@ function remove_event($id)
 
   $database = connect_to_database();
 
-  $result = mysql_query("DELETE FROM " . $sql_tableprefix . "events
+  mysql_query('DELETE FROM ' . $sql_tableprefix . "events
       WHERE id = '$id'", $database)
     or soft_error('MySQL error ' . mysql_errno($result) . ': '
       . mysql_error($result));
 
-  if(mysql_affected_rows($result) > 0)
+  if(mysql_affected_rows() > 0)
     return true;
   else
     return false;

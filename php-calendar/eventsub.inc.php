@@ -64,38 +64,38 @@ function submit_event()
     $description = '';
   }
 
-  if(!isset($HTTP_GET_VARS['day'])) $day = date('j');
-  else $day = $HTTP_GET_VARS['day'];
+  if(isset($HTTP_GET_VARS['day'])) $day = $HTTP_GET_VARS['day'];
+  else soft_error(_('No day was given.'));
 
-  if(!isset($HTTP_GET_VARS['month'])) $month = date('n');
-  else $month = $HTTP_GET_VARS['month'];
+  if(isset($HTTP_GET_VARS['month'])) $month = $HTTP_GET_VARS['month'];
+  else soft_error(_('No month was given.'));
 
-  if(!isset($HTTP_GET_VARS['year'])) $year = date('Y');
-  else $year = $HTTP_GET_VARS['year'];
+  if(isset($HTTP_GET_VARS['year'])) $year = $HTTP_GET_VARS['year'];
+  else soft_error(_('No year was given'));
 
   if(isset($HTTP_GET_VARS['hour'])) $hour = $HTTP_GET_VARS['hour'];
-  else $hour = 0;
+  else soft_error(_('No hour was given.'));
 
   if(isset($HTTP_GET_VARS['pm']) && $HTTP_GET_VARS['pm'] == 1) $hour += 12;
 
   if(isset($HTTP_GET_VARS['minute'])) $minute = $HTTP_GET_VARS['minute'];
-  else $minute = 0;
+  else soft_error(_('No minute was given.'));
 
   if(isset($HTTP_GET_VARS['durationhour']))
     $durationhour = $HTTP_GET_VARS['durationhour'];
-  else $durationhour = 1;
+  else soft_error(_('No duration hour was given.'));
 
   if(isset($HTTP_GET_VARS['durationmin']))
     $durationmin = $HTTP_GET_VARS['durationmin'];
-  else $durationmin = 0;
+  else soft_error(_('No duration minute was given.'));
      
   if(isset($HTTP_GET_VARS['durationday']))
     $durationday = $HTTP_GET_VARS['durationday'];
-  else $durationday = 0;
+  else soft_error(_('No duration day was given.'));
 
   if(isset($HTTP_GET_VARS['typeofevent']))
     $typeofevent = $HTTP_GET_VARS['typeofevent'];
-  else $typeofevent = 0;
+  else soft_error(_('No type of event was given.'));
 
   $timestamp = date('Y-m-d H:i:s', mktime($hour,$minute,0,$month,$day,$year));
   $durationstamp = date('Y-m-d H:i:s', mktime($hour + $durationhour,

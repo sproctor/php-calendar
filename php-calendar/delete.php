@@ -19,7 +19,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include("delete.inc");
+include('delete.inc.php');
 
 echo top() . del() . back_to_calendar() . bottom();
 
