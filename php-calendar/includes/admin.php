@@ -25,6 +25,10 @@ if ( !defined('IN_PHPC') ) {
 
 function admin()
 {
+        if(!check_user()) {
+                soft_error(_('You must be logged in'));
+        }
+
 	return tag('div', options_form(), new_user_form());
 }
 

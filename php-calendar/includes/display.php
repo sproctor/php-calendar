@@ -317,7 +317,7 @@ function display_id($id)
 	$name = stripslashes($row['username']);
 	$desc = parse_desc($row['description']);
 
-        if(check_user()) {
+        if(check_user() || $config['anon_permission'] >= 2) {
                 return tag('div', attributes('class="phpc-main"'),
                                 tag('h2', $subject),
                                 tag('div', 'by ', tag('cite', $name)),
