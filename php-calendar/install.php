@@ -19,7 +19,6 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-//top();
 echo '<html>
 <head>
 <title>install php calendar</title>
@@ -31,27 +30,19 @@ if(!isset($action)) {
     echo '<form method="get" action="install.php">
 <table class="display">
   <tr>
-    <td>' .
-_("MySQL hostname:")
-. '</td>
+    <td>' .  _('MySQL hostname:') . '</td>
     <td><input type="text" name="my_hostname" value="localhost"></td>
   </tr>
   <tr>
-    <td>' .
-_("Database name:")
-. '</td>
+    <td>' .  _("Database name:") . '</td>
     <td><input type="text" name="my_database" value="calendar"></td>
   </tr>
   <tr>
-    <td>' .
-_("Table prefix:")
-. '</td>
+    <td>' .  _("Table prefix:") . '</td>
     <td><input type="text" name="my_tablename" value="phpc_"></td>
   </tr>
   <tr>
-    <td>' .
-_("Username:")
-. '</td>
+    <td>' .  _("Username:") . '</td>
     <td><input type="text" name="my_username" value="calendar"></td>
   </tr>
   <tr>
@@ -135,7 +126,7 @@ define('TRANSLATE',    1);
   duration datetime,
   eventtype int(4),
   subject varchar(255),
-  description blob,
+  description text,
   PRIMARY KEY (id)
 )')
         or die("Could not create table");
