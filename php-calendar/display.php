@@ -1,5 +1,5 @@
 <?php
-include("config.php");
+include_once("config.php");
 include("header.php");
 
 $tablename = date('Fy', mktime(0,0,0,$month,1,$year));
@@ -133,7 +133,7 @@ echo "
   </tfoot>
 </table>" . ifold("</td></tr></table>", "") . "
 <div>
-  <a class=\"box\" href=\"index.php?month=$month&amp;year=$year&amp;day=$day\">Add Item</a>
+  <a class=\"box\" href=\"operate.php?month=$month&amp;year=$year&amp;day=$day&amp;action=Add+Item\">Add Item</a>
 </div>
 </form>";
 

@@ -1,6 +1,6 @@
-<?
-include("config.php");
-include ("header.php");
+<?php
+include_once("config.php");
+include("header.php");
 
 $currentday = date("j");
 $currentmonth = date("n");
@@ -27,8 +27,8 @@ if(empty($year)) {
 $firstday = date("w", mktime(0,0,0,$month,1,$year));
 $lastday = date("t", mktime(0,0,0,$month,$day,$year));
 	
-$nextyear = $year+1;
-$prevyear = $year-1;
+$nextyear = $year + 1;
+$prevyear = $year - 1;
 
 if(isold()) { 
     echo <<<END
@@ -194,7 +194,7 @@ for ($j = 0;; $j++) {
                 $tabling = 1;
             }
             
-            $subject = htmlspecialchars(stripslashes($row['subject']));
+            $subject = stripslashes($row['subject']);
             $typeofevent = $row['eventtype'];
             
             if($typeofevent == 3) {

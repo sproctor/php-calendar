@@ -1,6 +1,6 @@
 <?php
-include ("config.php");
-include ("header.php");
+include_once("config.php");
+include("header.php");
 
 $database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
 mysql_select_db($mysql_database, $database);
@@ -308,6 +308,7 @@ minutes
              }
          }
      }
+     //FIXME: remove undefined entities from these
      $description = ereg_replace("<[bB][rR][^>]*>", "\n", $description);
      $subject = addslashes(ereg_replace("<[^>]*>", "", $subject));
      $username = addslashes(ereg_replace("<[^>]*>", "", $username));
