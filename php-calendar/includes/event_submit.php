@@ -25,7 +25,8 @@ if ( !defined('IN_PHPC') ) {
 
 function event_submit()
 {
-	global $calendar_name, $day, $month, $year, $db, $vars, $config;
+	global $calendar_name, $day, $month, $year, $db, $vars, $config,
+	       $phpc_script;
 
         /* Validate input */
 	if(isset($vars['id'])) {
@@ -166,7 +167,7 @@ function event_submit()
 	$affected = $db->Affected_Rows($result);
 	if($affected < 1) soft_error(_('No changes made')."\nsql:\n$query");
 
-	header("Location: $_SERVER[SCRIPT_NAME]?action=display&id=$id");
+	header("Location: $phpc_script?action=display&id=$id");
 	return tag('div', attributes('class="box"'), _('Date updated').": $affected");
 }
 

@@ -94,7 +94,7 @@ function search_results()
 
 function search_form()
 {
-	global $day, $month, $year;
+	global $day, $month, $year, $phpc_script;
 
 	$html_table = tag('table', attributes('class="phpc-main"'),
 			tag('caption', _('Search')),
@@ -139,7 +139,7 @@ function search_form()
 							_('Ascending')),
 						tag('option', attributes('value="DES"'),
 							_('Decending'))))));
-	return tag('form', attributes("action=\"$_SERVER[SCRIPT_NAME]\"",
+	return tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'), $html_table);
 }
 

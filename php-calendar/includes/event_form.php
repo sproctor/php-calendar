@@ -25,7 +25,7 @@ if ( !defined('IN_PHPC') ) {
 
 function event_form()
 {
-	global $BName, $vars, $day, $month, $year, $db, $config;
+	global $vars, $day, $month, $year, $db, $config, $phpc_script;
 
 	if(isset($vars['id'])) {
 		// modifying
@@ -121,9 +121,8 @@ function event_form()
 	else $input = '';
 
 	$attributes = attributes('class="phpc-main"');
-	if($BName == 'MSIE') $attributes[] = 'cellspacing="0"';
 
-	return tag('form', attributes("action=\"$_SERVER[SCRIPT_NAME]\""),
+	return tag('form', attributes("action=\"$phpc_script\""),
 			tag('table', $attributes,
 				tag('caption', $title),
 				tag('tfoot',

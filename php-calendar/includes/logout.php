@@ -25,12 +25,12 @@ if ( !defined('IN_PHPC') ) {
 
 function logout()
 {
-	global $vars, $day, $month, $year;
+	global $vars, $day, $month, $year, $phpc_script;
 
 	session_unregister('user');
 	session_unregister('password');
 
-	$string = "Location: $_SERVER[SCRIPT_NAME]?";
+	$string = "Location: $phpc_script?";
         if(!empty($vars['lastaction'])) $string .= "action=$vars[lastaction]&";
         if(!empty($vars['day'])) $string .= "day=$day&";
         $string .= "month=$month&year=$year";

@@ -208,7 +208,7 @@ function event_type($num)
 // returns a string containing an XHTML document ready to be output
 function create_xhtml($rest)
 {
-	global $config;
+	global $config, $phpc_script;
 
 	$output = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
 		."\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
@@ -220,10 +220,10 @@ function create_xhtml($rest)
                                                 .' content="text/html;'
                                                 .' charset=iso-8859-1"')),
 				tag('link',
-                                        attributes('rel="stylesheet"'
-                                                .' type="text/css" href="'
-						.$_SERVER['SCRIPT_NAME']
-                                                .'?action=style"')),
+					attributes('rel="stylesheet"'
+						.' type="text/css" href="'
+						.$phpc_script
+						.'?action=style"')),
 				'<!--[if IE]><link rel="stylesheet" '
 				.'type="text/css" href="all-ie.css" />'
 				.'<![endif]-->'),
@@ -239,7 +239,9 @@ function create_xhtml($rest)
 // returns XHTML data for a link for $lang
 function lang_link($lang)
 {
-	$str = $_SERVER['SCRIPT_NAME'] . '?';
+	global $phpc_script;
+
+	$str = "$phpc_script?";
 	if(!empty($_SERVER['QUERY_STRING'])) {
 		$str .= htmlentities($_SERVER['QUERY_STRING']) . '&amp;';
 	}
@@ -251,7 +253,7 @@ function lang_link($lang)
 // returns XHTML data for the links at the bottom of the calendar
 function link_bar()
 {
-	global $config;
+	global $config, $phpc_url;
 
 	$html = tag('div', attributes('class="phpc-footer"'));
 
@@ -263,13 +265,9 @@ function link_bar()
 	$html[] = tag('p', '[',
 			tag('a',
 				attributes('href="http://validator.w3.org/'
-				.'check?url='
-				.rawurlencode((empty($_SERVER['HTTPS']) ? 'http'
-                                                : 'https')
-                                        ."://$_SERVER[SERVER_NAME]"
-                                        ."$_SERVER[SCRIPT_NAME]"
-                                        ."?$_SERVER[QUERY_STRING]")
-                                .'"'), 'Valid XHTML 1.1'),
+					.'check?url='
+					.rawurlencode($phpc_url)
+					.'"'), 'Valid XHTML 1.1'),
 			'] [',
 			tag('a', attributes('href="http://jigsaw.w3.org/'
 					.'css-validator/check/referer"'),
@@ -407,7 +405,9 @@ function weeks_in_month($month, $year)
 // returns XHTML data for the link
 function create_id_link($text, $action, $id = false, $attribs = false)
 {
-	$url = "href=\"$_SERVER[SCRIPT_NAME]?action=$action";
+	global $phpc_script;
+
+	$url = "href=\"$phpc_script?action=$action";
 	if($id !== false) $url .= "&amp;id=$id";
 	$url .= '"';
 
@@ -422,7 +422,7 @@ function create_id_link($text, $action, $id = false, $attribs = false)
 function create_date_link($text, $action, $year = false, $month = false,
                 $day = false, $attribs = false, $lastaction = false)
 {
-	$url = "href=\"$_SERVER[SCRIPT_NAME]?action=$action";
+	$url = "href=\"$phpc_script?action=$action";
 	if($year !== false) $url .= "&amp;year=$year";
 	if($month !== false) $url .= "&amp;month=$month";
 	if($day !== false) $url .= "&amp;day=$day";

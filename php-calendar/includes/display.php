@@ -101,7 +101,7 @@ function create_weeks($week_of_month, $month, $year)
 // return XHTML data for the days
 function display_days($day_of_week, $week_of_month, $month, $year)
 {
-	global $db;
+	global $db, $phpc_script;
 
 	if($day_of_week > 7) return array();
 
@@ -162,7 +162,7 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 			$html_events[] = tag('li',
 				tag('a',
 					attributes(
-                                                "href=\"$_SERVER[SCRIPT_NAME]"
+                                                "href=\"$phpc_script"
                                                 ."?action=display&amp;"
                                                 ."id=$row[id]\""),
 				"$event_time - $subject"));
@@ -204,7 +204,7 @@ function get_duration($duration, $typeofevent)
 // returns the XHTML data for the day
 function display_day($day, $month, $year)
 {
-	global $user, $db, $config;
+	global $user, $db, $config, $phpc_script;
 
 	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
 	$monthname = month_name($month);
@@ -283,7 +283,7 @@ function display_day($day, $month, $year)
 		$html_table[] = $html_body;
 
 		if($admin) $output = tag('form',
-			attributes("action=\"$_SERVER[SCRIPT_NAME]\""),
+			attributes("action=\"$phpc_script\""),
                         $html_table);
 		else $output = $html_table;
 

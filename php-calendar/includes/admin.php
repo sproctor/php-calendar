@@ -35,9 +35,9 @@ function admin()
 
 function options_form()
 {
-	global $config;
+	global $config, $phpc_script;
 
-	return tag('form', attributes("action=\"$_SERVER[SCRIPT_NAME]\"",
+	return tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
 			tag('table', attributes('class="phpc-main"'),
 				tag('caption', _('Options')),
@@ -75,7 +75,9 @@ function options_form()
 
 function new_user_form()
 {
-	return tag('form', attributes("action=\"$_SERVER[SCRIPT_NAME]\"",
+	global $phpc_script;
+
+	return tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
 			tag('table', attributes('class="phpc-main"'),
 				tag('caption', _('Create New User')),

@@ -25,7 +25,7 @@ if ( !defined('IN_PHPC') ) {
 
 function login()
 {
-	global $vars, $day, $month, $year, $user, $password;
+	global $vars, $day, $month, $year, $user, $password, $phpc_script;
 
 	$html = tag('div');
 
@@ -37,7 +37,7 @@ function login()
 		if(check_user()){
                         $_SESSION['user'] = $user;
                         $_SESSION['password'] = $password;
-                        $string = "Location: $_SERVER[SCRIPT_NAME]?";
+                        $string = "Location: $phpc_script?";
                         if(!empty($vars['lastaction']))
                                 $string .= "action=$lastaction&";
                         if(!empty($vars['day'])) $string .= "day=$day&";
@@ -57,11 +57,11 @@ function login()
 
 function login_form()
 {
-        global $vars;
+        global $vars, $phpc_script;
 
         $lastaction = empty($vars['lastaction']) ? '' : $vars['lastaction'];
 
-	return tag('form', attributes("action=\"$_SERVER[SCRIPT_NAME]\"",
+	return tag('form', attributes("action=\"$phpc_script\"",
 				'method="post"'),
 		tag('table', attributes('class="phpc-main"'),
 			tag('caption', _('Log in')),
