@@ -23,10 +23,8 @@ include("config.inc");
 
 function soft_error($str)
 {
-  echo top();
-  echo "<h1>Software Error</h1><p>$str</p>";
-  //echo bottom();
-  //die;
+  echo "<html><head><title>Error</title></head><body><h1>Software Error</h1><p>$str</p></body></html>";
+  exit;
 }
 
 //if(empty($translate)) {
@@ -90,23 +88,6 @@ function connect_to_database()
   return $database;
 }
 
-function doctype()
-{
-  return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-        "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-';
-}
-
-function print_header()
-{
-  global $title;
-  $output = "<head>
-  <title>$title</title>
-<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />
-" . print_style() . '</head>';
-  return $output;
-}
-
 function translate()
 {
   global $translate, $HTTP_ACCEPT_LANGUAGE, $HTTP_GET_VARS, $HTTP_COOKIE_VARS;
@@ -117,7 +98,6 @@ function translate()
       setcookie('lang', $lang);
     } elseif(isset($HTTP_COOKIE_VARS['lang'])) {
       $lang = substr($HTTP_COOKIE_VARS['lang'], 0, 2);
-      soft_error($translate);
     } elseif(isset($HTTP_ACCEPT_LANGUAGE)) {
       $lang = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
     } else {
@@ -159,19 +139,38 @@ function month_name($month)
 
 function top()
 {
-  global $header;
+  global $header, $title;
   translate();
   browser();
-  $output = doctype() . "<html xml:lang=\"en\">\n" . print_header() . "<body>
-  <h1>$header</h1>\n";
+  $output = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+        "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xml:lang="en">
+<head>
+  <title>' . $title . '</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+';
+
+// FIXME: add dynamic style stuff below
+
+  $output .= "<!-- Your browser: $BName $BVersion -->";
+  $output .= '<link rel="stylesheet" type="text/css" href="generic.css" />
+<link rel="stylesheet" type="text/css" href="style0.css" />
+';
+
+  $output .= '</head>
+<body>
+  <h1>' . $header . '</h1>
+';
   return $output;
 }
 
 function lang_link($lang)
 {
-  $str = "[<a href=\"" . $_SERVER['PHP_SELF'] . '?';
-  if(!empty($_SERVER['QUERY_STRING'])) {
-    $str .= $_SERVER['QUERY_STRING'] . '&amp;';
+  global $PHP_SELF, $QUERY_STRING;
+
+  $str = '[<a href="' . $PHP_SELF . '?';
+  if(!empty($QUERY_STRING)) {
+    $str .= $QUERY_STRING . '&amp;';
   }
 
   $str .= "lang=$lang\">$lang</a>]";
@@ -180,7 +179,7 @@ function lang_link($lang)
 
 function print_footer()
 {
-  global $translate;
+  global $translate, $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING;
   $output = '';
 
   if(!empty($translate)) {
@@ -192,9 +191,8 @@ function print_footer()
   }
 
   return $output . "<p>
-  [<a href=\"http://validator.w3.org/check?url=http://"
- . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'] . '?'
- . $_SERVER['QUERY_STRING'] . "\">Valid XHTML 1.1</a>]
+  [<a href=\"http://validator.w3.org/check?url=http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING\">
+    Valid XHTML 1.1</a>]
   [<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
 </p>\n";
 }
@@ -209,21 +207,20 @@ function print_style()
 {
 
   global $BName, $BVersion;
-  return "<!-- Your browser: $BName $BVersion -->
-<link rel=\"stylesheet\" type=\"text/css\" href=\"generic.css\" />
-<link rel=\"stylesheet\" type=\"text/css\" href=\"style0.css\" />\n";
 }
 
 function back_to_calendar()
 {
-  if(!isset($_GET['day'])) $day = date("j");
-  else $day = $_GET['day'];
+  global $HTTP_GET_VARS;
 
-  if(!isset($_GET['month'])) $month = date("n");
-  else $month = $_GET['month'];
+  if(!isset($HTTP_GET_VARS['day'])) $day = date("j");
+  else $day = $HTTP_GET_VARS['day'];
 
-  if(!isset($_GET['year'])) $year = date("Y");
-  else $year = $_GET['year'];
+  if(!isset($HTTP_GET_VARS['month'])) $month = date("n");
+  else $month = $HTTP_GET_VARS['month'];
+
+  if(!isset($HTTP_GET_VARS['year'])) $year = date("Y");
+  else $year = $HTTP_GET_VARS['year'];
 
   return "<div>
   <a class=\"box\" href=\"display.php?month=$month&amp;year=$year&amp;day=$day\">" .
