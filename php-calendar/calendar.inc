@@ -19,47 +19,37 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include("config.inc");
+include_once("config.inc");
 
 function soft_error($str)
 {
-  echo "<html><head><title>Error</title></head><body><h1>Software Error</h1><p>$str</p></body></html>";
-  exit;
+  echo top() . "<h1>Software Error</h1><p>$str</p>" . bottom();
 }
 
-//if(empty($translate)) {
-//  function _($str) { return $str; }
-//}
+if(empty($translate)) {
+  function _($str) { return $str; }
+}
 
-function browser()
-{
-  global $HTTP_USER_AGENT, $BName, $BVersion;
-
-  if(eregi('opera/?([0-9]+(\.[0-9]+)*)?', $HTTP_USER_AGENT, $match)) {
-    $BName = 'Opera';
-    $BVersion = $match[1];
-  } elseif(eregi('konqueror/([0-9]+.[0-9]+)', $HTTP_USER_AGENT, $match)) {
-    $BName = "Konqueror";
-    $BVersion = $match[1];
-  } elseif(eregi('lynx/([0-9]+.[0-9]+.[0-9]+)', $HTTP_USER_AGENT, $match)) {
-    $BName = 'Lynx';
-    $BVersion = $match[1];
-  } elseif(eregi('links\(([0-9]+.[0-9]+)', $HTTP_USER_AGENT, $match)) {
-    $BName = 'Links';
-    $BVersion = $match[1];
-  } elseif(eregi('msie ?([0-9]+.[0-9]+)', $HTTP_USER_AGENT, $match)) {
-    $BName = 'MSIE';
-    $BVersion = $match[1];
-  } elseif(eregi('(netscape6|mozilla)/([0-9]+.[0-9]+)', $HTTP_USER_AGENT, $match)) {
-    $BName = 'Netscape';
-    $BVersion = $match[2];
-  } elseif(eregi('w3m', $HTTP_USER_AGENT)) {
-    $BName = 'w3m';
-    $BVersion = 'Unknown';
-  } else {
-    $BName = 'Unknown';
-    $BVersion = 'Unknown';
-  }
+// Browser
+if(eregi("(opera)([0-9]{1,2}.[0-9]{1,3}){0,1}",$_SERVER['HTTP_USER_AGENT'],$match) || 
+   eregi("(opera/)([0-9]{1,2}.[0-9]{1,3}){0,1}",$_SERVER['HTTP_USER_AGENT'],$match)) {
+  $BName = "Opera"; $BVersion=$match[2];
+} elseif(eregi("(konqueror)/([0-9]{1,2}.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
+  $BName = "Konqueror"; $BVersion=$match[2];
+} elseif(eregi("(lynx)/([0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2})",$_SERVER['HTTP_USER_AGENT'],$match)) {
+  $BName = "Lynx"; $BVersion=$match[2];
+} elseif(eregi("(links)\(([0-9]{1,2}.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
+  $BName = "Links"; $BVersion=$match[2];
+} elseif(eregi("(msie) ?([0-9]{1,2}.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
+  $BName = "MSIE"; $BVersion=$match[2];
+} elseif(eregi("(netscape6)/(6.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
+  $BName = "Netscape"; $BVersion=$match[2];
+} elseif(eregi("(mozilla)/([0-9]{1,2}.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
+  $BName = "Netscape"; $BVersion=$match[2];
+} elseif(eregi("w3m",$_SERVER['HTTP_USER_AGENT'])) {
+  $BName = "w3m"; $BVersion="Unknown";
+} else {
+  $BName = "Unknown"; $BVersion="Unknown";
 }
 
 function ifold($str1, $str2)
@@ -72,7 +62,7 @@ function isold()
 {
   global $BName, $BVersion;
 
-  if(($BName == 'Netscape' || $BName == 'MSIE') && $BVersion < 5) return true;
+  if(($BName == "Netscape" || $BName == "MSIE") && $BVersion < 5) return true;
   else return false;
 }
 
@@ -88,18 +78,35 @@ function connect_to_database()
   return $database;
 }
 
+function doctype()
+{
+return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+        "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+';
+}
+
+function print_header()
+{
+  global $title;
+  $output = "<head>
+  <title>$title</title>
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />
+" . print_style() . "</head>";
+  return $output;
+}
+
 function translate()
 {
-  global $translate, $HTTP_ACCEPT_LANGUAGE, $HTTP_GET_VARS, $HTTP_COOKIE_VARS;
+  global $translate;
 
   if(!empty($translate)) {
-    if(isset($HTTP_GET_VARS['lang'])) {
-      $lang = substr($HTTP_GET_VARS['lang'], 0, 2);
+    if(isset($_GET['lang'])) {
+      $lang = substr($_GET['lang'], 0, 2);
       setcookie('lang', $lang);
-    } elseif(isset($HTTP_COOKIE_VARS['lang'])) {
-      $lang = substr($HTTP_COOKIE_VARS['lang'], 0, 2);
-    } elseif(isset($HTTP_ACCEPT_LANGUAGE)) {
-      $lang = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
+    } elseif(isset($_COOKIE['lang'])) {
+      $lang = substr($_COOKIE['lang'], 0, 2);
+    } elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+      $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
     } else {
       $lang = 'en';
     }
@@ -139,38 +146,18 @@ function month_name($month)
 
 function top()
 {
-  global $header, $title;
+  global $header;
   translate();
-  browser();
-  $output = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-        "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xml:lang="en">
-<head>
-  <title>' . $title . '</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-';
-
-// FIXME: add dynamic style stuff below
-
-  $output .= "<!-- Your browser: $BName $BVersion -->";
-  $output .= '<link rel="stylesheet" type="text/css" href="generic.css" />
-<link rel="stylesheet" type="text/css" href="style0.css" />
-';
-
-  $output .= '</head>
-<body>
-  <h1>' . $header . '</h1>
-';
+  $output = doctype() . "<html xml:lang=\"en\">\n" . print_header() . "<body>
+  <h1>$header</h1>\n";
   return $output;
 }
 
 function lang_link($lang)
 {
-  global $PHP_SELF, $QUERY_STRING;
-
-  $str = '[<a href="' . $PHP_SELF . '?';
-  if(!empty($QUERY_STRING)) {
-    $str .= $QUERY_STRING . '&amp;';
+  $str = "[<a href=\"" . $_SERVER['PHP_SELF'] . '?';
+  if(!empty($_SERVER['QUERY_STRING'])) {
+    $str .= $_SERVER['QUERY_STRING'] . '&amp;';
   }
 
   $str .= "lang=$lang\">$lang</a>]";
@@ -179,7 +166,7 @@ function lang_link($lang)
 
 function print_footer()
 {
-  global $translate, $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING;
+  global $translate;
   $output = '';
 
   if(!empty($translate)) {
@@ -191,8 +178,9 @@ function print_footer()
   }
 
   return $output . "<p>
-  [<a href=\"http://validator.w3.org/check?url=http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING\">
-    Valid XHTML 1.1</a>]
+  [<a href=\"http://validator.w3.org/check?url=http://"
+ . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'] . '?'
+ . $_SERVER['QUERY_STRING'] . "\">Valid XHTML 1.1</a>]
   [<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
 </p>\n";
 }
@@ -207,20 +195,21 @@ function print_style()
 {
 
   global $BName, $BVersion;
+  return "<!-- Your browser: $BName $BVersion -->
+<link rel=\"stylesheet\" type=\"text/css\" href=\"generic.css\" />
+<link rel=\"stylesheet\" type=\"text/css\" href=\"style0.css\" />\n";
 }
 
 function back_to_calendar()
 {
-  global $HTTP_GET_VARS;
+  if(!isset($_GET['day'])) $day = date("j");
+  else $day = $_GET['day'];
 
-  if(!isset($HTTP_GET_VARS['day'])) $day = date("j");
-  else $day = $HTTP_GET_VARS['day'];
+  if(!isset($_GET['month'])) $month = date("n");
+  else $month = $_GET['month'];
 
-  if(!isset($HTTP_GET_VARS['month'])) $month = date("n");
-  else $month = $HTTP_GET_VARS['month'];
-
-  if(!isset($HTTP_GET_VARS['year'])) $year = date("Y");
-  else $year = $HTTP_GET_VARS['year'];
+  if(!isset($_GET['year'])) $year = date("Y");
+  else $year = $_GET['year'];
 
   return "<div>
   <a class=\"box\" href=\"display.php?month=$month&amp;year=$year&amp;day=$day\">" .

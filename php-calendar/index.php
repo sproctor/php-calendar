@@ -19,7 +19,9 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include("index.inc");
+include_once("calendar.inc");
+include_once("config.inc");
+include_once("index.inc");
 
 echo top();
 

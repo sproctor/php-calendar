@@ -19,75 +19,71 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-//top();
-echo '<html>
-<head>
-<title>install php calendar</title>
-</head>
-<html>
-';
+include_once("calendar.inc");
+
+$title = 'PHP-Calendar Install';
+$header = 'PHP-Calendar Install';
+$start_monday = 0;
+$hour_24 = 1;
+
+top();
 
 if(!isset($action)) {
-    echo '<form method="get" action="install.php">
-<table class="display">
+    echo "<form method=\"GET\" action=\"install.php\">
+<table class=\"display\">
   <tr>
-    <td>' .
-_("MySQL hostname:")
-. '</td>
-    <td><input type="text" name="my_hostname" value="localhost"></td>
+    <td>MySQL hostname:</td>
+    <td><input type=\"text\" name=\"my_hostname\"></td>
   </tr>
   <tr>
-    <td>' .
-_("Database name:")
-. '</td>
-    <td><input type="text" name="my_database" value="calendar"></td>
+    <td>Database name:</td>
+    <td><input type=\"text\" name=\"my_database\"></td>
   </tr>
   <tr>
-    <td>' .
-_("Table prefix:")
-. '</td>
-    <td><input type="text" name="my_tablename" value="phpc_"></td>
+    <td>Table name:</td>
+    <td><input type=\"text\" name=\"my_tablename\"></td>
   </tr>
   <tr>
-    <td>' .
-_("Username:")
-. '</td>
-    <td><input type="text" name="my_username" value="calendar"></td>
+    <td>Username:</td>
+    <td><input type=\"text\" name=\"my_username\"></td>
   </tr>
   <tr>
     <td>Password:</td>
-    <td><input type="password" name="my_passwd"></td>
+    <td><input type=\"password\" name=\"my_passwd\"></td>
   </tr>
   <tr>
     <td>MySQL admin user:</td>
-    <td><input type="text" name="admin_username" value="root"></td>
+    <td><input type=\"text\" name=\"admin_username\"></td>
   <tr>
     <td>MySQL admin password:</td>
-    <td><input type="password" name="admin_passwd"></td>
+    <td><input type=\"password\" name=\"admin_passwd\"></td>
   </tr>
   <tr>
-    <td colspan="2"><input name="action" type="submit" value="Install"></td>
+    <td colspan=\"2\"><input name=\"action\" type=\"submit\" value=\"Install\"></td>
   </tr>
 </table>
-</form>';
+</form>";
 } else {
-$my_hostname = $HTTP_GET_VARS['my_hostname'];
-$my_username = $HTTP_GET_VARS['my_username'];
-$my_passwd = $HTTP_GET_VARS['my_passwd'];
-$my_tablename = $HTTP_GET_VARS['my_tablename'];
-$my_database = $HTTP_GET_VARS['my_database'];
-echo $my_hostname;
     $fp = fopen("config.inc", "w")
         or die("Couldn't open config file");
 
     $fstring = "<?php
-\$sql_hostname    = '$my_hostname';
-\$sql_username    = '$my_username';
-\$sql_password    = '$my_passwd';
-\$sql_database    = '$my_database';
-\$sql_tableprefix = '$my_tablename';
-\$title           = 'PHP-Calendar 0.7';
-\$header          = 'PHP-Calendar';
+\$mysql_hostname = '$my_hostname';
+\$mysql_username = '$my_username';
+\$mysql_password = '$my_passwd';
+\$mysql_database = '$my_database';
+\$mysql_tablename = '$my_tablename';
+\$title = 'PHP-Calendar 0.5';
+\$header = 'PHP-Calendar';
+\$bgcolor = '#336699';
+\$textcolor = 'blue';
+\$headercolor = 'white';
+\$headerbgcolor = 'gray';
+\$tablebgcolor = '#CCCCCC';
+\$futurecolor = 'white';
+\$pastcolor = '#CCDDFF';
+\$nonecolor = 'silver';
+\$bordercolor = '#339999';
 ?>";
 
     fwrite($fp, $fstring)
@@ -97,9 +93,8 @@ echo $my_hostname;
     $database = mysql_connect($my_hostname, $admin_username, $admin_passwd)
         or die("Could not connect to server");
 
-    $sql = "CREATE DATABASE $my_database";
-    if(!mysql_query($sql) and mysql_errno() != "1007")
-      die('create db:' . mysql_errno() . ': ' . mysql_error() . ': ' . $sql);
+    if(!mysql_query("CREATE DATABASE $my_database") and mysql_errno() != "1007")
+      die(mysql_errno() . ": " . mysql_error());
 
     mysql_select_db("mysql")
         or die("could not select mysql");
@@ -148,6 +143,6 @@ echo $my_hostname;
 
   echo "<p><a href=\".\">Calendar created</a></p>";
 }
-echo '</html>';
-//bottom();
+
+bottom();
 ?>
