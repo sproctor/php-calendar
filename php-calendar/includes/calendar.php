@@ -290,15 +290,26 @@ function get_events_by_date($day, $month, $year)
 */
         $startdate = $db->SQLDate('Y-m-d', 'startdate');
         $enddate = $db->SQLDate('Y-m-d', 'enddate');
-        $date = $db->DBDate("$year-$month-$day");
+        $date = '\''.date('Y-m-d', mktime(0, 0, 0, $month, $day, $year)).'\'';
+        // day of week
         $dow_startdate = $db->SQLDate('w', 'startdate');
-        $dow_date = $db->SQLDate('w', "DATE $date");
+        $dow_date = $db->SQLDate('w', $date);
+        // day of month
+        $dom_startdate = $db->SQLDate('d', 'startdate');
+        $dom_date = $db->SQLDate('d', $date);
+
 	$query = 'SELECT * FROM '.SQL_PREFIX."events\n"
-		."WHERE ($startdate <= $date\n"
-		."AND $enddate >= $date)\n"
+                // find normal events
+		."WHERE ((eventtype = 1 OR eventtype = 2 OR eventtype = 3) "
+                ."AND $startdate = $date)\n"
+                // find weekly events
+		."OR (eventtype = 5 AND $date >= $startdate "
+                ."AND $date <= $enddate AND $dow_startdate = $dow_date)\n"
+                // find monthly events
+		."OR (eventtype = 6 AND $date >= $startdate "
+                ."AND $date <= $enddate AND $dom_startdate = $dom_date)\n"
+                // in the current calendar
 		."AND calendar = '$calendar_name'\n"
-		."AND (eventtype != 5 OR $dow_startdate = $dow_date)\n"
-		."AND (eventtype != 6 OR ".$db->SQLDate('d')." = '$day')\n"
 		."ORDER BY starttime";
 
 	$result = $db->Execute($query)
@@ -393,14 +404,13 @@ function weeks_in_month($month, $year)
 // creates a link with text $text and GET attributes corresponding to the rest
 // of the arguments.
 // returns XHTML data for the link
-function create_id_link($text, $action, $id = -1, $attribs = -1)
+function create_id_link($text, $action, $id = false, $attribs = false)
 {
 	$url = "href=\"$_SERVER[SCRIPT_NAME]?action=$action";
-	if($id != -1) {
-		$url .= "&amp;id=$id";
-	}
+	if($id !== false) $url .= "&amp;id=$id";
 	$url .= '"';
-        if($attribs != -1) {
+
+        if($attribs !== false) {
                 $as = attributes($url, $attribs);
         } else {
                 $as = attributes($url);
@@ -408,21 +418,17 @@ function create_id_link($text, $action, $id = -1, $attribs = -1)
 	return tag('a', $as, $text);
 }
 
-function create_date_link($text, $action, $year = -1, $month = -1, $day = -1,
-                $attribs = -1)
+function create_date_link($text, $action, $year = false, $month = false,
+                $day = false, $attribs = false, $lastaction = false)
 {
 	$url = "href=\"$_SERVER[SCRIPT_NAME]?action=$action";
-	if($year != -1) {
-		$url .= "&amp;year=$year";
-	}
-	if($month != -1) {
-		$url .= "&amp;month=$month";
-	}
-	if($day != -1) {
-		$url .= "&amp;day=$day";
-	}
+	if($year !== false) $url .= "&amp;year=$year";
+	if($month !== false) $url .= "&amp;month=$month";
+	if($day !== false) $url .= "&amp;day=$day";
+        if($lastaction !== false) $url .= "&amp;lastaction=$lastaction";
 	$url .= '"';
-        if($attribs != -1) {
+
+        if($attribs !== false) {
                 $as = attributes($url, $attribs);
         } else {
                 $as = attributes($url);
@@ -431,20 +437,21 @@ function create_date_link($text, $action, $year = -1, $month = -1, $day = -1,
 }
 
 // takes a menu $html and appends an entry
-function menu_item_append(&$html, $name, $action, $year = -1, $month = -1,
-		$day = -1)
+function menu_item_append(&$html, $name, $action, $year = false, $month = false,
+		$day = false, $lastaction = false)
 {
 	$html = array_append(array_append($html,
 				create_date_link($name, $action, $year, $month,
-                                        $day)), "\n");
+                                        $day, false, $lastaction)), "\n");
 }
 
 // same as above, but prepends the entry
-function menu_item_prepend(&$html, $name, $action, $year = -1,
-		$month = -1, $day = -1)
+function menu_item_prepend(&$html, $name, $action, $year = false,
+		$month = false, $day = false, $lastaction = false)
 {
 	$html = array_cons(create_date_link($name, $action, $year, $month,
-                                $day), array_cons("\n", $html));
+                                $day, false, $lastaction),
+                        array_cons("\n", $html));
 }
 
 // creates a hidden input for a form
@@ -465,10 +472,10 @@ function create_submit($value)
 
 // creates a text entry for a form
 // returns XHTML data for the entry
-function create_text($name, $value = -1)
+function create_text($name, $value = false)
 {
 	$attributes = attributes("name=\"$name\"", 'type="text"');
-	if($value != -1) {
+	if($value !== false) {
 		$attributes[] = "value=\"$value\"";
 	}
 	return tag('input', $attributes);
@@ -483,11 +490,11 @@ function create_password($name)
 
 // creates a checkbox for a form
 // returns XHTML data for the checkbox
-function create_checkbox($name, $value = -1, $checked = -1)
+function create_checkbox($name, $value = false, $checked = false)
 {
 	$attributes = attributes("name=\"$name\"", 'type="checkbox"');
-	if($value != -1) $attributes[] = "value=\"$value\"";
-	if($checked != -1) $attributes[] = 'checked="checked"';
+	if($value !== false) $attributes[] = "value=\"$value\"";
+	if($checked !== false) $attributes[] = 'checked="checked"';
 	return tag('input', $attributes);
 }
 
@@ -523,17 +530,20 @@ function navbar()
 				$year, $month);
 	}
 
-	if($action != 'display' || isset($vars['id'])) {
+	if($action != 'display' || !empty($vars['id'])) {
 		menu_item_append($html, _('View date'), 'display', $year,
 				$month, $day);
 	}
 
 	if(isset($user)) {
-		menu_item_append($html, _('Log out'), 'logout', $year,
-				$month, $day);
+		menu_item_append($html, _('Log out'), 'logout',
+                                empty($vars['year']) ? false : $year,
+                                empty($vars['month']) ? false : $month,
+				empty($vars['day']) ? false : $day,
+				$action);
 	} else {
-		menu_item_append($html, _('Log in'), 'login', $year, $month,
-				$day);
+		menu_item_append($html, _('Log in'), 'login',
+                                $action);
 	}
 
 	if(isset($user) && $action != 'admin') {

@@ -1,7 +1,7 @@
 NEWS
 -----
 
-0.11:
+0.10.1 (9 Jan 2005):
         - fix security vulnerability with regard to loading any any PHP file
           (Thanks to James Bercegay of the GulfTech Security Research Team)
         - add a modified version of adodb to the distribution (it's version
@@ -9,6 +9,8 @@ NEWS
         - fix a few scattered bugs
         - make PostgreSQL work for new installations again
         - fix bug with multiple word searches
+        - fix get_events_by_date
+        - fix logout (and improve login as well)
 
 version 0.10 (5 Nov 2004):
         * fix bug in event_submit

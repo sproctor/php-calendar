@@ -28,11 +28,6 @@ function login()
 	global $vars, $day, $month, $year, $user, $password;
 
 	$html = tag('div');
-        if(array_key_exists('lastaction', $vars)) {
-                $lastaction = $vars['lastaction'];
-        } else {
-                $lastaction = 'display';
-        }
 
 	//Check password and username
 	if(isset($vars['username'])){
@@ -42,14 +37,12 @@ function login()
 		if(check_user()){
                         $_SESSION['user'] = $user;
                         $_SESSION['password'] = $password;
-                        if(!empty($vars['day'])) {
-                                $day_string = "&day=$day";
-                        } else {
-                                $day_string = '';
-                        }
-			header("Location: $_SERVER[SCRIPT_NAME]?"
-                                        ."action=$lastaction$day_string"
-                                        ."&month=$month&year=$year");
+                        $string = "Location: $_SERVER[SCRIPT_NAME]?";
+                        if(!empty($vars['lastaction']))
+                                $string .= "action=$lastaction&";
+                        if(!empty($vars['day'])) $string .= "day=$day&";
+                        $string .= "month=$month&year=$year";
+                        header($string);
 			return tag('h2', _('Loggin in...'));
 		}
 
@@ -57,13 +50,17 @@ function login()
 
 	}
 
-	$html[] = login_form($lastaction);
+	$html[] = login_form();
 	return $html;
 }
 
 
-function login_form($lastaction)
+function login_form()
 {
+        global $vars;
+
+        $lastaction = empty($vars['lastaction']) ? '' : $vars['lastaction'];
+
 	return tag('form', attributes("action=\"$_SERVER[SCRIPT_NAME]\"",
 				'method="post"'),
 		tag('table', attributes('class="phpc-main"'),

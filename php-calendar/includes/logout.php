@@ -29,8 +29,13 @@ function logout()
 
 	session_unregister('user');
 	session_unregister('password');
-	header("Location: $_SERVER[SCRIPT_NAME]?action=$vars[lastaction]"
-                        ."&day=$day&month=$month&year=$year");
+
+	$string = "Location: $_SERVER[SCRIPT_NAME]?";
+        if(!empty($vars['lastaction'])) $string .= "action=$vars[lastaction]&";
+        if(!empty($vars['day'])) $string .= "day=$day&";
+        $string .= "month=$month&year=$year";
+
+        header($string);
 	exit;
 }
 ?>
