@@ -9,7 +9,7 @@ a {
 }
 
 a:hover {
-  color: maroon;
+  color: gray;
   background-color: inherit;
 }
 
@@ -65,7 +65,7 @@ th {
 }
 
 #calendar table a:hover {
-  background-color: maroon;
+  background-color: gray;
   color: inherit;
 }
 
