@@ -144,7 +144,8 @@ function calendar($year, $month, $day, $database, $mysql_tablename)
   $currentmonth = date("n");
   $currentyear = date("Y");
 
-  $firstday = date("w", mktime(0,0,0,$month,1,$year));
+  if(empty($start_monday)) $firstday = date("w", mktime(0,0,0,$month,1,$year));
+  else $firstday = (date("w", mktime(0,0,0,$month,1,$year)) + 6) % 7;
   $lastday = date("t", mktime(0,0,0,$month,1,$year));
 
   echo "<table id=\"calendar\">
@@ -190,10 +191,6 @@ for ($week_index = 0;; $week_index++) {
   echo "  <tr>\n";
 
   for ($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
-    // If we want to start on monday, then start on monday!
-    if(!empty($start_monday)) {
-      $day_of_week = ($day_of_week + 1) % 7;
-    }
     $i = $week_index * 7 + $day_of_week;
     $day_of_month = $i - $firstday + 1;
 
