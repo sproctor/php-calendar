@@ -1,16 +1,14 @@
-finish moving to new xhtml infrastructure
 add support for real users - started
 unbreak gettext
 thoroughly test the install, make it more robust
 write page to create new admins, etc.
 ability to display the next N events or events within a certain range.
 enhancements to display:
- - if id is given, show that id, if next is set, show $next id's
- - if day is given, show that day
- - if month is given, show that month
- - if year is given, show that year
- - if nothing is given show the current year
-
+  half - if id is given, show that id, if next is set, show $next id's
+  done - if day is given, show that day
+  done - if month is given, show that month
+  not  - if year is given, show that year
+  done - if nothing is given show the current year
 make recurring events more powerful
 display range of time in month view rather than just start time
 integrate email_events.php
