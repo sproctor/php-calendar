@@ -134,15 +134,16 @@ if($config['translate'] && empty($no_gettext)) {
 
 	switch($lang) {
 		case 'de':
+                        putenv("LANGUAGE=de_DE");
 			putenv("LANG=de_DE");
 			setlocale(LC_ALL, 'de_DE');
 			break;
 		case 'en':
-			setlocale(LC_ALL, 'en_US');
+			setlocale(LC_ALL, 'english');
 			break;
 	}
 
-	bindtextdomain('messages', $phpc_root_path . 'locale');
+	bindtextdomain('messages', /* $phpc_root_path .*/ '/var/www/rottenvegetable.org/locale');
 	textdomain('messages');
 }
 ?>
