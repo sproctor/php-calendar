@@ -8,5 +8,6 @@ NEWS
           4.54 w/ day of week functions added for postgresql and mysql)
         - fix a few scattered bugs
         - make PostgreSQL work for new installations again
+        - fix bug with multiple word searches
 
 Prior versions didn't have a NEWS file.
