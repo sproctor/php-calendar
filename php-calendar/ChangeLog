@@ -6,26 +6,29 @@ Version 0.6:
         * starting to drop netscape 4 support again
         * added configuration to start week on monday
         * separated out style sheets, css clean ups
+        * started to add multiple language support with gettext
+        * moved modify into a link for each item
+        * made delete into checkboxes
 
-Version 0.5:
+Version 0.5 (3/15/02):
 	* remove some warnings
 	* fixed up indentation
 	* a number of minor style changes
 	* disallow remote access to config, header and footer files in apache
 	* added an install script
 	* removed $REMOTE_USER support, because I'll be adding my own 
-	eventually, and I never used or tested the current one.
+	  eventually, and I never used or tested the current one.
 	* added checking to mysql, reloading modify and add pages doesn't give
-	the same entry many times.  deleting a non-existant item displays a 
-	failure
+	  the same entry many times.  deleting a non-existant item displays a 
+	  failure
 	* added an update script for version 0.3 and below
-	
+
 Version 0.4 (2/20/2002):
 	* fix am/pm issues with new time input
 	* add duration to events
 	* add event type for full day and questionable times
 	* not compatible with old databases
-	
+
 Version 0.3 (02/15/2002):
 	* fix to make links work properly in IE
 	* minor color tweak
@@ -42,10 +45,10 @@ Version 0.2 (02/14/2002):
 	* bug that caused modified elements to be added twice fixed
 	* now regresses well in Netscape 4 (switches to HTML 4 transitional 
 	for old browsers)
-	
+
 Version 0.1 (02/11/2002):
 	* moved to php4, if anyone finds a version of php4 that doesn't work, 
-	or finds this to work in a older version, please let me know
+          or finds this to work in a older version, please let me know
 	* lots of style and HTML changes to try to make the calendar look more 
 	professional.  I've tried to make the style sheet somewhat friendly.  
 	If someone makes changes and wants a different style sheet included as 
@@ -56,24 +59,29 @@ Version 0.1 (02/11/2002):
 	intended.  IE 5.5 and 6.0 don't support the CSS element 
 	border-spacing, so they look a little funny.  Netscape 4.x looks 
 	awful, but is still usable.
-	* there was a bug where if you didn't include a subject, the post 
-	wouldn't show.
+	* there was a bug where if you didn't include a subject, the post
+          wouldn't show.
 	* included timestamp on the table
 	* added variables to change the displayed title and the header.
 	* some code cleanups.
-	
+
 Changes copied from original CST-Calendar CHANGES file:
+        * Made the system 'authentication aware'. If you've got some sort of 
+        authentication module that causes
+        $REMOTE_USER to be set (as all of them do), the only username you can 
+        delete/modify/add with is whatever
+        you logged in as. Some sort of super-user might be added some day. If 
+        you don't have an authentication
+        method, you just get to change whatever you like.
+        * A few usability enhancements. If something goes wrong in the 
+        add/modify/delete stage, you're always
+        given a button to return to the calendar (no pressing back and getting 
+        POST missing messages).
 
-* Made the system 'authentication aware'. If you've got some sort of authentication module that causes
-  $REMOTE_USER to be set (as all of them do), the only username you can delete/modify/add with is whatever
-  you logged in as. Some sort of super-user might be added some day. If you don't have an authentication
-  method, you just get to change whatever you like.
+        * Bug fixes relating the mysql_select_db function, which was hardcoded 
+        to select database 'calendar' before,
+        instead of being nice and using $mysql_database.
 
-* A few usability enhancements. If something goes wrong in the add/modify/delete stage, you're always
-  given a button to return to the calendar (no pressing back and getting POST missing messages).
-
-* Bug fixes relating the mysql_select_db function, which was hardcoded to select database 'calendar' before,
-  instead of being nice and using $mysql_database.
-
-* Bug fix for some browsers where setting a <td bgcolor=xxx> flag caused the rest of the row to default to that
-  colour, resulting in the calendar not greying out past days properly.
+        * Bug fix for some browsers where setting a <td bgcolor=xxx> flag 
+        caused the rest of the row to default to that
+          colour, resulting in the calendar not greying out past days properly.
