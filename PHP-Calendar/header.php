@@ -61,6 +61,7 @@ img {
 
 a {
   color: $textcolor;
+  background-color: inherit;
 }
 
 a:active {
@@ -126,7 +127,7 @@ ul {
 
 table.display {
   padding: 0px;
-  margin-top: 4px 0 0 0;
+  margin-top: 4px;
   background-color: $bordercolor;
   color: inherit;
 }
@@ -146,6 +147,7 @@ table.display td.title {
 table.calendar {
   text-align: center;
   font-size: 10pt;
+  font-weight: bold;
   ";
   if($BName != "MSIE" || $BVersion >= 6) echo "table-layout: fixed;
   "; echo "background-color: $bordercolor;
@@ -153,7 +155,7 @@ table.calendar {
 }
 
 table.nav {
-  font-size: 12pt;
+  font-size: 10pt;
   text-align: center;
   background-color: $bordercolor;
   margin: 4px 0;
@@ -162,7 +164,6 @@ table.nav {
   border-spacing: 1px;
   table-layout: fixed;
   color: $headercolor;
-  font-size: 10pt;
 }
 
 table.nav td {
@@ -192,11 +193,6 @@ table.nav a:hover {
   background-color: $headercolor;
 }
 
-table.calendar {
-  font-size: 12pt;
-  font-weight: bold;
-}
-
 td.past {
   color: inherit;
   background-color: $pastcolor;
@@ -216,7 +212,7 @@ td.none {
   color: inherit;
 }
 
-table.list {
+table.future, table.past {
   "; if(!isold()) echo "padding: 0;
   margin: 2px 0 0 0;
   "; echo "background-color: $bordercolor;
@@ -225,14 +221,14 @@ table.list {
   width: 100%;
 }
 
-table.list td {
+table.future td, table.past td {
   font-size: 10pt;
   font-weight: normal;
   padding: 0;
   width: 100%;
 }
 
-table.list a {
+table.future a, table.past a {
   display: block;
   text-decoration: none;
   padding: 2px;";
@@ -240,22 +236,22 @@ table.list a {
   echo "
 }
 
-td.past table.list a:hover {
+table.past a:hover {
   color: $bgcolor;
   background-color: $futurecolor;
 }
 
-td.future table.list a:hover {
+table.future a:hover {
   color: $bgcolor;
   background-color: $pastcolor;
 }
 
-td.past table.list td {
+table.past td {
   background-color: $pastcolor;
   color: inherit;
 }
 
-td.future table.list td {
+table.future td {
   background-color: $futurecolor;
   color: inherit;
 }
@@ -268,8 +264,9 @@ table.edit {
 }
 
 table.calendar thead td {
-  background-color: $headerbgcolor;
-  font-weight: bold;
+  color: $textcolor;
+  background-color: $tablebgcolor;
+  font-size: 12pt;
 }
 
 table.edit td {

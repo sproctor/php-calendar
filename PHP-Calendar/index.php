@@ -121,14 +121,12 @@ $lastday = date("t", mktime(0,0,0,$month,$day,$year));
 				echo "<td class=none>" . ifold("&nbsp;", "") . "</td>";
 				continue;
 			}
-			if ($currentyear > $year || ($currentmonth > $month || $currentmonth == $month && $currentday > $nextday) && $currentyear == $year)
-			{
-				echo "<td valign=top class=past" . ifold(" height=80>", ">");
-			}
-			else    
-			{
-                               	echo "<td valign=top class=future" . ifold(" height=80>", ">");
+			if ($currentyear > $year || ($currentmonth > $month || $currentmonth == $month && $currentday > $nextday) && $currentyear == $year) {
+				$pastorfuture = "past";
+			} else {
+				$pastorfuture = "future";
                         }
+                        echo "<td valign=top class=$pastorfuture" . ifold(" height=80>", ">");
 			echo "<a href=\"display.php?day=$nextday&amp;month=$month&amp;year=$year\" class=date>" . ifold("<b>$nextday</b></a>", "$nextday</a>");
 			$query = mysql_query("SELECT subject, stamp, eventtype FROM $mysql_tablename WHERE stamp >= \"$year-$month-$nextday 00:00:00\" AND stamp <= \"$year-$month-$nextday 23:59:59\" ORDER BY stamp");
 			$tabling = 0;
@@ -140,9 +138,11 @@ $lastday = date("t", mktime(0,0,0,$month,$day,$year));
 					if($i == 0) { if(isold()) { echo "
 <table cellspacing=0 cellpadding=0 border=0 width=\"100%\">
 <tr><td bgcolor=\"$bordercolor\">
-<table class=list cellspacing=1 cellpadding=2 border=0 width=\"100%\">\n"; }
-else if($BName == "MSIE") { echo "\n<table class=list cellspacing=1>"; }
-else echo "\n<table class=list>";
+<table class=$pastorfuture cellspacing=1 cellpadding=2 border=0 
+  width=\"100%\">\n"; 
+} elseif($BName == "MSIE") { 
+    echo "\n<table class=$pastorfuture cellspacing=1>"; }
+else echo "\n<table class=$pastorfuture>";
 						$tabling = 1;
 					}
 					$subject = htmlspecialchars(stripslashes($results['subject']));

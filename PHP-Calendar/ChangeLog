@@ -1,4 +1,4 @@
-PHPCalendar: php + mysql + html 4 + CSS 2
+php-calendar: php + mysql + html 4 + CSS 2
 
 Version 0.5:
 	* remove some warnings
