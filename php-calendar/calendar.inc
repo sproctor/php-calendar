@@ -56,9 +56,23 @@ function print_header()
   echo "</head>";
 }
 
+function translate()
+{
+  if(isset($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
+    $lang = $_SERVER["HTTP_ACCEPT_LANGUAGE"];
+  } else {
+    $lang = "en-us";
+  }
+
+  setlocale(LC_ALL, "de_DE");
+  bindtextdomain("messages", "./locale");
+  textdomain("messages");
+}
+
 function top()
 {
   global $header;
+  translate();
   doctype();
   echo "<html xml:lang=\"en\">\n";
   print_header();
@@ -69,12 +83,8 @@ function top()
 function print_footer()
 {
   echo "<p>
-  <a href=\"http://validator.w3.org/check/referer\">
-    <img src=\"valid-html401.png\" alt=\"[HTML 4.01]\" />
-  </a>
-  <a href=\"http://jigsaw.w3.org/css-validator/check/referer\">
-    <img src=\"valid-css.png\" alt=\"[CSS2]\" />
-  </a>
+  [<a href=\"http://validator.w3.org/check/referer\">Valid XHTML 1.1</a>]
+  [<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
 </p>";
 }
 
