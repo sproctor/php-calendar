@@ -317,15 +317,24 @@ function display_id($id)
 	$name = stripslashes($row['username']);
 	$desc = parse_desc($row['description']);
 
-	return tag('div', attributes('class="phpc-main"'),
-			tag('h2', $subject),
-			tag('div', 'by ', tag('cite', $name)),
-			tag('div', create_id_link(_('Modify'), 'event_form',
-                                        $id), "\n", create_id_link(_('Delete'),
-                                                'event_delete', $id)),
-			tag('div', tag('div', _('Time').": $time_str"),
-				tag('div', _('Duration').": $dur_str")),
-			tag('p', $desc));
+        if(check_user()) {
+                return tag('div', attributes('class="phpc-main"'),
+                                tag('h2', $subject),
+                                tag('div', 'by ', tag('cite', $name)),
+                                tag('div', create_id_link(_('Modify'), 'event_form',
+                                                $id), "\n", create_id_link(_('Delete'),
+                                                        'event_delete', $id)),
+                                tag('div', tag('div', _('Time').": $time_str"),
+                                        tag('div', _('Duration').": $dur_str")),
+                                tag('p', $desc));
+        } else {
+                return tag('div', attributes('class="phpc-main"'),
+                                tag('h2', $subject),
+                                tag('div', 'by ', tag('cite', $name)),
+                                tag('div', tag('div', _('Time').": $time_str"),
+                                        tag('div', _('Duration').": $dur_str")),
+                                tag('p', $desc));
+        }
 }
 
 ?>
