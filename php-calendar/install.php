@@ -56,15 +56,11 @@ if(!isset($HTTP_POST_VARS['config'])) {
 	add_sql_user();
 } elseif(!isset($HTTP_POST_VARS['base'])) {
 	install_base();
-} elseif(!isset($HTTP_POST_VARS['calendar_title'])) {
-	get_calendar();
-} elseif(!isset($HTTP_POST_VARS['made_calendar'])) {
-	add_calendar();
 } elseif(!isset($HTTP_POST_VARS['admin_user'])
 		&& !isset($HTTP_POST_VARS['admin_pass'])) {
 	get_admin();
 } else {
-	add_admin();
+	add_calendar();
 }
 
 function get_config()
@@ -389,9 +385,7 @@ function add_calendar()
 		die("Couldn't create calendar. $error[code]: $error[message]<pre>$query</pre>");
 	}
 
-	echo "<p>calendar created</p>\n"
-		."<div><input name=\"made_calendar\" type=\"submit\" "
-		."value=\"continue\"></div>";
+	echo "<p>calendar created</p>\n";
 
 	$passwd = md5($HTTP_POST_VARS['admin_pass']);
 
@@ -418,7 +412,7 @@ function add_calendar()
 	}
 
 	echo "<p>admin added; <a href=\"index.php\">View calendar</a></p>";
-	echo '<p>you should delete install.php now</p>';
+	echo '<p>you should delete install.php now and chmod 444 config.php</p>';
 }
 
 echo '</form></body></html>';
