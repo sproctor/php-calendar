@@ -51,10 +51,7 @@ function submit_event()
 {
 	global $calno, $day, $month, $year, $db, $vars, $config;
 
-	if(isset($vars['modify'])) {
-		if(!isset($vars['id'])) {
-			soft_error(_('No ID given.'));
-		}
+	if(isset($vars['id'])) {
 		$id = $vars['id'];
 		$modify = 1;
 	} else {

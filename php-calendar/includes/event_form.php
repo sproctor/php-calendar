@@ -32,12 +32,8 @@ function event_form($action)
 	$output .= ">\n"
 		."<caption>\n";
 
-	if($action == 'modify') {
-		if(!isset($vars['id'])) {
-			return '<h2>'._('Nothing to modify.').'</h2>';
-		} else {
-			$id = $vars['id'];
-		}
+	if(isset($vars['id'])) {
+		$id = $vars['id'];
 
 		$output .= sprintf(_('Modifying id #%d'), $id);
 
@@ -103,11 +99,8 @@ function event_form($action)
 		."<tr>\n"
 		."<td colspan=\"2\">\n";
 
-	if($action == 'modify') {
-		$output .= '<input type="hidden" name="modify" value="1" />'
-			."\n<input type=\"hidden\" name=\"id\" value=\"$id\" />"
-			."\n";
-	}
+	if(isset($id)) $output .= "<input type=\"hidden\" name=\"id\""
+		." value=\"$id\" />\n";
 
 	$output .= '<input type="submit" value="'._("Submit Item")."\" />\n"
 		."<input type=\"hidden\" name=\"action\" value=\"submit\" />\n"
