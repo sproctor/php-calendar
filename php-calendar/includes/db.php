@@ -37,8 +37,8 @@ switch($dbms)
 		include($phpbb_root_path . 'db/mysql4.'.$phpEx);
 		break;
 
-	case 'postgres':
-		include($phpbb_root_path . 'db/postgres7.'.$phpEx);
+	case 'postgres7':
+		include($phpc_root_path . 'db/postgres7.'.$phpEx);
 		break;
 
 	case 'mssql':

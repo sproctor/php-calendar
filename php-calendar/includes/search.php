@@ -104,9 +104,9 @@ function search_form()
 
 		for ($i = 1; $i <= 31; $i++){
 			if ($i == $day) {
-				$optday .= "<option value=\"$i\" selected=\"selected\">$i</option>\n";
+				$optday = "<option value=\"$i\" selected=\"selected\">$i</option>\n";
 			} else {
-				$optday .= "<option value=\"$i\">$i</option>\n";
+				$optday = "<option value=\"$i\">$i</option>\n";
 			}
 		}
 
@@ -115,9 +115,9 @@ function search_form()
 		for ($i = 1; $i <= 12; $i++) {
 			$nm = month_name($i);
 			if ($i == $month) {
-				$optmonth .= "<option value=\"$i\" selected=\"selected\">$nm</option>\n";
+				$optmonth = "<option value=\"$i\" selected=\"selected\">$nm</option>\n";
 			} else {
-				$optmonth .= "<option value=\"$i\">$nm</option>\n";
+				$optmonth = "<option value=\"$i\">$nm</option>\n";
 			}
 		}
 
@@ -126,9 +126,9 @@ function search_form()
 
 		for ($i=$year-2; $i<$year+5; $i++) {
 			if ($i == $year) {
-				$optyear .= "<option value=\"$i\" selected=\"selected\">$i</option>\n";
+				$optyear = "<option value=\"$i\" selected=\"selected\">$i</option>\n";
 			} else {
-				$optyear .= "<option value=\"$i\">$i</option>\n";
+				$optyear = "<option value=\"$i\">$i</option>\n";
 			}
 		}
 		$optyear .= "   </select>\n";

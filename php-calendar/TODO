@@ -4,3 +4,7 @@ add support for real users.
 unbreak gettext
 abstract things out better to allow for theming, etc. maybe.
 switch to phpBB sessions
+
+later:
+add an interface to pick a color for each event
+add a full year view. days with events should be a different color. full day events should be another color.

@@ -23,19 +23,22 @@ installation procedure and instructions.
 ---------------
 1 Requirements
 ---------------
--PHP 3.0.12 or higher
--MySQL
+-PHP 4.0 or higher
+-MySQL or PostgreSQL
 -ssh (try putty for windows http://www.chiark.greenend.org.uk/~sgtatham/putty/)
-  or an FTP program which can utilize the CHMOD command (try smartFTP for window
-  http://www.smartftp.com/)
--HTML editor (might be helpful)
--If you are running your own server you can download MySQL from www.mysql.com and PHP from www.php.net
+  or an FTP program which can utilize the CHMOD command (try smartFTP for 
+  windows http://www.smartftp.com/)
+
+Recommended:
+-editor (for editing the configuration files)
+-If you are running your own server you can download MySQL from www.mysql.com 
+  and PHP from www.php.net and PostgreSQL from www.postgresql.org
 
 ---------------
 2 Installation
 ---------------
-Try steps 1-6 first.  If that does not work, don't freak out, I have included
-some additional work arounds.
+Try the basic instructions first.  If that does not work, don't freak out, 
+I have included some additional work arounds.
 
 -----------------------
 2.1 Basic Instructions
@@ -45,25 +48,9 @@ some additional work arounds.
 
 2) (Remote server only) Use FTP to connect the server your webpage is stored on and create a new directory where you want to store the calendar (example: 'calendar' for www.mydomain.com/calendar).  You can call it whatever you want.
 
-3) If your web server doesn't have access to write to the calendar directory
-(ie. the next step fails), though you may way to do this just to be safe, upload
-a blank config.inc.php file and make sure everyone has write permission to it
-(with shell access: chmod 666 config.inc.php; with ftp access use your ftp
-client to CHMOD it to 666).
+3) Open up a browser window and navigate to the file install.php in your calendar folder of your webpage (example: www.mydomain.com/calendar/install.php)
 
-4) Open up a browser window and navigate to the file install.php in your calendar folder of your webpage (example: www.mydomain.com/calendar/install.php)
-
-5) Fill in the necessary information -- I have included some examples of typical  answers
-
-MySQL Hostname: localhost (check with your domain host--this is usually 'localhost')
- Database name: (usually provided by your domain host)
-  Table Prefix: phpc_ (only change this if you understand what it is.)
-     User Name: (I used my MySQL username to be safe)
- User Password: (I used my MySQL password to be safe)
-    Admin Name: (provided by your domain host)
-    Admin Pass: (provided by your domain host)
-
-6) Hit Enter and see if it works
+4) Follow the directions given by the instaler.
 
 ***DON'T freak out if the above did not work***
 
@@ -72,33 +59,19 @@ MySQL Hostname: localhost (check with your domain host--this is usually 'localho
 ---------------------
 Try the following steps if the above did not work.
 
-7a) Go to your MySQL administration utility and if you do not have a database assigned to you, you must create one.  Give it a simple name and write down the Database Name, User Name and User Password to use in the rest of the installation.
+1) If you already have a database assigned to you, go to step 2. Otherwise, go to your MySQL administration utility and if you do not have a database assigned to you, you must create one.  Give it a simple name and write down the Database Name, User Name and User Password to use in the rest of the installation.
 
-7b) If you already have a database assigned to you, go to it and in MySQL run the following query:
-
-CREATE TABLE phpc_events (
-  id int(11) DEFAULT '0' NOT NULL auto_increment,
-  username varchar(255),
-  stamp datetime,
-  duration datetime,
-  eventtype int(4),
-  subject varchar(255),
-  description text,
-  PRIMARY KEY (id)
-);
+2) If you already have a database assigned to you, go to it and in MySQL run the queries in calendar.sql. (if you have shell on the server you can type: mysql -u username -p database < calendar.sql)
 
 You might need to contact your domain host to obtain explicit instructions on adding new tables or databases.
 
-8) Rename the config.inc.php-dist to config.inc.php
+3) Rename the config.php-dist to config.php
 
-9) Open config.inc.php with a text or HTML editor and edit the content by
+4) Open config.php with a text or HTML editor and edit the contents by
 replacing the second field (ex. localhost) with the proper information (view
-the file for descriptions of the items).
+the file for descriptions of the items). If you made the change off of the server where the calendar is hosted, upload the file after you're done editing.
 
-10) Delete the config.inc.php-dit file from your server and upload the modified
-config.inc.php file.
-
-11) Try running your calendar by navigating to the directory where you installed it (eaxample: www.mydomain.com/calendar).
+5) Try running your calendar by navigating to the directory where you installed it (eaxample: www.mydomain.com/calendar/).
 
 ***DON'T freeak out if you get errors***
 

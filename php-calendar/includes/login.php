@@ -26,7 +26,7 @@
 */ 
 
 function login(){
-	global $calno, $vars, $day, $month, $year, $user, $password;
+	global $calno, $vars, $day, $month, $year, $user, $password, $lastaction;
 
 	$output = '';
 
@@ -35,11 +35,7 @@ function login(){
 		$user = $vars['username'];
 		$password = $vars['password'];
 
-		if(!get_magic_quotes_gpc()) {
-			$user = addslashes($user);
-			$password = addslashes($password);
-		}
-
+// FIXME: make sure username and password don't have and special characters in them here
 		if(check_user()){
 			session_register('user');
 			session_register('password');
@@ -57,7 +53,7 @@ function login(){
 
 
 function login_form(){
-	global $day, $month, $year;
+	global $day, $month, $year, $lastaction;
 
 	$output = "<form action=\"index.php\" method=\"post\">\n"
 		."<table class=\"phpc-main\">\n"

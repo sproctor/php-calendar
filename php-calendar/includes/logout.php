@@ -24,6 +24,7 @@ function logout()
 	global $vars, $day, $month, $year;
 
 	session_unregister('user');
+	session_unregister('password');
 	header("Location: index.php?action=$vars[lastaction]&day=$day&month=$month&year=$year");
 	exit;
 }

@@ -17,10 +17,9 @@
    You should have received a copy of the GNU General Public License
    along with PHP-Calendar; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
  */
 
-function get_duration($duration)
+function get_duration($duration, $typeofevent)
 {
 	$dur_mins = $duration % 60;
 	$dur_hrs  = $duration / 60;
@@ -111,7 +110,7 @@ function display_date()
 		$time_str = formatted_time_string($row['starttime'],
 				$row['eventtype']);
 
-		$dur_str = get_duration($row['duration']);
+		$dur_str = get_duration($row['duration'], $row['eventtype']);
 		$output .= "<tr>\n"
 			."<th>\n";
 
@@ -156,7 +155,7 @@ function display_id($id)
 
 	$time_str = formatted_time_string($row['starttime'], $row['eventtype'])
 		.' '.$row['startdate'];
-	$dur_str = get_duration($row['duration']);
+	$dur_str = get_duration($row['duration'], $row['eventtype']);
 	$subject = stripslashes($row['subject']);
 	$name = stripslashes($row['username']);
 	$desc = stripslashes($row['description']);

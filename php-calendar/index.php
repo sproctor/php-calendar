@@ -29,7 +29,11 @@ session_start();
 ini_set('arg_separator.output', "&amp;");
 
 unset($user);
-$user = $HTTP_SESSION_VARS['user'];
+unset($password);
+
+if(isset($HTTP_SESSION_VARS['user'])) $user = $HTTP_SESSION_VARS['user'];
+if(isset($HTTP_SESSION_VARS['password']))
+$password = $HTTP_SESSION_VARS['password'];
 
 list($BName, $BVersion) = browser();
 
@@ -87,55 +91,55 @@ if(empty($vars['action'])) {
 switch($action) {
 	case 'add':
 
-		include($phpc_root_dir . 'includes/event_form.php');
+		include($phpc_root_path . 'includes/event_form.php');
 		$output = event_form('add');
 		break;
 
 	case 'delete':
 
-		include($phpc_root_dir . 'includes/event_delete.php');
+		include($phpc_root_path . 'includes/event_delete.php');
 		$output = delete();
 		break;
 
 	case 'display':
 
-		include($phpc_root_dir . 'includes/display.php');
+		include($phpc_root_path . 'includes/display.php');
 		$output = display();
 		break;
 
 	case 'submit':
 
-		include($phpc_root_dir . 'includes/event_submit.php');
+		include($phpc_root_path . 'includes/event_submit.php');
 		$output = submit_event();
 		break;
 
 	case 'modify':
 
-		include($phpc_root_dir . 'includes/event_form.php');
+		include($phpc_root_path . 'includes/event_form.php');
 		$output = event_form('modify');
 		break;
 
 	case 'search':
 
-		include($phpc_root_dir . 'includes/search.php');
+		include($phpc_root_path . 'includes/search.php');
 		$output = search();
 		break;
 
 	case 'login':
 
-		include($phpc_root_dir . 'includes/login.php');
+		include($phpc_root_path . 'includes/login.php');
 		$output = login();
 		break;
 
 	case 'logout':
 
-		include($phpc_root_dir . 'includes/logout.php');
+		include($phpc_root_path . 'includes/logout.php');
 		$output = logout();
 		break;
 
 	case 'main':
 
-		include($phpc_root_dir . 'includes/main.php');
+		include($phpc_root_path . 'includes/main.php');
 		$output = calendar();
 		break;
 

@@ -19,6 +19,34 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+function nextval()
+{
+	global $db, $dbms;
+
+	$sequence = SQL_PREFIX . 'sequence';
+
+	switch($dbms) {
+		case 'mysql':
+			$query = "INSERT INTO $sequence VALUES ('DEFAULT')";
+			$broken = 1;
+			break;
+		default:
+			$query = "SELECT NEXTVAL('$sequence') as num";
+			$broken = 0;
+	}
+
+	$result = $db->sql_query($query);
+
+	if(!$result) {
+		$error = $db->sql_error();
+		soft_error(_('nextval error').": $error[code]: $error[message]:\n$query");
+	}
+
+	if($broken) return $db->sql_nextid();
+
+	return $db->sql_fetchfield('num');
+}
+
 function submit_event()
 {
 	global $calno, $day, $month, $year, $db, $vars;
@@ -111,11 +139,13 @@ function submit_event()
 	$enddate = date('Y-m-d', $endstamp);
 	$duration = $duration_hour * 60 + $duration_min;
 
+	$table = SQL_PREFIX . 'events';
+
 	if($modify) {
 		if(!check_user() && ANON_PERMISSIONS < 2) {
 			soft_error('You do not have permission to modify events.');
 		}
-		$query = 'UPDATE '.SQL_PREFIX."events\n"
+		$query = "UPDATE $table\n"
 			."SET username='$username',\n"
 			."startdate='$startdate',\n"
 			."enddate='$enddate',\n"
@@ -129,10 +159,11 @@ function submit_event()
 		if(!check_user() && ANON_PERMISSIONS < 1) {
 			soft_error('You do not have permission to post.');
 		}
-		$query = 'INSERT INTO '.SQL_PREFIX."events\n"
-			."(username, startdate, enddate, starttime, duration,"
+		$id = nextval();
+		$query = "INSERT INTO $table\n"
+			."(id, username, startdate, enddate, starttime, duration,"
 			." subject, description, eventtype, calno)\n"
-			."VALUES ('$username', '$startdate', '$enddate',"
+			."VALUES ($id, '$username', '$startdate', '$enddate',"
 			."'$starttime', '$duration', '$subject',"
 			."'$description', '$typeofevent', '$calno')";
 	}
@@ -141,7 +172,7 @@ function submit_event()
 
 	if(!$result) {
 		$error = $db->sql_error();
-		soft_error(_('Error updating event')
+		soft_error(_('Error processing event')
 				." $error[code]: $error[message]\n"
 				."sql:\n$query");
 	}

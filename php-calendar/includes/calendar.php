@@ -26,12 +26,6 @@ include($phpc_root_path . 'includes/db.php');
 define('BEGIN_TRANSACTION', 1);
 define('END_TRANSACTION', 2);
 
-// Error codes
-define('GENERAL_MESSAGE', 200);
-define('GENERAL_ERROR', 202);
-define('CRITICAL_MESSAGE', 203);
-define('CRITICAL_ERROR', 204);
-
 function soft_error($str)
 {
 	echo "<html><head><title>Error</title></head>\n"
@@ -100,10 +94,10 @@ function translate()
 
 	switch($lang) {
 		case 'de':
-			setlocale('LC_ALL', 'de_DE');
+			setlocale(LC_ALL, 'de_DE');
 			break;
 		case 'en':
-			setlocale('LC_ALL', 'en_US');
+			setlocale(LC_ALL, 'en_US');
 			break;
 	}
 
@@ -153,11 +147,13 @@ function check_user()
 {
 	global $user, $password, $db, $calno;
 
-	if(empty($user)) return false;
+	if(!isset($user) || !isset($password)) return false;
+
+	$passwd = md5($password);
 
 	$query= "SELECT * FROM ".SQL_PREFIX."admin\n"
 		."WHERE UID = '$user' "
-		."AND password = PASSWORD('$password') "
+		."AND password = '$passwd' "
 		."AND calno = '$calno'";
 
 	$result = $db->sql_query($query);
@@ -166,6 +162,10 @@ function check_user()
 		soft_error("$error[code]: $error[message]");
 	}
 
+$rows = $db->sql_numrows($result);
+echo "<pre>check: $rows</pre>";
+echo "<pre>user: $user</pre>";
+echo "<pre>password: $password</pre>";
 	if($db->sql_numrows($result)) return true;
 	else return false;
 }
@@ -282,6 +282,42 @@ function bottom()
 	return $output;
 }
 
+function day_of_week($string, $quoted = 0)
+{
+	global $dbms;
+
+	switch($dbms) {
+		case 'mysql':
+			if($quoted)
+				return "DAYOFWEEK('$string')";
+			else
+				return "DAYOFWEEK($string)";
+		default:
+			if($quoted)
+				return "EXTRACT(DOW FROM TIMESTAMP '$string')";
+			else
+				return "EXTRACT(DOW FROM $string)";
+	}
+}
+
+function day_of_month($string, $quoted = 0)
+{
+	global $dbms;
+
+	switch($dbms) {
+		case 'mysql':
+			if($quoted)
+				return "DAYOFMONTH('$string')";
+			else
+				return "DAYOFMONTH($string)";
+		default:
+			if($quoted)
+				return "EXTRACT(DOW FROM TIMESTAMP '$string')";
+			else
+				return "EXTRACT(DAY FROM $string)";
+	}
+}
+
 function get_events_by_date($day, $month, $year)
 {
 	global $calno, $db;
@@ -293,12 +329,17 @@ function get_events_by_date($day, $month, $year)
 		." OR eventtype = 6)"
 		." OR startdate = '$year-$month-$day')\n"
 		."AND calno = '$calno'\n"
-		."AND (eventtype != 5 OR DAYOFWEEK(startdate) ="
-		." DAYOFWEEK('$year-$month-$day'))\n"
-		."AND (eventtype != 6 OR DAYOFMONTH(startdate) = '$day')\n"
+		."AND (eventtype != 5 OR ".day_of_week('startdate')." = "
+		.day_of_week("$year-$month-$day", 1).")\n"
+		."AND (eventtype != 6 OR ".day_of_month('startdate')." = '$day')\n"
 		."ORDER BY starttime";
 
 	$result = $db->sql_query($query);
+
+	if(!$result) {
+		$error = $db->sql_error();
+		soft_error(_('Error in get_events_by_date').": $error[code]: $error[message]\nsql:\n$query");
+	}
 
 	return $result;
 }
