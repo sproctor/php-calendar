@@ -4,6 +4,13 @@ include_once("config.inc");
 
 top();
 
+chdir("/usr/local/apache/htdocs/php-calendar");
+
+putenv("LANG=de");
+setlocale(LC_ALL, "de");
+bindtextdomain("messages", "./locale");
+textdomain("messages");
+
 $currentday = date("j");
 $currentmonth = date("n");
 $currentyear = date("Y");
@@ -68,7 +75,7 @@ echo "      $year
       <a href=\"?month=$lastmonth&amp;year=$year\">" . _("last month") . "</a>
     </td>
     <td>
-      <a href=\"?month=1&amp;year=$year\">" . _("Jan") . "</a>
+      <a href=\"?month=1&amp;year=$year\">" . gettext("Jan") . "</a>
     </td>
     <td>
       <a href=\"?month=2&amp;year=$year\">" . _("Feb") . "</a>

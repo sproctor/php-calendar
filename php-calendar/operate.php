@@ -51,13 +51,13 @@ switch($action) {
   case "add":
     if($action == "modify") {
       if (empty($_GET['id'])) {
-        echo "<div class=\"box\">Nothing to modify.</div>";
+        echo "<div class=\"box\">" _("Nothing to modify.") . "</div>";
         break;
       } else {
         $id = $_GET['id'];
       }
 
-      $headerstring = "We are about to modify id $id from $mysql_tablename";
+      $headerstring = _("Modifying id ") . $id . _("from") . $mysql_tablename;
       $result = mysql_query("SELECT * FROM $mysql_tablename WHERE id = '$id'")
         or die("couldn't get items from table");
 
@@ -85,7 +85,7 @@ switch($action) {
 
     } else {
       // case "add":
-      $headerstring = "Adding item to calendar";
+      $headerstring = _("Adding item to calendar");
 
       $result = mysql_query("SELECT max(id) as id FROM $mysql_tablename");
       if($result) {
@@ -118,22 +118,20 @@ switch($action) {
       echo " cellspacing=\"0\"";
     }
 
-    echo <<<END
->
+    echo ">
   <thead>
   <tr>
-    <th colspan="2">$headerstring</th>
+    <th colspan=\"2\">$headerstring</th>
   </tr>
   </thead>
   <tbody>
   <tr>
-    <td>Name</td>
-    <td><input type="text" name="username" size="20" value="$username" /></td>
+    <td>" . _("Name") . "</td>
+    <td><input type=\"text\" name=\"username\" size=\"20\" value=\"$username\" /></td>
   </tr>
-  <tr><td>Day</td>
+  <tr><td>" . _("Day") . "</td>
     <td>
-      <select name="day" size="1">\n
-END;
+      <select name=\"day\" size=\"1\">\n";
      
     $lastday = date("t", mktime(0,0,0,$month,1,$year));
     for ($i = 1; $i <= $lastday; $i++){
@@ -303,7 +301,7 @@ END;
 
   case "doadd":
     if(empty($_GET['id'])) {
-      echo "<div class=\"box\">No ID given.</div>";
+      echo "<div class=\"box\">" . _("No ID given.") . "</div>";
       break;
     } else {
       $id = $_GET['id'];
@@ -322,7 +320,7 @@ END;
       if($result) {
         $row = mysql_fetch_array($result);
         if($id != $row['id'] + 1) {
-          echo "<div class=\"box\">" . _("Item already created") . "</div>";
+          echo "<div class=\"box\">" . _("Item already created.") . "</div>";
           break;
         }
       }
@@ -379,17 +377,19 @@ END;
 
     $result = mysql_query("INSERT INTO $mysql_tablename (username, stamp, subject, description, eventtype, duration) VALUES ('$username', '$timestamp', '$subject', '$description', '$typeofevent', '$durationstamp')");
     if ($result)
-      echo "<div class=\"box\">Item added ...</div>";
+      echo "<div class=\"box\">" . _("Item added.") . "</div>";
     else {
-      echo "<div class=\"box\">Item may not have been added ...", mysql_error(), "</div>";
+      echo "<div class=\"box\">" . _("Error adding item: ") . mysql_error()
+        . "</div>";
     }
      
     break;
 }
 
 echo "<div>
-  <a class=\"box\" href=\"display.php?month=$month&amp;year=$year&amp;day=$day\">View date</a>
-  <a class=\"box\" href=\"index.php?month=$month&amp;year=$year\">Back to Calendar</a>
+  <a class=\"box\" href=\"display.php?month=$month&amp;year=$year&amp;day=$day\">" . _("View date") . "</a>
+  <a class=\"box\" href=\"index.php?month=$month&amp;year=$year\">"
+  . _("Back to Calendar") . "</a>
 </div>";
 
 bottom();

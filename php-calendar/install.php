@@ -1,6 +1,10 @@
 <?
 include_once("calendar.inc");
-include_once("install.inc");
+
+$title = 'PHP-Calendar Install';
+$header = 'PHP-Calendar Install';
+$start_monday = 0;
+$hour_24 = 1;
 
 top();
 
