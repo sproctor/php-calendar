@@ -58,6 +58,10 @@ caption {
   height: 80px;
 }
 
+#calendar td {
+  overflow: hidden;
+}
+
 #calendar table {
   width: 100%;
   border-spacing: 1px;
@@ -67,8 +71,6 @@ caption {
   font-size: 10pt;
   font-weight: normal;
   padding: 0;
-  width: 100%;
-  overflow: hide;
 }
 
 #calendar table a {
@@ -105,7 +107,7 @@ caption {
 
 table.box {
   width: 100%;
-   border-spacing: 0;
+  border-spacing: 0;
 }
 
 table.box td {
