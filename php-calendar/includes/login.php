@@ -22,7 +22,7 @@
 function login(){
 	global $vars, $day, $month, $year, $user, $password;
 
-	$html[] = tag('div');
+	$html = tag('div');
 
 	//Check password and username
 	if(isset($vars['username'])){
