@@ -25,7 +25,7 @@ sproctor@rottenvegetable.org.
 -ssh (try putty for windows http://www.chiark.greenend.org.uk/~sgtatham/putty/)
   or an FTP program which can utilize the CHMOD command (try smartFTP for 
   windows http://www.smartftp.com/)
--adodb
+-adodb 2.41 or greater
 
 Recommended:
 -editor (for editing the configuration files)

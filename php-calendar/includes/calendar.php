@@ -255,16 +255,19 @@ function get_events_by_date($day, $month, $year)
 5 - weekly event
 6 - monthly event
 */
+        $startdate = $db->SQLDate('Y-m-d', 'startdate');
+        $enddate = $db->SQLDate('Y-m-d', 'enddate');
+        $date = sprintf('%4d-%02d-%02d', $year, $month, $day);
 	$query = 'SELECT * FROM '.SQL_PREFIX."events\n"
-		."WHERE (startdate <= '$year-$month-$day'\n"
-		."AND enddate >= '$year-$month-$day'"
+		."WHERE ($startdate <= '$date'\n"
+		."AND $enddate >= '$date'"
 //		."AND (eventtype = 4 OR eventtype = 5"
 //		." OR eventtype = 6)"
 //		." OR startdate = '$year-$month-$day')\n"
 		.")\n"
 		."AND calendar = '$calendar_name'\n"
 		."AND (eventtype != 5 OR DAYOFWEEK(startdate) = "
-		."DAYOFWEEK(DATE '$year-$month-$day'))\n"
+		."DAYOFWEEK(DATE '$date'))\n"
 		."AND (eventtype != 6 OR DAYOFMONTH(startdate) = '$day')\n"
 		."ORDER BY starttime";
 
