@@ -24,7 +24,7 @@ if ( !defined('IN_PHPC') ) {
 	die("Hacking attempt");
 }
 
-include('adodb.inc.php');
+include('adodb/adodb.inc.php');
 
 // Make the database connection.
 $db = NewADOConnection($dbms);

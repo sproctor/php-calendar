@@ -29,7 +29,7 @@ define('BEGIN_TRANSACTION', 1);
 define('END_TRANSACTION', 2);
 
 include($phpc_root_path . 'includes/calendar.php');
-include('adodb.inc.php');
+include('adodb/adodb.inc.php');
 
 echo '<html>
 <head>
