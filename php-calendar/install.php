@@ -72,8 +72,10 @@ function get_config()
 {
 	global $phpc_root_path;
 
-	if(is_writeable($phpc_root_path . 'config.php')
-			|| is_writeable($phpc_root_path)) {
+        $config_file = $phpc_root_path . 'config.php';
+
+	if( $file = @fopen($config_file, 'w')) {
+                fclose($file);
 		echo '<input type="hidden" name="config" value="1">
 			<p>your config file is writable</p>
 			<input type="submit" value="continue">';
