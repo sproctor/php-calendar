@@ -1,5 +1,5 @@
 <?php
-include_once("calendar.inc")
+include_once("calendar.inc");
 include_once("config.inc");
 
 top();

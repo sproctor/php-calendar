@@ -68,19 +68,22 @@ if(empty($action)) {
 
     $database = mysql_connect($my_hostname, $admin_username, $admin_passwd)
         or die("Could not connect to server");
+
+    if(!mysql_query("CREATE DATABASE $my_database") and mysql_errno() != "1007")
+      die(mysql_errno() . ": " . mysql_error());
+
     mysql_select_db("mysql")
         or die("could not select mysql");
 
-    $query = "REPLACE INTO user (host, user, password)
+    $result = mysql_query("REPLACE INTO user (host, user, password)
     VALUES (
         '$my_hostname',
         '$my_username',
         password('$my_passwd')
-    );";
-    $result = mysql_query($query)
+    );")
         or die("Could not add user");
 
-    $query = "REPLACE INTO db (host, db, user, select_priv, insert_priv,
+    mysql_query("REPLACE INTO db (host, db, user, select_priv, insert_priv,
                  update_priv, delete_priv, create_priv, drop_priv)
     VALUES (
         '$my_hostname',
@@ -88,17 +91,13 @@ if(empty($action)) {
         '$my_username',
         'Y', 'Y', 'Y', 'Y',
         'Y', 'Y'
-    );";
-    $result = mysql_query($query)
+    );")
         or die("Could not change privileges"); 
     
-    if(!mysql_query("CREATE DATABASE $my_database") and mysql_errno() != "1007")
-      die(mysql_errno() . ": " . mysql_error());
-
     mysql_select_db($my_database)
         or die("Could not select $my_database");
 
-    $query = "CREATE TABLE $my_tablename (
+    mysql_query("CREATE TABLE $my_tablename (
   id int(11) DEFAULT '0' NOT NULL auto_increment,
   username varchar(255),
   stamp datetime,
@@ -107,16 +106,13 @@ if(empty($action)) {
   subject varchar(255),
   description blob,
   PRIMARY KEY (id)
-);";
-    $result = mysql_query($query)
+);")
         or die("Could not create table");
 
-    $query = "GRANT SELECT, INSERT, UPDATE, DELETE ON $my_tablename TO $my_username;";
-    $result = mysql_query($query)
+    mysql_query("GRANT SELECT, INSERT, UPDATE, DELETE ON $my_tablename TO $my_username;")
         or die("Could not grant");
 
-    $query = "FLUSH PRIVILEGES;";
-    $result = mysql_query($query)
+    mysql_query("FLUSH PRIVILEGES;")
         or die("Could not flush privileges");
 
     mysql_close($database);
