@@ -31,8 +31,17 @@ function new_user_submit()
                 return tag('div', _('Permission denied'));
         }
 
-        if($vars['password1'] != $vars['password2']) {
-                return tag('div', _('You passwords did not match'));
+        if(empty($var['user_name'])) {
+                return tag('div', _('You must specify a user name'));
+        }
+
+        if(empty($var['password1'])) {
+                return tag('div', _('You must specify a password'));
+        }
+
+        if(empty($vars['password2'])
+                || $vars['password1'] != $vars['password2']) {
+                return tag('div', _('Your passwords did not match'));
         }
 
         $passwd = md5($_POST['password1']);

@@ -178,7 +178,7 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 function get_duration($duration, $typeofevent)
 {
 	$dur_mins = $duration % 60;
-	$dur_hrs  = $duration / 60;
+	$dur_hrs  = floor($duration / 60);
 
 	$dur_str = '';
 
@@ -187,7 +187,7 @@ function get_duration($duration, $typeofevent)
 		$comma = 0;
 		if(!empty($dur_hrs)) {
 			$comma = 1;
-			$dur_str .= "$dur_hrs "._('hours');
+			$dur_str .= "$dur_hrs "._('hour(s)');
 		}
 		if($dur_mins) {
 			if($comma) $dur_str .= ', ';
