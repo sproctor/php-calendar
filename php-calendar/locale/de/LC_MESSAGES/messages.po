@@ -12,7 +12,7 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: display.php:46 index.php:146
@@ -113,7 +113,7 @@ msgstr "Dez"
 
 #: index.php:134
 msgid "next month"
-msgstr "nchste Monat"
+msgstr "n&auml;chste Monat"
 
 #: index.php:141
 msgid "last year"
@@ -121,7 +121,7 @@ msgstr "voheriger Jahr"
 
 #: index.php:151
 msgid "next year"
-msgstr "nchste Jahr"
+msgstr "n&auml;chste Jahr"
 
 #: index.php:165 index.php:188
 msgid "Sunday"

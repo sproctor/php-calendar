@@ -8,7 +8,7 @@ $hour_24 = 1;
 
 top();
 
-if(empty($action)) {
+if(!isset($action)) {
     echo "<form method=\"GET\" action=\"install.php\">
 <table class=\"display\">
   <tr>

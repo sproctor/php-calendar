@@ -4,13 +4,13 @@ include_once("config.inc");
 
 top();
 
-if(empty($_GET['day'])) $day = date("j");
+if(!isset($_GET['day'])) $day = date("j");
 else $day = $_GET['day'];
 
-if(empty($_GET['month'])) $month = date("n");
+if(!isset($_GET['month'])) $month = date("n");
 else $month = $_GET['month'];
 
-if(empty($_GET['year'])) $year = date("Y");
+if(!isset($_GET['year'])) $year = date("Y");
 else $year = $_GET['year'];
 
 $tablename = date('Fy', mktime(0,0,0,$month,1,$year));

@@ -58,16 +58,28 @@ function print_header()
 
 function translate()
 {
-  if(isset($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
-    $lang = $_SERVER["HTTP_ACCEPT_LANGUAGE"];
+  if(isset($_GET['lang'])) {
+    $lang = substr($_GET['lang'], 0, 2);
+    setcookie('lang', $lang);
+  } elseif(isset($_COOKIE['lang'])) {
+    $lang = substr($_COOKIE['lang'], 0, 2);
+  } elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+    $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
   } else {
-    $lang = "en-us";
+    $lang = 'en';
   }
 
-  setlocale(LC_ALL, "de_DE");
-  //setlocale(LC_ALL, "en_US");
-  bindtextdomain("messages", "./locale");
-  textdomain("messages");
+  switch($lang) {
+    case 'de':
+      setlocale(LC_ALL, 'de_DE');
+      break;
+    case 'en':
+      setlocale(LC_ALL, 'en_US');
+      break;
+  }
+
+  bindtextdomain('messages', './locale');
+  textdomain('messages');
 }
 
 function month_name($month)
@@ -100,9 +112,25 @@ function top()
   <h1>$header</h1>\n"; 
 }
 
+function lang_link($lang)
+{
+  $str = "<a href=\"" . $_SERVER['PHP_SELF'] . '?';
+  if(!empty($_SERVER['QUERY_STRING'])) {
+    $str .= $_SERVER['QUERY_STRING'] . '&amp;';
+  }
+
+  $str .= "lang=$lang\">$lang</a>";
+  return $str;
+}
+
 function print_footer()
 {
-  echo "<p>
+  echo "
+<div>
+  [" . lang_link('en') . "]
+  [" . lang_link('de') . "]
+</div>
+<p>
   [<a href=\"http://validator.w3.org/check/referer\">Valid XHTML 1.1</a>]
   [<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
 </p>";

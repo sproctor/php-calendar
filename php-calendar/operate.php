@@ -7,16 +7,16 @@ top();
 $database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
 mysql_select_db($mysql_database, $database);
 
-if(empty($_GET['action'])) $action = "none";
+if(!isset($_GET['action'])) $action = "none";
 else $action = $_GET['action'];
 
-if(empty($_GET['day'])) $day = date("j");
+if(!isset($_GET['day'])) $day = date("j");
 else $day = $_GET['day'];
 
-if(empty($_GET['month'])) $month = date("n");
+if(!isset($_GET['month'])) $month = date("n");
 else $month = $_GET['month'];
 
-if(empty($_GET['year'])) $year = date("Y");
+if(!isset($_GET['year'])) $year = date("Y");
 else $year = $_GET['year'];
 
 switch($action) {
@@ -50,7 +50,7 @@ switch($action) {
   case "modify":
   case "add":
     if($action == "modify") {
-      if (empty($_GET['id'])) {
+      if (!isset($_GET['id'])) {
         echo "<div class=\"box\">" . 
 _("Nothing to modify.")
  . "</div>";
@@ -331,7 +331,7 @@ _("Submit Item")
     break;
 
   case "doadd":
-    if(empty($_GET['id'])) {
+    if(!isset($_GET['id'])) {
       echo "<div class=\"box\">" . 
 _("No ID given.")
  . "</div>";

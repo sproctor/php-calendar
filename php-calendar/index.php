@@ -20,13 +20,13 @@ if (!isset($_GET['month'])) {
   $month = $_GET['month'];
 }
 
-if(empty($_GET['year'])) {
+if(!isset($_GET['year'])) {
     $year = $currentyear;
 } else {
     $year = date("Y", mktime(0,0,0,$month,1,$_GET['year']));
 }
 
-if(empty($_GET['day'])) {
+if(!isset($_GET['day'])) {
     if($month == $currentmonth) $day = $currentday;
     else $day = 1;
 } else {
@@ -48,18 +48,13 @@ $lastyear = $year - 1;
 echo "<table id=\"navbar\"";
 if($BName == "MSIE") { echo " cellspacing=1"; }
 
-echo <<<END
->
+echo ">
   <colgroup><col /></colgroup>
-  <colgroup span="12" width="30" />
+  <colgroup span=\"12\" width=\"30\" />
   <colgroup><col /></colgroup>
 <thead>
   <tr>
-    <th colspan="14">
-END;
-echo date('F', mktime(0,0,0,$month,1,$year));
-echo "      $year
-    </th>
+    <th colspan=\"14\">" . month_name($month) . " $year</th>
   </tr>
 </thead>
 <tbody>
