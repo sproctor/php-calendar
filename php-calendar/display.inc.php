@@ -19,28 +19,28 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include("calendar.inc");
+include('calendar.inc.php');
 
 function display()
 {
   global $sql_tableprefix, $HTTP_GET_VARS;
 
-  if(!isset($HTTP_GET_VARS['day'])) $day = date("j");
+  if(!isset($HTTP_GET_VARS['day'])) $day = date('j');
   else $day = $HTTP_GET_VARS['day'];
 
-  if(!isset($HTTP_GET_VARS['month'])) $month = date("n");
+  if(!isset($HTTP_GET_VARS['month'])) $month = date('n');
   else $month = $HTTP_GET_VARS['month'];
 
-  if(!isset($HTTP_GET_VARS['year'])) $year = date("Y");
+  if(!isset($HTTP_GET_VARS['year'])) $year = date('Y');
   else $year = $HTTP_GET_VARS['year'];
 
   $tablename = date('Fy', mktime(0,0,0,$month,1,$year));
   $monthname = month_name($month);
 
   $lasttime = mktime(0,0,0,$month,$day-1,$year);
-  $lastday = date("j", $lasttime);
-  $lastmonth = date("n", $lasttime);
-  $lastyear = date("Y", $lasttime);
+  $lastday = date('j', $lasttime);
+  $lastmonth = date('n', $lasttime);
+  $lastyear = date('Y', $lasttime);
   $lastmonthname = month_name($lastmonth);
 
   $nexttime = mktime(0,0,0,$month,$day+1,$year);
@@ -49,30 +49,17 @@ function display()
   $nextyear = date("Y", $nexttime);
   $nextmonthname = month_name($nextmonth);
 
-  $output = "<table id=\"navbar\">
-  <thead>
-  <tr>
-    <th colspan=\"3\">$day $monthname $year</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <td>
+  $output = "<div id=\"navbar\">
       <a href=\"display.php?month=$lastmonth&amp;day=$lastday&amp;year=$lastyear\">$lastmonthname $lastday</a>
-    </td>
-    <td>
-      <a href=\"add.php?month=$month&amp;year=$year&amp;day=$day\">"
-    . _("Add Item")
-    . "</a>
-    </td>
-    <td>
       <a href=\"display.php?month=$nextmonth&amp;day=$nextday&amp;year=$nextyear\">$nextmonthname $nextday</a>
-    </td>
-  </tr>
-  </tbody>
-</table>
+</div>
+
+<a class=\"box\" href=\"add.php?month=$month&amp;year=$year&amp;day=$day\">" .
+  _("Add Item") . "</a>
+
 <form action=\"delete.php\">
 <table id=\"display\">
+  <caption>$day $monthname $year</caption>
   <colgroup>
     <col width=\"48\" />
   </colgroup>

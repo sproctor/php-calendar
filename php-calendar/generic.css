@@ -15,12 +15,16 @@ h1 {
   margin: 9px 0;
 }
 
+#navbar {
+  margin: 1em 0;
+}
+
 #navbar a {
   font-size: 10pt;
   text-decoration: none;
   border: 1px;
   border-style: solid;
-  margin: 0px;
+  margin: 0;
   padding: 2px;
 }
 
@@ -41,11 +45,12 @@ a.month {
   font-size: 12pt;
 }
 
-#calendar caption {
+caption {
   font-size: 16pt;
   border-width: 2px 2px 0 2px;
   border-style: solid;
   padding: 2px;
+  font-weight: bolder;
 }
 
 .past, .future {

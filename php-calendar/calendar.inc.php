@@ -27,9 +27,9 @@ function soft_error($str)
   exit;
 }
 
-//if(empty($translate)) {
-//  function _($str) { return $str; }
-//}
+if(empty($translate)) {
+  function _($str) { return $str; }
+}
 
 function browser()
 {
@@ -245,10 +245,12 @@ function get_event_by_id($id)
 {
   global $sql_tableprefix;
 
+  $database = connect_to_database();
+
   $result = mysql_query('SELECT UNIX_TIMESTAMP(stamp) AS start_since_epoch,
       UNIX_TIMESTAMP(duration) AS end_since_epoch, username, subject,
       description, eventtype FROM ' . $sql_tableprefix . "events
-      WHERE id = '$id'")
+      WHERE id = '$id'", $database)
     or die("couldn't get items from table");
   if(mysql_num_rows($result) == 0) {
     soft_error("item doesn't exist!");
