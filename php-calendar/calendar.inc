@@ -39,11 +39,10 @@ function isold()
 
 function doctype()
 {
-  if(!isold()) { echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"
-        \"http://www.w3.org/TR/html4/strict.dtd\">";
-  } else { echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"
-        \"http://www.w3.org/TR/html4/loose.dtd\">";
-  }
+  echo <<<END
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+        "http://www.w3.org/TR/xhtml11/xhtml11-strict.dtd">
+END;
 }
 
 function print_header()
@@ -51,7 +50,7 @@ function print_header()
   global $title;
   echo"<head>
   <title>$title</title>
-<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />
 ";
   print_style();
   echo "</head>";
@@ -71,14 +70,10 @@ function print_footer()
 {
   echo "<p>
   <a href=\"http://validator.w3.org/check/referer\">
-    <img src=\"valid-html401.png\" alt=\"[HTML 4.01]\"";
-  if(isold()) echo " border=0";
-  echo ">
+    <img src=\"valid-html401.png\" alt=\"[HTML 4.01]\" />
   </a>
   <a href=\"http://jigsaw.w3.org/css-validator/check/referer\">
-    <img src=\"valid-css.png\" alt=\"[CSS2]\"";
-  if(isold()) echo " border=0";
-  echo ">
+    <img src=\"valid-css.png\" alt=\"[CSS2]\" />
   </a>
 </p>";
 }

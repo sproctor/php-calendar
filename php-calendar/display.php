@@ -36,6 +36,7 @@ echo "<table class=\"nav\">
     <th colspan=\"3\">$day $monthname $year</th>
   </tr>
   </thead>
+  <tbody>
   <tr>
 	<td", ifold(" align=\"center\">
       <a style=\"text-decoration:none;color:$headercolor\"", ">
@@ -50,17 +51,18 @@ echo "<table class=\"nav\">
       <a"), " href=\"display.php?month=$nextmonth&amp;day=$nextday&amp;year=$nextyear\">$nextmonthname $nextday</a>
     </td>
   </tr>
+  </tbody>
 </table>", ifold("</td></tr></table>", ""), "
 <form action=\"operate.php\">", ifold("<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\"><tr><td bgcolor=\"$bordercolor\">", ""), "
 <table ", ifold("cellspacing=\"2\" bgcolor=\"$tablebgcolor\" cellpadding=\"2\" border=\"0\" width=\"100%\"", "class=\"display\""), ">
   <colgroup>
-    <col width=\"48\">
+    <col width=\"48\" />
   </colgroup>
   <colgroup>
-    <col width=\"96\">
-    <col width=\"160\">
-    <col width=\"160\">
-    <col width=\"128\">
+    <col width=\"96\" />
+    <col width=\"160\" />
+    <col width=\"160\" />
+    <col width=\"128\" />
   </colgroup>
   <thead>
   <tr>
@@ -69,8 +71,21 @@ echo "<table class=\"nav\">
     <th>Time</th>
     <th>Duration</th>
     <th>Subject</th>
-	<th>Description</th>
-  </tr>";
+	  <th>Description</th>
+  </tr>
+  </thead>
+  <tfoot>
+  <tr>
+    <td colspan=\"6\">
+	    <input type=\"hidden\" name=\"day\" value=\"$day\" />
+	    <input type=\"hidden\" name=\"month\" value=\"$month\" />
+	    <input type=\"hidden\" name=\"year\" value=\"$year\" />
+	    <input type=\"submit\" name=\"action\" value=\"Delete Selected\" />
+	    <input type=\"submit\" name=\"action\" value=\"Modify Selected\" />
+	  </td>
+  </tr>
+  </tfoot>
+  <tbody>";
 
 $database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password)
      or die("could not connect to database");
@@ -113,24 +128,18 @@ while ($row = mysql_fetch_array($result)) {
     }
     echo "
   <tr>
-    <td><input type=radio name=id value=$row[id]></td>
-	<td>$name</td><td>$time</td><td>$temp_dur</td>
-	<td>$subject</td><td class=\"description\">$desc</td>
+    <td><input type=\"radio\" name=\"id\" value=\"$row[id]\" /></td>
+	  <td>$name</td>
+    <td>$time</td>
+    <td>$temp_dur</td>
+	  <td>$subject</td>
+    <td class=\"description\">$desc</td>
   </tr>";
 }
 
 echo "
-  <tfoot>
-  <tr>
-    <td colspan=\"6\">
-	  <input type=hidden name=day value=\"$day\">
-	  <input type=hidden name=month value=\"$month\">
-	  <input type=hidden name=year value=\"$year\">
-	  <input type=submit name=action value=\"Delete Selected\">
-	  <input type=submit name=action value=\"Modify Selected\">
-	</td>
-  </tfoot>
-</table>" . ifold("</td></tr></table>", "") . "
+  </tbody>
+</table>
 <div>
   <a class=\"box\" href=\"operate.php?month=$month&amp;year=$year&amp;day=$day&amp;action=Add+Item\">Add Item</a>
 </div>

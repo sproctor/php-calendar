@@ -44,9 +44,9 @@ if($BName == "MSIE") { echo " cellspacing=1"; }
 
 echo <<<END
 >
-  <colgroup><col></colgroup>
-  <colgroup span="12" width="30">
-  <colgroup><col></colgroup>
+  <colgroup><col /></colgroup>
+  <colgroup span="12" width="30" />
+  <colgroup><col /></colgroup>
 <thead>
   <tr>
     <th colspan="14">
@@ -57,6 +57,7 @@ echo <<<END
     </th>
   </tr>
 </thead>
+<tbody>
   <tr>
     <td>
       <a href="?month=$month&amp;year=$prevyear">prev year</a>
@@ -106,12 +107,13 @@ echo <<<END
       <a href="operate.php?action=Add+Item&amp;month=$month&amp;year=$year&amp;day=$day">Add Item</a>
     </td>
   </tr>
-</table>
+</tbody>
+</table>\n
 END;
 
 echo <<<END
 <table class="calendar">
-  <colgroup span="7" width="1*">
+  <colgroup span="7" width="1*" />
   <thead>
   <tr>
     <th>Sunday</th>
@@ -196,7 +198,8 @@ END;
   }
 }
 
-echo "</table>\n";
+echo "  </tbody>
+</table>\n";
 
 bottom();
 ?>
