@@ -4,8 +4,6 @@ include_once("config.inc");
 
 top();
 
-chdir("/usr/local/apache/htdocs/php-calendar");
-
 $currentday = date("j");
 $currentmonth = date("n");
 $currentyear = date("Y");
@@ -67,57 +65,91 @@ echo "      $year
 <tbody>
   <tr>
     <td>
-      <a href=\"?month=$lastmonth&amp;year=$year\">" . _("last month") . "</a>
+      <a href=\"?month=$lastmonth&amp;year=$year\">" . 
+_("last month")
+. "</a>
     </td>
     <td>
-      <a href=\"?month=1&amp;year=$year\">" . _("Jan") . "</a>
+      <a href=\"?month=1&amp;year=$year\">" . 
+_("Jan")
+. "</a>
     </td>
     <td>
-      <a href=\"?month=2&amp;year=$year\">" . _("Feb") . "</a>
+      <a href=\"?month=2&amp;year=$year\">" . 
+_("Feb") 
+. "</a>
     </td>
     <td>
-      <a href=\"?month=3&amp;year=$year\">" . _("Mar") . "</a>
+      <a href=\"?month=3&amp;year=$year\">" . 
+_("Mar") 
+. "</a>
     </td>
     <td>
-      <a href=\"?month=4&amp;year=$year\">" . _("Apr") . "</a>
+      <a href=\"?month=4&amp;year=$year\">" . 
+_("Apr") 
+. "</a>
     </td>
     <td>
-      <a href=\"?month=5&amp;year=$year\">" . _("May") . "</a>
+      <a href=\"?month=5&amp;year=$year\">" . 
+_("May") 
+. "</a>
     </td>
     <td>
-      <a href=\"?month=6&amp;year=$year\">" . _("Jun") . "</a>
+      <a href=\"?month=6&amp;year=$year\">" . 
+_("Jun") 
+. "</a>
     </td>
     <td>
-      <a href=\"?month=7&amp;year=$year\">" . _("Jul") . "</a>
+      <a href=\"?month=7&amp;year=$year\">" . 
+_("Jul") 
+. "</a>
     </td>
     <td>
-      <a href=\"?month=8&amp;year=$year\">" . _("Aug") . "</a>
+      <a href=\"?month=8&amp;year=$year\">" . 
+_("Aug") 
+. "</a>
     </td>
     <td>
-      <a href=\"?month=9&amp;year=$year\">" . _("Sep") . "</a>
+      <a href=\"?month=9&amp;year=$year\">" . 
+_("Sep") 
+. "</a>
     </td>
     <td>
-      <a href=\"?month=10&amp;year=$year\">" . _("Oct") . "</a>
+      <a href=\"?month=10&amp;year=$year\">" . 
+_("Oct") 
+. "</a>
     </td>
     <td>
-      <a href=\"?month=11&amp;year=$year\">" . _("Nov") . "</a>
+      <a href=\"?month=11&amp;year=$year\">" . 
+_("Nov") 
+. "</a>
     </td>
     <td>
-      <a href=\"?month=12&amp;year=$year\">" . _("Dec") . "</a>
+      <a href=\"?month=12&amp;year=$year\">" . 
+_("Dec") 
+. "</a>
     </td>
     <td>
-      <a href=\"?month=$nextmonth&amp;year=$year\">" . _("next month") . "</a>
+      <a href=\"?month=$nextmonth&amp;year=$year\">" . 
+_("next month") 
+. "</a>
     </td>
   </tr>
   <tr>
     <td>
-      <a href=\"?month=$month&amp;year=$lastyear\">" . _("last year") . "</a>
+      <a href=\"?month=$month&amp;year=$lastyear\">" . 
+_("last year") 
+. "</a>
     </td> 
     <td colspan=\"12\">
-      <a href=\"operate.php?action=add&amp;month=$month&amp;year=$year&amp;day=$day\">" . _("Add Item") . "</a>
+      <a href=\"operate.php?action=add&amp;month=$month&amp;year=$year&amp;day=$day\">" . 
+_("Add Item") 
+. "</a>
     </td>
     <td>
-      <a href=\"?month=$month&amp;year=$nextyear\">" . _("next year") . "</a>
+      <a href=\"?month=$month&amp;year=$nextyear\">" . 
+_("next year") 
+. "</a>
     </td>
   </tr>
 </tbody>
@@ -129,17 +161,32 @@ echo "      $year
   <tr>\n";
 
   if(!$start_monday) {
-    echo "    <th>" . _("Sunday") . "</th>\n";
+    echo "    <th>" . 
+_("Sunday") 
+. "</th>\n";
   }
-echo "
-    <th>" . _("Monday") . "</th>
-    <th>" . _("Tuesday") . "</th>
-    <th>" . _("Wednesday") . "</th>
-    <th>" . _("Thursday") . "</th>
-    <th>" . _("Friday") . "</th>
-    <th>" . _("Saturday") . "</th>";
+echo "\n    <th>" . 
+_("Monday") 
+. "</th>
+    <th>" . 
+_("Tuesday") 
+. "</th>
+    <th>" . 
+_("Wednesday") 
+. "</th>
+    <th>" . 
+_("Thursday") 
+. "</th>
+    <th>" . 
+_("Friday") 
+. "</th>
+    <th>" . 
+_("Saturday") 
+. "</th>";
   if($start_monday) {
-    echo "    <th>" . _("Sunday") . "</th>\n";
+    echo "    <th>" . 
+_("Sunday") 
+. "</th>\n";
   }
 echo "  </tr>
   </thead>

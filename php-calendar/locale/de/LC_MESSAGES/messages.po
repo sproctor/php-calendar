@@ -17,139 +17,139 @@ msgstr ""
 
 #: display.php:46 index.php:146
 msgid "Add Item"
-msgstr ""
+msgstr "Termin erstellen"
 
 #: display.php:72
 msgid "Select"
-msgstr ""
+msgstr "Auswahl"
 
 #: display.php:75 display.php:137
 msgid "Modify"
-msgstr ""
+msgstr "&Auml;ndern"
 
 #: display.php:78
 msgid "Username"
-msgstr ""
+msgstr "Benutzername"
 
 #: display.php:81 operate.php:212
 msgid "Time"
-msgstr ""
+msgstr "Zeit"
 
 #: display.php:84 operate.php:256
 msgid "Duration"
-msgstr ""
+msgstr "Dauer"
 
 #: display.php:87 operate.php:300
 msgid "Subject"
-msgstr ""
+msgstr "Betreff"
 
 #: display.php:90 operate.php:307
 msgid "Description"
-msgstr ""
+msgstr "Beschreibung"
 
 #: display.php:99
 msgid "Delete Selected"
-msgstr ""
+msgstr "Bitte Termin zum l&ouml;schen auswhlen"
 
 #: display.php:129 index.php:255
 msgid "FULL DAY"
-msgstr ""
+msgstr "GANZT&Auml;GIG"
 
 #: display.php:155 operate.php:434
 msgid "Back to Calendar"
-msgstr ""
+msgstr "Zur&uuml;ck zum Kalender"
 
 #: index.php:69
 msgid "last month"
-msgstr ""
+msgstr "voheriger Monat"
 
 #: index.php:74
 msgid "Jan"
-msgstr ""
+msgstr "Jan"
 
 #: index.php:79
 msgid "Feb"
-msgstr ""
+msgstr "Feb"
 
 #: index.php:84
 msgid "Mar"
-msgstr ""
+msgstr "M&auml;r"
 
 #: index.php:89
 msgid "Apr"
-msgstr ""
+msgstr "Apr"
 
 #: index.php:94 calendar.inc:81
 msgid "May"
-msgstr ""
+msgstr "Mai"
 
 #: index.php:99
 msgid "Jun"
-msgstr ""
+msgstr "Jun"
 
 #: index.php:104
 msgid "Jul"
-msgstr ""
+msgstr "Jul"
 
 #: index.php:109
 msgid "Aug"
-msgstr ""
+msgstr "Aug"
 
 #: index.php:114
 msgid "Sep"
-msgstr ""
+msgstr "Sep"
 
 #: index.php:119
 msgid "Oct"
-msgstr ""
+msgstr "Okt"
 
 #: index.php:124
 msgid "Nov"
-msgstr ""
+msgstr "Nov"
 
 #: index.php:129
 msgid "Dec"
-msgstr ""
+msgstr "Dez"
 
 #: index.php:134
 msgid "next month"
-msgstr ""
+msgstr "nchste Monat"
 
 #: index.php:141
 msgid "last year"
-msgstr ""
+msgstr "voheriger Jahr"
 
 #: index.php:151
 msgid "next year"
-msgstr ""
+msgstr "nchste Jahr"
 
 #: index.php:165 index.php:188
 msgid "Sunday"
-msgstr ""
+msgstr "Sonntag"
 
 #: index.php:169
 msgid "Monday"
-msgstr ""
+msgstr "Montag"
 
 #: index.php:172
 msgid "Tuesday"
-msgstr ""
+msgstr "Dienstag"
 
 #: index.php:175
 msgid "Wednesday"
-msgstr ""
+msgstr "Mittwoch"
 
 #: index.php:178
 msgid "Thursday"
-msgstr ""
+msgstr "Donnerstag"
 
 #: index.php:181
 msgid "Friday"
-msgstr ""
+msgstr "Freitag"
 
 #: index.php:184
 msgid "Saturday"
-msgstr ""
+msgstr "Samstag"
 
 #: operate.php:40
 msgid "Could not remove item: "
@@ -157,11 +157,11 @@ msgstr ""
 
 #: operate.php:42
 msgid "Removed item: "
-msgstr ""
+msgstr "Termin gel&ouml;scht: "
 
 #: operate.php:55
 msgid "Nothing to modify."
-msgstr ""
+msgstr "Nichts zum &auml;ndern ausgew&auml;hlt."
 
 #: operate.php:62
 msgid "Modifying id "
@@ -173,47 +173,47 @@ msgstr ""
 
 #: operate.php:90
 msgid "Adding item to calendar"
-msgstr ""
+msgstr "Termin zum Kalender hinzuf&uuml;gen"
 
 #: operate.php:132
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: operate.php:137
 msgid "Day"
-msgstr ""
+msgstr "Tag"
 
 #: operate.php:176
 msgid "Event Type"
-msgstr ""
+msgstr "Terminart"
 
 #: operate.php:187
 msgid "Normal Event"
-msgstr ""
+msgstr "Normaler Termin"
 
 #: operate.php:196
 msgid "Full Day Event"
-msgstr ""
+msgstr "ganzt&auml;giger Termin"
 
 #: operate.php:205
 msgid "Unkown Time"
-msgstr ""
+msgstr "unbekannter Zeitraum"
 
 #: operate.php:270
 msgid "days"
-msgstr ""
+msgstr "Tage"
 
 #: operate.php:282
 msgid "hours"
-msgstr ""
+msgstr "Stunden"
 
 #: operate.php:294
 msgid "minutes"
-msgstr ""
+msgstr "Minuten"
 
 #: operate.php:301
 msgid " (255 chars max)"
-msgstr ""
+msgstr " (255)"
 
 #: operate.php:323
 msgid "Submit Item"
@@ -245,44 +245,44 @@ msgstr ""
 
 #: calendar.inc:77
 msgid "January"
-msgstr ""
+msgstr "Januar"
 
 #: calendar.inc:78
 msgid "February"
-msgstr ""
+msgstr "Februar"
 
 #: calendar.inc:79
 msgid "March"
-msgstr ""
+msgstr "M&auml;rz"
 
 #: calendar.inc:80
 msgid "April"
-msgstr ""
+msgstr "April"
 
 #: calendar.inc:82
 msgid "June"
-msgstr ""
+msgstr "Juni"
 
 #: calendar.inc:83
 msgid "July"
-msgstr ""
+msgstr "Juli"
 
 #: calendar.inc:84
 msgid "August"
-msgstr ""
+msgstr "August"
 
 #: calendar.inc:85
 msgid "September"
-msgstr ""
+msgstr "September"
 
 #: calendar.inc:86
 msgid "October"
-msgstr ""
+msgstr "Oktober"
 
 #: calendar.inc:87
 msgid "November"
-msgstr ""
+msgstr "November"
 
 #: calendar.inc:88
 msgid "December"
-msgstr ""
+msgstr "Dezember"

@@ -65,8 +65,28 @@ function translate()
   }
 
   setlocale(LC_ALL, "de_DE");
+  //setlocale(LC_ALL, "en_US");
   bindtextdomain("messages", "./locale");
   textdomain("messages");
+}
+
+function month_name($month)
+{
+  $month = ($month - 1) % 12 + 1;
+  switch($month) {
+    case 1:  return _("January");
+    case 2:  return _("February");
+    case 3:  return _("March");
+    case 4:  return _("April");
+    case 5:  return _("May");
+    case 6:  return _("June");
+    case 7:  return _("July");
+    case 8:  return _("August");
+    case 9:  return _("September");
+    case 10: return _("October");
+    case 11: return _("November");
+    case 12: return _("December");
+  }
 }
 
 function top()

@@ -51,7 +51,9 @@ switch($action) {
   case "add":
     if($action == "modify") {
       if (empty($_GET['id'])) {
-        echo "<div class=\"box\">" _("Nothing to modify.") . "</div>";
+        echo "<div class=\"box\">" . 
+_("Nothing to modify.")
+ . "</div>";
         break;
       } else {
         $id = $_GET['id'];
@@ -126,10 +128,14 @@ switch($action) {
   </thead>
   <tbody>
   <tr>
-    <td>" . _("Name") . "</td>
+    <td>" . 
+_("Name")
+ . "</td>
     <td><input type=\"text\" name=\"username\" size=\"20\" value=\"$username\" /></td>
   </tr>
-  <tr><td>" . _("Day") . "</td>
+  <tr><td>" . 
+_("Day")
+ . "</td>
     <td>
       <select name=\"day\" size=\"1\">\n";
      
@@ -145,7 +151,7 @@ switch($action) {
     echo "      </select>\n      <select size=\"1\" name=\"month\">\n";
 
     for ($i=1; $i<13; $i++) {
-      $nm = date("F", mktime(0,0,0,$i,1,$year));
+      $nm = month_name($i);
       if ($i == $month) {
         echo "        <option value=\"$i\" selected=\"selected\">$nm</option>\n";
       } else {
@@ -166,7 +172,9 @@ switch($action) {
     echo "      </select></td>
   </tr>
   <tr>
-    <td>" . _("Event Type") . "</td>
+    <td>" . 
+_("Event Type")
+ . "</td>
     <td>
 <select name=\"typeofevent\" size=\"1\">
 <option value=\"1\"";
@@ -175,26 +183,34 @@ switch($action) {
       echo " selected=\"selected\"";
     }
 
-    echo ">" . _("Normal Event") . "</option>
+    echo ">" . 
+_("Normal Event")
+ . "</option>
 <option value=\"2\"";
 
     if($typeofevent == 2) {
       echo " selected=\"selected\"";
     }
 
-    echo ">" . _("Full Day Event") . "</option>
+    echo ">" . 
+_("Full Day Event")
+ . "</option>
 <option value=\"3\"";
 
     if($typeofevent == 3) {
       echo " selected=\"selected\"";
     }
 
-    echo ">" . _("Unkown Time") . "</option>
+    echo ">" . 
+_("Unkown Time")
+ . "</option>
 </select>
     </td>
   </tr>
   <tr>
-    <td>" . _("Time") . "</td>
+    <td>" . 
+_("Time")
+ . "</td>
     <td>
 <select name=\"hour\" size=\"1\">\n";
 
@@ -236,7 +252,9 @@ switch($action) {
 </select></td>
   </tr>
   <tr>
-    <td>" . _("Duration") . "</td>
+    <td>" . 
+_("Duration")
+ . "</td>
     <td>
 <select name=\"durationday\" size=\"1\">";
 
@@ -248,7 +266,9 @@ switch($action) {
       echo ">$i</option>\n";
     }
     echo "</select>
-" . _("days") . "
+" . 
+_("days")
+ . "
 <select name=\"durationhour\" size=\"1\">";
     for($i = 0; $i < 24; $i++) {
       echo "<option value='$i'";
@@ -258,7 +278,9 @@ switch($action) {
       echo ">$i</option>\n";
     }
     echo "</select>
-" . _("hours") . "
+" . 
+_("hours")
+ . "
 <select name=\"durationmin\" size=\"1\">";
     for($i = 0; $i <= 59; $i = $i + 5) {
       echo "<option value='$i'";
@@ -268,15 +290,22 @@ switch($action) {
       printf(">%02d</option>\n", $i);
     }
     echo "</select>
-" . _("minutes") . "
+" . 
+_("minutes")
+ . "
 </td>
   </tr>
   <tr>
-    <td>" . _("Subject") . _(" (255 chars max)") . "</td>
+    <td>" . 
+_("Subject") . 
+_(" (255 chars max)")
+ . "</td>
     <td><input type=\"text\" name=\"subject\" value=\"$subject\" /></td>
   </tr>
   <tr>
-    <td>" . _("Description") . "</td>
+    <td>" . 
+_("Description")
+ . "</td>
     <td>
       <textarea rows=\"5\" cols=\"50\" name=\"description\">$desc</textarea>
     </td>
@@ -290,7 +319,9 @@ switch($action) {
       echo "<input type=\"hidden\" name=\"modify\" value=\"1\" />\n";
     }
 
-    echo "<input type=\"submit\" value=\"" . _("Submit Item") . "\" />
+    echo "<input type=\"submit\" value=\"" . 
+_("Submit Item")
+ . "\" />
     </td>
   </tr>
   </tbody>
@@ -301,7 +332,9 @@ switch($action) {
 
   case "doadd":
     if(empty($_GET['id'])) {
-      echo "<div class=\"box\">" . _("No ID given.") . "</div>";
+      echo "<div class=\"box\">" . 
+_("No ID given.")
+ . "</div>";
       break;
     } else {
       $id = $_GET['id'];
@@ -311,7 +344,9 @@ switch($action) {
       mysql_query("DELETE FROM $mysql_tablename WHERE id = '$id'")
         or die("couldn't delete item");
       if(mysql_affected_rows() == 0) {
-        echo "<div class=\"box\">" . _("Item already deleted.") . "</div>";
+        echo "<div class=\"box\">" . 
+_("Item already deleted.")
+ . "</div>";
         break;
       }
     } else {
@@ -320,7 +355,9 @@ switch($action) {
       if($result) {
         $row = mysql_fetch_array($result);
         if($id != $row['id'] + 1) {
-          echo "<div class=\"box\">" . _("Item already created.") . "</div>";
+          echo "<div class=\"box\">" . 
+_("Item already created.")
+ . "</div>";
           break;
         }
       }
@@ -377,19 +414,25 @@ switch($action) {
 
     $result = mysql_query("INSERT INTO $mysql_tablename (username, stamp, subject, description, eventtype, duration) VALUES ('$username', '$timestamp', '$subject', '$description', '$typeofevent', '$durationstamp')");
     if ($result)
-      echo "<div class=\"box\">" . _("Item added.") . "</div>";
+      echo "<div class=\"box\">" . 
+_("Item added.")
+ . "</div>";
     else {
-      echo "<div class=\"box\">" . _("Error adding item: ") . mysql_error()
-        . "</div>";
+      echo "<div class=\"box\">" . 
+_("Error adding item: ")
+ . mysql_error() . "</div>";
     }
      
     break;
 }
 
 echo "<div>
-  <a class=\"box\" href=\"display.php?month=$month&amp;year=$year&amp;day=$day\">" . _("View date") . "</a>
+  <a class=\"box\" href=\"display.php?month=$month&amp;year=$year&amp;day=$day\">" . 
+_("View date")
+ . "</a>
   <a class=\"box\" href=\"index.php?month=$month&amp;year=$year\">"
-  . _("Back to Calendar") . "</a>
+  . _("Back to Calendar")
+ . "</a>
 </div>";
 
 bottom();

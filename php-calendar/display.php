@@ -14,19 +14,19 @@ if(empty($_GET['year'])) $year = date("Y");
 else $year = $_GET['year'];
 
 $tablename = date('Fy', mktime(0,0,0,$month,1,$year));
-$monthname = date('F', mktime(0,0,0,$month,1,$year));
+$monthname = month_name($month);
 
 $lasttime = mktime(0,0,0,$month,$day-1,$year);
 $lastday = date("j", $lasttime);
 $lastmonth = date("n", $lasttime);
 $lastyear = date("Y", $lasttime);
-$lastmonthname = date("F", $lasttime);
+$lastmonthname = month_name($lastmonth);
 
 $nexttime = mktime(0,0,0,$month,$day+1,$year);
 $nextday = date("j", $nexttime);
 $nextmonth = date("n", $nexttime);
 $nextyear = date("Y", $nexttime);
-$nextmonthname = date('F', $nexttime);
+$nextmonthname = month_name($nextmonth);
 
 echo <<<END
 <table id="navbar">
@@ -68,20 +68,36 @@ echo <<<END
   <tr>
 END;
 echo "
-    <th>" . _("Select")      . "</th>
-    <th>" . _("Modify")      . "</th>
-    <th>" . _("Username")    . "</th>
-    <th>" . _("Time")        . "</th>
-    <th>" . _("Duration")    . "</th>
-    <th>" . _("Subject")     . "</th>
-    <th>" . _("Description") . "</th>
+    <th>" . 
+_("Select")
+. "</th>
+    <th>" . 
+_("Modify")
+. "</th>
+    <th>" . 
+_("Username")
+    . "</th>
+    <th>" . 
+_("Time")
+        . "</th>
+    <th>" . 
+_("Duration")
+    . "</th>
+    <th>" . 
+_("Subject")
+     . "</th>
+    <th>" . 
+_("Description")
+ . "</th>
   </tr>
   </thead>
   <tfoot>
   <tr>
     <td colspan=\"7\">
       <input type=\"hidden\" name=\"action\" value=\"delete\" />
-      <input type=\"submit\" value=\"" . _("Delete Selected") . "\" />
+      <input type=\"submit\" value=\"" . 
+_("Delete Selected")
+ . "\" />
     </td>
   </tr>
   </tfoot>
@@ -135,7 +151,9 @@ echo "
 </table>
 <div>
   <a class=\"box\" href=\".?month=$month&amp;day=$day&amp;year=$year\">
-    " . _("Back to Calendar") . "
+    " . 
+_("Back to Calendar")
+ . "
   </a>
 </div>
 </form>";
