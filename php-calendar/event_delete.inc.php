@@ -45,7 +45,7 @@ function delete()
 	$database = connect_to_database();
 	$del_array = explode('&', $QUERY_STRING);
 
-	$output = '<div class="box" style="width: 50%">';
+	$output = "<div class=\"box\" style=\"width: 50%\">\n";
 
 	$selected = 0;
 

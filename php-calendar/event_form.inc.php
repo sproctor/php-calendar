@@ -48,16 +48,24 @@ function event_form($action)
 		$username = stripslashes($row['username']);
 		$subject = stripslashes($row['subject']);
 		$desc = htmlspecialchars(stripslashes($row['description']));
-		$thetime = $row['start_since_epoch'];
-		$hour = date('G', $thetime);
-		$minute = date('i', $thetime);
-		$month = date('n', $thetime);
-		$year = date('Y', $thetime);
-		$day = date('j', $thetime);
-		$durtime = $row['end_since_epoch'] - $thetime;
-		$durmin = ($durtime / 60) % 60;     //seconds per minute
-		$durhr  = ($durtime / 3600) % 24;   //seconds per hour
-		$durday = floor($durtime / 86400);  //seconds per day
+
+		$dateformat = '/(\d+)-(\d+)-(\d+)/';
+		preg_match($dateformat, $row['startdate'], $matches);
+		$year = $matches[1];
+		$month = $matches[2];
+		$day = $matches[3];
+
+		preg_match($dateformat, $row['enddate'], $matches);
+		$end_year = $matches[1];
+		$end_month = $matches[2];
+		$end_day = $matches[3];
+
+		preg_match('/(\d+):(\d+):\d+/', $row['starttime'], $matches);
+		$hour = $matches[1];
+		$minute = $matches[2];
+
+		$durmin = $row['duration'] % 60;
+		$durhr  = $row['duration'] / 60;
 
 		if(!HOURS_24) {
 			if($hour >= 12) {
@@ -86,8 +94,10 @@ function event_form($action)
 			}
 		} else { $hour = 6; $pm = 1; }
 		$minute = 0;
+		$end_day = $day;
+		$end_month = $month;
+		$end_year = $year;
 		$durhr = 1;
-		$durday = 0;
 		$durmin = 0;
 		$typeofevent = 1;
 	}
@@ -112,12 +122,11 @@ function event_form($action)
 		.'<td><input type="text" name="username" size="20" value="'
 		.$username."\" /></td>\n"
 		."</tr>\n"
-		."<tr><td>"._('Day')."</td>\n"
+		."<tr><td>"._('Event Date')."</td>\n"
 		."<td>\n"
 		."<select name=\"day\" size=\"1\">\n";
 
-	$lastday = date('t', mktime(0, 0, 0, $month, 1, $year));
-	for ($i = 1; $i <= $lastday; $i++){
+	for ($i = 1; $i <= 31; $i++){
 		if ($i == $day) {
 			$output .= "        <option value=\"$i\" "
 				."selected=\"selected\">$i</option>\n";
@@ -142,8 +151,51 @@ function event_form($action)
 
 	$output .= "      </select>\n      <select size=\"1\" name=\"year\">";
 
-	for ($i=$year-2; $i<$year+5; $i++) {
+	for ($i = $year - 2; $i < $year + 5; $i++) {
 		if ($i == $year) {
+			$output .= "        <option value=\"$i\" "
+				."selected=\"selected\">$i</option>\n";
+		} else {
+			$output .= "        <option value=\"$i\">$i</option>\n";
+		}
+	}
+
+	$output .= "      </select></td>\n"
+		."</tr>\n"
+		."<tr><td>"
+		._('End Date (only for daily, weekly, and monthly event types)')
+		."</td>\n"
+		."<td>\n"
+		."<select name=\"endday\" size=\"1\">\n";
+
+	for ($i = 1; $i <= 31; $i++){
+		if ($i == $end_day) {
+			$output .= "        <option value=\"$i\" "
+				."selected=\"selected\">$i</option>\n";
+		} else {
+			$output .= "        <option value=\"$i\">$i</option>\n";
+		}
+	}
+
+	$output .= "      </select>\n"
+		."      <select size=\"1\" name=\"endmonth\">\n";
+
+	for ($i = 1; $i <= 12; $i++) {
+		$nm = month_name($i);
+		if ($i == $end_month) {
+			$output .= "        <option value=\"$i\" "
+				."selected=\"selected\">$nm</option>\n";
+		} else {
+			$output .= "        <option value=\"$i\">$nm</option>"
+				."\n";
+		}
+	}
+
+	$output .= "      </select>\n"
+		."      <select size=\"1\" name=\"endyear\">";
+
+	for ($i = $year - 2; $i < $year + 5; $i++) {
+		if ($i == $end_year) {
 			$output .= "        <option value=\"$i\" "
 				."selected=\"selected\">$i</option>\n";
 		} else {
@@ -156,29 +208,19 @@ function event_form($action)
 		."<tr>\n"
 		.'<td>' . _('Event Type') . "</td>\n"
 		."<td>\n"
-		."<select name=\"typeofevent\" size=\"1\">\n"
-		.'<option value="1"';
+		."<select name=\"typeofevent\" size=\"1\">\n";
 
-	if($typeofevent == 1) {
-		$output .= ' selected="selected"';
+	for($i = 1; $i <= 6; $i++) {
+		$output .= "<option value=\"$i\"";
+
+		if($typeofevent == $i) {
+			$output .= ' selected="selected"';
+		}
+
+		$output .= '>'.event_type($i).' '._('Event')."</option>\n";
 	}
 
-	$output .= '>' . _('Normal Event') . "</option>\n"
-		.'<option value="2"';
-
-	if($typeofevent == 2) {
-		$output .= ' selected="selected"';
-	}
-
-	$output .= '>' . _('Full Day Event') . "</option>\n"
-		.'<option value="3"';
-
-	if($typeofevent == 3) {
-		$output .= ' selected="selected"';
-	}
-
-	$output .= '>' .  _('Unkown Time') . "</option>\n"
-		."</select>\n"
+	$output .= "</select>\n"
 		."</td>\n"
 		."</tr>\n"
 		."<tr>\n"
@@ -236,17 +278,6 @@ function event_form($action)
 		."<tr>\n"
 		.'<td>'._('Duration')."</td>\n"
 		."<td>\n"
-		."<select name=\"durationday\" size=\"1\">\n";
-
-	for($i = 0; $i < 31; $i++) {
-		$output .= "  <option value='$i'";
-		if($durday == $i) {
-			$output .= ' selected="selected"';
-		}
-		$output .= ">$i</option>\n";
-	}
-	$output .= "</select>\n"
-		._('days')
 		."\n<select name=\"durationhour\" size=\"1\">\n";
 	for($i = 0; $i < 24; $i++) {
 		$output .= "<option value='$i'";

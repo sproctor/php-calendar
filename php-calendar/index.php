@@ -29,6 +29,7 @@ include "$basedir/calendar.inc.php";
 unset($user);
 $user = $HTTP_SESSION_VARS['user'];
 
+list($BName, $BVersion) = browser();
 /*
    echo "<pre>get vars:</pre>";
    foreach ($HTTP_GET_VARS as $key=>$val){

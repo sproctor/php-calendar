@@ -76,48 +76,66 @@ function submit_event()
 	if(isset($HTTP_GET_VARS['minute'])) $minute = $HTTP_GET_VARS['minute'];
 	else soft_error(_('No minute was given.'));
 
-	if(isset($HTTP_GET_VARS['durationhour']))
-		$durationhour = $HTTP_GET_VARS['durationhour'];
-	else soft_error(_('No duration hour was given.'));
-
 	if(isset($HTTP_GET_VARS['durationmin']))
-		$durationmin = $HTTP_GET_VARS['durationmin'];
+		$duration_min = $HTTP_GET_VARS['durationmin'];
 	else soft_error(_('No duration minute was given.'));
 
-	if(isset($HTTP_GET_VARS['durationday']))
-		$durationday = $HTTP_GET_VARS['durationday'];
-	else soft_error(_('No duration day was given.'));
+	if(isset($HTTP_GET_VARS['durationhour']))
+		$duration_hour = $HTTP_GET_VARS['durationhour'];
+	else soft_error(_('No duration hour was given.'));
 
 	if(isset($HTTP_GET_VARS['typeofevent']))
 		$typeofevent = $HTTP_GET_VARS['typeofevent'];
 	else soft_error(_('No type of event was given.'));
 
+	if(isset($HTTP_GET_VARS['endday']))
+		$end_day = $HTTP_GET_VARS['endday'];
+	else soft_error(_('No end day was given'));
+
+	if(isset($HTTP_GET_VARS['endmonth']))
+		$end_month = $HTTP_GET_VARS['endmonth'];
+	else soft_error(_('No end month was given'));
+
+	if(isset($HTTP_GET_VARS['endyear']))
+		$end_year = $HTTP_GET_VARS['endyear'];
+	else soft_error(_('No end year was given'));
+
 	if(strlen($subject) > SUBJECT_MAX) {
 		soft_error('Your subject was too long.  '.SUBJECT_MAX.' characters max.');
 	}
 
-	$timestamp = date('Y-m-d H:i:s', mktime($hour,$minute,0,$month,$day,$year));
-	$durationstamp = date('Y-m-d H:i:s', mktime($hour + $durationhour,
-				$minute + $durationmin, 0, $month, $day + $durationday, $year));
+	$startstamp = mktime($hour, $minute, 0, $month, $day, $year);
+	$startdate = date('Y-m-d', $startstamp);
+	$starttime = date('H:i:s', $startstamp);
+
+	$endstamp = mktime(0, 0, 0, $end_month, $end_day, $end_year);
+	$enddate = date('Y-m-d', $endstamp);
+	$duration = $duraction_hour * 60 + $duration_min;
 
 	if($modify) {
 		if(empty($user) && ANON_PERMISSIONS < 2) {
 			soft_error('You do not have permission to modify events.');
 		}
-		$query = 'UPDATE '.SQL_PREFIX."events SET username='$username',"
-			." stamp='$timestamp', subject='$subject',"
-			." description='$description',"
-			." eventtype='$typeofevent', duration='$durationstamp'"
-			." WHERE id='$id'";
+		$query = 'UPDATE '.SQL_PREFIX."events\n"
+			."SET username='$username',\n"
+			."startdate='$startdate',\n"
+			."enddate='$enddate',\n"
+			."starttime='$starttime',\n"
+			."duration='$duration',\n"
+			."subject='$subject',\n"
+			."description='$description',\n"
+			."eventtype='$typeofevent'\n"
+			."WHERE id='$id'";
 	} else {
 		if(empty($user) && ANON_PERMISSIONS < 1) {
 			soft_error('You do not have permission to post.');
 		}
-		$query = 'INSERT INTO '.SQL_PREFIX."events (username, stamp,"
-			." subject, description, eventtype, duration, calno)"
-			." VALUES ('$username', '$timestamp', '$subject',"
-			." '$description', '$typeofevent', '$durationstamp',"
-			." '$calno')";
+		$query = 'INSERT INTO '.SQL_PREFIX."events\n"
+			."(username, startdate, enddate, starttime, duration,"
+			." subject, description, eventtype, calno)\n"
+			."VALUES ('$username', '$startdate', '$enddate',"
+			."'$starttime', '$duration', '$subject',"
+			."'$description', '$typeofevent', '$calno')";
 	}
 
 	$result = mysql_query($query);
@@ -127,6 +145,6 @@ function submit_event()
 				."\n"._('sql').": $query");
 
 	return '<div class="box">'._('Date updated').": ".mysql_affected_rows()
-	."</div>\n";
+		."</div>\n";
 }
 ?>

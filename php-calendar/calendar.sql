@@ -43,8 +43,10 @@ CREATE TABLE phpc_calendars (
 CREATE TABLE phpc_events (
   id int(11) NOT NULL auto_increment,
   username varchar(255) default NULL,
-  stamp datetime default NULL,
-  duration datetime default NULL,
+  startdate date default NULL,
+  starttime time default NULL,
+  duration int(32) default NULL,
+  enddate date default NULL,
   eventtype int(4) default NULL,
   subject varchar(255) default NULL,
   description longblob,

@@ -30,7 +30,7 @@ function soft_error($str)
 
 function browser()
 {
-	global $HTTP_USER_AGENT, $BName, $BVersion;
+	global $HTTP_USER_AGENT;
 
 	if(eregi('opera/?([0-9]+(\.[0-9]+)*)?', $HTTP_USER_AGENT, $match)) {
 		$BName = 'Opera';
@@ -59,6 +59,8 @@ function browser()
 		$BName = 'Unknown';
 		$BVersion = 'Unknown';
 	}
+
+	return array($BName, $BVersion);
 }
 
 function connect_to_database()
@@ -149,7 +151,7 @@ function short_month_name($month)
 function formatted_time_string($secs, $type)
 {
 	switch($type) {
-		case 1:
+		default:
 			if(!HOURS_24) $format = 'g:iA';
 			else $format = 'G:i';
 			return date($format, $secs);
@@ -157,33 +159,53 @@ function formatted_time_string($secs, $type)
 			return _('FULL DAY');
 		case 3:
 			return '??:??';
-		default:
-			soft_error("Invalid time type: $type");
 	}
+}
+
+function event_type($num)
+{
+	switch($num) {
+		case 1:
+			return _('Normal');
+		case 2:
+			return _('Full Day');
+		case 3:
+			return _('Unknown Time');
+		case 4:
+			return _('Daily');
+		case 5:
+			return _('Weekly');
+		case 6:
+			return _('Monthly');
+	}
+
+	return false;
 }
 
 function top()
 {
 	global $BName, $BVersion;
+
 	translate();
-	browser();
 	$output = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
 		."\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
 		."<html xml:lang=\"en\">\n"
 		."<head>\n"
 		.'<title>'.TITLE."</title>\n"
 		.'<meta http-equiv="Content-Type" '
-		."content=\"text/html; charset=iso-8859-1\" />\n";
-
-	$output .= "<!-- Your browser: $BName $BVersion -->";
-	$output .= '<link rel="stylesheet" type="text/css" href="style.css.php"'
+		."content=\"text/html; charset=iso-8859-1\" />\n"
+		."<!-- Your browser: $BName $BVersion -->\n"
+		.'<link rel="stylesheet" type="text/css" href="style.css.php"'
 		." />\n";
+
 	if($BName == 'MSIE') {
 		$output .= '<link rel="stylesheet" type="text/css" '
 			."href=\"style-ie.css\" />\n";
 	}
 
-	return $output."</head>\n<body>\n<h1>".TITLE."</h1>\n";
+	$output .= "</head>\n<body>\n<h1>".TITLE."</h1>\n";
+
+	return $output;
 }
 
 function lang_link($lang)
@@ -251,15 +273,22 @@ function get_events_by_date($day, $month, $year)
 	global $calno;
 
 	$database = connect_to_database();
-	//-Nate- Added calno to the where clause to limit events to a single calendar
-	$result = mysql_query('SELECT UNIX_TIMESTAMP(stamp) as start_since_epoch,
-			UNIX_TIMESTAMP(duration) as end_since_epoch, username, subject,
-			description, eventtype, id
-			FROM '.SQL_PREFIX."events
-			WHERE duration >= \"$year-$month-$day 00:00:00\"
-			AND calno = $calno 
-			AND stamp <= \"$year-$month-$day 23:59:59\" ORDER BY stamp", $database)
-		or soft_error("get_events_by_date failed: ".mysql_error());
+
+	$query = 'SELECT * FROM '.SQL_PREFIX."events\n"
+		."WHERE (startdate <= '$year-$month-$day'\n"
+		."AND enddate >= '$year-$month-$day'\n"
+		."AND (eventtype = 4 OR eventtype = 5"
+		." OR eventtype = 6)"
+		." OR startdate = '$year-$month-$day')\n"
+		."AND calno = '$calno'\n"
+		."AND (eventtype != 5 OR DAYOFWEEK(startdate) ="
+		." DAYOFWEEK('$year-$month-$day'))\n"
+		."AND (eventtype != 6 OR DAYOFMONTH(startdate) = '$day')\n"
+		."ORDER BY starttime";
+
+	$result = mysql_query($query, $database)
+		or soft_error("get_events_by_date failed: ".mysql_error()
+				."\nquery:\n$query");
 
 	return $result;
 }
@@ -269,11 +298,9 @@ function get_event_by_id($id)
 	global $calno;
 
 	$database = connect_to_database();
-	//-Nate- Added calno to the where clause to limit events to a single calendar
-	$result = mysql_query('SELECT UNIX_TIMESTAMP(stamp) AS start_since_epoch,
-			UNIX_TIMESTAMP(duration) AS end_since_epoch, username, subject,
-			description, eventtype FROM '.SQL_PREFIX."events
-			WHERE id = '$id' AND calno = $calno", $database)
+
+	$result = mysql_query('SELECT * FROM '.SQL_PREFIX."events\n"
+			."WHERE id = '$id' AND calno = '$calno'", $database)
 		or soft_error("couldn't get items from table: ".mysql_error());
 	if(mysql_num_rows($result) == 0) {
 		soft_error("item doesn't exist!");

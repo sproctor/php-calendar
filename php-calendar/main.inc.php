@@ -21,7 +21,7 @@
 
 function month_navbar()
 {
-	global $BName, $day, $month, $year;
+	global $day, $month, $year;
 
 	$nextmonth = $month + 1;
 	$lastmonth = $month - 1;
