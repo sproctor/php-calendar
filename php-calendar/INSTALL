@@ -20,11 +20,12 @@ sproctor@rottenvegetable.org.
 1 Requirements
 ---------------
 
--PHP 4.0 or higher
+-PHP 4.1 or higher
 -MySQL or PostgreSQL (or access to a server)
 -ssh (try putty for windows http://www.chiark.greenend.org.uk/~sgtatham/putty/)
   or an FTP program which can utilize the CHMOD command (try smartFTP for 
   windows http://www.smartftp.com/)
+-adodb
 
 Recommended:
 -editor (for editing the configuration files)
@@ -34,6 +35,11 @@ Recommended:
 ---------------
 
 Instruction for people that are installing on a web host or some computer other than the one that they are working on are indicated with "remote host only"
+
+0) Make sure php, an SQL server, and adodb are installed on your server.
+   You can find php at http://php.net/ mysql at http://mysql.com
+   postgresql at http://postgresql.org adodb at http://php.weblogs.com/adodb
+   You will need php version 4.1 or greater.
 
 1) extract the files from the archive
    (in linux: tar -zxf php-calendar-x.y.tar.gz)

@@ -235,7 +235,7 @@ function create_dependent($dbms)
         //$db->CreateSequence(SQL_PREFIX . 'sequence');
 	reset($query);
 	while(list(,$q) = each($query)) {
-		$result = $db->sql_query($q);
+		$result = $db->Execute($q);
 		if(!$result) {
                         db_error(_('Error initializing default db stuff'),
                                 $query);

@@ -19,7 +19,8 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-function login(){
+function login()
+{
 	global $vars, $day, $month, $year, $user, $password;
 
 	$html = tag('div');
@@ -30,8 +31,8 @@ function login(){
 		$password = $vars['password'];
 
 		if(check_user()){
-			session_register('user');
-			session_register('password');
+                        $_SESSION['user'] = $user;
+                        $_SESSION['password'] = $password;
                         if(!empty($vars['day'])) {
                                 $day_string = "&day=$day";
                         } else {

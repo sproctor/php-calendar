@@ -1,7 +1,10 @@
-PHP-Calendar 0.8
+PHP-Calendar 0.9
 ----------------
 
 This program requires a PHP enabled webserver and an SQL server installed.
+
+mysql 3.21.15 or greater or postgresql 7 or greater. If you find a newer version
+of either of these that does not work, please notify me.
 
 Read INSTALL for installation instructions.
 
