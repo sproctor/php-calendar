@@ -19,37 +19,49 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include_once("config.inc");
+include("config.inc");
 
 function soft_error($str)
 {
-  echo top() . "<h1>Software Error</h1><p>$str</p>" . bottom();
+  echo top();
+  echo "<h1>Software Error</h1><p>$str</p>";
+  //echo bottom();
+  //die;
 }
 
-if(empty($translate)) {
-  function _($str) { return $str; }
-}
+//if(empty($translate)) {
+//  function _($str) { return $str; }
+//}
 
-// Browser
-if(eregi("(opera)([0-9]{1,2}.[0-9]{1,3}){0,1}",$_SERVER['HTTP_USER_AGENT'],$match) || 
-   eregi("(opera/)([0-9]{1,2}.[0-9]{1,3}){0,1}",$_SERVER['HTTP_USER_AGENT'],$match)) {
-  $BName = "Opera"; $BVersion=$match[2];
-} elseif(eregi("(konqueror)/([0-9]{1,2}.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
-  $BName = "Konqueror"; $BVersion=$match[2];
-} elseif(eregi("(lynx)/([0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2})",$_SERVER['HTTP_USER_AGENT'],$match)) {
-  $BName = "Lynx"; $BVersion=$match[2];
-} elseif(eregi("(links)\(([0-9]{1,2}.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
-  $BName = "Links"; $BVersion=$match[2];
-} elseif(eregi("(msie) ?([0-9]{1,2}.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
-  $BName = "MSIE"; $BVersion=$match[2];
-} elseif(eregi("(netscape6)/(6.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
-  $BName = "Netscape"; $BVersion=$match[2];
-} elseif(eregi("(mozilla)/([0-9]{1,2}.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
-  $BName = "Netscape"; $BVersion=$match[2];
-} elseif(eregi("w3m",$_SERVER['HTTP_USER_AGENT'])) {
-  $BName = "w3m"; $BVersion="Unknown";
-} else {
-  $BName = "Unknown"; $BVersion="Unknown";
+function browser()
+{
+  global $HTTP_USER_AGENT, $BName, $BVersion;
+
+  if(eregi('opera/?([0-9]+(\.[0-9]+)*)?', $HTTP_USER_AGENT, $match)) {
+    $BName = 'Opera';
+    $BVersion = $match[1];
+  } elseif(eregi('konqueror/([0-9]+.[0-9]+)', $HTTP_USER_AGENT, $match)) {
+    $BName = "Konqueror";
+    $BVersion = $match[1];
+  } elseif(eregi('lynx/([0-9]+.[0-9]+.[0-9]+)', $HTTP_USER_AGENT, $match)) {
+    $BName = 'Lynx';
+    $BVersion = $match[1];
+  } elseif(eregi('links\(([0-9]+.[0-9]+)', $HTTP_USER_AGENT, $match)) {
+    $BName = 'Links';
+    $BVersion = $match[1];
+  } elseif(eregi('msie ?([0-9]+.[0-9]+)', $HTTP_USER_AGENT, $match)) {
+    $BName = 'MSIE';
+    $BVersion = $match[1];
+  } elseif(eregi('(netscape6|mozilla)/([0-9]+.[0-9]+)', $HTTP_USER_AGENT, $match)) {
+    $BName = 'Netscape';
+    $BVersion = $match[2];
+  } elseif(eregi('w3m', $HTTP_USER_AGENT)) {
+    $BName = 'w3m';
+    $BVersion = 'Unknown';
+  } else {
+    $BName = 'Unknown';
+    $BVersion = 'Unknown';
+  }
 }
 
 function ifold($str1, $str2)
@@ -62,7 +74,7 @@ function isold()
 {
   global $BName, $BVersion;
 
-  if(($BName == "Netscape" || $BName == "MSIE") && $BVersion < 5) return true;
+  if(($BName == 'Netscape' || $BName == 'MSIE') && $BVersion < 5) return true;
   else return false;
 }
 
@@ -80,7 +92,7 @@ function connect_to_database()
 
 function doctype()
 {
-return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
         "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 ';
 }
@@ -91,22 +103,23 @@ function print_header()
   $output = "<head>
   <title>$title</title>
 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />
-" . print_style() . "</head>";
+" . print_style() . '</head>';
   return $output;
 }
 
 function translate()
 {
-  global $translate;
+  global $translate, $HTTP_ACCEPT_LANGUAGE, $HTTP_GET_VARS, $HTTP_COOKIE_VARS;
 
   if(!empty($translate)) {
-    if(isset($_GET['lang'])) {
-      $lang = substr($_GET['lang'], 0, 2);
+    if(isset($HTTP_GET_VARS['lang'])) {
+      $lang = substr($HTTP_GET_VARS['lang'], 0, 2);
       setcookie('lang', $lang);
-    } elseif(isset($_COOKIE['lang'])) {
-      $lang = substr($_COOKIE['lang'], 0, 2);
-    } elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-      $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+    } elseif(isset($HTTP_COOKIE_VARS['lang'])) {
+      $lang = substr($HTTP_COOKIE_VARS['lang'], 0, 2);
+      soft_error($translate);
+    } elseif(isset($HTTP_ACCEPT_LANGUAGE)) {
+      $lang = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
     } else {
       $lang = 'en';
     }
@@ -148,6 +161,7 @@ function top()
 {
   global $header;
   translate();
+  browser();
   $output = doctype() . "<html xml:lang=\"en\">\n" . print_header() . "<body>
   <h1>$header</h1>\n";
   return $output;

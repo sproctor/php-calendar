@@ -4,6 +4,6 @@ $sql_username    = 'calendar';
 $sql_password    = 'password';
 $sql_database    = 'calendar';
 $sql_tableprefix = 'phpc_';
-$title           = 'PHP-Calendar 0.6';
+$title           = 'PHP-Calendar 0.7';
 $header          = 'PHP-Calendar';
 ?>
