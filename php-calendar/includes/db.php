@@ -28,7 +28,11 @@ if ( !defined('IN_PHPC') ) {
 	die("Hacking attempt");
 }
 
-include_once('adodb.inc.php');
+require_once('adodb.inc.php');
+
+if ( !defined('SQL_TYPE') ) {
+        die("Error loading DB");
+}
 
 // Make the database connection.
 $db = NewADOConnection(SQL_TYPE);
