@@ -176,7 +176,9 @@ function print_footer()
   }
 
 echo "<p>
-  [<a href=\"http://validator.w3.org/check/referer\">Valid XHTML 1.1</a>]
+  [<a href=\"http://validator.w3.org/check?url=http://"
+ . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'] . '?'
+ . $_SERVER['QUERY_STRING'] . "\">Valid XHTML 1.1</a>]
   [<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
 </p>";
 }

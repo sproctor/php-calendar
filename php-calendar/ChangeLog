@@ -1,6 +1,6 @@
 php-calendar: php + mysql + html 4 + CSS 2 (+ gettext)
 
-Version 0.6:
+Version 0.6 (6/18/02):
         * LOTS of code clean-ups.
         * moved to xhtml
         * dropped netscape 4 support
@@ -8,6 +8,7 @@ Version 0.6:
         * separated out style sheets, css clean ups
         * UI clean-ups
         * multiple language support
+        * option to change the calendar to 24h time
 
 Version 0.5 (3/15/02):
 	* remove some warnings
