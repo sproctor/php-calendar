@@ -28,7 +28,7 @@ function submit_event()
   $database = connect_to_database();
   if(isset($HTTP_GET_VARS['modify'])) {
     if(!isset($HTTP_GET_VARS['id'])) {
-      soft_error(_("No ID given."));
+      soft_error(_('No ID given.'));
     }
     $id = $HTTP_GET_VARS['id'];
     $modify = 1;
@@ -37,40 +37,40 @@ function submit_event()
   }
 
   if($HTTP_GET_VARS['description']) {
-    $description = ereg_replace("<[bB][rR][^>]*>", "\n", 
+    $description = ereg_replace('<[bB][rR][^>]*>', "\n", 
     $HTTP_GET_VARS['description']);
   } else {
     $description = '';
   }
      
   if($HTTP_GET_VARS['subject']) {
-    $subject = addslashes(ereg_replace("<[^>]*>", "", 
+    $subject = addslashes(ereg_replace('<[^>]*>', '', 
       $HTTP_GET_VARS['subject']));
   } else {
     $subject = '';
   }
 
   if($HTTP_GET_VARS['username']) {
-    $username = addslashes(ereg_replace("<[^>]*>", "",
+    $username = addslashes(ereg_replace('<[^>]*>', '',
       $HTTP_GET_VARS['username']));
   } else {
     $username = '';
   }
 
   if($HTTP_GET_VARS['description']) {
-    $description = addslashes(ereg_replace("</?([^aA/]|[a-zA-Z_]{2,})[^>]*>",
-    "", $HTTP_GET_VARS['description']));
+    $description = addslashes(ereg_replace('</?([^aA/]|[a-zA-Z_]{2,})[^>]*>',
+    '', $HTTP_GET_VARS['description']));
   } else {
     $description = '';
   }
 
-  if(!isset($HTTP_GET_VARS['day'])) $day = date("j");
+  if(!isset($HTTP_GET_VARS['day'])) $day = date('j');
   else $day = $HTTP_GET_VARS['day'];
 
-  if(!isset($HTTP_GET_VARS['month'])) $month = date("n");
+  if(!isset($HTTP_GET_VARS['month'])) $month = date('n');
   else $month = $HTTP_GET_VARS['month'];
 
-  if(!isset($HTTP_GET_VARS['year'])) $year = date("Y");
+  if(!isset($HTTP_GET_VARS['year'])) $year = date('Y');
   else $year = $HTTP_GET_VARS['year'];
 
   if(isset($HTTP_GET_VARS['hour'])) $hour = $HTTP_GET_VARS['hour'];
@@ -97,15 +97,13 @@ function submit_event()
     $typeofevent = $HTTP_GET_VARS['typeofevent'];
   else $typeofevent = 0;
 
-  $timestamp = date("Y-m-d H:i:s", mktime($hour,$minute,0,$month,$day,$year));
-  $durationstamp = date("Y-m-d H:i:s", mktime($hour + $durationhour,
+  $timestamp = date('Y-m-d H:i:s', mktime($hour,$minute,0,$month,$day,$year));
+  $durationstamp = date('Y-m-d H:i:s', mktime($hour + $durationhour,
     $minute + $durationmin, 0, $month, $day + $durationday, $year));
 
   if($modify) {
     $query = 'UPDATE ' . $sql_tableprefix . "events SET username='$username',
-      stamp='$timestamp',
-      subject='$subject',
-      description='$description',
+      stamp='$timestamp', subject='$subject', description='$description',
       eventtype='$typeofevent', duration='$durationstamp' WHERE id='$id'";
   } else {
     $query = 'INSERT INTO ' . $sql_tableprefix . "events 
@@ -116,11 +114,9 @@ function submit_event()
 
   $result = mysql_query($query);
   if(empty($result)) {
-    soft_error('Error updating event: error: '. mysql_error()
+    soft_error('Error updating event: error: ' . mysql_error()
       . "<br>sql: $query");
   }
-  return "<div class=\"box\">" . 
-_("Date updated.")
- . "</div>";
+  return '<div class="box">' .  _('Date updated.') . "</div>\n";
 }
 ?>

@@ -321,12 +321,10 @@ _("Description")
     </td>
   </tr>
   <tr>
-    <td colspan=\"2\" style=\"text-align:center\">
-      <input type=\"hidden\" name=\"action\" value=\"doadd\" />";
+    <td colspan=\"2\" style=\"text-align:center\">\n";
    
-    if($action == "modify") {
-      $output .= "
-      <input type=\"hidden\" name=\"modify\" value=\"1\" />
+    if($action == 'modify') {
+      $output .= "<input type=\"hidden\" name=\"modify\" value=\"1\" />
       <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
     }
 
