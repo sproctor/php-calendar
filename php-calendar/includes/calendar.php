@@ -295,6 +295,11 @@ function navbar()
 			."year=$year\">"._('Log in')."</a>\n";
 	}
 
+	if(isset($user) && $action != 'options') {
+		$output .= "<a href=\"index.php?action=options\">"._('Options')
+			."</a>\n";
+	}
+
 	if($action == 'display' && !isset($vars['id'])) {
 		$monthname = month_name($month);
 

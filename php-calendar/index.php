@@ -96,7 +96,7 @@ switch($action) {
 	case 'delete':
 
 		include($phpc_root_path . 'includes/event_delete.php');
-		$output = delete();
+		$output = delete_event();
 		break;
 
 	case 'display':
@@ -145,6 +145,11 @@ switch($action) {
 
 		include($phpc_root_path . 'includes/main.php');
 		$output = calendar();
+		break;
+
+	case 'options':
+		include($phpc_root_path . 'includes/options.php');
+		$output = options();
 		break;
 
 	default:

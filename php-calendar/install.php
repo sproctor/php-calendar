@@ -329,9 +329,9 @@ function create_tables()
 		."translate integer NOT NULL default '0',\n"
 		."anon_permission integer NOT NULL default '0',\n"
 		."subject_max integer NOT NULL default '32',\n"
-		."contact_name varchar(256) default NULL,\n"
-		."contact_email varchar(256) default NULL,\n"
-		."calendar_title varchar(256) NOT NULL default '',\n"
+		."contact_name varchar(255) default NULL,\n"
+		."contact_email varchar(255) default NULL,\n"
+		."calendar_title varchar(255) NOT NULL default '',\n"
 		."URL varchar(200) default NULL,\n"
 		."PRIMARY KEY (calno)\n"
 		.")";

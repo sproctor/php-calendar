@@ -36,7 +36,7 @@ function remove_event($id)
 		return false;
 }
 
-function delete()
+function delete_event()
 {
 	global $QUERY_STRING, $config;
 
