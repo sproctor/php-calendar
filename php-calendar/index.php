@@ -67,7 +67,8 @@ include($phpc_root_path . 'includes/calendar.php');
 include($phpc_root_path . 'includes/setup.php');
 
 $legal_actions = array('event_form', 'event_delete', 'display', 'event_submit',
-		'search', 'login', 'logout', 'options');
+		'search', 'login', 'logout', 'admin', 'options_submit',
+                'new_user_submit');
 
 if(!is_int(array_search($action, $legal_actions, true))) {
 	soft_error(_('Invalid action'));

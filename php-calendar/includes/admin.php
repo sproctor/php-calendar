@@ -19,45 +19,9 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-function options()
+function admin()
 {
-	global $calendar_name, $vars, $db;
-
-	if(isset($vars['submit'])) {
-		if(!check_user()) {
-			return tag('div', _('Permission denied'));
-		}
-
-		$query = "UPDATE ".SQL_PREFIX."calendars SET\n";
-
-		if(isset($vars['hours_24']))
-			$query .= "hours_24 = 1,\n";
-		else
-			$query .= "hours_24 = 0,\n";
-
-		if(isset($vars['start_monday']))
-			$query .= "start_monday = 1,\n";
-		else
-			$query .= "start_monday = 0,\n";
-
-		if(isset($vars['translate']))
-			$query .= "translate = 1,\n";
-		else
-			$query .= "translate = 0,\n";
-
-		$calendar_title = $vars['calendar_title'];
-
-		$query .= "anon_permission = '$vars[anon_perm]',\n"
-			."calendar_title = '$calendar_title'\n"
-                        ."subject_max = '$subject_max'\n"
-			."WHERE calendar=$calendar_name;";
-
-		$result = $db->Execute($query)
-			or db_error(_('Error reading options'), $query);
-
-		return tag('div', _('Updated options'));
-	}
-	return options_form();
+	return tag('div', options_form(), new_user_form());
 }
 
 
@@ -72,7 +36,7 @@ function options_form()
 				tag('tfoot',
 					tag('tr',
 						tag('td', attributes('colspan="2"'),
-							create_hidden('action', 'options'),
+							create_hidden('action', 'options_submit'),
 							create_submit(_('Submit'))))),
 				tag('tbody',
 					tag('tr',
@@ -99,6 +63,29 @@ function options_form()
 						tag('th', _('Anonymous Permission').':'),
 						tag('td', create_select('anon_perm', 'anon_perm',
 								$config['anon_permission']))))));
+}
+
+function new_user_form()
+{
+	return tag('form', attributes("action=\"$_SERVER[SCRIPT_NAME]\"",
+                                'method="post"'),
+			tag('table', attributes('class="phpc-main"'),
+				tag('caption', _('Create New User')),
+				tag('tfoot',
+					tag('tr',
+						tag('td', attributes('colspan="2"'),
+							create_hidden('action', 'new_user_submit'),
+							create_submit(_('Submit'))))),
+				tag('tbody',
+					tag('tr',
+						tag('th', _('User Name').':'),
+						tag('td', create_text('user_name'))),
+					tag('tr',
+						tag('th', _('Password').':'),
+						tag('td', create_password('password1'))),
+					tag('tr',
+						tag('th', _('Confirm Password').':'),
+						tag('td', create_password('password2'))))));
 }
 
 ?>

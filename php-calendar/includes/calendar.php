@@ -504,8 +504,8 @@ function navbar()
 				$day);
 	}
 
-	if(isset($user) && $action != 'options') {
-		menu_item_append($html, _('Options'), 'options');
+	if(isset($user) && $action != 'admin') {
+		menu_item_append($html, _('Admin'), 'admin');
 	}
 
 	if(isset($var['display']) && $var['display'] == 'day') {

@@ -25,6 +25,15 @@
 
 /* FIXME: This file is a fucking mess, clean it up */
 
+// include adodb from the local path
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        ini_set ('include_path', ini_get ('include_path').';'.$phpc_root_path
+                        .'adodb');
+} else {
+        ini_set ('include_path', ini_get ('include_path').':'.$phpc_root_path
+                        .'adodb');
+}
+
 include($phpc_root_path . 'config.php');
 
 // SQL codes

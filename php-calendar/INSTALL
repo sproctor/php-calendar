@@ -39,8 +39,8 @@ Instruction for people that are installing on a web host or some computer other 
 0) Make sure php, an SQL server, and adodb are installed on your server.
    You can find php at http://php.net/ mysql at http://mysql.com
    postgresql at http://postgresql.org adodb at http://php.weblogs.com/adodb
-   You will need php version 4.1 or greater. If you do not have adodb installed
-   you can download it and extract it into the php-calendar directory.
+   You will need php version 4.1 or greater. If you don't have permissions to
+   install this globally, you can put it in your php-calendar directory.
 
 1) extract the files from the archive
    (in linux: tar -zxf php-calendar-x.y.tar.gz)
@@ -84,10 +84,10 @@ ERROR  Software error  Couldn't select database
 4 UPDATE
 ---------
 
-PHP-Calendar is not yet stable software. I've changed the DB format quite a
-bit through various versions. If you want to upgrade from an older version to
-a newer version, please feel free to write a script to do this. If you do, I
-would be happy to include it in future versions.
+I think I'm at the point where a database change would require an update script.
+Fortunately, there have been no database changes recently to warrant this. If
+I make a change in the future that would, you can rest assured that I would also
+write and update script to move over your data.
 
 Good luck!
 Sean Proctor

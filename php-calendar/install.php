@@ -33,6 +33,15 @@ define('IN_PHPC', 1);
 define('BEGIN_TRANSACTION', 1);
 define('END_TRANSACTION', 2);
 
+// include adodb from the local path
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        ini_set ('include_path', ini_get ('include_path').';'.$phpc_root_path
+                        .'adodb');
+} else {
+        ini_set ('include_path', ini_get ('include_path').':'$phpc_root_path
+                        .'adodb');
+}
+
 include_once($phpc_root_path . 'includes/calendar.php');
 include_once('adodb.inc.php');
 
@@ -217,34 +226,6 @@ function add_sql_user_db()
 
 }
 
-function create_dependent($sql_type)
-{
-	global $db;
-
-	$query = array();
-
-	switch($sql_type) {
-		case 'mysql':
-			break;
-		default:
-			$query[] = "CREATE FUNCTION dayofweek(date) RETURNS double precision AS ' SELECT EXTRACT(DOW FROM \$1); ' LANGUAGE SQL;";
-			$query[] = "CREATE FUNCTION dayofmonth(date) RETURNS double precision AS ' SELECT EXTRACT(DAY FROM \$1); ' LANGUAGE SQL;";
-			$query[] = "CREATE FUNCTION year(date) RETURNS double precision AS ' SELECT EXTRACT(YEAR FROM \$1); ' LANGUAGE SQL;";
-			$query[] = "CREATE FUNCTION month(date) RETURNS double precision AS ' SELECT EXTRACT(MONTH FROM \$1); ' LANGUAGE SQL;";
-
-	}
-
-        //$db->CreateSequence(SQL_PREFIX . 'sequence');
-	reset($query);
-	while(list(,$q) = each($query)) {
-		$result = $db->Execute($q);
-		if(!$result) {
-                        db_error(_('Error initializing default db stuff'),
-                                $query);
-		}
-	}
-}
-
 function install_base()
 {
 	global $phpc_root_path, $db;
@@ -276,8 +257,6 @@ function install_base()
 	include_once($phpc_root_path . 'includes/db.php');
 
 	create_tables();
-
-	create_dependent($sql_type);
 
 	echo "<p>calendars base created</p>\n"
 		."<div><input type=\"submit\" name=\"base\" value=\"continue\">"
@@ -378,11 +357,21 @@ function add_calendar()
 
 	echo "<p>calendar created</p>\n";
 
+	$query = "insert into ".SQL_PREFIX."users\n"
+		."(uid, username, password, calendar) VALUES\n"
+		."('".$db->GenID('uid', 0)."', 'anonymous', '',"
+                ." $calendar_name)";
+
+	$result = $db->Execute($query);
+	if(!$result) {
+		db_error("Could not add anonymous user:", $query);
+	}
+
 	$passwd = md5($_POST['admin_pass']);
 
 	$query = "insert into ".SQL_PREFIX."users\n"
 		."(uid, username, password, calendar) VALUES\n"
-		."('1', '$_POST[admin_user]', '$passwd',"
+		."('".$db->GenID('uid')."', '$_POST[admin_user]', '$passwd',"
 		." $calendar_name)";
 
 	$result = $db->Execute($query);
@@ -390,17 +379,6 @@ function add_calendar()
 		db_error("Could not add admin:", $query);
 	}
 	
-	$passwd = md5($_POST['admin_pass']);
-
-	$query = "insert into ".SQL_PREFIX."users\n"
-		."(uid, username, password, calendar) VALUES\n"
-		."('0', 'anonymous', '$passwd', $calendar_name)";
-
-	$result = $db->Execute($query);
-	if(!$result) {
-		db_error("Could not add admin:", $query);
-	}
-
 	echo "<p>admin added; <a href=\"index.php\">View calendar</a></p>";
 	echo '<p>you should delete install.php now and chmod 444 config.php</p>';
 }
