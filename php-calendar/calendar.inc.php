@@ -58,26 +58,12 @@ function browser()
   }
 }
 
-function ifold($str1, $str2)
-{
-  if(isold()) return $str1;
-  return $str2;
-}
-
-function isold()
-{
-  global $BName, $BVersion;
-
-  if(($BName == 'Netscape' || $BName == 'MSIE') && $BVersion < 5) return true;
-  else return false;
-}
-
 function connect_to_database()
 {
   $database = mysql_connect(SQL_HOSTNAME, SQL_USERNAME, SQL_PASSWORD)
-     or soft_error('Couldn\'t connect to database');
+     or soft_error(_('Couldn\'t connect to database server'));
   mysql_select_db(SQL_DATABASE, $database)
-     or soft_error('Couldn\'t select database');
+     or soft_error(_('Couldn\'t open database'));
 
   return $database;
 }
@@ -212,8 +198,11 @@ function print_footer()
   }
 
   return $output . '<p>
-  [<a href="http://validator.w3.org/check?url=' . rawurlencode("http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING") . '"> Valid XHTML 1.1</a>]
-  [<a href="http://jigsaw.w3.org/css-validator/check/referer">Valid CSS2</a>]
+  [<a href="http://validator.w3.org/check?url='
+  . rawurlencode("http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING")
+  .'">'._('Valid XHTML 1.1').'</a>]
+  [<a href="http://jigsaw.w3.org/css-validator/check/referer">'._('Valid CSS2')
+  .'</a>]
 </p>
 ';
 }
@@ -234,7 +223,7 @@ function get_events_by_date($day, $month, $year)
       FROM ' . SQL_PREFIX . "events
       WHERE duration >= \"$year-$month-$day 00:00:00\" 
       AND stamp <= \"$year-$month-$day 23:59:59\" ORDER BY stamp", $database)
-    or soft_error("get_events_by_date failed");
+    or soft_error(_('get_events_by_date failed'));
 
   return $result;
 }
@@ -247,9 +236,9 @@ function get_event_by_id($id)
       UNIX_TIMESTAMP(duration) AS end_since_epoch, username, subject,
       description, eventtype FROM ' . SQL_PREFIX . "events
       WHERE id = '$id'", $database)
-    or die("couldn't get items from table");
+    or soft_error(_('get_event_by_id failed'));
   if(mysql_num_rows($result) == 0) {
-    soft_error("item doesn't exist!");
+    soft_error(_('item doesn\'t exist!'));
   }
 
   return $result;
