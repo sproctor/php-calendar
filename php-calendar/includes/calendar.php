@@ -68,7 +68,8 @@ function check_user()
 {
 	global $user, $password, $db, $calno;
 
-	if(!isset($user) || !isset($password)) return false;
+	if(!isset($user) || !isset($password) || $user == 'anonymous')
+		return 0;
 
 	$passwd = md5($password);
 

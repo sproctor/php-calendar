@@ -348,58 +348,6 @@ function create_tables()
 	}
 }
 
-function get_calendar()
-{
-	echo "<table>\n"
-		."<tr><td>use 24h rather than 12h time</td>\n"
-		."<td>"
-		."<input type=\"checkbox\" name=\"hours_24\" value=\"1\"></td>"
-		."</tr>\n"
-		."<tr><td>start week on Monday rather than Sunday</td>\n"
-		."<td><input type=\"checkbox\" name=\"start_monday\" value=\"1\"></td></tr>\n"
-		."<tr><td>Support langauges besides English?</td>\n"
-		."<td><input type=\"checkbox\" name=\"translate\" value=\"1\"></td></tr>\n"
-		."<tr><td>Calendar title</td>\n"
-		."<td><input type=\"text\" name=\"calendar_title\"></td></tr>\n"
-		."<tr><td colspan=\"2\"><input type=\"submit\"></td></tr>\n"
-		."</table>\n";
-}
-
-function add_calendar()
-{
-	global $HTTP_POST_VARS, $db, $phpc_root_path, $calno;
-
-	include($phpc_root_path . 'config.php');
-	include($phpc_root_path . 'includes/db.php');
-
-	if(isset($HTTP_POST_VARS['hours_24'])) $hours_24 = 1;
-	else $hours_24 = 0;
-
-	if(isset($HTTP_POST_VARS['start_monday'])) $start_monday = 1;
-	else $start_monday = 0;
-
-	if(isset($HTTP_POST_VARS['translate'])) $translate = 1;
-	else $translate = 0;
-
-	$calendar_title = $HTTP_POST_VARS['calendar_title'];
-
-	$query = "INSERT INTO ".SQL_PREFIX."calendars (calno, hours_24, "
-	."start_monday, translate, subject_max, calendar_title) "
-	."VALUES ('$calno', '$hours_24', '$start_monday', '$translate', '32', "
-	."'$calendar_title')";
-
-	$result = $db->sql_query($query);
-
-	if(!$result) {
-		$error = $db->sql_error();
-		die("Couldn't create calendar. $error[code]: $error[message]<pre>$query</pre>");
-	}
-
-	echo "<p>calendar created</p>\n"
-		."<div><input name=\"made_calendar\" type=\"submit\" "
-		."value=\"continue\"></div>";
-}
-
 function get_admin()
 {
 
@@ -417,18 +365,51 @@ function get_admin()
 
 }
 
-function add_admin()
+function add_calendar()
 {
-	global $HTTP_POST_VARS, $calno, $phpc_root_path;
+	global $HTTP_POST_VARS, $db, $phpc_root_path, $calno;
 
 	include($phpc_root_path . 'config.php');
 	include($phpc_root_path . 'includes/db.php');
+
+	$hours_24 = 0;
+	$start_monday = 0;
+	$translate = 1;
+	$calendar_title = 'PHP-Calendar';
+
+	$query = "INSERT INTO ".SQL_PREFIX."calendars (calno, hours_24, "
+	."start_monday, translate, subject_max, calendar_title) "
+	."VALUES ('$calno', '$hours_24', '$start_monday', '$translate', '32', "
+	."'$calendar_title')";
+
+	$result = $db->sql_query($query);
+
+	if(!$result) {
+		$error = $db->sql_error();
+		die("Couldn't create calendar. $error[code]: $error[message]<pre>$query</pre>");
+	}
+
+	echo "<p>calendar created</p>\n"
+		."<div><input name=\"made_calendar\" type=\"submit\" "
+		."value=\"continue\"></div>";
 
 	$passwd = md5($HTTP_POST_VARS['admin_pass']);
 
 	$query = "insert into ".SQL_PREFIX."users
 		(uid, username, password, calno) VALUES
 		('1', '$HTTP_POST_VARS[admin_user]', '$passwd', $calno)";
+
+	$result = $db->sql_query($query);
+	if(!$result) {
+		$error = $db->sql_error();
+		die("Could not add admin: $error[code]: $error[message]:\n<pre>$query</pre>");
+	}
+	
+	$passwd = md5($HTTP_POST_VARS['admin_pass']);
+
+	$query = "insert into ".SQL_PREFIX."users
+		(uid, username, password, calno) VALUES
+		('0', 'anonymous', '$passwd', $calno)";
 
 	$result = $db->sql_query($query);
 	if(!$result) {
