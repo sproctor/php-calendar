@@ -1,0 +1,19 @@
+Very simple install.  Put these files someplace in you web directory tree and 
+either run install.php or add table.sql to you database (edit it to change the 
+table name if you want and then also edit config.php to reflect this change) 
+and move config.php-dist to config.php and edit to setup your proper 
+infomation.
+
+You will need PHP, which you can find at www.php.net, and MySQL, which you can 
+find at www.mysql.com.  You will need register_globals enabled in PHP.  If 
+there's any other requirements, send me details.
+
+* Attention version 0.3 and below users *
+Versions newer than 0.3 have a slightly updated database from the CST-Calendar DB and previous releases.  With version 0.5 I've added an update script.  Simply run update.php to update your old database (you'll need to copy your old config.php to your new installation first).
+
+Both the install and update scripts are messy, so don't expect too much from
+them.
+
+Good luck!
+Sean
+sproctor@ccs.neu.edu
