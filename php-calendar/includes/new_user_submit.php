@@ -41,8 +41,8 @@ function new_user_submit()
            that don't have a uid sequence */
         $query = "insert into ".SQL_PREFIX."users\n"
                 ."(uid, username, password, calendar) VALUES\n"
-                ."('".$db->GenID('uid', 2)."', '$_POST[user_name]', '$passwd',"
-                ." $calendar_name)";
+                ."('".$db->GenID(SQL_PREFIX . 'uid', 2)."', "
+                "'$_POST[user_name]', '$passwd', $calendar_name)";
 
         $result = $db->Execute($query)
                 or db_error(_('Error creating user'), $query);

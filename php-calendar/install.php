@@ -350,8 +350,8 @@ function add_calendar()
 
 	$query = "insert into ".SQL_PREFIX."users\n"
 		."(uid, username, password, calendar) VALUES\n"
-		."('".$db->GenID('uid', 0)."', 'anonymous', '',"
-                ." $calendar_name)";
+		."('".$db->GenID(SQL_PREFIX.'uid', 0)."', 'anonymous', '', "
+                ."$calendar_name)";
 
 	$result = $db->Execute($query);
 	if(!$result) {
@@ -362,8 +362,8 @@ function add_calendar()
 
 	$query = "insert into ".SQL_PREFIX."users\n"
 		."(uid, username, password, calendar) VALUES\n"
-		."('".$db->GenID('uid')."', '$_POST[admin_user]', '$passwd',"
-		." $calendar_name)";
+		."('".$db->GenID(SQL_PREFIX.'uid')."', '$_POST[admin_user]', "
+                ."'$passwd', $calendar_name)";
 
 	$result = $db->Execute($query);
 	if(!$result) {
