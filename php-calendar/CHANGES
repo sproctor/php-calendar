@@ -1,4 +1,10 @@
-php-calendar: php + sql + xhtml 1.1 + CSS 2 [+ gettext]
+php-calendar: php + sql + xhtml 1.1 + CSS 2.1 [+ gettext]
+
+version 0.10:
+	* fix bug in event_submit
+	* a number of installation fixes
+	* more strings are translatable
+	* much better code documentation
 
 Version 0.9.1 (4/14/04):
         * add quick event add link

@@ -48,7 +48,7 @@ function search_results()
 		."ORDER BY $sort $order";
 
 	$result = $db->Execute($query)
-		or db_error(_('Encountered an error while searching.', $query);
+		or db_error(_('Encountered an error while searching.', $query));
 
 
 	$html =  tag('table',
