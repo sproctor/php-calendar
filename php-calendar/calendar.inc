@@ -1,6 +1,10 @@
 <?php
 include_once("config.inc");
 
+if(empty($translate)) {
+  function _($str) { return $str; }
+}
+
 // Browser
 if(eregi("(opera)([0-9]{1,2}.[0-9]{1,3}){0,1}",$_SERVER['HTTP_USER_AGENT'],$match) || 
    eregi("(opera/)([0-9]{1,2}.[0-9]{1,3}){0,1}",$_SERVER['HTTP_USER_AGENT'],$match)) {
@@ -37,6 +41,18 @@ function isold()
   else return false;
 }
 
+function connect_to_database()
+{
+  global $mysql_hostname, $mysql_username, $mysql_password, $mysql_database;
+
+  $database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password)
+     or die("couldn't connect to database");
+  mysql_select_db($mysql_database, $database)
+     or die("Couldn't select database");
+
+  return $database;
+}
+
 function doctype()
 {
   echo <<<END
@@ -58,28 +74,30 @@ function print_header()
 
 function translate()
 {
-  if(isset($_GET['lang'])) {
-    $lang = substr($_GET['lang'], 0, 2);
-    setcookie('lang', $lang);
-  } elseif(isset($_COOKIE['lang'])) {
-    $lang = substr($_COOKIE['lang'], 0, 2);
-  } elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-    $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-  } else {
-    $lang = 'en';
-  }
+  if(!empty($translate)) {
+    if(isset($_GET['lang'])) {
+      $lang = substr($_GET['lang'], 0, 2);
+      setcookie('lang', $lang);
+    } elseif(isset($_COOKIE['lang'])) {
+      $lang = substr($_COOKIE['lang'], 0, 2);
+    } elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+      $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+    } else {
+      $lang = 'en';
+    }
 
-  switch($lang) {
-    case 'de':
+    switch($lang) {
+     case 'de':
       setlocale(LC_ALL, 'de_DE');
       break;
-    case 'en':
+     case 'en':
       setlocale(LC_ALL, 'en_US');
       break;
-  }
+    }
 
-  bindtextdomain('messages', './locale');
-  textdomain('messages');
+    bindtextdomain('messages', './locale');
+    textdomain('messages');
+  }
 }
 
 function month_name($month)
@@ -114,23 +132,26 @@ function top()
 
 function lang_link($lang)
 {
-  $str = "<a href=\"" . $_SERVER['PHP_SELF'] . '?';
+  $str = "[<a href=\"" . $_SERVER['PHP_SELF'] . '?';
   if(!empty($_SERVER['QUERY_STRING'])) {
     $str .= $_SERVER['QUERY_STRING'] . '&amp;';
   }
 
-  $str .= "lang=$lang\">$lang</a>";
+  $str .= "lang=$lang\">$lang</a>]";
   return $str;
 }
 
 function print_footer()
 {
-  echo "
+  if(!empty($translate)) {
+    echo "
 <div>
-  [" . lang_link('en') . "]
-  [" . lang_link('de') . "]
-</div>
-<p>
+  " . lang_link('en') . "
+  " . lang_link('de') . "
+</div>\n";
+  }
+
+echo "<p>
   [<a href=\"http://validator.w3.org/check/referer\">Valid XHTML 1.1</a>]
   [<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
 </p>";

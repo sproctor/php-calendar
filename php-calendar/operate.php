@@ -4,8 +4,7 @@ include_once("config.inc");
 
 top();
 
-$database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
-mysql_select_db($mysql_database, $database);
+$database = connect_to_database();
 
 if(!isset($_GET['action'])) $action = "none";
 else $action = $_GET['action'];
@@ -59,7 +58,8 @@ _("Nothing to modify.")
         $id = $_GET['id'];
       }
 
-      $headerstring = _("Modifying id ") . $id . _("from") . $mysql_tablename;
+      $headerstring = sprintf(_("Modifying id %d from %s\n"), $id,
+        $mysql_tablename);
       $result = mysql_query("SELECT * FROM $mysql_tablename WHERE id = '$id'")
         or die("couldn't get items from table");
 
