@@ -59,7 +59,7 @@ switch($dbms)
 }
 
 // Make the database connection.
-$db = new sql_db(SQL_HOSTNAME, SQL_USER, SQL_PASSWD, SQL_DATABASE, false);
+$db = new sql_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE, false);
 if(!$db->db_connect_id)
 {
 	soft_error("Could not connect to the database");
