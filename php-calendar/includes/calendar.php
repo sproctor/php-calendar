@@ -32,11 +32,11 @@ function db_error($str, $query = "")
 {
         global $db;
 
-        $string = "$str<br>".$db->ErrorNo().': '.$db->ErrorMsg();
+        $string = "$str<br />".$db->ErrorNo().': '.$db->ErrorMsg();
         if($query != "") {
                 $string .= "<br>sql: $query";
         }
-        soft_error($str);
+        soft_error($string);
 }
 
 function month_name($month)
@@ -117,9 +117,9 @@ function check_user()
                 db_error("error checking user", $query);
 	}
 
-	if($db->FieldCount($result) == 0) return 0;
+	if($result->FieldCount() == 0) return 0;
 
-	$row = $db->FetchRow($result);
+	$row = $result->FetchRow();
 
 	return $row['uid'];
 }
@@ -294,11 +294,11 @@ function get_event_by_id($id)
 		db_error(_('Error in get_event_by_id'), $query);
 	}
 
-	if($db->FieldCount($result) == 0) {
+	if($result->FieldCount() == 0) {
 		soft_error("item doesn't exist!");
 	}
 
-	return $db->FetchRow($result);
+	return $result->FetchRow();
 }
 
 function parse_desc($text)
@@ -415,7 +415,7 @@ function navbar()
 	$html = array();
 
 	if(($config['anon_permission'] || isset($user)) && $action != 'add') { 
-		menu_item_append($html, _('Add Item'), 'event_form', $year,
+		menu_item_append($html, _('Add Event'), 'event_form', $year,
 				$month, $day);
 	}
 

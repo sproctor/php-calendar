@@ -29,6 +29,7 @@ define('BEGIN_TRANSACTION', 1);
 define('END_TRANSACTION', 2);
 
 include($phpc_root_path . 'includes/calendar.php');
+include('adodb.inc.php');
 
 echo '<html>
 <head>
@@ -38,7 +39,7 @@ echo '<html>
 <form method="post" action="install.php">
 ';
 
-foreach($_POST as $key => $value)) {
+foreach($_POST as $key => $value) {
 	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">";
 }
 
@@ -152,9 +153,12 @@ function add_sql_user()
 	$my_adminname = $_POST['my_adminname'];
 	$my_adminpasswd = $_POST['my_adminpassword'];
 
+        echo $my_adminname;
+
 	switch($_POST['sql_type']) {
 		case 'mysql':
-			$link = $mysql_connect($my_hostname, $my_adminname, $my_adminpasswd)
+			$link = mysql_connect($my_hostname, $my_adminname,
+                                        $my_adminpasswd)
 				or die("Could not connect");
 
 			mysql_select_db("mysql")
@@ -198,7 +202,7 @@ function add_sql_user()
 function create_db($my_hostname, $my_username, $my_passwd, $my_database,
 		$sql_type)
 {
-	global $phpc_root_path;
+	global $phpc_root_path, $db;
 
 	include($phpc_root_path . "db/$sql_type.php");
 
@@ -207,11 +211,8 @@ function create_db($my_hostname, $my_username, $my_passwd, $my_database,
 
 	$sql = "CREATE DATABASE $my_database";
 
-        $result = $db->Execute($sql);
-
-	if(!$result) {
-                db_error(_('error creating db'), $sql);
-	}
+        $db->Execute($sql)
+                or db_error(_('error creating db'), $sql);
 }
 
 function create_dependent($dbms)
@@ -231,7 +232,7 @@ function create_dependent($dbms)
 
 	}
 
-        $db->CreateSequence(SQL_PREFIX . 'sequence');
+        //$db->CreateSequence(SQL_PREFIX . 'sequence');
 	reset($query);
 	while(list(,$q) = each($query)) {
 		$result = $db->sql_query($q);
@@ -385,7 +386,7 @@ function add_calendar()
 		."('1', '$_POST[admin_user]', '$passwd',"
 		." $calendar_name)";
 
-	$result = $db->sql_query($query);
+	$result = $db->Execute($query);
 	if(!$result) {
 		db_error("Could not add admin:", $query);
 	}

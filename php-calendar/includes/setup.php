@@ -117,7 +117,7 @@ if(!$result) {
         .': '.$error[message].": $query");
 }
 
-$config = $db->FetchRow($result);
+$config = $result->FetchRow($result);
 
 if($config['translate'] && empty($no_gettext)) {
 
