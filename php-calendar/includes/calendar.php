@@ -28,6 +28,17 @@ function soft_error($str)
 	exit;
 }
 
+function db_error($str, $query = "")
+{
+        global $db;
+
+        $string = "$str<br>".$db->ErrorNo().': '.$db->ErrorMsg();
+        if($query != "") {
+                $string .= "<br>sql: $query";
+        }
+        soft_error($str);
+}
+
 function month_name($month)
 {
 	$month = ($month - 1) % 12 + 1;
@@ -101,15 +112,14 @@ function check_user()
 		."AND password = '$passwd' "
 		."AND calendar = '$calendar_name'";
 
-	$result = $db->sql_query($query);
+	$result = $db->Execute($query);
 	if(!$result) {
-		$error = $db->sql_error();
-		soft_error("$error[code]: $error[message]");
+                db_error("error checking user", $query);
 	}
 
-	if(!$db->sql_numrows($result)) return 0;
+	if($db->FieldCount($result) == 0) return 0;
 
-	$row = $db->sql_fetchrow($result);
+	$row = $db->FetchRow($result);
 
 	return $row['uid'];
 }
@@ -251,11 +261,10 @@ function get_events_by_date($day, $month, $year)
 		."AND (eventtype != 6 OR DAYOFMONTH(startdate) = '$day')\n"
 		."ORDER BY starttime";
 
-	$result = $db->sql_query($query);
+	$result = $db->Execute($query);
 
 	if(!$result) {
-		$error = $db->sql_error();
-		soft_error(_('Error in get_events_by_date').": $error[code]: $error[message]\nsql:\n$query");
+		db_error(_('Error in get_events_by_date'), $query);
 	}
 
 	return $result;
@@ -279,20 +288,17 @@ function get_event_by_id($id)
 		."WHERE $events_table.id = '$id'\n"
 		."AND $events_table.calendar = '$calendar_name';";
 
-	$result = $db->sql_query($query);
+	$result = $db->Execute($query);
 
 	if(!$result) {
-		$error = $db->sql_error();
-		soft_error(_('Error in get_event_by_id')
-				." $error[code]: $error[message]\n"
-				."sql:\n$query");
+		db_error(_('Error in get_event_by_id'), $query);
 	}
 
-	if($db->sql_numrows($result) == 0) {
+	if($db->FieldCount($result) == 0) {
 		soft_error("item doesn't exist!");
 	}
 
-	return $db->sql_fetchrow($result);
+	return $db->FetchRow($result);
 }
 
 function parse_desc($text)

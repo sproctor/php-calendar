@@ -28,6 +28,8 @@ define('IN_PHPC', 1);
 define('BEGIN_TRANSACTION', 1);
 define('END_TRANSACTION', 2);
 
+include($phpc_root_path . 'includes/calendar.php');
+
 echo '<html>
 <head>
 <title>install php calendar</title>
@@ -36,29 +38,28 @@ echo '<html>
 <form method="post" action="install.php">
 ';
 
-reset($HTTP_POST_VARS);
-while(list($key, $value) = each($HTTP_POST_VARS)) {
+foreach($_POST as $key => $value)) {
 	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">";
 }
 
-if(!isset($HTTP_POST_VARS['config'])) {
+if(!isset($_POST['config'])) {
 	get_config();
-} elseif(!isset($HTTP_POST_VARS['my_hostname'])
-		&& !isset($HTTP_POST_VARS['my_username'])
-		&& !isset($HTTP_POST_VARS['my_passwd'])
-		&& !isset($HTTP_POST_VARS['my_prefix'])
-		&& !isset($HTTP_POST_VARS['my_database'])) {
+} elseif(!isset($_POST['my_hostname'])
+		&& !isset($_POST['my_username'])
+		&& !isset($_POST['my_passwd'])
+		&& !isset($_POST['my_prefix'])
+		&& !isset($_POST['my_database'])) {
 	get_server_setup();
-} elseif(!isset($HTTP_POST_VARS['has_user'])) {
+} elseif(!isset($_POST['has_user'])) {
 	get_sql_user();
-} elseif(!isset($HTTP_POST_VARS['my_adminname'])
-		&& !isset($HTTP_POST_VARS['my_adminpassword'])
-		&& $HTTP_POST_VARS['has_user'] == 'no') {
+} elseif(!isset($_POST['my_adminname'])
+		&& !isset($_POST['my_adminpassword'])
+		&& $_POST['has_user'] == 'no') {
 	add_sql_user();
-} elseif(!isset($HTTP_POST_VARS['base'])) {
+} elseif(!isset($_POST['base'])) {
 	install_base();
-} elseif(!isset($HTTP_POST_VARS['admin_user'])
-		&& !isset($HTTP_POST_VARS['admin_pass'])) {
+} elseif(!isset($_POST['admin_user'])
+		&& !isset($_POST['admin_pass'])) {
 	get_admin();
 } else {
 	add_calendar();
@@ -143,17 +144,15 @@ function get_server_setup()
 
 function add_sql_user()
 {
-	global $HTTP_POST_VARS;
+	$my_hostname = $_POST['my_hostname'];
+	$my_username = $_POST['my_username'];
+	$my_passwd = $_POST['my_passwd'];
+	$my_prefix = $_POST['my_prefix'];
+	$my_database = $_POST['my_database'];
+	$my_adminname = $_POST['my_adminname'];
+	$my_adminpasswd = $_POST['my_adminpassword'];
 
-	$my_hostname = $HTTP_POST_VARS['my_hostname'];
-	$my_username = $HTTP_POST_VARS['my_username'];
-	$my_passwd = $HTTP_POST_VARS['my_passwd'];
-	$my_prefix = $HTTP_POST_VARS['my_prefix'];
-	$my_database = $HTTP_POST_VARS['my_database'];
-	$my_adminname = $HTTP_POST_VARS['my_adminname'];
-	$my_adminpasswd = $HTTP_POST_VARS['my_adminpassword'];
-
-	switch($HTTP_POST_VARS['sql_type']) {
+	switch($_POST['sql_type']) {
 		case 'mysql':
 			$link = $mysql_connect($my_hostname, $my_adminname, $my_adminpasswd)
 				or die("Could not connect");
@@ -203,16 +202,15 @@ function create_db($my_hostname, $my_username, $my_passwd, $my_database,
 
 	include($phpc_root_path . "db/$sql_type.php");
 
-	$db = new sql_db($my_hostname, $my_username, $my_passwd, '');
+        $db = NewADOConnection($sql_type);
+        $db->Connect($my_hostname, $my_username, $my_passwd, '');
 
 	$sql = "CREATE DATABASE $my_database";
 
-	if(!$db->sql_query($sql)) {
-		$error = $db->sql_error();
-		if($error['code'] != '1007') {
-			die(_('error creating db')
-					.": $error[code]: $error[message]: $sql");
-		}
+        $result = $db->Execute($sql);
+
+	if(!$result) {
+                db_error(_('error creating db'), $sql);
 	}
 }
 
@@ -220,16 +218,12 @@ function create_dependent($dbms)
 {
 	global $db;
 
-	$sequence = SQL_PREFIX . 'sequence';
-
 	$query = array();
 
 	switch($dbms) {
 		case 'mysql':
-			$query[] = "CREATE TABLE $sequence (id integer NOT NULL DEFAULT '0' AUTO_INCREMENT, PRIMARY KEY(id))";
 			break;
 		default:
-			$query[] = "CREATE SEQUENCE $sequence";
 			$query[] = "CREATE FUNCTION dayofweek(date) RETURNS double precision AS ' SELECT EXTRACT(DOW FROM \$1); ' LANGUAGE SQL;";
 			$query[] = "CREATE FUNCTION dayofmonth(date) RETURNS double precision AS ' SELECT EXTRACT(DAY FROM \$1); ' LANGUAGE SQL;";
 			$query[] = "CREATE FUNCTION year(date) RETURNS double precision AS ' SELECT EXTRACT(YEAR FROM \$1); ' LANGUAGE SQL;";
@@ -237,27 +231,27 @@ function create_dependent($dbms)
 
 	}
 
+        $db->CreateSequence(SQL_PREFIX . 'sequence');
 	reset($query);
 	while(list(,$q) = each($query)) {
 		$result = $db->sql_query($q);
-		$result = 1;
 		if(!$result) {
-			$error = $db->sql_error();
-			die("error in sequence: $error[code]: $error[message]:<pre>$query</pre>");
+                        db_error(_('Error initializing default db stuff'),
+                                $query);
 		}
 	}
 }
 
 function install_base()
 {
-	global $HTTP_POST_VARS, $phpc_root_path, $db;
+	global $phpc_root_path, $db;
 
-	$sql_type = $HTTP_POST_VARS['sql_type'];
-	$my_hostname = $HTTP_POST_VARS['my_hostname'];
-	$my_username = $HTTP_POST_VARS['my_username'];
-	$my_passwd = $HTTP_POST_VARS['my_passwd'];
-	$my_prefix = $HTTP_POST_VARS['my_prefix'];
-	$my_database = $HTTP_POST_VARS['my_database'];
+	$sql_type = $_POST['sql_type'];
+	$my_hostname = $_POST['my_hostname'];
+	$my_username = $_POST['my_username'];
+	$my_passwd = $_POST['my_passwd'];
+	$my_prefix = $_POST['my_prefix'];
+	$my_database = $_POST['my_database'];
 
 	$fp = fopen("$phpc_root_path/config.php", 'w')
 		or die('Couldn\'t open config file.');
@@ -275,8 +269,8 @@ function install_base()
 		or die("could not write to file");
 	fclose($fp);
 
-	if(!empty($HTTP_POST_VARS['create_db'])
-			&& $HTTP_POST_VARS['has_user'] == 'yes') {
+	if(!empty($_POST['create_db'])
+			&& $_POST['has_user'] == 'yes') {
 		create_db($my_hostname, $my_username, $my_passwd, $my_database,
 				$sql_type);
 	}
@@ -333,14 +327,11 @@ function create_tables()
 		."PRIMARY KEY (calendar)\n"
 		.")";
 
-	reset($query);
-	while(list(, $sql) = each($query)) {
-		$result = $db->sql_query($sql);
+	foreach($query as $sql) {
+		$result = $db->Execute($sql);
 
 		if(!$result) {
-			$error = $db->sql_error();
-			die("Error creating table: $error[code]: "
-					."$error[message]:<pre>$sql</pre>");
+			db_error("Error creating table:", $sql);
 		}
 	}
 }
@@ -364,7 +355,7 @@ function get_admin()
 
 function add_calendar()
 {
-	global $HTTP_POST_VARS, $db, $phpc_root_path, $calendar_name;
+	global $db, $phpc_root_path, $calendar_name;
 
 	include($phpc_root_path . 'config.php');
 	include($phpc_root_path . 'includes/db.php');
@@ -379,38 +370,35 @@ function add_calendar()
 	."VALUES ('$calendar_name', '$hours_24', '$start_monday', '$translate',"
 	." '32', '$calendar_title')";
 
-	$result = $db->sql_query($query);
+	$result = $db->Execute($query);
 
 	if(!$result) {
-		$error = $db->sql_error();
-		die("Couldn't create calendar. $error[code]: $error[message]<pre>$query</pre>");
+		db_error("Couldn't create calendar.", $query);
 	}
 
 	echo "<p>calendar created</p>\n";
 
-	$passwd = md5($HTTP_POST_VARS['admin_pass']);
+	$passwd = md5($_POST['admin_pass']);
 
 	$query = "insert into ".SQL_PREFIX."users\n"
 		."(uid, username, password, calendar) VALUES\n"
-		."('1', '$HTTP_POST_VARS[admin_user]', '$passwd',"
+		."('1', '$_POST[admin_user]', '$passwd',"
 		." $calendar_name)";
 
 	$result = $db->sql_query($query);
 	if(!$result) {
-		$error = $db->sql_error();
-		die("Could not add admin: $error[code]: $error[message]:\n<pre>$query</pre>");
+		db_error("Could not add admin:", $query);
 	}
 	
-	$passwd = md5($HTTP_POST_VARS['admin_pass']);
+	$passwd = md5($_POST['admin_pass']);
 
 	$query = "insert into ".SQL_PREFIX."users\n"
 		."(uid, username, password, calendar) VALUES\n"
 		."('0', 'anonymous', '$passwd', $calendar_name)";
 
-	$result = $db->sql_query($query);
+	$result = $db->Execute($query);
 	if(!$result) {
-		$error = $db->sql_error();
-		die("Could not add admin: $error[code]: $error[message]:\n<pre>$query</pre>");
+		db_error("Could not add admin:", $query);
 	}
 
 	echo "<p>admin added; <a href=\"index.php\">View calendar</a></p>";

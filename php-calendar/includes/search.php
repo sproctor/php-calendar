@@ -47,10 +47,9 @@ function search_results()
 		."AND startdate <= DATE '$end'"
 		."ORDER BY $sort $order";
 
-	$result = $db->sql_query($query);
+	$result = $db->Execute($query);
 	if(!$result) {
-		$error = $db->sql_error();
-		soft_error("$error[code]: $error[message]");
+                db_error("search error");
 	}
 
 
@@ -61,7 +60,7 @@ function search_results()
 					tag('th', _('Subject')),
 					tag('th', _('Date Time')),
 					tag('th', _('Description')))));
-	while ($row = $db->sql_fetchrow($result)) {
+	while ($row = $db->FetchRow($result)) {
 		$i++;
 		$name = stripslashes($row['username']);
 		$subject = stripslashes($row['subject']);

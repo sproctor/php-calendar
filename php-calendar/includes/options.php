@@ -50,10 +50,9 @@ function options()
 			."WHERE calendar=$calendar_name;";
 
 		if(check_user()){
-			$result = $db->sql_query($query);
+			$result = $db->Execute($query);
 			if(!$result) {
-				$error = $db->sql_error();
-				soft_error("$error[code]: $error[message]");
+				db_error("Error reading options", $query);
 			}
 
 			return tag('div', _('Updated options'));

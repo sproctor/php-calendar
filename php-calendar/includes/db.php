@@ -20,53 +20,13 @@
  *
  ***************************************************************************/
 
-if ( !defined('IN_PHPC') )
-{
+if ( !defined('IN_PHPC') ) {
 	die("Hacking attempt");
 }
 
-if( !defined('DB_PHP')) {
-
-define('DB_PHP', 1);
-$phpEx = 'php';
-
-switch($dbms)
-{
-	case 'mysql':
-		include($phpc_root_path . 'db/mysql.'.$phpEx);
-		break;
-
-	case 'mysql4':
-		include($phpbb_root_path . 'db/mysql4.'.$phpEx);
-		break;
-
-	case 'postgres7':
-		include($phpc_root_path . 'db/postgres7.'.$phpEx);
-		break;
-
-	case 'mssql':
-		include($phpbb_root_path . 'db/mssql.'.$phpEx);
-		break;
-
-	case 'oracle':
-		include($phpbb_root_path . 'db/oracle.'.$phpEx);
-		break;
-
-	case 'msaccess':
-		include($phpbb_root_path . 'db/msaccess.'.$phpEx);
-		break;
-
-	case 'mssql-odbc':
-		include($phpbb_root_path . 'db/mssql-odbc.'.$phpEx);
-		break;
-}
-
 // Make the database connection.
-$db = new sql_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE, false);
-if(!$db->db_connect_id)
-{
+$db = NewADOConnection($dbms);
+if(!$db->Connect(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE)) {
 	die("Could not connect to the database");
-}
-
 }
 ?>

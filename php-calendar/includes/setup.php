@@ -34,11 +34,11 @@ if(!function_exists('_')) {
 	$no_gettext = 1;
 }
 
-foreach($HTTP_GET_VARS as $key => $value) {
+foreach($_GET as $key => $value) {
 	$vars[$key] = $value;
 }
 
-foreach($HTTP_POST_VARS as $key => $value) {
+foreach($_POST as $key => $value) {
 	$vars[$key] = $value;
 }
 
@@ -49,9 +49,12 @@ ini_set('arg_separator.output', "&amp;");
 unset($user);
 unset($password);
 
-if(isset($HTTP_SESSION_VARS['user'])) $user = $HTTP_SESSION_VARS['user'];
-if(isset($HTTP_SESSION_VARS['password']))
-$password = $HTTP_SESSION_VARS['password'];
+if(isset($_SESSION['user'])) {
+  $user = $_SESSION['user'];
+}
+if(isset($_SESSION['password'])) {
+  $password = $_SESSION['password'];
+}
 
 /*
    echo "<pre>get vars:</pre>";
@@ -100,30 +103,31 @@ if(empty($vars['action'])) {
 	$action = $vars['action'];
 }
 
-if(!empty($vars['calendar_name']))
-$calendar_name = $vars['calendar_name'];
+if(!empty($vars['calendar_name'])) {
+        $calendar_name = $vars['calendar_name'];
+}
 
 $query = "SELECT * from ".SQL_PREFIX."calendars "
 ."WHERE calendar='$calendar_name'";
 
-$result = $db->sql_query($query);
+$result = $db->Execute($query);
 
 if(!$result) {
-	$error = $db->sql_error();
-	soft_error(_('Could not read configuration').": $error[code]: $error[message]: $query");
+	soft_error(_('Could not read configuration').": ".$db->ErrorMsg()
+        .': '.$error[message].": $query");
 }
 
-$config = $db->sql_fetchrow($result);
+$config = $db->FetchRow($result);
 
 if($config['translate'] && empty($no_gettext)) {
 
 	if(isset($vars['lang'])) {
 		$lang = substr($vars['lang'], 0, 2);
 		setcookie('lang', $lang);
-	} elseif(isset($HTTP_COOKIE_VARS['lang'])) {
-		$lang = substr($HTTP_COOKIE_VARS['lang'], 0, 2);
-	} elseif(isset($HTTP_ACCEPT_LANGUAGE)) {
-		$lang = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
+	} elseif(isset($_COOKIE['lang'])) {
+		$lang = substr($_COOKIE['lang'], 0, 2);
+	} elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+		$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
 	} else {
 		$lang = 'en';
 	}

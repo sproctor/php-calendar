@@ -117,7 +117,7 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 		 *  list.  loop through each event for the day
 		 */
 		$html_events = tag('ul');
-		while($row = $db->sql_fetchrow($result)) {
+		while($row = $db->FetchRow($result)) {
 			$subject = stripslashes($row['subject']);
 
 			$event_time = formatted_time_string(
@@ -175,7 +175,7 @@ function display_day($day, $month, $year)
 
 	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
 
-	if($row = $db->sql_fetchrow($result)) {
+	if($row = $db->FetchRow($result)) {
 
 		$html_table = tag('table', attributes('class="phpc-main"'),
 				tag('caption', "$day $monthname $year"),
@@ -200,7 +200,7 @@ function display_day($day, $month, $year)
 
 		$html_body = tag('tbody');
 
-		for(; $row; $row = $db->sql_fetchrow($result)) {
+		for(; $row; $row = $db->FetchRow($result)) {
 			//$name = stripslashes($row['username']);
 			$subject = stripslashes($row['subject']);
 			if(empty($subject)) $subject = '(No subject)';

@@ -34,7 +34,7 @@ define('TEXTCOLOR2',   '#FFFFFF');
 
 define('IN_PHPC', 1);
 
-if($HTTP_GET_VARS['action'] == 'style') {
+if($_GET['action'] == 'style') {
 	include($phpc_root_path . 'includes/style.php');
 	exit;
 }

@@ -19,34 +19,6 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-function nextval()
-{
-	global $db, $dbms;
-
-	$sequence = SQL_PREFIX . 'sequence';
-
-	switch($dbms) {
-		case 'mysql':
-			$query = "INSERT INTO $sequence VALUES ('DEFAULT')";
-			$broken = 1;
-			break;
-		default:
-			$query = "SELECT NEXTVAL('$sequence') as num";
-			$broken = 0;
-	}
-
-	$result = $db->sql_query($query);
-
-	if(!$result) {
-		$error = $db->sql_error();
-		soft_error(_('nextval error').": $error[code]: $error[message]:\n$query");
-	}
-
-	if($broken) return $db->sql_nextid();
-
-	return $db->sql_fetchfield('num');
-}
-
 function event_submit()
 {
 	global $calendar_name, $day, $month, $year, $db, $vars, $config, $SCRIPT_NAME;
@@ -151,7 +123,7 @@ function event_submit()
 		if(!check_user() && $config['anon_permission'] < 1) {
 			soft_error('You do not have permission to post.');
 		}
-		$id = nextval();
+		$id = $db->GenID(SQL_PREFIX . 'sequence');
 		$query = "INSERT INTO $table\n"
 			."(id, uid, startdate, enddate, starttime, duration,"
 			." subject, description, eventtype, calendar)\n"
@@ -160,16 +132,13 @@ function event_submit()
 			."'$description', '$typeofevent', '$calendar_name')";
 	}
 
-	$result = $db->sql_query($query);
+	$result = $db->Execute($query);
 
 	if(!$result) {
-		$error = $db->sql_error();
-		soft_error(_('Error processing event')
-				." $error[code]: $error[message]\n"
-				."sql:\n$query");
+		db_error(_('Error processing event'), $query);
 	}
 
-	$affected = $db->sql_affectedrows($result);
+	$affected = $db->Affected_Rows($result);
 	if($affected < 1) soft_error(_('No changes made')."\nsql:\n$query");
 
 	header("Location: $SCRIPT_NAME?action=display&id=$id");
