@@ -22,6 +22,16 @@
 include($phpc_root_path . 'config.php');
 include($phpc_root_path . 'includes/db.php');
 
+// SQL codes
+define('BEGIN_TRANSACTION', 1);
+define('END_TRANSACTION', 2);
+
+// Error codes
+define('GENERAL_MESSAGE', 200);
+define('GENERAL_ERROR', 202);
+define('CRITICAL_MESSAGE', 203);
+define('CRITICAL_ERROR', 204);
+
 function soft_error($str)
 {
 	echo "<html><head><title>Error</title></head>\n"

@@ -7,4 +7,5 @@ define('SQL_DATABASE',	'calendar');	// your MySQL database name
 define('SQL_PREFIX',	'phpc_');	// this sets the prefix for all tables
 					// that php-calendar uses, only change
 					// this if you need to
+$dbms = 'mysql';
 ?>
