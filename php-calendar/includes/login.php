@@ -22,7 +22,7 @@
 function login(){
 	global $vars, $day, $month, $year, $user, $password;
 
-	$html = tag('div');
+	$html[] = tag('div');
 
 	//Check password and username
 	if(isset($vars['username'])){
@@ -32,8 +32,13 @@ function login(){
 		if(check_user()){
 			session_register('user');
 			session_register('password');
+                        if(!empty($vars['day'])) {
+                                $day_string = "&day=$day";
+                        } else {
+                                $day_string = '';
+                        }
 			header("Location: $_SERVER[SCRIPT_NAME]?"
-                                        ."action=$vars[lastaction]&day=$day"
+                                        ."action=$vars[lastaction]$day_string"
                                         ."&month=$month&year=$year");
 			return tag('h2', _('Loggin in...'));
 		}

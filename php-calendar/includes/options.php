@@ -25,7 +25,6 @@ function options()
 
 	//Check password and username
 	if(isset($vars['submit'])){
-
 		$query = "UPDATE ".SQL_PREFIX."calendars SET\n";
 
 		if(isset($vars['hours_24']))

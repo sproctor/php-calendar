@@ -391,7 +391,8 @@ function create_hidden($name, $value)
 
 function create_submit($value)
 {
-	return tag('input', attributes("value=\"$value\"", 'type="submit"'));
+	return tag('input', attributes('name="submit"', "value=\"$value\"",
+                                'type="submit"'));
 }
 
 function create_text($name, $value = NULL)
