@@ -81,13 +81,15 @@ echo $my_hostname;
         or die('Couldn\'t open config file.');
 
     $fstring = "<?php
-\$sql_hostname    = '$my_hostname';
-\$sql_username    = '$my_username';
-\$sql_password    = '$my_passwd';
-\$sql_database    = '$my_database';
-\$sql_tableprefix = '$my_prefix';
-\$title           = 'PHP-Calendar 0.7';
-\$header          = 'PHP-Calendar';
+define('SQL_HOSTNAME', '$my_hostname');
+define('SQL_USERNAME', '$my_username');
+define('SQL_PASSWORD', '$my_passwd');
+define('SQL_DATABASE', '$my_database');
+define('SQL_PREFIX',   '$my_prefix');
+define('TITLE',        'PHP-Calendar 0.8');
+define('START_MONDAY', 0);
+define('HOURS_24',     0);
+define('TRANSLATE',    1);
 ?>";
 
     fwrite($fp, $fstring)

@@ -21,7 +21,7 @@ h1 {
 
 #calendar {
   background-color: black;
-  color: white;
+  color: gray;
 }
 
 caption {
@@ -42,6 +42,7 @@ th {
 #navbar a:hover {
   color: silver;
   background-color: black;
+  border-color: black;
 }
 
 .past, .past td {
@@ -66,7 +67,12 @@ th {
 
 #calendar table a:hover {
   background-color: gray;
-  color: inherit;
+  color: white;
+}
+
+.event-time {
+  background-color: gray;
+  color: white;
 }
 
 #display {

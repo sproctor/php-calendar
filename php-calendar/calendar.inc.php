@@ -74,11 +74,9 @@ function isold()
 
 function connect_to_database()
 {
-  global $sql_hostname, $sql_username, $sql_password, $sql_database;
-
-  $database = mysql_connect($sql_hostname, $sql_username, $sql_password)
+  $database = mysql_connect(SQL_HOSTNAME, SQL_USERNAME, SQL_PASSWORD)
      or soft_error('Couldn\'t connect to database');
-  mysql_select_db($sql_database, $database)
+  mysql_select_db(SQL_DATABASE, $database)
      or soft_error('Couldn\'t select database');
 
   return $database;
@@ -86,37 +84,39 @@ function connect_to_database()
 
 function translate()
 {
-  global $translate, $HTTP_ACCEPT_LANGUAGE, $HTTP_GET_VARS, $HTTP_COOKIE_VARS;
+  global $HTTP_ACCEPT_LANGUAGE, $HTTP_GET_VARS, $HTTP_COOKIE_VARS;
 
   if(!function_exists('_')) {
     function _($str) { return $str; }
-    unset($translate);
+    return;
   }
 
-  if(!empty($translate)) {
-    if(isset($HTTP_GET_VARS['lang'])) {
-      $lang = substr($HTTP_GET_VARS['lang'], 0, 2);
-      setcookie('lang', $lang);
-    } elseif(isset($HTTP_COOKIE_VARS['lang'])) {
-      $lang = substr($HTTP_COOKIE_VARS['lang'], 0, 2);
-    } elseif(isset($HTTP_ACCEPT_LANGUAGE)) {
-      $lang = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
-    } else {
-      $lang = 'en';
-    }
-
-    switch($lang) {
-     case 'de':
-      setlocale('LC_ALL', 'de_DE');
-      break;
-     case 'en':
-      setlocale('LC_ALL', 'en_US');
-      break;
-    }
-
-    bindtextdomain('messages', './locale');
-    textdomain('messages');
+  if(!TRANSLATE) {
+    return;
   }
+
+  if(isset($HTTP_GET_VARS['lang'])) {
+    $lang = substr($HTTP_GET_VARS['lang'], 0, 2);
+    setcookie('lang', $lang);
+  } elseif(isset($HTTP_COOKIE_VARS['lang'])) {
+    $lang = substr($HTTP_COOKIE_VARS['lang'], 0, 2);
+  } elseif(isset($HTTP_ACCEPT_LANGUAGE)) {
+    $lang = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
+  } else {
+    $lang = 'en';
+  }
+
+  switch($lang) {
+   case 'de':
+    setlocale('LC_ALL', 'de_DE');
+    break;
+   case 'en':
+    setlocale('LC_ALL', 'en_US');
+    break;
+  }
+
+  bindtextdomain('messages', './locale');
+  textdomain('messages');
 }
 
 function month_name($month)
@@ -159,14 +159,14 @@ function short_month_name($month)
 
 function top()
 {
-  global $header, $title, $BName, $BVersion;
+  global $BName, $BVersion;
   translate();
   browser();
   $output = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
         "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xml:lang="en">
 <head>
-  <title>' . $title . '</title>
+  <title>' . TITLE . '</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 ';
 
@@ -182,7 +182,7 @@ function top()
 
   return $output . '</head>
 <body>
-  <h1>' . $header . '</h1>
+  <h1>' . TITLE . '</h1>
 ';
 }
 
@@ -226,14 +226,12 @@ function bottom()
 
 function get_events_by_date($day, $month, $year)
 {
-  global $sql_tableprefix;
-
   $database = connect_to_database();
 
   $result = mysql_query('SELECT UNIX_TIMESTAMP(stamp) as start_since_epoch,
       UNIX_TIMESTAMP(duration) as end_since_epoch, username, subject,
       description, eventtype, id
-      FROM ' . $sql_tableprefix . "events
+      FROM ' . SQL_PREFIX . "events
       WHERE duration >= \"$year-$month-$day 00:00:00\" 
       AND stamp <= \"$year-$month-$day 23:59:59\" ORDER BY stamp", $database)
     or soft_error("get_events_by_date failed");
@@ -243,13 +241,11 @@ function get_events_by_date($day, $month, $year)
 
 function get_event_by_id($id)
 {
-  global $sql_tableprefix;
-
   $database = connect_to_database();
 
   $result = mysql_query('SELECT UNIX_TIMESTAMP(stamp) AS start_since_epoch,
       UNIX_TIMESTAMP(duration) AS end_since_epoch, username, subject,
-      description, eventtype FROM ' . $sql_tableprefix . "events
+      description, eventtype FROM ' . SQL_PREFIX . "events
       WHERE id = '$id'", $database)
     or die("couldn't get items from table");
   if(mysql_num_rows($result) == 0) {

@@ -23,11 +23,9 @@ include('event.inc.php');
 
 function remove_event($id)
 {
-  global $sql_tableprefix;
-
   $database = connect_to_database();
 
-  mysql_query('DELETE FROM ' . $sql_tableprefix . "events
+  mysql_query('DELETE FROM ' . SQL_PREFIX . "events
       WHERE id = '$id'", $database)
     or soft_error('MySQL error ' . mysql_errno($result) . ': '
       . mysql_error($result));

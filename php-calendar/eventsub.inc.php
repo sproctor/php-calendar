@@ -23,7 +23,7 @@ include('event.inc.php');
 
 function submit_event()
 {
-  global $sql_tableprefix, $HTTP_GET_VARS;
+  global $HTTP_GET_VARS;
 
   $database = connect_to_database();
   if(isset($HTTP_GET_VARS['modify'])) {
@@ -97,16 +97,20 @@ function submit_event()
     $typeofevent = $HTTP_GET_VARS['typeofevent'];
   else soft_error(_('No type of event was given.'));
 
+  if(strlen($subject) > SUBJECT_MAX) {
+    soft_error('Your subject was too long.  '.SUBJECT_MAX.' characters max.');
+  }
+
   $timestamp = date('Y-m-d H:i:s', mktime($hour,$minute,0,$month,$day,$year));
   $durationstamp = date('Y-m-d H:i:s', mktime($hour + $durationhour,
     $minute + $durationmin, 0, $month, $day + $durationday, $year));
 
   if($modify) {
-    $query = 'UPDATE ' . $sql_tableprefix . "events SET username='$username',
+    $query = 'UPDATE ' . SQL_PREFIX . "events SET username='$username',
       stamp='$timestamp', subject='$subject', description='$description',
       eventtype='$typeofevent', duration='$durationstamp' WHERE id='$id'";
   } else {
-    $query = 'INSERT INTO ' . $sql_tableprefix . "events 
+    $query = 'INSERT INTO ' . SQL_PREFIX . "events 
       (username, stamp, subject, description, eventtype, duration) 
       VALUES ('$username', '$timestamp', '$subject', '$description', 
       '$typeofevent', '$durationstamp')";

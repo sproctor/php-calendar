@@ -51,16 +51,16 @@ _('Add Item') . '</a>
 
 function calendar($year, $month, $day)
 {
-  global $start_monday, $hours_24, $BName, $sql_tableprefix;
+  global $BName;
 
   $database = connect_to_database();
-  $currentday = date("j");
-  $currentmonth = date("n");
-  $currentyear = date("Y");
+  $currentday = date('j');
+  $currentmonth = date('n');
+  $currentyear = date('Y');
 
-  if(empty($start_monday)) $firstday = date("w", mktime(0,0,0,$month,1,$year));
-  else $firstday = (date("w", mktime(0,0,0,$month,1,$year)) + 6) % 7;
-  $lastday = date("t", mktime(0,0,0,$month,1,$year));
+  if(!START_MONDAY) $firstday = date('w', mktime(0, 0, 0, $month, 1, $year));
+  else $firstday = (date('w', mktime(0, 0, 0, $month, 1, $year)) + 6) % 7;
+  $lastday = date('t', mktime(0, 0, 0, $month, 1, $year));
 
   $output = '<table id="calendar">
   <caption>' . month_name($month) . " $year</caption>
@@ -68,9 +68,7 @@ function calendar($year, $month, $day)
   <thead>
   <tr>\n";
 
-  if(empty($start_monday)) {
-    $output .= "    <th>" .  _('Sunday') . '</th>' . "\n";
-  }
+  if(!START_MONDAY) $output .= "    <th>" .  _('Sunday') . "</th>\n";
   
   $output .= '    <th>' .  _('Monday') . '</th>
     <th>' .  _('Tuesday') . '</th>
@@ -78,101 +76,102 @@ function calendar($year, $month, $day)
     <th>' .  _('Thursday') . '</th>
     <th>' .  _('Friday') . '</th>
     <th>' .  _('Saturday') . '</th>';
-  if(!empty($start_monday)) {
-    $output .= '    <th>' .  _('Sunday') . '</th>' . "\n";
-  }
+
+  if(START_MONDAY) $output .= '    <th>' .  _('Sunday') . "</th>\n";
 
   $output .= '  </tr>
   </thead>
   <tbody>';
 
-// Loop to render the calendar
-for ($week_index = 0;; $week_index++) {
-  $output .= '  <tr>' . "\n";
+  // Loop to render the calendar
+  for ($week_index = 0;; $week_index++) {
+    $output .= "  <tr>\n";
 
-  for ($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
-    $i = $week_index * 7 + $day_of_week;
-    $day_of_month = $i - $firstday + 1;
+    for ($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
+      $i = $week_index * 7 + $day_of_week;
+      $day_of_month = $i - $firstday + 1;
 
-    if($i < $firstday || $day_of_month > $lastday) {
-      $output .= '    <td class="none"></td>';
-      continue;
-    }
+      if($i < $firstday || $day_of_month > $lastday) {
+        $output .= '    <td class="none"></td>';
+        continue;
+      }
 
-    // set whether the date is in the past or future/present
-    if($currentyear > $year || $currentyear == $year
-       && ($currentmonth > $month || $currentmonth == $month 
-           && $currentday > $day_of_month)) {
-      $current_era = 'past';
-    } else {
-      $current_era = 'future';
-    }
+      // set whether the date is in the past or future/present
+      if($currentyear > $year || $currentyear == $year
+          && ($currentmonth > $month || $currentmonth == $month 
+          && $currentday > $day_of_month)) {
+        $current_era = 'past';
+      } else {
+        $current_era = 'future';
+      }
 
-    $output .= "
+      $output .= "
     <td valign=\"top\" class=\"$current_era\">
       <a href=\"display.php?day=$day_of_month&amp;month=$month&amp;year=$year\" 
         class=\"date\">$day_of_month</a>";
 
-    $result = get_events_by_date($day_of_month, $month, $year);
+      $result = get_events_by_date($day_of_month, $month, $year);
 
-    /* Start off knowing we don't need to close the event table
+      /* Start off knowing we don't need to close the event table
        loop through each event for the day
-     */
-    $tabling = 0;
-    while($row = mysql_fetch_array($result)) {
-      // if we didn't start the event table yet, do so
-      if($tabling == 0) {
-        if($BName == 'MSIE') { 
-          $output .= "\n<table cellspacing=\"1\">\n";
-        } else {
-          $output .= "\n<table>\n";
+      */
+      $tabling = 0;
+      while($row = mysql_fetch_array($result)) {
+        // if we didn't start the event table yet, do so
+        if($tabling == 0) {
+          if($BName == 'MSIE') { 
+            $output .= "\n<table cellspacing=\"1\">\n";
+          } else {
+            $output .= "\n<table>\n";
+          }
+          $tabling = 1;
         }
-        $tabling = 1;
-      }
-            
-      $subject = stripslashes($row['subject']);
-      $typeofevent = $row['eventtype'];
 
-      switch($typeofevent) {
-       case 1:
-        if(empty($hours_24)) $timeformat = 'g:i A';
-        else $timeformat = 'G:i';
-        $event_time = date($timeformat, $row['start_since_epoch']);
-        break;
-       case 2:
-        $event_time = _('FULL DAY');
-        break;
-       case 3:
-        $event_time = '??:??';
-        break;
-       default:
-        $event_time = 'BROKEN';
-      }
+        $subject = stripslashes($row['subject']);
+        $typeofevent = $row['eventtype'];
 
-      $output .= "
+        switch($typeofevent) {
+         case 1:
+          if(!HOURS_24) $timeformat = 'g:iA';
+          else $timeformat = 'G:i';
+          $event_time = date($timeformat, $row['start_since_epoch']);
+          break;
+         case 2:
+          $event_time = _('FULL DAY');
+          break;
+         case 3:
+          $event_time = '??:??';
+          break;
+         default:
+          $event_time = 'BROKEN';
+        }
+
+        if($row['start_since_epoch'] < gmmktime(0, 0, 0, $month, $day_of_month,
+            $year))
+          $event_time = '<<<';
+
+        $output .= "
         <tr>
           <td>
-            <a href=\"display.php?day=$day_of_month&amp;month=$month&amp;year=$year\">
-              $event_time - $subject
-            </a>
+            <a href=\"display.php?day=$day_of_month&amp;month=$month&amp;year=$year\"><span class=\"event-time\">$event_time</span> $subject</a>
           </td>
         </tr>";
-    }
+      }
         
-    // If we opened the event table, close it
-    if($tabling == 1) {
-      $output .= '      </table>';
+      // If we opened the event table, close it
+      if($tabling == 1) {
+        $output .= '      </table>';
+      }
+
+      $output .= '    </td>';
     }
+    $output .= "\n  </tr>\n";
 
-    $output .= '    </td>';
+    // If it's the last day, we're done
+    if($day_of_month >= $lastday) {
+      break;
+    }
   }
-  $output .= "\n  </tr>\n";
-
-  // If it's the last day, we're done
-  if($day_of_month >= $lastday) {
-    break;
-  }
-}
 
   return $output . '  </tbody>
 </table>

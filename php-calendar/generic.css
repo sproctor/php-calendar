@@ -79,6 +79,10 @@ caption {
   padding: 2px;
 }
 
+.event-time {
+  padding: 0 2px;
+}
+
 #display {
   width: 100%;
   text-align: center;

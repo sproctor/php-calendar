@@ -23,7 +23,7 @@ include('calendar.inc.php');
 
 function display()
 {
-  global $sql_tableprefix, $HTTP_GET_VARS;
+  global $HTTP_GET_VARS;
 
   if(!isset($HTTP_GET_VARS['day'])) $day = date('j');
   else $day = $HTTP_GET_VARS['day'];
@@ -105,7 +105,7 @@ function display()
     $temp_time = $row['start_since_epoch'];
     switch($typeofevent) {
      case 1:
-      if(empty($hours_24)) $timeformat = 'j F Y, g:i A';
+      if(!HOURS_24) $timeformat = 'j F Y, g:i A';
       else $timeformat = 'j F Y, G:i';
       $time = date($timeformat, $temp_time);
       break;

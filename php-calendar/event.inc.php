@@ -74,7 +74,7 @@ function event_form($action)
     $durhr  = ($durtime / 3600) % 24;   //seconds per hour
     $durday = floor($durtime / 86400);  //seconds per day
 
-    if(empty($hours_24)) {
+    if(!HOURS_24) {
       if($hour >= 12) {
         $pm = 1;
         $hour = $hour - 12;
@@ -92,7 +92,7 @@ function event_form($action)
     $desc = '';
     if($day == date('j') && $month == date('n') && $year == date('Y')) {
       $hour = date('G') + 1;
-      if(empty($hours_24)) {
+      if(!HOURS_24) {
         if($hour >= 12) {
           $hour = $hour - 12;
           $pm = 1;
@@ -183,7 +183,7 @@ function event_form($action)
     <td>
 <select name=\"hour\" size=\"1\">\n";
 
-    if(empty($hours_24)) {
+    if(!HOURS_24) {
       for($i = 1; $i <= 12; $i++) {
         $output .= '<option value="' . $i % 12 . '"';
         if($hour == $i) {
@@ -213,7 +213,7 @@ function event_form($action)
 
     $output .= "</select>\n";
 
-    if(empty($hours_24)) {
+    if(!HOURS_24) {
       $output .= '<select name="pm" size="1">
 <option value="0"';
       if(empty($pm)) {
