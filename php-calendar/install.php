@@ -79,8 +79,8 @@ function get_config()
 	} else {
 		echo '<p>your config file is not writeable.  I suggest logging in with a shell and typing:</p>
 			<p><code>
-			touch config.inc.php<br>
-			chmod 666 config.inc.php
+			touch config.php<br>
+			chmod 666 config.php
 			</code></p>
 			<p>or if you only have ftp access, upload a blank file named config.inc.php then use the chmod command to change the permissions of config.inc.php to 666</p>
 			<input type="submit" value="retry">';
@@ -106,11 +106,11 @@ function get_server_setup()
 	echo '
 		<table class="display">
 		<tr>
-		<td>MySQL hostname:</td>
+		<td>SQL server hostname:</td>
 		<td><input type="text" name="my_hostname" value="localhost"></td>
 		</tr>
 		<tr>
-		<td>Database name:</td>
+		<td>SQL Database name:</td>
 		<td><input type="text" name="my_database" value="calendar"></td>
 		</tr>
 		<tr>
