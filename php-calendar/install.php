@@ -177,6 +177,7 @@ function finalize_install()
 		or die('Couldn\'t open config file.');
 
 	$fstring = "<?php\n"
+		."define('SUBJECT_MAX',  32);\n"
 		."define('SQL_HOSTNAME', '$my_hostname');\n"
 		."define('SQL_USERNAME', '$my_username');\n"
 		."define('SQL_PASSWORD', '$my_passwd');\n"

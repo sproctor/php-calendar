@@ -44,10 +44,14 @@ function navbar($year, $month, $day)
 		."<a href=\"?month=$month&amp;year=$nextyear\">"
 		._('next year')."</a>\n"
 		."</div>\n"
-		."<div>\n"
-		."<a class=\"box\" href=\"add.php?month=$month&amp;year=$year"
-		."&amp;day=$day\">"._('Add Item')."</a>\n"
-		."</div>\n";
+		."<form action=\"add.php\">\n"
+."<div class=\"phpc-button\">\n"
+."<input type=\"hidden\" value=\"$month\" name=\"month\" />\n"
+."<input type=\"hidden\" value=\"$year\" name=\"year\" />\n"
+."<input type=\"hidden\" value=\"$day\" name=\"day\" />\n"
+.'<input type="submit" value="'._('Add Item')."\" />\n"
+."</div>\n"
+		."</form>\n";
 	return $output;
 }
 

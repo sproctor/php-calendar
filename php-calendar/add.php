@@ -21,6 +21,6 @@
 
 include('event.inc.php');
 
-echo top() . event_form('add') . back_to_calendar() . bottom();
+echo top().back_to_calendar().event_form('add').bottom();
 
 ?>

@@ -49,17 +49,24 @@ function display()
   $nextyear = date('Y', $nexttime);
   $nextmonthname = month_name($nextmonth);
 
-  $output = "<div id=\"navbar\">
-      <a href=\"display.php?month=$lastmonth&amp;day=$lastday&amp;year=$lastyear\">$lastmonthname $lastday</a>
-      <a href=\"display.php?month=$nextmonth&amp;day=$nextday&amp;year=$nextyear\">$nextmonthname $nextday</a>
-</div>
-<div>
-  <a class=\"box\" href=\"add.php?month=$month&amp;year=$year&amp;day=$day\">" .
-  _("Add Item") . '</a>
-</div>
-
-<form action="delete.php">
-<table id="display">
+  $output = "<div class=\"phpc-navbar\">\n"
+      ."<a href=\"display.php?month=$lastmonth&amp;day=$lastday&amp;"
+      ."year=$lastyear\">$lastmonthname $lastday</a>\n"
+      ."<a href=\"index.php?month=$month&amp;day=$day&amp;year=$year\">"
+      ._('Back to Calendar')."</a>\n"
+      ."<a href=\"display.php?month=$nextmonth&amp;day=$nextday&amp;"
+      ."year=$nextyear\">$nextmonthname $nextday</a>\n"
+      ."</div>\n"
+."<form action=\"add.php\">\n"
+."<div class=\"phpc-button\">\n"
+."<input type=\"hidden\" value=\"$month\" name=\"month\">\n"
+."<input type=\"hidden\" value=\"$year\" name=\"year\">\n"
+."<input type=\"hidden\" value=\"$day\" name=\"day\">\n"
+.'<input type="submit" value="'._('Add Item')."\">\n"
+."</div>\n"
+."</form>\n"
+."<form action=\"delete.php\">\n"
+.'<table class="phpc-main">
   <caption>' . "$day $monthname $year" . '</caption>
   <colgroup>
     <col width="48" />
@@ -146,11 +153,6 @@ function display()
 
   return $output . "</tbody>
 </table>
-</form>
-<div>
-  <a class=\"box\" href=\"index.php?month=$month&amp;day=$day&amp;year=$year\">
-    " .  _('Back to Calendar') . "
-  </a>
-</div>\n";
+</form>";
 }
 ?>

@@ -150,20 +150,20 @@ function top()
 	global $BName, $BVersion;
 	translate();
 	browser();
-	$output = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-		"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-		<html xml:lang="en">
-		<head>
-		<title>' . TITLE . '</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-		';
-
-	// FIXME: add dynamic style stuff below
+	$output = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
+		."\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
+		."<html xml:lang=\"en\">\n"
+		."<head>\n"
+		.'<title>'.TITLE."</title>\n"
+		.'<meta http-equiv="Content-Type" '
+		."content=\"text/html; charset=iso-8859-1\" />\n";
 
 	$output .= "<!-- Your browser: $BName $BVersion -->";
-	$output .= '<link rel="stylesheet" type="text/css" href="style.css.php" />'."\n";
+	$output .= '<link rel="stylesheet" type="text/css" href="style.css.php"'
+		." />\n";
 	if($BName == 'MSIE') {
-		$output .= '<link rel="stylesheet" type="text/css" href="style-ie.css" />';
+		$output .= '<link rel="stylesheet" type="text/css" '
+			."href=\"style-ie.css\" />\n";
 	}
 
 	return $output."</head>\n<body>\n<h1>".TITLE."</h1>\n";
@@ -194,8 +194,8 @@ function print_footer()
 			."</div>\n";
 	}
 
-	return $output . '<p>
-		[<a href="http://validator.w3.org/check?url='
+	return $output . "<p class=\"phpc-footer\">\n"
+		.'[<a href="http://validator.w3.org/check?url='
 		. rawurlencode("http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING")
 		.'">'._('Valid XHTML 1.1').'</a>]'
 		.' [<a href="http://jigsaw.w3.org/css-validator/check/referer">'
@@ -252,10 +252,11 @@ function back_to_calendar()
 	if(!isset($HTTP_GET_VARS['year'])) $year = date("Y");
 	else $year = $HTTP_GET_VARS['year'];
 
-	return "<div>
-		<a class=\"box\" href=\"display.php?month=$month&amp;year=$year&amp;day=$day\">" .  _('View date') . "</a>
-		<a class=\"box\" href=\"index.php?month=$month&amp;year=$year\">"
-		. _('Back to Calendar') . "</a>
-		</div>\n";
+	return "<div class=\"phpc-navbar\">\n"
+		."<a href=\"display.php?month=$month&amp;year=$year&amp;"
+		."day=$day\">"._('View date')."</a>\n"
+		."<a href=\"index.php?month=$month&amp;year=$year\">"
+		._('Back to Calendar')."</a>\n"
+		."</div>\n";
 }
 ?>
