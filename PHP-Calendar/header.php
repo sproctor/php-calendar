@@ -283,7 +283,7 @@ table.edit {
 
 table.calendar thead td {
   color: $textcolor;
-  background-color: $tablebgcolor;
+  background-color: $headerbgcolor;
   font-size: 12pt;
 }
 
