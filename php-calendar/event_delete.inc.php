@@ -36,7 +36,11 @@ function remove_event($id)
 
 function delete()
 {
-	global $QUERY_STRING;
+	global $QUERY_STRING, $user;
+
+	if(empty($user) && ANON_PERMISSIONS < 2) {
+		soft_error('You do not have permission to delete events.');
+	}
 
 	$database = connect_to_database();
 	$del_array = explode('&', $QUERY_STRING);

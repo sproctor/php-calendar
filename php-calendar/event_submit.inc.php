@@ -21,7 +21,7 @@
 
 function submit_event()
 {
-	global $HTTP_GET_VARS, $calno;
+	global $HTTP_GET_VARS, $calno, $user;
 
 	$database = connect_to_database();
 	if(isset($HTTP_GET_VARS['modify'])) {
@@ -62,14 +62,11 @@ function submit_event()
 		$description = '';
 	}
 
-	if(isset($HTTP_GET_VARS['day'])) $day = $HTTP_GET_VARS['day'];
-	else soft_error(_('No day was given.'));
+	if(empty($HTTP_GET_VARS['day'])) soft_error(_('No day was given.'));
 
-	if(isset($HTTP_GET_VARS['month'])) $month = $HTTP_GET_VARS['month'];
-	else soft_error(_('No month was given.'));
+	if(empty($HTTP_GET_VARS['month'])) soft_error(_('No month was given.'));
 
-	if(isset($HTTP_GET_VARS['year'])) $year = $HTTP_GET_VARS['year'];
-	else soft_error(_('No year was given'));
+	if(empty($HTTP_GET_VARS['year'])) soft_error(_('No year was given'));
 
 	if(isset($HTTP_GET_VARS['hour'])) $hour = $HTTP_GET_VARS['hour'];
 	else soft_error(_('No hour was given.'));
@@ -104,12 +101,18 @@ function submit_event()
 				$minute + $durationmin, 0, $month, $day + $durationday, $year));
 
 	if($modify) {
+		if(empty($user) && ANON_PERMISSIONS < 2) {
+			soft_error('You do not have permission to modify events.');
+		}
 		$query = 'UPDATE '.SQL_PREFIX."events SET username='$username',"
 			." stamp='$timestamp', subject='$subject',"
 			." description='$description',"
 			." eventtype='$typeofevent', duration='$durationstamp'"
 			." WHERE id='$id'";
 	} else {
+		if(empty($user) && ANON_PERMISSIONS < 1) {
+			soft_error('You do not have permission to post.');
+		}
 		$query = 'INSERT INTO '.SQL_PREFIX."events (username, stamp,"
 			." subject, description, eventtype, duration, calno)"
 			." VALUES ('$username', '$timestamp', '$subject',"

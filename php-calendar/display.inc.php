@@ -29,7 +29,7 @@ event_id has been passed in the query string
 
 function display()
 {
-	global $HTTP_GET_VARS, $day, $month, $year;
+	global $HTTP_GET_VARS, $day, $month, $year, $user;
 
 	/* FIXME: this function needs a big rewrite. showing the items in
 	a table is wicked lame. do something better */
@@ -41,7 +41,8 @@ function display()
 	$monthname = month_name($month);
 
 	// -Nate- Output an alternate display if not administrative user
-	if(empty($GLOBALS['user'])) {
+	if(empty($user) && ANON_PERMISSIONS < 2) {
+		$admin = 0;
 		$num_cols = 3;
 		$output .= "<table class=\"phpc-main\">\n"
 			."<caption>$day $monthname $year</caption>\n"
@@ -59,6 +60,7 @@ function display()
 			."<tbody>\n";
 	}else{ //This is the ouput for administrators
 		$num_cols = 5;
+		$admin = 1;
 		$output .= "<form action=\"index.php\">"
 			."<table class=\"phpc-main\">\n"
 			."<caption>$day $monthname $year</caption>\n"
@@ -137,7 +139,7 @@ function display()
 		else $temp_dur = "$durday days, $durhr hours, $durmin minutes";
 
 		$output .= "<tr>\n";
-		if(!empty($GLOBALS['user'])) {
+		if($admin) {
 			$output .= "<td><input type=\"checkbox\""
 				." name=\"delete\" value=\"".$eventid."\""
 				." /></td>\n"
@@ -167,7 +169,7 @@ function display()
 
 	return $output . "</tbody>
 		</table>";
-		if(!empty($GLOBALS['user'])) $output .= "</form>\n";
+		if($admin) $output .= "</form>\n";
 		$output .= "<div><a class=\"box\" href=\"index.php?month=$month"
 			."&amp;day=$day&amp;year=$year\">"._('Back to Calendar')
 			."</a></div>\n";

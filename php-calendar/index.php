@@ -26,6 +26,9 @@ session_start();
 include 'miniconfig.inc.php';
 include "$basedir/calendar.inc.php";
 
+unset($user);
+$user = $HTTP_SESSION_VARS['user'];
+
 /*
    echo "<pre>get vars:</pre>";
    foreach ($HTTP_GET_VARS as $key=>$val){

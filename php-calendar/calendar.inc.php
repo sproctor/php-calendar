@@ -275,7 +275,7 @@ function navbar()
 
 	$output = '';
 
-	if($GLOBALS['user'] && $action != 'add') { 
+	if(ANON_POSTING || $GLOBALS['user'] && $action != 'add') { 
 		$output .= "<a href=\"index.php?action=add&amp;day=$day"
 			."&amp;month=$month&amp;year=$year\">"._('Add Item')
 			."</a>\n";
