@@ -72,7 +72,8 @@ function connect_to_database()
 
 function translate()
 {
-	global $HTTP_ACCEPT_LANGUAGE, $HTTP_GET_VARS, $HTTP_COOKIE_VARS;
+	global $HTTP_ACCEPT_LANGUAGE, $HTTP_GET_VARS, $HTTP_COOKIE_VARS,
+	$translate;
 
 	if(!function_exists('_')) {
 		function _($str) { return $str; }
@@ -82,6 +83,8 @@ function translate()
 	if(!TRANSLATE) {
 		return;
 	}
+
+	$translate = 1;
 
 	if(isset($HTTP_GET_VARS['lang'])) {
 		$lang = substr($HTTP_GET_VARS['lang'], 0, 2);
@@ -185,21 +188,21 @@ function lang_link($lang)
 function print_footer()
 {
 	global $translate, $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING;
-	$output = '';
+	$output = "<div class=\"phpc-footer\">\n";
 
 	if(!empty($translate)) {
-		$output .= "<div>\n"
+		$output .= "<p>\n"
 			.lang_link('en')
 			.lang_link('de')
-			."</div>\n";
+			."</p>\n";
 	}
 
-	return $output . "<p class=\"phpc-footer\">\n"
+	return $output . "<p>\n"
 		.'[<a href="http://validator.w3.org/check?url='
 		. rawurlencode("http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING")
 		.'">'._('Valid XHTML 1.1').'</a>]'
 		.' [<a href="http://jigsaw.w3.org/css-validator/check/referer">'
-		._('Valid CSS2')."</a>]\n</p>\n";
+		._('Valid CSS2')."</a>]\n</p>\n</div>\n";
 }
 
 function bottom()
