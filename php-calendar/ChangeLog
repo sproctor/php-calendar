@@ -1,6 +1,6 @@
 php-calendar: php + mysql + xhtml 1.1 + CSS 2 [+ gettext]
 
-Version 0.8 (3/05/03):
+Version 0.8 (3/11/03):
 	* Change config file to use defines rather than variables.
 	* You _need_ gettext-0.11.6-pre1 or later to parse with xgettext.  I
 	  have a copy of this if anyone needs it.  My language support is
@@ -20,6 +20,7 @@ Version 0.8 (3/05/03):
 	* added weekly/monthly/daily events (thanks me)
 	* changed the config files a lot, so old calendars will break
 	* support for SQL servers besides MySQL (thanks phpBB)
+	* Page to change options added
 
 Version 0.7 (10/5/02):
 	* added .php to end of .inc files

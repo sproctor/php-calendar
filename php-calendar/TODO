@@ -2,7 +2,15 @@ add support for real users - started
 unbreak gettext
 thoroughly test the install, make it more robust
 write page to create new admins, etc.
+merge action=main and action=display
 ability to display the next N events or events within a certain range.
+ - display=year show given year or current year
+ - display=month display given or current month
+ - display=day act like current display
+ - display=# display the next # valid ids, if id is given, then from there,
+      else from the given or current day.
+ - on no display - if there's an id or multiple id's show those, otherwise show
+     the month of the given or current date.
 make recurring events more powerful
 
 later:
