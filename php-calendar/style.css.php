@@ -65,6 +65,14 @@ h1 {
   background-color: inherit;
 }
 
+h2 {
+  font-size: 175%;
+  text-align: center;
+  font-family: serif;
+  color: <?php echo $textcolor1 ?>;
+  background-color: inherit;
+}
+
 input[type="submit"] {
   background-color: <?php echo $bgcolor3 ?>;
   color: <?php echo $textcolor1 ?>;
@@ -100,15 +108,41 @@ input[type="submit"]:hover {
 }
 
 .phpc-main {
-  width: 100%;
   font-size: 90%;
-  font-weight: bold;
   border-style: solid;
   border-collapse: collapse;
   border-color: <?php echo $sepcolor ?>;
   border-width: 2px;
   color: <?php echo $textcolor1 ?>;
   background-color: inherit;
+}
+
+table.phpc-main {
+  width: 100%;
+}
+
+.phpc-main > h2 {
+  margin: 0;
+  text-align: left;
+  background-color: <?php echo $bgcolor3 ?>;
+  padding: .25em; 
+  border-color: <?php echo $sepcolor ?>;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+}
+
+.phpc-main > div {
+  margin: .5em;
+  font-weight: bold;
+}
+
+.phpc-main > p {
+  border-style: solid;
+  border-width: 2px 0 0 0;
+  border-color: <?php echo $sepcolor ?>;
+  padding: .5em;
+  margin: 0;
+  text-align: justify;
 }
 
 caption {
@@ -137,6 +171,7 @@ thead, tfoot {
   border-collapse: collapse;
   border-color: <?php echo $sepcolor ?>;
   border-width: 2px;
+  padding: .5em;
 }
 
 .phpc-main td {
@@ -153,6 +188,8 @@ thead, tfoot {
   height: 80px;
   overflow: hidden;
 }
+
+p
 
 td.past {
   background-color: <?php echo $bgpast ?>;

@@ -1,10 +1,11 @@
-clean up single event display.
-decide if description should be show in multi-event display
-add support for real users.
+add support for real users - started
 unbreak gettext
-abstract things out better to allow for theming, etc. maybe.
-switch to phpBB sessions
+switch to phpBB sessions - started
+check that the installer works properly.
+store modifiable parts of config in DB rather than text file - started
+write page to create new admins, etc.
 
 later:
+abstract things out better to allow for theming, etc. maybe.
 add an interface to pick a color for each event
 add a full year view. days with events should be a different color. full day events should be another color.

@@ -283,7 +283,18 @@ function finalize_install()
 	include("$phpc_root_path/config.php");
 	include("$phpc_root_path/includes/db.php");
 
-	$query = "CREATE TABLE $my_prefix"."events (\n"
+	create_tables();
+	create_dependent($sql_type);
+
+	echo "<p><input type=\"submit\" name=\"admin\" value=\"Create Admin\"></p>";
+}
+
+function create_tables()
+{
+
+	$query = array();
+
+	$query[] = "CREATE TABLE $my_prefix"."events (\n"
 		."id integer DEFAULT '0' NOT NULL,\n"
 		."username varchar(255),\n"
 		."startdate date,\n"
@@ -297,48 +308,41 @@ function finalize_install()
 		//."PRIMARY KEY (id)\n"
 		.")";
 
-	$result = $db->sql_query($query);
-$result = 1;
-	if(!$result) {
-		$error = $db->sql_error();
-		die("Could not create events table: $error[code]: $error[message]:\n<pre>$query</pre>");
+	$query[] = "CREATE TABLE ".$my_prefix."users ( "
+		."calno integer NOT NULL default '0', "
+		."UID integer NOT NULL default '0', "
+		."username varchar(32) NOT NULL default '' "
+		."password varchar(32) NOT NULL default '', "
+		."PRIMARY KEY (calno,UID))";
+
+	$query[] = "CREATE TABLE ".$my_prefix."calendars ("
+		."calno integer NOT NULL, "
+		."cookie_name varchar(256), "
+		."cookie_path varchar(256), "
+		."cookie_domain varchar(256), "
+		."cookie_secure varchar(256), "
+		."hours_24 integer NOT NULL default '0', "
+		."start_monday integer NOT NULL default '0', "
+		."translate integer NOT NULL default '0', "
+		."anon_permission integer NOT NULL default '0', "
+		."subject_max integer NOT NULL default '32', "
+		."contact_name varchar(256) default NULL, "
+		."contact_email varchar(256) default NULL, "
+		."calendar_title varchar(256) NOT NULL default '', "
+		."URL varchar(256) default NULL, "
+		."PRIMARY KEY (calno) "
+		.")";
+
+	reset($query);
+	while(list(,$sql) = each($query)) {
+		$result = $db->sql_query($sql);
+		$result = 1;
+		if(!$result) {
+			$error = $db->sql_error();
+			die("Could not create table: $error[code]: "
+					."$error[message]:\n<pre>$sql</pre>");
+		}
 	}
-
-	$query = "CREATE TABLE ".$my_prefix."admin (
-		calno integer NOT NULL default '0',
-	UID varchar(9) NOT NULL default '',
-	password varchar(32) NOT NULL default '',
-	PRIMARY KEY  (calno,UID)
-		)";
-
-	$result = $db->sql_query($query);
-$result = 1;
-
-	if(!$result) {
-		$error = $db->sql_error();
-		die("error creating admin table: $error[code]: $error[message]:<pre>$query</pre>e");
-	}
-
-	$query = "CREATE TABLE ".$my_prefix."calendars (
-		calno integer NOT NULL,
-	contact_name varchar(40) default NULL,
-	contact_email varchar(30) default NULL,
-	cal_name varchar(200) NOT NULL default '',
-	URL varchar(200) default NULL,
-	PRIMARY KEY  (calno)
-		)";
-
-	$result = $db->sql_query($query);
-$result = 1;
-
-	if(!$result) {
-		$error = $db->sql_error();
-		die("Error in calendars table: $error[code]: $error[message]:<pre>$query</pre>");
-	}
-
-	create_dependent($sql_type);
-
-	echo "<p><input type=\"submit\" name=\"admin\" value=\"Create Admin\"></p>";
 }
 
 function get_admin()
