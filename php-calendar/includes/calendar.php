@@ -19,52 +19,14 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-include($phpc_root_path . 'config.php');
-
-// SQL codes
-define('BEGIN_TRANSACTION', 1);
-define('END_TRANSACTION', 2);
-
-include($phpc_root_path . 'includes/db.php');
-
-if(!function_exists('_')) {
-	function _($str) { return $str; }
-	return;
-}
-
-if(!TRANSLATE) {
-	return;
-}
-
-if(isset($vars['lang'])) {
-	$lang = substr($vars['lang'], 0, 2);
-	setcookie('lang', $lang);
-} elseif(isset($HTTP_COOKIE_VARS['lang'])) {
-	$lang = substr($HTTP_COOKIE_VARS['lang'], 0, 2);
-} elseif(isset($HTTP_ACCEPT_LANGUAGE)) {
-	$lang = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
-} else {
-	$lang = 'en';
-}
-
-switch($lang) {
-	case 'de':
-		setlocale(LC_ALL, 'de_DE');
-		break;
-	case 'en':
-		setlocale(LC_ALL, 'en_US');
-		break;
-}
-
-bindtextdomain('messages', './locale');
-textdomain('messages');
-
 function soft_error($str)
 {
 	echo "<html><head><title>Error</title></head>\n"
 		."<body><h1>Software Error</h1><pre>$str</pre></body></html>";
 	exit;
 }
+
+include($phpc_root_path . 'includes/setup.php');
 
 function browser()
 {

@@ -169,15 +169,15 @@ function display_id($id)
 
 	$output = "<div class=\"phpc-main\">\n"
 		."<h2>$subject</h2>\n"
+		."<div>by <cite>$name</cite></div>\n"
 		."<div>\n"
 		."<a href=\"index.php?action=modify&amp;id=$id\">"._('Modify')
 		."</a>\n"
 		."<a href=\"index.php?action=delete&amp;id=$id\">"._('Delete')
 		."</a>\n"
 		."</div>\n"
-		."<p>by $name</p>\n"
-		."<pre>Time: $time_str\n"
-		."Duration: $dur_str</pre>\n"
+		."<div>Time: $time_str<br />\n"
+		."Duration: $dur_str</div>\n"
 		."<p>$desc</p>\n"
 		."</div>\n";
 
