@@ -1,12 +1,15 @@
 <?php
-define('SUBJECT_MAX', 32);
-define('SQL_HOSTNAME', 'localhost');
-define('SQL_USERNAME', 'calendar');
-define('SQL_PASSWORD', 'password');
-define('SQL_DATABASE', 'calendar');
-define('SQL_PREFIX', 'phpc_');
-define('TITLE', 'PHP-Calendar 0.8');
-define('START_MONDAY', 0);
-define('HOURS_24', 0);
-define('TRANSLATE', 1);
+define('SUBJECT_MAX', 32);           // Don't edit this
+define('SQL_HOSTNAME', 'localhost'); // your MySQL server
+define('SQL_USERNAME', 'calendar');  // your MySQL user name
+define('SQL_PASSWORD', 'password');  // your MySQL password
+define('SQL_DATABASE', 'calendar');  // your MySQL database name
+define('SQL_PREFIX', 'phpc_');       // this sets the prefix for all the tables
+                                     // that php-calendar uses, only change
+                                     // this if you need to
+define('TITLE', 'PHP-Calendar 0.8'); // The title/header for the calendar
+define('START_MONDAY', 0);           // Change to 1 if you want the weeks to
+                                     // start with Monday
+define('HOURS_24', 0);               // Change to 1 if you want 24 hour time
+define('TRANSLATE', 1);              // Change to 0 if you only need English
 ?>
