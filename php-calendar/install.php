@@ -19,7 +19,7 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-include 'miniconfig.inc.php';
+include 'miniconfig.php';
 
 echo '<html>
 <head>
@@ -31,9 +31,10 @@ echo '<html>
 
 function get_config()
 {
-global $basedir;
+	global $phpc_root_path;
 
-	if(is_writeable("$basedir/config.inc.php") || is_writeable($basedir)) {
+	if(is_writeable("$phpc_root_path/config.php")
+			|| is_writeable($phpc_root_path)) {
 		echo '<input type="hidden" name="config" value="1">
 			<p>your config file is writable</p>
 			<input type="submit" value="continue">';
@@ -134,8 +135,11 @@ function add_user()
 	$my_passwd = $HTTP_POST_VARS['my_passwd'];
 	$my_prefix = $HTTP_POST_VARS['my_prefix'];
 	$my_database = $HTTP_POST_VARS['my_database'];
+	$my_adminname = $HTTP_POST_VARS['my_adminname'];
+	$my_adminpasswd = $HTTP_POST_VARS['my_adminpassword'];
 
-	$link = mysql_connect($my_hostname, $HTTP_POST_VARS['my_adminname'], $HTTP_POST_VARS['my_adminpassword'])
+if($db_type == 'mysql') {
+	$link = $mysql_connect($my_hostname, $my_adminname, $my_adminpasswd)
 		or die("Could not connect");
 
 	mysql_select_db("mysql")
@@ -160,9 +164,8 @@ function add_user()
 			.");") or die("Could not change privileges"); 
 
 	if(!empty($HTTP_POST_VARS['create_db'])) {
-		$sql = "CREATE DATABASE $my_database";
-		if(!mysql_query($sql) and mysql_errno() != "1007")
-			die('create db:'.mysql_errno().': '.mysql_error().': '.$sql);
+		create_db($my_hostname, $my_adminname, $my_adminpasswd,
+				$my_database);
 	}
 
 	mysql_query("GRANT SELECT, INSERT, UPDATE, DELETE ON $my_prefix"."events TO $my_username;")
@@ -172,17 +175,37 @@ function add_user()
 		or die("Could not flush privileges");
 
 }
+}
+
+function create_db($my_hostname, $my_username, $my_paswd, $my_database)
+{
+	include("$phpc_root_path/db/$db_type.php");
+
+	$db->sql_connect($my_hostname, $my_username, $my_passwd)
+		or die("Could not connect");
+
+	$sql = "CREATE DATABASE $my_database";
+
+	if(!$db->sql_query($sql)) {
+		$error = $db->sql_error();
+		if($error['code'] != '1007') {
+			die(_('create db)
+					."$error[code]: $error[message]: $sql");
+		}
+	}
+}
 
 function finalize_install()
 {
-	global $HTTP_POST_VARS, $basedir;
+	global $HTTP_POST_VARS, $phpc_root_path, $db;
+
 	$my_hostname = $HTTP_POST_VARS['my_hostname'];
 	$my_username = $HTTP_POST_VARS['my_username'];
 	$my_passwd = $HTTP_POST_VARS['my_passwd'];
 	$my_prefix = $HTTP_POST_VARS['my_prefix'];
 	$my_database = $HTTP_POST_VARS['my_database'];
 
-	$fp = fopen("$basedir/config.inc.php", 'w')
+	$fp = fopen("$phpc_root_path/config.php", 'w')
 		or die('Couldn\'t open config file.');
 
 	$fstring = "<?php\n"
@@ -198,17 +221,12 @@ function finalize_install()
 		or die("could not write to file");
 	fclose($fp);
 
-	$link = mysql_connect($my_hostname, $my_username, $my_passwd)
-		or die("Could not connect");
-
 	if(!empty($HTTP_POST_VARS['create_db'])
 			&& $HTTP_POST_VARS['has_user'] == 'yes') {
-		$sql = "CREATE DATABASE $my_database";
-		if(!mysql_query($sql) and mysql_errno() != "1007")
-			die('create db:'.mysql_errno().': '.mysql_error().': '.$sql);
+		create_db($my_hostname, $my_username, $my_passwd, $my_database);
 	}
-	mysql_select_db($my_database)
-		or die("Could not select $my_database");
+
+	include("$phpc_root_path/includes/db.php");
 
 	$query = "CREATE TABLE $my_prefix"."events (\n"
 			."id int(11) DEFAULT '0' NOT NULL auto_increment,\n"
@@ -224,7 +242,7 @@ function finalize_install()
 			."PRIMARY KEY (id)\n"
 			.")";
 echo "<pre>$query</pre>";
-	mysql_query($query)
+	$db->sql_query($query)
 		or die("Could not create events table");
 
 $query = "CREATE TABLE ".$my_prefix."admin (
@@ -234,7 +252,7 @@ $query = "CREATE TABLE ".$my_prefix."admin (
   PRIMARY KEY  (calno,UID)
 )";
 
-mysql_query($query)
+$db->sql_query($query)
 or die("Could not create admin table");
 
 $query = "CREATE TABLE ".$my_prefix."calendars (
@@ -246,10 +264,8 @@ $query = "CREATE TABLE ".$my_prefix."calendars (
   PRIMARY KEY  (calno)
 )";
 
-mysql_query($query)
+$db->sql_query($query)
 or die("Could not create calendars table");
-
-	mysql_close($link);
 
 	echo "<p><input type=\"submit\" name=\"admin\" value=\"Create Admin\"></p>";
 }
@@ -275,21 +291,18 @@ function add_admin()
 {
 	global $HTTP_POST_VARS, $calno;
 
-	$link = mysql_connect($HTTP_POST_VARS['my_hostname'],
-			$HTTP_POST_VARS['my_username'],
-			$HTTP_POST_VARS['my_passwd'])
-		or die("Could not connect");
+	include("$phpc_root_path/includes/db.php");
 
-	mysql_select_db($HTTP_POST_VARS['my_database']);
 	$query = "insert into $HTTP_POST_VARS[my_prefix]admin
 		(UID, password, calno) VALUES
 		('$HTTP_POST_VARS[admin_user]',
 		 PASSWORD('$HTTP_POST_VARS[admin_pass]'), $calno)";
 
-	mysql_query($query)
+	$db->sql_query($query)
 		or die("Could not add admin");
 
 	echo "<p>admin added; <a href=\"index.php\">View calendar</a></p>";
+	echo '<p>you should delete install.php now</p>';
 }
 
 echo '</form></body></html>';
