@@ -214,25 +214,33 @@ function create_db($my_hostname, $my_username, $my_passwd, $my_database,
 	}
 }
 
-function create_sequence($dbms)
+function create_dependent($dbms)
 {
 	global $db;
 
 	$sequence = SQL_PREFIX . 'sequence';
 
+	$query = array();
+
 	switch($dbms) {
 		case 'mysql':
-			$query = "CREATE TABLE $sequence (id integer DEFAULT '0' AUTO_INCREMENT, PRIMARY KEY(id))";
+			$query[] = "CREATE TABLE $sequence (id integer DEFAULT '0' AUTO_INCREMENT, PRIMARY KEY(id))";
 			break;
 		default:
-			$query = "CREATE SEQUENCE $sequence";
+			$query[] = "CREATE SEQUENCE $sequence";
+			$query[] = "CREATE FUNCTION dayofweek(date) RETURNS double precision AS ' SELECT EXTRACT(DOW FROM \$1); ' LANGUAGE SQL;";
+			$query[] = "CREATE FUNCTION dayofmonth(date) RETURNS double precision AS ' SELECT EXTRACT(DAY FROM \$1); ' LANGUAGE SQL;";
+
 	}
 
-	$result = $db->sql_query($query);
-
-	if(!$result) {
-		$error = $db->sql_error();
-		die("error in sequence: $error[code]: $error[message]:<pre>$query</pre>");
+	reset($query);
+	while(list(,$q) = each($query)) {
+		$result = $db->sql_query($q);
+		$result = 1;
+		if(!$result) {
+			$error = $db->sql_error();
+			die("error in sequence: $error[code]: $error[message]:<pre>$query</pre>");
+		}
 	}
 }
 
@@ -288,7 +296,7 @@ function finalize_install()
 		.")";
 
 	$result = $db->sql_query($query);
-
+$result = 1;
 	if(!$result) {
 		$error = $db->sql_error();
 		die("Could not create events table: $error[code]: $error[message]:\n<pre>$query</pre>");
@@ -302,6 +310,7 @@ function finalize_install()
 		)";
 
 	$result = $db->sql_query($query);
+$result = 1;
 
 	if(!$result) {
 		$error = $db->sql_error();
@@ -318,13 +327,14 @@ function finalize_install()
 		)";
 
 	$result = $db->sql_query($query);
+$result = 1;
 
 	if(!$result) {
 		$error = $db->sql_error();
 		die("Error in calendars table: $error[code]: $error[message]:<pre>$query</pre>");
 	}
 
-	create_sequence($sql_type);
+	create_dependent($sql_type);
 
 	echo "<p><input type=\"submit\" name=\"admin\" value=\"Create Admin\"></p>";
 }

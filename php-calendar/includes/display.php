@@ -63,7 +63,9 @@ function display_date()
 	if(empty($user) && ANON_PERMISSIONS < 2) $admin = 0;
 	else $admin = 1;
 
-	if($admin) $output .= "<form action=\"index.php\">";
+	if($admin) $output = "<form action=\"index.php\">";
+	else $output = '';
+
 	$output .= "<table class=\"phpc-main\">\n"
 		."<caption>$day $monthname $year</caption>\n"
 		."<thead>\n"
@@ -144,7 +146,7 @@ function display_date()
 
 function display_id($id)
 {
-	global $user, $db;
+	global $user, $db, $year, $month, $day;
 
 	$result = get_event_by_id($id);
 

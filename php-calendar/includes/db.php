@@ -25,6 +25,9 @@ if ( !defined('IN_PHPC') )
 	die("Hacking attempt");
 }
 
+if( !defined('DB_PHP')) {
+
+define('DB_PHP', 1);
 $phpEx = 'php';
 
 switch($dbms)
@@ -62,7 +65,8 @@ switch($dbms)
 $db = new sql_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE, false);
 if(!$db->db_connect_id)
 {
-	soft_error("Could not connect to the database");
+	die("Could not connect to the database");
 }
 
+}
 ?>

@@ -20,11 +20,12 @@
  */
 
 include($phpc_root_path . 'config.php');
-include($phpc_root_path . 'includes/db.php');
 
 // SQL codes
 define('BEGIN_TRANSACTION', 1);
 define('END_TRANSACTION', 2);
+
+include($phpc_root_path . 'includes/db.php');
 
 function soft_error($str)
 {
@@ -282,42 +283,6 @@ function bottom()
 	return $output;
 }
 
-function day_of_week($string, $quoted = 0)
-{
-	global $dbms;
-
-	switch($dbms) {
-		case 'mysql':
-			if($quoted)
-				return "DAYOFWEEK('$string')";
-			else
-				return "DAYOFWEEK($string)";
-		default:
-			if($quoted)
-				return "EXTRACT(DOW FROM TIMESTAMP '$string')";
-			else
-				return "EXTRACT(DOW FROM $string)";
-	}
-}
-
-function day_of_month($string, $quoted = 0)
-{
-	global $dbms;
-
-	switch($dbms) {
-		case 'mysql':
-			if($quoted)
-				return "DAYOFMONTH('$string')";
-			else
-				return "DAYOFMONTH($string)";
-		default:
-			if($quoted)
-				return "EXTRACT(DOW FROM TIMESTAMP '$string')";
-			else
-				return "EXTRACT(DAY FROM $string)";
-	}
-}
-
 function get_events_by_date($day, $month, $year)
 {
 	global $calno, $db;
@@ -329,9 +294,9 @@ function get_events_by_date($day, $month, $year)
 		." OR eventtype = 6)"
 		." OR startdate = '$year-$month-$day')\n"
 		."AND calno = '$calno'\n"
-		."AND (eventtype != 5 OR ".day_of_week('startdate')." = "
-		.day_of_week("$year-$month-$day", 1).")\n"
-		."AND (eventtype != 6 OR ".day_of_month('startdate')." = '$day')\n"
+		."AND (eventtype != 5 OR DAYOFWEEK(startdate) = "
+		."DAYOFWEEK(DATE '$year-$month-$day'))\n"
+		."AND (eventtype != 6 OR DAYOFMONTH(startdate) = '$day')\n"
 		."ORDER BY starttime";
 
 	$result = $db->sql_query($query);
@@ -348,7 +313,7 @@ function get_event_by_id($id)
 {
 	global $calno, $db;
 
-	$result = $db->sql_query('SELECT * FROM '.SQL_PREFIX."events\n"
+	$result = $db->sql_query('SELECT *,  FROM '.SQL_PREFIX."events\n"
 			."WHERE id = '$id' AND calno = '$calno'");
 
 	if($db->sql_numrows() == 0) {
@@ -360,7 +325,7 @@ function get_event_by_id($id)
 
 function navbar()
 {
-	global $var, $year, $month, $day, $user, $action;
+	global $vars, $year, $month, $day, $user, $action;
 
 	$output = '';
 
@@ -381,8 +346,7 @@ function navbar()
 			._('Back to Calendar')."</a>\n";
 	}
 
-	if(($action != 'display' || isset($vars['id']))
-			&& isset($vars['day'])) {
+	if($action != 'display' || isset($vars['id'])) {
 		$output .= "<a href=\"index.php?action=display&amp;day=$day"
 			."&amp;month=$month&amp;year=$year\">"._('View date')
 			."</a>\n";
@@ -398,8 +362,7 @@ function navbar()
 			."year=$year\">"._('Log in')."</a>\n";
 	}
 
-
-	if($action == 'display') {
+	if($action == 'display' && !isset($vars['id'])) {
 		$monthname = month_name($month);
 
 		$lasttime = mktime(0, 0, 0, $month, $day - 1, $year);
