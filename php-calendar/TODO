@@ -49,8 +49,13 @@ some good ideas: http://mjr.towers.org.uk/blog/2004-7.html#webcal0929
 
  - open add event links in a javascript window.
  
+ - have some kind of approval queue for incoming messages
+ 
+ - add rel="nofollow" to links posted by anonymous users (or some scheme
+   to decide who, maybe everyone)
+
 later:
  - integrate email_events.php (where is this?)
-abstract things out better to allow for theming, etc. maybe.
-add an interface to pick a color for each event
-add a full year view. days with events should be a different color. full day events should be another color. (maybe use labels for this?)
+ - abstract things out better to allow for theming, etc. maybe.
+ - add a full year view. days with events should be a different color.
+   full day events should be another color. (maybe use labels for this?)
