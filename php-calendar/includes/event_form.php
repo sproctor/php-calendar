@@ -31,7 +31,7 @@ function event_form()
 		// modifying
 		$id = $vars['id'];
 
-		$title = sprintf(_('Modifying id #%d'), $id);
+		$title = sprintf(_('Editing Event #%d'), $id);
 
 		$row = get_event_by_id($id);
 
@@ -42,24 +42,26 @@ function event_form()
 		$month = $row['month'];
 		$day = $row['day'];
 
+                $hour = $row['hour'];
+		$minute = $row['minute'];
+
 		$end_year = $row['end_year'];
 		$end_month = $row['end_month'];
 		$end_day = $row['end_day'];
 
-		if($config['hours_24']) {
-                        $hour = $row['hour'];
-		} else {
-                        $hour = $row['hour12'];
-                        if($row['ampm'] == 'PM') {
+		$durmin = $row['duration'] % 60;
+		$durhr  = floor($row['duration'] / 60);
+
+		if(!$config['hours_24']) {
+			if($hour > 12) {
+				$pm = true;
+				$hour = $hour - 12;
+			} elseif($hour == 12) {
                                 $pm = true;
                         } else {
                                 $pm = false;
                         }
                 }
-		$minute = $row['minute'];
-
-		$durmin = $row['duration'] % 60;
-		$durhr  = $row['duration'] / 60;
 
 		$typeofevent = $row['eventtype'];
 
