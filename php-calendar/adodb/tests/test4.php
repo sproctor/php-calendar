@@ -1,7 +1,7 @@
 <?php
 
 /** 
- * @version V4.50 6 July 2004 (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V4.50 6 July 2004 (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -33,11 +33,11 @@ FROM ADOXYZ WHERE id = -1";
 // Select an empty record from the database 
 
 
-$conn = &ADONewConnection("mssql");  // create a connection
-$conn->PConnect("", "sa", "natsoft", "northwind"); // connect to MySQL, testdb
+#$conn = &ADONewConnection("mssql");  // create a connection
+#$conn->PConnect("", "sa", "natsoft", "northwind"); // connect to MySQL, testdb
 
-//$conn = &ADONewConnection("mysql");  // create a connection
-//$conn->PConnect("localhost", "root", "", "test"); // connect to MySQL, testdb
+$conn = &ADONewConnection("mysql");  // create a connection
+$conn->PConnect("localhost", "root", "", "test"); // connect to MySQL, testdb
 
 //$conn =& ADONewConnection('oci8');
 //$conn->Connect('','scott','natsoft');
@@ -114,6 +114,16 @@ $updateSQL = $conn->GetUpdateSQL($rs, $record);
 $conn->Execute($updateSQL,$varr); // Update the record in the database
 if ($conn->Affected_Rows() != 1)print "<p><b>Error 2</b>: Rows Affected=".$conn->Affected_Rows().", should be 1</p>";
 
+$rs = $conn->Execute("select * from ADOXYZ where lastname like 'Sm%'");
+//adodb_pr($rs);
+rs2html($rs);
+
+$record["firstName"] = "Carol-new-".rand();
+$record["lasTname"] = "Smithy"; // Update Caroline's lastname from Miranda to Smith
+$record["creAted"] = '2002-12-'.(rand()%30+1);
+$record['num'] = 331;
+
+$conn->AutoExecute('ADOXYZ',$record,'UPDATE', "lastname like 'Sm%'");
 $rs = $conn->Execute("select * from ADOXYZ where lastname like 'Sm%'");
 //adodb_pr($rs);
 rs2html($rs);

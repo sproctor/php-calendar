@@ -1,6 +1,6 @@
 <?php
 /*
-V4.54 5 Nov 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.61 24 Feb 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -48,8 +48,8 @@ class ADODB_mysqli extends ADOConnection {
 	
 	function ADODB_mysqli() 
 	{			
-	  if(!extension_loaded("mysqli"))
-	      trigger_error("You must have the mysqli extension installed.", E_USER_ERROR);
+	 // if(!extension_loaded("mysqli"))
+	      ;//trigger_error("You must have the mysqli extension installed.", E_USER_ERROR);
 	    
 	}
 	
@@ -62,6 +62,9 @@ class ADODB_mysqli extends ADOConnection {
 			  $argPassword = NULL, 
 			  $argDatabasename = NULL, $persist=false)
 	  {
+	  	 if(!extension_loaded("mysqli")) {
+			return null;
+		 }
 	    $this->_connectionID = @mysqli_init();
 	    
 	    if (is_null($this->_connectionID)) {
@@ -107,7 +110,7 @@ class ADODB_mysqli extends ADOConnection {
 	function _nconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	  {
 	    $this->forceNewConnect = true;
-	    $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename);
+	    return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename);
 	  }
 	
 	function IfNull( $field, $ifNull ) 
@@ -418,6 +421,10 @@ class ADODB_mysqli extends ADOConnection {
 			} elseif (preg_match("/^(.+)\((\d+)/", $type, $query_array)) {
 				$fld->type = $query_array[1];
 				$fld->max_length = is_numeric($query_array[2]) ? $query_array[2] : -1;
+			} elseif (preg_match("/^(enum)\((.*)\)$/i", $type, $query_array)) {
+				$fld->type = $query_array[1];
+				$fld->max_length = max(array_map("strlen",explode(",",$query_array[2]))) - 2; // PHP >= 4.0.6
+				$fld->max_length = ($fld->max_length == 0 ? 1 : $fld->max_length);
 			} else {
 				$fld->type = $type;
 				$fld->max_length = -1;
@@ -529,7 +536,7 @@ class ADODB_mysqli extends ADOConnection {
 	function ErrorMsg() 
 	  {
 	    if (empty($this->_connectionID)) 
-	      $this->_errorMsg = @mysqli_error();
+	      $this->_errorMsg = @mysqli_connect_error();
 	    else 
 	      $this->_errorMsg = @mysqli_error($this->_connectionID);
 	    return $this->_errorMsg;
@@ -539,7 +546,7 @@ class ADODB_mysqli extends ADOConnection {
 	function ErrorNo() 
 	  {
 	    if (empty($this->_connectionID))  
-	      return @mysqli_errno();
+	      return @mysqli_connect_errno();
 	    else 
 	      return @mysqli_errno($this->_connectionID);
 	  }

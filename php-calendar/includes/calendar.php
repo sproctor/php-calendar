@@ -422,6 +422,8 @@ function create_id_link($text, $action, $id = false, $attribs = false)
 function create_date_link($text, $action, $year = false, $month = false,
                 $day = false, $attribs = false, $lastaction = false)
 {
+        global $phpc_script;
+
 	$url = "href=\"$phpc_script?action=$action";
 	if($year !== false) $url .= "&amp;year=$year";
 	if($month !== false) $url .= "&amp;month=$month";

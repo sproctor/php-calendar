@@ -1,6 +1,6 @@
 <?php
 /*
- V4.54 5 Nov 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V4.61 24 Feb 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -73,12 +73,13 @@ class ADODB_postgres64 extends ADOConnection{
 	var $blobEncodeType = 'C';
 	var $metaColumnsSQL = "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum 
 		FROM pg_class c, pg_attribute a,pg_type t 
-		WHERE relkind = 'r' AND (c.relname='%s' or c.relname = lower('%s')) and a.attname not like '....%%'
+		WHERE relkind in ('r','v') AND (c.relname='%s' or c.relname = lower('%s')) and a.attname not like '....%%'
 AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";
 
+	// used when schema defined
 	var $metaColumnsSQL1 = "SELECT a.attname, t.typname, a.attlen, a.atttypmod, a.attnotnull, a.atthasdef, a.attnum 
 FROM pg_class c, pg_attribute a, pg_type t, pg_namespace n 
-WHERE relkind = 'r' AND (c.relname='%s' or c.relname = lower('%s'))
+WHERE relkind in ('r','v') AND (c.relname='%s' or c.relname = lower('%s'))
  and c.relnamespace=n.oid and n.nspname='%s' 
 	and a.attname not like '....%%' AND a.attnum > 0 
 	AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";
@@ -101,7 +102,7 @@ WHERE relkind = 'r' AND (c.relname='%s' or c.relname = lower('%s'))
 	var $_dropSeqSQL = "DROP SEQUENCE %s";
 	var $metaDefaultsSQL = "SELECT d.adnum as num, d.adsrc as def from pg_attrdef d, pg_class c where d.adrelid=c.oid and c.relname='%s' order by d.adnum";
 	var $random = 'random()';		/// random function
-	var $autoRollback = true; // apparently pgsql does not autorollback properly before 4.3.4
+	var $autoRollback = true; // apparently pgsql does not autorollback properly before php 4.3.4
 							// http://bugs.php.net/bug.php?id=25404
 							
 	var $_bindInputArray = false; // requires postgresql 7.3+ and ability to modify database
@@ -307,6 +308,10 @@ select viewname,'V' from pg_views where viewname like $mask";
 				$s .= 'D';
 				break;
 				
+			case 'w':
+				$s .= 'D';
+				break;
+				
 			default:
 			// handle escape characters...
 				if ($ch == '\\') {
@@ -408,8 +413,13 @@ select viewname,'V' from pg_views where viewname like $mask";
 		// note that there is a pg_escape_bytea function only for php 4.2.0 or later
 	}
 	
+	// assumes bytea for blob, and varchar for clob
 	function UpdateBlob($table,$column,$val,$where,$blobtype='BLOB')
 	{
+	
+		if ($blobtype == 'CLOB') {
+    		return $this->Execute("UPDATE $table SET $column=" . $this->qstr($val) . " WHERE $where");
+		}
 		// do not use bind params which uses qstr(), as blobencode() already quotes data
 		return $this->Execute("UPDATE $table SET $column='".$this->BlobEncode($val)."'::bytea WHERE $where");
 	}
@@ -529,7 +539,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 			$rs->MoveNext();
 		}
 		$rs->Close();
-		return $retarr;	
+		return empty($retarr) ? false : $retarr;	
 		
 	}
 
@@ -818,9 +828,10 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		{
 		case ADODB_FETCH_NUM: $this->fetchMode = PGSQL_NUM; break;
 		case ADODB_FETCH_ASSOC:$this->fetchMode = PGSQL_ASSOC; break;
-		default:
+		
 		case ADODB_FETCH_DEFAULT:
-		case ADODB_FETCH_BOTH:$this->fetchMode = PGSQL_BOTH; break;
+		case ADODB_FETCH_BOTH:
+		default: $this->fetchMode = PGSQL_BOTH; break;
 		}
 		$this->adodbFetchMode = $mode;
 		$this->ADORecordSet($queryID);
@@ -951,6 +962,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 				case 'NAME':
 		   		case 'BPCHAR':
 				case '_VARCHAR':
+				case 'INET':
 					if ($len <= $this->blobSize) return 'C';
 				
 				case 'TEXT':

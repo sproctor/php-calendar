@@ -54,6 +54,8 @@ some good ideas: http://mjr.towers.org.uk/blog/2004-7.html#webcal0929
  - add rel="nofollow" to links posted by anonymous users (or some scheme
    to decide who, maybe everyone)
 
+ - event type - "no time" for events without a particular time
+
 later:
  - integrate email_events.php (where is this?)
  - abstract things out better to allow for theming, etc. maybe.

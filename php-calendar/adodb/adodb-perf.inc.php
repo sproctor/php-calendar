@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.54 5 Nov 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.61 24 Feb 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -85,8 +85,14 @@ global $HTTP_SERVER_VARS;
 		if (is_array($inputarr)) {
 			if (is_array(reset($inputarr))) $params = 'Array sizeof='.sizeof($inputarr);
 			else {
-				$params = '';
-				$params = implode(', ',$inputarr);
+				// Quote string parameters so we can see them in the
+				// performance stats. This helps spot disabled indexes.
+				$xar_params = $inputarr;
+				foreach ($xar_params as $xar_param_key => $xar_param) {
+					if (gettype($xar_param) == 'string')
+					$xar_params[$xar_param_key] = '"' . $xar_param . '"';
+				}
+				$params = implode(', ', $xar_params);
 				if (strlen($params) >= 3000) $params = substr($params, 0, 3000);
 			}
 		} else {
@@ -211,6 +217,12 @@ processes 69293
 		// Algorithm is taken from
 		// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/wmisdk/wmi/example__obtaining_raw_performance_data.asp
 		if (strncmp(PHP_OS,'WIN',3)==0) {
+			if (PHP_VERSION == '5.0.0') return false;
+			if (PHP_VERSION == '5.0.1') return false;
+			if (PHP_VERSION == '5.0.2') return false;
+			if (PHP_VERSION == '5.0.3') return false;
+			if (PHP_VERSION == '4.3.10') return false; # see http://bugs.php.net/bug.php?id=31737
+			
 			@$c = new COM("WinMgmts:{impersonationLevel=impersonate}!Win32_PerfRawData_PerfOS_Processor.Name='_Total'");
 			if (!$c) return false;
 			
@@ -382,6 +394,7 @@ Committed_AS:   348732 kB
 			
 			$save = $ADODB_FETCH_MODE;
 			$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+			if ($this->conn->fetchMode !== false) $savem = $this->conn->SetFetchMode(false);
 			//$this->conn->debug=1;
 			$rs =& $this->conn->SelectLimit(
 			"select avg(timer) as avg_timer,$sql1,count(*),max(timer) as max_timer,min(timer) as min_timer
@@ -390,6 +403,7 @@ Committed_AS:   348732 kB
 				and (tracer is null or tracer not like 'ERROR:%')
 				group by sql1
 				order by 1 desc",$numsql);
+			if (isset($savem)) $this->conn->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
 			$this->conn->fnExecute = $saveE;
 			
@@ -459,6 +473,8 @@ Committed_AS:   348732 kB
 			$sql1 = $this->sql1;
 			$save = $ADODB_FETCH_MODE;
 			$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+			if ($this->conn->fetchMode !== false) $savem = $this->conn->SetFetchMode(false);
+			
 			$rs =& $this->conn->SelectLimit(
 			"select sum(timer) as total,$sql1,count(*),max(timer) as max_timer,min(timer) as min_timer
 				from $perf_table
@@ -466,7 +482,7 @@ Committed_AS:   348732 kB
 				and (tracer is null or tracer not like 'ERROR:%')
 				group by sql1
 				order by 1 desc",$numsql);
-			
+			if (isset($savem)) $this->conn->SetFetchMode($savem);
 			$this->conn->fnExecute = $saveE;
 			$ADODB_FETCH_MODE = $save;
 			if (!$rs) return "<p>$this->helpurl. ".$this->conn->ErrorMsg()."</p>";
@@ -703,7 +719,7 @@ Committed_AS:   348732 kB
 			echo date('H:i:s').'  '.$osval."$hits  $sess $reads $writes\n";
 			flush();
 			
-			if (connection_aborted()|| connection_timeout()) return;
+			if (connection_aborted()) return;
 			
 			sleep($secs);
 			$arro = $arr;
