@@ -15,32 +15,17 @@ h1 {
   margin: 9px 0;
 }
 
-#navbar {
-  width: 100%;
-  font-size: 10pt;
-  text-align: center;
-  margin: 8px 0;
-  border-style: none;
-  padding: 0px;
-  border-spacing: 1px;
-  table-layout: fixed;
-}
-
-#navbar th {
-  font-family: serif;
-  font-size: 16pt;
-  font-weight: bold;
-  text-align: center;
-}
-
-#navbar td {
-  padding: 0;
-}
-
 #navbar a {
-  display: block;
+  font-size: 10pt;
   text-decoration: none;
-  padding: 2px 0;
+  border: 1px;
+  border-style: solid;
+  margin: 0px;
+  padding: 2px;
+}
+
+a.month {
+  width: 300px;
 }
 
 #calendar {
@@ -54,6 +39,13 @@ h1 {
 
 #calendar th {
   font-size: 12pt;
+}
+
+#calendar caption {
+  font-size: 16pt;
+  border-width: 2px 2px 0 2px;
+  border-style: solid;
+  padding: 2px;
 }
 
 .past, .future {
@@ -144,4 +136,3 @@ b {
 img {
   border-style: none;
 }
-

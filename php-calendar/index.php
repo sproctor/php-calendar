@@ -19,11 +19,11 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include("index.inc");
+include('index.inc.php');
 
-$currentday = date("j");
-$currentmonth = date("n");
-$currentyear = date("Y");
+$currentday = date('j');
+$currentmonth = date('n');
+$currentyear = date('Y');
 
 if (!isset($HTTP_GET_VARS['month'])) {
     $month = $currentmonth;
@@ -34,7 +34,7 @@ if (!isset($HTTP_GET_VARS['month'])) {
 if(!isset($HTTP_GET_VARS['year'])) {
     $year = $currentyear;
 } else {
-    $year = date("Y", mktime(0,0,0,$month,1,$HTTP_GET_VARS['year']));
+    $year = date('Y', mktime(0,0,0,$month,1,$HTTP_GET_VARS['year']));
 }
 
 if(!isset($HTTP_GET_VARS['day'])) {

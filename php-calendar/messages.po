@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-06-18 19:49-0400\n"
+"POT-Creation-Date: 2002-08-20 17:51-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,279 +15,285 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: display.php:46 index.inc:107
-msgid "Add Item"
-msgstr ""
-
-#: display.php:72
-msgid "Select"
-msgstr ""
-
-#: display.php:75 display.php:137
-msgid "Modify"
-msgstr ""
-
-#: display.php:78
-msgid "Username"
-msgstr ""
-
-#: display.php:81 operate.php:212 operate.inc:212
-msgid "Time"
-msgstr ""
-
-#: display.php:84 operate.php:256 operate.inc:256
-msgid "Duration"
-msgstr ""
-
-#: display.php:87 operate.php:300 operate.inc:300
-msgid "Subject"
-msgstr ""
-
-#: display.php:90 operate.php:307 operate.inc:307
-msgid "Description"
-msgstr ""
-
-#: display.php:99
-msgid "Delete Selected"
-msgstr ""
-
-#: display.php:129 index.inc:228
-msgid "FULL DAY"
-msgstr ""
-
-#: display.php:155 operate.php:434 operate.inc:434
-msgid "Back to Calendar"
-msgstr ""
-
-#: operate.php:39 operate.inc:40
-msgid "Could not remove item: "
-msgstr ""
-
-#: operate.php:41 operate.inc:42
-msgid "Removed item: "
-msgstr ""
-
-#: operate.php:54 operate.inc:55
-msgid "Nothing to modify."
-msgstr ""
-
-#: operate.php:61
-#, c-format
-msgid "Modifying id %d from %s\n"
-msgstr ""
-
-#: operate.php:90 operate.inc:90
-msgid "Adding item to calendar"
-msgstr ""
-
-#: operate.php:132 operate.inc:132
-msgid "Name"
-msgstr ""
-
-#: operate.php:137 operate.inc:137
-msgid "Day"
-msgstr ""
-
-#: operate.php:176 operate.inc:176
-msgid "Event Type"
-msgstr ""
-
-#: operate.php:187 operate.inc:187
-msgid "Normal Event"
-msgstr ""
-
-#: operate.php:196 operate.inc:196
-msgid "Full Day Event"
-msgstr ""
-
-#: operate.php:205 operate.inc:205
-msgid "Unkown Time"
-msgstr ""
-
-#: operate.php:270 operate.inc:270
-msgid "days"
-msgstr ""
-
-#: operate.php:282 operate.inc:282
-msgid "hours"
-msgstr ""
-
-#: operate.php:294 operate.inc:294
-msgid "minutes"
-msgstr ""
-
-#: operate.php:301 operate.inc:301
-msgid " (255 chars max)"
-msgstr ""
-
-#: operate.php:323 operate.inc:323
-msgid "Submit Item"
-msgstr ""
-
-#: operate.php:336 operate.inc:336
-msgid "No ID given."
-msgstr ""
-
-#: operate.php:348 operate.inc:348
-msgid "Item already deleted."
-msgstr ""
-
-#: operate.php:359 operate.inc:359
-msgid "Item already created."
-msgstr ""
-
-#: operate.php:418 operate.inc:418
-msgid "Item added."
-msgstr ""
-
-#: operate.php:422 operate.inc:422
-msgid "Error adding item: "
-msgstr ""
-
-#: operate.php:431 operate.inc:431
-msgid "View date"
-msgstr ""
-
-#: calendar.inc:101
+#: calendar.inc.php:125
 msgid "January"
 msgstr ""
 
-#: calendar.inc:102
+#: calendar.inc.php:126
 msgid "February"
 msgstr ""
 
-#: calendar.inc:103
+#: calendar.inc.php:127
 msgid "March"
 msgstr ""
 
-#: calendar.inc:104
+#: calendar.inc.php:128
 msgid "April"
 msgstr ""
 
-#: calendar.inc:105 index.inc:55
+#: calendar.inc.php:129 index.inc.php:63
 msgid "May"
 msgstr ""
 
-#: calendar.inc:106
+#: calendar.inc.php:130
 msgid "June"
 msgstr ""
 
-#: calendar.inc:107
+#: calendar.inc.php:131
 msgid "July"
 msgstr ""
 
-#: calendar.inc:108
+#: calendar.inc.php:132
 msgid "August"
 msgstr ""
 
-#: calendar.inc:109
+#: calendar.inc.php:133
 msgid "September"
 msgstr ""
 
-#: calendar.inc:110
+#: calendar.inc.php:134
 msgid "October"
 msgstr ""
 
-#: calendar.inc:111
+#: calendar.inc.php:135
 msgid "November"
 msgstr ""
 
-#: calendar.inc:112
+#: calendar.inc.php:136
 msgid "December"
 msgstr ""
 
-#: index.inc:30
+#: calendar.inc.php:256
+msgid "View date"
+msgstr ""
+
+#: calendar.inc.php:259 display.inc.php:182
+msgid "Back to Calendar"
+msgstr ""
+
+#: delete.inc.php:38
+#, php-format
+msgid "Removed item: %d"
+msgstr ""
+
+#: delete.inc.php:40
+#, php-format
+msgid "Could not remove item: %d"
+msgstr ""
+
+#: display.inc.php:65 index.inc.php:96
+msgid "Add Item"
+msgstr ""
+
+#: display.inc.php:88
+msgid "Select"
+msgstr ""
+
+#: display.inc.php:91 display.inc.php:158
+msgid "Modify"
+msgstr ""
+
+#: display.inc.php:94
+msgid "Username"
+msgstr ""
+
+#: display.inc.php:97 event.inc.php:212
+msgid "Time"
+msgstr ""
+
+#: display.inc.php:100 event.inc.php:266
+msgid "Duration"
+msgstr ""
+
+#: display.inc.php:103 event.inc.php:310
+msgid "Subject"
+msgstr ""
+
+#: display.inc.php:106 event.inc.php:317
+msgid "Description"
+msgstr ""
+
+#: display.inc.php:114
+msgid "Delete Selected"
+msgstr ""
+
+#: display.inc.php:138 display.inc.php:152 index.inc.php:215
+msgid "FULL DAY"
+msgstr ""
+
+#: display.inc.php:141
+msgid "??:??"
+msgstr ""
+
+#: display.inc.php:169
+msgid "No events on this day."
+msgstr ""
+
+#: event.inc.php:68
+msgid "Nothing to modify."
+msgstr ""
+
+#: event.inc.php:75
+#, php-format
+msgid "Modifying id #%d"
+msgstr ""
+
+#: event.inc.php:105
+msgid "Adding item to calendar"
+msgstr ""
+
+#: event.inc.php:132
+msgid "Name"
+msgstr ""
+
+#: event.inc.php:137
+msgid "Day"
+msgstr ""
+
+#: event.inc.php:176
+msgid "Event Type"
+msgstr ""
+
+#: event.inc.php:187
+msgid "Normal Event"
+msgstr ""
+
+#: event.inc.php:196
+msgid "Full Day Event"
+msgstr ""
+
+#: event.inc.php:205
+msgid "Unkown Time"
+msgstr ""
+
+#: event.inc.php:280
+msgid "days"
+msgstr ""
+
+#: event.inc.php:292
+msgid "hours"
+msgstr ""
+
+#: event.inc.php:304
+msgid "minutes"
+msgstr ""
+
+#: event.inc.php:311
+msgid " (255 chars max)"
+msgstr ""
+
+#: event.inc.php:334
+msgid "Submit Item"
+msgstr ""
+
+#: eventsub.inc.php:31
+msgid "No ID given."
+msgstr ""
+
+#: eventsub.inc.php:123
+msgid "Date updated."
+msgstr ""
+
+#: index.inc.php:48
 msgid "last month"
 msgstr ""
 
-#: index.inc:35
+#: index.inc.php:51
 msgid "Jan"
 msgstr ""
 
-#: index.inc:40
+#: index.inc.php:54
 msgid "Feb"
 msgstr ""
 
-#: index.inc:45
+#: index.inc.php:57
 msgid "Mar"
 msgstr ""
 
-#: index.inc:50
+#: index.inc.php:60
 msgid "Apr"
 msgstr ""
 
-#: index.inc:60
+#: index.inc.php:66
 msgid "Jun"
 msgstr ""
 
-#: index.inc:65
+#: index.inc.php:69
 msgid "Jul"
 msgstr ""
 
-#: index.inc:70
+#: index.inc.php:72
 msgid "Aug"
 msgstr ""
 
-#: index.inc:75
+#: index.inc.php:75
 msgid "Sep"
 msgstr ""
 
-#: index.inc:80
+#: index.inc.php:78
 msgid "Oct"
 msgstr ""
 
-#: index.inc:85
+#: index.inc.php:81
 msgid "Nov"
 msgstr ""
 
-#: index.inc:90
+#: index.inc.php:84
 msgid "Dec"
 msgstr ""
 
-#: index.inc:95
+#: index.inc.php:87
 msgid "next month"
 msgstr ""
 
-#: index.inc:102
+#: index.inc.php:92
 msgid "last year"
 msgstr ""
 
-#: index.inc:112
+#: index.inc.php:101
 msgid "next year"
 msgstr ""
 
-#: index.inc:137 index.inc:161
+#: index.inc.php:130 index.inc.php:154
 msgid "Sunday"
 msgstr ""
 
-#: index.inc:142
+#: index.inc.php:135
 msgid "Monday"
 msgstr ""
 
-#: index.inc:145
+#: index.inc.php:138
 msgid "Tuesday"
 msgstr ""
 
-#: index.inc:148
+#: index.inc.php:141
 msgid "Wednesday"
 msgstr ""
 
-#: index.inc:151
+#: index.inc.php:144
 msgid "Thursday"
 msgstr ""
 
-#: index.inc:154
+#: index.inc.php:147
 msgid "Friday"
 msgstr ""
 
-#: index.inc:157
+#: index.inc.php:150
 msgid "Saturday"
 msgstr ""
 
-#: operate.inc:62
-msgid "Modifying id "
+#: install.php:35
+msgid "MySQL hostname:"
 msgstr ""
 
-#: operate.inc:62
-msgid "from"
+#: install.php:41
+msgid "Database name:"
+msgstr ""
+
+#: install.php:47
+msgid "Table prefix:"
+msgstr ""
+
+#: install.php:53
+msgid "Username:"
 msgstr ""

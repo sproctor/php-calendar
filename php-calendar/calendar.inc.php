@@ -19,7 +19,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include('config.inc');
+include('config.inc.php');
 
 function soft_error($str)
 {
@@ -134,6 +134,25 @@ function month_name($month)
     case 10: return _("October");
     case 11: return _("November");
     case 12: return _("December");
+  }
+}
+
+function short_month_name($month)
+{
+  $month = ($month - 1) % 12 + 1;
+  switch($month) {
+    case 1:  return _('Jan');
+    case 2:  return _('Feb');
+    case 3:  return _('Mar');
+    case 4:  return _('Apr');
+    case 5:  return _('May');
+    case 6:  return _('Jun');
+    case 7:  return _('Jul');
+    case 8:  return _('Aug');
+    case 9:  return _('Sep');
+    case 10: return _('Oct');
+    case 11: return _('Nov');
+    case 12: return _('Dec');
   }
 }
 

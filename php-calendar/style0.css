@@ -19,9 +19,14 @@ h1 {
   border-color: black;
 }
 
-#navbar, #calendar {
+#calendar {
   background-color: black;
   color: white;
+}
+
+#calendar caption {
+  background-color: gray;
+  color: black;
 }
 
 th {
@@ -84,4 +89,3 @@ a.box:hover {
   background-color: black;
   color: silver;
 }
-

@@ -74,18 +74,18 @@ _("Username:")
 $my_hostname = $HTTP_GET_VARS['my_hostname'];
 $my_username = $HTTP_GET_VARS['my_username'];
 $my_passwd = $HTTP_GET_VARS['my_passwd'];
-$my_tablename = $HTTP_GET_VARS['my_tablename'];
+$my_prefix = $HTTP_GET_VARS['my_tablename'];
 $my_database = $HTTP_GET_VARS['my_database'];
 echo $my_hostname;
-    $fp = fopen("config.inc", "w")
-        or die("Couldn't open config file");
+    $fp = fopen('config.inc.php', 'w')
+        or die('Couldn\'t open config file.');
 
     $fstring = "<?php
 \$sql_hostname    = '$my_hostname';
 \$sql_username    = '$my_username';
 \$sql_password    = '$my_passwd';
 \$sql_database    = '$my_database';
-\$sql_tableprefix = '$my_tablename';
+\$sql_tableprefix = '$my_prefix';
 \$title           = 'PHP-Calendar 0.7';
 \$header          = 'PHP-Calendar';
 ?>";
@@ -126,8 +126,8 @@ echo $my_hostname;
     mysql_select_db($my_database)
         or die("Could not select $my_database");
 
-    mysql_query("CREATE TABLE $my_tablename (
-  id int(11) DEFAULT '0' NOT NULL auto_increment,
+    mysql_query('CREATE TABLE ' . $my_prefix . 'events (
+  id int(11) DEFAULT \'0\' NOT NULL auto_increment,
   username varchar(255),
   stamp datetime,
   duration datetime,
@@ -135,7 +135,7 @@ echo $my_hostname;
   subject varchar(255),
   description blob,
   PRIMARY KEY (id)
-);")
+)')
         or die("Could not create table");
 
     mysql_query("GRANT SELECT, INSERT, UPDATE, DELETE ON $my_tablename TO $my_username;")
