@@ -104,24 +104,22 @@ function calendar()
 			}
 
 			$output .= "<td valign=\"top\" class=\"$current_era\">\n"
-				."<a href=\"index.php?action=display&amp;day=$day_of_month&amp;month=$month&amp;"
-				."year=$year\" class=\"date\">$day_of_month</a>\n";
+				."<a href=\"index.php?action=display&amp;"
+				."day=$day_of_month&amp;month=$month&amp;"
+				."year=$year\" class=\"date\">"
+				."$day_of_month</a>\n";
 
 			$result = get_events_by_date($day_of_month, $month, $year);
 
-			/* Start off knowing we don't need to close the event table
-			   loop through each event for the day
+			/* Start off knowing we don't need to close the event
+			 *  list.  loop through each event for the day
 			 */
-			$tabling = 0;
+			$have_events = 0;
 			while($row = mysql_fetch_array($result)) {
 				// if we didn't start the event table yet, do so
-				if($tabling == 0) {
-					if($BName == 'MSIE') { 
-						$output .= "<table cellspacing=\"1\">\n";
-					} else {
-						$output .= "<table>\n";
-					}
-					$tabling = 1;
+				if($have_events == 0) {
+					$output .= "<ul>\n";
+					$have_events = 1;
 				}
 
 				$subject = stripslashes($row['subject']);
@@ -130,26 +128,19 @@ function calendar()
 						$row['starttime'],
 						$row['eventtype']);
 
-				// - Nate - Changed the QueryString from day, month, year to event_id
-				//<a href=\"index.php?action=display&amp;event_id=".$row['id']."\">
-				$output .= "
-					<tr>
-					<td>
-					<a href=\"index.php?action=display&amp;day=$day_of_month&amp;month=$month&amp;year=$year&amp;event_id=".$row['id']."\">
-					$event_time - $subject
-					</a>
-					</td>
-					</tr>";
+				$output .= "<li>\n"
+					."<a href=\"index.php?action=display&amp;day=$day_of_month&amp;month=$month&amp;year=$year&amp;event_id=".$row['id']."\">$event_time - $subject</a>\n"
+					."</li>";
 			}
 
 			// If we opened the event table, close it
-			if($tabling == 1) {
-				$output .= '      </table>';
+			if($have_events == 1) {
+				$output .= "</ul>\n";
 			}
 
-			$output .= '    </td>';
+			$output .= "</td>\n";
 		}
-		$output .= "\n  </tr>\n";
+		$output .= "</tr>\n";
 
 		// If it's the last day, we're done
 		if($day_of_month >= $lastday) {

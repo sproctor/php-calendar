@@ -138,12 +138,12 @@ function submit_event()
 			."'$description', '$typeofevent', '$calno')";
 	}
 
-	$result = mysql_query($query);
+	$result = mysql_query($query)
+		or soft_error(_('Error updating event').': '.mysql_error()
+				."\n"."sql:\n$query");
 
-	if(empty($result) or mysql_affected_rows() < 1)
-		soft_error(_('Error updating event').': '.mysql_error()
-				."\n"._('sql').": $query");
-
+	if(mysql_affected_rows() < 1) soft_error(_('No changes made')
+			."\nsql:\n$query");
 	return '<div class="box">'._('Date updated').": ".mysql_affected_rows()
 		."</div>\n";
 }

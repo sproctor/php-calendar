@@ -129,25 +129,35 @@ tfoot {
   overflow: hidden;
 }
 
-.phpc-main table {
-  width: 100%;
-  border-spacing: 1px;
-  background-color: <?php echo $sepcolor ?>;
+.phpc-main ul {
+  margin: 2px;
+  padding: 1px;
+  list-style-type: none;
 }
 
-.phpc-main table td {
+.phpc-main li {
   font-size: 80%;
   font-weight: normal;
   padding: 0;
+  background-color: <?php echo $bgcolor3 ?>;
+  border-color: <?php echo $sepcolor ?>;
+  border-style: solid;
+  border-width: 0 1px 1px 1px;
+  margin: 0;
 }
 
-.phpc-main table a {
+.phpc-main ul > li:first-child {
+  border-width: 1px;
+}
+
+.phpc-main li a {
   display: block;
   text-decoration: none;
   padding: 2px;
+  margin: 0;
 }
 
-.phpc-main table a:hover {
+.phpc-main li a:hover {
   background-color: <?php echo $bgcolor2 ?>;
   color: <?php echo $textcolor2 ?>;
 }

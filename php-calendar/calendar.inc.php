@@ -154,7 +154,7 @@ function formatted_time_string($time, $type)
 		default:
 			preg_match('/(\d+):(\d+)/', $time, $matches);
 			$hour = $matches[1];
-			$minute = $match[2];
+			$minute = $matches[2];
 
 			if(!HOURS_24) {
 				if($hour > 12) {
