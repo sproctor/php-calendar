@@ -5,5 +5,8 @@ your proper infomation.
 
 You will need PHP, which you can find at www.php.net, and MySQL, which you can find at www.mysql.com.
 
+version 0.4 has a slightly updated database, shouldn't be hard to migrate, but
+I'm not going to go through the effort to make a script yet.
+
 Good luck!
 

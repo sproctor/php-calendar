@@ -1,5 +1,11 @@
 PHPCalendar: php + mysql + html 4 + CSS 2
 
+Version 0.4 (2/20/2002):
+	* fix am/pm issues with new time input
+	* add duration to events
+	* add event type for full day and questionable times
+	* not compatible with old databases
+	
 Version 0.3 (02/15/2002):
 	* fix to make links work properly in IE
 	* minor color tweak
