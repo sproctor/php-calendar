@@ -1,4 +1,0 @@
-<filesmatch "^(header|footer|config)\.php$">
-  order deny,allow
-  allow from all
-</filesmatch>

@@ -66,7 +66,9 @@ if(!isset($action)) {
 			|| empty($HTTP_GET_VARS['my_username'])
 			|| empty($HTTP_GET_VARS['my_passwd'])
 			|| empty($HTTP_GET_VARS['my_tablename'])
-			|| empty($HTTP_GET_VARS['my_database'])) {
+			|| empty($HTTP_GET_VARS['my_database'])
+			|| empty($HTTP_GET_VARS['admin_username'])
+			|| empty($HTTP_GET_VARS['admin_passwd'])) {
 		exit('You didn\'t fill in all the values.');
 	}
 
