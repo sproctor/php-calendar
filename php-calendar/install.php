@@ -378,7 +378,7 @@ function add_calendar()
 	}
 	
 	echo "<p>admin added; <a href=\"index.php\">View calendar</a></p>";
-	echo '<p>you should delete install.php now and chmod 444 config.php</p>';
+	echo '<p>You should now delete install.php and chmod 444 config.php</p>';
 }
 
 echo '</form></body></html>';

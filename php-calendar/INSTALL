@@ -20,12 +20,13 @@ is in the AUTHORS file).
 1 Requirements
 ---------------
 
--PHP 4.1 or higher
--MySQL or PostgreSQL (or access to a server)
--ssh (try putty for windows http://www.chiark.greenend.org.uk/~sgtatham/putty/)
-  or an FTP program which can utilize the CHMOD command (try smartFTP for 
-  windows http://www.smartftp.com/)
--adodb 2.41 or greater
+-PHP 4.1 or higher http://www.php.net/
+-MySQL or PostgreSQL (or access to a server running one of these)
+-SSH or an FTP program which and utilize the CHMOD command
+  For SSH on Windows, try putty at
+    http://www.chiark.greenend.org.uk/~sgtatham/putty/
+  For FTP on Windows, try smartFTP http://www.smartftp.com/
+-adodb 4.62 or greater http://adodb.sourceforge.net/
 
 Recommended:
 -editor (for editing the configuration files)
@@ -36,7 +37,8 @@ Recommended:
 
 Instruction for people that are installing on a web host or some computer other than the one that they are working on are indicated with "remote host only"
 
-0) Make sure php, an SQL server, and adodb are installed on your server.
+0) Make sure you have fulfilled all of the requirements listed above
+Make sure php, an SQL server, and adodb are installed on your server.
    You can find php at http://php.net/ mysql at http://mysql.com
    postgresql at http://postgresql.org adodb at http://php.weblogs.com/adodb
    You will need php version 4.1 or greater. If you don't have permissions to
@@ -50,14 +52,16 @@ Instruction for people that are installing on a web host or some computer other 
    'calendar' for www.mydomain.com/calendar).  You can call it whatever you
    want.
 
-3) Open up a browser window and navigate to the file install.php in your
+3) You need to have access to ADOdb from in PHP-Calendar. There are two ways
+   to accomplish this.
+     a) Add the path to ADOdb to your php include_path in your php.ini
+     b) Copy ADOdb into your PHP-Calendar directory (or make a symlink)
+
+4) Open up a browser window and navigate to the file install.php in your
    calendar folder of your webpage (example:
    http://www.mydomain.com/calendar/install.php)
 
-4) Follow the directions given by the installer.
-
-5) Once the calendar is installed, make sure to delete install.php or else
-   someone else could run the script and over-write your calendar.
+5) Follow the directions given by the installer.
 
 *** freak out if the above did not work ***
 
