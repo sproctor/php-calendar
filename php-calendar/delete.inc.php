@@ -47,16 +47,24 @@ function del()
 
   $output = '<div class="box" style="width: 50%">';
 
+  $selected = 0;
+
   while(list(, $del_value) = each($del_array)) {
     list($drop, $id) = explode("=", $del_value);
 
     if(preg_match('/delete$/', $drop) == 0) continue;
+
+    $selected = 1;
 
     if(remove_event($id)) {
       $output .= sprintf(_('Removed item: %d'), $id) . "<br />\n";
     } else {        
       $output .= sprintf(_('Could not remove item: %d'), $id) . "<br />\n";
     }
+  }
+
+  if(!$selected) {
+    $output .= _('No items selected.');
   }
 
   return $output . "</div>\n";
