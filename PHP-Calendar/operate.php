@@ -13,10 +13,11 @@ if(empty($year)) $year = date("Y");
 switch ($action) {
  case "Delete Selected":
      if (empty($id)) {
-         echo "<p>You can't delete nothing from the table.";
+         echo "<p>You must select an item to delete</p>.";
          break;
      }
-     echo "<p>We are about to delete id $id from $mysql_tablename";
+
+     $headerstring =  "We are about to delete id $id from $mysql_tablename";
      
      $query = "SELECT username FROM $mysql_tablename WHERE id = $id";
      $result = mysql_query($query);
@@ -45,7 +46,7 @@ switch ($action) {
          echo "<p>Nothing to modify.</p>";
          break;
      }
-     echo "<p>We are about to modify id $id from $mysql_tablename</p>\n";
+     $headerstring = "We are about to modify id $id from $mysql_tablename";
      $query = "SELECT * FROM $mysql_tablename WHERE id = '$id'";
      $result = mysql_query($query)
          or die("couldn't get items from table");
@@ -91,7 +92,7 @@ switch ($action) {
      
  case "Add Item":
      if($action == "Add Item") {
-         echo "<p>Adding item to calendar</p>\n";
+         $headerstring = "Adding item to calendar";
          $query = "SELECT max(id) as id FROM $mysql_tablename";
          $result = mysql_query($query);
          if($result) {
@@ -120,10 +121,21 @@ switch ($action) {
      }
    
      echo "<form method=\"get\" action=\"operate.php\">\n";
-     if(isold()) echo "<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"96%\"><tr><td bgcolor=\"$bordercolor\">
-<table class=\"edit\" cellspacing=\"0\" border=\"0\" cellpadding=\"2\" width=\"100%\"";
-     else echo "<table class=\"edit\"";
+     if(isold()) {
+         echo "<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"96%\"><tr><td bgcolor=\"$bordercolor\">
+<table class=\"box\" cellspacing=\"0\" border=\"0\" cellpadding=\"2\" width=\"100%\"";
+     } else {
+         echo "<table class=\"box\"";
+         if($BName == "MSIE") {
+             echo " cellspacing=\"0\"";
+         }
+     }
      echo ">
+  <thead>
+  <tr>
+    <th colspan=\"2\">$headerstring</th>
+  </tr>
+  </thead>
   <tr>
     <td>Name</td>";
    
@@ -314,7 +326,7 @@ minutes
      $durationstamp = date("Y-m-d H:i:s", mktime($hour+$durationhour,$minute+$durationminute,0,$month,$day+$durationday,$year));
      $query = "INSERT INTO $mysql_tablename (username, stamp, subject, description, eventtype, duration) VALUES ('$username', '$timestamp', '$subject', '$description', '$typeofevent', '$durationstamp')";
      $result = mysql_query($query);
-     if ($temp)
+     if ($result)
          echo "<p>Item added ...</p>";
      else {
          echo "<p>Item may not have been added ...", mysql_error();
@@ -323,10 +335,8 @@ minutes
      break;
 }
 
-echo "<form method=get action=\"./\"><p>
-  <input type=submit value='Back to Calendar'>
-  <input type=hidden name=month value=\"$month\">
-  <input type=hidden name=year value=\"$year\">
-</p></form>";
+echo "<div style=\"width:80px;text-align:center;margin:0 auto\" class=\"box\">
+  <a href=\"index.php?month=$month&amp;year=$year\">Back to Calendar</a>
+</div>";
 include("footer.php");
 ?>

@@ -32,6 +32,11 @@ if(isold()) {
 }
 
 echo "
+  <thead>
+  <tr>
+    <th colspan=\"3\">$day $monthname $year</th>
+  </tr>
+  </thead>
   <tr>
 	<td", ifold(" align=\"center\">
       <a style=\"text-decoration:none;color:$headercolor\"", ">
@@ -49,8 +54,23 @@ echo "
 </table>", ifold("</td></tr></table>", ""), "
 <form action=\"operate.php\">", ifold("<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\"><tr><td bgcolor=\"$bordercolor\">", ""), "
 <table ", ifold("cellspacing=\"2\" bgcolor=\"$tablebgcolor\" cellpadding=\"2\" border=\"0\" width=\"100%\"", "class=\"display\""), ">
+  <colgroup>
+    <col width=\"48\">
+  </colgroup>
+  <colgroup>
+    <col width=\"96\">
+    <col width=\"160\">
+    <col width=\"160\">
+    <col width=\"128\">
+  </colgroup>
+  <thead>
   <tr>
-    <td colspan=\"6\" class=\"title\">$day $monthname $year</td>
+    <th>Select</th>
+    <th>Username</th>
+    <th>Time</th>
+    <th>Duration</th>
+    <th>Subject</th>
+	<th>Description</th>
   </tr>";
 
 $database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password)
@@ -61,8 +81,6 @@ mysql_select_db($mysql_database)
 $query = "SELECT * FROM $mysql_tablename WHERE stamp >= \"$year-$month-$day 00:00:00\" AND stamp <= \"$year-$month-$day 23:59:59\" ORDER BY stamp";
 $result = mysql_query($query)
      or die("could not run query");
-echo "<tr><td><b>Select</b></td><td><b>Username</b></td><td><b>Time</b></td><td><b>Duration</b></td><td><b>Subject</b></td>
-		<td><b>Description</b></td></tr>";
 
 while ($row = mysql_fetch_array($result)) {
     $name = stripslashes($row['username']);
@@ -96,7 +114,7 @@ while ($row = mysql_fetch_array($result)) {
     }
     echo "<tr><td><input type=radio name=id value=$row[id]></td>
 			<td>$name</td><td>$time</td><td>$temp_dur</td>
-			<td>$subject</td><td>$desc</td></tr>";
+			<td>$subject</td><td class=\"description\">$desc</td></tr>";
 }
 
 echo "</table>" . ifold("</td></tr></table>", "") . "

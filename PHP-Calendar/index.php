@@ -45,29 +45,16 @@ else {
 }
 echo <<<END
 >
-  <colgroup>
-    <col>
-    <col width="30">
-    <col width="30">
-    <col width="30">
-    <col width="30">
-    <col width="30">
-    <col width="30">
-    <col width="30">
-    <col width="30">
-    <col width="30">
-    <col width="30">
-    <col width="30">
-    <col width="30">
-    <col>
-  </colgroup>
+  <colgroup><col></colgroup>
+  <colgroup span="12" width="30">
+  <colgroup><col></colgroup>
 <thead>
   <tr>
-    <td colspan="14" class="title">
+    <th colspan="14">
 END;
 echo date('F', mktime(0,0,0,$month,1,$year));
 echo " $year
-    </td>
+    </th>
   </tr>
 </thead>
   <tr>
@@ -155,13 +142,13 @@ echo "
   <colgroup span=\"7\" width=\"1*\">
   <thead>
   <tr", ifold(" bgcolor=\"$headerbgcolor\"", ""), ">
-    <td>", ifold("<font color=\"$headercolor\">Sunday</font>", "Sunday"), "</td>
-    <td>", ifold("<font color=\"$headercolor\">Monday</font>", "Monday"), "</td>
-    <td>", ifold("<font color=\"$headercolor\">Tuesday</font>", "Tuesday"), "</td>
-	<td>", ifold("<font color=\"$headercolor\">Wednesday</font>", "Wednesday"), "</td>
-    <td>", ifold("<font color=\"$headercolor\">Thursday</font>", "Thursday"), "</td>
-    <td>", ifold("<font color=\"$headercolor\">Friday</font>", "Friday"), "</td>
-    <td>", ifold("<font color=\"$headercolor\">Saturday</font>", "Saturday"), "</td>
+    <th>", ifold("<font color=\"$headercolor\">Sunday</font>", "Sunday"), "</th>
+    <th>", ifold("<font color=\"$headercolor\">Monday</font>", "Monday"), "</th>
+    <th>", ifold("<font color=\"$headercolor\">Tuesday</font>", "Tuesday"), "</th>
+	<th>", ifold("<font color=\"$headercolor\">Wednesday</font>", "Wednesday"), "</th>
+    <th>", ifold("<font color=\"$headercolor\">Thursday</font>", "Thursday"), "</th>
+    <th>", ifold("<font color=\"$headercolor\">Friday</font>", "Friday"), "</th>
+    <th>", ifold("<font color=\"$headercolor\">Saturday</font>", "Saturday"), "</th>
   </tr>
   </thead>
   <tbody>\n";
@@ -183,12 +170,9 @@ for ($j = 0;; $j++) {
         } else {
             $pastorfuture = "future";
         }
-        echo "    <td valign=\"top\" class=\"$pastorfuture\"" . ifold(" height=\"80\">", ">");
+        echo "    <td valign=\"top\"" . ifold(" height=\"80\" bgcolor=\"$tablebgcolor\">", " class=\"$pastorfuture\">");
         echo "      <a href=\"display.php?day=$nextday&amp;month=$month&amp;year=$year\" 
-        class=\"date\">
-        " . ifold("<b>$nextday</b>
-      </a>", "$nextday
-      </a>");
+        class=\"date\">", ifold("<b>$nextday</b></a>", "$nextday</a>");
         $query = "SELECT subject, stamp, eventtype FROM $mysql_tablename WHERE stamp >= \"$year-$month-$nextday 00:00:00\" AND stamp <= \"$year-$month-$nextday 23:59:59\" ORDER BY stamp";
         $result = mysql_query($query)
             or die("couldn't select item");

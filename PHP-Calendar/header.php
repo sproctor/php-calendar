@@ -48,16 +48,17 @@ echo <<<END
 <style type="text/css">
 /* Your browser: $BName $BVersion */
 body {
-  color: $headercolor;
+  color: $textcolor;
   background-color: $bgcolor;
   text-align: center;
   font-size: 12pt;
   font-family: "Times New Roman", serif, sans-serif;
-  padding: 0 2%;
+  margin: 8px 2%;
+  padding: 0;
 }
 
 img {
-  border: 0;
+  border-style: none;
 }
 END;
 if(!isold()) {
@@ -86,7 +87,6 @@ table {
 }
 
 td {
-  vertical-align: top;
   color: $textcolor;
   background-color: inherit;
 }
@@ -94,18 +94,36 @@ td {
 END;
 }
 echo <<<END
-.header {
+h1 {
   background-color: $headerbgcolor;
   color: $headercolor;
-  font-size: 20pt;
-  font-weight: bold;
+  /*font-size: 20pt;
+    font-weight: bold;*/
   text-align: center;
   font-family: sans-serif;
   padding: 4px 0;
   border: 1px solid $bordercolor;
+  margin: 9px 0;
 }
 
-.title {
+ul {
+  margin: 0;
+  padding: 0 0 0 16px;
+}
+
+table.nav {
+  font-size: 10pt;
+  text-align: center;
+  background-color: $bordercolor;
+  margin: 8px 0;
+  border-style: none;
+  padding: 0px;
+  border-spacing: 1px;
+  table-layout: fixed;
+  color: $headercolor;
+}
+
+table.nav th {
   background-color: $headerbgcolor;
   color: $headercolor;
   font-family: serif;
@@ -114,76 +132,8 @@ echo <<<END
   text-align: center;
 }
 
-ul {
-  margin: 0;
-  padding: 0 0 0 16px;
-}
-
-.mod {
-  font-family: monospace;
-  font-size: 10pt;
-}
-
-.blurb {
-  margin: 2em 12%;
-  font-size: 14pt;
-  font-family: serif;
-  text-align: justify;
-}
-
-table.display {
-  padding: 0px;
-  margin-top: 4px;
-  background-color: $bordercolor;
-  color: inherit;
-}
-
-table.display td {
-  background-color: $tablebgcolor;
-  color: $textcolor;
-  text-align: left;
-}
-
-table.display td.title {
-  text-align: center;
-  background-color: $headerbgcolor;
-  color: $headercolor;
-}
-
-table.calendar {
-  text-align: center;
-  font-size: 10pt;
-  font-weight: bold;
-END;
-if($BName != "MSIE" || $BVersion >= 6) {
-    echo "  table-layout: fixed;"; 
-}
-echo <<<END
-  background-color: $bordercolor;
-  color: $headercolor;
-}
-
-table.nav {
-  font-size: 10pt;
-  text-align: center;
-  background-color: $bordercolor;
-  margin: 4px 0;
-  border-style: none;
-  padding: 0px;
-  border-spacing: 1px;
-  table-layout: fixed;
-  color: $headercolor;
-}
-
 table.nav td {
-  background-color: $tablebgcolor;
-  color: inherit;
   padding: 0;
-}
-
-table.nav .title {
-  background-color: $headerbgcolor;
-  color: inherit;
 }
 
 table.nav a {
@@ -204,21 +154,46 @@ table.nav a:hover {
   background-color: $headercolor;
 }
 
-td.past {
+table.calendar {
+  text-align: center;
+  font-size: 10pt;
+  font-weight: bold;
+END;
+if($BName != "MSIE" || $BVersion >= 6) {
+    echo "  table-layout: fixed;"; 
+}
+echo <<<END
+  background-color: $bordercolor;
+  color: $headercolor;
+  border-style: none;
+}
+
+table.calendar th {
+  color: $textcolor;
+  background-color: $headerbgcolor;
+  font-size: 12pt;
+}
+
+table.calendar td {
+  background-color: $tablebgcolor;
+  color: inherit;
+}
+
+table.calendar td.past {
   color: inherit;
   background-color: $pastcolor;
   text-align: left;
   height: 80px;
 }
 
-td.future {
+table.calendar td.future {
   color: inherit;
   background-color: $futurecolor;
   text-align: left;
   height: 80px;
 }
 
-td.none {
+table.calendar td.none {
   background-color: $nonecolor;
   color: inherit;
 }
@@ -233,7 +208,6 @@ echo <<<END
   background-color: $bordercolor;
   color: inherit;
   border-spacing: 1px;
-  width: 100%;
 }
 
 table.future td, table.past td {
@@ -274,37 +248,75 @@ table.future td {
   color: inherit;
 }
 
-table.edit {
-  background-color: $tablebgcolor;
-  color: $textcolor;
-  border: 1px solid $bordercolor;
-  width: 100%;
+table.display {
+  text-align: center;
+  font-size: 10pt;
+  background-color: $bordercolor;
+  color: $headercolor;
+  border-style: none;
+  border-spacing: 2px;
+  padding: 0;
+  margin: 0;
 }
 
-table.calendar thead td {
-  color: $textcolor;
-  background-color: $headerbgcolor;
+table.display th {
+  font-weight: bold;
   font-size: 12pt;
 }
 
-table.edit td {
+table.display td {
+  background-color: $tablebgcolor;
+  color: inherit;
+}
+
+.description {
+  text-align: justify;
+}
+
+.box {
   text-align: left;
+  font-size: 10pt;
+  background-color: $tablebgcolor;
+  border-color: $bordercolor;
+  border-style: solid;
+  border-width: 1px;
+  color: $headercolor;  
+}
+
+table.box {
+  border-spacing: 0;
+}
+
+table.box td {
+  padding: 4px;
+}
+
+table.box td:first-child {
+  text-align: right;
+}
+
+table.box th {
+  text-align: center;
+  background-color: $headerbgcolor;
+  color: $headercolor;
+  margin: 0;
+  font-size: 12pt;
+}
+
+div.box a {
+  text-decoration: none;
+  display: block;
+}
+
+div.box a:hover {
+  background-color: $textcolor;
+  color: $tablebgcolor;
 }
 
 .bold {
   font-weight: bolder;
   font-size: 16pt;
 }
-
-tr.title {
-  border-width: 0 0 1px 0;
-  border-style: solid;
-  border-color: $bordercolor;
-}
-
-TT, KBD, PRE { font-family: monospace; }
-
-TH, TD { font-style: normal; }
 </style>
 </head>
 <body>
@@ -316,7 +328,10 @@ if(isold()) {
     <td bgcolor="$bordercolor">
   <table width="100%" cellspacing="1" cellpadding="2" border="0">
     <tr>
-      <td bgcolor="$headerbgcolor" class="title">$header</td></tr>
+      <td bgcolor="$headerbgcolor">
+        <center><b>$header</b></center>
+      </td>
+    </tr>
   </table>
     </td>
   </tr>
@@ -324,6 +339,6 @@ if(isold()) {
 <br>
 END;
 } else {
-    echo "<div class=\"header\">$header</div>\n"; 
+    echo "<h1>$header</h1>\n"; 
 } 
 ?>
