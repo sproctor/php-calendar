@@ -106,15 +106,12 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 
 		$html_day = tag('td', attributes('valign="top"',
 					"class=\"$current_era\""),
-				tag('a',
-                                        attributes(
-                                                "href=\"$_SERVER[SCRIPT_NAME]"
-                                                ."?action=display&amp;"
-                                                ."day=$day_of_month&amp;"
-                                                ."month=$month&amp;year=$year"
-                                                ."&amp;display=day\"",
-						'class="date"'),
-					$day_of_month));
+                                create_action_link('+', 'event_form', false,
+                                        $year, $month, $day_of_month,
+                                        array('class="phpc-add"')),
+                                create_action_link($day_of_month, 'display',
+                                        false, $year, $month, $day,
+                                        array('class="date"')));
 
 		$result = get_events_by_date($day_of_month, $month, $year);
 

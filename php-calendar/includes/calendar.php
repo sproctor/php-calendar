@@ -351,8 +351,8 @@ function weeks_in_month($month, $year)
 				+ days_in_month($month, $year)) / 7);
 }
 
-function create_action_link($name, $action, $id = 0, $year = 0, $month = 0,
-		$day = 0)
+function create_action_link($name, $action, $id = false, $year = false,
+                $month = false, $day = false, $attribs = false)
 {
 	$url = "href=\"$_SERVER[SCRIPT_NAME]?action=$action";
 	if($id) {
@@ -368,7 +368,12 @@ function create_action_link($name, $action, $id = 0, $year = 0, $month = 0,
 		$url .= "&amp;day=$day";
 	}
 	$url .= '"';
-	return tag('a', attributes($url), $name);
+        if($attribs) {
+                $as = attributes($url, $attribs);
+        } else {
+                $as = attributes($url);
+        }
+	return tag('a', $as, $name);
 }
 
 function menu_item_append(&$html, $name, $action, $year = 0, $month = 0,

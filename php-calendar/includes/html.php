@@ -147,9 +147,17 @@ function tag()
 function attributes()
 {
 	$attrs = func_get_args();
-	array_unshift($attrs, 'is_attribute_list');
+        $attribs = array();
+        foreach($attrs as $a) {
+                if(is_array($a)) {
+                        $attribs = array_merge($attribs, $a);
+                } else {
+                        array_push($attribs, $a);
+                }
+        }
+	array_unshift($attribs, 'is_attribute_list');
 
-	return $attrs;
+	return $attribs;
 }
 
 function array_cons($x, $xs)

@@ -247,3 +247,8 @@ table.phpc-main li a:hover {
 .phpc-button {
   text-align: center;
 }
+
+.phpc-add {
+  float: right;
+  text-align: right;
+}

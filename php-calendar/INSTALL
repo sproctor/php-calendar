@@ -39,7 +39,8 @@ Instruction for people that are installing on a web host or some computer other 
 0) Make sure php, an SQL server, and adodb are installed on your server.
    You can find php at http://php.net/ mysql at http://mysql.com
    postgresql at http://postgresql.org adodb at http://php.weblogs.com/adodb
-   You will need php version 4.1 or greater.
+   You will need php version 4.1 or greater. If you do not have adodb installed
+   you can download it and extract it into the php-calendar directory.
 
 1) extract the files from the archive
    (in linux: tar -zxf php-calendar-x.y.tar.gz)
