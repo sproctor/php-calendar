@@ -28,8 +28,8 @@ define('IN_PHPC', 1);
 define('BEGIN_TRANSACTION', 1);
 define('END_TRANSACTION', 2);
 
-include($phpc_root_path . 'includes/calendar.php');
-include('adodb/adodb.inc.php');
+include_once($phpc_root_path . 'includes/calendar.php');
+include_once('adodb/adodb.inc.php');
 
 echo '<html>
 <head>
@@ -51,12 +51,9 @@ if(!isset($_POST['config'])) {
 		&& !isset($_POST['my_prefix'])
 		&& !isset($_POST['my_database'])) {
 	get_server_setup();
-} elseif(!isset($_POST['has_user'])) {
-	get_sql_user();
-} elseif(!isset($_POST['my_adminname'])
-		&& !isset($_POST['my_adminpassword'])
-		&& $_POST['has_user'] == 'no') {
-	add_sql_user();
+} elseif((isset($_POST['create_user']) || isset($_POST['create_db']))
+		&& !isset($_POST['done_user_db'])) {
+	add_sql_user_db();
 } elseif(!isset($_POST['base'])) {
 	install_base();
 } elseif(!isset($_POST['admin_user'])
@@ -86,22 +83,8 @@ function get_config()
 	}
 }
 
-function get_sql_user()
-{
-	echo '<p>Have you already created the user for your database?</p>
-		<input type="submit" name="has_user" value="yes">
-		<input type="submit" name="has_user" value="no">';
-}
-
 function get_server_setup()
 {
-	/* ignore this comment.  it should be setting stuff up to give some info, but I'm lazy so FIXME
-	   !isset($HTTP_POST_VARS['my_hostname'])
-	   || !isset($HTTP_POST_VARS['my_username'])
-	   || !isset($HTTP_POST_VARS['my_passwd'])
-	   || !isset($HTTP_POST_VARS['my_prefix'])
-	   || !isset($HTTP_POST_VARS['my_database'])) {
-	 */
 	echo '
 		<table class="display">
 		<tr>
@@ -125,26 +108,48 @@ function get_server_setup()
 		<td><input type="password" name="my_passwd"></td>
 		</tr>
 		<tr>
-		<td colspan="2"><input name="action" type="submit" value="Install"></td>
-		</tr>
-		<tr>
-		<td><input type="checkbox" name="create_db" value="1">
-		create the database (don\'t check this if it already exists)
+		<td>Database type:</td>
+		<td><select name="sql_type">
+		<option value="mysql">MySQL</option>
+		<option value="postgres7">PostgreSQL 7.x</option>
+		</select>
 		</td>
 		</tr>
 		<tr>
-		<td>Database type:</td>
-		<td><select name="sql_type">
-		<option value="mysql">MySQL 3.x</option>
-		<option value="postgres7">PostgreSQL 7.x</option>
-		</select>
+		<td colspan="2">
+		  <input type="checkbox" name="create_db" value="yes">
+		  create the database (don\'t check this if it already exists)
+		</td>
+		</tr>
+		<tr><td colspan="2">
+		  <input type="checkbox" name="create_user" value="yes">
+		  Should the user info supplied above be created? Do not check
+		  this if the user already exists
+		</td></tr>
+		<tr><td colspan="2">
+		  You only need to provide the following information if you
+		  need to create a user
+		</td></tr>
+		<tr>
+		<td>Admin name:</td>
+		<td><input type="text" name="my_adminname"></td>
+		</tr>
+		<tr>
+		<td>Amind Password:</td>
+		<td><input type="password" name="my_adminpassword"></td>
+		</tr>
+		<tr>
+		<td colspan="2">
+		  <input name="action" type="submit" value="Install">
 		</td>
 		</tr>
 		</table>';
 }
 
-function add_sql_user()
+function add_sql_user_db()
 {
+	global $db;
+
 	$my_hostname = $_POST['my_hostname'];
 	$my_username = $_POST['my_username'];
 	$my_passwd = $_POST['my_passwd'];
@@ -152,76 +157,68 @@ function add_sql_user()
 	$my_database = $_POST['my_database'];
 	$my_adminname = $_POST['my_adminname'];
 	$my_adminpasswd = $_POST['my_adminpassword'];
+	$sql_type = $_POST['sql_type'];
 
-        echo $my_adminname;
+	$create_user = isset($_POST['create_user'])
+		&& $_POST['create_user'] = 'yes';
+	$create_db = isset($_POST['create_db']) && $_POST['create_db'] = 'yes';
 
-	switch($_POST['sql_type']) {
-		case 'mysql':
-			$link = mysql_connect($my_hostname, $my_adminname,
-                                        $my_adminpasswd)
-				or die("Could not connect");
+	$db = NewADOConnection($sql_type);
 
-			mysql_select_db("mysql")
-				or die("could not select mysql");
+	$string = "";
 
-			mysql_query("REPLACE INTO user (host, user, password)\n"
-					."VALUES (\n"
-					."'$my_hostname',\n"
-					."'$my_username',\n"
-					."password('$my_passwd')\n"
-					.");")
-				or die("Could not add user");
-
-			mysql_query("REPLACE INTO db (host, db, user, select_priv, "
-					."insert_priv, update_priv, delete_priv, "
-					."create_priv, drop_priv)\n"
-					."VALUES (\n"
-					."'$my_hostname',\n"
-					."'$my_database',\n"
-					."'$my_username',\n"
-					."'Y', 'Y', 'Y', 'Y', 'Y', 'Y'\n"
-					.");") or die("Could not change privileges"); 
-
-			if(!empty($HTTP_POST_VARS['create_db'])) {
-				create_db($my_hostname, $my_adminname,
-				$my_adminpasswd, $my_database,
-				$HTTP_POST_VARS['sql_type']);
-			}
-
-			mysql_query("GRANT SELECT, INSERT, UPDATE, DELETE ON $my_prefix"."events TO $my_username;")
-				or die("Could not grant");
-
-			mysql_query("FLUSH PRIVILEGES;")
-				or die("Could not flush privileges");
-
-		default:
-			die('we don\'t support creating users for this database type yet');
+	if($create_user) {
+		$db->Connect($my_hostname, $my_adminname, $my_adminpasswd, '');
+	} else {
+		$db->Connect($my_hostname, $my_username, $my_passwd, '');
 	}
+
+	if($create_db) {
+		$sql = "CREATE DATABASE $my_database";
+
+		$db->Execute($sql)
+			or db_error(_('error creating db'), $sql);
+
+		$string .= "<div>Successfully created database</div>";
+	}
+
+	if($create_user) {
+		switch($sql_type) {
+			case 'mysql':
+				$sql = "GRANT ALL ON accounts.* TO $my_username@localhost identified by '$my_passwd'";
+				$db->Execute($sql)
+					or db_error(_('Could not grant:'), $sql);
+				$sql = "GRANT ALL ON $my_database.* to $my_username";
+				$db->Execute($sql)
+					or db_error(_('Could not grant:'), $sql);
+
+				$sql = "FLUSH PRIVILEGES";
+				$db->Execute($sql)
+					or db_error("Could not flush privileges", $sql);
+
+				$string .= "<div>Successfully added user</div>";
+
+				break;
+
+			default:
+				die('we don\'t support creating users for this database type yet');
+
+		}
+	}
+
+	echo "$string\n"
+		."<div><input type=\"submit\" name=\"done_user_db\" value=\"continue\">"
+		."</div>\n";
+
 }
 
-function create_db($my_hostname, $my_username, $my_passwd, $my_database,
-		$sql_type)
-{
-	global $phpc_root_path, $db;
-
-	include($phpc_root_path . "db/$sql_type.php");
-
-        $db = NewADOConnection($sql_type);
-        $db->Connect($my_hostname, $my_username, $my_passwd, '');
-
-	$sql = "CREATE DATABASE $my_database";
-
-        $db->Execute($sql)
-                or db_error(_('error creating db'), $sql);
-}
-
-function create_dependent($dbms)
+function create_dependent($sql_type)
 {
 	global $db;
 
 	$query = array();
 
-	switch($dbms) {
+	switch($sql_type) {
 		case 'mysql':
 			break;
 		default:
@@ -258,26 +255,20 @@ function install_base()
 		or die('Couldn\'t open config file.');
 
 	$fstring = "<?php\n"
-		."define('SQL_HOST', '$my_hostname');\n"
-		."define('SQL_USER', '$my_username');\n"
-		."define('SQL_PASSWD', '$my_passwd');\n"
+		."define('SQL_HOST',     '$my_hostname');\n"
+		."define('SQL_USER',     '$my_username');\n"
+		."define('SQL_PASSWD',   '$my_passwd');\n"
 		."define('SQL_DATABASE', '$my_database');\n"
 		."define('SQL_PREFIX',   '$my_prefix');\n"
-		."\$dbms = '$sql_type';\n"
+		."define('SQL_TYPE',     '$sql_type');\n"
 		."?>\n";
 
 	fwrite($fp, $fstring)
 		or die("could not write to file");
 	fclose($fp);
 
-	if(!empty($_POST['create_db'])
-			&& $_POST['has_user'] == 'yes') {
-		create_db($my_hostname, $my_username, $my_passwd, $my_database,
-				$sql_type);
-	}
-
-	include($phpc_root_path . 'config.php');
-	include($phpc_root_path . 'includes/db.php');
+	include_once($phpc_root_path . 'config.php');
+	include_once($phpc_root_path . 'includes/db.php');
 
 	create_tables();
 
@@ -340,7 +331,10 @@ function create_tables()
 function get_admin()
 {
 
-	echo "<table><tr><td>\n"
+	echo "<table>\n"
+		."<tr><td colspan=\"2\">The following is to log in to the "
+		."calendar (not the SQL admin)</td></tr>\n"
+		."<tr><td>\n"
 		."Admin name:\n"
 		."</td><td>\n"
 		."<input type=\"text\" name=\"admin_user\" />\n"

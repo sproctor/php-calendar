@@ -58,11 +58,11 @@ if(isset($_SESSION['password'])) {
 
 /*
    echo "<pre>get vars:</pre>";
-   foreach ($HTTP_GET_VARS as $key=>$val){
+   foreach ($_GET as $key=>$val){
    echo "<pre>$key: $val</pre>";
    }
    echo "<pre>post vars:</pre>";
-   foreach ($HTTP_POST_VARS as $key=>$val) {
+   foreach ($_POST as $key=>$val) {
    echo "<pre>$key: $val</pre>";
    }
    echo "<pre>all vars:</pre>";

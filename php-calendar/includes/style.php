@@ -24,8 +24,8 @@ header('Content-Type: text/css');
 
 //include($phpc_root_path . 'includes/browser.php');
 
-if(isset($HTTP_GET_VARS['bgcolor1'])) {
-	$bgcolor1 = $HTTP_GET_VARS['bgcolor'];
+if(isset($_GET['bgcolor1'])) {
+	$bgcolor1 = $_GET['bgcolor'];
 } else {
 	$bgcolor1 = BG_COLOR1;
 }

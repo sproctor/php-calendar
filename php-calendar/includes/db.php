@@ -24,11 +24,11 @@ if ( !defined('IN_PHPC') ) {
 	die("Hacking attempt");
 }
 
-include('adodb/adodb.inc.php');
+include_once('adodb/adodb.inc.php');
 
 // Make the database connection.
-$db = NewADOConnection($dbms);
+$db = NewADOConnection(SQL_TYPE);
 if(!$db->Connect(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE)) {
-	die("Could not connect to the database");
+	db_error(_("Could not connect to the database"));
 }
 ?>
