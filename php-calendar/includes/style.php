@@ -20,11 +20,9 @@
 
  */
 
-include('miniconfig.php');
-
 header('Content-Type: text/css');
 
-include($phpc_root_path . 'includes/browser.php');
+//include($phpc_root_path . 'includes/browser.php');
 
 if(isset($HTTP_GET_VARS['bgcolor1'])) {
 	$bgcolor1 = $HTTP_GET_VARS['bgcolor'];
@@ -101,7 +99,7 @@ input[type="submit"]:hover {
 }
 
 .phpc-navbar {
-  margin: 1em 0;
+  margin: 1em 0 2em 0;
   text-align: center;
 }
 

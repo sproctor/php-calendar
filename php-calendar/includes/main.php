@@ -104,8 +104,8 @@ function calendar()
 
 			$output .= "<td valign=\"top\" class=\"$current_era\">\n"
 				."<a href=\"index.php?action=display&amp;"
-				."day=$day&amp;month=$month&amp;"
-				."year=$year\" class=\"date\">"
+				."day=$day&amp;month=$month&amp;year=$year"
+				."&amp;display=day\" class=\"date\">"
 				."$day</a>\n";
 
 			$result = get_events_by_date($day, $month, $year);

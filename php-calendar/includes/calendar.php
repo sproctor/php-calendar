@@ -151,8 +151,8 @@ function top()
 		."<title>$config[calendar_title]</title>\n"
 		.'<meta http-equiv="Content-Type" '
 		."content=\"text/html; charset=iso-8859-1\" />\n"
-		.'<link rel="stylesheet" type="text/css" href="style.css.php"'
-		." />\n"
+		.'<link rel="stylesheet" type="text/css"'
+		." href=\"index.php?action=style\" />\n"
 		."</head>\n"
 		."<body>\n"
 		."<h1>$config[calendar_title]</h1>\n";
@@ -323,7 +323,7 @@ function navbar()
 			."</a>\n";
 	}
 
-	if($action == 'display' && !isset($vars['id'])) {
+	if(isset($var['display']) && $var['display'] == 'day') {
 		$monthname = month_name($month);
 
 		$lasttime = mktime(0, 0, 0, $month, $day - 1, $year);

@@ -48,12 +48,17 @@ function display()
 {
 	global $vars;
 
-	if(empty($vars['id'])) return display_date();
-
-	return display_id($vars['id']);
+	if(empty($vars['display'])) {
+		if(empty($vars['id'])) {
+			include ($php_root_path . 'includes/main.php');
+			return month_navbar() . calendar();
+		}
+		return display_id($vars['id']);
+	}
+	return display_day();
 }
 
-function display_date()
+function display_day()
 {
 	global $day, $month, $year, $user, $db, $config;
 
@@ -67,77 +72,74 @@ function display_date()
 
 	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
 
-	$i = 0;
-	while($row = $db->sql_fetchrow($result)) {
-		if(!$i) {
-			if($admin) $output = "<form action=\"index.php\">";
-			else $output = '';
+	if($row = $db->sql_fetchrow($result)) {
+		if($admin) $output = "<form action=\"index.php\">";
+		else $output = '';
 
-			$output .= "<table class=\"phpc-main\">\n"
-				."<caption>$day $monthname $year</caption>\n"
-				."<thead>\n"
+		$output .= "<table class=\"phpc-main\">\n"
+			."<caption>$day $monthname $year</caption>\n"
+			."<thead>\n"
+			."<tr>\n"
+			.'<th>'._('Title')."</th>\n"
+			.'<th>'._('Time')."</th>\n"
+			.'<th>'._('Duration')."</th>\n"
+			.'<th>'._('Description')."</th>\n"
+			."</tr>\n"
+			."</thead>\n";
+		if($admin) 
+			$output .= "<tfoot>\n"
 				."<tr>\n"
-				.'<th>'._('Title')."</th>\n"
-				.'<th>'._('Time')."</th>\n"
-				.'<th>'._('Duration')."</th>\n"
-				.'<th>'._('Description')."</th>\n"
+				."<td colspan=\"4\">\n"
+				."<input type=\"hidden\" name=\"action\""
+				." value=\"delete\" />\n"
+				."<input type=\"hidden\" name=\"day\" value=\"$day\""
+				." />\n"
+				."<input type=\"hidden\" name=\"month\""
+				." value=\"$month\" />\n"
+				."<input type=\"hidden\" name=\"year\" value=\"$year\""
+				." />\n"
+				.'<input type="submit" value="'._('Delete Selected')
+				."\" />\n"
+				."</td>\n"
 				."</tr>\n"
-				."</thead>\n";
-			if($admin) 
-				$output .= "<tfoot>\n"
-					."<tr>\n"
-					."<td colspan=\"4\">\n"
-					."<input type=\"hidden\" name=\"action\""
-					." value=\"delete\" />\n"
-					."<input type=\"hidden\" name=\"day\" value=\"$day\""
-					." />\n"
-					."<input type=\"hidden\" name=\"month\""
-					." value=\"$month\" />\n"
-					."<input type=\"hidden\" name=\"year\" value=\"$year\""
-					." />\n"
-					.'<input type="submit" value="'._('Delete Selected')
-					."\" />\n"
-					."</td>\n"
-					."</tr>\n"
-					."</tfoot>\n";
+				."</tfoot>\n";
 
-			$output .= "<tbody>\n";
+		$output .= "<tbody>\n";
+
+		for(; $row; $row = $db->sql_fetchrow($result)) {
+			//$name = stripslashes($row['username']);
+			$subject = stripslashes($row['subject']);
+			$desc = parse_desc($row['description']);
+			$time_str = formatted_time_string($row['starttime'],
+					$row['eventtype']);
+			$dur_str = get_duration($row['duration'],
+					$row['eventtype']);
+			$output .= "<tr>\n"
+				."<td>\n";
+
+			if($admin) $output .= "<input type=\"checkbox\""
+				." name=\"id\" value=\"$row[id]\" />\n";
+
+			$output .= "<a href=\"index.php?action=display&amp;id="
+				."$row[id]\"><strong>$subject</strong></a>\n";
+
+			if($admin) $output .= " (<a href=\"index.php?action="
+				."modify&amp;id=$row[id]\">"._('Modify')
+				."</a>)\n";
+
+			$output .= "</td>\n"
+				."<td>$time_str</td>\n"
+				."<td>$dur_str</td>\n"
+				."<td>$desc</td>\n"
+				."</tr>\n";
 		}
-		$i++;
-		//$name = stripslashes($row['username']);
-		$subject = stripslashes($row['subject']);
 
-		$desc = parse_desc($row['description']);
-
-		$time_str = formatted_time_string($row['starttime'],
-				$row['eventtype']);
-
-		$dur_str = get_duration($row['duration'], $row['eventtype']);
-		$output .= "<tr>\n"
-			."<td>\n";
-
-		if($admin) $output .= "<input type=\"checkbox\" name=\"id\""
-			." value=\"$row[id]\" />\n";
-
-		$output .= "<a href=\"index.php?action=display&amp;"
-			."id=$row[id]\"><strong>$subject</strong></a>\n";
-
-		if($admin) $output .= " (<a href=\"index.php?action=modify&amp;"
-			."id=$row[id]\">"._('Modify')."</a>)\n";
-
-		$output .= "</td>\n"
-			."<td>$time_str</td>\n"
-			."<td>$dur_str</td>\n"
-			."<td>$desc</td>\n"
-			."</tr>\n";
-	}
-
-	if($i == 0) {
-		$output .= "<h2>"._('No events on this day.')."</h2>\n";
-	} else {
 		$output .= "</tbody>\n"
 			."</table>\n";
 		if($admin) $output .= "</form>\n";
+
+	} else {
+		$output = "<h2>"._('No events on this day.')."</h2>\n";
 	}
 
 	return $output;

@@ -19,9 +19,26 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+$calno = 0;
+$phpc_root_path = './';
+
+define('SEPCOLOR',     '#000000');
+define('BG_COLOR1',    '#FFFFFF');
+define('BG_COLOR2',    'gray');
+define('BG_COLOR3',    'silver');
+define('BG_COLOR4',    '#CCCCCC');
+define('BG_PAST',      'silver');
+define('BG_FUTURE',    'white');
+define('TEXTCOLOR1',   '#000000');
+define('TEXTCOLOR2',   '#FFFFFF');
+
 define('IN_PHPC', 1);
 
-include('miniconfig.php');
+if($HTTP_GET_VARS['action'] == 'style') {
+	include($phpc_root_path . 'includes/style.php');
+	exit;
+}
+
 include($phpc_root_path . 'includes/calendar.php');
 include($phpc_root_path . 'includes/setup.php');
 

@@ -91,7 +91,7 @@ while($month < 1) $month += 12;
 $month = ($month - 1) % 12 + 1;
 
 if(empty($vars['action'])) {
-	$action = 'main';
+	$action = 'display';
 } else {
 	$action = $vars['action'];
 }
