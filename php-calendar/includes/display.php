@@ -19,6 +19,119 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+function month_navbar($month, $year)
+{
+	global $SCRIPT_NAME;
+
+	$html = array('div', attributes('class="phpc-navbar"'),
+			array('a', attributes("href=\"$SCRIPT_NAME?month=$month&amp;year="
+					. $year - 1 . '"'),
+				_('last year')),
+			array('a', attributes("href=\"$SCRIPT_NAME?month="
+					. $month - 1 . "&amp;year=$year\""),
+				_('last month')));
+	for($i = 1; $i <= 12; $i++) {
+		$html[] = array('a', attributes('class="phpc-month"',
+					"href=\"$SCRIPT_NAME?month=$i&amp;year=$year\""),
+				short_month_name($i));
+	}
+	$html[] = array('a', attributes("href=\"$SCRIPT_NAME?month=".$month + 1
+				."&amp;year=$year\""), _('next month'));
+	$html[] = array('a', attributes("href=\"$SCRIPT_NAME?month=$month&amp;year="
+				.$year + 1 . '"'), _('next year'));
+
+	return $html;
+}
+
+function display_month($month, $year)
+{
+	$days = array('tr');
+	for($i = 0; $i < 7; $i++) {
+		$days[] = array('th', day_name($i));
+	}
+
+	return array('table', attributes('class="phpc-main"',
+				'id="calendar"'),
+			array('caption', month_name($month)." $year"),
+			array('colgroup', attributes('span="7"', 'width="1*"')),
+			array('thead', $days),
+			create_month($month, $year));
+}
+
+function create_month($month, $year)
+{
+
+	return array_cons('tbody', create_weeks(1, $month, $year));
+}
+
+function create_weeks($week_of_month, $month, $year)
+{
+	if($week_of_month > weeks_in_month($month, $year)) return array();
+
+	return array_cons(array_cons('tr', display_days(1, $week_of_month,
+					$month, $year)),
+			create_weeks($week_of_month + 1, $month, $year));
+}
+
+function display_days($day_of_week, $week_of_month, $month, $year)
+{
+	global $db, $SCRIPT_NAME;
+
+	if($day_of_week > 7) return array();
+
+	$day_of_month = ($week_of_month - 1) * 7 + $day_of_week
+		- day_of_first($month, $year);
+
+	if($day_of_month <= 0 || $day_of_month > days_in_month($month, $year)) {
+		$html_day = array('td', attributes('class="none"'));
+	} else {
+		$currentday = date('j');
+		$currentmonth = date('n');
+		$currentyear = date('Y');
+
+		// set whether the date is in the past or future/present
+		if($currentyear > $year || $currentyear == $year
+				&& ($currentmonth > $month
+					|| $currentmonth == $month 
+					&& $currentday > $day_of_month
+				   )) {
+			$current_era = 'past';
+		} else {
+			$current_era = 'future';
+		}
+
+		$html_day = array('td', attributes('valign="top"',
+					"class=\"$current_era\""),
+				array('a',
+					attributes("href=\"$SCRIPT_NAME?action=display&amp;day=$day_of_month&amp;month=$month&amp;year=$year&amp;display=day\"",
+						'class="date"'),
+					$day_of_month)
+
+		$result = get_events_by_date($day_of_month, $month, $year);
+
+		/* Start off knowing we don't need to close the event
+		 *  list.  loop through each event for the day
+		 */
+		$html_events = array('ul');
+		while($row = $db->sql_fetchrow($result)) {
+			$subject = stripslashes($row['subject']);
+
+			$event_time = formatted_time_string(
+					$row['starttime'],
+					$row['eventtype']);
+
+			$html_events[] = array('li',
+				array('a',
+					attributes("href=\"$SCRIPT_NAME?action=display&amp;id=$row[id]\""),
+				"$event_time - $subject");
+		}
+		if(sizeof($html_events) != 1) $html_day[] = $html_events;
+	}
+
+	return array_cons($html_day, display_days($day_of_week + 1,
+				$week_of_month, $month, $year));
+}
+
 function get_duration($duration, $typeofevent)
 {
 	$dur_mins = $duration % 60;
@@ -46,21 +159,20 @@ function get_duration($duration, $typeofevent)
 
 function display()
 {
-	global $vars;
+	global $vars, $day, $month, $year;
 
 	if(empty($vars['display'])) {
 		if(empty($vars['id'])) {
-			include ($php_root_path . 'includes/main.php');
-			return calendar();
+			return display_month($month, $year);
 		}
 		return display_id($vars['id']);
 	}
-	return display_day();
+	return display_day($day, $month, $year);
 }
 
-function display_day()
+function display_day($day, $month, $year)
 {
-	global $day, $month, $year, $user, $db, $config;
+	global $user, $db, $config;
 
 	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
 	$monthname = month_name($month);
@@ -76,35 +188,43 @@ function display_day()
 		if($admin) $output = "<form action=\"index.php\">";
 		else $output = '';
 
-		$output .= "<table class=\"phpc-main\">\n"
-			."<caption>$day $monthname $year</caption>\n"
-			."<thead>\n"
-			."<tr>\n"
-			.'<th>'._('Title')."</th>\n"
-			.'<th>'._('Time')."</th>\n"
-			.'<th>'._('Duration')."</th>\n"
-			.'<th>'._('Description')."</th>\n"
-			."</tr>\n"
-			."</thead>\n";
+		$html_table = array('table', attributes('class="phpc-main"')
+				array('caption', "$day $monthname $year"),
+				array('thead',
+					array('tr',
+						array('th', _('Title')),
+						array('th', _('Time')),
+						array('th', _('Duration')),
+						array('th', _('Description'))
+					     )));
 		if($admin) 
-			$output .= "<tfoot>\n"
-				."<tr>\n"
-				."<td colspan=\"4\">\n"
-				."<input type=\"hidden\" name=\"action\""
-				." value=\"event_delete\" />\n"
-				."<input type=\"hidden\" name=\"day\""
-				." value=\"$day\" />\n"
-				."<input type=\"hidden\" name=\"month\""
-				." value=\"$month\" />\n"
-				."<input type=\"hidden\" name=\"year\""
-				." value=\"$year\" />\n"
-				.'<input type="submit" value="'
-				._('Delete Selected')."\" />\n"
-				."</td>\n"
-				."</tr>\n"
-				."</tfoot>\n";
+			$html_table[] = array('tfoot',
+					array('tr',
+						array('td',
+							attributes('colspan="4"'),
+							array('input',
+								attributes('type="hidden"',
+									'name="action"',
+									'value="event_delete"')),
+							array('input',
+								attributes('type="hidden"',
+								'name="day"',
+								"value=\"$day\"")),
+							array('input',
+								attributes('type="hidden"',
+									'name="month"',
+									"value=\"$month\"")),
+							array('input',
+								attributes('type="hidden"',
+									'name="year"',
+									"value=\"$year\"")),
+							array('input',
+								attributes('type="submit"',
+									'value="'
+									._('Delete Selected').'"'))
+								)));
 
-		$output .= "<tbody>\n";
+		$ .= "<tbody>\n";
 
 		for(; $row; $row = $db->sql_fetchrow($result)) {
 			//$name = stripslashes($row['username']);
@@ -125,7 +245,7 @@ function display_day()
 
 			if($admin) $output .= " (<a href=\"index.php?action="
 				."event_form&amp;id=$row[id]\">"._('Modify')
-				."</a>)\n";
+					."</a>)\n";
 
 			$output .= "</td>\n"
 				."<td>$time_str</td>\n"

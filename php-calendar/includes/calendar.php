@@ -162,62 +162,69 @@ function event_type($num)
 	return false;
 }
 
-function top()
+function create_xhtml($rest)
 {
 	global $config;
 
 	$output = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
-		."\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
-		."<html xml:lang=\"en\">\n"
-		."<head>\n"
-		."<title>$config[calendar_title]</title>\n"
-		.'<meta http-equiv="Content-Type" '
-		."content=\"text/html; charset=iso-8859-1\" />\n"
-		.'<link rel="stylesheet" type="text/css"'
-		." href=\"index.php?action=style\" />\n"
-		."</head>\n"
-		."<body>\n"
-		."<h1>$config[calendar_title]</h1>\n";
+		."\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
+	$html = array('html', attributes('xml:lang="en"'), 
+			array('head',
+				array('title', $config['calendar_title']),
+				array('meta',
+					attributes('http-equiv="Content-Type"'
+						.' content="text/html;'
+						.' charset=iso-8859-1"')),
+				array('link',
+					attributes('rel="stylesheet"'
+						.' type="text/css"'
+						.' href="index.php?action='
+						.'style"'))),
+			array('body',
+				array('h1', $config['calendar_title']),
+				$rest,
+				link_bar()));
 
 	return $output;
 }
 
 function lang_link($lang)
 {
-	global $PHP_SELF, $QUERY_STRING;
+	global $SCRIPT_NAME, $QUERY_STRING;
 
-	$str = '[<a href="' . $PHP_SELF . '?';
+	$str = $SCRIPT_NAME . '?';
 	if(!empty($QUERY_STRING)) {
 		$str .= htmlentities($QUERY_STRING) . '&amp;';
 	}
+	$str .= "lang=$lang";
 
-	$str .= "lang=$lang\">$lang</a>]\n";
-	return $str;
+	return array('a', attributes("href=\"$str\""), $lang);
 }
 
-function bottom()
+function link_bar()
 {
-	global $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING, $year, $month, $day,
-	$config;
+	global $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING, $config;
 
-	$output = "<div class=\"phpc-footer\">";
+	$html = array();
 
 	if($config['translate']) {
-		$output .= "<p>\n"
-			.lang_link('en')
-			.lang_link('de')
-			."</p>\n";
+		$html[] = array('p', '[', lang_link('en'), '] [',
+			lang_link('de'), ']');
 	}
 
-	$output .= "<p>\n
-		[<a href=\"http://validator.w3.org/check?url=" . rawurlencode("http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING") . "\"> Valid XHTML 1.1</a>]
-		[<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
-		</p>";
-	$output .= "</div>\n"
-		."</body>\n"
-		."</html>";
+	$html[] = array('p', '[',
+			array('a',
+				attributes('href="http://validator.w3.org/'
+				.'check?url='
+				.rawurlencode("http://$SERVER_NAME$SCRIPT_NAME"
+				."?$QUERY_STRING") . '"'), 'Valid XHTML 1.1'),
+			'] [',
+			array('a', attributes('href="http://jigsaw.w3.org/'
+					.'css-validator/check/referer"'),
+					'Valid CSS2'),
+			']');
 
-	return $output;
+	return array('div', attributes('class="phpc-footer"'), $html);
 }
 
 function get_events_by_date($day, $month, $year)
@@ -331,12 +338,12 @@ function weeks_in_month($month, $year)
 
 function navbar()
 {
-	global $vars, $year, $month, $day, $user, $action, $config;
+	global $vars, $year, $month, $day, $user, $action, $config, $PHP_SELF;
 
-	$output = '';
+	$html = array();
 
 	if(($config['anon_permission'] || isset($user)) && $action != 'add') { 
-		$output .= "<a href=\"index.php?action=event_form&amp;day=$day"
+		$html[] = "<a href=\"index.php?action=event_form&amp;day=$day"
 			."&amp;month=$month&amp;year=$year\">"._('Add Item')
 			."</a>\n";
 	}
