@@ -151,7 +151,13 @@ class MysqlSearch
 	}
 }
 
-function search_results(){
+function search()
+{
+	return search_results() . search_form();
+}
+
+function search_results()
+{
 	global $HTTP_POST_VARS, $calno, $database, $HTTP_GET_VARS, $day, $month,
 	$year;
 
@@ -229,18 +235,13 @@ function search_results(){
 				<td colspan="3"><h2>' . _('No events.') . "</h2></td>
 				</tr>\n";
 		}	
-		return $output . "
-			</table>
-			</form>
-			<div>
-			<a class=\"box\" href=\"index.php?month=$month&amp;day=$day&amp;year=$year\">
-			" .  _('Back to Calendar') . "
-			</a>
-			</div>\n";
+		return $output . "</table>
+			</form>\n";
 	}
 }
 
-function search_form(){
+function search_form()
+{
 	global $HTTP_GET_VARS, $HTTP_POST_VARS, $day, $month, $year;
 
 	if(!isset($HTTP_POST_VARS['submit'])){

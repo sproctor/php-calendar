@@ -227,7 +227,7 @@ function print_footer()
 
 	if(empty($GLOBALS['user'])){
 		$output .= "<input type=\"hidden\" name=\"action\""
-			." value=\"signin\">\n"
+			." value=\"login\">\n"
 			.'<input type="submit" value="'._('Admin')."\" />\n";
 	} else {
 		$output .= "<input type=\"hidden\" name=\"action\""

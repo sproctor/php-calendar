@@ -72,7 +72,7 @@ if(empty($HTTP_GET_VARS['action'])) {
 	$action = $HTTP_GET_VARS['action'];
 }
 
-if(isset($HTTP_POST_VARS['signin'])) $action = 'signin';
+if(isset($HTTP_POST_VARS['login'])) $action = 'login';
 
 switch($action) {
 	case 'add':
@@ -108,10 +108,10 @@ switch($action) {
 	case 'search':
 
 		include "$basedir/search.inc.php";
-		$output = search_results();
+		$output = search();
 		break;
 
-	case 'signin':
+	case 'login':
 
 		include "$basedir/login.inc.php";
 		$output = login();
