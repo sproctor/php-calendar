@@ -37,11 +37,12 @@ function search_results()
 
 	$keywords = explode(" ", $searchstring);
 
-	$where = '';
+	$words = array();
 	foreach($keywords as $keyword) {
-		$where .= "subject LIKE '%$keyword%' "
-			."OR description LIKE '%$keyword%'\n";
+		$words[] = "(subject LIKE '%$keyword%' "
+                        ."OR description LIKE '%$keyword%')\n";
 	}
+        $where = implode(' AND ', $words);
 
 	$query = 'SELECT * FROM '.SQL_PREFIX."events "
 		."WHERE ($where) "
