@@ -21,6 +21,14 @@
 
 define('IN_PHPC', 1);
 
+foreach($HTTP_GET_VARS as $key => $value) {
+	$vars[$key] = $value;
+}
+
+foreach($HTTP_POST_VARS as $key => $value) {
+	$vars[$key] = $value;
+}
+
 include('miniconfig.php');
 include($phpc_root_path . 'includes/calendar.php');
 
@@ -45,14 +53,6 @@ $password = $HTTP_SESSION_VARS['password'];
    echo "<pre>$key: $val</pre>";
    }
  */
-
-foreach($HTTP_GET_VARS as $key => $value) {
-	$vars[$key] = $value;
-}
-
-foreach($HTTP_POST_VARS as $key => $value) {
-	$vars[$key] = $value;
-}
 
 $currentday = date('j');
 $currentmonth = date('n');

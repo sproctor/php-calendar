@@ -59,6 +59,7 @@ if($config['translate']) {
 
 	switch($lang) {
 		case 'de':
+			putenv("LANG=de_DE");
 			setlocale(LC_ALL, 'de_DE');
 			break;
 		case 'en':
@@ -66,7 +67,7 @@ if($config['translate']) {
 			break;
 	}
 
-	bindtextdomain('messages', './locale');
+	bindtextdomain('messages', $phpc_root_path . 'locale');
 	textdomain('messages');
 }
 ?>
