@@ -10,7 +10,9 @@ if(!isold()) { ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
 <title><?php echo "$title" ?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <?
-include("style.php");
+if(!isold()) {
+  include("style.php");
+}
 echo "
 </head>
 <body>";
@@ -32,6 +34,6 @@ if(isold()) {
 <br>
 END;
 } else {
-    echo "<h1>$header</h1>\n"; 
+    echo "<h1 class=\"calendar\">$header</h1>\n"; 
 } 
 ?>

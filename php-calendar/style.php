@@ -17,45 +17,20 @@ body {
 img {
   border-style: none;
 }
-END;
-if(!isold()) {
-echo <<<END
-a {
+
+.calendar a, .display a {
   color: $textcolor;
   background-color: inherit;
 }
 
-a:active {
+.calendar a:hover, .display a:hover {
   color: $bgcolor;
   background-color: inherit;
 }
 
-a.plain {
-  text-decoration: none;
-}
-
-a:hover {
-  color: $bgcolor;
-  background-color: inherit;
-}
-
-table {
-  width: 100%;
-}
-
-td {
-  color: $textcolor;
-  background-color: inherit;
-}
-
-END;
-}
-echo <<<END
-h1 {
+h1.calendar {
   background-color: $headerbgcolor;
   color: $headercolor;
-  /*font-size: 20pt;
-    font-weight: bold;*/
   text-align: center;
   font-family: sans-serif;
   padding: 4px 0;
@@ -63,12 +38,8 @@ h1 {
   margin: 9px 0;
 }
 
-ul {
-  margin: 0;
-  padding: 0 0 0 16px;
-}
-
 table.nav {
+  width: 100%;
   font-size: 10pt;
   text-align: center;
   background-color: $bordercolor;
@@ -112,6 +83,7 @@ table.nav a:hover {
 }
 
 table.calendar {
+  width: 100%;
   text-align: center;
   font-size: 10pt;
   font-weight: bold;
@@ -162,6 +134,7 @@ if(!isold()) {
   margin: 2px 0 0 0;";
 }
 echo <<<END
+  width: 100%;
   background-color: $bordercolor;
   color: inherit;
   border-spacing: 1px;
@@ -206,6 +179,7 @@ table.future td {
 }
 
 table.display {
+  width: 100%;
   text-align: center;
   font-size: 10pt;
   background-color: $bordercolor;
@@ -243,6 +217,7 @@ table.display td {
 }
 
 table.box {
+  width: 100%;
   border-spacing: 0;
 }
 
@@ -280,7 +255,7 @@ a.box:hover {
   color: $tablebgcolor;
 }
 
-b {
+.display b {
   font-size: 16pt;
 }
 </style>
