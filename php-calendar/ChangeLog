@@ -2,8 +2,6 @@ php-calendar: php + mysql + xhtml 1.1 + CSS 2 [+ gettext]
 
 Version 0.8:
 	* Change config file to use defines rather than variables.
-	* made the error messages use gettext, I don't know why they didn't
-	  before, kind of. I had it all done before, but now I fell behind.
 	* You _need_ gettext-0.11.6-pre1 or later to parse with xgettext.  I
 	  have a copy of this if anyone needs it.  My language support is
 	  going to lag unless someone helps.  I only speak English, so it's
@@ -15,11 +13,16 @@ Version 0.8:
 	  (Thanks Nate for the first part)
 	* cluster calendars. one base with a separate index file for each
 	  calendar. (thanks Nate)
-	* moved to requiring php 4.0 again (thanks Nate ;-)
+	* moved to requiring php 4.0 again (thanks Nate ;-) (as a note:
+	  this requirement might not last until 0.8 is released so ignore this
+	  message basically, I'm going to try to switch to phpBB sessions
+	  rather than php sessions)
 	* colors are again configurable through a calendar specific config
-	  file
+	  file (miniconfig.php)
 	* We got a search function! (thanks Nate)
 	* added weekly/monthly/daily events (thanks me)
+	* dropped the .inc from the files.
+	* support for SQL servers besides MySQL (thanks phpBB)
 
 Version 0.7 (10/5/02):
 	* added .php to end of .inc files
@@ -31,7 +34,7 @@ Version 0.7 (10/5/02):
 	  insert select to copy over the old data
 	* not sure what is wrong with gettext.  It no longer works at all, but
 	  the _() function gets defined better.  basically, things are no
-	  longer give errors, but they don't work anymore.
+	  longer giving errors, but they don't work anymore.
 
 Version 0.6 (6/18/02):
         * LOTS of code clean-ups.
@@ -97,24 +100,3 @@ Version 0.1 (02/11/2002):
 	* included timestamp on the table
 	* added variables to change the displayed title and the header.
 	* some code cleanups.
-
-Changes copied from original CST-Calendar CHANGES file:
-        * Made the system 'authentication aware'. If you've got some sort of 
-        authentication module that causes
-        $REMOTE_USER to be set (as all of them do), the only username you can 
-        delete/modify/add with is whatever
-        you logged in as. Some sort of super-user might be added some day. If 
-        you don't have an authentication
-        method, you just get to change whatever you like.
-        * A few usability enhancements. If something goes wrong in the 
-        add/modify/delete stage, you're always
-        given a button to return to the calendar (no pressing back and getting 
-        POST missing messages).
-
-        * Bug fixes relating the mysql_select_db function, which was hardcoded 
-        to select database 'calendar' before,
-        instead of being nice and using $mysql_database.
-
-        * Bug fix for some browsers where setting a <td bgcolor=xxx> flag 
-        caused the rest of the row to default to that
-          colour, resulting in the calendar not greying out past days properly.

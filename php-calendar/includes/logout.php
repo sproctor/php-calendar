@@ -21,11 +21,10 @@
 
 function logout()
 {
-	global $HTTP_GET_VARS, $day, $month, $year;
+	global $vars, $day, $month, $year;
 
 	session_unregister('user');
-	header("Location: index.php?action=$HTTP_GET_VARS[lastaction]&day=$day&month=$month&year=$year");
+	header("Location: index.php?action=$vars[lastaction]&day=$day&month=$month&year=$year");
 	exit;
-
 }
 ?>

@@ -26,31 +26,24 @@
 */ 
 
 function login(){
-	global $calno, $vars, $day, $month, $year, $user;
+	global $calno, $vars, $day, $month, $year, $user, $password;
 
 	$output = '';
-	$calendarDB = connect_to_database();
-
-	$colname_rsAuthenticate = "1";
-	if (isset($vars['username'])) {
-		$colname_rsAuthenticate = (get_magic_quotes_gpc()) ? $vars['username'] : addslashes($vars['username']);
-	}
 
 	//Check password and username
-	if (isset($vars['submit'])){
-		$query= "SELECT * FROM ".SQL_PREFIX."admin\n"
-			."WHERE UID = '$vars[username]' "
-			."AND password = PASSWORD('$vars[password]') "
-			."AND calno = '$calno'";
-		$result = $db_events->sql_query($query)
-			or soft_error($db_events->sql_error($result)['message']);
-		$row= $db_events->sql_fetchrow($result);
-		$totalRows_rsAuthenticate = sql_num_rows($result);
+	if(isset($vars['submit'])){
+		$user = $vars['username'];
+		$password = $vars['password'];
 
-		if($db_events->sql_numrows($result) > 0){
-			$user = 1;
+		if(!get_magic_quotes_gpc()) {
+			$user = addslashes($user);
+			$password = addslashes($password);
+		}
+
+		if(check_user()){
 			session_register('user');
-			header("Location: index.php?day=$day&month=$month&year=$year");
+			session_register('password');
+			header("Location: index.php?action=$lastaction&day=$day&month=$month&year=$year");
 			$output .= '<h2>loggin in...</h2>';
 			return $output;
 		}
@@ -64,7 +57,7 @@ function login(){
 
 
 function login_form(){
-	global $HTTP_GET_VARS, $day, $month, $year;
+	global $day, $month, $year;
 
 	$output = "<form action=\"index.php\" method=\"post\">\n"
 		."<table class=\"phpc-main\">\n"
@@ -72,6 +65,8 @@ function login_form(){
 		."<tfoot>\n"
 		."<tr>\n"
 		."<td colspan=\"2\">\n"
+		."<input type=\"hidden\" name=\"lastaction\" "
+		."value=\"$lastaction\" />\n"
 		."<input type=\"hidden\" name=\"action\" value=\"login\" />\n"
 		.'<input type="submit" name="submit" value="'._('Submit')
 		."\" />\n"
@@ -94,4 +89,3 @@ function login_form(){
 	return $output;
 }
 ?>
-

@@ -38,9 +38,9 @@ function remove_event($id)
 
 function delete()
 {
-	global $QUERY_STRING, $user;
+	global $QUERY_STRING;
 
-	if(empty($user) && ANON_PERMISSIONS < 2) {
+	if(!check_user() && ANON_PERMISSIONS < 2) {
 		soft_error('You do not have permission to delete events.');
 	}
 

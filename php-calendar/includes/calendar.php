@@ -19,8 +19,8 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-include($phpc_root_path . 'config.inc.php');
-include($phpc_root_path . 'includes/db.inc.php');
+include($phpc_root_path . 'config.php');
+include($phpc_root_path . 'includes/db.php');
 
 function soft_error($str)
 {
@@ -66,7 +66,7 @@ function browser()
 
 function translate()
 {
-	global $HTTP_ACCEPT_LANGUAGE, $HTTP_GET_VARS, $HTTP_COOKIE_VARS;
+	global $HTTP_ACCEPT_LANGUAGE, $vars, $HTTP_COOKIE_VARS;
 
 	if(!function_exists('_')) {
 		function _($str) { return $str; }
@@ -77,8 +77,8 @@ function translate()
 		return;
 	}
 
-	if(isset($HTTP_GET_VARS['lang'])) {
-		$lang = substr($HTTP_GET_VARS['lang'], 0, 2);
+	if(isset($vars['lang'])) {
+		$lang = substr($vars['lang'], 0, 2);
 		setcookie('lang', $lang);
 	} elseif(isset($HTTP_COOKIE_VARS['lang'])) {
 		$lang = substr($HTTP_COOKIE_VARS['lang'], 0, 2);
@@ -137,6 +137,27 @@ function short_month_name($month)
 		case 11: return _('Nov');
 		case 12: return _('Dec');
 	}
+}
+
+function check_user()
+{
+	global $user, $password, $db_events, $calno;
+
+	if(empty($user)) return false;
+
+	$query= "SELECT * FROM ".SQL_PREFIX."admin\n"
+		."WHERE UID = '$user' "
+		."AND password = PASSWORD('$password') "
+		."AND calno = '$calno'";
+
+	$result = $db_events->sql_query($query);
+	if(!$result) {
+		$error = $db_events->sql_error();
+		soft_error("$error[code]: $error[message]");
+	}
+
+	if($db_events->sql_numrows($result)) return true;
+	else return false;
 }
 
 function formatted_time_string($time, $type)
@@ -227,8 +248,7 @@ function lang_link($lang)
 
 function bottom()
 {
-	global $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING, $HTTP_GET_VARS, $year,
-	$month, $day, $action;
+	global $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING, $year, $month, $day;
 
 	$output = "<div class=\"phpc-footer\">";
 
@@ -243,24 +263,6 @@ function bottom()
 	[<a href=\"http://validator.w3.org/check?url=" . rawurlencode("http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING") . "\"> Valid XHTML 1.1</a>]
 	[<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
 	</p>";
-	$output .= "<form action=\"index.php\">\n"
-		."<div class=\"phpc-button\">\n"
-		."<input type=\"hidden\" name=\"day\" value=\"$day\" />\n"
-		."<input type=\"hidden\" name=\"month\" value=\"$month\" />\n"
-		."<input type=\"hidden\" name=\"year\" value=\"$year\" />\n"
-		."<input type=\"hidden\" name=\"lastaction\" value=\"$action\""
-		." />\n";
-
-	if(empty($GLOBALS['user'])){
-		$output .= "<input type=\"hidden\" name=\"action\""
-			." value=\"login\" />\n"
-			.'<input type="submit" value="'._('Log in')."\" />\n";
-	} else {
-		$output .= "<input type=\"hidden\" name=\"action\""
-			." value=\"logout\" />\n"
-			.'<input type="submit" value="'._('Log out')."\" />\n";
-	}
-
 	$output .= "</div>\n"
 		."</form>\n"
 		."</div>\n"
@@ -307,11 +309,11 @@ function get_event_by_id($id)
 
 function navbar()
 {
-	global $HTTP_GET_VARS, $year, $month, $day, $action;
+	global $var, $year, $month, $day, $user, $action;
 
 	$output = '';
 
-	if(ANON_PERMISSIONS || $GLOBALS['user'] && $action != 'add') { 
+	if((ANON_PERMISSIONS || isset($user)) && $action != 'add') { 
 		$output .= "<a href=\"index.php?action=add&amp;day=$day"
 			."&amp;month=$month&amp;year=$year\">"._('Add Item')
 			."</a>\n";
@@ -328,12 +330,23 @@ function navbar()
 			._('Back to Calendar')."</a>\n";
 	}
 
-	if(($action != 'display' || isset($HTTP_GET_VARS['id']))
-			&& isset($HTTP_GET_VARS['day'])) {
+	if(($action != 'display' || isset($vars['id']))
+			&& isset($vars['day'])) {
 		$output .= "<a href=\"index.php?action=display&amp;day=$day"
 			."&amp;month=$month&amp;year=$year\">"._('View date')
 			."</a>\n";
 	}
+
+	if(isset($user)) {
+		$output .= "<a href=\"index.php?action=logout&amp;"
+			."lastaction=$action&amp;day=$day&amp;month=$month&amp;"
+			."year=$year\">"._('Log out')."</a>\n";
+	} else {
+		$output .= "<a href=\"index.php?action=login&amp;"
+			."lastaction=$action&amp;day=$day&amp;month=$month&amp;"
+			."year=$year\">"._('Log in')."</a>\n";
+	}
+
 
 	if($action == 'display') {
 		$monthname = month_name($month);

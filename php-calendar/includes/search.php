@@ -81,7 +81,7 @@ function search_results()
 
 		if(empty($i)) {
 			$output .= "<tr>\n"
-				."<td colspan="3"><strong>'._('No events.')
+				.'<td colspan="3"><strong>'._('No events.')
 				."</strong></td>\n"
 				."</tr>\n";
 		}	
@@ -92,41 +92,40 @@ function search_results()
 
 function search_form()
 {
-	global $HTTP_GET_VARS, $HTTP_POST_VARS, $day, $month, $year;
+	global $vars, $day, $month, $year;
 
-	if(!isset($HTTP_POST_VARS['submit'])){
+	if(!isset($vars['submit'])){
 
 		$optdayfrom = "<select name=\"fromday\" size=\"1\">\n";
 		$optdayto  = "<select name=\"today\" size=\"1\">\n";
 
-		$lastday = date('t', mktime(0, 0, 0, $month, 1, $year));
-		for ($i = 1; $i <= $lastday; $i++){
+		for ($i = 1; $i <= 31; $i++){
 			if ($i == $day) {
-				$optday .= "        <option value=\"$i\" selected=\"selected\">$i</option>\n";
+				$optday .= "<option value=\"$i\" selected=\"selected\">$i</option>\n";
 			} else {
-				$optday .= "        <option value=\"$i\">$i</option>\n";
+				$optday .= "<option value=\"$i\">$i</option>\n";
 			}
 		}
 
-		$optmonthfrom = "      </select>\n      <select size=\"1\" name=\"frommonth\">\n";
-		$optmonthto = "    </select>\n     <select size=\"1\" name=\"tomonth\">\n";
+		$optmonthfrom = "</select>\n<select size=\"1\" name=\"frommonth\">\n";
+		$optmonthto = "</select>\n<select size=\"1\" name=\"tomonth\">\n";
 		for ($i = 1; $i <= 12; $i++) {
 			$nm = month_name($i);
 			if ($i == $month) {
-				$optmonth .= "        <option value=\"$i\" selected=\"selected\">$nm</option>\n";
+				$optmonth .= "<option value=\"$i\" selected=\"selected\">$nm</option>\n";
 			} else {
-				$optmonth .= "        <option value=\"$i\">$nm</option>\n";
+				$optmonth .= "<option value=\"$i\">$nm</option>\n";
 			}
 		}
 
-		$optyearfrom = "      </select>\n      <select size=\"1\" name=\"fromyear\">";
-		$optyearto = "      </select>\n      <select size=\"1\" name=\"toyear\">";
+		$optyearfrom = "</select>\n<select size=\"1\" name=\"fromyear\">";
+		$optyearto = "</select>\n<select size=\"1\" name=\"toyear\">";
 
 		for ($i=$year-2; $i<$year+5; $i++) {
 			if ($i == $year) {
-				$optyear .= "        <option value=\"$i\" selected=\"selected\">$i</option>\n";
+				$optyear .= "<option value=\"$i\" selected=\"selected\">$i</option>\n";
 			} else {
-				$optyear .= "        <option value=\"$i\">$i</option>\n";
+				$optyear .= "<option value=\"$i\">$i</option>\n";
 			}
 		}
 		$optyear .= "   </select>\n";

@@ -20,7 +20,7 @@
 
  */
 
-include 'miniconfig.inc.php';
+include 'miniconfig.php';
 header('Content-Type: text/css');
 if(isset($HTTP_GET_VARS['bgcolor1'])) {
 	$bgcolor1 = $HTTP_GET_VARS['bgcolor'];

@@ -1,7 +1,7 @@
 <?php
 $calno = 1;
-$basedir = '.';
-define('ANON_PERMISSIONS', 2);		// Allow anonymous posting. 1 for yes,
+$phpc_root_path = './';
+define('ANON_PERMISSIONS', 0);		// Allow anonymous posting. 1 for yes,
 					// 0 for no, 2 to allow mod/delete
 define('TITLE',	'PHP-Calendar 0.8');	// The title/header for the calendar
 define('START_MONDAY',	0);		// Change to 1 if you want the weeks to

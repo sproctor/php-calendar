@@ -47,11 +47,11 @@ function get_duration($duration)
 
 function display()
 {
-	global $HTTP_GET_VARS;
+	global $vars;
 
-	if(empty($HTTP_GET_VARS['id'])) return display_date();
+	if(empty($vars['id'])) return display_date();
 
-	return display_id($HTTP_GET_VARS['id']);
+	return display_id($vars['id']);
 }
 
 function display_date()

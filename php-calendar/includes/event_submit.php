@@ -21,82 +21,82 @@
 
 function submit_event()
 {
-	global $HTTP_GET_VARS, $calno, $user, $day, $month, $year, $db_events;
+	global $calno, $day, $month, $year, $db_events, $vars;
 
-	if(isset($HTTP_GET_VARS['modify'])) {
-		if(!isset($HTTP_GET_VARS['id'])) {
+	if(isset($vars['modify'])) {
+		if(!isset($vars['id'])) {
 			soft_error(_('No ID given.'));
 		}
-		$id = $HTTP_GET_VARS['id'];
+		$id = $vars['id'];
 		$modify = 1;
 	} else {
 		$modify = 0;
 	}
 
-	if($HTTP_GET_VARS['description']) {
+	if($vars['description']) {
 		$description = ereg_replace('<[bB][rR][^>]*>', "\n", 
-				$HTTP_GET_VARS['description']);
+				$vars['description']);
 	} else {
 		$description = '';
 	}
 
-	if($HTTP_GET_VARS['subject']) {
+	if($vars['subject']) {
 		$subject = addslashes(ereg_replace('<[^>]*>', '', 
-					$HTTP_GET_VARS['subject']));
+					$vars['subject']));
 	} else {
 		$subject = '';
 	}
 
-	if($HTTP_GET_VARS['username']) {
+	if($vars['username']) {
 		$username = addslashes(ereg_replace('<[^>]*>', '',
-					$HTTP_GET_VARS['username']));
+					$vars['username']));
 	} else {
 		$username = '';
 	}
 
-	if($HTTP_GET_VARS['description']) {
+	if($vars['description']) {
 		$description = addslashes(ereg_replace('</?([^aA/]|[a-zA-Z_]{2,})[^>]*>',
-					'', $HTTP_GET_VARS['description']));
+					'', $vars['description']));
 	} else {
 		$description = '';
 	}
 
-	if(empty($HTTP_GET_VARS['day'])) soft_error(_('No day was given.'));
+	if(empty($vars['day'])) soft_error(_('No day was given.'));
 
-	if(empty($HTTP_GET_VARS['month'])) soft_error(_('No month was given.'));
+	if(empty($vars['month'])) soft_error(_('No month was given.'));
 
-	if(empty($HTTP_GET_VARS['year'])) soft_error(_('No year was given'));
+	if(empty($vars['year'])) soft_error(_('No year was given'));
 
-	if(isset($HTTP_GET_VARS['hour'])) $hour = $HTTP_GET_VARS['hour'];
+	if(isset($vars['hour'])) $hour = $vars['hour'];
 	else soft_error(_('No hour was given.'));
 
-	if(isset($HTTP_GET_VARS['pm']) && $HTTP_GET_VARS['pm'] == 1) $hour += 12;
+	if(isset($vars['pm']) && $vars['pm'] == 1) $hour += 12;
 
-	if(isset($HTTP_GET_VARS['minute'])) $minute = $HTTP_GET_VARS['minute'];
+	if(isset($vars['minute'])) $minute = $vars['minute'];
 	else soft_error(_('No minute was given.'));
 
-	if(isset($HTTP_GET_VARS['durationmin']))
-		$duration_min = $HTTP_GET_VARS['durationmin'];
+	if(isset($vars['durationmin']))
+		$duration_min = $vars['durationmin'];
 	else soft_error(_('No duration minute was given.'));
 
-	if(isset($HTTP_GET_VARS['durationhour']))
-		$duration_hour = $HTTP_GET_VARS['durationhour'];
+	if(isset($vars['durationhour']))
+		$duration_hour = $vars['durationhour'];
 	else soft_error(_('No duration hour was given.'));
 
-	if(isset($HTTP_GET_VARS['typeofevent']))
-		$typeofevent = $HTTP_GET_VARS['typeofevent'];
+	if(isset($vars['typeofevent']))
+		$typeofevent = $vars['typeofevent'];
 	else soft_error(_('No type of event was given.'));
 
-	if(isset($HTTP_GET_VARS['endday']))
-		$end_day = $HTTP_GET_VARS['endday'];
+	if(isset($vars['endday']))
+		$end_day = $vars['endday'];
 	else soft_error(_('No end day was given'));
 
-	if(isset($HTTP_GET_VARS['endmonth']))
-		$end_month = $HTTP_GET_VARS['endmonth'];
+	if(isset($vars['endmonth']))
+		$end_month = $vars['endmonth'];
 	else soft_error(_('No end month was given'));
 
-	if(isset($HTTP_GET_VARS['endyear']))
-		$end_year = $HTTP_GET_VARS['endyear'];
+	if(isset($vars['endyear']))
+		$end_year = $vars['endyear'];
 	else soft_error(_('No end year was given'));
 
 	if(strlen($subject) > SUBJECT_MAX) {
@@ -112,7 +112,7 @@ function submit_event()
 	$duration = $duration_hour * 60 + $duration_min;
 
 	if($modify) {
-		if(empty($user) && ANON_PERMISSIONS < 2) {
+		if(!check_user() && ANON_PERMISSIONS < 2) {
 			soft_error('You do not have permission to modify events.');
 		}
 		$query = 'UPDATE '.SQL_PREFIX."events\n"
@@ -126,7 +126,7 @@ function submit_event()
 			."eventtype='$typeofevent'\n"
 			."WHERE id='$id'";
 	} else {
-		if(empty($user) && ANON_PERMISSIONS < 1) {
+		if(!check_user() && ANON_PERMISSIONS < 1) {
 			soft_error('You do not have permission to post.');
 		}
 		$query = 'INSERT INTO '.SQL_PREFIX."events\n"
@@ -148,6 +148,7 @@ function submit_event()
 
 	$affected = $db_events->sql_affectedrows($result);
 	if($affected < 1) soft_error(_('No changes made')."\nsql:\n$query");
+
 	return '<div class="box">'._('Date updated').": $affected</div>\n";
 }
 ?>

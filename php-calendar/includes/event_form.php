@@ -21,7 +21,7 @@
 
 function event_form($action)
 {
-	global $BName, $HTTP_GET_VARS, $day, $month, $year, $db_events;
+	global $BName, $vars, $day, $month, $year, $db_events;
 
 	$output = "<form action=\"index.php\">\n"
 		.'<table class="phpc-main"';
@@ -33,10 +33,10 @@ function event_form($action)
 		."<caption>\n";
 
 	if($action == 'modify') {
-		if (!isset($HTTP_GET_VARS['id'])) {
+		if(!isset($vars['id'])) {
 			return '<h2>'._('Nothing to modify.').'</h2>';
 		} else {
-			$id = $HTTP_GET_VARS['id'];
+			$id = $vars['id'];
 		}
 
 		$output .= sprintf(_('Modifying id #%d'), $id);
