@@ -19,10 +19,12 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-session_start();
+define('IN_PHPC', 1);
 
-include 'miniconfig.inc.php';
-include "$basedir/calendar.inc.php";
+include('miniconfig.php');
+include($phpc_root_path . 'includes/calendar.php');
+
+session_start();
 
 ini_set('arg_separator.output', "&amp;");
 
@@ -30,6 +32,9 @@ unset($user);
 $user = $HTTP_SESSION_VARS['user'];
 
 list($BName, $BVersion) = browser();
+
+$db_events = new sql_db(SQL_HOSTNAME, SQL_USERNAME, SQL_PASSWORD, SQL_DATABASE);
+
 /*
    echo "<pre>get vars:</pre>";
    foreach ($HTTP_GET_VARS as $key=>$val){
@@ -84,54 +89,55 @@ if(empty($vars['action'])) {
 switch($action) {
 	case 'add':
 
-		include "$basedir/event_form.inc.php";
+		include($phpc_root_dir . 'includes/event_form.php');
 		$output = event_form('add');
 		break;
 
 	case 'delete':
 
-		include "$basedir/event_delete.inc.php";
+		include($phpc_root_dir . 'includes/event_delete.php');
 		$output = delete();
 		break;
 
 	case 'display':
 
-		include "$basedir/display.inc.php";
+		include($phpc_root_dir . 'includes/display.php');
 		$output = display();
 		break;
 
 	case 'submit':
 
-		include "$basedir/event_submit.inc.php";
+		include($phpc_root_dir . 'includes/event_submit.php');
 		$output = submit_event();
 		break;
 
 	case 'modify':
 
-		include "$basedir/event_form.inc.php";
+		include($phpc_root_dir . 'includes/event_form.php');
 		$output = event_form('modify');
 		break;
 
 	case 'search':
 
-		include "$basedir/search.inc.php";
+		include($phpc_root_dir . 'includes/search.php');
 		$output = search();
 		break;
 
 	case 'login':
 
-		include "$basedir/login.inc.php";
+		include($phpc_root_dir . 'includes/login.php');
 		$output = login();
 		break;
 
 	case 'logout':
-		include "$basedir/logout.inc.php";
+
+		include($phpc_root_dir . 'includes/logout.php');
 		$output = logout();
 		break;
 
 	case 'main':
 
-		include "$basedir/main.inc.php";
+		include($phpc_root_dir . 'includes/main.php');
 		$output = calendar();
 		break;
 
