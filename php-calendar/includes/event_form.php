@@ -164,7 +164,7 @@ function event_form()
 							create_select('durationmin', 'minute', $durmin),
 							_('minutes') . "\n")),
 					tag('tr',
-						tag('th', _('Subject').' '._('(255 chars max)')),
+						tag('th', _('Subject').' ('.$config['subject_max'].' '._('chars max').')'),
 						tag('td', tag('input', attributes('type="text"',
 									'name="subject"',
 									"value=\"$subject\"")))),

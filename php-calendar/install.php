@@ -34,7 +34,7 @@ define('BEGIN_TRANSACTION', 1);
 define('END_TRANSACTION', 2);
 
 include_once($phpc_root_path . 'includes/calendar.php');
-include_once('adodb/adodb.inc.php');
+include_once('adodb.inc.php');
 
 echo '<html>
 <head>

@@ -49,6 +49,7 @@ function options()
 
 		$query .= "anon_permission = '$vars[anon_perm]',\n"
 			."calendar_title = '$calendar_title'\n"
+                        ."subject_max = '$subject_max'\n"
 			."WHERE calendar=$calendar_name;";
 
 		$result = $db->Execute($query)
@@ -90,6 +91,10 @@ function options_form()
 						tag('th', _('Calendar Title').':'),
 						tag('td', create_text('calendar_title',
 								$config['calendar_title']))),
+					tag('tr',
+						tag('th', _('Maximum Subject Length').':'),
+						tag('td', create_text('subject_max',
+								$config['subject_max']))),
 					tag('tr',
 						tag('th', _('Anonymous Permission').':'),
 						tag('td', create_select('anon_perm', 'anon_perm',

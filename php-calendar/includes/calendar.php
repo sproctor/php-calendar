@@ -34,8 +34,8 @@ if(!function_exists('_')) {
 // called when some error happens
 function soft_error($str)
 {
-	echo '<html><head><title>'._('Error').'</title></head>\n'
-		.'<body><h1>'._('Software Error').'</h1>\n'
+	echo '<html><head><title>'._('Error')."</title></head>\n"
+		.'<body><h1>'._('Software Error')."</h1>\n"
 		."<pre>$str</pre></body></html>\n";
 	exit;
 }
