@@ -135,7 +135,7 @@ function search_form()
 							_('Ascending')),
 						tag('option', attributes('value="DES"'),
 							_('Decending'))))));
-	return tag('form', attributes("'action=\"$_SERVER[SCRIPT_NAME]\"",
+	return tag('form', attributes("action=\"$_SERVER[SCRIPT_NAME]\"",
                                 'method="post"'), $html_table);
 }
 
