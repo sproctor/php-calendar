@@ -21,7 +21,7 @@
 
 function submit_event()
 {
-	global $HTTP_GET_VARS, $calno, $user;
+	global $HTTP_GET_VARS, $calno, $user, $day, $month, $year;
 
 	$database = connect_to_database();
 	if(isset($HTTP_GET_VARS['modify'])) {

@@ -73,8 +73,7 @@ function connect_to_database()
 
 function translate()
 {
-	global $HTTP_ACCEPT_LANGUAGE, $HTTP_GET_VARS, $HTTP_COOKIE_VARS,
-	$translate;
+	global $HTTP_ACCEPT_LANGUAGE, $HTTP_GET_VARS, $HTTP_COOKIE_VARS;
 
 	if(!function_exists('_')) {
 		function _($str) { return $str; }
@@ -84,8 +83,6 @@ function translate()
 	if(!TRANSLATE) {
 		return;
 	}
-
-	$translate = 1;
 
 	if(isset($HTTP_GET_VARS['lang'])) {
 		$lang = substr($HTTP_GET_VARS['lang'], 0, 2);
@@ -146,6 +143,22 @@ function short_month_name($month)
 		case 10: return _('Oct');
 		case 11: return _('Nov');
 		case 12: return _('Dec');
+	}
+}
+
+function formatted_time_string($secs, $type)
+{
+	switch($type) {
+		case 1:
+			if(!HOURS_24) $format = 'g:iA';
+			else $format = 'G:i';
+			return date($format, $secs);
+		case 2:
+			return _('FULL DAY');
+		case 3:
+			return '??:??';
+		default:
+			soft_error("Invalid time type: $type");
 	}
 }
 
@@ -218,8 +231,8 @@ function print_footer()
 			.'<input type="submit" value="'._('Admin')."\" />\n";
 	} else {
 		$output .= "<input type=\"hidden\" name=\"action\""
-		." value=\"logout\" />\n"
-		.'<input type="submit" value="'._('Log out')."\" />\n";
+			." value=\"logout\" />\n"
+			.'<input type="submit" value="'._('Log out')."\" />\n";
 	}
 
 	$output .= "</div>\n"

@@ -92,12 +92,16 @@ caption {
 }
 
 th {
-  background-color: <?php echo $bgcolor2 ?>;
+  background-color: <?php echo $bgcolor3 ?>;
   color: <?php echo $textcolor1 ?>;
 }
 
+tbody > tr > th, table > tr > th {
+  text-align: left;
+}
+
 td {
-  background-color: <?php echo $bgcolor3 ?>;
+  background-color: <?php echo $bgcolor1 ?>;
 }
 
 tfoot {

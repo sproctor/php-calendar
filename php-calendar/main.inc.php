@@ -81,6 +81,7 @@ function calendar()
 		."<tbody>\n";
 
 	// Loop to render the calendar
+	//FIXME: this needs to be made much less messy
 	for ($week_index = 0;; $week_index++) {
 		$output .= "  <tr>\n";
 
@@ -124,23 +125,10 @@ function calendar()
 				}
 
 				$subject = stripslashes($row['subject']);
-				$typeofevent = $row['eventtype'];
 
-				switch($typeofevent) {
-					case 1:
-						if(!HOURS_24) $timeformat = 'g:iA';
-						else $timeformat = 'G:i';
-						$event_time = date($timeformat, $row['start_since_epoch']);
-						break;
-					case 2:
-						$event_time = _('FULL DAY');
-						break;
-					case 3:
-						$event_time = '??:??';
-						break;
-					default:
-						$event_time = 'BROKEN';
-				}
+				$event_time = formatted_time_string(
+						$row['start_since_epoch'],
+						$row['eventtype']);
 
 				// - Nate - Changed the QueryString from day, month, year to event_id
 				//<a href=\"index.php?action=display&amp;event_id=".$row['id']."\">

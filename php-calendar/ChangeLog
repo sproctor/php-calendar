@@ -1,6 +1,26 @@
 php-calendar: php + mysql + xhtml 1.1 + CSS 2 [+ gettext]
 
-Version 0.7:
+Version 0.8:
+	* Change config file to use defines rather than variables.
+	* made the error messages use gettext, I don't know why they didn't
+	  before, kind of. I had it all done before, but now I fell behind.
+	* You _need_ gettext-0.11.6-pre1 or later to parse with xgettext.  I
+	  have a copy of this if anyone needs it.  My language support is
+	  going to lag unless someone helps.  I only speak English, so it's
+	  not useful to me.
+	* Very much updated documentation (thanks Tai)
+	* greatly improved install script (thanks to motivation from Tai,
+	  and ideas from postnuke)
+	* admin support, plus a variable to adjust the anonymous permissions
+	  (Thanks Nate for the first part)
+	* cluster calendars. one base with a separate index file for each
+	  calendar. (thanks Nate)
+	* moved to requiring php 4.0 again (thanks Nate ;-)
+	* colors are again configurable through a calendar specific config
+	  file
+	* We got a search function! (thanks Nate)
+
+Version 0.7 (10/5/02):
 	* added .php to end of .inc files
 	* cleaned up the look a little,
 	* modifying posts is fixed which may or may not have been broken in

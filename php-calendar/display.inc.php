@@ -1,88 +1,95 @@
 <?php
 /*
-    Copyright 2002 Sean Proctor
+   Copyright 2002 Sean Proctor
 
-    This file is part of PHP-Calendar.
+   This file is part of PHP-Calendar.
 
-    PHP-Calendar is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+   PHP-Calendar is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-    PHP-Calendar is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+   PHP-Calendar is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PHP-Calendar; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+   You should have received a copy of the GNU General Public License
+   along with PHP-Calendar; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-UPDATE:  Nate - 11/07/02 - Constrict what information is displayed based on
-whether user is an administrator
-- Changed the table layout of the tables a little
-UPDATE:  Nate - 12/03/02 - Added Functionality.  Script will now display either
-a whole day or a single event depending on wether 
-event_id has been passed in the query string
+   UPDATE:  Nate - 11/07/02 - Constrict what information is displayed based on
+   whether user is an administrator
+   - Changed the table layout of the tables a little
+   UPDATE:  Nate - 12/03/02 - Added Functionality.  Script will now display either
+   a whole day or a single event depending on wether 
+   event_id has been passed in the query string
 
  */
 
+function get_duration($dur_secs)
+{
+	$dur_mins = ($dur_secs / 60) % 60;     //minute per 60 seconds, 60 per hour
+	$dur_hrs  = ($dur_secs / 3600) % 24;   //hour per 3600 seconds, 24 per day
+	$dur_days = floor($dur_secs / 86400);  //day per 86400 seconds
+
+	$dur_str = '';
+
+	if($typeofevent == 2) $dur_str = _("FULL DAY");
+	else {
+		$comma = 0;
+		if($dur_days) {
+			$dur_str .= "$dur_days days";
+			$comma = 1;
+		}
+		if($dur_hrs) {
+			if($comma) $dur_str .= ', ';
+			else $comma = 1;
+			$dur_str .= "$dur_hrs hours";
+		}
+		if($dur_mins) {
+			if($comma) $dur_str .= ', ';
+			$dur_str .= "$durmin minutes";
+		}
+	}
+
+	return $dur_str;
+}
+
 function display()
 {
-	global $HTTP_GET_VARS, $day, $month, $year, $user;
+	global $HTTP_GET_VARS;
 
-	/* FIXME: this function needs a big rewrite. showing the items in
-	a table is wicked lame. do something better */
+	if(empty($HTTP_GET_VARS['event_id'])) return display_date();
 
-	//Nate added this code to get just one event by ID
-	$eventid = $HTTP_GET_VARS['event_id']; 
+	return display_id($HTTP_GET_VARS['event_id']);
+}
+
+function display_date()
+{
+	global $day, $month, $year, $user;
 
 	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
 	$monthname = month_name($month);
 
-	// -Nate- Output an alternate display if not administrative user
-	if(empty($user) && ANON_PERMISSIONS < 2) {
-		$admin = 0;
-		$num_cols = 3;
-		$output .= "<table class=\"phpc-main\">\n"
-			."<caption>$day $monthname $year</caption>\n"
-			."<colgroup>\n"
-			."<col width=\"96\" />\n"
-			."<col width=\"50%\" />\n"
-			."</colgroup>\n"
-			."<thead>\n"
+	if(empty($user) && ANON_PERMISSIONS < 2) $admin = 0;
+	else $admin = 1;
+
+	if($admin) $output .= "<form action=\"index.php\">";
+	$output .= "<table class=\"phpc-main\">\n"
+		."<caption>$day $monthname $year</caption>\n"
+		."<thead>\n"
+		."<tr>\n"
+		.'<th>'._('Title')."</th>\n"
+		.'<th>'._('Time')."</th>\n"
+		.'<th>'._('Duration')."</th>\n"
+		.'<th>'._('Description')."</th>\n"
+		."</tr>\n"
+		."</thead>\n";
+	if($admin) 
+		$output .= "<tfoot>\n"
 			."<tr>\n"
-			.'<th>'._('Author')."</th>\n"
-			.'<th>'._('Time')."</th>\n"
-			.'<th>'._('Duration')."</th>\n"
-			."</tr>\n"
-			."</thead>\n"
-			."<tbody>\n";
-	}else{ //This is the ouput for administrators
-		$num_cols = 5;
-		$admin = 1;
-		$output .= "<form action=\"index.php\">"
-			."<table class=\"phpc-main\">\n"
-			."<caption>$day $monthname $year</caption>\n"
-			."<colgroup>\n"
-			."<col width=\"48\" />\n"
-			."<col width=\"96\" />\n"
-			."<col width=\"160\" />\n"
-			."<col width=\"160\" />\n"
-			."<col width=\"128\" />\n"
-			."</colgroup>\n"
-			."<thead>\n"
-			."<tr>\n"
-			.'<th>'._('Select')."</th>\n"
-			.'<th>'._('Modify')."</th>\n"
-			.'<th>'._('Username')."</th>\n"
-			.'<th>'._('Time')."</th>\n"
-			.'<th>'._('Duration')."</th>\n"
-			."</tr>\n"
-			."</thead>\n"
-			."<tfoot>\n"
-			."<tr>\n"
-			."<td colspan=\"$num_cols\">\n"
+			."<td colspan=\"4\">\n"
 			."<input type=\"hidden\" name=\"action\""
 			." value=\"delete\" />\n"
 			."<input type=\"hidden\" name=\"day\" value=\"$day\""
@@ -95,83 +102,84 @@ function display()
 			."\" />\n"
 			."</td>\n"
 			."</tr>\n"
-			."</tfoot>\n"
-			."<tbody>\n";
-	}
+			."</tfoot>\n";
 
-	// Nate - determine if the whole day or just a single event should
-	// be displayed
-	if(!empty($eventid)) $result = get_event_by_id($eventid);
-	else $result = get_events_by_date($day, $month, $year);
+	$output .= "<tbody>\n";
+
+	$result = get_events_by_date($day, $month, $year);
+
+	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
 
 	$i = 0;
-	while ($row = mysql_fetch_array($result)) {
+	while($row = mysql_fetch_array($result)) {
 		$i++;
-		$name = stripslashes($row['username']);
+		//$name = stripslashes($row['username']);
 		$subject = stripslashes($row['subject']);
 		$desc = nl2br(stripslashes($row['description']));
 		$desc = ereg_replace("[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]",
 				"<a href=\"\\0\">\\0</a>", $desc);
-		$typeofevent = $row['eventtype'];
-		$temp_time = $row['start_since_epoch'];
-		switch($typeofevent) {
-			case 1:
-				if(empty($hours_24)) $timeformat = 'j F Y, g:i A';
-				else $timeformat = 'j F Y, G:i';
-				$time = date($timeformat, $temp_time);
-				break;
-			case 2:
-				$time = date('j F Y, ', $temp_time) . _('FULL DAY');
-				break;
-			case 3:
-				$time = date('j F Y, ', $temp_time) . _('??:??');
-				break;
-			default:
-				$time = "????: $typeofevent";
-		}
+		$event_epoch = $row['start_since_epoch'];
 
-		$durtime = $row['end_since_epoch'] - $temp_time;
-		$durmin = ($durtime / 60) % 60;     //minute per 60 seconds, 60 per hour
-		$durhr  = ($durtime / 3600) % 24;   //hour per 3600 seconds, 24 per day
-		$durday = floor($durtime / 86400);  //day per 86400 seconds
+		$time_str = formatted_time_string($event_epoch,
+				$row['eventtype']);
+		if($event_epoch < $today_epoch)
+			$time_str = date('j F Y, ', $event_epoch) . $time_str;
 
-		if($typeofevent == 2) $temp_dur = _("FULL DAY");
-		else $temp_dur = "$durday days, $durhr hours, $durmin minutes";
-
-		$output .= "<tr>\n";
-		if($admin) {
-			$output .= "<td><input type=\"checkbox\""
-				." name=\"delete\" value=\"".$eventid."\""
-				." /></td>\n"
-				."<td><a href=\"index.php?action=modify"
-				."&amp;id=$eventid\">"._('Modify')
-				."</a></td>\n";
-		}
-
-		$num_body_cols = $num_cols - 1;
-		$output .= "<td>$name</td>\n"
-			."<td>$time</td>\n"
-			."<td>$temp_dur</td>\n"
-			."</tr>\n<tr>\n"
-			.'<th>'._('Subject')."</th>\n"
-			."<td colspan=\"$num_body_cols\"><strong>$subject"
-			."</strong></td></tr>\n"
-			."<tr>\n"
-			.'<th>'._('Description')."</th>\n"
-			."<td colspan=\"$num_body_cols\" class=\"description\">"
-			."$desc</td></tr>\n";
+		$dur_str = get_duration($row['end_since_epoch'] - $event_epoch);
+		$output .= "<tr>\n"
+			."<th>\n";
+		if($admin) $output .= "<input type=\"checkbox\" name=\"delete\""
+			." value=\"$row[id]\" />\n";
+		$output .= "<a href=\"index.php?action=display&amp;"
+			."event_id=$row[id]\">$subject</a></th>\n"
+			."<td>$time_str</td>\n"
+			."<td>$dur_str</td>\n"
+			."<td class=\"description\">$desc</td>\n"
+			."</tr>\n";
 	}
 
 	if($i == 0) {
-		$output .= "<tr><td colspan=\"$num_cols\"><strong>"
+		$output .= "<tr><td colspan=\"4\"><strong>"
 			._('No events on this day.')."</strong></td></tr>\n";
 	}
 
-	return $output . "</tbody>
+	$output .= "</tbody>
 		</table>";
-		if($admin) $output .= "</form>\n";
-		$output .= "<div><a class=\"box\" href=\"index.php?month=$month"
-			."&amp;day=$day&amp;year=$year\">"._('Back to Calendar')
-			."</a></div>\n";
+	if($admin) $output .= "</form>\n";
+
+	return $output;
+}
+
+function display_id($id)
+{
+	global $user;
+
+	$result = get_event_by_id($id);
+
+	if(!empty($user) || ANON_PERMISSIONS >= 2) $admin = 1;
+	else $admin = 0;
+
+	$row = mysql_fetch_array($result);
+	$epoch_secs = $row['start_since_epoch'];
+	$time_str = formatted_time_string($epoch_secs, $row['eventtype'])
+		. date(', j F y', $epoch_secs);
+	$dur_str = get_duration($row['end_since_epoch'] - $epoch_secs);
+	$subject = stripslashes($row['subject']);
+	$name = stripslashes($row['username']);
+	$desc = stripslashes($row['description']);
+
+	$output = "<h2>$subject</h2>\n"
+		."<div>\n"
+		."<a href=\"index.php?action=modify&amp;id=$id\">"._('Modify')
+		."</a>\n"
+		."<a href=\"index.php?action=delete&amp;id=$id\">"._('Delete')
+		."</a>\n"
+		."</div>\n"
+		."<p>by $name</p>\n"
+		."<pre>Time: $time_str\n"
+		."Duration: $dur_str</pre>\n"
+		."<p>$desc</p>";
+
+	return $output;
 }
 ?>
