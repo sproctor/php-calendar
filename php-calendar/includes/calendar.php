@@ -290,7 +290,8 @@ function get_events_by_date($day, $month, $year)
 */
         $startdate = $db->SQLDate('Y-m-d', 'startdate');
         $enddate = $db->SQLDate('Y-m-d', 'enddate');
-        $date = '\''.date('Y-m-d', mktime(0, 0, 0, $month, $day, $year)).'\'';
+        $date = "DATE '" . date('Y-m-d', mktime(0, 0, 0, $month, $day, $year))
+                . "'";
         // day of week
         $dow_startdate = $db->SQLDate('w', 'startdate');
         $dow_date = $db->SQLDate('w', $date);
