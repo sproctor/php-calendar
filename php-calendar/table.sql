@@ -2,7 +2,7 @@
 # to at least this bare minimum of columns. You should be able to add more, as 
 # I reference by column name and not id number.
 
-CREATE TABLE calendar (
+CREATE TABLE phpc_events (
   id int(11) DEFAULT '0' NOT NULL auto_increment,
   username varchar(255),
   stamp datetime,

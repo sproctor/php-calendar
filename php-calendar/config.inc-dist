@@ -1,18 +1,9 @@
-<?
-$mysql_hostname  = 'localhost';
-$mysql_username  = 'calendar';
-$mysql_password  = 'password';
-$mysql_database  = 'calendar';
-$mysql_tablename = 'calendar';
+<?php
+$sql_hostname    = 'localhost';
+$sql_username    = 'calendar';
+$sql_password    = 'password';
+$sql_database    = 'calendar';
+$sql_tableprefix = 'phpc_';
 $title           = 'PHP-Calendar 0.6';
 $header          = 'PHP-Calendar';
-$bgcolor         = '#336699';
-$textcolor       = 'blue';
-$headercolor     = 'white';
-$headerbgcolor   = 'gray';
-$tablebgcolor    = '#CCCCCC';
-$futurecolor     = 'white';
-$pastcolor       = '#CCDDFF';
-$nonecolor       = 'silver';
-$bordercolor     = '#339999';
 ?>

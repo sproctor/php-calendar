@@ -21,6 +21,11 @@
 
 include_once("config.inc");
 
+function soft_error($str)
+{
+  echo top() . "<h1>Software Error</h1><p>$str</p>" . bottom();
+}
+
 if(empty($translate)) {
   function _($str) { return $str; }
 }
@@ -63,11 +68,11 @@ function isold()
 
 function connect_to_database()
 {
-  global $mysql_hostname, $mysql_username, $mysql_password, $mysql_database;
+  global $sql_hostname, $sql_username, $sql_password, $sql_database;
 
-  $database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password)
+  $database = mysql_connect($sql_hostname, $sql_username, $sql_password)
      or die("couldn't connect to database");
-  mysql_select_db($mysql_database, $database)
+  mysql_select_db($sql_database, $database)
      or die("Couldn't select database");
 
   return $database;
@@ -75,21 +80,19 @@ function connect_to_database()
 
 function doctype()
 {
-  echo <<<END
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-        "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n
-END;
+return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+        "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+';
 }
 
 function print_header()
 {
   global $title;
-  echo"<head>
+  $output = "<head>
   <title>$title</title>
 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />
-";
-  print_style();
-  echo "</head>";
+" . print_style() . "</head>";
+  return $output;
 }
 
 function translate()
@@ -145,11 +148,9 @@ function top()
 {
   global $header;
   translate();
-  doctype();
-  echo "<html xml:lang=\"en\">\n";
-  print_header();
-  echo "<body>
-  <h1>$header</h1>\n"; 
+  $output = doctype() . "<html xml:lang=\"en\">\n" . print_header() . "<body>
+  <h1>$header</h1>\n";
+  return $output;
 }
 
 function lang_link($lang)
@@ -166,27 +167,27 @@ function lang_link($lang)
 function print_footer()
 {
   global $translate;
+  $output = '';
 
   if(!empty($translate)) {
-    echo "
+    $output .= "
 <div>
   " . lang_link('en') . "
   " . lang_link('de') . "
 </div>\n";
   }
 
-echo "<p>
+  return $output . "<p>
   [<a href=\"http://validator.w3.org/check?url=http://"
  . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'] . '?'
  . $_SERVER['QUERY_STRING'] . "\">Valid XHTML 1.1</a>]
   [<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
-</p>";
+</p>\n";
 }
 
 function bottom()
 {
-  print_footer();
-  echo "\n</body>
+  return print_footer() . "</body>
 </html>";
 }
 
@@ -194,9 +195,29 @@ function print_style()
 {
 
   global $BName, $BVersion;
-  echo <<<END
-<!-- Your browser: $BName $BVersion -->
-<link rel="stylesheet" type="text/css" href="generic.css" />
-<link rel="stylesheet" type="text/css" href="style0.css" />
-END;
+  return "<!-- Your browser: $BName $BVersion -->
+<link rel=\"stylesheet\" type=\"text/css\" href=\"generic.css\" />
+<link rel=\"stylesheet\" type=\"text/css\" href=\"style0.css\" />\n";
 }
+
+function back_to_calendar()
+{
+  if(!isset($_GET['day'])) $day = date("j");
+  else $day = $_GET['day'];
+
+  if(!isset($_GET['month'])) $month = date("n");
+  else $month = $_GET['month'];
+
+  if(!isset($_GET['year'])) $year = date("Y");
+  else $year = $_GET['year'];
+
+  return "<div>
+  <a class=\"box\" href=\"display.php?month=$month&amp;year=$year&amp;day=$day\">" .
+_("View date")
+ . "</a>
+  <a class=\"box\" href=\"index.php?month=$month&amp;year=$year\">"
+  . _("Back to Calendar")
+ . "</a>
+</div>";
+}
+?>

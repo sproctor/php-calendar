@@ -23,7 +23,7 @@ include_once("calendar.inc");
 include_once("config.inc");
 include_once("index.inc");
 
-top();
+echo top();
 
 $currentday = date("j");
 $currentmonth = date("n");
@@ -51,11 +51,9 @@ if(!isset($_GET['day'])) {
 while($month < 1) $month += 12;
 $month = ($month - 1) % 12 + 1;
 
-$database = connect_to_database();
+echo navbar($year, $month, $day);
 
-navbar($year, $month, $day);
+echo calendar($year, $month, $day);
 
-calendar($year, $month, $day, $database, $mysql_tablename);
-
-bottom();
+echo bottom();
 ?>

@@ -31,10 +31,10 @@ function navbar($year, $month, $day)
   $nextyear = $year + 1;
   $lastyear = $year - 1;
 
-  echo "<table id=\"navbar\"";
-  if($BName == "MSIE") { echo " cellspacing=1"; }
+  $output = "<table id=\"navbar\"";
+  if($BName == "MSIE") { $output .= " cellspacing=1"; }
 
-  echo ">
+  $output .= ">
   <colgroup><col /></colgroup>
   <colgroup span=\"12\" width=\"30\" />
   <colgroup><col /></colgroup>
@@ -123,7 +123,7 @@ _("last year")
 . "</a>
     </td> 
     <td colspan=\"12\">
-      <a href=\"operate.php?action=add&amp;month=$month&amp;year=$year&amp;day=$day\">" . 
+      <a href=\"add.php?month=$month&amp;year=$year&amp;day=$day\">" . 
 _("Add Item") 
 . "</a>
     </td>
@@ -135,11 +135,14 @@ _("next year")
   </tr>
 </tbody>
 </table>";
+  return $output;
 }
 
-function calendar($year, $month, $day, $database, $mysql_tablename)
+function calendar($year, $month, $day)
 {
-  global $start_monday, $hours_24, $BName;
+  global $start_monday, $hours_24, $BName, $sql_tableprefix;
+
+  $database = connect_to_database();
   $currentday = date("j");
   $currentmonth = date("n");
   $currentyear = date("Y");
@@ -148,18 +151,18 @@ function calendar($year, $month, $day, $database, $mysql_tablename)
   else $firstday = (date("w", mktime(0,0,0,$month,1,$year)) + 6) % 7;
   $lastday = date("t", mktime(0,0,0,$month,1,$year));
 
-  echo "<table id=\"calendar\">
+  $output = "<table id=\"calendar\">
   <colgroup span=\"7\" width=\"1*\" />
   <thead>
   <tr>\n";
 
   if(empty($start_monday)) {
-    echo "    <th>" . 
+    $output .= "    <th>" . 
 _("Sunday") 
 . "</th>\n";
   }
   
-  echo "\n    <th>" . 
+  $output .= "\n    <th>" . 
 _("Monday") 
 . "</th>
     <th>" . 
@@ -178,24 +181,24 @@ _("Friday")
 _("Saturday") 
 . "</th>";
   if(!empty($start_monday)) {
-    echo "    <th>" . 
+    $output .= "    <th>" . 
 _("Sunday") 
 . "</th>\n";
   }
-  echo "  </tr>
+  $output .= "  </tr>
   </thead>
   <tbody>";
 
 // Loop to render the calendar
 for ($week_index = 0;; $week_index++) {
-  echo "  <tr>\n";
+  $output .= "  <tr>\n";
 
   for ($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
     $i = $week_index * 7 + $day_of_week;
     $day_of_month = $i - $firstday + 1;
 
     if($i < $firstday || $day_of_month > $lastday) {
-      echo "    <td class=\"none\"></td>";
+      $output .= "    <td class=\"none\"></td>";
       continue;
     }
 
@@ -208,14 +211,14 @@ for ($week_index = 0;; $week_index++) {
       $current_era = "future";
     }
 
-    echo <<<END
+    $output .= <<<END
     <td valign="top" class="$current_era">
       <a href="display.php?day=$day_of_month&amp;month=$month&amp;year=$year" 
         class="date">$day_of_month</a>
 END;
 
     $result = mysql_query("SELECT subject, stamp, eventtype 
-        FROM $mysql_tablename 
+        FROM " . $sql_tableprefix . "events
         WHERE stamp >= \"$year-$month-$day_of_month 00:00:00\" 
         AND stamp <= \"$year-$month-$day_of_month 23:59:59\" ORDER BY stamp")
       or die("couldn't select item");
@@ -229,9 +232,9 @@ END;
       // if we didn't start the event table yet, do so
       if($tabling == 0) {
         if($BName == "MSIE") { 
-          echo "\n<table cellspacing=\"1\">\n";
+          $output .= "\n<table cellspacing=\"1\">\n";
         } else {
-          echo "\n<table>\n";
+          $output .= "\n<table>\n";
         }
         $tabling = 1;
       }
@@ -255,7 +258,7 @@ END;
         $event_time = "BROKEN";
       }
 
-      echo <<<END
+      $output .= <<<END
         <tr>
           <td>
             <a href="display.php?day=$day_of_month&amp;month=$month&amp;year=$year">
@@ -268,12 +271,12 @@ END;
         
     // If we opened the event table, close it
     if($tabling == 1) {
-      echo "      </table>";
+      $output .= "      </table>";
     }
 
-    echo "    </td>";
+    $output .= "    </td>";
   }
-  echo "  </tr>\n";
+  $output .= "  </tr>\n";
 
   // If it's the last day, we're done
   if($day_of_month >= $lastday) {
@@ -281,7 +284,8 @@ END;
   }
 }
 
-echo "  </tbody>
+$output .= "  </tbody>
 </table>\n";
+  return $output;
 }
 ?>
