@@ -27,6 +27,7 @@ function event_submit()
 {
 	global $calendar_name, $day, $month, $year, $db, $vars, $config;
 
+        /* Validate input */
 	if(isset($vars['id'])) {
 		$id = $vars['id'];
 		$modify = 1;
@@ -117,10 +118,14 @@ function event_submit()
 	$uid = check_user();
 
 	$startstamp = mktime($hour, $minute, 0, $month, $day, $year);
+	$endstamp = mktime(0, 0, 0, $end_month, $end_day, $end_year);
+
+        if($endstamp < $startstamp) {
+                soft_error(_('The start of the event cannot be after the end of the event.'));
+        }
 	$startdate = $db->DBDate($startstamp);
 	$starttime = date('H:i:s', $startstamp);
 
-	$endstamp = mktime(0, 0, 0, $end_month, $end_day, $end_year);
 	$enddate = $db->DBDate($endstamp);
 	$duration = $duration_hour * 60 + $duration_min;
 

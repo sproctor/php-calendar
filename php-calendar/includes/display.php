@@ -67,13 +67,14 @@ function display_month($month, $year)
 		$days[] = tag('th', day_name($i));
 	}
 
-	return tag('table', attributes('class="phpc-main"',
-				'id="calendar"'),
-			tag('caption', month_name($month)." $year"),
-			tag('colgroup', attributes('span="7"', 'width="1*"')),
-			tag('thead', $days),
-			month_navbar($month, $year),
-			create_month($month, $year));
+	return tag('div',
+                        month_navbar($month, $year),
+                        tag('table', attributes('class="phpc-main"',
+                                        'id="calendar"'),
+                                tag('caption', month_name($month)." $year"),
+                                tag('colgroup', attributes('span="7"', 'width="1*"')),
+                                tag('thead', $days),
+                                create_month($month, $year)));
 }
 
 // creates a display for a particular month
