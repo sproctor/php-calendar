@@ -100,8 +100,11 @@ if(empty($vars['action'])) {
 	$action = $vars['action'];
 }
 
+if(!empty($vars['calendar_name']))
+$calendar_name = $vars['calendar_name'];
+
 $query = "SELECT * from ".SQL_PREFIX."calendars "
-."WHERE calno='$calno'";
+."WHERE calendar='$calendar_name'";
 
 $result = $db->sql_query($query);
 

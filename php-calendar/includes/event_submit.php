@@ -49,7 +49,7 @@ function nextval()
 
 function event_submit()
 {
-	global $calno, $day, $month, $year, $db, $vars, $config;
+	global $calendar_name, $day, $month, $year, $db, $vars, $config;
 
 	if(isset($vars['id'])) {
 		$id = $vars['id'];
@@ -154,10 +154,10 @@ function event_submit()
 		$id = nextval();
 		$query = "INSERT INTO $table\n"
 			."(id, uid, startdate, enddate, starttime, duration,"
-			." subject, description, eventtype, calno)\n"
+			." subject, description, eventtype, calendar)\n"
 			."VALUES ($id, '$uid', '$startdate', '$enddate',"
 			."'$starttime', '$duration', '$subject',"
-			."'$description', '$typeofevent', '$calno')";
+			."'$description', '$typeofevent', '$calendar_name')";
 	}
 
 	$result = $db->sql_query($query);

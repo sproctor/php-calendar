@@ -26,7 +26,7 @@
 */ 
 
 function login(){
-	global $calno, $vars, $day, $month, $year, $user, $password, $lastaction;
+	global $vars, $day, $month, $year, $user, $password, $lastaction;
 
 	$output = '';
 
@@ -39,11 +39,10 @@ function login(){
 			session_register('user');
 			session_register('password');
 			header("Location: index.php?action=$lastaction&day=$day&month=$month&year=$year");
-			$output .= '<h2>loggin in...</h2>';
-			return $output;
+			return '<h2>'._('Loggin in...')."</h2>\n";
 		}
 
-		$output .= '<h2>Sorry, Invalid Login</h2>';
+		$output .= '<h2>'._('Sorry, Invalid Login')."</h2>\n";
 
 	}
 

@@ -23,7 +23,7 @@
 
 function search_results()
 {
-	global $vars, $calno, $day, $month, $year, $db;
+	global $vars, $calendar_name, $day, $month, $year, $db;
 
 	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
 	$monthname = month_name($month);
@@ -48,7 +48,7 @@ function search_results()
 
 	$query = 'SELECT * FROM '.SQL_PREFIX."events "
 		."WHERE ($where) "
-		."AND calno = '$calno' "
+		."AND calendar = '$calendar_name' "
 		."AND enddate >= DATE '$fromyear-$frommonth-$fromday' "
 		."AND startdate <= DATE '$toyear-$tomonth-$today'"
 		."ORDER BY $sort $order";

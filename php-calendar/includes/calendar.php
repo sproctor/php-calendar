@@ -45,6 +45,27 @@ function month_name($month)
 	}
 }
 
+function day_name($day)
+{
+	global $config;
+
+	if($config['start_monday']) {
+		$day = $day + 1;
+	}
+
+	$day = $day % 7;
+
+	switch($day) {
+		case 0: return _('Sunday');
+		case 1: return _('Monday');
+		case 2: return _('Tuesday');
+		case 3: return _('Wednesday');
+		case 4: return _('Thursday');
+		case 5: return _('Friday');
+		case 6: return _('Saturday');
+	}
+}
+
 function short_month_name($month)
 {
 	$month = ($month - 1) % 12 + 1;
@@ -66,7 +87,7 @@ function short_month_name($month)
 
 function check_user()
 {
-	global $user, $password, $db, $calno;
+	global $user, $password, $db, $calendar_name;
 
 	if(!isset($user) || !isset($password) || $user == 'anonymous')
 		return 0;
@@ -76,7 +97,7 @@ function check_user()
 	$query= "SELECT uid FROM ".SQL_PREFIX."users\n"
 		."WHERE username = '$user' "
 		."AND password = '$passwd' "
-		."AND calno = '$calno'";
+		."AND calendar = '$calendar_name'";
 
 	$result = $db->sql_query($query);
 	if(!$result) {
@@ -201,7 +222,7 @@ function bottom()
 
 function get_events_by_date($day, $month, $year)
 {
-	global $calno, $db;
+	global $calendar_name, $db;
 
 /* event types:
 1 - Normal event
@@ -218,7 +239,7 @@ function get_events_by_date($day, $month, $year)
 //		." OR eventtype = 6)"
 //		." OR startdate = '$year-$month-$day')\n"
 		.")\n"
-		."AND calno = '$calno'\n"
+		."AND calendar = '$calendar_name'\n"
 		."AND (eventtype != 5 OR DAYOFWEEK(startdate) = "
 		."DAYOFWEEK(DATE '$year-$month-$day'))\n"
 		."AND (eventtype != 6 OR DAYOFMONTH(startdate) = '$day')\n"
@@ -236,7 +257,7 @@ function get_events_by_date($day, $month, $year)
 
 function get_event_by_id($id)
 {
-	global $calno, $db;
+	global $calendar_name, $db;
 
 	$events_table = SQL_PREFIX . 'events';
 	$users_table = SQL_PREFIX . 'users';
@@ -250,7 +271,7 @@ function get_event_by_id($id)
 		."LEFT JOIN $users_table\n"
 		."ON ($events_table.uid = $users_table.uid)\n"
 		."WHERE $events_table.id = '$id'\n"
-		."AND $events_table.calno = '$calno';";
+		."AND $events_table.calendar = '$calendar_name';";
 
 	$result = $db->sql_query($query);
 
@@ -287,6 +308,27 @@ function parse_desc($text)
 	return $text;
 }
 
+function day_of_first($month, $year)
+{
+	global $config;
+
+	if(!$config['start_monday'])
+		return date('w', mktime(0, 0, 0, $month, 1, $year));
+	else
+		return (date('w', mktime(0, 0, 0, $month, 1, $year)) + 6) % 7;
+}
+
+function days_in_month($month, $year)
+{
+	return date('t', mktime(0, 0, 0, $month, 1, $year));
+}
+
+function weeks_in_month($month, $year)
+{
+	return ceil((day_of_first($month, $year)
+				+ days_in_month($month, $year)) / 7);
+}
+
 function navbar()
 {
 	global $vars, $year, $month, $day, $user, $action, $config;
@@ -305,7 +347,8 @@ function navbar()
 			."</a>\n";
 	}
 
-	if($action != 'main') {
+	if($action != 'display' || !empty($vars['display'])
+			|| !empty($vars['id'])) {
 		$output .= "<a href=\"index.php?month=$month&amp;year=$year\">"
 			._('Back to Calendar')."</a>\n";
 	}

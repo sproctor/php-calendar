@@ -21,7 +21,7 @@
 
 function options()
 {
-	global $calno, $vars, $db;
+	global $calendar_name, $vars, $db;
 
 	//Check password and username
 	if(isset($vars['submit'])){
@@ -46,7 +46,8 @@ function options()
 		$calendar_title = $vars['calendar_title'];
 
 		$query .= "anon_permission = '$vars[anon_perm]',\n"
-			."calendar_title = '$calendar_title';";
+			."calendar_title = '$calendar_title'\n"
+			."WHERE calendar=$calendar_name;";
 
 		if(check_user()){
 			$result = $db->sql_query($query);

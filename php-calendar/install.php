@@ -19,7 +19,8 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-include('miniconfig.php');
+$phpc_root_path = './';
+$calendar_name = '0';
 
 define('IN_PHPC', 1);
 
@@ -308,18 +309,18 @@ function create_tables()
 		."eventtype integer,\n"
 		."subject varchar(255),\n"
 		."description text,\n"
-		."calno integer\n"
+		."calendar varchar(32)\n"
 		.")";
 
 	$query[] = "CREATE TABLE ".SQL_PREFIX."users (\n"
-		."calno integer NOT NULL default '0',\n"
+		."calendar varchar(32) NOT NULL default '0',\n"
 		."uid integer NOT NULL,\n"
 		."username varchar(32) NOT NULL,\n"
 		."password varchar(32) NOT NULL default '',\n"
-		."PRIMARY KEY (calno, uid))";
+		."PRIMARY KEY (calendar, uid))";
 
 	$query[] = "CREATE TABLE ".SQL_PREFIX."calendars (\n"
-		."calno integer NOT NULL,\n"
+		."calendar varchar(32) NOT NULL,\n"
 		."hours_24 integer NOT NULL default '0',\n"
 		."start_monday integer NOT NULL default '0',\n"
 		."translate integer NOT NULL default '0',\n"
@@ -329,7 +330,7 @@ function create_tables()
 		."contact_email varchar(255) default NULL,\n"
 		."calendar_title varchar(255) NOT NULL default '',\n"
 		."URL varchar(200) default NULL,\n"
-		."PRIMARY KEY (calno)\n"
+		."PRIMARY KEY (calendar)\n"
 		.")";
 
 	reset($query);
@@ -363,7 +364,7 @@ function get_admin()
 
 function add_calendar()
 {
-	global $HTTP_POST_VARS, $db, $phpc_root_path, $calno;
+	global $HTTP_POST_VARS, $db, $phpc_root_path, $calendar_name;
 
 	include($phpc_root_path . 'config.php');
 	include($phpc_root_path . 'includes/db.php');
@@ -373,10 +374,10 @@ function add_calendar()
 	$translate = 1;
 	$calendar_title = 'PHP-Calendar';
 
-	$query = "INSERT INTO ".SQL_PREFIX."calendars (calno, hours_24, "
+	$query = "INSERT INTO ".SQL_PREFIX."calendars (calendar, hours_24, "
 	."start_monday, translate, subject_max, calendar_title) "
-	."VALUES ('$calno', '$hours_24', '$start_monday', '$translate', '32', "
-	."'$calendar_title')";
+	."VALUES ('$calendar_name', '$hours_24', '$start_monday', '$translate',"
+	." '32', '$calendar_title')";
 
 	$result = $db->sql_query($query);
 
@@ -389,9 +390,10 @@ function add_calendar()
 
 	$passwd = md5($HTTP_POST_VARS['admin_pass']);
 
-	$query = "insert into ".SQL_PREFIX."users
-		(uid, username, password, calno) VALUES
-		('1', '$HTTP_POST_VARS[admin_user]', '$passwd', $calno)";
+	$query = "insert into ".SQL_PREFIX."users\n"
+		."(uid, username, password, calendar) VALUES\n"
+		."('1', '$HTTP_POST_VARS[admin_user]', '$passwd',"
+		." $calendar_name)";
 
 	$result = $db->sql_query($query);
 	if(!$result) {
@@ -401,9 +403,9 @@ function add_calendar()
 	
 	$passwd = md5($HTTP_POST_VARS['admin_pass']);
 
-	$query = "insert into ".SQL_PREFIX."users
-		(uid, username, password, calno) VALUES
-		('0', 'anonymous', '$passwd', $calno)";
+	$query = "insert into ".SQL_PREFIX."users\n"
+		."(uid, username, password, calendar) VALUES\n"
+		."('0', 'anonymous', '$passwd', $calendar_name)";
 
 	$result = $db->sql_query($query);
 	if(!$result) {

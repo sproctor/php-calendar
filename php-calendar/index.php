@@ -19,7 +19,7 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-$calno = 0;
+$calendar_name = '0';
 $phpc_root_path = './';
 
 define('SEPCOLOR',     '#000000');
@@ -42,7 +42,7 @@ if($HTTP_GET_VARS['action'] == 'style') {
 include($phpc_root_path . 'includes/calendar.php');
 include($phpc_root_path . 'includes/setup.php');
 
-$legal_actions = array('event_form', 'delete', 'display', 'event_submit',
+$legal_actions = array('event_form', 'event_delete', 'display', 'event_submit',
 		'search', 'login', 'logout', 'options');
 
 if(!is_int(array_search($action, $legal_actions, true))) {

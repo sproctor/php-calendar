@@ -48,15 +48,7 @@ function month_navbar()
 
 function calendar()
 {
-	global $BName, $day, $month, $year, $db, $config;
-
-	$currentday = date('j');
-	$currentmonth = date('n');
-	$currentyear = date('Y');
-
-	if(!$config['start_monday']) $firstday = date('w', mktime(0, 0, 0, $month, 1, $year));
-	else $firstday = (date('w', mktime(0, 0, 0, $month, 1, $year)) + 6) % 7;
-	$lastday = date('t', mktime(0, 0, 0, $month, 1, $year));
+	global $month, $year;
 
 	$output = "<table class=\"phpc-main\" id=\"calendar\">\n"
 		.'<caption>'.month_name($month)." $year</caption>\n"
@@ -64,92 +56,104 @@ function calendar()
 		."<thead>\n"
 		."<tr>\n";
 
-	if(!$config['start_monday']) $output .= "<th>" .  _('Sunday') . "</th>\n";
-
-	$output .= '<th>' .  _('Monday') . "</th>\n"
-		.'<th>' .  _('Tuesday') . "</th>\n"
-		.'<th>' .  _('Wednesday') . "</th>\n"
-		.'<th>' .  _('Thursday') . "</th>\n"
-		.'<th>' .  _('Friday') . "</th>\n"
-		.'<th>' .  _('Saturday') . "</th>\n";
-
-	if($config['start_monday']) $output .= '<th>' .  _('Sunday') . "</th>\n";
+	for($i = 0; $i < 7; $i++) {
+		$output .= '<th>' . day_name($i) . "</th>\n";
+	}
 
 	$output .= "</tr>\n"
 		."</thead>\n"
-		."<tbody>\n";
-
-	// Loop to render the calendar
-	//FIXME: this needs to be made much less messy
-	for ($week_index = 0;; $week_index++) {
-		$output .= "  <tr>\n";
-
-		for ($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
-			$i = $week_index * 7 + $day_of_week;
-			$day = $i - $firstday + 1;
-
-			if($i < $firstday || $day > $lastday) {
-				$output .= "<td class=\"none\"></td>\n";
-				continue;
-			}
-
-			// set whether the date is in the past or future/present
-			if($currentyear > $year || $currentyear == $year
-					&& ($currentmonth > $month || $currentmonth == $month 
-						&& $currentday > $day)) {
-				$current_era = 'past';
-			} else {
-				$current_era = 'future';
-			}
-
-			$output .= "<td valign=\"top\" class=\"$current_era\">\n"
-				."<a href=\"index.php?action=display&amp;"
-				."day=$day&amp;month=$month&amp;year=$year"
-				."&amp;display=day\" class=\"date\">"
-				."$day</a>\n";
-
-			$result = get_events_by_date($day, $month, $year);
-
-			/* Start off knowing we don't need to close the event
-			 *  list.  loop through each event for the day
-			 */
-			$have_events = 0;
-			while($row = $db->sql_fetchrow($result)) {
-				// if we didn't start the event table yet, do so
-				if($have_events == 0) {
-					$output .= "<ul>\n";
-					$have_events = 1;
-				}
-
-				$subject = stripslashes($row['subject']);
-
-				$event_time = formatted_time_string(
-						$row['starttime'],
-						$row['eventtype']);
-
-				$output .= "<li>\n"
-					."<a href=\"index.php?action=display&amp;id=$row[id]\">$event_time - $subject</a>\n"
-					."</li>";
-			}
-
-			// If we opened the event table, close it
-			if($have_events == 1) {
-				$output .= "</ul>\n";
-			}
-
-			$output .= "</td>\n";
-		}
-		$output .= "</tr>\n";
-
-		// If it's the last day, we're done
-		if($day >= $lastday) {
-			break;
-		}
-	}
-
-	$output .= "</tbody>\n"
+		."<tbody>\n"
+		.display_month($month, $year)
+		."</tbody>\n"
 		."</table>\n";
 
 	return $output;
 }
+
+function display_month($month, $year)
+{
+
+	return display_weeks(1, $month, $year);
+}
+
+function display_weeks($week_of_month, $month, $year)
+{
+	$output = "<tr>\n".display_days(1, $week_of_month, $month, $year)
+		."</tr>\n";
+	if($week_of_month < weeks_in_month($month, $year)) {
+		$output .= display_weeks($week_of_month + 1, $month, $year);
+	}
+	return $output;
+}
+
+function display_days($day_of_week, $week_of_month, $month, $year)
+{
+	global $db;
+
+	if($day_of_week > 7) return '';
+
+	$day_of_month = ($week_of_month - 1) * 7 + $day_of_week
+		- day_of_first($month, $year);
+
+	if($day_of_month <= 0 || $day_of_month > days_in_month($month, $year)) {
+		return "<td class=\"none\"></td>\n"
+		.display_days($day_of_week + 1, $week_of_month, $month, $year);
+	}
+
+	$currentday = date('j');
+	$currentmonth = date('n');
+	$currentyear = date('Y');
+
+	// set whether the date is in the past or future/present
+	if($currentyear > $year || $currentyear == $year
+			&& ($currentmonth > $month
+				|| $currentmonth == $month 
+				&& $currentday > $day_of_month
+			   )) {
+		$current_era = 'past';
+	} else {
+		$current_era = 'future';
+	}
+
+	$output .= "<td valign=\"top\" class=\"$current_era\">\n"
+		."<a href=\"index.php?action=display&amp;"
+		."day=$day_of_month&amp;month=$month&amp;"
+		."year=$year&amp;display=day\" class=\"date\">"
+		."$day_of_month</a>\n";
+
+	$result = get_events_by_date($day_of_month, $month, $year);
+
+	/* Start off knowing we don't need to close the event
+	 *  list.  loop through each event for the day
+	 */
+	$have_events = 0;
+	while($row = $db->sql_fetchrow($result)) {
+		// if we didn't start the event table yet, do so
+		if($have_events == 0) {
+			$output .= "<ul>\n";
+			$have_events = 1;
+		}
+
+		$subject = stripslashes($row['subject']);
+
+		$event_time = formatted_time_string(
+				$row['starttime'],
+				$row['eventtype']);
+
+		$output .= "<li>\n"
+			."<a href=\"index.php?action=display&amp;id=$row[id]\">$event_time - $subject</a>\n"
+			."</li>";
+	}
+
+	// If we opened the event table, close it
+	if($have_events == 1) {
+		$output .= "</ul>\n";
+	}
+
+	$output .= "</td>\n";
+
+	return $output . display_days($day_of_week + 1, $week_of_month, $month,
+			$year);
+}
+
 ?>
