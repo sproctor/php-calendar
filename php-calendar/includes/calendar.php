@@ -135,10 +135,15 @@ function formatted_time_string($time, $type)
 			$minute = $matches[2];
 
 			if(!$config['hours_24']) {
-				if($hour > 12) {
-					$hour -= 12;
+				if($hour >= 12) {
+                                        if($hour != 12) {
+                                                $hour -= 12;
+                                        }
 					$pm = ' PM';
-				} else {
+                                } else {
+                                        if($hour == 0) {
+                                                $hour = 12;
+                                        }
 					$pm = ' AM';
 				}
 			} else {
