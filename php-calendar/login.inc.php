@@ -26,21 +26,20 @@
 */ 
 
 function login(){
-	global $HTTP_POST_VARS, $calno, $HTTP_GET_VARS, $day, $month, $year,
-	$user;
+	global $calno, $vars, $day, $month, $year, $user;
 
 	$output = '';
 	$calendarDB = connect_to_database();
 
 	$colname_rsAuthenticate = "1";
-	if (isset($HTTP_POST_VARS['username'])) {
-		$colname_rsAuthenticate = (get_magic_quotes_gpc()) ? $HTTP_POST_VARS['username'] : addslashes($HTTP_POST_VARS['username']);
+	if (isset($vars['username'])) {
+		$colname_rsAuthenticate = (get_magic_quotes_gpc()) ? $vars['username'] : addslashes($vars['username']);
 	}
 
 	//Check password and username
-	if (isset($HTTP_POST_VARS['submit'])){
+	if (isset($vars['submit'])){
 		//mysql_select_db($database_calendarDB, $calendarDB);
-		$query_rsAuthenticate = "SELECT * FROM ".SQL_PREFIX."admin WHERE UID = '$HTTP_POST_VARS[username]' AND password = PASSWORD('$HTTP_POST_VARS[password]') AND calno = $calno";
+		$query_rsAuthenticate = "SELECT * FROM ".SQL_PREFIX."admin WHERE UID = '$vars[username]' AND password = PASSWORD('$vars[password]') AND calno = '$calno'";
 		$rsAuthenticate = mysql_query($query_rsAuthenticate, $calendarDB) or die(mysql_error());
 		$row_rsAuthenticate = mysql_fetch_assoc($rsAuthenticate);
 		$totalRows_rsAuthenticate = mysql_num_rows($rsAuthenticate);
@@ -70,7 +69,7 @@ function login_form(){
 		."<tfoot>\n"
 		."<tr>\n"
 		."<td colspan=\"2\">\n"
-		."<input type=\"hidden\" name=\"login\" value=\"1\" />\n"
+		."<input type=\"hidden\" name=\"action\" value=\"login\" />\n"
 		.'<input type="submit" name="submit" value="'._('Submit')
 		."\" />\n"
 		."</td>\n"
