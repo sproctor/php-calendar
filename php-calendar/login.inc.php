@@ -1,6 +1,6 @@
 <?php 
 /*
-   Copyright 2002 Sean Proctor
+   Copyright 2002 Sean Proctor, Nathan Poiro
 
    This file is part of PHP-Calendar.
 
@@ -21,7 +21,9 @@
 
 /*  This provides an administrative signin page allowing users to
     add, modify, and delete event entries.  It uses session variables
-    so cookies must be enables */ 
+    so cookies must be enables (this is untrue PHP can use get/post headers
+    for session info) 
+*/ 
 
 function login(){
 	global $HTTP_POST_VARS, $calno, $HTTP_GET_VARS, $day, $month, $year,

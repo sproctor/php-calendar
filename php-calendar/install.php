@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 Sean Proctor
+   Copyright 2002 Sean Proctor, Nathan Poiro
 
    This file is part of PHP-Calendar.
 

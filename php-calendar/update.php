@@ -1,6 +1,6 @@
 <?php
 /*
-    Copyright 2002 Sean Proctor
+    Copyright 2002 Sean Proctor, Nathan Poiro
 
     This file is part of PHP-Calendar.
 
@@ -19,16 +19,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include ("config.php");
-include ("header.php");
+include 'miniconfig.inc.php';
+include "$basedir/calendar.inc.php";
 
-{
-    $database = mysql_connect($mysql_hostname, $mysql_username, 
-                              $mysql_password) 
-        or die("Could not connect to server");
-
-    mysql_select_db($mysql_database)
-        or die("Could not select $mysql_database");
+    $database = connect_to_database();
 
     $query = "ALTER TABLE $mysql_tablename 
   ADD duration datetime AFTER stamp,
@@ -41,7 +35,4 @@ include ("header.php");
     $result = mysql_query($query)
         or die(mysql_error());
 
-    mysql_close($database);
-}
-include("footer.php");
 ?>

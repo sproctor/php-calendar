@@ -1,14 +1,35 @@
 <?php
+/*
+   Copyright 2002 Sean Proctor, Nathan Poiro
+
+   This file is part of PHP-Calendar.
+
+   PHP-Calendar is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PHP-Calendar is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with PHP-Calendar; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+ */
+
 include 'miniconfig.inc.php';
 header('Content-Type: text/css');
 if(isset($HTTP_GET_VARS['bgcolor1'])) {
-$bgcolor1 = $HTTP_GET_VARS['bgcolor'];
+	$bgcolor1 = $HTTP_GET_VARS['bgcolor'];
 } else {
-$bgcolor1 = BG_COLOR1;
+	$bgcolor1 = BG_COLOR1;
 }
 /* you get the idea, eventually the colors should be pickable by a user,
-but we need a real concept of users first
-*/
+   but we need a real concept of users first
+ */
 $bgcolor2 = BG_COLOR2;
 $bgcolor3 = BG_COLOR3;
 $bgcolor4 = BG_COLOR4;
@@ -20,7 +41,7 @@ $textcolor2 = TEXTCOLOR2;
 ?>
 body {
   font-family: "Times New Roman", serif;
-  margin: 8px 2%;
+  margin: 0 2%;
   padding: 0;
   background-color: <?php echo $bgcolor1 ?>;
   color: <?php echo $textcolor1 ?>;
@@ -28,7 +49,7 @@ body {
 
 a {
   color: <?php echo $textcolor1 ?>;
-  background-color: inherit;
+   background-color: inherit;
 }
 
 a:hover {
@@ -76,10 +97,6 @@ input[type="submit"]:hover {
   text-decoration: none;
   margin: 0;
   padding: 2px;
-}
-
-a.month {
-  width: 300px;
 }
 
 .phpc-main {
@@ -137,12 +154,12 @@ thead, tfoot {
   overflow: hidden;
 }
 
-td.past, .past li {
+td.past {
   background-color: <?php echo $bgpast ?>;
   color: inherit;
 }
 
-td.future, .future li {
+td.future {
   background-color: <?php echo $bgfuture ?>;
   color: inherit;
 }
@@ -188,12 +205,4 @@ td.none {
 
 .phpc-button {
   text-align: center;
-}
-
-.event-time {
-  padding: 0 2px;
-}
-
-.description {
-  text-align: justify;
 }

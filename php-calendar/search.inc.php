@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 Sean Proctor
+   Copyright 2002 Sean Proctor, Nathan Poiro
 
    This file is part of PHP-Calendar.
 
@@ -17,9 +17,6 @@
    You should have received a copy of the GNU General Public License
    along with PHP-Calendar; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-   THIS PAGE ADDED BY NATHAN CHARLES POIRO
-   -IMPLEMENTS A SEARCH FUNCTION FOR PHP CALENDAR
 
  */
 

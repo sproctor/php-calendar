@@ -19,6 +19,7 @@ Version 0.8:
 	* colors are again configurable through a calendar specific config
 	  file
 	* We got a search function! (thanks Nate)
+	* added weekly/monthly/daily events (thanks me)
 
 Version 0.7 (10/5/02):
 	* added .php to end of .inc files

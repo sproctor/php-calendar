@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 Sean Proctor
+   Copyright 2002 Sean Proctor, Nathan Poiro
 
    This file is part of PHP-Calendar.
 
@@ -17,13 +17,6 @@
    You should have received a copy of the GNU General Public License
    along with PHP-Calendar; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-   UPDATE:  Nate - 11/07/02 - Constrict what information is displayed based on
-   whether user is an administrator
-   - Changed the table layout of the tables a little
-   UPDATE:  Nate - 12/03/02 - Added Functionality.  Script will now display either
-   a whole day or a single event depending on wether 
-   event_id has been passed in the query string
 
  */
 
@@ -79,13 +72,13 @@ function display_date()
 		.'<th>'._('Title')."</th>\n"
 		.'<th>'._('Time')."</th>\n"
 		.'<th>'._('Duration')."</th>\n"
-		.'<th>'._('Description')."</th>\n"
+		//.'<th>'._('Description')."</th>\n"
 		."</tr>\n"
 		."</thead>\n";
 	if($admin) 
 		$output .= "<tfoot>\n"
 			."<tr>\n"
-			."<td colspan=\"4\">\n"
+			."<td colspan=\"3\">\n"
 			."<input type=\"hidden\" name=\"action\""
 			." value=\"delete\" />\n"
 			."<input type=\"hidden\" name=\"day\" value=\"$day\""
@@ -114,7 +107,6 @@ function display_date()
 		$desc = nl2br(stripslashes($row['description']));
 		$desc = ereg_replace("[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]",
 				"<a href=\"\\0\">\\0</a>", $desc);
-		$event_epoch = $row['start_since_epoch'];
 
 		$time_str = formatted_time_string($row['starttime'],
 				$row['eventtype']);
@@ -122,18 +114,25 @@ function display_date()
 		$dur_str = get_duration($row['duration']);
 		$output .= "<tr>\n"
 			."<th>\n";
+
 		if($admin) $output .= "<input type=\"checkbox\" name=\"delete\""
 			." value=\"$row[id]\" />\n";
+
 		$output .= "<a href=\"index.php?action=display&amp;"
-			."event_id=$row[id]\">$subject</a></th>\n"
+			."event_id=$row[id]\">$subject</a>\n";
+
+		if($admin) $output .= " (<a href=\"index.php?action=modify&amp;"
+				."id=$row[id]\">"._('Modify')."</a>)\n";
+
+		$output .= "</th>\n"
 			."<td>$time_str</td>\n"
 			."<td>$dur_str</td>\n"
-			."<td class=\"description\">$desc</td>\n"
+			//."<td>$desc</td>\n"
 			."</tr>\n";
 	}
 
 	if($i == 0) {
-		$output .= "<tr><td colspan=\"4\"><strong>"
+		$output .= "<tr><td colspan=\"3\"><strong>"
 			._('No events on this day.')."</strong></td></tr>\n";
 	}
 
