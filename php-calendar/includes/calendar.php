@@ -300,15 +300,14 @@ function get_events_by_date($day, $month, $year)
         $dom_date = $db->SQLDate('d', $date);
 
 	$query = 'SELECT * FROM '.SQL_PREFIX."events\n"
+		."WHERE $date >= $startdate AND $date <= $enddate\n"
                 // find normal events
-		."WHERE ((eventtype = 1 OR eventtype = 2 OR eventtype = 3) "
-                ."AND $startdate = $date)\n"
+                ."AND (eventtype = 1 OR eventtype = 2 OR eventtype = 3\n"
                 // find weekly events
-		."OR (eventtype = 5 AND $date >= $startdate "
-                ."AND $date <= $enddate AND $dow_startdate = $dow_date)\n"
+		."OR (eventtype = 5 AND $dow_startdate = $dow_date)\n"
                 // find monthly events
-		."OR (eventtype = 6 AND $date >= $startdate "
-                ."AND $date <= $enddate AND $dom_startdate = $dom_date)\n"
+		."OR (eventtype = 6 AND $dom_startdate = $dom_date)\n"
+                .")\n"
                 // in the current calendar
 		."AND calendar = '$calendar_name'\n"
 		."ORDER BY starttime";
