@@ -59,12 +59,12 @@ define('IN_PHPC', 1);
 
 if(!empty($_GET) && array_key_exists('action', $_GET)
                         && $_GET['action'] == 'style') {
-	include($phpc_root_path . 'includes/style.php');
+	require_once($phpc_root_path . 'includes/style.php');
 	exit;
 }
 
-include($phpc_root_path . 'includes/calendar.php');
-include($phpc_root_path . 'includes/setup.php');
+require_once($phpc_root_path . 'includes/calendar.php');
+require_once($phpc_root_path . 'includes/setup.php');
 
 $legal_actions = array('event_form', 'event_delete', 'display', 'event_submit',
 		'search', 'login', 'logout', 'admin', 'options_submit',
@@ -74,7 +74,7 @@ if(!is_int(array_search($action, $legal_actions, true))) {
 	soft_error(_('Invalid action'));
 }
 
-include($phpc_root_path . "includes/$action.php");
+require_once($phpc_root_path . "includes/$action.php");
 
 eval("\$output = $action();");
 

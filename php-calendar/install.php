@@ -42,8 +42,8 @@ if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                         .'adodb');
 }
 
-include_once($phpc_root_path . 'includes/calendar.php');
-include_once('adodb.inc.php');
+require_once($phpc_root_path . 'includes/calendar.php');
+require_once('adodb.inc.php');
 
 echo '<html>
 <head>
@@ -253,8 +253,8 @@ function install_base()
 		or die("could not write to file");
 	fclose($fp);
 
-	include_once($phpc_root_path . 'config.php');
-	include_once($phpc_root_path . 'includes/db.php');
+	require_once($phpc_root_path . 'config.php');
+	require_once($phpc_root_path . 'includes/db.php');
 
 	create_tables();
 
@@ -336,8 +336,8 @@ function add_calendar()
 {
 	global $db, $phpc_root_path, $calendar_name;
 
-	include($phpc_root_path . 'config.php');
-	include($phpc_root_path . 'includes/db.php');
+	require_once($phpc_root_path . 'config.php');
+	require_once($phpc_root_path . 'includes/db.php');
 
 	$hours_24 = 0;
 	$start_monday = 0;
