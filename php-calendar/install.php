@@ -19,6 +19,8 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+include 'miniconfig.inc.php';
+
 echo '<html>
 <head>
 <title>install php calendar</title>
@@ -29,12 +31,14 @@ echo '<html>
 
 function get_config()
 {
-	if(is_writeable('config.inc.php') || is_writeable('.')) {
+global $basedir;
+
+	if(is_writeable("$basedir/config.inc.php") || is_writeable($basedir)) {
 		echo '<input type="hidden" name="config" value="1">
 			<p>your config file is writable</p>
 			<input type="submit" value="continue">';
 	} else {
-		echo '<p>your config file is not readable.  I suggest logging in with a shell and typing:</p>
+		echo '<p>your config file is not writeable.  I suggest logging in with a shell and typing:</p>
 			<p><code>
 			touch config.inc.php<br>
 			chmod 666 config.inc.php
@@ -44,7 +48,7 @@ function get_config()
 	}
 }
 
-function get_user_add()
+function get_user()
 {
 	echo '<p>Have you already created the user for your database?</p>
 		<input type="submit" name="has_user" value="yes">
@@ -65,13 +69,18 @@ if(!isset($HTTP_POST_VARS['config'])) {
 		&& !isset($HTTP_POST_VARS['my_database'])) {
 	get_server_setup();
 } elseif(!isset($HTTP_POST_VARS['has_user'])) {
-	get_user_add();
+	get_user();
 } elseif(!isset($HTTP_POST_VARS['my_adminname'])
 		&& !isset($HTTP_POST_VARS['my_adminpassword'])
 		&& $HTTP_POST_VARS['has_user'] == 'no') {
-	user_add_do();
-} else {
+	add_user();
+} elseif(!isset($HTTP_POST_VARS['admin'])) {
 finalize_install();
+} elseif(!isset($HTTP_POST_VARS['admin_user'])
+		&& !isset($HTTP_POST_VARS['admin_pass'])) {
+	get_admin();
+} else {
+	add_admin();
 }
 
 function get_server_setup()
@@ -116,7 +125,7 @@ function get_server_setup()
 		</table>';
 }
 
-function user_add_do()
+function add_user()
 {
 	global $HTTP_POST_VARS;
 
@@ -166,14 +175,14 @@ function user_add_do()
 
 function finalize_install()
 {
-	global $HTTP_POST_VARS;
+	global $HTTP_POST_VARS, $basedir;
 	$my_hostname = $HTTP_POST_VARS['my_hostname'];
 	$my_username = $HTTP_POST_VARS['my_username'];
 	$my_passwd = $HTTP_POST_VARS['my_passwd'];
 	$my_prefix = $HTTP_POST_VARS['my_prefix'];
 	$my_database = $HTTP_POST_VARS['my_database'];
 
-	$fp = fopen('config.inc.php', 'w')
+	$fp = fopen("$basedir/config.inc.php", 'w')
 		or die('Couldn\'t open config file.');
 
 	$fstring = "<?php\n"
@@ -183,10 +192,6 @@ function finalize_install()
 		."define('SQL_PASSWORD', '$my_passwd');\n"
 		."define('SQL_DATABASE', '$my_database');\n"
 		."define('SQL_PREFIX',   '$my_prefix');\n"
-		."define('TITLE',        'PHP-Calendar 0.8');\n"
-		."define('START_MONDAY', 0);\n"
-		."define('HOURS_24',     0);\n"
-		."define('TRANSLATE',    1);\n"
 		."?>";
 
 	fwrite($fp, $fstring)
@@ -212,16 +217,77 @@ function finalize_install()
 			."duration datetime,\n"
 			."eventtype int(4),\n"
 			."subject varchar(255),\n"
-			."description text,\n"
+			."description longblob,\n"
+			."calno int(4) default NULL,\n"
 			."PRIMARY KEY (id)\n"
 			.")";
 echo "<pre>$query</pre>";
 	mysql_query($query)
-		or die("Could not create table");
+		or die("Could not create events table");
+
+$query = "CREATE TABLE ".$my_prefix."admin (
+  calno int(11) NOT NULL default '0',
+  UID varchar(9) NOT NULL default '',
+  password varchar(30) NOT NULL default '',
+  PRIMARY KEY  (calno,UID)
+)";
+
+mysql_query($query)
+or die("Could not create admin table");
+
+$query = "CREATE TABLE ".$my_prefix."calendars (
+  calno int(11) NOT NULL auto_increment,
+  contact_name varchar(40) default NULL,
+  contact_email varchar(30) default NULL,
+  cal_name varchar(200) NOT NULL default '',
+  URL varchar(200) default NULL,
+  PRIMARY KEY  (calno)
+)";
+
+mysql_query($query)
+or die("Could not create calendars table");
 
 	mysql_close($link);
 
-	echo "<p><a href=\".\">Calendar created</a></p>";
+	echo "<p><input type=\"submit\" name=\"admin\" value=\"Create Admin\"></p>";
+}
+
+function get_admin()
+{
+
+echo "<table><tr><td>\n"
+."Admin name:\n"
+."</td><td>\n"
+."<input type=\"text\" name=\"admin_user\" />\n"
+."</td></tr><tr><td>\n"
+."Admin password:"
+."</td><td>\n"
+."<input type=\"password\" name=\"admin_pass\" />\n"
+."</td></tr><tr><td colspan=\"2\">"
+."<input type=\"submit\" value=\"Create Admin\" />\n"
+."</td></tr></table>\n";
+
+}
+
+function add_admin()
+{
+	global $HTTP_POST_VARS, $calno;
+
+	$link = mysql_connect($HTTP_POST_VARS['my_hostname'],
+			$HTTP_POST_VARS['my_username'],
+			$HTTP_POST_VARS['my_passwd'])
+		or die("Could not connect");
+
+	mysql_select_db($HTTP_POST_VARS['my_database']);
+	$query = "insert into $HTTP_POST_VARS[my_prefix]admin
+		(UID, password, calno) VALUES
+		('$HTTP_POST_VARS[admin_user]',
+		 PASSWORD('$HTTP_POST_VARS[admin_pass]'), $calno)";
+
+	mysql_query($query)
+		or die("Could not add admin");
+
+	echo "<p>admin added; <a href=\"index.php\">View calendar</a></p>";
 }
 
 echo '</form></body></html>';
