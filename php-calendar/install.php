@@ -287,8 +287,7 @@ function finalize_install()
 		//."PRIMARY KEY (id)\n"
 		.")";
 
-	//$result = $db->sql_query($query);
-	$result = 1;
+	$result = $db->sql_query($query);
 
 	if(!$result) {
 		$error = $db->sql_error();
@@ -302,7 +301,7 @@ function finalize_install()
 	PRIMARY KEY  (calno,UID)
 		)";
 
-	//$result = $db->sql_query($query);
+	$result = $db->sql_query($query);
 
 	if(!$result) {
 		$error = $db->sql_error();
@@ -318,7 +317,7 @@ function finalize_install()
 	PRIMARY KEY  (calno)
 		)";
 
-	//$result = $db->sql_query($query);
+	$result = $db->sql_query($query);
 
 	if(!$result) {
 		$error = $db->sql_error();
