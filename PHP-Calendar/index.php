@@ -73,7 +73,7 @@ echo " $year
   <tr>
     <td", ifold(" align=\"center\">
       <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), "href=\"?month=$month&amp;year=$prevyear\">prev year</a>
+      <a"), " href=\"?month=$month&amp;year=$prevyear\">prev year</a>
     </td>
 	<td", ifold(" align=\"center\">
       <a style=\"text-decoration:none;color:$headercolor\"", ">

@@ -42,7 +42,7 @@ switch ($action) {
  case "Modify Selected":
      $modify = "Modify";
      if (empty($id)) {
-         echo "Nothing to modify.";
+         echo "<p>Nothing to modify.</p>";
          break;
      }
      echo "<p>We are about to modify id $id from $mysql_tablename</p>\n";
@@ -315,9 +315,9 @@ minutes
      $query = "INSERT INTO $mysql_tablename (username, stamp, subject, description, eventtype, duration) VALUES ('$username', '$timestamp', '$subject', '$description', '$typeofevent', '$durationstamp')";
      $result = mysql_query($query);
      if ($temp)
-         echo "Item added ...";
+         echo "<p>Item added ...</p>";
      else {
-         echo "Item may not have been added ...", mysql_error();
+         echo "<p>Item may not have been added ...", mysql_error();
      }
      
      break;
