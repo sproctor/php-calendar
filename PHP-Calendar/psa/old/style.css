@@ -1,0 +1,207 @@
+body {
+  color: black;
+  background-color: maroon;
+  text-align: center;
+  font-size: 12pt;
+  padding: 0 2%;
+}
+
+img {
+  border: 0;
+}
+
+a {
+  color: black;
+}
+
+a:active {
+  color: gray;
+}
+
+a.plain {
+  text-decoration: none;
+}
+
+a:hover {
+  color: maroon;
+}
+
+table {
+  margin: 2px 0 0 0;
+  width: 100%;
+}
+
+td {
+  padding: 2px;
+  vertical-align: top;
+}
+
+.header {
+  background-color: gray;
+  font-size: 20pt;
+  font-weight: bold;
+  text-align: center;
+  font-family: sans-serif;
+  padding: 4px 0;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.title {
+  background-color: gray;
+  font-family: serif;
+  font-size: 16pt;
+  font-weight: bold;
+  text-align: center;
+}
+
+ul {
+  margin: 0;
+  padding: 0 0 0 16px;
+}
+
+.mod {
+  font-family: monospace;
+  font-size: 10pt;
+}
+
+.blurb {
+  margin: 2em 12%;
+  font-size: 14pt;
+  font-family: serif;
+  text-align: justify;
+}
+
+table.display {
+  padding: 0px;
+  background-color: gray;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+}
+
+table.display td {
+  background-color: silver;
+  text-align: left;
+}
+
+table.display td.title {
+  text-align: center;
+  background-color: transparent;
+}
+
+table.calendar {
+  text-align: center;
+  font-size: 10pt;
+  border: 1px solid black;
+}
+
+table.nav {
+  font-size: 10pt;
+  text-align: center;
+  background-color: black;
+  margin: 4px 0;
+  border-style: none;
+  padding: 0px;
+  border-spacing: 1px;
+  table-layout: fixed;
+  color: inherit;
+}
+
+table.nav td {
+  padding: 0;
+  background-color: gray;
+  color: maroon;
+}
+
+table.nav thead td {
+  color: black;
+  background-color: gray;
+}
+
+table.nav a {
+  padding: 2px;
+  display: block;
+  background-color: silver;
+  color: maroon;
+  text-decoration: none;
+}
+
+table.nav a:hover {
+  color: silver;
+  background-color: maroon;
+}
+
+td.past {
+  background-color: gray;
+  font-size: 8pt;
+  text-align: left;
+  height: 80px;
+}
+
+td.future {
+  background-color: silver;
+  font-size: 8pt;
+  text-align: left;
+  height: 80px;
+}
+
+td.none {
+  background-color: black;
+}
+
+.date {
+  font-size: 12pt;
+  font-weight: bold;
+}
+
+table.list {
+  padding: 0;
+  background-color: black;
+  border-spacing: 1px;
+}
+
+table.list td {
+  background-color: silver;
+  padding: 0;
+  font-size: 9px;
+}
+
+table.list a {
+  display: block;
+  text-decoration: none;
+  padding: 2px;
+}
+
+table.list a:hover {
+  color: black;
+  background-color: maroon;
+}
+
+td.past table.list td {
+  background-color: gray;
+}
+
+table.edit {
+  background-color: gray;
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
+  width: 100%;
+}
+
+table.calendar thead td {
+  background-color: gray;
+  font-weight: bold;
+}
+
+table.edit td {
+  text-align: left;
+}
+
+tr.title {
+  border-width: 0 0 1px 0;
+  border-style: solid;
+  border-color: black;
+}
