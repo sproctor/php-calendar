@@ -7,10 +7,17 @@ top();
 $database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
 mysql_select_db($mysql_database, $database);
 
-if(empty($action)) $action = "none";
-if(empty($day)) $day = date("j");
-if(empty($month)) $month = date("n");
-if(empty($year)) $year = date("Y");
+if(empty($_GET['action'])) $action = "none";
+else $action = $_GET['action'];
+
+if(empty($_GET['day'])) $day = date("j");
+else $day = $_GET['day'];
+
+if(empty($_GET['month'])) $month = date("n");
+else $month = $_GET['month'];
+
+if(empty($_GET['year'])) $year = date("Y");
+else $year = $_GET['year'];
 
 switch ($action) {
  case "Delete Selected":

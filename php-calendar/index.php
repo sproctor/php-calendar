@@ -13,17 +13,24 @@ $database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password)
 mysql_select_db($mysql_database)
      or die("Couldn't select database");
 
-if (empty($month)) {
+
+if (empty($_GET['month'])) {
     $month = $currentmonth;
+} else {
+    $month = $_GET['month'];
 }
 
-if(empty($day)) {
+if(empty($_GET['day'])) {
     if($month == $currentmonth) $day = $currentday;
     else $day = 1;
+} else {
+    $day = $_GET['day'];
 }
 
-if(empty($year)) {
+if(empty($_GET['year'])) {
     $year = $currentyear;
+} else {
+    $year = $_GET['year'];
 }
 
 $firstday = date("w", mktime(0,0,0,$month,1,$year));
@@ -32,19 +39,9 @@ $lastday = date("t", mktime(0,0,0,$month,$day,$year));
 $nextyear = $year + 1;
 $prevyear = $year - 1;
 
-if(isold()) { 
-    echo <<<END
-<table border="0" cellspacing="0" cellpadding="0" width="96%">
-  <tr>
-    <td bgcolor="$bordercolor">
-<table width="100%" border="0" cellspacing="1" cellpadding="2"
-bgcolor="$tablebgcolor"
-END;
-}
-else {
-    echo "<table class=\"nav\"";
-    if($BName == "MSIE") { echo " cellspacing=1"; }
-}
+echo "<table class=\"nav\"";
+if($BName == "MSIE") { echo " cellspacing=1"; }
+
 echo <<<END
 >
   <colgroup><col></colgroup>
@@ -55,105 +52,79 @@ echo <<<END
     <th colspan="14">
 END;
 echo date('F', mktime(0,0,0,$month,1,$year));
-echo " $year
+echo <<<END
+      $year
     </th>
   </tr>
 </thead>
   <tr>
-    <td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=$month&amp;year=$prevyear\">prev year</a>
+    <td>
+      <a href="?month=$month&amp;year=$prevyear">prev year</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=1&amp;year=$year\">Jan</a>
+	  <td>
+      <a href="?month=1&amp;year=$year">Jan</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=2&amp;year=$year\">Feb</a>
+	  <td>
+      <a href="?month=2&amp;year=$year">Feb</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=3&amp;year=$year\">Mar</a>
+	  <td>
+      <a href="?month=3&amp;year=$year">Mar</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=4&amp;year=$year\">Apr</a>
+	  <td>
+      <a href="?month=4&amp;year=$year">Apr</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=5&amp;year=$year\">May</a>
+	  <td>
+      <a href="?month=5&amp;year=$year">May</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=6&amp;year=$year\">Jun</a>
+	  <td>
+      <a href="?month=6&amp;year=$year">Jun</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=7&amp;year=$year\">Jul</a>
+	  <td>
+      <a href="?month=7&amp;year=$year">Jul</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=8&amp;year=$year\">Aug</a>
+	  <td>
+      <a href="?month=8&amp;year=$year">Aug</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=9&amp;year=$year\">Sep</a>
+	  <td>
+      <a href="?month=9&amp;year=$year">Sep</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=10&amp;year=$year\">Oct</a>
+	  <td>
+      <a href="?month=10&amp;year=$year">Oct</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=11&amp;year=$year\">Nov</a>
+	  <td>
+      <a href="?month=11&amp;year=$year">Nov</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=12&amp;year=$year\">Dec</a>
+	  <td>
+      <a href="?month=12&amp;year=$year">Dec</a>
     </td>
-	<td", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"?month=$month&amp;year=$nextyear\">next year</a>
+	  <td>
+      <a href="?month=$month&amp;year=$nextyear">next year</a>
     </td>
   </tr>
   <tr>
-	<td colspan=\"14\"", ifold(" align=\"center\">
-      <a style=\"text-decoration:none;color:$headercolor\"", ">
-      <a"), " href=\"operate.php?action=Add+Item&amp;month=$month&amp;year=$year&amp;day=$day\">Add Item</a>
-    </td>
-  </tr>
-</table>";
-
-if(isold()) { 
-    echo <<<END
+	  <td colspan="14">
+      <a href="operate.php?action=Add+Item&amp;month=$month&amp;year=$year&amp;day=$day">Add Item</a>
     </td>
   </tr>
 </table>
-<br>
-<table width="96%" cellspacing="0" cellpadding="0" border="0">
-  <tr>
-    <td bgcolor="$bordercolor">
-<table width="100%" cellspacing="2" cellpadding="2" border="0">
 END;
-} else {
-    echo "<table class=\"calendar\">";
-}
 
-echo "
-  <colgroup span=\"7\" width=\"1*\">
+echo <<<END
+<table class="calendar">
+  <colgroup span="7" width="1*">
   <thead>
-  <tr", ifold(" bgcolor=\"$headerbgcolor\"", ""), ">
-    <th>", ifold("<font color=\"$headercolor\">Sunday</font>", "Sunday"), "</th>
-    <th>", ifold("<font color=\"$headercolor\">Monday</font>", "Monday"), "</th>
-    <th>", ifold("<font color=\"$headercolor\">Tuesday</font>", "Tuesday"), "</th>
-	<th>", ifold("<font color=\"$headercolor\">Wednesday</font>", "Wednesday"), "</th>
-    <th>", ifold("<font color=\"$headercolor\">Thursday</font>", "Thursday"), "</th>
-    <th>", ifold("<font color=\"$headercolor\">Friday</font>", "Friday"), "</th>
-    <th>", ifold("<font color=\"$headercolor\">Saturday</font>", "Saturday"), "</th>
+  <tr>
+    <th>Sunday</th>
+    <th>Monday</th>
+    <th>Tuesday</th>
+	  <th>Wednesday</th>
+    <th>Thursday</th>
+    <th>Friday</th>
+    <th>Saturday</th>
   </tr>
   </thead>
-  <tbody>\n";
+  <tbody>
+END;
 
 for ($j = 0;; $j++) {
   echo "  <tr>\n";
@@ -161,7 +132,7 @@ for ($j = 0;; $j++) {
     $i = $j * 7 + $k;
     $nextday = $i - $firstday + 1;
     if($i < $firstday || $nextday > $lastday) {
-      echo "    <td class=\"none\">" . ifold("&nbsp;", "") . "</td>";
+      echo "    <td class=\"none\"></td>";
       continue;
     }
     if($currentyear > $year || $currentyear == $year
@@ -171,11 +142,11 @@ for ($j = 0;; $j++) {
     } else {
       $pastorfuture = "future";
     }
-    echo "    <td valign=\"top\""
-      . ifold(" height=\"80\" bgcolor=\"$tablebgcolor\">", 
-              " class=\"$pastorfuture\">");
-    echo "      <a href=\"display.php?day=$nextday&amp;month=$month&amp;year=$year\" 
-        class=\"date\">", ifold("<b>$nextday</b></a>", "$nextday</a>");
+    echo <<<END
+    <td valign="top" class="$pastorfuture">
+      <a href="display.php?day=$nextday&amp;month=$month&amp;year=$year" 
+        class="date">$nextday</a>
+END;
     $query = "SELECT subject, stamp, eventtype FROM $mysql_tablename WHERE stamp >= \"$year-$month-$nextday 00:00:00\" AND stamp <= \"$year-$month-$nextday 23:59:59\" ORDER BY stamp";
     $result = mysql_query($query)
       or die("couldn't select item");
@@ -183,13 +154,7 @@ for ($j = 0;; $j++) {
 
     while($row = mysql_fetch_array($result)) {
       if($tabling == 0) {
-        if(isold()) { 
-          echo "
-      <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\">
-      <tr><td bgcolor=\"$bordercolor\">
-      <table class=\"$pastorfuture\" cellspacing=\"1\" cellpadding=\"2\" 
-        border=\"0\" width=\"100%\">\n"; 
-        } elseif($BName == "MSIE") { 
+        if($BName == "MSIE") { 
           echo "\n<table class=\"$pastorfuture\" cellspacing=\"1\">\n";
         } else {
           echo "\n<table class=\"$pastorfuture\">\n";
@@ -208,21 +173,20 @@ for ($j = 0;; $j++) {
         $temp_time = date("g:i A", strtotime($row['stamp']));
       }
             
-      echo "
+      echo <<<END
         <tr>
           <td>
-            ", ifold('<font size="1">', ""), 
-        "<a href=\"display.php?day=$nextday&amp;month=$month&amp;year=$year\">
+            <a href="display.php?day=$nextday&amp;month=$month&amp;year=$year">
               $temp_time - $subject
-            </a>", ifold("</font>", ""), "
+            </a>
           </td>
-        </tr>\n";
+        </tr>
+END;
     }
         
         
     if($tabling == 1) {
       echo "      </table>";
-      if(isold()) { echo "</td></tr></table>"; }
     }
     echo "    </td>";
   }
@@ -233,9 +197,6 @@ for ($j = 0;; $j++) {
 }
 
 echo "</table>\n";
-if(isold()) { 
-    echo "</td></tr></table>"; 
-}
 
 bottom();
 ?>

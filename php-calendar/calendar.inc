@@ -2,22 +2,22 @@
 include_once("config.inc");
 
 // Browser
-if(eregi("(opera)([0-9]{1,2}.[0-9]{1,3}){0,1}",$HTTP_USER_AGENT,$match) || 
-   eregi("(opera/)([0-9]{1,2}.[0-9]{1,3}){0,1}",$HTTP_USER_AGENT,$match)) {
+if(eregi("(opera)([0-9]{1,2}.[0-9]{1,3}){0,1}",$_SERVER['HTTP_USER_AGENT'],$match) || 
+   eregi("(opera/)([0-9]{1,2}.[0-9]{1,3}){0,1}",$_SERVER['HTTP_USER_AGENT'],$match)) {
   $BName = "Opera"; $BVersion=$match[2];
-} elseif(eregi("(konqueror)/([0-9]{1,2}.[0-9]{1,3})",$HTTP_USER_AGENT,$match)) {
+} elseif(eregi("(konqueror)/([0-9]{1,2}.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
   $BName = "Konqueror"; $BVersion=$match[2];
-} elseif(eregi("(lynx)/([0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2})",$HTTP_USER_AGENT,$match)) {
+} elseif(eregi("(lynx)/([0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2})",$_SERVER['HTTP_USER_AGENT'],$match)) {
   $BName = "Lynx"; $BVersion=$match[2];
-} elseif(eregi("(links)\(([0-9]{1,2}.[0-9]{1,3})",$HTTP_USER_AGENT,$match)) {
+} elseif(eregi("(links)\(([0-9]{1,2}.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
   $BName = "Links"; $BVersion=$match[2];
-} elseif(eregi("(msie) ?([0-9]{1,2}.[0-9]{1,3})",$HTTP_USER_AGENT,$match)) {
+} elseif(eregi("(msie) ?([0-9]{1,2}.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
   $BName = "MSIE"; $BVersion=$match[2];
-} elseif(eregi("(netscape6)/(6.[0-9]{1,3})",$HTTP_USER_AGENT,$match)) {
+} elseif(eregi("(netscape6)/(6.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
   $BName = "Netscape"; $BVersion=$match[2];
-} elseif(eregi("(mozilla)/([0-9]{1,2}.[0-9]{1,3})",$HTTP_USER_AGENT,$match)) {
+} elseif(eregi("(mozilla)/([0-9]{1,2}.[0-9]{1,3})",$_SERVER['HTTP_USER_AGENT'],$match)) {
   $BName = "Netscape"; $BVersion=$match[2];
-} elseif(eregi("w3m",$HTTP_USER_AGENT)) {
+} elseif(eregi("w3m",$_SERVER['HTTP_USER_AGENT'])) {
   $BName = "w3m"; $BVersion="Unknown";
 } else {
   $BName = "Unknown"; $BVersion="Unknown";
@@ -59,31 +59,12 @@ function print_header()
 
 function top()
 {
-  global $bordercolor, $headercolor, $header;
+  global $header;
   doctype();
   echo "<html>\n";
   print_header();
-  echo "<body>";
-  if(isold()) { 
-    echo <<<END
-<table width="96%" cellspacing="0" cellpadding="0" border="0">
-  <tr>
-    <td bgcolor="$bordercolor">
-  <table width="100%" cellspacing="1" cellpadding="2" border="0">
-    <tr>
-      <td bgcolor="$headerbgcolor">
-        <center><b>$header</b></center>
-      </td>
-    </tr>
-  </table>
-    </td>
-  </tr>
-</table>
-<br>
-END;
-  } else {
-    echo "<h1 class=\"calendar\">$header</h1>\n"; 
-  }
+  echo "<body>
+  <h1 class=\"calendar\">$header</h1>\n"; 
 }
 
 function print_footer()
@@ -111,8 +92,9 @@ function bottom()
 
 function print_style()
 {
-  global $title, $header, $bgcolor, $textcolor, $headercolor, $tablecolor,
-    $futurecolor, $pastcolor, $nonecolor, $bordercolor, $BName, $BVersion;
+  global $title, $header, $bgcolor, $textcolor, $headercolor, $headerbgcolor, 
+    $tablebgcolor, $futurecolor, $pastcolor, $nonecolor, $bordercolor, $BName, 
+    $BVersion;
   echo <<<END
 <style type="text/css">
 /* Your browser: $BName $BVersion */

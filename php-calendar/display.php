@@ -4,14 +4,19 @@ include_once("config.inc");
 
 top();
 
+if(empty($_GET['day'])) $day = date("j");
+else $day = $_GET['day'];
+
+if(empty($_GET['month'])) $month = date("n");
+else $month = $_GET['month'];
+
+if(empty($_GET['year'])) $year = date("Y");
+else $year = $_GET['year'];
+
 $tablename = date('Fy', mktime(0,0,0,$month,1,$year));
 $monthname = date('F', mktime(0,0,0,$month,1,$year));
 $lastmonthname = $monthname;
 $nextmonthname = $monthname;
-
-if(empty($day)) $day = date("j");
-if(empty($month)) $month = date("n");
-if(empty($year)) $year = date("Y");
 
 $lasttime = mktime(0,0,0,$month,$day-1,$year);
 $lastday = date("j", $lasttime);
@@ -25,15 +30,7 @@ $nextmonth = date("n", $nexttime);
 $nextyear = date("Y", $nexttime);
 $nextmonthname = date('F', $nexttime);
 
-if(isold()) {
-    echo "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"96%\">
-<tr><td bgcolor=\"$bordercolor\">
-<table border=\"0\" cellspacing=\"1\" cellpadding=\"2\" width=\"100%\" bgcolor=\"$tablebgcolor\">\n";
-} else {
-    echo "<table class=\"nav\">\n";
-}
-
-echo "
+echo "<table class=\"nav\">
   <thead>
   <tr>
     <th colspan=\"3\">$day $monthname $year</th>
