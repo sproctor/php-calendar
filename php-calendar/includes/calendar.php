@@ -234,19 +234,24 @@ function get_event_by_id($id)
 	$events_table = SQL_PREFIX . 'events';
 	$users_table = SQL_PREFIX . 'users';
 
-	$query = "SELECT e.*, YEAR(e.startdate) AS year, "
-		."MONTH(e.startdate) AS month, DAYOFMONTH(e.startdate) AS day, "
-		."u.username "
-		."FROM $events_table AS e JOIN $users_table AS u "
-		."ON (e.uid = u.uid) "
-		."WHERE e.id = '$id' AND e.calno = '$calno'";
+	$query = "SELECT $events_table.*,\n"
+		."YEAR($events_table.startdate) AS year,\n"
+		."MONTH($events_table.startdate) AS month,\n"
+		."DAYOFMONTH($events_table.startdate) AS day,\n"
+		."$users_table.username\n"
+		."FROM $events_table\n"
+		."LEFT JOIN $users_table\n"
+		."ON ($events_table.uid = $users_table.uid)\n"
+		."WHERE $events_table.id = '$id'\n"
+		."AND $events_table.calno = '$calno';";
 
 	$result = $db->sql_query($query);
 
 	if(!$result) {
 		$error = $db->sql_error();
 		soft_error(_('Error in get_event_by_id')
-				." $error[code]: $error[message]\n$query");
+				." $error[code]: $error[message]\n"
+				."sql:\n$query");
 	}
 
 	if($db->sql_numrows($result) == 0) {

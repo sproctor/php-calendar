@@ -70,8 +70,11 @@ function search_results()
 		$desc = ereg_replace("[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]",
 				"<a href=\"\\0\">\\0</a>", $desc);
 
-		$output .= "<tr><td><strong>$subject</strong></td>\n"
-			."<td>$row[startdate] ".formatted_time_string($row['starttime'], $row['eventtype'])."</td>\n"
+		$output .= "<tr><td><strong><a href=\"index.php?action=display"
+			."&amp;id=$row[id]\">$subject</a></strong></td>\n"
+			."<td>$row[startdate] "
+			.formatted_time_string($row['starttime'],
+					$row['eventtype'])."</td>\n"
 			."<td>$desc</td>
 			</tr>\n";
 	}
@@ -96,7 +99,8 @@ function search_form()
 	$day_options = '';
 	for ($i = 1; $i <= 31; $i++){
 		if ($i == $day) {
-			$day_options .= "<option value=\"$i\" selected=\"selected\">$i</option>\n";
+			$day_options .= "<option value=\"$i\" selected="
+			."\"selected\">$i</option>\n";
 		} else {
 			$day_options .= "<option value=\"$i\">$i</option>\n";
 		}
