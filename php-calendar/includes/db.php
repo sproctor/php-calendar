@@ -62,7 +62,7 @@ switch($dbms)
 $db = new sql_db(SQL_HOSTNAME, SQL_USER, SQL_PASSWD, SQL_DATABASE, false);
 if(!$db->db_connect_id)
 {
-   message_die("Could not connect to the database");
+	soft_error("Could not connect to the database");
 }
 
 ?>
