@@ -25,76 +25,16 @@ include('miniconfig.php');
 include($phpc_root_path . 'includes/calendar.php');
 include($phpc_root_path . 'includes/setup.php');
 
-switch($action) {
-	case 'add':
+$legal_actions = array('event_add', 'event_delete', 'display', 'event_submit',
+		'event_modify', 'search', 'login', 'logout', 'options');
 
-		include($phpc_root_path . 'includes/event_form.php');
-		$output = event_form('add');
-		break;
-
-	case 'delete':
-
-		include($phpc_root_path . 'includes/event_delete.php');
-		$output = delete_event();
-		break;
-
-	case 'display':
-
-		include($phpc_root_path . 'includes/display.php');
-		$output = display();
-		break;
-
-	case 'submit':
-
-		include($phpc_root_path . 'includes/event_submit.php');
-		$output = submit_event();
-		break;
-
-	case 'modify':
-
-		include($phpc_root_path . 'includes/event_form.php');
-		$output = event_form('modify');
-		break;
-
-	case 'search':
-
-		include($phpc_root_path . 'includes/search.php');
-		$output = search_form();
-		break;
-
-	case 'search_results':
-
-		include($phpc_root_path . 'includes/search.php');
-		$output = search_results();
-		break;
-
-	case 'login':
-
-		include($phpc_root_path . 'includes/login.php');
-		$output = login();
-		break;
-
-	case 'logout':
-
-		include($phpc_root_path . 'includes/logout.php');
-		$output = logout();
-		break;
-
-	case 'main':
-
-		include($phpc_root_path . 'includes/main.php');
-		$output = calendar();
-		break;
-
-	case 'options':
-		include($phpc_root_path . 'includes/options.php');
-		$output = options();
-		break;
-
-	default:
-		soft_error(_('Invalid action'));
-
+if(!array_search($action, $legal_actions)) {
+	soft_error(_('Invalid action'));
 }
+
+include($phpc_root_path . "includes/$action.php");
+
+eval("\$output = $action();");
 
 echo top() . navbar() . $output . bottom();
 

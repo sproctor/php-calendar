@@ -116,139 +116,35 @@ function event_form($action)
 		."</tfoot>\n"
 		."<tbody>\n"
 		."<tr><th>"._('Event Date')."</th>\n"
-		."<td><select name=\"day\" size=\"1\">\n";
-
-	for ($i = 1; $i <= 31; $i++){
-		if ($i == $day) {
-			$output .= "        <option value=\"$i\" "
-				."selected=\"selected\">$i</option>\n";
-		} else {
-			$output .= "        <option value=\"$i\">$i</option>\n";
-		}
-	}
-
-	$output .= "      </select>\n"
-		."      <select size=\"1\" name=\"month\">\n";
-
-	for ($i = 1; $i <= 12; $i++) {
-		$nm = month_name($i);
-		if ($i == $month) {
-			$output .= "        <option value=\"$i\" "
-				."selected=\"selected\">$nm</option>\n";
-		} else {
-			$output .= "        <option value=\"$i\">$nm</option>"
-				."\n";
-		}
-	}
-
-	$output .= "      </select>\n      <select size=\"1\" name=\"year\">";
-
-	for ($i = $year - 2; $i < $year + 5; $i++) {
-		if ($i == $year) {
-			$output .= "        <option value=\"$i\" "
-				."selected=\"selected\">$i</option>\n";
-		} else {
-			$output .= "        <option value=\"$i\">$i</option>\n";
-		}
-	}
-
-	$output .= "      </select></td>\n"
+		."<td>"
+		.create_select('day', 'day', $day)
+		.create_select('month', 'month', $month)
+		.create_select('year', 'year', $year)
+		."</td>\n"
 		."</tr>\n"
 		."<tr><th>"
 		._('End Date (only for daily, weekly, and monthly event types)')
 		."</th>\n"
 		."<td>\n"
-		."<select name=\"endday\" size=\"1\">\n";
-
-	for ($i = 1; $i <= 31; $i++){
-		if ($i == $end_day) {
-			$output .= "        <option value=\"$i\" "
-				."selected=\"selected\">$i</option>\n";
-		} else {
-			$output .= "        <option value=\"$i\">$i</option>\n";
-		}
-	}
-
-	$output .= "      </select>\n"
-		."      <select size=\"1\" name=\"endmonth\">\n";
-
-	for ($i = 1; $i <= 12; $i++) {
-		$nm = month_name($i);
-		if ($i == $end_month) {
-			$output .= "        <option value=\"$i\" "
-				."selected=\"selected\">$nm</option>\n";
-		} else {
-			$output .= "        <option value=\"$i\">$nm</option>"
-				."\n";
-		}
-	}
-
-	$output .= "      </select>\n"
-		."      <select size=\"1\" name=\"endyear\">";
-
-	for ($i = $year - 2; $i < $year + 5; $i++) {
-		if ($i == $end_year) {
-			$output .= "        <option value=\"$i\" "
-				."selected=\"selected\">$i</option>\n";
-		} else {
-			$output .= "        <option value=\"$i\">$i</option>\n";
-		}
-	}
-
-	$output .= "      </select></td>\n"
+		.create_select('endday', 'day', $end_day)
+		.create_select('endmonth', 'month', $end_month)
+		.create_select('endyear', 'year', $end_year)
+		."</td>\n"
 		."</tr>\n"
 		."<tr>\n"
 		.'<th>' . _('Event Type') . "</th>\n"
 		."<td>\n"
-		."<select name=\"typeofevent\" size=\"1\">\n";
-
-	for($i = 1; $i <= 6; $i++) {
-		$output .= "<option value=\"$i\"";
-
-		if($typeofevent == $i) {
-			$output .= ' selected="selected"';
-		}
-
-		$output .= '>'.event_type($i).' '._('Event')."</option>\n";
-	}
-
-	$output .= "</select>\n"
+		.create_select('typeofevent', 'event', $typeofevent)
 		."</td>\n"
 		."</tr>\n"
 		."<tr>\n"
 		.'<th>' .  _('Time') . "</th>\n"
 		."<td>\n"
-		."<select name=\"hour\" size=\"1\">\n";
-
-	if(!$config['hours_24']) {
-		for($i = 1; $i <= 12; $i++) {
-			$output .= '<option value="' . $i % 12 . '"';
-			if($hour == $i) {
-				$output .= ' selected="selected"';
-			}
-			$output .= ">$i</option>\n";
-		}
-	} else {
-		for($i = 0; $i < 24; $i++) {
-			$output .= "<option value=\"$i\"";
-			if($hour == $i) {
-				$output .= ' selected="selected"';
-			}
-			$output .= '>' . $i . "</option>\n";
-		}
-	}
-
-	$output .= "</select><b>:</b><select name=\"minute\" size=\"1\">\n";
-
-	for($i = 0; $i <= 59; $i = $i + 5) {
-		$output .= "<option value='$i'";
-		if($minute >= $i && $i > $minute - 5) {
-			$output .= ' selected="selected"';
-		}
-		$output .= sprintf(">%02d</option>\n", $i);
-	}
-
-	$output .= "</select>\n";
+		.create_select('hour',
+				$config['hours_24'] ? '24hour' : '12hour',
+				$hour)
+		."<b>:</b>\n";
+		.create_select('minute', 'minute', $minute);
 
 	if(!$config['hours_24']) {
 		$output .= "<select name=\"pm\" size=\"1\">\n"
@@ -270,25 +166,9 @@ function event_form($action)
 		."<tr>\n"
 		.'<th>'._('Duration')."</th>\n"
 		."<td>\n"
-		."\n<select name=\"durationhour\" size=\"1\">\n";
-	for($i = 0; $i < 24; $i++) {
-		$output .= "<option value='$i'";
-		if($durhr == $i) {
-			$output .= ' selected="selected"';
-		}
-		$output .= ">$i</option>\n";
-	}
-	$output .= "</select>\n"
-		._('hours')
-		."\n<select name=\"durationmin\" size=\"1\">\n";
-	for($i = 0; $i <= 59; $i = $i + 5) {
-		$output .= "<option value='$i'";
-		if($durmin >= $i && $i > $durmin - 5) {
-			$output .= ' selected="selected"';
-		}
-		$output .= sprintf(">%02d</option>\n", $i);
-	}
-	$output .= "</select>\n"
+		.create_select('durationhour', '24hour', $durhr)
+		._('hours')."\n"
+		.create_select('durationmin', 'minute', $durmin)
 		._('minutes')
 		."\n</td>\n"
 		."</tr>\n"

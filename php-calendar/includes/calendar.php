@@ -273,8 +273,8 @@ function parse_desc($text)
 
 	// emails
 	$text = preg_replace("/([a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*"
-		."[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z])/",
-		"<a href=\"mailto:$1\">$1</a>", $text );
+			."[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z])/",
+			"<a href=\"mailto:$1\">$1</a>", $text );
 
 	return $text;
 }
@@ -355,4 +355,75 @@ function navbar()
 
 	return $output;
 }
+
+function create_select($name, $type, $select)
+{
+	$output = "<select size=\"1\" name=\"$name\">\n";
+
+	switch($type){
+		case 'minute':
+			$lbound = 0;
+			$ubound = 59;
+			$increment = 5;
+			break;
+		case '24hour':
+			$lbound = 0;
+			$ubound = 23;
+			$increment = 1;
+			break;
+		case '12hour':
+			$lbound = 1;
+			$ubound = 12;
+			$increment = 1;
+			break;
+		case 'day':
+			$lbound = 1;
+			$ubound = 31;
+			$increment = 1;
+			break;
+		case 'month':
+			$lbound = 1;
+			$ubound = 12;
+			$increment = 1;
+			break;
+		case 'year':
+			$lbound = $select - 2;
+			$ubound = $select + 3;
+			$increment = 1;
+			break;
+		case 'event':
+			$lbound = 1;
+			$ubound = 6;
+			$increment = 1;
+			break;
+		default:
+			soft_error('Invalid select type');
+	}
+
+	for ($i = $lbound; $i <= $ubound; $i += $increment){
+		switch($type) {
+			case 'month':
+				$text = month_name($i);
+				break;
+			case 'event':
+				$text = event_type($i) . ' ' . _('Event');
+				break;
+			case 'minute':
+				$text = sprintf('%02d', $i);
+			default:
+				$text = $i;
+		}
+		if ($i == $select) {
+			$output .= "<option value=\"$i\" selected="
+				."\"selected\">$text</option>\n";
+		} else {
+			$output .= "<option value=\"$i\">$text</option>\n";
+		}
+	}
+
+	$output .= "</select>\n";
+
+	return $output;
+}
+
 ?>

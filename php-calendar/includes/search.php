@@ -38,7 +38,7 @@ function search_results()
 	$sort = $vars['sort'];
 	$order = $vars['order'];
 
-	$keywords = explode(" ",$searchstring);
+	$keywords = explode(" ", $searchstring);
 	$where = '';
 	reset($keywords);
 	while(list(,$keyword) = each($keywords)) {
@@ -67,8 +67,7 @@ function search_results()
 		$name = stripslashes($row['username']);
 		$subject = stripslashes($row['subject']);
 		$desc = nl2br(stripslashes($row['description']));
-		$desc = ereg_replace("[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]",
-				"<a href=\"\\0\">\\0</a>", $desc);
+		$desc = parse_desc($desc);
 
 		$output .= "<tr><td><strong><a href=\"index.php?action=display"
 			."&amp;id=$row[id]\">$subject</a></strong></td>\n"
@@ -96,35 +95,6 @@ function search_form()
 {
 	global $day, $month, $year;
 
-	$day_options = '';
-	for ($i = 1; $i <= 31; $i++){
-		if ($i == $day) {
-			$day_options .= "<option value=\"$i\" selected="
-			."\"selected\">$i</option>\n";
-		} else {
-			$day_options .= "<option value=\"$i\">$i</option>\n";
-		}
-	}
-
-	$month_options = '';
-	for ($i = 1; $i <= 12; $i++) {
-		$nm = month_name($i);
-		if ($i == $month) {
-			$month_options .= "<option value=\"$i\" selected=\"selected\">$nm</option>\n";
-		} else {
-			$month_options .= "<option value=\"$i\">$nm</option>\n";
-		}
-	}
-
-	$year_options = '';
-	for ($i=$year-2; $i<$year+5; $i++) {
-		if ($i == $year) {
-			$year_options .= "<option value=\"$i\" selected=\"selected\">$i</option>\n";
-		} else {
-			$year_options .= "<option value=\"$i\">$i</option>\n";
-		}
-	}
-
 	$output = "<form action=\"index.php\" method=\"post\">"
 		."<table class=\"phpc-main\">\n"
 		."<tr>\n"
@@ -137,29 +107,26 @@ function search_form()
 		."</td>\n"
 		."</tr>\n"
 		."<tr><td>"._('From').": </td><td>\n"
-		."<select name=\"fromday\" size=\"1\">\n"
-		.$day_options
-		."</select>\n"
-		."<select size=\"1\" name=\"frommonth\">\n"
-		.$month_options
-		."</select>\n"
-		."<select size=\"1\" name=\"fromyear\">"
-		.$year_options
+		.create_select('fromday', 'day', $day)
+		.create_select('frommonth', 'month', $month)
+		.create_select('fromyear', 'year', $year)
 		."</td></tr>\n" 
 		."<tr><td>"._('To').": </td><td>\n"
-		."<select name=\"today\" size=\"1\">\n"
-		.$day_options
-		."</select>\n"
-		."<select size=\"1\" name=\"tomonth\">\n"
-		.$month_options
-		."</select>\n"
-		."<select size=\"1\" name=\"toyear\">"
-		.$year_options
-		."</select>\n"
+		.create_select('today', 'day', $day)
+		.create_select('tomonth', 'month', $month)
+		.create_select('toyear', 'year', $year)
 		."<tr><td>"._('Sort By').": </td>\n"
-		."<td><select name=\"sort\"><option value=\"startdate\">Start Date</option><option value=\"subject\">Subject</option></select></td></tr>\n"
-		."<tr><td>"._('Order').": </td><td><select name=\"order\"><option value=\"\">Ascending</option><option value=\"DESC\">Decending</option></select></td></tr>\n"
-		.'<tr><td colspan="2"><input type="submit" value="'._('Submit').'" /></td></tr></table>'
+		."<td><select name=\"sort\">\n"
+		."<option value=\"startdate\">"._('Start Date')."</option>\n"
+		."<option value=\"subject\">"._('Subject')."</option>\n"
+		."</select></td></tr>\n"
+		."<tr><td>"._('Order').": </td>\n"
+		."<td><select name=\"order\">"
+		."<option value=\"\">"._('Ascending')."</option>\n"
+		."<option value=\"DESC\">"._('Decending')."</option>\n"
+		."</select></td></tr>\n"
+		.'<tr><td colspan="2"><input type="submit" value="'._('Submit')
+		.'" /></td></tr></table>'
 		.'</form>';
 
 	return $output;
