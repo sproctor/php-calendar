@@ -26,8 +26,6 @@ function soft_error($str)
 	exit;
 }
 
-include($phpc_root_path . 'includes/setup.php');
-
 function month_name($month)
 {
 	$month = ($month - 1) % 12 + 1;
@@ -259,6 +257,25 @@ function get_event_by_id($id)
 	}
 
 	return $db->sql_fetchrow($result);
+}
+
+function parse_desc($text)
+{
+
+	// get out the crap, put in breaks
+	$text = nl2br(stripslashes($text));
+
+	//urls
+	$text = preg_replace("/([[:alpha:]]+:\\/\\/[^<>\s]+[\\w\\/])/i",
+			"<a href=\"$1\">$1</a>", $text);
+
+
+	// emails
+	$text = preg_replace("/([a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*"
+		."[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z])/",
+		"<a href=\"mailto:$1\">$1</a>", $text );
+
+	return $text;
 }
 
 function navbar()

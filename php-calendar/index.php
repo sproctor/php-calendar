@@ -21,70 +21,9 @@
 
 define('IN_PHPC', 1);
 
-foreach($HTTP_GET_VARS as $key => $value) {
-	$vars[$key] = $value;
-}
-
-foreach($HTTP_POST_VARS as $key => $value) {
-	$vars[$key] = $value;
-}
-
 include('miniconfig.php');
 include($phpc_root_path . 'includes/calendar.php');
-
-session_start();
-
-ini_set('arg_separator.output', "&amp;");
-
-unset($user);
-unset($password);
-
-if(isset($HTTP_SESSION_VARS['user'])) $user = $HTTP_SESSION_VARS['user'];
-if(isset($HTTP_SESSION_VARS['password']))
-$password = $HTTP_SESSION_VARS['password'];
-
-/*
-   echo "<pre>get vars:</pre>";
-   foreach ($HTTP_GET_VARS as $key=>$val){
-   echo "<pre>$key: $val</pre>";
-   }
-   echo "<pre>post vars:</pre>";
-   foreach ($HTTP_POST_VARS as $key=>$val) {
-   echo "<pre>$key: $val</pre>";
-   }
- */
-
-$currentday = date('j');
-$currentmonth = date('n');
-$currentyear = date('Y');
-
-if (!isset($vars['month'])) {
-	$month = $currentmonth;
-} else {
-	$month = $vars['month'];
-}
-
-if(!isset($vars['year'])) {
-	$year = $currentyear;
-} else {
-	$year = date('Y', mktime(0,0,0,$month,1,$vars['year']));
-}
-
-if(!isset($vars['day'])) {
-	if($month == $currentmonth) $day = $currentday;
-	else $day = 1;
-} else {
-	$day = ($vars['day'] - 1) % date("t", mktime(0,0,0,$month,1,$year)) + 1;
-}
-
-while($month < 1) $month += 12;
-$month = ($month - 1) % 12 + 1;
-
-if(empty($vars['action'])) {
-	$action = 'main';
-} else {
-	$action = $vars['action'];
-}
+include($phpc_root_path . 'includes/setup.php');
 
 switch($action) {
 	case 'add':

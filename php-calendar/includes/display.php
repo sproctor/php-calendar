@@ -107,9 +107,7 @@ function display_date()
 		//$name = stripslashes($row['username']);
 		$subject = stripslashes($row['subject']);
 
-		$desc = ereg_replace("[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]",
-				"<a href=\"\\0\">\\0</a>",
-				nl2br(stripslashes($row['description'])));
+		$desc = parse_desc($row['description']);
 
 		$time_str = formatted_time_string($row['starttime'],
 				$row['eventtype']);
@@ -163,7 +161,7 @@ function display_id($id)
 	$dur_str = get_duration($row['duration'], $row['eventtype']);
 	$subject = stripslashes($row['subject']);
 	$name = stripslashes($row['username']);
-	$desc = stripslashes($row['description']);
+	$desc = parse_desc($row['description']);
 
 	$output = "<div class=\"phpc-main\">\n"
 		."<h2>$subject</h2>\n"

@@ -23,8 +23,6 @@ function options()
 {
 	global $calno, $vars, $db;
 
-	$output = '';
-
 	//Check password and username
 	if(isset($vars['submit'])){
 
@@ -57,19 +55,22 @@ function options()
 				soft_error("$error[code]: $error[message]");
 			}
 
-			$output .= "<div>"._('Updated options')."</div>\n";
+			$output = "<div>"._('Updated options')."</div>\n";
 		} else {
-			$output .= "<div>"._('Permission denied')."</div>\n";
+			$output = "<div>"._('Permission denied')."</div>\n";
 		}
 
+	} else {
+		$output = options_form();
 	}
 
-	return $output . option_form();
+	return $output;
 }
 
 
-function option_form()
+function options_form()
 {
+	global $config;
 
 	$output = "<form action=\"index.php\" method=\"post\">\n"
 		."<table class=\"phpc-main\">\n"
@@ -86,26 +87,39 @@ function option_form()
 		."<tbody>\n"
 		."<tr>\n"
 		."<th>"._('Start Monday').":</th>\n"
-		."<td><input name=\"start_monday\" type=\"checkbox\" /></td>\n"
+		."<td><input name=\"start_monday\" type=\"checkbox\" "
+		.($config['start_monday'] ? 'checked="checked" ' : '')
+		."/></td>\n"
 		."</tr>\n"
 		."<tr>\n"
 		."<th>"._('24 hour').":</th>\n"
-		."<td><input name=\"hours_24\" type=\"checkbox\" /></td>\n"
+		."<td><input name=\"hours_24\" type=\"checkbox\" "
+		.($config['hours_24'] ? 'checked="checked" ' : '')
+		."/></td>\n"
 		."</tr>\n"
 		."<tr>\n"
 		."<th>"._('Translate').":</th>\n"
-		."<td><input name=\"translate\" type=\"checkbox\" /></td>\n"
+		."<td><input name=\"translate\" type=\"checkbox\" "
+		.($config['translate'] ? 'checked="checked" ' : '')
+		."/></td>\n"
 		."</tr>\n"
 		."<tr>\n"
 		."<th>"._('Calendar Title').":</th>\n"
-		."<td><input name=\"calendar_title\" type=\"text\" /></td>\n"
+		."<td><input name=\"calendar_title\" type=\"text\" "
+		."value=\"$config[calendar_title]\" /></td>\n"
 		."</td>\n"
 		."<tr>\n"
 		."<th>"._('Anonymous Permission:')."</th>\n"
 		."<td><select name=\"anon_perm\" size=\"1\">\n"
-		."<option value=\"0\">Cannot add events</option>\n"
-		."<option value=\"1\">Can add but not modify events</option>\n"
-		."<option value=\"2\">Can add and modify events</option>\n"
+		."<option value=\"0\""
+		.($config['anon_permission'] == 0 ? ' selected="selected"' : '')
+		.">Cannot add events</option>\n"
+		."<option value=\"1\""
+		.($config['anon_permission'] == 1 ? ' selected="selected"' : '')
+		.">Can add but not modify events</option>\n"
+		."<option value=\"2\""
+		.($config['anon_permission'] == 2 ? ' selected="selected"' : '')
+		.">Can add and modify events</option>\n"
 		."</select></td>\n"
 		."</tr>\n"
 		."</tbody>\n"

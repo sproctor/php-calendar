@@ -1,10 +1,12 @@
 add support for real users - started
 unbreak gettext
-switch to phpBB sessions - started
 thoroughly test the install, make it more robust
 write page to create new admins, etc.
+ability to display the next N events or events within a certain range.
+make recurring events more powerful
 
 later:
+switch to phpBB sessions (maybe)
 abstract things out better to allow for theming, etc. maybe.
 add an interface to pick a color for each event
 add a full year view. days with events should be a different color. full day events should be another color.

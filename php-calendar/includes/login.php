@@ -35,7 +35,6 @@ function login(){
 		$user = $vars['username'];
 		$password = $vars['password'];
 
-// FIXME: make sure username and password don't have and special characters in them here
 		if(check_user()){
 			session_register('user');
 			session_register('password');
