@@ -42,8 +42,10 @@ function navbar($year, $month, $day)
     . "</a>
   <a href=\"?month=$month&amp;year=$nextyear\">" . _('next year') . "</a>
 </div>
-<a class=\"box\" href=\"add.php?month=$month&amp;year=$year&amp;day=$day\">" .
-_('Add Item') . "</a>";
+<div>
+  <a class=\"box\" href=\"add.php?month=$month&amp;year=$year&amp;day=$day\">" .
+_('Add Item') . '</a>
+</div>';
   return $output;
 }
 

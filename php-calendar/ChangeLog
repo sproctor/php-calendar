@@ -1,4 +1,14 @@
-php-calendar: php + mysql + html 4 + CSS 2 (+ gettext)
+php-calendar: php + mysql + xhtml 1.1 + CSS 2 [+ gettext]
+
+Version 0.7:
+	* added .php to .inc files
+	* cleaned up the look a little,
+	* modifying posts is fixed which may or may not have been broken in
+	  0.6
+	* changed from specifying table name to table prefix.  to update
+	  you'll need to create the new table (ie phpc_events) then do an
+	  insert select to copy over the old data
+	* fixed gettext stuff, I think
 
 Version 0.6 (6/18/02):
         * LOTS of code clean-ups.

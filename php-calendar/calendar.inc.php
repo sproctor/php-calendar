@@ -27,8 +27,9 @@ function soft_error($str)
   exit;
 }
 
-if(empty($translate)) {
+if(!function_exists('_')) {
   function _($str) { return $str; }
+  unset($translate);
 }
 
 function browser()
