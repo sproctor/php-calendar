@@ -23,16 +23,11 @@ function remove_event($id)
 {
 	global $db;
 
-	$result = $db->Execute('DELETE FROM '.SQL_PREFIX
-			."events WHERE id = '$id'");
-	if(!$result) {
-		db_error('SQL error');
-	}
+	$sql = 'DELETE FROM '.SQL_PREFIX ."events WHERE id = '$id'";
+	$result = $db->Execute($sql)
+		or db_error(_('Error while removing an event.'), $sql);
 
-	if($db->Affected_Rows($result) > 0)
-		return true;
-	else
-		return false;
+	return ($db->Affected_Rows($result) > 0);
 }
 
 function event_delete()
@@ -40,7 +35,7 @@ function event_delete()
 	global $config;
 
 	if(!check_user() && $config['anon_permission'] < 2) {
-		soft_error('You do not have permission to delete events.');
+		soft_error(_('You do not have permission to delete events.'));
 	}
 
 	$del_array = explode('&', $_SERVER['QUERY_STRING']);

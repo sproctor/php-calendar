@@ -19,6 +19,11 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/*
+   Run this file to install the calendar
+   it needs very much work
+*/
+
 $phpc_root_path = './';
 $calendar_name = '0';
 
@@ -185,10 +190,10 @@ function add_sql_user_db()
 	if($create_user) {
 		switch($sql_type) {
 			case 'mysql':
-				$sql = "GRANT ALL ON accounts.* TO $my_username@localhost identified by '$my_passwd'";
+				$sql = "GRANT ALL ON accounts.* TO $my_username@$my_hostname identified by '$my_passwd'";
 				$db->Execute($sql)
 					or db_error(_('Could not grant:'), $sql);
-				$sql = "GRANT ALL ON $my_database.* to $my_username";
+				$sql = "GRANT ALL ON $my_database.* to $my_username identified by '$my_passwd'";
 				$db->Execute($sql)
 					or db_error(_('Could not grant:'), $sql);
 

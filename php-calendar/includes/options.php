@@ -23,8 +23,11 @@ function options()
 {
 	global $calendar_name, $vars, $db;
 
-	//Check password and username
-	if(isset($vars['submit'])){
+	if(isset($vars['submit'])) {
+		if(!check_user()) {
+			return tag('div', _('Permission denied'));
+		}
+
 		$query = "UPDATE ".SQL_PREFIX."calendars SET\n";
 
 		if(isset($vars['hours_24']))
@@ -48,15 +51,10 @@ function options()
 			."calendar_title = '$calendar_title'\n"
 			."WHERE calendar=$calendar_name;";
 
-		if(check_user()){
-			$result = $db->Execute($query);
-			if(!$result) {
-				db_error("Error reading options", $query);
-			}
+		$result = $db->Execute($query)
+			or db_error(_('Error reading options'), $query);
 
-			return tag('div', _('Updated options'));
-		}
-		return tag('div', _('Permission denied'));
+		return tag('div', _('Updated options'));
 	}
 	return options_form();
 }

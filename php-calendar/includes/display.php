@@ -19,6 +19,12 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/*
+   This file has the functions for the main displays of the calendar
+*/
+
+// picks which view to show based on what data is given
+// returns the appropriate view
 function display()
 {
 	global $vars, $day, $month, $year;
@@ -30,6 +36,8 @@ function display()
 	return display_month($month, $year);
 }
 
+// creates a menu to navigate the month/year
+// returns XHTML data for the menu
 function month_navbar($month, $year)
 {
 	$html = tag('div', attributes('class="phpc-navbar"'));
@@ -46,6 +54,8 @@ function month_navbar($month, $year)
 	return $html;
 }
 
+// creates a tables of the days in the month
+// returns XHTML data for the month
 function display_month($month, $year)
 {
 	$days = tag('tr');
@@ -62,12 +72,17 @@ function display_month($month, $year)
 			create_month($month, $year));
 }
 
+// creates a display for a particular month
+// return XHTML data for the month
 function create_month($month, $year)
 {
 
 	return array_merge(tag('tbody'), create_weeks(1, $month, $year));
 }
 
+// creates a display for a particular week and the rest of the weeks until the
+// end of the month
+// returns XHTML data for the weeks
 function create_weeks($week_of_month, $month, $year)
 {
 	if($week_of_month > weeks_in_month($month, $year)) return array();
@@ -77,6 +92,8 @@ function create_weeks($week_of_month, $month, $year)
 			create_weeks($week_of_month + 1, $month, $year));
 }
 
+// displays the day of the week and the following days of the week
+// return XHTML data for the days
 function display_days($day_of_week, $week_of_month, $month, $year)
 {
 	global $db;
@@ -141,6 +158,7 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 				$week_of_month, $month, $year));
 }
 
+// returns a string representation of $duration for $typeofevent
 function get_duration($duration, $typeofevent)
 {
 	$dur_mins = $duration % 60;
@@ -166,6 +184,8 @@ function get_duration($duration, $typeofevent)
 	return $dur_str;
 }
 
+// displays a single day in a verbose way to be shown singly
+// returns the XHTML data for the day
 function display_day($day, $month, $year)
 {
 	global $user, $db, $config;
@@ -208,7 +228,7 @@ function display_day($day, $month, $year)
 		for(; $row; $row = $result->FetchRow()) {
 			//$name = stripslashes($row['username']);
 			$subject = stripslashes($row['subject']);
-			if(empty($subject)) $subject = '(No subject)';
+			if(empty($subject)) $subject = _('(No subject)');
 			$desc = parse_desc($row['description']);
 			$time_str = formatted_time_string($row['starttime'],
 					$row['eventtype']);
@@ -257,6 +277,8 @@ function display_day($day, $month, $year)
 	return $output;
 }
 
+// displays a particular event to be show singly
+// returns XHTML data for the event
 function display_id($id)
 {
 	global $user, $db, $year, $month, $day, $config;
@@ -274,7 +296,7 @@ function display_id($id)
 		.' '.$row['startdate'];
 	$dur_str = get_duration($row['duration'], $row['eventtype']);
 	$subject = stripslashes($row['subject']);
-	if(empty($subject)) $subject = '(No subject)';
+	if(empty($subject)) $subject = _('(No subject)');
 	$name = stripslashes($row['username']);
 	$desc = parse_desc($row['description']);
 
@@ -283,8 +305,8 @@ function display_id($id)
 			tag('div', 'by ', tag('cite', $name)),
 			tag('div', create_action_link(_('Modify'), 'event_form', $id), "\n",
 				create_action_link(_('Delete'), 'event_delete', $id)),
-			tag('div', tag('div', "Time: $time_str"),
-				tag('div', "Duration: $dur_str")),
+			tag('div', tag('div', _('Time').": $time_str"),
+				tag('div', _('Duration').": $dur_str")),
 			tag('p', $desc));
 }
 

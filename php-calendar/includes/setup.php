@@ -19,6 +19,10 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/*
+   This file sets up the global variables to be used later
+*/
+
 /* FIXME: This file is a fucking mess, clean it up */
 
 include($phpc_root_path . 'config.php');
@@ -28,11 +32,6 @@ define('BEGIN_TRANSACTION', 1);
 define('END_TRANSACTION', 2);
 
 include($phpc_root_path . 'includes/db.php');
-
-if(!function_exists('_')) {
-	function _($str) { return $str; }
-	$no_gettext = 1;
-}
 
 foreach($_GET as $key => $value) {
 	$vars[$key] = $value;

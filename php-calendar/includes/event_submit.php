@@ -104,7 +104,8 @@ function event_submit()
 
 	if(strlen($subject) > $config['subject_max']) {
 		soft_error(_('Your subject was too long')
-		.". $config[subject_max] ".('characters max').".");
+				.". $config[subject_max] "._('characters max')
+				.".");
 	}
 
 	$uid = check_user();
@@ -121,7 +122,7 @@ function event_submit()
 
 	if($modify) {
 		if(!check_user() && $config['anon_permission'] < 2) {
-			soft_error('You do not have permission to modify events.');
+			soft_error(_('You do not have permission to modify events.'));
 		}
 		$query = "UPDATE $table\n"
 			."SET startdate=$startdate,\n"
@@ -134,7 +135,7 @@ function event_submit()
 			."WHERE id='$id'";
 	} else {
 		if(!check_user() && $config['anon_permission'] < 1) {
-			soft_error('You do not have permission to post.');
+			soft_error(_('You do not have permission to post.'));
 		}
 		$id = $db->GenID(SQL_PREFIX . 'sequence');
 		$query = "INSERT INTO $table\n"

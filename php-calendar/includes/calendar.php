@@ -19,26 +19,40 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/*
+   this file contains all the re-usable functions for the calendar
+*/
+
 include($phpc_root_path . 'includes/html.php');
 
+// make sure that we have _ defined
+if(!function_exists('_')) {
+	function _($str) { return $str; }
+	$no_gettext = 1;
+}
+
+// called when some error happens
 function soft_error($str)
 {
-	echo "<html><head><title>Error</title></head>\n"
-		."<body><h1>Software Error</h1><pre>$str</pre></body></html>";
+	echo '<html><head><title>'._('Error').'</title></head>\n'
+		.'<body><h1>'._('Software Error').'</h1>\n'
+		."<pre>$str</pre></body></html>\n";
 	exit;
 }
 
+// called when there is an error involving the DB
 function db_error($str, $query = "")
 {
         global $db;
 
         $string = "$str<br />".$db->ErrorNo().': '.$db->ErrorMsg();
         if($query != "") {
-                $string .= "<br>sql: $query";
+                $string .= "<br>"._('SQL query').": $query";
         }
         soft_error($string);
 }
 
+// takes a number of the month, returns the name
 function month_name($month)
 {
 	$month = ($month - 1) % 12 + 1;
@@ -58,6 +72,7 @@ function month_name($month)
 	}
 }
 
+//takes a day number of the week, returns a name
 function day_name($day)
 {
 	global $config;
@@ -98,6 +113,8 @@ function short_month_name($month)
 	}
 }
 
+// checks global variables to see if the user is logged in.
+// if so, returns the UID, otherwise returns 0
 function check_user()
 {
 	global $user, $password, $db, $calendar_name;
@@ -124,6 +141,8 @@ function check_user()
 	return $row['uid'];
 }
 
+// takes a time string, and formats it according to type
+// returns the formatted string
 function formatted_time_string($time, $type)
 {
 	global $config;
@@ -158,6 +177,8 @@ function formatted_time_string($time, $type)
 	}
 }
 
+// takes a type of an event
+// returns the name of that type of event
 function event_type($num)
 {
 	switch($num) {
@@ -179,6 +200,8 @@ function event_type($num)
 	return false;
 }
 
+// takes some xhtml data fragment and adds the calendar-wide menus, etc
+// returns a string containing an XHTML document ready to be output
 function create_xhtml($rest)
 {
 	global $config;
@@ -206,6 +229,7 @@ function create_xhtml($rest)
 	return $output . html_to_string($html);
 }
 
+// returns XHTML data for a link for $lang
 function lang_link($lang)
 {
 	$str = $_SERVER['SCRIPT_NAME'] . '?';
@@ -217,6 +241,7 @@ function lang_link($lang)
 	return tag('a', attributes("href=\"$str\""), $lang);
 }
 
+// returns XHTML data for the links at the bottom of the calendar
 function link_bar()
 {
 	global $config;
@@ -243,6 +268,7 @@ function link_bar()
 	return $html;
 }
 
+// returns all the events for a particular day
 function get_events_by_date($day, $month, $year)
 {
 	global $calendar_name, $db;
@@ -271,15 +297,13 @@ function get_events_by_date($day, $month, $year)
 		."AND (eventtype != 6 OR DAYOFMONTH(startdate) = '$day')\n"
 		."ORDER BY starttime";
 
-	$result = $db->Execute($query);
-
-	if(!$result) {
-		db_error(_('Error in get_events_by_date'), $query);
-	}
+	$result = $db->Execute($query)
+		or db_error(_('Error in get_events_by_date'), $query);
 
 	return $result;
 }
 
+// returns the event that corresponds to $id
 function get_event_by_id($id)
 {
 	global $calendar_name, $db;
@@ -311,6 +335,7 @@ function get_event_by_id($id)
 	return $result->FetchRow();
 }
 
+// parses a description and adds the appropriate mark-up
 function parse_desc($text)
 {
 
@@ -330,6 +355,7 @@ function parse_desc($text)
 	return $text;
 }
 
+// returns the day of week number corresponding to 1st of $month
 function day_of_first($month, $year)
 {
 	global $config;
@@ -340,18 +366,23 @@ function day_of_first($month, $year)
 		return (date('w', mktime(0, 0, 0, $month, 1, $year)) + 6) % 7;
 }
 
+// returns the number of days in $month
 function days_in_month($month, $year)
 {
 	return date('t', mktime(0, 0, 0, $month, 1, $year));
 }
 
+//returns the number of weeks in $month
 function weeks_in_month($month, $year)
 {
 	return ceil((day_of_first($month, $year)
 				+ days_in_month($month, $year)) / 7);
 }
 
-function create_action_link($name, $action, $id = false, $year = false,
+// creates a link with text $text and GET attributes corresponding to the rest
+// of the arguments.
+// returns XHTML data for the link
+function create_action_link($text, $action, $id = false, $year = false,
                 $month = false, $day = false, $attribs = false)
 {
 	$url = "href=\"$_SERVER[SCRIPT_NAME]?action=$action";
@@ -373,48 +404,62 @@ function create_action_link($name, $action, $id = false, $year = false,
         } else {
                 $as = attributes($url);
         }
-	return tag('a', $as, $name);
+	return tag('a', $as, $text);
 }
 
-function menu_item_append(&$html, $name, $action, $year = 0, $month = 0,
-		$day = 0)
+// takes a menu $html and appends an entry
+function menu_item_append(&$html, $name, $action, $year = false, $month = false,
+		$day = false)
 {
 	$html = array_append(array_append($html,
-				create_action_link($name, $action, 0, $year,
+				create_action_link($name, $action, false, $year,
 					$month, $day)), "\n");
 }
 
-function menu_item_prepend(&$html, $name, $action, $year = 0, $month = 0,
-		$day = 0)
+// same as above, but prepends the entry
+function menu_item_prepend(&$html, $name, $action, $year = false,
+		$month = false, $day = false)
 {
-	$html = array_cons(create_action_link($name, $action, 0, $year, $month,
-				$day), array_cons("\n", $html));
+	$html = array_cons(create_action_link($name, $action, false, $year,
+				$month, $day), array_cons("\n", $html));
 }
 
+// creates a hidden input for a form
+// returns XHTML data for the input
 function create_hidden($name, $value)
 {
 	return tag('input', attributes("name=\"$name\"", "value=\"$value\"",
 				'type="hidden"'));
 }
 
+// creates a submit button for a form
+// return XHTML data for the button
 function create_submit($value)
 {
 	return tag('input', attributes('name="submit"', "value=\"$value\"",
                                 'type="submit"'));
 }
 
-function create_text($name, $value = NULL)
+// creates a text entry for a form
+// returns XHTML data for the entry
+function create_text($name, $value = false)
 {
 	$attributes = attributes("name=\"$name\"", 'type="text"');
-	if($value != NULL) $attributes[] = "value=\"$value\"";
+	if($value != false) {
+		$attributes[] = "value=\"$value\"";
+	}
 	return tag('input', $attributes);
 }
 
+// creates a password entry for a form
+// returns XHTML data for the entry
 function create_password($name)
 {
 	return tag('input', attributes("name=\"$name\"", 'type="password"'));
 }
 
+// creates a checkbox for a form
+// returns XHTML data for the checkbox
 function create_checkbox($name, $value = false, $checked = false)
 {
 	$attributes = attributes("name=\"$name\"", 'type="checkbox"');
@@ -423,6 +468,8 @@ function create_checkbox($name, $value = false, $checked = false)
 	return tag('input', $attributes);
 }
 
+// creates the navbar for the top of the calendar
+// returns XHTML data for the navbar
 function navbar()
 {
 	global $vars, $user, $action, $config, $year, $month, $day;
@@ -487,6 +534,8 @@ function navbar()
 			$html);
 }
 
+// creates a select element for a form of pre-defined $type
+// returns XHTML data for the element
 function create_select($name, $type, $select)
 {
 	$html = tag('select', attributes('size="1"', "name=\"$name\""));

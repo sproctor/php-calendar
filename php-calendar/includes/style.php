@@ -20,9 +20,11 @@
 
  */
 
-header('Content-Type: text/css');
+/*
+   This file is loaded as a style sheet
+*/
 
-//include($phpc_root_path . 'includes/browser.php');
+header('Content-Type: text/css');
 
 if(isset($_GET['bgcolor1'])) {
 	$bgcolor1 = $_GET['bgcolor'];

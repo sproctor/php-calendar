@@ -47,10 +47,8 @@ function search_results()
 		."AND startdate <= DATE '$end'"
 		."ORDER BY $sort $order";
 
-	$result = $db->Execute($query);
-	if(!$result) {
-                db_error("search error");
-	}
+	$result = $db->Execute($query)
+		or db_error(_('Encountered an error while searching.', $query);
 
 
 	$html =  tag('table',
