@@ -212,11 +212,11 @@ function print_footer()
 </div>\n";
   }
 
-  return $output . "<p>
-  [<a href=\"http://validator.w3.org/check?url=http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING\">
-    Valid XHTML 1.1</a>]
-  [<a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Valid CSS2</a>]
-</p>\n";
+  return $output . '<p>
+  [<a href="' . htmlentities("http://validator.w3.org/check?url=http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING") . '"> Valid XHTML 1.1</a>]
+  [<a href="http://jigsaw.w3.org/css-validator/check/referer">Valid CSS2</a>]
+</p>
+';
 }
 
 function bottom()

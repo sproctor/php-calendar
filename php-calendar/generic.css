@@ -22,7 +22,7 @@ h1 {
 #navbar a {
   font-size: 10pt;
   text-decoration: none;
-  border: 1px;
+  border-width: 1px;
   border-style: solid;
   margin: 0;
   padding: 2px;

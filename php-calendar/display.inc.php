@@ -53,57 +53,45 @@ function display()
       <a href=\"display.php?month=$lastmonth&amp;day=$lastday&amp;year=$lastyear\">$lastmonthname $lastday</a>
       <a href=\"display.php?month=$nextmonth&amp;day=$nextday&amp;year=$nextyear\">$nextmonthname $nextday</a>
 </div>
+<div>
+  <a class=\"box\" href=\"add.php?month=$month&amp;year=$year&amp;day=$day\">" .
+  _("Add Item") . '</a>
+</div>
 
-<a class=\"box\" href=\"add.php?month=$month&amp;year=$year&amp;day=$day\">" .
-  _("Add Item") . "</a>
-
-<form action=\"delete.php\">
-<table id=\"display\">
-  <caption>$day $monthname $year</caption>
+<form action="delete.php">
+<table id="display">
+  <caption>' . "$day $monthname $year" . '</caption>
   <colgroup>
-    <col width=\"48\" />
+    <col width="48" />
   </colgroup>
   <colgroup>
-    <col width=\"96\" />
-    <col width=\"160\" />
-    <col width=\"160\" />
-    <col width=\"128\" />
+    <col width="96" />
+    <col width="160" />
+    <col width="160" />
+    <col width="128" />
   </colgroup>
   <thead>
   <tr>
-    <th>" . 
-_("Select")
-. "</th>
-    <th>" . 
-_("Modify")
-. "</th>
-    <th>" . 
-_("Username")
-    . "</th>
-    <th>" . 
-_("Time")
-        . "</th>
-    <th>" . 
-_("Duration")
-    . "</th>
-    <th>" . 
-_("Subject")
-     . "</th>
-    <th>" . 
-_("Description")
- . "</th>
+    <th>' .  _('Select') . '</th>
+    <th>' .  _('Modify') . '</th>
+    <th>' .  _('Username') . '</th>
+    <th>' .  _('Time') . '</th>
+    <th>' .  _('Duration') . '</th>
+    <th>' .  _('Subject') . '</th>
+    <th>' .  _('Description') . '</th>
   </tr>
   </thead>
   <tfoot>
   <tr>
-    <td colspan=\"7\">
-      <input type=\"submit\" value=\"" . 
-_("Delete Selected")
- . "\" />
+    <td colspan="7">
+      <input type="submit" value="' .  _('Delete Selected') . "\" />
+<input type=\"hidden\" name=\"day\" value=\"$day\" />
+<input type=\"hidden\" name=\"month\" value=\"$month\" />
+<input type=\"hidden\" name=\"year\" value=\"$year\" />
     </td>
   </tr>
   </tfoot>
-  <tbody>";
+  <tbody>\n";
 
   $result = get_events_by_date($day, $month, $year);
 
@@ -117,15 +105,15 @@ _("Delete Selected")
     $temp_time = $row['start_since_epoch'];
     switch($typeofevent) {
      case 1:
-      if(empty($hours_24)) $timeformat = "j F Y, g:i A";
-      else $timeformat = "j F Y, G:i";
+      if(empty($hours_24)) $timeformat = 'j F Y, g:i A';
+      else $timeformat = 'j F Y, G:i';
       $time = date($timeformat, $temp_time);
       break;
      case 2:
-      $time = date("j F Y, ", $temp_time) . _("FULL DAY");
+      $time = date('j F Y, ', $temp_time) . _('FULL DAY');
       break;
      case 3:
-      $time = date("j F Y, ", $temp_time) . _("??:??");
+      $time = date('j F Y, ', $temp_time) . _('??:??');
       break;
      default:
       $time = "????: $typeofevent";
@@ -139,11 +127,9 @@ _("Delete Selected")
     if($typeofevent == 2) $temp_dur = _("FULL DAY");
     else $temp_dur = "$durday days, $durhr hours, $durmin minutes";
 
-    $output .= "<tr>
+    $output .= "  <tr>
     <td><input type=\"checkbox\" name=\"delete\" value=\"$row[id]\" /></td>
-    <td><a href=\"modify.php?id=$row[id]\">"
-    . _("Modify")
-    . "</a></td>
+    <td><a href=\"modify.php?id=$row[id]\">" . _('Modify') . "</a></td>
     <td>$name</td>
     <td>$time</td>
     <td>$temp_dur</td>
@@ -153,15 +139,14 @@ _("Delete Selected")
   }
 
   if(empty($i)) {
-    $output .= "<tr><td colspan=\"7\"><h2>" . _("No events on this day.")
-      . "</h2></td></tr>\n";
+    $output .= '  <tr>
+    <td colspan="7"><h2>' . _('No events on this day.') . "</h2></td>
+  </tr>\n";
   }
 
-  $output .= "</tbody>
+  $output .= "
+</tbody>
 </table>
-<input type=\"hidden\" name=\"day\" value=\"$day\" />
-<input type=\"hidden\" name=\"month\" value=\"$month\" />
-<input type=\"hidden\" name=\"year\" value=\"$year\" />
 </form>
 <div>
   <a class=\"box\" href=\"index.php?month=$month&amp;day=$day&amp;year=$year\">
