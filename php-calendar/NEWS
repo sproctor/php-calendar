@@ -1,6 +1,18 @@
 NEWS
 -----
 
+0.10.2:
+        - fix a problem where modifying an event didn't pick up the date
+          properly
+        - try to require touching config.php less often on install
+        - add SQL_PREFIX to user sequence table. may break existing calendars
+        - stop anonymous users from trying to edit events when they aren't
+          allowed. and same for preferences.
+        - fix old broken hour behavior
+        - fix duration display where we were display fractional hours by
+          mistake in addition to minutes.
+        - Require a username and password when creating a new user
+
 0.10.1 (10 Jan 2005):
         - fix security vulnerability with regard to loading any any PHP file
           (Thanks to James Bercegay of the GulfTech Security Research Team)
