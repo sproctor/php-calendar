@@ -138,9 +138,22 @@ while ($row = mysql_fetch_array($result)) {
     $desc = nl2br(stripslashes($row['description']));
     $typeofevent = $row['eventtype'];
     $temp_time = strtotime($row['stamp']);
-    if($typeofevent == 3) $time = date("j F Y, ??:?? ??", $temp_time);
-    else if($typeofevent == 2) $time = date("j F Y, \F\U\L\L \D\A\Y", $temp_time);
-    else $time = date("j F Y, h:i A", $temp_time);
+    switch($typeofevent) {
+     case 1:
+      if(empty($hours_24)) $timeformat = "j F Y, g:i A";
+      else $timeformat = "j F Y, G:i";
+      $time = date($timeformat, $temp_time);
+      break;
+     case 2:
+      $time = date("j F Y, ", $temp_time) . _("FULL DAY");
+      break;
+     case 3:
+      $time = date("j F Y, ", $temp_time) . _("??:??");
+      break;
+     default:
+      $time = "????: $typeofevent";
+    }
+
     $durtime = strtotime($row['duration']) - $temp_time;
     $durmin = ($durtime / 60) % 60;     //seconds per minute
     $durhr  = ($durtime / 3600) % 24;   //seconds per hour
@@ -170,7 +183,7 @@ echo "
   </tbody>
 </table>
 <div>
-  <a class=\"box\" href=\".?month=$month&amp;day=$day&amp;year=$year\">
+  <a class=\"box\" href=\"index.php?month=$month&amp;day=$day&amp;year=$year\">
     " . 
 _("Back to Calendar")
  . "

@@ -94,6 +94,8 @@ function print_header()
 
 function translate()
 {
+  global $translate;
+
   if(!empty($translate)) {
     if(isset($_GET['lang'])) {
       $lang = substr($_GET['lang'], 0, 2);
@@ -163,6 +165,8 @@ function lang_link($lang)
 
 function print_footer()
 {
+  global $translate;
+
   if(!empty($translate)) {
     echo "
 <div>

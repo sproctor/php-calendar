@@ -139,7 +139,7 @@ _("next year")
 
 function calendar($year, $month, $day, $database, $mysql_tablename)
 {
-  global $start_monday, $BName;
+  global $start_monday, $hours_24, $BName;
   $currentday = date("j");
   $currentmonth = date("n");
   $currentyear = date("Y");
@@ -152,7 +152,7 @@ function calendar($year, $month, $day, $database, $mysql_tablename)
   <thead>
   <tr>\n";
 
-  if(!$start_monday) {
+  if(empty($start_monday)) {
     echo "    <th>" . 
 _("Sunday") 
 . "</th>\n";
@@ -176,7 +176,7 @@ _("Friday")
     <th>" . 
 _("Saturday") 
 . "</th>";
-  if($start_monday) {
+  if(!empty($start_monday)) {
     echo "    <th>" . 
 _("Sunday") 
 . "</th>\n";
@@ -191,7 +191,7 @@ for ($week_index = 0;; $week_index++) {
 
   for ($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
     // If we want to start on monday, then start on monday!
-    if($start_monday) {
+    if(!empty($start_monday)) {
       $day_of_week = ($day_of_week + 1) % 7;
     }
     $i = $week_index * 7 + $day_of_week;
@@ -242,14 +242,22 @@ END;
       $subject = stripslashes($row['subject']);
       $typeofevent = $row['eventtype'];
 
-      if($typeofevent == 3) {
-        $event_time = "??:??";
-      } elseif($typeofevent == 2) {
+      switch($typeofevent) {
+       case 1:
+        if(empty($hours_24)) $timeformat = "g:i A";
+        else $timeformat = "G:i";
+        $event_time = date($timeformat, strtotime($row['stamp']));
+        break;
+       case 2:
         $event_time = _("FULL DAY");
-      } else {
-        $event_time = date("g:i A", strtotime($row['stamp']));
+        break;
+       case 3:
+        $event_time = "??:??";
+        break;
+       default:
+        $event_time = "BROKEN";
       }
-            
+
       echo <<<END
         <tr>
           <td>

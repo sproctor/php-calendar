@@ -98,10 +98,12 @@ _("Nothing to modify.")
       $durhr  = ($durtime / 3600) % 24;   //seconds per hour
       $durday = floor($durtime / 86400);  //seconds per day
 
-      if($hour >= 12) {
-        $pm = 1;
-        $hour = $hour - 12;
-      } else $pm = 0;
+      if(empty($hours_24)) {
+        if($hour >= 12) {
+          $pm = 1;
+          $hour = $hour - 12;
+        } else $pm = 0;
+      }
 
       $typeofevent = $row['eventtype'];
 
@@ -122,10 +124,12 @@ _("Nothing to modify.")
       $desc = "";
       if($day == date("j") && $month == date("n") && $year == date("Y")) {
         $hour = date("G") + 1;
-        if($hour >= 12) {
-          $hour = $hour - 12;
-          $pm = 1;
-        } else $pm = 0;
+        if(empty($hours_24)) {
+          if($hour >= 12) {
+            $hour = $hour - 12;
+            $pm = 1;
+          } else $pm = 0;
+        }
       } else { $hour = 6; $pm = 1; }
       $minute = 0;
       $durhr = 1;
@@ -234,21 +238,25 @@ _("Time")
     <td>
 <select name=\"hour\" size=\"1\">\n";
 
-    for($i = 1; $i < 12; $i++) {
-      echo "<option value='$i'";
-      if($hour == $i) {
-        echo " selected=\"selected\"";
+    if(empty($hours_24)) {
+      for($i = 1; $i <= 12; $i++) {
+        echo "<option value=\"" . $i % 12 . '"';
+        if($hour == $i) {
+          echo " selected=\"selected\"";
+        }
+        echo ">$i</option>\n";
       }
-      echo ">$i</option>\n";
+    } else {
+      for($i = 0; $i < 24; $i++) {
+        echo "<option value=\"$i\"";
+        if($hour == $i) {
+          echo " selected=\"selected\"";
+        }
+        echo '>' . $i . "</option>\n";
+      }
     }
 
-    echo "<option value='0'";
-
-    if($hour == 0) {
-      echo " selected=\"selected\"";
-    }
-    echo ">12</option>
-</select><b>:</b><select name=\"minute\" size=\"1\">\n";
+    echo "</select><b>:</b><select name=\"minute\" size=\"1\">\n";
 
     for($i = 0; $i <= 59; $i = $i + 5) {
       echo "<option value='$i'";
@@ -258,18 +266,24 @@ _("Time")
       printf(">%02d</option>\n", $i);
     }
 
-    echo "</select><select name=\"pm\" size=\"1\">
+    echo "</select>";
+
+    if(empty($hours_24)) {
+      echo "<select name=\"pm\" size=\"1\">
 <option value='0'";
-    if(!$pm) {
-      echo " selected=\"selected\"";
-    }
-    echo ">AM</option>
+      if(empty($pm)) {
+        echo " selected=\"selected\"";
+      }
+      echo ">AM</option>
 <option value='1'";
-    if($pm) {
-      echo " selected=\"selected\"";
+      if($pm) {
+        echo " selected=\"selected\"";
+      }
+      echo ">PM</option>
+</select>";
     }
-    echo ">PM</option>
-</select></td>
+
+echo "</td>
   </tr>
   <tr>
     <td>" . 
@@ -335,7 +349,7 @@ _("Description")
       <input type=\"hidden\" name=\"action\" value=\"doadd\" />
       <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
    
-    if(isset($modify)) {
+    if($action == "modify") {
       echo "<input type=\"hidden\" name=\"modify\" value=\"1\" />\n";
     }
 
