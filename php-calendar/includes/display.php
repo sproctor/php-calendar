@@ -79,7 +79,7 @@ function create_weeks($week_of_month, $month, $year)
 
 function display_days($day_of_week, $week_of_month, $month, $year)
 {
-	global $db, $SCRIPT_NAME;
+	global $db;
 
 	if($day_of_week > 7) return array();
 
@@ -107,7 +107,12 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 		$html_day = tag('td', attributes('valign="top"',
 					"class=\"$current_era\""),
 				tag('a',
-					attributes("href=\"$SCRIPT_NAME?action=display&amp;day=$day_of_month&amp;month=$month&amp;year=$year&amp;display=day\"",
+                                        attributes(
+                                                "href=\"$_SERVER[SCRIPT_NAME]"
+                                                ."?action=display&amp;"
+                                                ."day=$day_of_month&amp;"
+                                                ."month=$month&amp;year=$year"
+                                                ."&amp;display=day\"",
 						'class="date"'),
 					$day_of_month));
 
@@ -126,7 +131,10 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 
 			$html_events[] = tag('li',
 				tag('a',
-					attributes("href=\"$SCRIPT_NAME?action=display&amp;id=$row[id]\""),
+					attributes(
+                                                "href=\"$_SERVER[SCRIPT_NAME]"
+                                                ."?action=display&amp;"
+                                                ."id=$row[id]\""),
 				"$event_time - $subject"));
 		}
 		if(sizeof($html_events) != 1) $html_day[] = $html_events;
@@ -233,7 +241,8 @@ function display_day($day, $month, $year)
 		$html_table[] = $html_body;
 
 		if($admin) $output = tag('form',
-			attributes("action=\"$SCRIPT_NAME\""), $html_table);
+			attributes("action=\"$_SERVER[SCRIPT_NAME]\""),
+                        $html_table);
 		else $output = $html_table;
 
 	} else {

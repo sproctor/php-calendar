@@ -21,7 +21,7 @@
 
 function event_form()
 {
-	global $BName, $vars, $day, $month, $year, $db, $config, $SCRIPT_NAME;
+	global $BName, $vars, $day, $month, $year, $db, $config;
 
 	if(isset($vars['id'])) {
 		// modifying
@@ -111,7 +111,7 @@ function event_form()
 	$attributes = attributes('class="phpc-main"');
 	if($BName == 'MSIE') $attributes[] = 'cellspacing="0"';
 
-	return tag('form', attributes("action=\"$SCRIPT_NAME\""),
+	return tag('form', attributes("action=\"$_SERVER[SCRIPT_NAME]\""),
 			tag('table', $attributes,
 				tag('caption', $title),
 				tag('tfoot',

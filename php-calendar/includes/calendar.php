@@ -181,7 +181,7 @@ function event_type($num)
 
 function create_xhtml($rest)
 {
-	global $config, $SCRIPT_NAME;
+	global $config;
 
 	$output = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
 		."\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
@@ -190,10 +190,13 @@ function create_xhtml($rest)
 				tag('title', $config['calendar_title']),
 				tag('meta',
 					attributes('http-equiv="Content-Type"'
-						.' content="text/html; charset=iso-8859-1"')),
+                                                .' content="text/html;'
+                                                .' charset=iso-8859-1"')),
 				tag('link',
-					attributes('rel="stylesheet" type="text/css" href="'
-						. $SCRIPT_NAME .'?action=style"'))),
+                                        attributes('rel="stylesheet"'
+                                                .' type="text/css" href="'
+						.$_SERVER['SCRIPT_NAME']
+                                                .'?action=style"'))),
 			tag('body',
 				tag('h1', $config['calendar_title']),
 				navbar(),
@@ -348,8 +351,7 @@ function weeks_in_month($month, $year)
 function create_action_link($name, $action, $id = 0, $year = 0, $month = 0,
 		$day = 0)
 {
-	global $SCRIPT_NAME;
-	$url = "href=\"$SCRIPT_NAME?action=$action";
+	$url = "href=\"$_SERVER[SCRIPT_NAME]?action=$action";
 	if($id) {
 		$url .= "&amp;id=$id";
 	}

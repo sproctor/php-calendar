@@ -21,11 +21,12 @@
 
 function logout()
 {
-	global $vars, $day, $month, $year, $SCRIPT_NAME;
+	global $vars, $day, $month, $year;
 
 	session_unregister('user');
 	session_unregister('password');
-	header("Location: $SCRIPT_NAME?action=$vars[lastaction]&day=$day&month=$month&year=$year");
+	header("Location: $_SERVER[SCRIPT_NAME]?action=$vars[lastaction]"
+                        ."&day=$day&month=$month&year=$year");
 	exit;
 }
 ?>

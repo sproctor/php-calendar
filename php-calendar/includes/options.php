@@ -65,9 +65,10 @@ function options()
 
 function options_form()
 {
-	global $config, $SCRIPT_NAME;
+	global $config;
 
-	return tag('form', attributes("action=\"$SCRIPT_NAME\"", 'method="post"'),
+	return tag('form', attributes("action=\"$_SERVER[SCRIPT_NAME]\"",
+                                'method="post"'),
 			tag('table', attributes('class="phpc-main"'),
 				tag('caption', _('Options')),
 				tag('tfoot',

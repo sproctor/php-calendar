@@ -21,7 +21,7 @@
 
 function event_submit()
 {
-	global $calendar_name, $day, $month, $year, $db, $vars, $config, $SCRIPT_NAME;
+	global $calendar_name, $day, $month, $year, $db, $vars, $config;
 
 	if(isset($vars['id'])) {
 		$id = $vars['id'];
@@ -141,7 +141,7 @@ function event_submit()
 	$affected = $db->Affected_Rows($result);
 	if($affected < 1) soft_error(_('No changes made')."\nsql:\n$query");
 
-	header("Location: $SCRIPT_NAME?action=display&id=$id");
+	header("Location: $_SERVER[SCRIPT_NAME]?action=display&id=$id");
 	return tag('div', attributes('class="box"'), _('Date updated').": $affected");
 }
 
