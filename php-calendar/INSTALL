@@ -1,4 +1,4 @@
-PHP-Calenar 0.6
+PHP-Calenar 0.8
 -------------------
 
 Simple install:
@@ -11,14 +11,18 @@ point web browser to /php-calendar/install.php
 follow directions from there
 
 Descriptive install:
-Very easy install.  Put these files someplace in you web directory tree and 
-either run install.php or add table.sql to you database (edit it to change the 
-table name if you want and then also edit config.inc to reflect this change) 
-and move config.inc-dist to config.inc and edit to setup your proper 
-infomation.
+Extract the .tar.gz, and move it to the place you'd like your calendar to be in
+your web hierarchy.  Either run install.php (by visiting the page in your
+browser) or add table.sql to your database (
+"mysql -u (username) -p (database) < table.sql" put your mysql user in for
+(username) and the database in for (database) with no parentheses), and edit it
+to change the table name if you want and then also move config.inc.php-dist to
+config.inc.php and edit it to reflect this change and the rest of the information proper for your system.
 
-You will need PHP 4.1 or greater, which you can find at www.php.net, and MySQL, 
-which you can find at www.mysql.com.  You will need register_globals enabled in PHP.  If there's any other requirements, send me details.
+You will need PHP 3.0.19 or greater (nothing lower has been tested.  3.0.12
+should work but no guarantees.  if you succeed with something lower than 3.0.19,
+please let me know), which you can find at www.php.net, and MySQL, which you
+can find at www.mysql.com.
 
 update:
 * Attention version 0.3 and below users *
