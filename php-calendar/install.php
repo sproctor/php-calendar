@@ -39,7 +39,7 @@ if(empty($action)) {
     <td>MySQL admin user:</td>
     <td><input type=\"text\" name=\"admin_username\"></td>
   <tr>
-    <td>MySQL root password:</td>
+    <td>MySQL admin password:</td>
     <td><input type=\"password\" name=\"admin_passwd\"></td>
   </tr>
   <tr>
