@@ -55,12 +55,12 @@ function display()
 
 function display_date()
 {
-	global $day, $month, $year, $user, $db;
+	global $day, $month, $year, $user, $db, $config;
 
 	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
 	$monthname = month_name($month);
 
-	if(empty($user) && ANON_PERMISSIONS < 2) $admin = 0;
+	if(empty($user) && $config['anon_permission'] < 2) $admin = 0;
 	else $admin = 1;
 
 	$result = get_events_by_date($day, $month, $year);
@@ -116,18 +116,18 @@ function display_date()
 
 		$dur_str = get_duration($row['duration'], $row['eventtype']);
 		$output .= "<tr>\n"
-			."<th>\n";
+			."<td>\n";
 
 		if($admin) $output .= "<input type=\"checkbox\" name=\"delete\""
 			." value=\"$row[id]\" />\n";
 
 		$output .= "<a href=\"index.php?action=display&amp;"
-			."id=$row[id]\">$subject</a>\n";
+			."id=$row[id]\"><strong>$subject</strong></a>\n";
 
 		if($admin) $output .= " (<a href=\"index.php?action=modify&amp;"
 			."id=$row[id]\">"._('Modify')."</a>)\n";
 
-		$output .= "</th>\n"
+		$output .= "</td>\n"
 			."<td>$time_str</td>\n"
 			."<td>$dur_str</td>\n"
 			."<td>$desc</td>\n"
@@ -147,14 +147,12 @@ function display_date()
 
 function display_id($id)
 {
-	global $user, $db, $year, $month, $day;
+	global $user, $db, $year, $month, $day, $config;
 
-	$result = get_event_by_id($id);
+	$row = get_event_by_id($id);
 
-	if(!empty($user) || ANON_PERMISSIONS >= 2) $admin = 1;
+	if(!empty($user) || $config['anon_permission'] >= 2) $admin = 1;
 	else $admin = 0;
-
-	$row = $db->sql_fetchrow($result);
 
 	$year = $row['year'];
 	$month = $row['month'];

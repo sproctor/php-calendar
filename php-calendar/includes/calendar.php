@@ -28,41 +28,6 @@ function soft_error($str)
 
 include($phpc_root_path . 'includes/setup.php');
 
-function browser()
-{
-	global $HTTP_USER_AGENT;
-
-	if(eregi('opera/?([0-9]+(\.[0-9]+)*)?', $HTTP_USER_AGENT, $match)) {
-		$BName = 'Opera';
-		$BVersion = $match[1];
-	} elseif(eregi('konqueror/([0-9]+.[0-9]+)', $HTTP_USER_AGENT, $match)) {
-		$BName = "Konqueror";
-		$BVersion = $match[1];
-	} elseif(eregi('lynx/([0-9]+.[0-9]+.[0-9]+)', $HTTP_USER_AGENT,
-				$match)) {
-		$BName = 'Lynx';
-		$BVersion = $match[1];
-	} elseif(eregi("links\(([0-9]+.[0-9]+)", $HTTP_USER_AGENT, $match)) {
-		$BName = 'Links';
-		$BVersion = $match[1];
-	} elseif(eregi('msie ?([0-9]+.[0-9]+)', $HTTP_USER_AGENT, $match)) {
-		$BName = 'MSIE';
-		$BVersion = $match[1];
-	} elseif(eregi('(netscape6|mozilla)/([0-9]+.[0-9]+)',
-				$HTTP_USER_AGENT, $match)) {
-		$BName = 'Netscape';
-		$BVersion = $match[2];
-	} elseif(eregi('w3m', $HTTP_USER_AGENT)) {
-		$BName = 'w3m';
-		$BVersion = 'Unknown';
-	} else {
-		$BName = 'Unknown';
-		$BVersion = 'Unknown';
-	}
-
-	return array($BName, $BVersion);
-}
-
 function month_name($month)
 {
 	$month = ($month - 1) % 12 + 1;
@@ -109,8 +74,8 @@ function check_user()
 
 	$passwd = md5($password);
 
-	$query= "SELECT * FROM ".SQL_PREFIX."admin\n"
-		."WHERE UID = '$user' "
+	$query= "SELECT uid FROM ".SQL_PREFIX."users\n"
+		."WHERE username = '$user' "
 		."AND password = '$passwd' "
 		."AND calno = '$calno'";
 
@@ -120,23 +85,24 @@ function check_user()
 		soft_error("$error[code]: $error[message]");
 	}
 
-	$rows = $db->sql_numrows($result);
-	echo "<pre>check: $rows</pre>";
-	echo "<pre>user: $user</pre>";
-	echo "<pre>password: $password</pre>";
-	if($db->sql_numrows($result)) return true;
-	else return false;
+	if(!$db->sql_numrows($result)) return 0;
+
+	$row = $db->sql_fetchrow($result);
+
+	return $row['uid'];
 }
 
 function formatted_time_string($time, $type)
 {
+	global $config;
+
 	switch($type) {
 		default:
 			preg_match('/(\d+):(\d+)/', $time, $matches);
 			$hour = $matches[1];
 			$minute = $matches[2];
 
-			if(!HOURS_24) {
+			if(!$config['hours_24']) {
 				if($hour > 12) {
 					$hour -= 12;
 					$pm = ' PM';
@@ -177,25 +143,20 @@ function event_type($num)
 
 function top()
 {
-	global $BName, $BVersion;
+	global $config;
 
 	$output = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
 		."\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
 		."<html xml:lang=\"en\">\n"
 		."<head>\n"
-		.'<title>'.TITLE."</title>\n"
+		."<title>$config[calendar_title]</title>\n"
 		.'<meta http-equiv="Content-Type" '
 		."content=\"text/html; charset=iso-8859-1\" />\n"
-		."<!-- Your browser: $BName $BVersion -->\n"
 		.'<link rel="stylesheet" type="text/css" href="style.css.php"'
-		." />\n";
-
-	if($BName == 'MSIE') {
-		$output .= '<link rel="stylesheet" type="text/css" '
-			."href=\"style-ie.css\" />\n";
-	}
-
-	$output .= "</head>\n<body>\n<h1>".TITLE."</h1>\n";
+		." />\n"
+		."</head>\n"
+		."<body>\n"
+		."<h1>$config[calendar_title]</h1>\n";
 
 	return $output;
 }
@@ -215,11 +176,12 @@ function lang_link($lang)
 
 function bottom()
 {
-	global $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING, $year, $month, $day;
+	global $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING, $year, $month, $day,
+	$config;
 
 	$output = "<div class=\"phpc-footer\">";
 
-	if(TRANSLATE) {
+	if($config['translate']) {
 		$output .= "<p>\n"
 			.lang_link('en')
 			.lang_link('de')
@@ -269,23 +231,38 @@ function get_event_by_id($id)
 {
 	global $calno, $db;
 
-	$result = $db->sql_query('SELECT *, YEAR(startdate) AS year, MONTH(startdate) AS month, DAYOFMONTH(startdate) AS day FROM '.SQL_PREFIX."events\n"
-			."WHERE id = '$id' AND calno = '$calno'");
+	$events_table = SQL_PREFIX . 'events';
+	$users_table = SQL_PREFIX . 'users';
 
-	if($db->sql_numrows() == 0) {
+	$query = "SELECT e.*, YEAR(e.startdate) AS year, "
+		."MONTH(e.startdate) AS month, DAYOFMONTH(e.startdate) AS day, "
+		."u.username "
+		."FROM $events_table AS e JOIN $users_table AS u "
+		."ON (e.uid = u.uid) "
+		."WHERE e.id = '$id' AND e.calno = '$calno'";
+
+	$result = $db->sql_query($query);
+
+	if(!$result) {
+		$error = $db->sql_error();
+		soft_error(_('Error in get_event_by_id')
+				." $error[code]: $error[message]\n$query");
+	}
+
+	if($db->sql_numrows($result) == 0) {
 		soft_error("item doesn't exist!");
 	}
 
-	return $result;
+	return $db->sql_fetchrow($result);
 }
 
 function navbar()
 {
-	global $vars, $year, $month, $day, $user, $action;
+	global $vars, $year, $month, $day, $user, $action, $config;
 
 	$output = '';
 
-	if((ANON_PERMISSIONS || isset($user)) && $action != 'add') { 
+	if(($config['anon_permission'] || isset($user)) && $action != 'add') { 
 		$output .= "<a href=\"index.php?action=add&amp;day=$day"
 			."&amp;month=$month&amp;year=$year\">"._('Add Item')
 			."</a>\n";

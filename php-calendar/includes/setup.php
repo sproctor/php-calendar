@@ -32,33 +32,6 @@ if(!function_exists('_')) {
 	return;
 }
 
-if(!TRANSLATE) {
-	return;
-}
-
-if(isset($vars['lang'])) {
-	$lang = substr($vars['lang'], 0, 2);
-	setcookie('lang', $lang);
-} elseif(isset($HTTP_COOKIE_VARS['lang'])) {
-	$lang = substr($HTTP_COOKIE_VARS['lang'], 0, 2);
-} elseif(isset($HTTP_ACCEPT_LANGUAGE)) {
-	$lang = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
-} else {
-	$lang = 'en';
-}
-
-switch($lang) {
-	case 'de':
-		setlocale(LC_ALL, 'de_DE');
-		break;
-	case 'en':
-		setlocale(LC_ALL, 'en_US');
-		break;
-}
-
-bindtextdomain('messages', './locale');
-textdomain('messages');
-
 $query = "SELECT * from ".SQL_PREFIX."calendars "
 ."WHERE calno='$calno'";
 
@@ -70,4 +43,30 @@ if(!$result) {
 }
 
 $config = $db->sql_fetchrow($result);
+
+if($config['translate']) {
+
+	if(isset($vars['lang'])) {
+		$lang = substr($vars['lang'], 0, 2);
+		setcookie('lang', $lang);
+	} elseif(isset($HTTP_COOKIE_VARS['lang'])) {
+		$lang = substr($HTTP_COOKIE_VARS['lang'], 0, 2);
+	} elseif(isset($HTTP_ACCEPT_LANGUAGE)) {
+		$lang = substr($HTTP_ACCEPT_LANGUAGE, 0, 2);
+	} else {
+		$lang = 'en';
+	}
+
+	switch($lang) {
+		case 'de':
+			setlocale(LC_ALL, 'de_DE');
+			break;
+		case 'en':
+			setlocale(LC_ALL, 'en_US');
+			break;
+	}
+
+	bindtextdomain('messages', './locale');
+	textdomain('messages');
+}
 ?>

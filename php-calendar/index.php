@@ -35,8 +35,6 @@ if(isset($HTTP_SESSION_VARS['user'])) $user = $HTTP_SESSION_VARS['user'];
 if(isset($HTTP_SESSION_VARS['password']))
 $password = $HTTP_SESSION_VARS['password'];
 
-list($BName, $BVersion) = browser();
-
 /*
    echo "<pre>get vars:</pre>";
    foreach ($HTTP_GET_VARS as $key=>$val){

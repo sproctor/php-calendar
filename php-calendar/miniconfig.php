@@ -6,7 +6,7 @@ define('SEPCOLOR',     '#000000');
 define('BG_COLOR1',    '#FFFFFF');
 define('BG_COLOR2',    'gray');
 define('BG_COLOR3',    'silver');
-define('BG_COLOR4',    'gray');
+define('BG_COLOR4',    '#CCCCCC');
 define('BG_PAST',      'silver');
 define('BG_FUTURE',    'white');
 define('TEXTCOLOR1',   '#000000');

@@ -20,14 +20,19 @@
 
  */
 
-include 'miniconfig.php';
+include('miniconfig.php');
+
 header('Content-Type: text/css');
+
+include($phpc_root_path . 'includes/browser.php');
+
 if(isset($HTTP_GET_VARS['bgcolor1'])) {
 	$bgcolor1 = $HTTP_GET_VARS['bgcolor'];
 } else {
 	$bgcolor1 = BG_COLOR1;
 }
-/* you get the idea, eventually the colors should be pickable by a user,
+/*
+   FIXME: you get the idea, eventually the colors should be pickable by a user,
    but we need a real concept of users first
  */
 $bgcolor2 = BG_COLOR2;
@@ -114,7 +119,7 @@ input[type="submit"]:hover {
   border-color: <?php echo $sepcolor ?>;
   border-width: 2px;
   color: <?php echo $textcolor1 ?>;
-  background-color: inherit;
+  background-color: <?php echo $bgcolor4 ?>;
 }
 
 table.phpc-main {
@@ -148,25 +153,21 @@ table.phpc-main {
 caption {
   font-size: 175%;
   color: <?php echo $textcolor1 ?>;
-  background-color: inherit;
+  background-color: <?php echo $bgcolor1 ?>;
   padding: 2px;
   font-weight: bolder;
 }
 
-th {
+thead th {
   background-color: <?php echo $bgcolor3 ?>;
   color: <?php echo $textcolor1 ?>;
-}
-
-table tr th {
-  text-align: left;
 }
 
 thead, tfoot {
   text-align: center;
 }
 
-.phpc-main td, .phpc-main th {
+#calendar td, #calendar th {
   border-style: solid;
   border-collapse: collapse;
   border-color: <?php echo $sepcolor ?>;
@@ -174,9 +175,12 @@ thead, tfoot {
   padding: .5em;
 }
 
-.phpc-main td {
-  background-color: <?php echo $bgcolor1 ?>;
-  color: inherit;
+table.phpc-main tbody th {
+  text-align: right;
+}
+
+table.phpc-main {
+  width: 100%;
 }
 
 #calendar {
@@ -188,8 +192,6 @@ thead, tfoot {
   height: 80px;
   overflow: hidden;
 }
-
-p
 
 td.past {
   background-color: <?php echo $bgpast ?>;
@@ -206,7 +208,7 @@ td.none {
   color: inherit;
 }
 
-.phpc-main ul {
+table.phpc-main ul {
   margin: 2px;
   padding: 0;
   list-style-type: none;
@@ -215,7 +217,7 @@ td.none {
   border-width: 1px 1px 0 1px;
 }
 
-.phpc-main li {
+table.phpc-main li {
   font-size: 80%;
   font-weight: normal;
   padding: 0;
@@ -225,13 +227,13 @@ td.none {
   margin: 0;
 }
 
-.phpc-main li a {
+table.phpc-main li a {
   display: block;
   text-decoration: none;
   padding: 2px;
 }
 
-.phpc-main li a:hover {
+table.phpc-main li a:hover {
   background-color: <?php echo $bgcolor2 ?>;
   color: <?php echo $textcolor2 ?>;
 }

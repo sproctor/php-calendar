@@ -49,7 +49,7 @@ function nextval()
 
 function submit_event()
 {
-	global $calno, $day, $month, $year, $db, $vars;
+	global $calno, $day, $month, $year, $db, $vars, $config;
 
 	if(isset($vars['modify'])) {
 		if(!isset($vars['id'])) {
@@ -61,28 +61,21 @@ function submit_event()
 		$modify = 0;
 	}
 
-	if($vars['description']) {
+	if(isset($vars['description'])) {
 		$description = ereg_replace('<[bB][rR][^>]*>', "\n", 
 				$vars['description']);
 	} else {
 		$description = '';
 	}
 
-	if($vars['subject']) {
+	if(isset($vars['subject'])) {
 		$subject = addslashes(ereg_replace('<[^>]*>', '', 
 					$vars['subject']));
 	} else {
 		$subject = '';
 	}
 
-	if($vars['username']) {
-		$username = addslashes(ereg_replace('<[^>]*>', '',
-					$vars['username']));
-	} else {
-		$username = '';
-	}
-
-	if($vars['description']) {
+	if(isset($vars['description'])) {
 		$description = addslashes(ereg_replace('</?([^aA/]|[a-zA-Z_]{2,})[^>]*>',
 					'', $vars['description']));
 	} else {
@@ -127,9 +120,12 @@ function submit_event()
 		$end_year = $vars['endyear'];
 	else soft_error(_('No end year was given'));
 
-	if(strlen($subject) > SUBJECT_MAX) {
-		soft_error('Your subject was too long.  '.SUBJECT_MAX.' characters max.');
+	if(strlen($subject) > $config['subject_max']) {
+		soft_error(_('Your subject was too long')
+		.". $config[subject_max] ".('characters max').".");
 	}
+
+	$uid = check_user();
 
 	$startstamp = mktime($hour, $minute, 0, $month, $day, $year);
 	$startdate = date('Y-m-d', $startstamp);
@@ -142,12 +138,11 @@ function submit_event()
 	$table = SQL_PREFIX . 'events';
 
 	if($modify) {
-		if(!check_user() && ANON_PERMISSIONS < 2) {
+		if(!check_user() && $config['anon_permission'] < 2) {
 			soft_error('You do not have permission to modify events.');
 		}
 		$query = "UPDATE $table\n"
-			."SET username='$username',\n"
-			."startdate='$startdate',\n"
+			."SET startdate='$startdate',\n"
 			."enddate='$enddate',\n"
 			."starttime='$starttime',\n"
 			."duration='$duration',\n"
@@ -156,14 +151,14 @@ function submit_event()
 			."eventtype='$typeofevent'\n"
 			."WHERE id='$id'";
 	} else {
-		if(!check_user() && ANON_PERMISSIONS < 1) {
+		if(!check_user() && $config['anon_permission'] < 1) {
 			soft_error('You do not have permission to post.');
 		}
 		$id = nextval();
 		$query = "INSERT INTO $table\n"
-			."(id, username, startdate, enddate, starttime, duration,"
+			."(id, uid, startdate, enddate, starttime, duration,"
 			." subject, description, eventtype, calno)\n"
-			."VALUES ($id, '$username', '$startdate', '$enddate',"
+			."VALUES ($id, '$uid', '$startdate', '$enddate',"
 			."'$starttime', '$duration', '$subject',"
 			."'$description', '$typeofevent', '$calno')";
 	}

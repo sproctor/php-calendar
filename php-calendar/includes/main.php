@@ -48,13 +48,13 @@ function month_navbar()
 
 function calendar()
 {
-	global $BName, $day, $month, $year, $db;
+	global $BName, $day, $month, $year, $db, $config;
 
 	$currentday = date('j');
 	$currentmonth = date('n');
 	$currentyear = date('Y');
 
-	if(!START_MONDAY) $firstday = date('w', mktime(0, 0, 0, $month, 1, $year));
+	if(!$config['start_monday']) $firstday = date('w', mktime(0, 0, 0, $month, 1, $year));
 	else $firstday = (date('w', mktime(0, 0, 0, $month, 1, $year)) + 6) % 7;
 	$lastday = date('t', mktime(0, 0, 0, $month, 1, $year));
 
@@ -64,7 +64,7 @@ function calendar()
 		."<thead>\n"
 		."<tr>\n";
 
-	if(!START_MONDAY) $output .= "<th>" .  _('Sunday') . "</th>\n";
+	if(!$config['start_monday']) $output .= "<th>" .  _('Sunday') . "</th>\n";
 
 	$output .= '<th>' .  _('Monday') . "</th>\n"
 		.'<th>' .  _('Tuesday') . "</th>\n"
@@ -73,7 +73,7 @@ function calendar()
 		.'<th>' .  _('Friday') . "</th>\n"
 		.'<th>' .  _('Saturday') . "</th>\n";
 
-	if(START_MONDAY) $output .= '<th>' .  _('Sunday') . "</th>\n";
+	if($config['start_monday']) $output .= '<th>' .  _('Sunday') . "</th>\n";
 
 	$output .= "</tr>\n"
 		."</thead>\n"

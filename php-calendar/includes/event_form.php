@@ -21,7 +21,7 @@
 
 function event_form($action)
 {
-	global $BName, $vars, $day, $month, $year, $db;
+	global $BName, $vars, $day, $month, $year, $db, $config;
 
 	$output = "<form action=\"index.php\">\n"
 		.'<table class="phpc-main"';
@@ -44,7 +44,6 @@ function event_form($action)
 		$result = get_event_by_id($id);
 
 		$row = $db->sql_fetchrow($result);
-		$username = stripslashes($row['username']);
 		$subject = stripslashes($row['subject']);
 		$desc = htmlspecialchars(stripslashes($row['description']));
 
@@ -66,7 +65,7 @@ function event_form($action)
 		$durmin = $row['duration'] % 60;
 		$durhr  = $row['duration'] / 60;
 
-		if(!HOURS_24) {
+		if(!$config['hours_24']) {
 			if($hour >= 12) {
 				$pm = 1;
 				$hour = $hour - 12;
@@ -79,13 +78,12 @@ function event_form($action)
 		// case "add":
 		$output .= _('Adding item to calendar');
 
-		$username = '';
 		$subject = '';
 		$desc = '';
 		if($day == date('j') && $month == date('n')
 				&& $year == date('Y')) {
 			$hour = date('G') + 1;
-			if(!HOURS_24) {
+			if(!$config['hours_24']) {
 				if($hour >= 12) {
 					$hour = $hour - 12;
 					$pm = 1;
@@ -118,14 +116,8 @@ function event_form($action)
 		."</tr>\n"
 		."</tfoot>\n"
 		."<tbody>\n"
-		."<tr>\n"
-		.'<td>'._('Name')."</td>\n"
-		.'<td><input type="text" name="username" size="20" value="'
-		.$username."\" /></td>\n"
-		."</tr>\n"
-		."<tr><td>"._('Event Date')."</td>\n"
-		."<td>\n"
-		."<select name=\"day\" size=\"1\">\n";
+		."<tr><th>"._('Event Date')."</th>\n"
+		."<td><select name=\"day\" size=\"1\">\n";
 
 	for ($i = 1; $i <= 31; $i++){
 		if ($i == $day) {
@@ -163,9 +155,9 @@ function event_form($action)
 
 	$output .= "      </select></td>\n"
 		."</tr>\n"
-		."<tr><td>"
+		."<tr><th>"
 		._('End Date (only for daily, weekly, and monthly event types)')
-		."</td>\n"
+		."</th>\n"
 		."<td>\n"
 		."<select name=\"endday\" size=\"1\">\n";
 
@@ -207,7 +199,7 @@ function event_form($action)
 	$output .= "      </select></td>\n"
 		."</tr>\n"
 		."<tr>\n"
-		.'<td>' . _('Event Type') . "</td>\n"
+		.'<th>' . _('Event Type') . "</th>\n"
 		."<td>\n"
 		."<select name=\"typeofevent\" size=\"1\">\n";
 
@@ -225,11 +217,11 @@ function event_form($action)
 		."</td>\n"
 		."</tr>\n"
 		."<tr>\n"
-		.'<td>' .  _('Time') . "</td>\n"
+		.'<th>' .  _('Time') . "</th>\n"
 		."<td>\n"
 		."<select name=\"hour\" size=\"1\">\n";
 
-	if(!HOURS_24) {
+	if(!$config['hours_24']) {
 		for($i = 1; $i <= 12; $i++) {
 			$output .= '<option value="' . $i % 12 . '"';
 			if($hour == $i) {
@@ -259,7 +251,7 @@ function event_form($action)
 
 	$output .= "</select>\n";
 
-	if(!HOURS_24) {
+	if(!$config['hours_24']) {
 		$output .= "<select name=\"pm\" size=\"1\">\n"
 			.'<option value="0"';
 		if(empty($pm)) {
@@ -277,7 +269,7 @@ function event_form($action)
 	$output .= "</td>\n"
 		."</tr>\n"
 		."<tr>\n"
-		.'<td>'._('Duration')."</td>\n"
+		.'<th>'._('Duration')."</th>\n"
 		."<td>\n"
 		."\n<select name=\"durationhour\" size=\"1\">\n";
 	for($i = 0; $i < 24; $i++) {
@@ -302,12 +294,12 @@ function event_form($action)
 		."\n</td>\n"
 		."</tr>\n"
 		."<tr>\n"
-		.'<td>'._('Subject').' '._('(255 chars max)')."</td>\n"
+		.'<th>'._('Subject').' '._('(255 chars max)')."</th>\n"
 		."<td><input type=\"text\" name=\"subject\" value=\"$subject\" "
 		."/></td>\n"
 		."</tr>\n"
 		."<tr>\n"
-		.'<td>' .  _('Description') . "</td>\n"
+		.'<th>' .  _('Description') . "</th>\n"
 		."<td>\n"
 		.'<textarea rows="5" cols="50" name="description">'
 		."$desc</textarea>\n"

@@ -19,7 +19,7 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-include 'miniconfig.php';
+include('miniconfig.php');
 
 define('IN_PHPC', 1);
 
@@ -34,6 +34,38 @@ echo '<html>
 <body>
 <form method="post" action="install.php">
 ';
+
+reset($HTTP_POST_VARS);
+while(list($key, $value) = each($HTTP_POST_VARS)) {
+	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">";
+}
+
+if(!isset($HTTP_POST_VARS['config'])) {
+	get_config();
+} elseif(!isset($HTTP_POST_VARS['my_hostname'])
+		&& !isset($HTTP_POST_VARS['my_username'])
+		&& !isset($HTTP_POST_VARS['my_passwd'])
+		&& !isset($HTTP_POST_VARS['my_prefix'])
+		&& !isset($HTTP_POST_VARS['my_database'])) {
+	get_server_setup();
+} elseif(!isset($HTTP_POST_VARS['has_user'])) {
+	get_sql_user();
+} elseif(!isset($HTTP_POST_VARS['my_adminname'])
+		&& !isset($HTTP_POST_VARS['my_adminpassword'])
+		&& $HTTP_POST_VARS['has_user'] == 'no') {
+	add_sql_user();
+} elseif(!isset($HTTP_POST_VARS['base'])) {
+	install_base();
+} elseif(!isset($HTTP_POST_VARS['calendar_title'])) {
+	get_calendar();
+} elseif(!isset($HTTP_POST_VARS['made_calendar'])) {
+	add_calendar();
+} elseif(!isset($HTTP_POST_VARS['admin_user'])
+		&& !isset($HTTP_POST_VARS['admin_pass'])) {
+	get_admin();
+} else {
+	add_admin();
+}
 
 function get_config()
 {
@@ -55,39 +87,11 @@ function get_config()
 	}
 }
 
-function get_user()
+function get_sql_user()
 {
 	echo '<p>Have you already created the user for your database?</p>
 		<input type="submit" name="has_user" value="yes">
 		<input type="submit" name="has_user" value="no">';
-}
-
-reset($HTTP_POST_VARS);
-while(list($key, $value) = each($HTTP_POST_VARS)) {
-	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">";
-}
-
-if(!isset($HTTP_POST_VARS['config'])) {
-	get_config();
-} elseif(!isset($HTTP_POST_VARS['my_hostname'])
-		&& !isset($HTTP_POST_VARS['my_username'])
-		&& !isset($HTTP_POST_VARS['my_passwd'])
-		&& !isset($HTTP_POST_VARS['my_prefix'])
-		&& !isset($HTTP_POST_VARS['my_database'])) {
-	get_server_setup();
-} elseif(!isset($HTTP_POST_VARS['has_user'])) {
-	get_user();
-} elseif(!isset($HTTP_POST_VARS['my_adminname'])
-		&& !isset($HTTP_POST_VARS['my_adminpassword'])
-		&& $HTTP_POST_VARS['has_user'] == 'no') {
-	add_user();
-} elseif(!isset($HTTP_POST_VARS['admin'])) {
-	finalize_install();
-} elseif(!isset($HTTP_POST_VARS['admin_user'])
-		&& !isset($HTTP_POST_VARS['admin_pass'])) {
-	get_admin();
-} else {
-	add_admin();
 }
 
 function get_server_setup()
@@ -140,7 +144,7 @@ function get_server_setup()
 		</table>';
 }
 
-function add_user()
+function add_sql_user()
 {
 	global $HTTP_POST_VARS;
 
@@ -179,8 +183,9 @@ function add_user()
 					.");") or die("Could not change privileges"); 
 
 			if(!empty($HTTP_POST_VARS['create_db'])) {
-				create_db($my_hostname, $my_adminname, $my_adminpasswd,
-						$my_database, $HTTP_POST_VARS['sql_type']);
+				create_db($my_hostname, $my_adminname,
+				$my_adminpasswd, $my_database,
+				$HTTP_POST_VARS['sql_type']);
 			}
 
 			mysql_query("GRANT SELECT, INSERT, UPDATE, DELETE ON $my_prefix"."events TO $my_username;")
@@ -246,7 +251,7 @@ function create_dependent($dbms)
 	}
 }
 
-function finalize_install()
+function install_base()
 {
 	global $HTTP_POST_VARS, $phpc_root_path, $db;
 
@@ -261,7 +266,6 @@ function finalize_install()
 		or die('Couldn\'t open config file.');
 
 	$fstring = "<?php\n"
-		."define('SUBJECT_MAX',  32);\n"
 		."define('SQL_HOST', '$my_hostname');\n"
 		."define('SQL_USER', '$my_username');\n"
 		."define('SQL_PASSWD', '$my_passwd');\n"
@@ -280,23 +284,27 @@ function finalize_install()
 				$sql_type);
 	}
 
-	include("$phpc_root_path/config.php");
-	include("$phpc_root_path/includes/db.php");
+	include($phpc_root_path . 'config.php');
+	include($phpc_root_path . 'includes/db.php');
 
 	create_tables();
+
 	create_dependent($sql_type);
 
-	echo "<p><input type=\"submit\" name=\"admin\" value=\"Create Admin\"></p>";
+	echo "<p>calendars base created</p>\n"
+		."<div><input type=\"submit\" name=\"base\" value=\"continue\">"
+		."</div>\n";
 }
 
 function create_tables()
 {
+	global $db;
 
 	$query = array();
 
-	$query[] = "CREATE TABLE $my_prefix"."events (\n"
-		."id integer DEFAULT '0' NOT NULL,\n"
-		."username varchar(255),\n"
+	$query[] = "CREATE TABLE ".SQL_PREFIX."events (\n"
+		."id integer NOT NULL,\n"
+		."uid integer,\n"
 		."startdate date,\n"
 		."enddate date,\n"
 		."starttime time,\n"
@@ -305,44 +313,91 @@ function create_tables()
 		."subject varchar(255),\n"
 		."description text,\n"
 		."calno integer\n"
-		//."PRIMARY KEY (id)\n"
 		.")";
 
-	$query[] = "CREATE TABLE ".$my_prefix."users ( "
-		."calno integer NOT NULL default '0', "
-		."UID integer NOT NULL default '0', "
-		."username varchar(32) NOT NULL default '' "
-		."password varchar(32) NOT NULL default '', "
-		."PRIMARY KEY (calno,UID))";
+	$query[] = "CREATE TABLE ".SQL_PREFIX."users (\n"
+		."calno integer NOT NULL default '0',\n"
+		."uid integer NOT NULL,\n"
+		."username varchar(32) NOT NULL,\n"
+		."password varchar(32) NOT NULL default '',\n"
+		."PRIMARY KEY (calno, uid))";
 
-	$query[] = "CREATE TABLE ".$my_prefix."calendars ("
-		."calno integer NOT NULL, "
-		."cookie_name varchar(256), "
-		."cookie_path varchar(256), "
-		."cookie_domain varchar(256), "
-		."cookie_secure varchar(256), "
-		."hours_24 integer NOT NULL default '0', "
-		."start_monday integer NOT NULL default '0', "
-		."translate integer NOT NULL default '0', "
-		."anon_permission integer NOT NULL default '0', "
-		."subject_max integer NOT NULL default '32', "
-		."contact_name varchar(256) default NULL, "
-		."contact_email varchar(256) default NULL, "
-		."calendar_title varchar(256) NOT NULL default '', "
-		."URL varchar(256) default NULL, "
-		."PRIMARY KEY (calno) "
+	$query[] = "CREATE TABLE ".SQL_PREFIX."calendars (\n"
+		."calno integer NOT NULL,\n"
+		."hours_24 integer NOT NULL default '0',\n"
+		."start_monday integer NOT NULL default '0',\n"
+		."translate integer NOT NULL default '0',\n"
+		."anon_permission integer NOT NULL default '0',\n"
+		."subject_max integer NOT NULL default '32',\n"
+		."contact_name varchar(256) default NULL,\n"
+		."contact_email varchar(256) default NULL,\n"
+		."calendar_title varchar(256) NOT NULL default '',\n"
+		."URL varchar(200) default NULL,\n"
+		."PRIMARY KEY (calno)\n"
 		.")";
 
 	reset($query);
-	while(list(,$sql) = each($query)) {
+	while(list(, $sql) = each($query)) {
 		$result = $db->sql_query($sql);
-		$result = 1;
+
 		if(!$result) {
 			$error = $db->sql_error();
-			die("Could not create table: $error[code]: "
-					."$error[message]:\n<pre>$sql</pre>");
+			die("Error creating table: $error[code]: "
+					."$error[message]:<pre>$sql</pre>");
 		}
 	}
+}
+
+function get_calendar()
+{
+	echo "<table>\n"
+		."<tr><td>use 24h rather than 12h time</td>\n"
+		."<td>"
+		."<input type=\"checkbox\" name=\"hours_24\" value=\"1\"></td>"
+		."</tr>\n"
+		."<tr><td>start week on Monday rather than Sunday</td>\n"
+		."<td><input type=\"checkbox\" name=\"start_monday\" value=\"1\"></td></tr>\n"
+		."<tr><td>Support langauges besides English?</td>\n"
+		."<td><input type=\"checkbox\" name=\"translate\" value=\"1\"></td></tr>\n"
+		."<tr><td>Calendar title</td>\n"
+		."<td><input type=\"text\" name=\"calendar_title\"></td></tr>\n"
+		."<tr><td colspan=\"2\"><input type=\"submit\"></td></tr>\n"
+		."</table>\n";
+}
+
+function add_calendar()
+{
+	global $HTTP_POST_VARS, $db, $phpc_root_path, $calno;
+
+	include($phpc_root_path . 'config.php');
+	include($phpc_root_path . 'includes/db.php');
+
+	if(isset($HTTP_POST_VARS['hours_24'])) $hours_24 = 1;
+	else $hours_24 = 0;
+
+	if(isset($HTTP_POST_VARS['start_monday'])) $start_monday = 1;
+	else $start_monday = 0;
+
+	if(isset($HTTP_POST_VARS['translate'])) $translate = 1;
+	else $translate = 0;
+
+	$calendar_title = $HTTP_POST_VARS['calendar_title'];
+
+	$query = "INSERT INTO ".SQL_PREFIX."calendars (calno, hours_24, "
+	."start_monday, translate, subject_max, calendar_title) "
+	."VALUES ('$calno', '$hours_24', '$start_monday', '$translate', '32', "
+	."'$calendar_title')";
+
+	$result = $db->sql_query($query);
+
+	if(!$result) {
+		$error = $db->sql_error();
+		die("Couldn't create calendar. $error[code]: $error[message]<pre>$query</pre>");
+	}
+
+	echo "<p>calendar created</p>\n"
+		."<div><input name=\"made_calendar\" type=\"submit\" "
+		."value=\"continue\"></div>";
 }
 
 function get_admin()
@@ -371,9 +426,9 @@ function add_admin()
 
 	$passwd = md5($HTTP_POST_VARS['admin_pass']);
 
-	$query = "insert into $HTTP_POST_VARS[my_prefix]admin
-		(UID, password, calno) VALUES
-		('$HTTP_POST_VARS[admin_user]', '$passwd', $calno)";
+	$query = "insert into ".SQL_PREFIX."users
+		(uid, username, password, calno) VALUES
+		('1', '$HTTP_POST_VARS[admin_user]', '$passwd', $calno)";
 
 	$result = $db->sql_query($query);
 	if(!$result) {

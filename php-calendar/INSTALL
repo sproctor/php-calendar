@@ -10,19 +10,16 @@ PHP-Calenar 0.8
 ----------
 0 Preface
 ----------
+
 The installation work arounds in this installation guide are based on the input
 I have recevied from other users on different systems.  If you encounter
 installation issues that are not mentioned here, PLEASE notify me at
-sproctor@ccs.neu.edu.
-
-Once I have received more installation experiences, I will be able to modify the
-installation procedure and instructions.
-
-
+sproctor@rottenvegetable.org.
 
 ---------------
 1 Requirements
 ---------------
+
 -PHP 4.0 or higher
 -MySQL or PostgreSQL
 -ssh (try putty for windows http://www.chiark.greenend.org.uk/~sgtatham/putty/)
@@ -31,57 +28,42 @@ installation procedure and instructions.
 
 Recommended:
 -editor (for editing the configuration files)
--If you are running your own server you can download MySQL from www.mysql.com 
-  and PHP from www.php.net and PostgreSQL from www.postgresql.org
 
 ---------------
 2 Installation
 ---------------
-Try the basic instructions first.  If that does not work, don't freak out, 
-I have included some additional work arounds.
 
------------------------
-2.1 Basic Instructions
------------------------
+Instruction for people that are installing on a web host or some computer other than the one that they are working on are indicated with "remote host only"
 
-1) Unzip the program and save the files in a seperate directory on your computer.  You may need to modify some of the files if the first 6 steps don't work.
+1) extract the files from the archive
+   (in linux: tar -zxf php-calendar-x.y.tar.gz)
 
-2) (Remote server only) Use FTP to connect the server your webpage is stored on and create a new directory where you want to store the calendar (example: 'calendar' for www.mydomain.com/calendar).  You can call it whatever you want.
+2) (Remote server only) Use FTP to connect the server your webpage is stored on
+   and create a new directory where you want to store the calendar (example:
+   'calendar' for www.mydomain.com/calendar).  You can call it whatever you
+   want.
 
-3) Open up a browser window and navigate to the file install.php in your calendar folder of your webpage (example: www.mydomain.com/calendar/install.php)
+3) Open up a browser window and navigate to the file install.php in your
+   calendar folder of your webpage (example:
+   http://www.mydomain.com/calendar/install.php)
 
-4) Follow the directions given by the instaler.
+4) Follow the directions given by the installer.
 
-***DON'T freak out if the above did not work***
+5) Once the calendar is installed, make sure to delete install.php or else
+   someone else could run the script and over-write your calendar.
 
----------------------
-2.2 ADDITIONAL STEPS
----------------------
-Try the following steps if the above did not work.
+*** freak out if the above did not work ***
 
-1) If you already have a database assigned to you, go to step 2. Otherwise, go to your MySQL administration utility and if you do not have a database assigned to you, you must create one.  Give it a simple name and write down the Database Name, User Name and User Password to use in the rest of the installation.
-
-2) If you already have a database assigned to you, go to it and in MySQL run the queries in calendar.sql. (if you have shell on the server you can type: mysql -u username -p database < calendar.sql)
-
-You might need to contact your domain host to obtain explicit instructions on adding new tables or databases.
-
-3) Rename the config.php-dist to config.php
-
-4) Open config.php with a text or HTML editor and edit the contents by
-replacing the second field (ex. localhost) with the proper information (view
-the file for descriptions of the items). If you made the change off of the server where the calendar is hosted, upload the file after you're done editing.
-
-5) Try running your calendar by navigating to the directory where you installed it (eaxample: www.mydomain.com/calendar/).
-
-***DON'T freeak out if you get errors***
-
-You may recevie one of the following errors.  Try some of the following steps to remedy them.
+More seriously, if this didn't work, see the section below.
 
 -----------
-2.3 ERRORS
+3 ERRORS
 -----------
+
+this section assumes you are using MySQL, but it may be helpful for everyone.
+
 ERROR  db:1044: Access denied for user: 'MySQLusername@localhost'
---Make sure you have your MySQL username and password correct in the config.inc.php file.  Contact your server to make sure they are right.
+--Make sure you have your MySQL username and password correct in the config.php file.  Contact your server to make sure they are right.
 
 ERROR  create db:1044: Access denied for user: 'MySQLusername@localhost' to database
 'MySQLdatabasename': CREATE TABLE phpc_events
@@ -92,32 +74,14 @@ ERROR  Software error  Couldn't select database
 --Make sure the $sql_tableprefix is set to 'phpc_' in the config.inc.php file
 
 ---------
-3 UPDATE
+4 UPDATE
 ---------
-Unless noted below, you should be able to make a backup of your config.inc.php, delete the directory that contains php-calendar, extract the new version, copy your config.inc.php into the new directory and move that into the place of the old one, and things should work.
-If there are changes that require updating the DB, the last step should be visiting update.php or something like that.
 
-version 0.7 and below:
-from version 0.7 to 0.8, the config file format has changed.  please just edit
-yours to look like the config.inc.php-dist included in 0.8 (or better yet, edit
-the config.inc.php-dist to contain your changes and then move it to
-confic.inc.php).
-
-0.6 and below:
-the table name was changed in 0.7.  you'll need to rename the table to something
-that ends in "events" and then update the config file to have prefix contain
-your prefix to that.  I should write an update script, but I haven't yet.  If
-you write one or desperately need this, please contact me.
-
-version 0.3 and below:
-Versions newer than 0.3 have a slightly updated database from the CST-Calendar
-DB and previous releases.  With version 0.5 I've added an update script.
-Simply run update.php to update your old database (you'll need to copy your old
-config.php to your new installation first).
-
-Both the install and update scripts are messy, so don't expect too much from
-them.
+PHP-Calendar is not yet stable software. I've changed the DB format quite a
+bit through various versions. If you want to upgrade from an older version to
+a newer version, please feel free to write a script to do this. If you do, I
+would be happy to include it in future versions.
 
 Good luck!
-Sean
-sproctor@ccs.neu.edu
+Sean Proctor
+sproctor@rottenvegetable.org
