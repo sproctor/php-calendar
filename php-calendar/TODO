@@ -46,6 +46,8 @@ some good ideas: http://mjr.towers.org.uk/blog/2004-7.html#webcal0929
  - change the HTML data type to use classes instead of arrays.
 
  - view events by labels and date ranges.
+
+ - open add event links in a javascript window.
  
 later:
  - integrate email_events.php (where is this?)
