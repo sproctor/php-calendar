@@ -21,37 +21,33 @@
 
 include("index.inc");
 
-echo top();
-
 $currentday = date("j");
 $currentmonth = date("n");
 $currentyear = date("Y");
 
-if (!isset($_GET['month'])) {
+if (!isset($HTTP_GET_VARS['month'])) {
     $month = $currentmonth;
 } else {
-  $month = $_GET['month'];
+  $month = $HTTP_GET_VARS['month'];
 }
 
-if(!isset($_GET['year'])) {
+if(!isset($HTTP_GET_VARS['year'])) {
     $year = $currentyear;
 } else {
-    $year = date("Y", mktime(0,0,0,$month,1,$_GET['year']));
+    $year = date("Y", mktime(0,0,0,$month,1,$HTTP_GET_VARS['year']));
 }
 
-if(!isset($_GET['day'])) {
+if(!isset($HTTP_GET_VARS['day'])) {
     if($month == $currentmonth) $day = $currentday;
     else $day = 1;
 } else {
-    $day = ($_GET['day'] - 1) % date("t", mktime(0,0,0,$month,1,$year)) + 1;
+    $day = ($HTTP_GET_VARS['day'] - 1) % date("t", mktime(0,0,0,$month,1,$year)) + 1;
 }
 
 while($month < 1) $month += 12;
 $month = ($month - 1) % 12 + 1;
 
-echo navbar($year, $month, $day);
+echo top() . navbar($year, $month, $day) . calendar($year, $month, $day)
+  . bottom();
 
-echo calendar($year, $month, $day);
-
-echo bottom();
 ?>

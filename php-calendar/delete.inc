@@ -18,13 +18,14 @@
     along with PHP-Calendar; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-include_once("calendar.inc");
-include_once("event.inc");
+include("event.inc");
 
 function del()
 {
+  global $QUERY_STRING;
+
   $database = connect_to_database();
-  $del_array = explode("&", $_SERVER['QUERY_STRING']);
+  $del_array = explode("&", $QUERY_STRING);
 
   $output = "<div class=\"box\" style=\"width: 50%\">";
 

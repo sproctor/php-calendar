@@ -19,15 +19,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include_once("calendar.inc");
-include_once("config.inc");
-include_once("event.inc");
+include("event.inc");
 
-echo top();
+echo top() . event_form("modify") . back_to_calendar() . bottom();
 
-echo event_form("modify");
-
-echo back_to_calendar();
-
-echo bottom();
 ?>

@@ -19,8 +19,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include_once("calendar.inc");
-include_once("config.inc");
+include("calendar.inc");
 
 function remove_event($id)
 {
@@ -35,47 +34,52 @@ function remove_event($id)
 
 function event_form($action)
 {
-  global $BName, $sql_tableprefix;
+  global $BName, $sql_tableprefix, $HTTP_GET_VARS;
 
   $database = connect_to_database();
 
-if(!isset($_GET['day'])) $day = date("j");
-else $day = $_GET['day'];
+  if(!isset($HTTP_GET_VARS['day'])) $day = date("j");
+  else $day = $HTTP_GET_VARS['day'];
 
-if(!isset($_GET['month'])) $month = date("n");
-else $month = $_GET['month'];
+  if(!isset($HTTP_GET_VARS['month'])) $month = date("n");
+  else $month = $HTTP_GET_VARS['month'];
 
-if(!isset($_GET['year'])) $year = date("Y");
-else $year = $_GET['year'];
+  if(!isset($HTTP_GET_VARS['year'])) $year = date("Y");
+  else $year = $HTTP_GET_VARS['year'];
 
   $output = '';
   if($action == "modify") {
-    if (!isset($_GET['id'])) {
+    if (!isset($HTTP_GET_VARS['id'])) {
       $output .= "<div class=\"box\">"
         . _("Nothing to modify.")
         . "</div>";
       return;
     } else {
-      $id = $_GET['id'];
+      $id = $HTTP_GET_VARS['id'];
     }
 
     $headerstring = sprintf(_("Modifying id %d from %s\n"), $id,
       $sql_tableprefix . "events");
-    $result = mysql_query("SELECT * FROM " . $sql_tableprefix . "events
-         WHERE id = '$id'")
+    $result = mysql_query('SELECT UNIX_TIMESTAMP(stamp) AS start_since_epoch,
+        UNIX_TIMESTAMP(duration) AS end_since_epoch, username, subject,
+        description, eventtype FROM ' . $sql_tableprefix . "events
+        WHERE id = '$id'")
       or die("couldn't get items from table");
+    if(mysql_num_rows($result) == 0) {
+      soft_error("item doesn't exist!");
+    }
 
     $row = mysql_fetch_array($result);
     $username = stripslashes($row['username']);
     $subject = stripslashes($row['subject']);
     $desc = htmlspecialchars(stripslashes($row['description']));
-    $thetime = strtotime($row['stamp']);
+    $thetime = $row['start_since_epoch'];
     $hour = date("G", $thetime);
     $minute = date("i", $thetime);
     $month = date("n", $thetime);
     $year = date("Y", $thetime);
     $day = date("j", $thetime);
-    $durtime = strtotime($row['duration']) - $thetime;
+    $durtime = $row['end_since_epoch'] - $thetime;
     $durmin = ($durtime / 60) % 60;     //seconds per minute
     $durhr  = ($durtime / 3600) % 24;   //seconds per hour
     $durday = floor($durtime / 86400);  //seconds per day

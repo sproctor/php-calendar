@@ -106,10 +106,10 @@ function translate()
 
     switch($lang) {
      case 'de':
-      setlocale(LC_ALL, 'de_DE');
+      setlocale('LC_ALL', 'de_DE');
       break;
      case 'en':
-      setlocale(LC_ALL, 'en_US');
+      setlocale('LC_ALL', 'en_US');
       break;
     }
 
@@ -139,7 +139,7 @@ function month_name($month)
 
 function top()
 {
-  global $header, $title;
+  global $header, $title, $BName, $BVersion;
   translate();
   browser();
   $output = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
