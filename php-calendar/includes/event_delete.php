@@ -37,13 +37,13 @@ function remove_event($id)
 
 function event_delete()
 {
-	global $QUERY_STRING, $config;
+	global $config;
 
 	if(!check_user() && $config['anon_permission'] < 2) {
 		soft_error('You do not have permission to delete events.');
 	}
 
-	$del_array = explode('&', $QUERY_STRING);
+	$del_array = explode('&', $_SERVER['QUERY_STRING']);
 
 	$html = array();
 

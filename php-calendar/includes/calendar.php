@@ -205,11 +205,9 @@ function create_xhtml($rest)
 
 function lang_link($lang)
 {
-	global $SCRIPT_NAME, $QUERY_STRING;
-
-	$str = $SCRIPT_NAME . '?';
-	if(!empty($QUERY_STRING)) {
-		$str .= htmlentities($QUERY_STRING) . '&amp;';
+	$str = $_SERVER['SCRIPT_NAME'] . '?';
+	if(!empty($_SERVER['QUERY_STRING'])) {
+		$str .= htmlentities($_SERVER['QUERY_STRING']) . '&amp;';
 	}
 	$str .= "lang=$lang";
 
@@ -218,7 +216,7 @@ function lang_link($lang)
 
 function link_bar()
 {
-	global $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING, $config;
+	global $config;
 
 	$html = tag('div', attributes('class="phpc-footer"'));
 
@@ -231,8 +229,9 @@ function link_bar()
 			tag('a',
 				attributes('href="http://validator.w3.org/'
 				.'check?url='
-				.rawurlencode("http://$SERVER_NAME$SCRIPT_NAME"
-				."?$QUERY_STRING") . '"'), 'Valid XHTML 1.1'),
+				.rawurlencode("http://$_SERVER[SERVER_NAME]"
+                                ."$_SERVER[SCRIPT_NAME]?$_SERVER[QUERY_STRING]")
+                                .'"'), 'Valid XHTML 1.1'),
 			'] [',
 			tag('a', attributes('href="http://jigsaw.w3.org/'
 					.'css-validator/check/referer"'),
