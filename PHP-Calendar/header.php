@@ -44,21 +44,24 @@ function isold()
     else return false;
 }
 
-echo "<style type=\"text/css\">
+echo <<<END
+<style type="text/css">
 /* Your browser: $BName $BVersion */
 body {
   color: $headercolor;
   background-color: $bgcolor;
   text-align: center;
   font-size: 12pt;
-  font-family: \"Times New Roman\", serif, sans-serif;
+  font-family: "Times New Roman", serif, sans-serif;
   padding: 0 2%;
 }
 
 img {
   border: 0;
 }
-
+END;
+if(!isold()) {
+echo <<<END
 a {
   color: $textcolor;
   background-color: inherit;
@@ -88,6 +91,9 @@ td {
   background-color: inherit;
 }
 
+END;
+}
+echo <<<END
 .header {
   background-color: $headerbgcolor;
   color: $headercolor;
@@ -148,9 +154,12 @@ table.calendar {
   text-align: center;
   font-size: 10pt;
   font-weight: bold;
-  ";
-  if($BName != "MSIE" || $BVersion >= 6) echo "table-layout: fixed;
-  "; echo "background-color: $bordercolor;
+END;
+if($BName != "MSIE" || $BVersion >= 6) {
+    echo "  table-layout: fixed;"; 
+}
+echo <<<END
+  background-color: $bordercolor;
   color: $headercolor;
 }
 
@@ -182,10 +191,12 @@ table.nav a {
   background-color: $tablebgcolor;
   color: $headercolor;
   text-decoration: none;
-  padding: 2px 0;";
-  if($BName == "MSIE") echo "
-  width: 100%;";
-  echo "
+  padding: 2px 0;
+END;
+if($BName == "MSIE") {
+    echo "  width: 100%;";
+}
+echo <<<END
 }
 
 table.nav a:hover {
@@ -213,9 +224,13 @@ td.none {
 }
 
 table.future, table.past {
-  "; if(!isold()) echo "padding: 0;
-  margin: 2px 0 0 0;
-  "; echo "background-color: $bordercolor;
+END;
+if(!isold()) {
+  echo "padding: 0;
+  margin: 2px 0 0 0;";
+}
+echo <<<END
+  background-color: $bordercolor;
   color: inherit;
   border-spacing: 1px;
   width: 100%;
@@ -231,9 +246,12 @@ table.future td, table.past td {
 table.future a, table.past a {
   display: block;
   text-decoration: none;
-  padding: 2px;";
-  if($BName == "MSIE" && $BVersion < 6) echo "  width: 100%;";
-  echo "
+  padding: 2px;
+END;
+if($BName == "MSIE" && $BVersion < 6) {
+    echo "  width: 100%;";
+}
+echo <<<END
 }
 
 table.past a:hover {
@@ -289,11 +307,23 @@ TT, KBD, PRE { font-family: monospace; }
 TH, TD { font-style: normal; }
 </style>
 </head>
-<body>";
-if(isold()) { echo "<table width=\"96%\" cellspacing=0 cellpadding=0 border=0>
-<tr><td bgcolor=\"$bordercolor\">
-<table width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"0\">
-<tr><td bgcolor=\"$headerbgcolor\" class=\"title\">$header</td></tr>
+<body>
+END;
+if(isold()) { 
+    echo <<<END
+<table width="96%" cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td bgcolor="$bordercolor">
+  <table width="100%" cellspacing="1" cellpadding="2" border="0">
+    <tr>
+      <td bgcolor="$headerbgcolor" class="title">$header</td></tr>
+  </table>
+    </td>
+  </tr>
 </table>
-</td></tr></table><br>\n"; }
-else { echo "<div class=\"header\">$header</div>\n"; } ?>
+<br>
+END;
+} else {
+    echo "<div class=\"header\">$header</div>\n"; 
+} 
+?>
