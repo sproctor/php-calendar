@@ -158,22 +158,21 @@ function search()
 
 function search_results()
 {
-	global $HTTP_POST_VARS, $calno, $database, $HTTP_GET_VARS, $day, $month,
-	$year;
+	global $vars, $calno, $database, $day, $month, $year;
 
 	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
 	$monthname = month_name($month);
 
-	if(isset($HTTP_POST_VARS['submit']) && $HTTP_POST_VARS['submit'] == 'Submit'){
-		$searchstring = $HTTP_POST_VARS['searchstring'];
-		$fromday = $HTTP_POST_VARS['fromday'];
-		$frommonth = $HTTP_POST_VARS['frommonth'];
-		$fromyear = $HTTP_POST_VARS['fromyear'];
-		$today = $HTTP_POST_VARS['today'];
-		$tomonth = $HTTP_POST_VARS['tomonth'];
-		$toyear = $HTTP_POST_VARS['toyear'];
-		$sort = $HTTP_POST_VARS['sort'];
-		$order = $HTTP_POST_VARS['order'];
+	if(isset($vars['submit'])) {
+		$searchstring = $vars['searchstring'];
+		$fromday = $vars['fromday'];
+		$frommonth = $vars['frommonth'];
+		$fromyear = $vars['fromyear'];
+		$today = $vars['today'];
+		$tomonth = $vars['tomonth'];
+		$toyear = $vars['toyear'];
+		$sort = $vars['sort'];
+		$order = $vars['order'];
 		connect_to_database();
 
 		$eventsearch = new MysqlSearch;
@@ -184,19 +183,17 @@ function search_results()
 
 		$where = join($searchresults,"' OR id = '");
 		$where = " WHERE (id = '".$where."')";
-		$sqlquery = 'SELECT UNIX_TIMESTAMP(stamp) as start_since_epoch,
-		UNIX_TIMESTAMP(duration) as end_since_epoch, username, subject,
-		description, eventtype, id FROM '.SQL_PREFIX."events " .
-			$where . ' AND calno = ' . $calno . 
-			" AND stamp >= \"$fromyear-$frommonth-$fromday 00:00:01\"
-			AND stamp <= \"$toyear-$tomonth-$today 23:59:59\" ";
-		$sqlquery.= "ORDER BY $sort $order";
+		$sqlquery = 'SELECT * FROM '.SQL_PREFIX."events "
+			."$where AND calno = '$calno'"
+			." AND enddate >= '$fromyear-$frommonth-$fromday'"
+			." AND startdate <= '$toyear-$tomonth-$today'"
+			."ORDER BY $sort $order";
 
 		$rsEvents = mysql_query($sqlquery) or die(mysql_error());
 		$totalRows_rsEvents = mysql_num_rows($rsEvents);
 
-		$output = "<a class=\"box\" href=\"index.php?actionpage=search&month=$month&year=$year&day=$day\">" . _('New Search') . 
-			'</a><table id="display"><caption>Search Results</caption>';
+		$output = "<a href=\"index.php?action=search&amp;month=$month&amp;year=$year&amp;day=$day\">" . _('New Search') . 
+			'</a><table class="phpc-main"><caption>Search Results</caption>';
 
 		while ($row = mysql_fetch_array($rsEvents)) {
 			$i++;
@@ -281,19 +278,28 @@ function search_form()
 		}
 		$optyear .= "   </select>\n";
 
-		$output = '<form action="'.$HTTP_SERVER_VARS['PHP_SELF'].'" method="post">' . 
-			'<center><table class="box"><tr><td align="right">Phrase: </td>' .
-			'<td align="left"><input type="text" name="searchstring" size="32" id="searchstring" value=""/></td></tr>' .
-			'<tr><td align="right">From: </td><td>' . 
-			"$optdayfrom$optday $optmonthfrom$optmonth $optyearfrom$optyear</td></tr>" . 
-			'<tr><td align="right">To: </td><td>' . 
-			"$optdayto$optday $optmonthto$optmonth $optyearto$optyear</td></tr>".
-			"<tr><td align=\"right\">Sort By: </td><td><select name=\"sort\"><option value=\"stamp\">Date</option><option value=\"subject\">Subject</option></select></td></tr>" .
-			"<tr><td align=\"right\">Order: <td><select name=\"order\"><option value=\"\">Ascending</option><option value=\"DESC\">Decending</option></select></td></tr>" .
+		$output = "<form action=\"index.php\" method=\"post\">"
+			."<table class=\"phpc-main\">\n"
+			."<tr>\n"
+			."<td>"._('Phrase').":</td>\n"
+			."<td>\n"
+			."<input type=\"text\" name=\"searchstring\""
+			." size=\"32\" />\n"
+			."<input type=\"hidden\" name=\"action\""
+			." value=\"search\" />\n"
+			."</td>\n"
+			."</tr>\n"
+			."<tr><td>"._('From').": </td><td>\n"
+			."$optdayfrom$optday $optmonthfrom$optmonth $optyearfrom$optyear</td></tr>" 
+			."<tr><td>"._('To').": </td><td>\n"
+			."$optdayto$optday $optmonthto$optmonth $optyearto$optyear</td></tr>"
+			."<tr><td>"._('Sort By').": </td>\n"
+."<td><select name=\"sort\"><option value=\"startdate\">Start Date</option><option value=\"subject\">Subject</option></select></td></tr>"
+			."<tr><td>"._('Order').": </td><td><select name=\"order\"><option value=\"\">Ascending</option><option value=\"DESC\">Decending</option></select></td></tr>" .
 			'<tr><td>&nbsp;</td><td><input type="submit" name="submit" value="Submit"/></td></tr></table>' . 
-			'</center></form>';
+			'</form>';
 
-		$output .= '<p>&nbsp;</p></center></td></tr></table>';
+		$output .= '<p>&nbsp;</p></td></tr></table>';
 	}
 	return $output;
 }

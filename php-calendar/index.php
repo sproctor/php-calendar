@@ -43,39 +43,45 @@ list($BName, $BVersion) = browser();
    }
  */
 
+foreach($HTTP_GET_VARS as $key => $value) {
+	$vars[$key] = $value;
+}
+
+foreach($HTTP_POST_VARS as $key => $value) {
+	$vars[$key] = $value;
+}
+
 $currentday = date('j');
 $currentmonth = date('n');
 $currentyear = date('Y');
 
-if (!isset($HTTP_GET_VARS['month'])) {
+if (!isset($vars['month'])) {
 	$month = $currentmonth;
 } else {
-	$month = $HTTP_GET_VARS['month'];
+	$month = $vars['month'];
 }
 
-if(!isset($HTTP_GET_VARS['year'])) {
+if(!isset($vars['year'])) {
 	$year = $currentyear;
 } else {
-	$year = date('Y', mktime(0,0,0,$month,1,$HTTP_GET_VARS['year']));
+	$year = date('Y', mktime(0,0,0,$month,1,$vars['year']));
 }
 
-if(!isset($HTTP_GET_VARS['day'])) {
+if(!isset($vars['day'])) {
 	if($month == $currentmonth) $day = $currentday;
 	else $day = 1;
 } else {
-	$day = ($HTTP_GET_VARS['day'] - 1) % date("t", mktime(0,0,0,$month,1,$year)) + 1;
+	$day = ($vars['day'] - 1) % date("t", mktime(0,0,0,$month,1,$year)) + 1;
 }
 
 while($month < 1) $month += 12;
 $month = ($month - 1) % 12 + 1;
 
-if(empty($HTTP_GET_VARS['action'])) {
+if(empty($vars['action'])) {
 	$action = 'main';
 } else {
-	$action = $HTTP_GET_VARS['action'];
+	$action = $vars['action'];
 }
-
-if(isset($HTTP_POST_VARS['login'])) $action = 'login';
 
 switch($action) {
 	case 'add':
@@ -130,6 +136,9 @@ switch($action) {
 		include "$basedir/main.inc.php";
 		$output = calendar();
 		break;
+
+	default:
+		soft_error(_('Invalid action'));
 
 }
 
