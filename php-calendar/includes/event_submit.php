@@ -49,7 +49,7 @@ function nextval()
 
 function event_submit()
 {
-	global $calendar_name, $day, $month, $year, $db, $vars, $config;
+	global $calendar_name, $day, $month, $year, $db, $vars, $config, $SCRIPT_NAME;
 
 	if(isset($vars['id'])) {
 		$id = $vars['id'];
@@ -172,7 +172,8 @@ function event_submit()
 	$affected = $db->sql_affectedrows($result);
 	if($affected < 1) soft_error(_('No changes made')."\nsql:\n$query");
 
-	header("Location: index.php?action=display&id=$id");
-	return '<div class="box">'._('Date updated').": $affected</div>\n";
+	header("Location: $SCRIPT_NAME?action=display&id=$id");
+	return tag('div', attributes('class="box"'), _('Date updated').": $affected");
 }
+
 ?>

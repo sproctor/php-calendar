@@ -20,7 +20,7 @@
  */
 
 function login(){
-	global $vars, $day, $month, $year, $user, $password, $lastaction;
+	global $vars, $day, $month, $year, $user, $password, $SCRIPT_NAME;
 
 	$html = tag('div');
 
@@ -32,7 +32,7 @@ function login(){
 		if(check_user()){
 			session_register('user');
 			session_register('password');
-			header("Location: index.php?action=$lastaction&day=$day&month=$month&year=$year");
+			header("Location: $SCRIPT_NAME?action=$vars[lastaction]&day=$day&month=$month&year=$year");
 			return tag('h2', _('Loggin in...'));
 		}
 
@@ -40,7 +40,7 @@ function login(){
 
 	}
 
-	$html[] = login_form($lastaction);
+	$html[] = login_form($vars['lastaction']);
 	return $html;
 }
 

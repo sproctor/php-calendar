@@ -226,7 +226,7 @@ function create_dependent($dbms)
 
 	switch($dbms) {
 		case 'mysql':
-			$query[] = "CREATE TABLE $sequence (id integer DEFAULT '0' AUTO_INCREMENT, PRIMARY KEY(id))";
+			$query[] = "CREATE TABLE $sequence (id integer NOT NULL DEFAULT '0' AUTO_INCREMENT, PRIMARY KEY(id))";
 			break;
 		default:
 			$query[] = "CREATE SEQUENCE $sequence";

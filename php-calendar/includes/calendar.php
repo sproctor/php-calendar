@@ -166,7 +166,7 @@ function event_type($num)
 
 function create_xhtml($rest)
 {
-	global $config;
+	global $config, $SCRIPT_NAME;
 
 	$output = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
 		."\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
@@ -175,13 +175,10 @@ function create_xhtml($rest)
 				tag('title', $config['calendar_title']),
 				tag('meta',
 					attributes('http-equiv="Content-Type"'
-						.' content="text/html;'
-						.' charset=iso-8859-1"')),
+						.' content="text/html; charset=iso-8859-1"')),
 				tag('link',
-					attributes('rel="stylesheet"'
-						.' type="text/css"'
-						.' href="index.php?action='
-						.'style"'))),
+					attributes('rel="stylesheet" type="text/css" href="'
+						. $SCRIPT_NAME .'?action=style"'))),
 			tag('body',
 				tag('h1', $config['calendar_title']),
 				navbar(),

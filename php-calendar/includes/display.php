@@ -214,9 +214,8 @@ function display_day($day, $month, $year)
 
 			if($admin) $html_subject[] = create_checkbox('id', $row['id']);
 
-			$html_subject[] = tag('a',
-					attributes("href=\"index.php?action=display&amp;id=$row[id]\""),
-					tag('strong', $subject));
+			$html_subject[] = create_action_link(tag('strong', $subject),
+					'display', $row['id']);
 
 			if($admin) {
 				$html_subject[] = ' (';
@@ -261,23 +260,18 @@ function display_id($id)
 		.' '.$row['startdate'];
 	$dur_str = get_duration($row['duration'], $row['eventtype']);
 	$subject = stripslashes($row['subject']);
+	if(empty($subject)) $subject = '(No subject)';
 	$name = stripslashes($row['username']);
 	$desc = parse_desc($row['description']);
 
-	$output = "<div class=\"phpc-main\">\n"
-		."<h2>$subject</h2>\n"
-		."<div>by <cite>$name</cite></div>\n"
-		."<div>\n"
-		."<a href=\"index.php?action=event_form&amp;id=$id\">"
-		._('Modify')."</a>\n"
-		."<a href=\"index.php?action=event_delete&amp;id=$id\">"
-		._('Delete')."</a>\n"
-		."</div>\n"
-		."<div>Time: $time_str<br />\n"
-		."Duration: $dur_str</div>\n"
-		."<p>$desc</p>\n"
-		."</div>\n";
-
-	return $output;
+	return tag('div', attributes('class="phpc-main"'),
+			tag('h2', $subject),
+			tag('div', 'by ', tag('cite', $name)),
+			tag('div', create_action_link(_('Modify'), 'event_form', $id), "\n",
+				create_action_link(_('Delete'), 'event_delete', $id)),
+			tag('div', tag('div', "Time: $time_str"),
+				tag('div', "Duration: $dur_str")),
+			tag('p', $desc));
 }
+
 ?>
