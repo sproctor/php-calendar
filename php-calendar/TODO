@@ -1,0 +1,6 @@
+clean up single event display.
+decide if description should be show in multi-event display
+add support for real users.
+unbreak gettext
+abstract things out better to allow for theming, etc. maybe.
+switch to phpBB sessions
