@@ -1,0 +1,87 @@
+body {
+  color: black;
+  background-color: white;
+}
+
+a {
+  color: black;
+  background-color: inherit;
+}
+
+a:hover {
+  color: maroon;
+  background-color: inherit;
+}
+
+h1 {
+  background-color: gray;
+  color: white;
+  border-color: black;
+}
+
+#navbar, #calendar {
+  background-color: black;
+  color: white;
+}
+
+th {
+  background-color: gray;
+  color: black;
+}
+
+#navbar a {
+  background-color: silver;
+  color: black;
+}
+
+#navbar a:hover {
+  color: silver;
+  background-color: black;
+}
+
+.past, .past td {
+  color: inherit;
+  background-color: silver;
+}
+
+.future, .future td {
+  color: inherit;
+  background-color: white;
+}
+
+.none {
+  background-color: gray;
+  color: inherit;
+}
+
+#calendar table {
+  background-color: black;
+  color: inherit;
+}
+
+#calendar table a:hover {
+  background-color: maroon;
+  color: inherit;
+}
+
+#display {
+  background-color: black;
+  color: white;
+}
+
+#display td {
+  background-color: silver;
+  color: black;
+}
+
+.box {
+  background-color: silver;
+  border-color: black;
+  color: black;
+}
+
+a.box:hover {
+  background-color: black;
+  color: silver;
+}
+
