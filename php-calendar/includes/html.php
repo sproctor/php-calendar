@@ -77,8 +77,12 @@ function remove_attributes(&$html)
 	return NULL;
 }
 
+$new_line = true;
+
 function html_to_string($html)
 {
+	global $new_line;
+
 	$inline = array('a', 'strong');
 
 	$tag_name = remove_tag($html);
@@ -97,7 +101,12 @@ die;
 		soft_error('No tag name given');
 	}
 
-	$output = "<$tag_name";
+	if($new_line || in_array($tag_name, $inline)) {
+		$new_line = false;
+		$output = '';
+	} else $output = "\n";
+
+	$output .= "<$tag_name";
 
 	if(isset($attributes)) {
 		$output .= attribute_list_to_string($attributes);
@@ -105,11 +114,12 @@ die;
 
 	if(sizeof($html) == 0) {
 		$output .= " />\n";
+		$new_line = true;
 		return $output;
 	}
 
 	$output .= ">";
-	if(!in_array($tag_name, $inline)) $output .= "\n";
+	//if(!in_array($tag_name, $inline)) $output .= "\n";
 
 	foreach($html as $val) {
 		if(is_array($val)) {
@@ -120,7 +130,10 @@ die;
 	}
 
 	$output .= "</$tag_name>";
-	if(!in_array($tag_name, $inline)) $output .= "\n";
+	if(!in_array($tag_name, $inline)) {
+		$output .= "\n";
+		$new_line = true;
+	}
 	return $output;
 }
 

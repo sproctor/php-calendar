@@ -13,6 +13,7 @@ enhancements to display:
 
 make recurring events more powerful
 display range of time in month view rather than just start time
+integrate email_events.php
 
 later:
 abstract things out better to allow for theming, etc. maybe.

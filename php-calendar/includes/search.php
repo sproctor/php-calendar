@@ -94,6 +94,11 @@ function search_form()
 	global $day, $month, $year, $SCRIPT_NAME;
 
 	$html_table = tag('table', attributes('class="phpc-main"'),
+			tag('caption', _('Search')),
+			tag('tfoot',
+				tag('tr',
+					tag('td', attributes('colspan="2"'),
+						create_submit(_('Submit'))))),
 			tag('tr',
 				tag('td', _('Phrase') . ': '),
 				tag('td', tag('input', attributes('type="text"',
@@ -123,19 +128,15 @@ function search_form()
 							attributes('value="subject"'),
 							_('Subject'))))),
 			tag('tr',
-					tag('td', _('Order') . ': '),
-					tag('td',
-						tag('select',
-							attributes('name="order"'),
-							tag('option', attributes('value="ASC"'),
-								_('Ascending')),
-							tag('option', attributes('value="DES"'),
-								_('Decending'))))),
-			tag('tr',
-					tag('td', attributes('colspan="2"'),
-						tag('input', attributes('type="submit"',
-								'value="' . _('Submit') . '"')))));
-								return tag('form', attributes('action="index.php"', 'method="post"'),
+				tag('td', _('Order') . ': '),
+				tag('td',
+					tag('select',
+						attributes('name="order"'),
+						tag('option', attributes('value="ASC"'),
+							_('Ascending')),
+						tag('option', attributes('value="DES"'),
+							_('Decending'))))));
+	return tag('form', attributes("'action=\"$SCRIPT_NAME\"", 'method="post"'),
 			$html_table);
 }
 

@@ -376,8 +376,33 @@ function menu_item_prepend(&$html, $name, $action, $year = 0, $month = 0,
 
 function create_hidden($name, $value)
 {
-	return tag('input', attributes("name=$name", "value=$value",
-				'type=hidden'));
+	return tag('input', attributes("name=\"$name\"", "value=\"$value\"",
+				'type="hidden"'));
+}
+
+function create_submit($value)
+{
+	return tag('input', attributes("value=\"$value\"", 'type="submit"'));
+}
+
+function create_text($name, $value = NULL)
+{
+	$attributes = attributes("name=\"$name\"", 'type="text"');
+	if($value != NULL) $attributes[] = "value=\"$value\"";
+	return tag('input', $attributes);
+}
+
+function create_password($name)
+{
+	return tag('input', attributes("name=\"$name\"", 'type="password"'));
+}
+
+function create_checkbox($name, $value = NULL, $checked = false)
+{
+	$attributes = attributes("name=\"$name\"", 'type="checkbox"');
+	if($value) $attributes[] = "value=\"$value\"";
+	if($checked) $attributes[] = 'checked="checked"';
+	return tag('input', $attributes);
 }
 
 function navbar()
@@ -396,8 +421,7 @@ function navbar()
 				$day);
 	}
 
-	if(!empty($vars['day']) && ($action != 'display'
-				|| !empty($vars['id']))) {
+	if(!empty($vars['day']) || !empty($vars['id']) || $action != 'display') {
 		menu_item_append($html, _('Back to Calendar'), 'display',
 				$year, $month);
 	}
@@ -485,6 +509,11 @@ function create_select($name, $type, $select)
 			$ubound = 6;
 			$increment = 1;
 			break;
+		case 'anon_perm':
+			$lbound = 0;
+			$ubound = 2;
+			$increment = 1;
+			break;
 		default:
 			soft_error('Invalid select type');
 	}
@@ -501,6 +530,11 @@ function create_select($name, $type, $select)
 				break;
 			case 'minute':
 				$text = sprintf('%02d', $i);
+				break;
+			case 'anon_perm':
+				if($i == 0) $text = _('Cannot add events');
+				elseif($i == 1) $text = _('Can add but not modify events');
+				elseif($i == 2) $text = _('Can add and modify events');
 				break;
 			default:
 				$text = $i;

@@ -19,19 +19,13 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/*  This provides an administrative signin page allowing users to
-    add, modify, and delete event entries.  It uses session variables
-    so cookies must be enables (this is untrue PHP can use get/post headers
-    for session info) 
-*/ 
-
 function login(){
 	global $vars, $day, $month, $year, $user, $password, $lastaction;
 
-	$output = '';
+	$html = tag('div');
 
 	//Check password and username
-	if(isset($vars['submit'])){
+	if(isset($vars['username'])){
 		$user = $vars['username'];
 		$password = $vars['password'];
 
@@ -39,47 +33,39 @@ function login(){
 			session_register('user');
 			session_register('password');
 			header("Location: index.php?action=$lastaction&day=$day&month=$month&year=$year");
-			return '<h2>'._('Loggin in...')."</h2>\n";
+			return tag('h2', _('Loggin in...'));
 		}
 
-		$output .= '<h2>'._('Sorry, Invalid Login')."</h2>\n";
+		$html[] = tag('h2', _('Sorry, Invalid Login'));
 
 	}
 
-	return $output . login_form();
+	$html[] = login_form($lastaction);
+	return $html;
 }
 
 
-function login_form(){
-	global $day, $month, $year, $lastaction;
+function login_form($lastaction)
+{
+	global $SCRIPT_NAME;
 
-	$output = "<form action=\"index.php\" method=\"post\">\n"
-		."<table class=\"phpc-main\">\n"
-		."<caption>"._('Log in')."</caption>\n"
-		."<tfoot>\n"
-		."<tr>\n"
-		."<td colspan=\"2\">\n"
-		."<input type=\"hidden\" name=\"lastaction\" "
-		."value=\"$lastaction\" />\n"
-		."<input type=\"hidden\" name=\"action\" value=\"login\" />\n"
-		.'<input type="submit" name="submit" value="'._('Submit')
-		."\" />\n"
-		."</td>\n"
-		."</tr>\n"
-		."</tfoot>\n"
-		."<tbody>\n"
-		."<tr>\n"
-		."<th>"._('Username').":</th>\n"
-		."<td><input name=\"username\" type=\"text\" /></td>\n"
-		."</tr>\n"
-		."<tr>\n"
-		."<th>"._('Password').":</th>\n"
-		."<td><input name=\"password\" type=\"password\" /></td>\n"
-		."</tr>\n"
-		."</tbody>\n"
-		."</table>\n"
-		."</form>\n";
-
-	return $output;
+	return tag('form', attributes("action=\"$SCRIPT_NAME\"",
+				'method="post"'),
+		tag('table', attributes('class="phpc-main"'),
+			tag('caption', _('Log in')),
+			tag('tfoot',
+				tag('tr',
+					tag('td', attributes('colspan="2"'),
+						create_hidden('lastaction', $lastaction),
+						create_hidden('action', 'login'),
+						create_submit(_('Submit'))))),
+			tag('tbody',
+				tag('tr',
+					tag('th', _('Username').':'),
+					tag('td', create_text('username'))),
+				tag('tr',
+					tag('th', _('Password').':'),
+					tag('td', create_password('password'))))));
 }
+
 ?>

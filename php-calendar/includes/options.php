@@ -56,77 +56,47 @@ function options()
 				soft_error("$error[code]: $error[message]");
 			}
 
-			$output = "<div>"._('Updated options')."</div>\n";
-		} else {
-			$output = "<div>"._('Permission denied')."</div>\n";
+			return tag('div', _('Updated options'));
 		}
-
-	} else {
-		$output = options_form();
+		return tag('div', _('Permission denied'));
 	}
-
-	return $output;
+	return options_form();
 }
 
 
 function options_form()
 {
-	global $config;
+	global $config, $SCRIPT_NAME;
 
-	$output = "<form action=\"index.php\" method=\"post\">\n"
-		."<table class=\"phpc-main\">\n"
-		."<caption>"._('Options')."</caption>\n"
-		."<tfoot>\n"
-		."<tr>\n"
-		."<td colspan=\"2\">\n"
-		."<input type=\"hidden\" name=\"action\" value=\"options\" />\n"
-		.'<input type="submit" name="submit" value="'._('Submit')
-		."\" />\n"
-		."</td>\n"
-		."</tr>\n"
-		."</tfoot>\n"
-		."<tbody>\n"
-		."<tr>\n"
-		."<th>"._('Start Monday').":</th>\n"
-		."<td><input name=\"start_monday\" type=\"checkbox\" "
-		.($config['start_monday'] ? 'checked="checked" ' : '')
-		."/></td>\n"
-		."</tr>\n"
-		."<tr>\n"
-		."<th>"._('24 hour').":</th>\n"
-		."<td><input name=\"hours_24\" type=\"checkbox\" "
-		.($config['hours_24'] ? 'checked="checked" ' : '')
-		."/></td>\n"
-		."</tr>\n"
-		."<tr>\n"
-		."<th>"._('Translate').":</th>\n"
-		."<td><input name=\"translate\" type=\"checkbox\" "
-		.($config['translate'] ? 'checked="checked" ' : '')
-		."/></td>\n"
-		."</tr>\n"
-		."<tr>\n"
-		."<th>"._('Calendar Title').":</th>\n"
-		."<td><input name=\"calendar_title\" type=\"text\" "
-		."value=\"$config[calendar_title]\" /></td>\n"
-		."</td>\n"
-		."<tr>\n"
-		."<th>"._('Anonymous Permission:')."</th>\n"
-		."<td><select name=\"anon_perm\" size=\"1\">\n"
-		."<option value=\"0\""
-		.($config['anon_permission'] == 0 ? ' selected="selected"' : '')
-		.">Cannot add events</option>\n"
-		."<option value=\"1\""
-		.($config['anon_permission'] == 1 ? ' selected="selected"' : '')
-		.">Can add but not modify events</option>\n"
-		."<option value=\"2\""
-		.($config['anon_permission'] == 2 ? ' selected="selected"' : '')
-		.">Can add and modify events</option>\n"
-		."</select></td>\n"
-		."</tr>\n"
-		."</tbody>\n"
-		."</table>\n"
-		."</form>\n";
-
-	return $output;
+	return tag('form', attributes("action=\"$SCRIPT_NAME\"", 'method="post"'),
+			tag('table', attributes('class="phpc-main"'),
+				tag('caption', _('Options')),
+				tag('tfoot',
+					tag('tr',
+						tag('td', attributes('colspan="2"'),
+							create_hidden('action', 'options'),
+							create_submit(_('Submit'))))),
+				tag('tbody',
+					tag('tr',
+						tag('th', _('Start Monday').':'),
+						tag('td', create_checkbox('start_monday', '1',
+								$config['start_monday']))),
+					tag('tr',
+						tag('th', _('24 hour').':'),
+						tag('td', create_checkbox('hours_24', '1',
+								$config['hours_24']))),
+					tag('tr',
+						tag('th', _('Translate').':'),
+						tag('td', create_checkbox('translate', '1',
+								$config['translate']))),
+					tag('tr',
+						tag('th', _('Calendar Title').':'),
+						tag('td', create_text('calendar_title',
+								$config['calendar_title']))),
+					tag('tr',
+						tag('th', _('Anonymous Permission').':'),
+						tag('td', create_select('anon_perm', 'anon_perm',
+								$config['anon_permission']))))));
 }
+
 ?>

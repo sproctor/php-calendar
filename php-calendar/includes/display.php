@@ -19,6 +19,17 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+function display()
+{
+	global $vars, $day, $month, $year;
+
+	if(isset($vars['id'])) return display_id($vars['id']);
+	if(isset($vars['day'])) return display_day($day, $month, $year);
+	if(isset($vars['month'])) return display_month($month, $year);
+	if(isset($vars['year'])) soft_error('year view not yet implemented');
+	return display_month($month, $year);
+}
+
 function month_navbar($month, $year)
 {
 	$html = tag('div', attributes('class="phpc-navbar"'));
@@ -150,19 +161,6 @@ function get_duration($duration, $typeofevent)
 	return $dur_str;
 }
 
-function display()
-{
-	global $vars, $day, $month, $year;
-
-	if(empty($vars['id'])) {
-		if(empty($vars['day'])) {
-			return display_month($month, $year);
-		}
-		return display_day($day, $month, $year);
-	}
-	return display_id($vars['id']);
-}
-
 function display_day($day, $month, $year)
 {
 	global $user, $db, $config;
@@ -193,26 +191,11 @@ function display_day($day, $month, $year)
 					tag('tr',
 						tag('td',
 							attributes('colspan="4"'),
-							tag('input',
-								attributes('type="hidden"',
-									'name="action"',
-									'value="event_delete"')),
-							tag('input',
-								attributes('type="hidden"',
-								'name="day"',
-								"value=\"$day\"")),
-							tag('input',
-								attributes('type="hidden"',
-									'name="month"',
-									"value=\"$month\"")),
-							tag('input',
-								attributes('type="hidden"',
-									'name="year"',
-									"value=\"$year\"")),
-							tag('input',
-								attributes('type="submit"',
-									'value="'
-									._('Delete Selected').'"')))));
+							create_hidden('action', 'event_delete'),
+							create_hidden('day', $day),
+							create_hidden('month', $month),
+							create_hidden('year', $year),
+							create_submit(_('Delete Selected')))));
 		}
 
 		$html_body = tag('tbody');
@@ -220,6 +203,7 @@ function display_day($day, $month, $year)
 		for(; $row; $row = $db->sql_fetchrow($result)) {
 			//$name = stripslashes($row['username']);
 			$subject = stripslashes($row['subject']);
+			if(empty($subject)) $subject = '(No subject)';
 			$desc = parse_desc($row['description']);
 			$time_str = formatted_time_string($row['starttime'],
 					$row['eventtype']);
@@ -228,10 +212,7 @@ function display_day($day, $month, $year)
 
 			$html_subject = tag('td');
 
-			if($admin) $html_subject[] = tag('input',
-					attributes('type="checkbox"',
-						'name="id"',
-						"value=\"$row[id]\""));
+			if($admin) $html_subject[] = create_checkbox('id', $row['id']);
 
 			$html_subject[] = tag('a',
 					attributes("href=\"index.php?action=display&amp;id=$row[id]\""),
@@ -239,9 +220,7 @@ function display_day($day, $month, $year)
 
 			if($admin) {
 				$html_subject[] = ' (';
-				$html_subject[] = tag('a',
-					attributes("href=\"index.php?action=event_form&amp;id=$row[id]\""),
-					_('Modify'));
+				$html_subject[] = create_action_link(_('Modify'), 'event_form', $row['id']);
 				$html_subject[] = ')';
 			}
 
@@ -255,8 +234,7 @@ function display_day($day, $month, $year)
 		$html_table[] = $html_body;
 
 		if($admin) $output = tag('form',
-			attributes('action="index.php"'),
-			$html_table);
+			attributes("action=\"$SCRIPT_NAME\""), $html_table);
 		else $output = $html_table;
 
 	} else {
