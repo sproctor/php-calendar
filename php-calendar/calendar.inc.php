@@ -27,11 +27,6 @@ function soft_error($str)
   exit;
 }
 
-if(!function_exists('_')) {
-  function _($str) { return $str; }
-  unset($translate);
-}
-
 function browser()
 {
   global $HTTP_USER_AGENT, $BName, $BVersion;
@@ -93,6 +88,11 @@ function translate()
 {
   global $translate, $HTTP_ACCEPT_LANGUAGE, $HTTP_GET_VARS, $HTTP_COOKIE_VARS;
 
+  if(!function_exists('_')) {
+    function _($str) { return $str; }
+    unset($translate);
+  }
+
   if(!empty($translate)) {
     if(isset($HTTP_GET_VARS['lang'])) {
       $lang = substr($HTTP_GET_VARS['lang'], 0, 2);
@@ -123,18 +123,18 @@ function month_name($month)
 {
   $month = ($month - 1) % 12 + 1;
   switch($month) {
-    case 1:  return _("January");
-    case 2:  return _("February");
-    case 3:  return _("March");
-    case 4:  return _("April");
-    case 5:  return _("May");
-    case 6:  return _("June");
-    case 7:  return _("July");
-    case 8:  return _("August");
-    case 9:  return _("September");
-    case 10: return _("October");
-    case 11: return _("November");
-    case 12: return _("December");
+    case 1:  return _('January');
+    case 2:  return _('February');
+    case 3:  return _('March');
+    case 4:  return _('April');
+    case 5:  return _('May');
+    case 6:  return _('June');
+    case 7:  return _('July');
+    case 8:  return _('August');
+    case 9:  return _('September');
+    case 10: return _('October');
+    case 11: return _('November');
+    case 12: return _('December');
   }
 }
 
@@ -205,10 +205,9 @@ function print_footer()
   $output = '';
 
   if(!empty($translate)) {
-    $output .= "
-<div>
-  " . lang_link('en') . "
-  " . lang_link('de') . "
+    $output .= '<div>
+  ' . lang_link('en') . '
+  ' . lang_link('de') . "
 </div>\n";
   }
 
@@ -221,8 +220,8 @@ function print_footer()
 
 function bottom()
 {
-  return print_footer() . "</body>
-</html>";
+  return print_footer() . '</body>
+</html>';
 }
 
 function get_events_by_date($day, $month, $year)
@@ -231,10 +230,10 @@ function get_events_by_date($day, $month, $year)
 
   $database = connect_to_database();
 
-  $result = mysql_query("SELECT UNIX_TIMESTAMP(stamp) as start_since_epoch,
+  $result = mysql_query('SELECT UNIX_TIMESTAMP(stamp) as start_since_epoch,
       UNIX_TIMESTAMP(duration) as end_since_epoch, username, subject,
       description, eventtype, id
-      FROM " . $sql_tableprefix . "events
+      FROM ' . $sql_tableprefix . "events
       WHERE duration >= \"$year-$month-$day 00:00:00\" 
       AND stamp <= \"$year-$month-$day 23:59:59\" ORDER BY stamp", $database)
     or soft_error("get_events_by_date failed");
@@ -274,12 +273,9 @@ function back_to_calendar()
   else $year = $HTTP_GET_VARS['year'];
 
   return "<div>
-  <a class=\"box\" href=\"display.php?month=$month&amp;year=$year&amp;day=$day\">" .
-_("View date")
- . "</a>
+  <a class=\"box\" href=\"display.php?month=$month&amp;year=$year&amp;day=$day\">" .  _('View date') . "</a>
   <a class=\"box\" href=\"index.php?month=$month&amp;year=$year\">"
-  . _("Back to Calendar")
- . "</a>
-</div>";
+  . _('Back to Calendar') . "</a>
+</div>\n";
 }
 ?>

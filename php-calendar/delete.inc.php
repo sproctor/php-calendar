@@ -21,27 +21,44 @@
 
 include('event.inc.php');
 
+function remove_event($id)
+{
+  global $sql_tableprefix;
+
+  $database = connect_to_database();
+
+  mysql_query('DELETE FROM ' . $sql_tableprefix . "events
+      WHERE id = '$id'", $database)
+    or soft_error('MySQL error ' . mysql_errno($result) . ': '
+      . mysql_error($result));
+
+  if(mysql_affected_rows() > 0)
+    return true;
+  else
+    return false;
+}
+
 function del()
 {
   global $QUERY_STRING;
 
   $database = connect_to_database();
-  $del_array = explode("&", $QUERY_STRING);
+  $del_array = explode('&', $QUERY_STRING);
 
-  $output = "<div class=\"box\" style=\"width: 50%\">";
+  $output = '<div class="box" style="width: 50%">';
 
   while(list(, $del_value) = each($del_array)) {
     list($drop, $id) = explode("=", $del_value);
 
-    if(preg_match("/delete$/", $drop) == 0) continue;
+    if(preg_match('/delete$/', $drop) == 0) continue;
 
     if(remove_event($id)) {
-      $output .= sprintf(_("Removed item: %d"), $id) . "<br />\n";
+      $output .= sprintf(_('Removed item: %d'), $id) . "<br />\n";
     } else {        
-      $output .= sprintf(_("Could not remove item: %d"), $id) . "<br />\n";
+      $output .= sprintf(_('Could not remove item: %d'), $id) . "<br />\n";
     }
   }
 
-  return $output . "</div>";
+  return $output . "</div>\n";
 }
 ?>

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-08-20 17:51-0400\n"
+"POT-Creation-Date: 2002-10-06 07:25-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,174 +15,218 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: calendar.inc.php:125
+#: calendar.inc.php:126
 msgid "January"
 msgstr ""
 
-#: calendar.inc.php:126
+#: calendar.inc.php:127
 msgid "February"
 msgstr ""
 
-#: calendar.inc.php:127
+#: calendar.inc.php:128
 msgid "March"
 msgstr ""
 
-#: calendar.inc.php:128
+#: calendar.inc.php:129
 msgid "April"
 msgstr ""
 
-#: calendar.inc.php:129 index.inc.php:63
+#: calendar.inc.php:130 calendar.inc.php:149
 msgid "May"
 msgstr ""
 
-#: calendar.inc.php:130
+#: calendar.inc.php:131
 msgid "June"
 msgstr ""
 
-#: calendar.inc.php:131
+#: calendar.inc.php:132
 msgid "July"
 msgstr ""
 
-#: calendar.inc.php:132
+#: calendar.inc.php:133
 msgid "August"
 msgstr ""
 
-#: calendar.inc.php:133
+#: calendar.inc.php:134
 msgid "September"
 msgstr ""
 
-#: calendar.inc.php:134
+#: calendar.inc.php:135
 msgid "October"
 msgstr ""
 
-#: calendar.inc.php:135
+#: calendar.inc.php:136
 msgid "November"
 msgstr ""
 
-#: calendar.inc.php:136
+#: calendar.inc.php:137
 msgid "December"
 msgstr ""
 
-#: calendar.inc.php:256
+#: calendar.inc.php:145
+msgid "Jan"
+msgstr ""
+
+#: calendar.inc.php:146
+msgid "Feb"
+msgstr ""
+
+#: calendar.inc.php:147
+msgid "Mar"
+msgstr ""
+
+#: calendar.inc.php:148
+msgid "Apr"
+msgstr ""
+
+#: calendar.inc.php:150
+msgid "Jun"
+msgstr ""
+
+#: calendar.inc.php:151
+msgid "Jul"
+msgstr ""
+
+#: calendar.inc.php:152
+msgid "Aug"
+msgstr ""
+
+#: calendar.inc.php:153
+msgid "Sep"
+msgstr ""
+
+#: calendar.inc.php:154
+msgid "Oct"
+msgstr ""
+
+#: calendar.inc.php:155
+msgid "Nov"
+msgstr ""
+
+#: calendar.inc.php:156
+msgid "Dec"
+msgstr ""
+
+#: calendar.inc.php:276
 msgid "View date"
 msgstr ""
 
-#: calendar.inc.php:259 display.inc.php:182
+#: calendar.inc.php:278 display.inc.php:152
 msgid "Back to Calendar"
 msgstr ""
 
-#: delete.inc.php:38
+#: delete.inc.php:56
 #, php-format
 msgid "Removed item: %d"
 msgstr ""
 
-#: delete.inc.php:40
+#: delete.inc.php:58
 #, php-format
 msgid "Could not remove item: %d"
 msgstr ""
 
-#: display.inc.php:65 index.inc.php:96
+#: display.inc.php:58 index.inc.php:47
 msgid "Add Item"
 msgstr ""
 
-#: display.inc.php:88
+#: display.inc.php:75
 msgid "Select"
 msgstr ""
 
-#: display.inc.php:91 display.inc.php:158
+#: display.inc.php:76 display.inc.php:132
 msgid "Modify"
 msgstr ""
 
-#: display.inc.php:94
+#: display.inc.php:77
 msgid "Username"
 msgstr ""
 
-#: display.inc.php:97 event.inc.php:212
+#: display.inc.php:78 event.inc.php:182
 msgid "Time"
 msgstr ""
 
-#: display.inc.php:100 event.inc.php:266
+#: display.inc.php:79 event.inc.php:234
 msgid "Duration"
 msgstr ""
 
-#: display.inc.php:103 event.inc.php:310
+#: display.inc.php:80 event.inc.php:270
 msgid "Subject"
 msgstr ""
 
-#: display.inc.php:106 event.inc.php:317
+#: display.inc.php:81 event.inc.php:274
 msgid "Description"
 msgstr ""
 
-#: display.inc.php:114
+#: display.inc.php:87
 msgid "Delete Selected"
 msgstr ""
 
-#: display.inc.php:138 display.inc.php:152 index.inc.php:215
+#: display.inc.php:113 display.inc.php:127 index.inc.php:143
 msgid "FULL DAY"
 msgstr ""
 
-#: display.inc.php:141
+#: display.inc.php:116
 msgid "??:??"
 msgstr ""
 
-#: display.inc.php:169
+#: display.inc.php:143
 msgid "No events on this day."
 msgstr ""
 
-#: event.inc.php:68
+#: event.inc.php:51
 msgid "Nothing to modify."
 msgstr ""
 
-#: event.inc.php:75
+#: event.inc.php:58
 #, php-format
 msgid "Modifying id #%d"
 msgstr ""
 
-#: event.inc.php:105
+#: event.inc.php:88
 msgid "Adding item to calendar"
 msgstr ""
 
-#: event.inc.php:132
+#: event.inc.php:114
 msgid "Name"
 msgstr ""
 
-#: event.inc.php:137
+#: event.inc.php:117
 msgid "Day"
 msgstr ""
 
-#: event.inc.php:176
+#: event.inc.php:154
 msgid "Event Type"
 msgstr ""
 
-#: event.inc.php:187
+#: event.inc.php:163
 msgid "Normal Event"
 msgstr ""
 
-#: event.inc.php:196
+#: event.inc.php:170
 msgid "Full Day Event"
 msgstr ""
 
-#: event.inc.php:205
+#: event.inc.php:177
 msgid "Unkown Time"
 msgstr ""
 
-#: event.inc.php:280
+#: event.inc.php:246
 msgid "days"
 msgstr ""
 
-#: event.inc.php:292
+#: event.inc.php:256
 msgid "hours"
 msgstr ""
 
-#: event.inc.php:304
+#: event.inc.php:266
 msgid "minutes"
 msgstr ""
 
-#: event.inc.php:311
-msgid " (255 chars max)"
+#: event.inc.php:270
+msgid "(255 chars max)"
 msgstr ""
 
-#: event.inc.php:334
+#: event.inc.php:287
 msgid "Submit Item"
 msgstr ""
 
@@ -190,95 +234,87 @@ msgstr ""
 msgid "No ID given."
 msgstr ""
 
-#: eventsub.inc.php:123
+#: eventsub.inc.php:68
+msgid "No day was given."
+msgstr ""
+
+#: eventsub.inc.php:71
+msgid "No month was given."
+msgstr ""
+
+#: eventsub.inc.php:74
+msgid "No year was given"
+msgstr ""
+
+#: eventsub.inc.php:77
+msgid "No hour was given."
+msgstr ""
+
+#: eventsub.inc.php:82
+msgid "No minute was given."
+msgstr ""
+
+#: eventsub.inc.php:86
+msgid "No duration hour was given."
+msgstr ""
+
+#: eventsub.inc.php:90
+msgid "No duration minute was given."
+msgstr ""
+
+#: eventsub.inc.php:94
+msgid "No duration day was given."
+msgstr ""
+
+#: eventsub.inc.php:98
+msgid "No type of event was given."
+msgstr ""
+
+#: eventsub.inc.php:120
 msgid "Date updated."
 msgstr ""
 
-#: index.inc.php:48
-msgid "last month"
-msgstr ""
-
-#: index.inc.php:51
-msgid "Jan"
-msgstr ""
-
-#: index.inc.php:54
-msgid "Feb"
-msgstr ""
-
-#: index.inc.php:57
-msgid "Mar"
-msgstr ""
-
-#: index.inc.php:60
-msgid "Apr"
-msgstr ""
-
-#: index.inc.php:66
-msgid "Jun"
-msgstr ""
-
-#: index.inc.php:69
-msgid "Jul"
-msgstr ""
-
-#: index.inc.php:72
-msgid "Aug"
-msgstr ""
-
-#: index.inc.php:75
-msgid "Sep"
-msgstr ""
-
-#: index.inc.php:78
-msgid "Oct"
-msgstr ""
-
-#: index.inc.php:81
-msgid "Nov"
-msgstr ""
-
-#: index.inc.php:84
-msgid "Dec"
-msgstr ""
-
-#: index.inc.php:87
-msgid "next month"
-msgstr ""
-
-#: index.inc.php:92
+#: index.inc.php:34
 msgid "last year"
 msgstr ""
 
-#: index.inc.php:101
+#: index.inc.php:35
+msgid "last month"
+msgstr ""
+
+#: index.inc.php:41
+msgid "next month"
+msgstr ""
+
+#: index.inc.php:43
 msgid "next year"
 msgstr ""
 
-#: index.inc.php:130 index.inc.php:154
+#: index.inc.php:72 index.inc.php:82
 msgid "Sunday"
 msgstr ""
 
-#: index.inc.php:135
+#: index.inc.php:75
 msgid "Monday"
 msgstr ""
 
-#: index.inc.php:138
+#: index.inc.php:76
 msgid "Tuesday"
 msgstr ""
 
-#: index.inc.php:141
+#: index.inc.php:77
 msgid "Wednesday"
 msgstr ""
 
-#: index.inc.php:144
+#: index.inc.php:78
 msgid "Thursday"
 msgstr ""
 
-#: index.inc.php:147
+#: index.inc.php:79
 msgid "Friday"
 msgstr ""
 
-#: index.inc.php:150
+#: index.inc.php:80
 msgid "Saturday"
 msgstr ""
 

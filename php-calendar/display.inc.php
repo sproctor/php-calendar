@@ -34,19 +34,19 @@ function display()
   if(!isset($HTTP_GET_VARS['year'])) $year = date('Y');
   else $year = $HTTP_GET_VARS['year'];
 
-  $tablename = date('Fy', mktime(0,0,0,$month,1,$year));
+  $tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
   $monthname = month_name($month);
 
-  $lasttime = mktime(0,0,0,$month,$day-1,$year);
+  $lasttime = mktime(0, 0, 0, $month, $day - 1, $year);
   $lastday = date('j', $lasttime);
   $lastmonth = date('n', $lasttime);
   $lastyear = date('Y', $lasttime);
   $lastmonthname = month_name($lastmonth);
 
-  $nexttime = mktime(0,0,0,$month,$day+1,$year);
-  $nextday = date("j", $nexttime);
-  $nextmonth = date("n", $nexttime);
-  $nextyear = date("Y", $nexttime);
+  $nexttime = mktime(0, 0, 0, $month, $day + 1, $year);
+  $nextday = date('j', $nexttime);
+  $nextmonth = date('n', $nexttime);
+  $nextyear = date('Y', $nexttime);
   $nextmonthname = month_name($nextmonth);
 
   $output = "<div id=\"navbar\">
@@ -144,17 +144,13 @@ function display()
   </tr>\n";
   }
 
-  $output .= "
-</tbody>
+  return $output . "</tbody>
 </table>
 </form>
 <div>
   <a class=\"box\" href=\"index.php?month=$month&amp;day=$day&amp;year=$year\">
-    " . 
-_("Back to Calendar")
- . "
+    " .  _('Back to Calendar') . "
   </a>
-</div>";
-  return $output;
+</div>\n";
 }
 ?>
