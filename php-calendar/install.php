@@ -23,11 +23,67 @@ echo '<html>
 <head>
 <title>install php calendar</title>
 </head>
-<html>
+<body>
+<form method="post" action="install.php">
 ';
 
-if(!isset($action)) {
-	echo '<form method="get" action="install.php">
+function get_config()
+{
+	if(is_writeable('config.inc.php') || is_writeable('.')) {
+		echo '<input type="hidden" name="config" value="1">
+			<p>your config file is writable</p>
+			<input type="submit" value="continue">';
+	} else {
+		echo '<p>your config file is not readable.  I suggest logging in with a shell and typing:</p>
+			<p><code>
+			touch config.inc.php<br>
+			chmod 666 config.inc.php
+			</code></p>
+			<p>or if you only have ftp access, upload a blank file named config.inc.php then use the chmod command to change the permissions of config.inc.php to 666</p>
+			<input type="submit" value="retry">';
+	}
+}
+
+function get_user_add()
+{
+	echo '<p>Have you already created the user for your database?</p>
+		<input type="submit" name="has_user" value="yes">
+		<input type="submit" name="has_user" value="no">';
+}
+
+reset($HTTP_POST_VARS);
+while(list($key, $value) = each($HTTP_POST_VARS)) {
+	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">";
+}
+
+if(!isset($HTTP_POST_VARS['config'])) {
+	get_config();
+} elseif(!isset($HTTP_POST_VARS['my_hostname'])
+		&& !isset($HTTP_POST_VARS['my_username'])
+		&& !isset($HTTP_POST_VARS['my_passwd'])
+		&& !isset($HTTP_POST_VARS['my_prefix'])
+		&& !isset($HTTP_POST_VARS['my_database'])) {
+	get_server_setup();
+} elseif(!isset($HTTP_POST_VARS['has_user'])) {
+	get_user_add();
+} elseif(!isset($HTTP_POST_VARS['my_adminname'])
+		&& !isset($HTTP_POST_VARS['my_adminpassword'])
+		&& $HTTP_POST_VARS['has_user'] == 'no') {
+	user_add_do();
+} else {
+finalize_install();
+}
+
+function get_server_setup()
+{
+	/* ignore this comment.  it should be setting stuff up to give some info, but I'm lazy so FIXME
+	   !isset($HTTP_POST_VARS['my_hostname'])
+	   || !isset($HTTP_POST_VARS['my_username'])
+	   || !isset($HTTP_POST_VARS['my_passwd'])
+	   || !isset($HTTP_POST_VARS['my_prefix'])
+	   || !isset($HTTP_POST_VARS['my_database'])) {
+	 */
+	echo '
 		<table class="display">
 		<tr>
 		<td>MySQL hostname:</td>
@@ -39,7 +95,7 @@ if(!isset($action)) {
 		</tr>
 		<tr>
 		<td>Table prefix:</td>
-		<td><input type="text" name="my_tablename" value="phpc_"></td>
+		<td><input type="text" name="my_prefix" value="phpc_"></td>
 		</tr>
 		<tr>
 		<td>Username:</td>
@@ -50,61 +106,28 @@ if(!isset($action)) {
 		<td><input type="password" name="my_passwd"></td>
 		</tr>
 		<tr>
-		<td>MySQL admin user:</td>
-		<td><input type="text" name="admin_username" value="root"></td>
-		<tr>
-		<td>MySQL admin password:</td>
-		<td><input type="password" name="admin_passwd"></td>
-		</tr>
-		<tr>
 		<td colspan="2"><input name="action" type="submit" value="Install"></td>
 		</tr>
-		</table>
-		</form>';
-} else {
-	if(empty($HTTP_GET_VARS['my_hostname'])
-			|| empty($HTTP_GET_VARS['my_username'])
-			|| empty($HTTP_GET_VARS['my_passwd'])
-			|| empty($HTTP_GET_VARS['my_tablename'])
-			|| empty($HTTP_GET_VARS['my_database'])
-			|| empty($HTTP_GET_VARS['admin_username'])
-			|| empty($HTTP_GET_VARS['admin_passwd'])) {
-		exit('You didn\'t fill in all the values.');
-	}
+		<tr>
+		<td><input type="checkbox" name="create_db" value="1">
+		create the database (don\'t check this if it already exists)
+		</td>
+		</tr>
+		</table>';
+}
 
-	$my_hostname = $HTTP_GET_VARS['my_hostname'];
-	$my_username = $HTTP_GET_VARS['my_username'];
-	$my_passwd = $HTTP_GET_VARS['my_passwd'];
-	$my_prefix = $HTTP_GET_VARS['my_tablename'];
-	$my_database = $HTTP_GET_VARS['my_database'];
-	$admin_username = $HTTP_GET_VARS['admin_username'];
-	$admin_passwd = $HTTP_GET_VARS['admin_passwd'];
+function user_add_do()
+{
+	global $HTTP_POST_VARS;
 
-	$fp = fopen('config.inc.php', 'w')
-		or die('Couldn\'t open config file.');
+	$my_hostname = $HTTP_POST_VARS['my_hostname'];
+	$my_username = $HTTP_POST_VARS['my_username'];
+	$my_passwd = $HTTP_POST_VARS['my_passwd'];
+	$my_prefix = $HTTP_POST_VARS['my_prefix'];
+	$my_database = $HTTP_POST_VARS['my_database'];
 
-	$fstring = "<?php\n"
-		."define('SQL_HOSTNAME', '$my_hostname');\n"
-		."define('SQL_USERNAME', '$my_username');\n"
-		."define('SQL_PASSWORD', '$my_passwd');\n"
-		."define('SQL_DATABASE', '$my_database');\n"
-		."define('SQL_PREFIX',   '$my_prefix');\n"
-		."define('TITLE',        'PHP-Calendar 0.8');\n"
-		."define('START_MONDAY', 0);\n"
-		."define('HOURS_24',     0);\n"
-		."define('TRANSLATE',    1);\n"
-		."?>";
-
-	fwrite($fp, $fstring)
-		or die("could not write to file");
-	fclose($fp);
-
-	$database = mysql_connect($my_hostname, $admin_username, $admin_passwd)
-		or die("Could not connect to server");
-
-	$sql = "CREATE DATABASE $my_database";
-	if(!mysql_query($sql) and mysql_errno() != "1007")
-		die('create db:'.mysql_errno().': '.mysql_error().': '.$sql);
+	$link = mysql_connect($my_hostname, $HTTP_POST_VARS['my_adminname'], $HTTP_POST_VARS['my_adminpassword'])
+		or die("Could not connect");
 
 	mysql_select_db("mysql")
 		or die("could not select mysql");
@@ -127,20 +150,11 @@ if(!isset($action)) {
 			."'Y', 'Y', 'Y', 'Y', 'Y', 'Y'\n"
 			.");") or die("Could not change privileges"); 
 
-	mysql_select_db($my_database)
-		or die("Could not select $my_database");
-
-	mysql_query("CREATE TABLE $my_prefix"."events (\n"
-			."id int(11) DEFAULT \'0\' NOT NULL auto_increment,\n"
-			."username varchar(255),\n"
-			."stamp datetime,\n"
-			."duration datetime,\n"
-			."eventtype int(4),\n"
-			."subject varchar(255),\n"
-			."description text,\n"
-			."PRIMARY KEY (id)\n"
-			.")")
-		or die("Could not create table");
+	if(!empty($HTTP_POST_VARS['create_db'])) {
+		$sql = "CREATE DATABASE $my_database";
+		if(!mysql_query($sql) and mysql_errno() != "1007")
+			die('create db:'.mysql_errno().': '.mysql_error().': '.$sql);
+	}
 
 	mysql_query("GRANT SELECT, INSERT, UPDATE, DELETE ON $my_prefix"."events TO $my_username;")
 		or die("Could not grant");
@@ -148,9 +162,66 @@ if(!isset($action)) {
 	mysql_query("FLUSH PRIVILEGES;")
 		or die("Could not flush privileges");
 
-	mysql_close($database);
+}
+
+function finalize_install()
+{
+	global $HTTP_POST_VARS;
+	$my_hostname = $HTTP_POST_VARS['my_hostname'];
+	$my_username = $HTTP_POST_VARS['my_username'];
+	$my_passwd = $HTTP_POST_VARS['my_passwd'];
+	$my_prefix = $HTTP_POST_VARS['my_prefix'];
+	$my_database = $HTTP_POST_VARS['my_database'];
+
+	$fp = fopen('config.inc.php', 'w')
+		or die('Couldn\'t open config file.');
+
+	$fstring = "<?php\n"
+		."define('SQL_HOSTNAME', '$my_hostname');\n"
+		."define('SQL_USERNAME', '$my_username');\n"
+		."define('SQL_PASSWORD', '$my_passwd');\n"
+		."define('SQL_DATABASE', '$my_database');\n"
+		."define('SQL_PREFIX',   '$my_prefix');\n"
+		."define('TITLE',        'PHP-Calendar 0.8');\n"
+		."define('START_MONDAY', 0);\n"
+		."define('HOURS_24',     0);\n"
+		."define('TRANSLATE',    1);\n"
+		."?>";
+
+	fwrite($fp, $fstring)
+		or die("could not write to file");
+	fclose($fp);
+
+	$link = mysql_connect($my_hostname, $my_username, $my_passwd)
+		or die("Could not connect");
+
+	if(!empty($HTTP_POST_VARS['create_db'])
+			&& $HTTP_POST_VARS['has_user'] == 'yes') {
+		$sql = "CREATE DATABASE $my_database";
+		if(!mysql_query($sql) and mysql_errno() != "1007")
+			die('create db:'.mysql_errno().': '.mysql_error().': '.$sql);
+	}
+	mysql_select_db($my_database)
+		or die("Could not select $my_database");
+
+	$query = "CREATE TABLE $my_prefix"."events (\n"
+			."id int(11) DEFAULT '0' NOT NULL auto_increment,\n"
+			."username varchar(255),\n"
+			."stamp datetime,\n"
+			."duration datetime,\n"
+			."eventtype int(4),\n"
+			."subject varchar(255),\n"
+			."description text,\n"
+			."PRIMARY KEY (id)\n"
+			.")";
+echo "<pre>$query</pre>";
+	mysql_query($query)
+		or die("Could not create table");
+
+	mysql_close($link);
 
 	echo "<p><a href=\".\">Calendar created</a></p>";
 }
-echo '</html>';
+
+echo '</form></body></html>';
 ?>
