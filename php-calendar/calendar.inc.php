@@ -23,7 +23,8 @@ include('config.inc.php');
 
 function soft_error($str)
 {
-	echo "<html><head><title>Error</title></head><body><h1>Software Error</h1><p>$str</p></body></html>";
+	echo "<html><head><title>Error</title></head>\n"
+		."<body><h1>Software Error</h1><pre>$str</pre></body></html>";
 	exit;
 }
 
@@ -65,7 +66,7 @@ function connect_to_database()
 	$database = mysql_connect(SQL_HOSTNAME, SQL_USERNAME, SQL_PASSWORD)
 		or soft_error(_('Couldn\'t connect to database server'));
 	mysql_select_db(SQL_DATABASE, $database)
-		or soft_error(_('Couldn\'t open database'));
+		or soft_error(_('Couldn\'t open database').': '.mysql_error());
 
 	return $database;
 }
@@ -187,79 +188,146 @@ function lang_link($lang)
 
 function print_footer()
 {
-	global $translate, $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING;
-	$output = "<div class=\"phpc-footer\">\n";
+	global $SERVER_NAME, $SCRIPT_NAME, $QUERY_STRING, $HTTP_GET_VARS, $year,
+	$month, $day, $action;
 
-	if(!empty($translate)) {
+	$output = "<div class=\"phpc-footer\">";
+
+	if(TRANSLATE) {
 		$output .= "<p>\n"
 			.lang_link('en')
 			.lang_link('de')
 			."</p>\n";
 	}
 
-	return $output . "<p>\n"
-		.'[<a href="http://validator.w3.org/check?url='
-		. rawurlencode("http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING")
-		.'">'._('Valid XHTML 1.1').'</a>]'
-		.' [<a href="http://jigsaw.w3.org/css-validator/check/referer">'
-		._('Valid CSS2')."</a>]\n</p>\n</div>\n";
+	$output .= "<p>\n";
+	//[<a href="http://validator.w3.org/check?url=' . rawurlencode("http://$SERVER_NAME$SCRIPT_NAME?$QUERY_STRING") . '"> Valid XHTML 1.1</a>]
+	//[<a href="http://jigsaw.w3.org/css-validator/check/referer">Valid CSS2</a>]
+	//</p>';
+	$output .= "<form action=\"index.php\">\n"
+		."<div class=\"phpc-button\">\n"
+		."<input type=\"hidden\" name=\"day\" value=\"$day\" />\n"
+		."<input type=\"hidden\" name=\"month\" value=\"$month\" />\n"
+		."<input type=\"hidden\" name=\"year\" value=\"$year\" />\n"
+		."<input type=\"hidden\" name=\"lastaction\" value=\"$action\""
+		." />\n";
+
+	if(empty($GLOBALS['user'])){
+		$output .= "<input type=\"hidden\" name=\"action\""
+			." value=\"signin\">\n"
+			.'<input type="submit" value="'._('Admin')."\" />\n";
+	} else {
+		$output .= "<input type=\"hidden\" name=\"action\""
+		." value=\"logout\" />\n"
+		.'<input type="submit" value="'._('Log out')."\" />\n";
+	}
+
+	$output .= "</div>\n"
+		."</form>\n";
+
+	return $output;
 }
 
 function bottom()
 {
-	return print_footer() . '</body>
-		</html>';
+	return print_footer() . "</body>\n</html>";
 }
 
 function get_events_by_date($day, $month, $year)
 {
-	$database = connect_to_database();
+	global $calno;
 
+	$database = connect_to_database();
+	//-Nate- Added calno to the where clause to limit events to a single calendar
 	$result = mysql_query('SELECT UNIX_TIMESTAMP(stamp) as start_since_epoch,
 			UNIX_TIMESTAMP(duration) as end_since_epoch, username, subject,
 			description, eventtype, id
-			FROM ' . SQL_PREFIX . "events
-			WHERE duration >= \"$year-$month-$day 00:00:00\" 
+			FROM '.SQL_PREFIX."events
+			WHERE duration >= \"$year-$month-$day 00:00:00\"
+			AND calno = $calno 
 			AND stamp <= \"$year-$month-$day 23:59:59\" ORDER BY stamp", $database)
-		or soft_error(_('get_events_by_date failed'));
+		or soft_error("get_events_by_date failed: ".mysql_error());
 
 	return $result;
 }
 
 function get_event_by_id($id)
 {
-	$database = connect_to_database();
+	global $calno;
 
+	$database = connect_to_database();
+	//-Nate- Added calno to the where clause to limit events to a single calendar
 	$result = mysql_query('SELECT UNIX_TIMESTAMP(stamp) AS start_since_epoch,
 			UNIX_TIMESTAMP(duration) AS end_since_epoch, username, subject,
-			description, eventtype FROM ' . SQL_PREFIX . "events
-			WHERE id = '$id'", $database)
-		or soft_error(_('get_event_by_id failed'));
+			description, eventtype FROM '.SQL_PREFIX."events
+			WHERE id = '$id' AND calno = $calno", $database)
+		or soft_error("couldn't get items from table: ".mysql_error());
 	if(mysql_num_rows($result) == 0) {
-		soft_error(_('item doesn\'t exist!'));
+		soft_error("item doesn't exist!");
 	}
 
 	return $result;
 }
 
-function back_to_calendar()
+function navbar()
 {
-	global $HTTP_GET_VARS;
+	global $HTTP_GET_VARS, $year, $month, $day, $action;
 
-	if(!isset($HTTP_GET_VARS['day'])) $day = date("j");
-	else $day = $HTTP_GET_VARS['day'];
+	$output = '';
 
-	if(!isset($HTTP_GET_VARS['month'])) $month = date("n");
-	else $month = $HTTP_GET_VARS['month'];
+	if($GLOBALS['user'] && $action != 'add') { 
+		$output .= "<a href=\"index.php?action=add&amp;day=$day"
+			."&amp;month=$month&amp;year=$year\">"._('Add Item')
+			."</a>\n";
+	}
 
-	if(!isset($HTTP_GET_VARS['year'])) $year = date("Y");
-	else $year = $HTTP_GET_VARS['year'];
+	if($action != 'search') {
+		$output .= "<a href=\"index.php?action=search&amp;day=$day"
+			."&amp;month=$month&amp;year=$year\">"._('Search')
+			."</a>\n";
+	}
 
-	return "<div class=\"phpc-navbar\">\n"
-		."<a href=\"display.php?month=$month&amp;year=$year&amp;"
-		."day=$day\">"._('View date')."</a>\n"
-		."<a href=\"index.php?month=$month&amp;year=$year\">"
-		._('Back to Calendar')."</a>\n"
-		."</div>\n";
+	if($action != 'main') {
+		$output .= "<a href=\"index.php?month=$month&amp;year=$year\">"
+			._('Back to Calendar')."</a>\n";
+	}
+
+	if($action != 'display' && !empty($HTTP_GET_VARS['day'])) {
+		$output .= "<a href=\"index.php?action=display&amp;day=$day"
+			."&amp;month=$month&amp;year=$year\">"._('View date')
+			."</a>\n";
+	}
+
+	if($action == 'display') {
+		$monthname = month_name($month);
+
+		$lasttime = mktime(0, 0, 0, $month, $day - 1, $year);
+		$lastday = date('j', $lasttime);
+		$lastmonth = date('n', $lasttime);
+		$lastyear = date('Y', $lasttime);
+		$lastmonthname = month_name($lastmonth);
+
+		$nexttime = mktime(0, 0, 0, $month, $day + 1, $year);
+		$nextday = date('j', $nexttime);
+		$nextmonth = date('n', $nexttime);
+		$nextyear = date('Y', $nexttime);
+		$nextmonthname = month_name($nextmonth);
+
+		$output = "<a href=\"index.php?action=display&amp;day=$lastday"
+			."&amp;month=$lastmonth&amp;year=$lastyear\">"
+			."$lastmonthname $lastday</a>\n"
+			.$output
+			."<a href=\"index.php?action=display&amp;day=$nextday"
+			."month=$nextmonth&amp;day=$nextday&amp;year=$nextyear"
+			."\">$nextmonthname $nextday</a>\n";
+	}
+
+	$output = "<div class=\"phpc-navbar\">$output</div>\n";
+
+	if($action == 'main') {
+		$output = month_navbar() . $output;
+	}
+
+	return $output;
 }
 ?>

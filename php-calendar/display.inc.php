@@ -17,142 +17,159 @@
     You should have received a copy of the GNU General Public License
     along with PHP-Calendar; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
 
-include('calendar.inc.php');
+UPDATE:  Nate - 11/07/02 - Constrict what information is displayed based on
+whether user is an administrator
+- Changed the table layout of the tables a little
+UPDATE:  Nate - 12/03/02 - Added Functionality.  Script will now display either
+a whole day or a single event depending on wether 
+event_id has been passed in the query string
+
+ */
 
 function display()
 {
-  global $HTTP_GET_VARS;
+	global $HTTP_GET_VARS, $day, $month, $year;
 
-  if(!isset($HTTP_GET_VARS['day'])) $day = date('j');
-  else $day = $HTTP_GET_VARS['day'];
+	/* FIXME: this function needs a big rewrite. showing the items in
+	a table is wicked lame. do something better */
 
-  if(!isset($HTTP_GET_VARS['month'])) $month = date('n');
-  else $month = $HTTP_GET_VARS['month'];
+	//Nate added this code to get just one event by ID
+	$eventid = $HTTP_GET_VARS['event_id']; 
 
-  if(!isset($HTTP_GET_VARS['year'])) $year = date('Y');
-  else $year = $HTTP_GET_VARS['year'];
+	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
+	$monthname = month_name($month);
 
-  $tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
-  $monthname = month_name($month);
+	// -Nate- Output an alternate display if not administrative user
+	if(empty($GLOBALS['user'])) {
+		$num_cols = 3;
+		$output .= "<table class=\"phpc-main\">\n"
+			."<caption>$day $monthname $year</caption>\n"
+			."<colgroup>\n"
+			."<col width=\"96\" />\n"
+			."<col width=\"50%\" />\n"
+			."</colgroup>\n"
+			."<thead>\n"
+			."<tr>\n"
+			.'<th>'._('Author')."</th>\n"
+			.'<th>'._('Time')."</th>\n"
+			.'<th>'._('Duration')."</th>\n"
+			."</tr>\n"
+			."</thead>\n"
+			."<tbody>\n";
+	}else{ //This is the ouput for administrators
+		$num_cols = 5;
+		$output .= "<form action=\"index.php\">"
+			."<table class=\"phpc-main\">\n"
+			."<caption>$day $monthname $year</caption>\n"
+			."<colgroup>\n"
+			."<col width=\"48\" />\n"
+			."<col width=\"96\" />\n"
+			."<col width=\"160\" />\n"
+			."<col width=\"160\" />\n"
+			."<col width=\"128\" />\n"
+			."</colgroup>\n"
+			."<thead>\n"
+			."<tr>\n"
+			.'<th>'._('Select')."</th>\n"
+			.'<th>'._('Modify')."</th>\n"
+			.'<th>'._('Username')."</th>\n"
+			.'<th>'._('Time')."</th>\n"
+			.'<th>'._('Duration')."</th>\n"
+			."</tr>\n"
+			."</thead>\n"
+			."<tfoot>\n"
+			."<tr>\n"
+			."<td colspan=\"$num_cols\">\n"
+			."<input type=\"hidden\" name=\"action\""
+			." value=\"delete\" />\n"
+			."<input type=\"hidden\" name=\"day\" value=\"$day\""
+			." />\n"
+			."<input type=\"hidden\" name=\"month\""
+			." value=\"$month\" />\n"
+			."<input type=\"hidden\" name=\"year\" value=\"$year\""
+			." />\n"
+			.'<input type="submit" value="'._('Delete Selected')
+			."\" />\n"
+			."</td>\n"
+			."</tr>\n"
+			."</tfoot>\n"
+			."<tbody>\n";
+	}
 
-  $lasttime = mktime(0, 0, 0, $month, $day - 1, $year);
-  $lastday = date('j', $lasttime);
-  $lastmonth = date('n', $lasttime);
-  $lastyear = date('Y', $lasttime);
-  $lastmonthname = month_name($lastmonth);
+	// Nate - determine if the whole day or just a single event should
+	// be displayed
+	if(!empty($eventid)) $result = get_event_by_id($eventid);
+	else $result = get_events_by_date($day, $month, $year);
 
-  $nexttime = mktime(0, 0, 0, $month, $day + 1, $year);
-  $nextday = date('j', $nexttime);
-  $nextmonth = date('n', $nexttime);
-  $nextyear = date('Y', $nexttime);
-  $nextmonthname = month_name($nextmonth);
+	$i = 0;
+	while ($row = mysql_fetch_array($result)) {
+		$i++;
+		$name = stripslashes($row['username']);
+		$subject = stripslashes($row['subject']);
+		$desc = nl2br(stripslashes($row['description']));
+		$desc = ereg_replace("[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]",
+				"<a href=\"\\0\">\\0</a>", $desc);
+		$typeofevent = $row['eventtype'];
+		$temp_time = $row['start_since_epoch'];
+		switch($typeofevent) {
+			case 1:
+				if(empty($hours_24)) $timeformat = 'j F Y, g:i A';
+				else $timeformat = 'j F Y, G:i';
+				$time = date($timeformat, $temp_time);
+				break;
+			case 2:
+				$time = date('j F Y, ', $temp_time) . _('FULL DAY');
+				break;
+			case 3:
+				$time = date('j F Y, ', $temp_time) . _('??:??');
+				break;
+			default:
+				$time = "????: $typeofevent";
+		}
 
-  $output = "<div class=\"phpc-navbar\">\n"
-      ."<a href=\"display.php?month=$lastmonth&amp;day=$lastday&amp;"
-      ."year=$lastyear\">$lastmonthname $lastday</a>\n"
-      ."<a href=\"index.php?month=$month&amp;day=$day&amp;year=$year\">"
-      ._('Back to Calendar')."</a>\n"
-      ."<a href=\"display.php?month=$nextmonth&amp;day=$nextday&amp;"
-      ."year=$nextyear\">$nextmonthname $nextday</a>\n"
-      ."</div>\n"
-."<form action=\"add.php\">\n"
-."<div class=\"phpc-button\">\n"
-."<input type=\"hidden\" value=\"$month\" name=\"month\">\n"
-."<input type=\"hidden\" value=\"$year\" name=\"year\">\n"
-."<input type=\"hidden\" value=\"$day\" name=\"day\">\n"
-.'<input type="submit" value="'._('Add Item')."\">\n"
-."</div>\n"
-."</form>\n"
-."<form action=\"delete.php\">\n"
-.'<table class="phpc-main">
-  <caption>' . "$day $monthname $year" . '</caption>
-  <colgroup>
-    <col width="48" />
-  </colgroup>
-  <colgroup>
-    <col width="96" />
-    <col width="160" />
-    <col width="160" />
-    <col width="128" />
-  </colgroup>
-  <thead>
-  <tr>
-    <th>' .  _('Select') . '</th>
-    <th>' .  _('Modify') . '</th>
-    <th>' .  _('Username') . '</th>
-    <th>' .  _('Time') . '</th>
-    <th>' .  _('Duration') . '</th>
-    <th>' .  _('Subject') . '</th>
-    <th>' .  _('Description') . '</th>
-  </tr>
-  </thead>
-  <tfoot>
-  <tr>
-    <td colspan="7">
-      <input type="submit" value="' .  _('Delete Selected') . "\" />
-<input type=\"hidden\" name=\"day\" value=\"$day\" />
-<input type=\"hidden\" name=\"month\" value=\"$month\" />
-<input type=\"hidden\" name=\"year\" value=\"$year\" />
-    </td>
-  </tr>
-  </tfoot>
-  <tbody>\n";
+		$durtime = $row['end_since_epoch'] - $temp_time;
+		$durmin = ($durtime / 60) % 60;     //minute per 60 seconds, 60 per hour
+		$durhr  = ($durtime / 3600) % 24;   //hour per 3600 seconds, 24 per day
+		$durday = floor($durtime / 86400);  //day per 86400 seconds
 
-  $result = get_events_by_date($day, $month, $year);
+		if($typeofevent == 2) $temp_dur = _("FULL DAY");
+		else $temp_dur = "$durday days, $durhr hours, $durmin minutes";
 
-  $i = 0;
-  while ($row = mysql_fetch_array($result)) {
-    $i++;
-    $name = stripslashes($row['username']);
-    $subject = stripslashes($row['subject']);
-    $desc = nl2br(stripslashes($row['description']));
-    $typeofevent = $row['eventtype'];
-    $temp_time = $row['start_since_epoch'];
-    switch($typeofevent) {
-     case 1:
-      if(!HOURS_24) $timeformat = 'j F Y, g:i A';
-      else $timeformat = 'j F Y, G:i';
-      $time = date($timeformat, $temp_time);
-      break;
-     case 2:
-      $time = date('j F Y, ', $temp_time) . _('FULL DAY');
-      break;
-     case 3:
-      $time = date('j F Y, ', $temp_time) . _('??:??');
-      break;
-     default:
-      $time = "????: $typeofevent";
-    }
+		$output .= "<tr>\n";
+		if(!empty($GLOBALS['user'])) {
+			$output .= "<td><input type=\"checkbox\""
+				." name=\"delete\" value=\"".$eventid."\""
+				." /></td>\n"
+				."<td><a href=\"index.php?action=modify"
+				."&amp;id=$eventid\">"._('Modify')
+				."</a></td>\n";
+		}
 
-    $durtime = $row['end_since_epoch'] - $temp_time;
-    $durmin = ($durtime / 60) % 60;     //minute per 60 seconds, 60 per hour
-    $durhr  = ($durtime / 3600) % 24;   //hour per 3600 seconds, 24 per day
-    $durday = floor($durtime / 86400);  //day per 86400 seconds
+		$num_body_cols = $num_cols - 1;
+		$output .= "<td>$name</td>\n"
+			."<td>$time</td>\n"
+			."<td>$temp_dur</td>\n"
+			."</tr>\n<tr>\n"
+			.'<th>'._('Subject')."</th>\n"
+			."<td colspan=\"$num_body_cols\"><strong>$subject"
+			."</strong></td></tr>\n"
+			."<tr>\n"
+			.'<th>'._('Description')."</th>\n"
+			."<td colspan=\"$num_body_cols\" class=\"description\">"
+			."$desc</td></tr>\n";
+	}
 
-    if($typeofevent == 2) $temp_dur = _("FULL DAY");
-    else $temp_dur = "$durday days, $durhr hours, $durmin minutes";
+	if($i == 0) {
+		$output .= "<tr><td colspan=\"$num_cols\"><strong>"
+			._('No events on this day.')."</strong></td></tr>\n";
+	}
 
-    $output .= "  <tr>
-    <td><input type=\"checkbox\" name=\"delete\" value=\"$row[id]\" /></td>
-    <td><a href=\"modify.php?id=$row[id]\">" . _('Modify') . "</a></td>
-    <td>$name</td>
-    <td>$time</td>
-    <td>$temp_dur</td>
-    <td>$subject</td>
-    <td class=\"description\">$desc</td>
-  </tr>\n";
-  }
-
-  if(empty($i)) {
-    $output .= '  <tr>
-    <td colspan="7"><h2>' . _('No events on this day.') . "</h2></td>
-  </tr>\n";
-  }
-
-  return $output . "</tbody>
-</table>
-</form>";
+	return $output . "</tbody>
+		</table>";
+		if(!empty($GLOBALS['user'])) $output .= "</form>\n";
+		$output .= "<div><a class=\"box\" href=\"index.php?month=$month"
+			."&amp;day=$day&amp;year=$year\">"._('Back to Calendar')
+			."</a></div>\n";
 }
 ?>

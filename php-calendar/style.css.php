@@ -1,11 +1,14 @@
 <?php
-include 'config.inc.php';
+include 'miniconfig.inc.php';
 header('Content-Type: text/css');
 if(isset($HTTP_GET_VARS['bgcolor1'])) {
 $bgcolor1 = $HTTP_GET_VARS['bgcolor'];
 } else {
 $bgcolor1 = BG_COLOR1;
 }
+/* you get the idea, eventually the colors should be pickable by a user,
+but we need a real concept of users first
+*/
 $bgcolor2 = BG_COLOR2;
 $bgcolor3 = BG_COLOR3;
 $bgcolor4 = BG_COLOR4;

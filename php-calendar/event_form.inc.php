@@ -19,22 +19,12 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-include('calendar.inc.php');
-
 function event_form($action)
 {
-	global $BName, $HTTP_GET_VARS;
+	global $BName, $HTTP_GET_VARS, $day, $month, $year;
 
-	if(!isset($HTTP_GET_VARS['day'])) $day = date("j");
-	else $day = $HTTP_GET_VARS['day'];
-
-	if(!isset($HTTP_GET_VARS['month'])) $month = date("n");
-	else $month = $HTTP_GET_VARS['month'];
-
-	if(!isset($HTTP_GET_VARS['year'])) $year = date("Y");
-	else $year = $HTTP_GET_VARS['year'];
-
-	$output = "<form method=\"get\" action=\"eventsub.php\">\n"
+	$output = "<form action=\"index.php\">\n"
+		."<input type=\"hidden\" name=\"action\" value=\"submit\" />\n"
 		.'<table class="phpc-main"';
 	if($BName == 'MSIE') {
 		$output .= ' cellspacing="0"';
@@ -50,7 +40,7 @@ function event_form($action)
 			$id = $HTTP_GET_VARS['id'];
 		}
 
-		$output .= sprintf(_("Modifying id #%d"), $id);
+		$output .= sprintf(_('Modifying id #%d'), $id);
 
 		$result = get_event_by_id($id);
 
@@ -85,7 +75,8 @@ function event_form($action)
 		$username = '';
 		$subject = '';
 		$desc = '';
-		if($day == date('j') && $month == date('n') && $year == date('Y')) {
+		if($day == date('j') && $month == date('n')
+				&& $year == date('Y')) {
 			$hour = date('G') + 1;
 			if(!HOURS_24) {
 				if($hour >= 12) {

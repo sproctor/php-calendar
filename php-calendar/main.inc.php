@@ -19,11 +19,9 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-include('calendar.inc.php');
-
-function navbar($year, $month, $day)
+function month_navbar()
 {
-	global $BName;
+	global $BName, $day, $month, $year;
 
 	$nextmonth = $month + 1;
 	$lastmonth = $month - 1;
@@ -43,21 +41,14 @@ function navbar($year, $month, $day)
 		._('next month')."</a>\n"
 		."<a href=\"?month=$month&amp;year=$nextyear\">"
 		._('next year')."</a>\n"
-		."</div>\n"
-		."<form action=\"add.php\">\n"
-."<div class=\"phpc-button\">\n"
-."<input type=\"hidden\" value=\"$month\" name=\"month\" />\n"
-."<input type=\"hidden\" value=\"$year\" name=\"year\" />\n"
-."<input type=\"hidden\" value=\"$day\" name=\"day\" />\n"
-.'<input type="submit" value="'._('Add Item')."\" />\n"
-."</div>\n"
-		."</form>\n";
+		."</div>\n";
+
 	return $output;
 }
 
-function calendar($year, $month, $day)
+function calendar()
 {
-	global $BName;
+	global $BName, $day, $month, $year;
 
 	$database = connect_to_database();
 	$currentday = date('j');
@@ -112,7 +103,7 @@ function calendar($year, $month, $day)
 			}
 
 			$output .= "<td valign=\"top\" class=\"$current_era\">\n"
-				."<a href=\"display.php?day=$day_of_month&amp;month=$month&amp;"
+				."<a href=\"index.php?action=display&amp;day=$day_of_month&amp;month=$month&amp;"
 				."year=$year\" class=\"date\">$day_of_month</a>\n";
 
 			$result = get_events_by_date($day_of_month, $month, $year);
@@ -151,13 +142,14 @@ function calendar($year, $month, $day)
 						$event_time = 'BROKEN';
 				}
 
-				if($row['start_since_epoch'] < gmmktime(0, 0, 0, $month, $day_of_month,
-							$year))
-					$event_time = '<<<';
-
-				$output .= "<tr>\n"
-					."<td>\n"
-					."<a href=\"display.php?day=$day_of_month&amp;month=$month&amp;year=$year\"><span class=\"event-time\">$event_time</span> $subject</a>
+				// - Nate - Changed the QueryString from day, month, year to event_id
+				//<a href=\"index.php?action=display&amp;event_id=".$row['id']."\">
+				$output .= "
+					<tr>
+					<td>
+					<a href=\"index.php?action=display&amp;day=$day_of_month&amp;month=$month&amp;year=$year&amp;event_id=".$row['id']."\">
+					$event_time - $subject
+					</a>
 					</td>
 					</tr>";
 			}
@@ -181,4 +173,5 @@ function calendar($year, $month, $day)
 		</table>
 		';
 }
+
 ?>

@@ -1,16 +1,6 @@
 php-calendar: php + mysql + xhtml 1.1 + CSS 2 [+ gettext]
 
-Version 0.8:
-	* updated the config file format
-	* made the error messages use gettext, I don't know why they didn't
-	  before.
-	* You _need_ gettext-0.11.6-pre1 or later to parse with xgettext.  I
-	  have a copy of this if anyone needs it.  My language support is
-	  going to lag unless someone helps.  I only speak English, so it's
-	  not useful to me.
-	* Very much updated documentation
-
-Version 0.7 (10/5/02):
+Version 0.7:
 	* added .php to end of .inc files
 	* cleaned up the look a little,
 	* modifying posts is fixed which may or may not have been broken in
