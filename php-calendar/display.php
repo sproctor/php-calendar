@@ -1,6 +1,8 @@
 <?php
-include_once("config.php");
-include("header.php");
+include_once("calendar.inc");
+include_once("config.inc");
+
+top();
 
 $tablename = date('Fy', mktime(0,0,0,$month,1,$year));
 $monthname = date('F', mktime(0,0,0,$month,1,$year));
@@ -137,5 +139,5 @@ echo "
 </div>
 </form>";
 
-include("footer.php");
+bottom();
 ?>

@@ -1,6 +1,8 @@
 <?php
-include_once("config.php");
-include("header.php");
+include_once("calendar.inc")
+include_once("config.inc");
+
+top();
 
 $database = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
 mysql_select_db($mysql_database, $database);
@@ -332,5 +334,5 @@ echo "<div>
   <a class=\"box\" href=\"index.php?month=$month&amp;year=$year\">Back to Calendar</a>
 </div>";
 
-include("footer.php");
+bottom();
 ?>

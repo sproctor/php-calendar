@@ -1,16 +1,8 @@
 <?
-$title = 'PHP-Calendar 0.5';
-$header = 'PHP-Calendar';
-$bgcolor = '#336699';
-$textcolor = 'blue';
-$headercolor = 'white';
-$headerbgcolor = 'gray';
-$tablebgcolor = '#CCCCCC';
-$futurecolor = 'white';
-$pastcolor = '#CCDDFF';
-$nonecolor = 'silver';
-$bordercolor = '#339999';
-include ("header.php");
+include_once("calendar.inc");
+include_once("install.inc");
+
+top();
 
 if(empty($action)) {
     echo "<form method=\"GET\" action=\"install.php\">
@@ -48,7 +40,7 @@ if(empty($action)) {
 </table>
 </form>";
 } else {
-    $fp = fopen("config.php", "w")
+    $fp = fopen("config.inc", "w")
         or die("Couldn't open config file");
 
     $fstring = "<?php
@@ -100,9 +92,9 @@ if(empty($action)) {
     $result = mysql_query($query)
         or die("Could not change privileges"); 
     
-    mysql_create_db($my_database)
-        or die("Could not create database");
-    
+    if(!mysql_query("CREATE DATABASE $my_database") and mysql_errno() != "1007")
+      die(mysql_errno() . ": " . mysql_error());
+
     mysql_select_db($my_database)
         or die("Could not select $my_database");
 
@@ -128,6 +120,9 @@ if(empty($action)) {
         or die("Could not flush privileges");
 
     mysql_close($database);
+
+  echo "<p><a href=\".\">Calendar created</a></p>";
 }
-include("footer.php");
+
+bottom();
 ?>

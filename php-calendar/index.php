@@ -1,6 +1,8 @@
 <?php
-include_once("config.php");
-include("header.php");
+include_once("calendar.inc");
+include_once("config.inc");
+
+top();
 
 $currentday = date("j");
 $currentmonth = date("n");
@@ -154,78 +156,80 @@ echo "
   <tbody>\n";
 
 for ($j = 0;; $j++) {
-    echo "  <tr>\n";
-    for ($k = 0; $k<7; $k++) {
-        $i = $j * 7 + $k;
-        $nextday = $i - $firstday + 1;
-        if($i < $firstday || $nextday > $lastday) {
-            echo "    <td class=\"none\">" . ifold("&nbsp;", "") . "</td>";
-            continue;
-        }
-        if ($currentyear > $year || ($currentmonth > $month 
-                                     || $currentmonth == $month 
-                                     && $currentday > $nextday) 
-            && $currentyear == $year) {
-            $pastorfuture = "past";
-        } else {
-            $pastorfuture = "future";
-        }
-        echo "    <td valign=\"top\"" . ifold(" height=\"80\" bgcolor=\"$tablebgcolor\">", " class=\"$pastorfuture\">");
-        echo "      <a href=\"display.php?day=$nextday&amp;month=$month&amp;year=$year\" 
+  echo "  <tr>\n";
+  for ($k = 0; $k<7; $k++) {
+    $i = $j * 7 + $k;
+    $nextday = $i - $firstday + 1;
+    if($i < $firstday || $nextday > $lastday) {
+      echo "    <td class=\"none\">" . ifold("&nbsp;", "") . "</td>";
+      continue;
+    }
+    if($currentyear > $year || $currentyear == $year
+       && ($currentmonth > $month || $currentmonth == $month 
+           && $currentday > $nextday)) {
+      $pastorfuture = "past";
+    } else {
+      $pastorfuture = "future";
+    }
+    echo "    <td valign=\"top\""
+      . ifold(" height=\"80\" bgcolor=\"$tablebgcolor\">", 
+              " class=\"$pastorfuture\">");
+    echo "      <a href=\"display.php?day=$nextday&amp;month=$month&amp;year=$year\" 
         class=\"date\">", ifold("<b>$nextday</b></a>", "$nextday</a>");
-        $query = "SELECT subject, stamp, eventtype FROM $mysql_tablename WHERE stamp >= \"$year-$month-$nextday 00:00:00\" AND stamp <= \"$year-$month-$nextday 23:59:59\" ORDER BY stamp";
-        $result = mysql_query($query)
-            or die("couldn't select item");
-        $tabling = 0;
+    $query = "SELECT subject, stamp, eventtype FROM $mysql_tablename WHERE stamp >= \"$year-$month-$nextday 00:00:00\" AND stamp <= \"$year-$month-$nextday 23:59:59\" ORDER BY stamp";
+    $result = mysql_query($query)
+      or die("couldn't select item");
+    $tabling = 0;
 
-        while($row = mysql_fetch_array($result)) {
-            if($tabling == 0) {
-                if(isold()) { 
-                    echo "
+    while($row = mysql_fetch_array($result)) {
+      if($tabling == 0) {
+        if(isold()) { 
+          echo "
       <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\">
       <tr><td bgcolor=\"$bordercolor\">
       <table class=\"$pastorfuture\" cellspacing=\"1\" cellpadding=\"2\" 
         border=\"0\" width=\"100%\">\n"; 
-                } elseif($BName == "MSIE") { 
-                    echo "\n<table class=\"$pastorfuture\" cellspacing=\"1\">\n";
-                } else {
-                    echo "\n<table class=\"$pastorfuture\">\n";
-                }
-                $tabling = 1;
-            }
+        } elseif($BName == "MSIE") { 
+          echo "\n<table class=\"$pastorfuture\" cellspacing=\"1\">\n";
+        } else {
+          echo "\n<table class=\"$pastorfuture\">\n";
+        }
+        $tabling = 1;
+      }
             
-            $subject = stripslashes($row['subject']);
-            $typeofevent = $row['eventtype'];
+      $subject = stripslashes($row['subject']);
+      $typeofevent = $row['eventtype'];
+
+      if($typeofevent == 3) {
+        $temp_time = "??:??";
+      } elseif($typeofevent == 2) {
+        $temp_time = "FULL DAY";
+      } else {
+        $temp_time = date("g:i A", strtotime($row['stamp']));
+      }
             
-            if($typeofevent == 3) {
-                $temp_time = "??:??";
-            } elseif($typeofevent == 2) {
-                $temp_time = "FULL DAY";
-            } else {
-                $temp_time = date("g:i A", strtotime($row['stamp']));
-            }
-            
-            echo "
+      echo "
         <tr>
           <td>
-            ", ifold('<font size="1">', ""), "<a href=\"display.php?day=$nextday&amp;month=$month&amp;year=$year\">
+            ", ifold('<font size="1">', ""), 
+        "<a href=\"display.php?day=$nextday&amp;month=$month&amp;year=$year\">
               $temp_time - $subject
             </a>", ifold("</font>", ""), "
           </td>
         </tr>\n";
-        }
+    }
         
         
-        if ($tabling == 1) {
-            echo "      </table>";
-            if(isold()) { echo "</td></tr></table>"; }
-        }
-        echo "    </td>";
+    if($tabling == 1) {
+      echo "      </table>";
+      if(isold()) { echo "</td></tr></table>"; }
     }
-    echo "  </tr>\n";
-    if($nextday >= $lastday) {
-        break;
-    }
+    echo "    </td>";
+  }
+  echo "  </tr>\n";
+  if($nextday >= $lastday) {
+    break;
+  }
 }
 
 echo "</table>\n";
@@ -233,5 +237,5 @@ if(isold()) {
     echo "</td></tr></table>"; 
 }
 
-include("footer.php");
+bottom();
 ?>
