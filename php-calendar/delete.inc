@@ -29,7 +29,7 @@ function del()
 
   $output = "<div class=\"box\" style=\"width: 50%\">";
 
-  foreach($del_array as $del_value) {
+  while(list(, $del_value) = each($del_array)) {
     list($drop, $id) = explode("=", $del_value);
 
     if(preg_match("/delete$/", $drop) == 0) continue;
