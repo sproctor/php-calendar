@@ -42,10 +42,10 @@ if($HTTP_GET_VARS['action'] == 'style') {
 include($phpc_root_path . 'includes/calendar.php');
 include($phpc_root_path . 'includes/setup.php');
 
-$legal_actions = array('event_add', 'event_delete', 'display', 'event_submit',
-		'event_modify', 'search', 'login', 'logout', 'options');
+$legal_actions = array('event_form', 'delete', 'display', 'event_submit',
+		'search', 'login', 'logout', 'options');
 
-if(!array_search($action, $legal_actions)) {
+if(!is_int(array_search($action, $legal_actions, true))) {
 	soft_error(_('Invalid action'));
 }
 

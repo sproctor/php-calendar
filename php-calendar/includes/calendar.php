@@ -286,7 +286,7 @@ function navbar()
 	$output = '';
 
 	if(($config['anon_permission'] || isset($user)) && $action != 'add') { 
-		$output .= "<a href=\"index.php?action=add&amp;day=$day"
+		$output .= "<a href=\"index.php?action=event_form&amp;day=$day"
 			."&amp;month=$month&amp;year=$year\">"._('Add Item')
 			."</a>\n";
 	}

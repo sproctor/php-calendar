@@ -19,7 +19,7 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-function event_form($action)
+function event_form()
 {
 	global $BName, $vars, $day, $month, $year, $db, $config;
 
@@ -33,6 +33,7 @@ function event_form($action)
 		."<caption>\n";
 
 	if(isset($vars['id'])) {
+		// modifying
 		$id = $vars['id'];
 
 		$output .= sprintf(_('Modifying id #%d'), $id);
@@ -136,7 +137,7 @@ function event_form($action)
 		.create_select('hour',
 				$config['hours_24'] ? '24hour' : '12hour',
 				$hour)
-		."<b>:</b>\n";
+		."<b>:</b>\n"
 		.create_select('minute', 'minute', $minute);
 
 	if(!$config['hours_24']) {
