@@ -63,9 +63,8 @@ function event_delete()
 		$html[] = tag('p', _('No items selected.'));
 	}
 
-	array_unshift($html, tag('div',
-				attributes('class="box"', 'style="width: 50%'));
-	return $html;
+	return array_merge(tag('div', attributes('class="box"',
+                                        'style="width: 50%"')), $html);
 }
 
 ?>
