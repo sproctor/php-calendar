@@ -68,6 +68,7 @@ caption {
   font-weight: normal;
   padding: 0;
   width: 100%;
+  overflow: hide;
 }
 
 #calendar table a {
