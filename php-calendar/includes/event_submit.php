@@ -63,7 +63,7 @@ function event_submit()
                 soft_error(_('No hour was given.'));
         }
 
-	if(!$config['hour_24'] && array_key_exists('pm', $vars)
+	if(!$config['hours_24'] && array_key_exists('pm', $vars)
                         && $vars['pm']) {
                 if($hour < 12) {
                         $hour += 12;

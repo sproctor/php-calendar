@@ -1,5 +1,5 @@
 ****************
-PHP-Calenar 0.8
+PHP-Calenar 0.10
 ****************
 
 0 Preface
@@ -13,8 +13,8 @@ PHP-Calenar 0.8
 
 The installation work arounds in this installation guide are based on the input
 I have recevied from other users on different systems.  If you encounter
-installation issues that are not mentioned here, PLEASE notify me at
-sproctor@rottenvegetable.org.
+installation issues that are not mentioned here, PLEASE notify (contact info
+is in the AUTHORS file).
 
 ---------------
 1 Requirements
@@ -91,4 +91,4 @@ would be happy to include it in future versions.
 
 Good luck!
 Sean Proctor
-sproctor@rottenvegetable.org
+(See AUTHORS file for contact info)

@@ -1,4 +1,4 @@
-PHP-Calendar 0.9
+PHP-Calendar 0.10
 ----------------
 
 This program requires a PHP enabled webserver and an SQL server installed.
@@ -11,4 +11,4 @@ Read INSTALL for installation instructions.
 Please read the COPYING file for information regarding distribution of this 
 program.  This script is released under the GPL, so enjoy!
 
-Any questions, contact me at sproctor@ccs.neu.edu.
+Any questions, contact me at the E-mail address found in the AUTHORS files.
