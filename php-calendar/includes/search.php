@@ -60,7 +60,7 @@ function search_results()
 					tag('th', _('Subject')),
 					tag('th', _('Date Time')),
 					tag('th', _('Description')))));
-	while ($row = $db->FetchRow($result)) {
+	while ($row = $result->FetchRow()) {
 		$i++;
 		$name = stripslashes($row['username']);
 		$subject = stripslashes($row['subject']);

@@ -264,7 +264,7 @@ function install_base()
 		."define('SQL_DATABASE', '$my_database');\n"
 		."define('SQL_PREFIX',   '$my_prefix');\n"
 		."\$dbms = '$sql_type';\n"
-		."?>";
+		."?>\n";
 
 	fwrite($fp, $fstring)
 		or die("could not write to file");

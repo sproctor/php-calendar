@@ -63,7 +63,7 @@ function event_form()
 
 	} else {
 		// case "add":
-		$title = _('Adding item to calendar');
+		$title = _('Adding event to calendar');
 
 		$subject = '';
 		$desc = '';
@@ -118,8 +118,7 @@ function event_form()
 					tag('tr',
 						tag('td', attributes( 'colspan="2"'),
 							$input,
-							tag('input', attributes('type="submit"',
-									'value="'._("Submit Item").'"')),
+							create_submit(_("Submit Event")),
 							create_hidden('action', 'event_submit')))),
 				tag('tbody',
 					tag('tr',
