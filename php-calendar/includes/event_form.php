@@ -34,37 +34,26 @@ function event_form()
 		$subject = stripslashes($row['subject']);
 		$desc = htmlspecialchars(stripslashes($row['description']));
 
-		$dateformat = '/(\d+)-(\d+)-(\d+)/';
-		preg_match($dateformat, $row['startdate'], $matches);
-		$year = $matches[1];
-		$month = $matches[2];
-		$day = $matches[3];
+		$year = $row['year'];
+		$month = $row['month'];
+		$day = $row['day'];
 
-		preg_match($dateformat, $row['enddate'], $matches);
-		$end_year = $matches[1];
-		$end_month = $matches[2];
-		$end_day = $matches[3];
+		$end_year = $row['end_year'];
+		$end_month = $row['end_month'];
+		$end_day = $row['end_day'];
 
-		preg_match('/(\d+):(\d+):\d+/', $row['starttime'], $matches);
-		$hour = $matches[1];
-		$minute = $matches[2];
+		if($config['hours_24']) {
+                        $hour = $row['hour'];
+		} else {
+                        $hour = $row['hour12'];
+                        if($row['ampm'] == 'PM') {
+                                $pm = TRUE;
+                        }
+                }
+		$minute = $row['minute'];
 
 		$durmin = $row['duration'] % 60;
 		$durhr  = $row['duration'] / 60;
-
-		if(!$config['hours_24']) {
-			if($hour > 12) {
-				$pm = true;
-				$hour = $hour - 12;
-			} if($hour == 12) {
-                                $pm = true;
-                        } if($hour == 0) {
-                                $pm = false;
-                                $hour = 12;
-                        } else {
-                                $pm = false;
-                        }
-		}
 
 		$typeofevent = $row['eventtype'];
 
@@ -73,25 +62,25 @@ function event_form()
 		$title = _('Adding event to calendar');
 
 		$subject = '';
-		$desc = '';
-		if($day == date('j') && $month == date('n')
-				&& $year == date('Y')) {
-			$hour = date('G') + 1;
-			if(!$config['hours_24']) {
-				if($hour > 12) {
-					$hour = $hour - 12;
-					$pm = true;
-				} if($hour == 12) {
+                $desc = '';
+                if($day == date('j') && $month == date('n')
+                                && $year == date('Y')) {
+                        if($config['hours_24']) {
+                                $hour = date('G');
+                        } else {
+                                $hour = date('g');
+                                if(date('a') == 'pm') {
                                         $pm = true;
-                                } if($hour == 0) {
-                                        $pm = false;
-                                        $hour = 12;
                                 } else {
                                         $pm = false;
                                 }
-			}
-		} else { $hour = 6; $pm = true; }
-		$minute = 0;
+                        }
+                } else {
+                        $hour = 6;
+                        $pm = true;
+                }
+
+                $minute = 0;
 		$end_day = $day;
 		$end_month = $month;
 		$end_year = $year;

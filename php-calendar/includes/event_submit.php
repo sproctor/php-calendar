@@ -63,16 +63,18 @@ function event_submit()
                 soft_error(_('No hour was given.'));
         }
 
-	if(!$config['hours_24'] && array_key_exists('pm', $vars)
-                        && $vars['pm']) {
-                if($hour < 12) {
-                        $hour += 12;
+        if(!$config['hours_24'])
+        {
+                if (array_key_exists('pm', $vars) && $vars['pm']) {
+                        if ($hour < 12) {
+                                $hour += 12;
+                        }
+                } elseif($hour == 12) {
+                        $hour = 0;
                 }
-        } elseif($hour == 12) {
-                $hour = 0;
         }
 
-	if(array_key_exists('minute', $vars)) {
+        if(array_key_exists('minute', $vars)) {
                 $minute = $vars['minute'];
         } else {
                 soft_error(_('No minute was given.'));

@@ -192,7 +192,8 @@ function event_type($num)
 			//return _('Daily');
 			return false;
 		case 5:
-			return _('Weekly');
+			//return _('Weekly');
+                        return false;
 		case 6:
 			return _('Monthly');
 	}
@@ -278,7 +279,7 @@ function get_events_by_date($day, $month, $year)
 2 - full day event
 3 - unknown time event
 4 - reserved
-5 - weekly event
+5 - weekly event - disabled until supported by adodb
 6 - monthly event
 */
         $startdate = $db->SQLDate('Y-m-d', 'startdate');
@@ -292,9 +293,9 @@ function get_events_by_date($day, $month, $year)
 //		." OR startdate = '$year-$month-$day')\n"
 		.")\n"
 		."AND calendar = '$calendar_name'\n"
-		."AND (eventtype != 5 OR DAYOFWEEK(startdate) = "
-		."DAYOFWEEK(DATE '$date'))\n"
-		."AND (eventtype != 6 OR DAYOFMONTH(startdate) = '$day')\n"
+//		."AND (eventtype != 5 OR DAYOFWEEK(startdate) = "
+//		."DAYOFWEEK(DATE '$date'))\n"
+		."AND (eventtype != 6 OR ".$db->SQLDate('d')." = '$day')\n"
 		."ORDER BY starttime";
 
 	$result = $db->Execute($query)
@@ -312,9 +313,16 @@ function get_event_by_id($id)
 	$users_table = SQL_PREFIX . 'users';
 
 	$query = "SELECT $events_table.*,\n"
-		."YEAR($events_table.startdate) AS year,\n"
-		."MONTH($events_table.startdate) AS month,\n"
-		."DAYOFMONTH($events_table.startdate) AS day,\n"
+		.$db->SQLDate('Y', "$events_table.startdate")." AS year,\n"
+		.$db->SQLDate('m', "$events_table.startdate")." AS month,\n"
+		.$db->SQLDate('d', "$events_table.startdate")." AS day,\n"
+		.$db->SQLDate('H', "$events_table.startdate")." AS hour,\n"
+		.$db->SQLDate('h', "$events_table.startdate")." AS hour12,\n"
+		.$db->SQLDate('i', "$events_table.startdate")." AS minute,\n"
+		.$db->SQLDate('a', "$events_table.startdate")." AS ampm,\n"
+		.$db->SQLDate('Y', "$events_table.enddate")." AS end_year,\n"
+		.$db->SQLDate('m', "$events_table.enddate")." AS end_month,\n"
+		.$db->SQLDate('d', "$events_table.enddate")." AS end_day,\n"
 		."$users_table.username\n"
 		."FROM $events_table\n"
 		."LEFT JOIN $users_table\n"
@@ -591,9 +599,9 @@ function create_select($name, $type, $select)
 				$text = month_name($i);
 				break;
 			case 'event':
-				$text = event_type($i) . ' ' . _('Event');
-				//nasty hack because 4 is reserved.
-				if($i == 4) continue(2);
+                                $event = event_type($i);
+				if(!$event) continue(2);
+				$text = "$event " . _('Event');
 				break;
 			case 'minute':
 				$text = sprintf('%02d', $i);
