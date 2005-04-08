@@ -165,7 +165,8 @@ function display_days($day_of_week, $week_of_month, $month, $year)
                                                 "href=\"$phpc_script"
                                                 ."?action=display&amp;"
                                                 ."id=$row[id]\""),
-				"$event_time - $subject"));
+				($event_time ? "$event_time - " : '')
+                                . $subject));
 		}
 		if(sizeof($html_events) != 1) $html_day[] = $html_events;
 	}

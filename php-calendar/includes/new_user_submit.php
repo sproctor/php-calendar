@@ -31,11 +31,11 @@ function new_user_submit()
                 return tag('div', _('Permission denied'));
         }
 
-        if(empty($var['user_name'])) {
+        if(empty($vars['user_name'])) {
                 return tag('div', _('You must specify a user name'));
         }
 
-        if(empty($var['password1'])) {
+        if(empty($vars['password1'])) {
                 return tag('div', _('You must specify a password'));
         }
 
@@ -48,10 +48,10 @@ function new_user_submit()
 
         /* start the UIDs at 2 to be backward compatible with all calendars
            that don't have a uid sequence */
-        $query = "insert into ".SQL_PREFIX."users\n"
+        $query = "INSERT into ".SQL_PREFIX."users\n"
                 ."(uid, username, password, calendar) VALUES\n"
                 ."('".$db->GenID(SQL_PREFIX . 'uid', 2)."', "
-                "'$_POST[user_name]', '$passwd', $calendar_name)";
+                ."'$_POST[user_name]', '$passwd', '$calendar_name')";
 
         $result = $db->Execute($query)
                 or db_error(_('Error creating user'), $query);

@@ -177,7 +177,9 @@ function formatted_time_string($time, $type)
 		case 2:
 			return _('FULL DAY');
 		case 3:
-			return '??:??';
+			return _('TBA');
+                case 4:
+                        return '';
 	}
 }
 
@@ -191,10 +193,9 @@ function event_type($num)
 		case 2:
 			return _('Full Day');
 		case 3:
-			return _('Unknown Time');
+			return _('To Be Announced');
 		case 4:
-			//return _('Daily');
-			return false;
+			return _('No Time');
 		case 5:
 			return _('Weekly');
 		case 6:
@@ -303,7 +304,8 @@ function get_events_by_date($day, $month, $year)
 	$query = 'SELECT * FROM '.SQL_PREFIX."events\n"
 		."WHERE $date >= $startdate AND $date <= $enddate\n"
                 // find normal events
-                ."AND (eventtype = 1 OR eventtype = 2 OR eventtype = 3\n"
+                ."AND (eventtype = 1 OR eventtype = 2 OR eventtype = 3 "
+                ."OR eventtype = 4\n"
                 // find weekly events
 		."OR (eventtype = 5 AND $dow_startdate = $dow_date)\n"
                 // find monthly events
@@ -636,9 +638,8 @@ function create_select($name, $type, $select)
 				$text = month_name($i);
 				break;
 			case 'event':
-                                $event = event_type($i);
-				if(!$event) continue(2);
-				$text = "$event " . _('Event');
+                                $text = event_type($i);
+				if($text === false) continue(2);
 				break;
 			case 'minute':
 				$text = sprintf('%02d', $i);
