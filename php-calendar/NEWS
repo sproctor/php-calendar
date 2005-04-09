@@ -1,13 +1,18 @@
 NEWS
 -----
 
+0.10.3:
+        - fixed an issue creating new users (thanks to Volker Hoffman)
+        - changed Unknown time to To Be Announced (suggested by Mark Mason)
+        - added a new event option No Time (suggested by Alex Falcone)
+
 0.10.2 (04 April 2005):
         - fix a problem where modifying an event didn't pick up the date
           properly.
         - try to require creating config.php less often on install
         - add SQL_PREFIX to user sequence table. may break existing calendars
           where more users than the defaults were added when more users are
-          created
+          created (thanks to Nathan Barham)
         - stop anonymous users from trying to edit events when they aren't
           allowed. and same for preferences.
         - fix old broken hour behavior.
@@ -15,6 +20,8 @@ NEWS
           mistake in addition to minutes.
         - Require a username and password when creating a new user
         - No longer shipping modified ADOdb. Require ADOdb 4.62 or greater.
+          (Thanks to John Lim)
+        - URL to be modified via $phpc_script in setup.php
 
 0.10.1 (10 Jan 2005):
         - fix security vulnerability with regard to loading any any PHP file
@@ -114,7 +121,7 @@ Version 0.4 (2/20/2002):
 Version 0.3 (02/15/2002):
         * fix to make links work properly in IE
         * minor color tweak
-        * bugfixes (thanks to richard@datafordummies.com)
+        * bugfixes (thanks to richard datafordummies.com)
         * more fixes for Netscape 4
         * made time input more user-friendly and fixed bugs with the old
         method.
