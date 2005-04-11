@@ -68,7 +68,7 @@ function options_form()
 						tag('td', create_text('subject_max',
 								$config['subject_max']))),
 					tag('tr',
-						tag('th', _('Anonymous Permission').':'),
+						tag('th', _('Grant Full Access to Anonymous Users').':'),
 						tag('td', create_select('anon_perm', 'anon_perm',
 								$config['anon_permission']))))));
 }

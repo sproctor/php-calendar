@@ -5,6 +5,9 @@ NEWS
         - fixed an issue creating new users (thanks to Volker Hoffman)
         - changed Unknown time to To Be Announced (suggested by Mark Mason)
         - added a new event option No Time (suggested by Alex Falcone)
+        - fixed an issue with older versions of MySQL where the hour
+          and minute wouldn't be read correctly causing them to be lost
+          on modification (thanks to Mark Mason)
 
 0.10.2 (04 April 2005):
         - fix a problem where modifying an event didn't pick up the date

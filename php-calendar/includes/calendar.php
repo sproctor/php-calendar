@@ -333,8 +333,6 @@ function get_event_by_id($id)
 		.$db->SQLDate('Y', "$events_table.startdate")." AS year,\n"
 		.$db->SQLDate('m', "$events_table.startdate")." AS month,\n"
 		.$db->SQLDate('d', "$events_table.startdate")." AS day,\n"
-		.$db->SQLDate('H', "$events_table.starttime")." AS hour,\n"
-		.$db->SQLDate('i', "$events_table.starttime")." AS minute,\n"
 		.$db->SQLDate('Y', "$events_table.enddate")." AS end_year,\n"
 		.$db->SQLDate('m', "$events_table.enddate")." AS end_month,\n"
 		.$db->SQLDate('d', "$events_table.enddate")." AS end_day,\n"

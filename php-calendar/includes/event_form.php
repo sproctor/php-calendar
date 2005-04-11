@@ -42,8 +42,8 @@ function event_form()
 		$month = $row['month'];
 		$day = $row['day'];
 
-                $hour = $row['hour'];
-		$minute = $row['minute'];
+                $hour = date('H', strtotime($row['starttime']));
+		$minute = date('i', strtotime($row['starttime']));
 
 		$end_year = $row['end_year'];
 		$end_month = $row['end_month'];
