@@ -30,15 +30,11 @@ if ( !defined('IN_PHPC') ) {
 }
 
 require_once($phpc_root_path . 'config.php');
+require_once($phpc_root_path . 'includes/calendar.php');
 
 $phpc_script = $_SERVER['SCRIPT_NAME'];
 $phpc_url = (empty($_SERVER['HTTPS']) ? 'http' : 'https')
 	. "://{$_SERVER['SERVER_NAME']}$phpc_script?{$_SERVER['QUERY_STRING']}";
-
-
-// SQL codes
-define('BEGIN_TRANSACTION', 1);
-define('END_TRANSACTION', 2);
 
 require_once($phpc_root_path . 'includes/db.php');
 

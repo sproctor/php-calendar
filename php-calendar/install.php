@@ -27,11 +27,7 @@
 $phpc_root_path = './';
 $calendar_name = '0';
 
-define('IN_PHPC', 1);
-
-// SQL codes
-define('BEGIN_TRANSACTION', 1);
-define('END_TRANSACTION', 2);
+define('IN_PHPC', true);
 
 require_once($phpc_root_path . 'includes/calendar.php');
 require_once($phpc_root_path . 'adodb/adodb.inc.php');
