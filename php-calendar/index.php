@@ -55,7 +55,7 @@ define('TEXTCOLOR2',   '#FFFFFF');
    Do not modify anything under this point
 */
 
-define('IN_PHPC', 1);
+define('IN_PHPC', true);
 
 if(!empty($_GET) && array_key_exists('action', $_GET)
                         && $_GET['action'] == 'style') {
