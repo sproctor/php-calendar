@@ -29,8 +29,12 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-require_once($phpc_root_path . 'config.php');
-require_once($phpc_root_path . 'includes/calendar.php');
+if(file_exists($phpc_root_path . 'config.php')) {
+        require_once($phpc_root_path . 'config.php');
+} else {
+        require($phpc_root_path . 'install.php');
+        exit;
+}
 
 $phpc_script = $_SERVER['SCRIPT_NAME'];
 $phpc_url = (empty($_SERVER['HTTPS']) ? 'http' : 'https')
