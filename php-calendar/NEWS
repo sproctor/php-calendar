@@ -8,6 +8,12 @@ NEWS
         - fixed an issue with older versions of MySQL where the hour
           and minute wouldn't be read correctly causing them to be lost
           on modification (thanks to Mark Mason)
+        - moved old array-based HTML data structure to a class-based one
+          (this was a huge change, any weird behavior you see was probably
+          caused by this)
+        - fixed the issue with options being selected incorrectly in the
+          admin page
+        - added an update script (only supports 0.8 and newer so far)
 
 0.10.2 (04 April 2005):
         - fix a problem where modifying an event didn't pick up the date

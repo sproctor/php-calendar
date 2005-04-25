@@ -86,7 +86,7 @@ function search_results()
                                                 tag('th', _('Subject')),
                                                 tag('th', _('Date Time')),
                                                 tag('th', _('Description')))));
-                foreach($tags as $tag) $html[] = $tag;
+                foreach($tags as $tag) $html->add($tag);
         }
 
 	return $html;
@@ -94,8 +94,11 @@ function search_results()
 
 function search_form()
 {
-	global $day, $month, $year, $phpc_script;
+	global $day, $month, $year, $phpc_script, $month_names;
 
+        $day_sequence = create_sequence(1, 31);
+        $month_sequence = create_sequence(1, 12);
+        $year_sequence = create_sequence(1970, 2037);
 	$html_table = tag('table', attributes('class="phpc-main"'),
 			tag('caption', _('Search')),
 			tag('tfoot',
@@ -111,25 +114,30 @@ function search_form()
 			tag('tr',
 				tag('td', _('From') . ': '),
 				tag('td',
-					create_select('sday', 'day', $day),
-					create_select('smonth', 'month', $month),
-					create_select('syear', 'year', $year))),
+					create_select('sday', $day_sequence,
+                                                $day),
+					create_select('smonth', $month_names,
+                                                $month, $month_sequence),
+					create_select('syear', $year_sequence,
+                                                $year))),
 			tag('tr',
 				tag('td', _('To') . ': '),
 				tag('td',
-					create_select('eday', 'day', $day),
-					create_select('emonth', 'month', $month),
-					create_select('eyear', 'year', $year))),
+					create_select('eday', $day_sequence,
+                                                $day),
+					create_select('emonth', $month_names,
+                                                $month, $month_sequence),
+					create_select('eyear', $year_sequence,
+                                                $year))),
 			tag('tr',
 				tag('td', _('Sort By') . ': '),
 				tag('td',
-					tag('select', attributes('name="sort"'),
-						tag('option',
-							attributes('value="startdate"'),
-							_('Start Date')),
-						tag('option',
-							attributes('value="subject"'),
-							_('Subject'))))),
+                                        create_select('sort',
+                                                array(_('Start Date'),
+                                                        _('Subject')),
+                                                        false,
+                                                        array('startdate',
+                                                                'subject')))),
 			tag('tr',
 				tag('td', _('Order') . ': '),
 				tag('td',

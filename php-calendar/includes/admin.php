@@ -32,45 +32,68 @@ function admin()
 	return tag('div', options_form(), new_user_form());
 }
 
+define('CHECK', 1);
+define('TEXT', 2);
+define('DROPDOWN', 3);
+
+// name, text, type, value(s)
+$config_form = array(
+        array('start_monday', _('Start Monday'), CHECK),
+        array('hours_24', _('24 Hour Time'), CHECK),
+        array('translate', _('Translate'), CHECK),
+        array('calendar_title', _('Calendar Title'), TEXT),
+        array('subject_max', _('Maximum Subject Length'), TEXT),
+        array('anon_permission', _('Anonymous Users'), DROPDOWN,
+                array(_('Cannot add nor modify events'),
+                        _('Can add but not modify events'),
+                        _('Can add and modify events'))));
 
 function options_form()
 {
-	global $config, $phpc_script;
+	global $config, $phpc_script, $config_form;
 
-	return tag('form', attributes("action=\"$phpc_script\"",
+        $tbody = tag('tbody');
+
+        foreach($config_form as $element) {
+                $name = $element[0];
+                $text = $element[1];
+                $type = $element[2];
+
+                switch($type) {
+                        case CHECK:
+                                $input = create_checkbox($name, '1',
+                                                $config[$name]);
+                                break;
+                        case TEXT:
+                                $input = create_text($name, $config[$name]);
+                                break;
+                        case DROPDOWN:
+                                $sequence = create_sequence(0,
+                                                count($element[3]) - 1);
+                                $input = create_select($name, $element[3],
+                                                $config[$name], $sequence);
+                                break;
+                        default:
+                                soft_error(_('Unsupported config type')
+                                                . ": $type");
+                }
+
+                $tbody->add(tag('tr',
+                                tag('th', $text.':'),
+                                tag('td', $input)));
+        }
+
+        return tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
 			tag('table', attributes('class="phpc-main"'),
 				tag('caption', _('Options')),
 				tag('tfoot',
-					tag('tr',
-						tag('td', attributes('colspan="2"'),
+                                        tag('tr',
+                                                tag('td', attributes('colspan="2"'),
 							create_hidden('action', 'options_submit'),
 							create_submit(_('Submit'))))),
-				tag('tbody',
-					tag('tr',
-						tag('th', _('Start Monday').':'),
-						tag('td', create_checkbox('start_monday', '1',
-								$config['start_monday']))),
-					tag('tr',
-						tag('th', _('24 hour').':'),
-						tag('td', create_checkbox('hours_24', '1',
-								$config['hours_24']))),
-					tag('tr',
-						tag('th', _('Translate').':'),
-						tag('td', create_checkbox('translate', '1',
-								$config['translate']))),
-					tag('tr',
-						tag('th', _('Calendar Title').':'),
-						tag('td', create_text('calendar_title',
-								$config['calendar_title']))),
-					tag('tr',
-						tag('th', _('Maximum Subject Length').':'),
-						tag('td', create_text('subject_max',
-								$config['subject_max']))),
-					tag('tr',
-						tag('th', _('Grant Full Access to Anonymous Users').':'),
-						tag('td', create_select('anon_perm', 'anon_perm',
-								$config['anon_permission']))))));
+				$tbody));
+
 }
 
 function new_user_form()

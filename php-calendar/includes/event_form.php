@@ -25,7 +25,8 @@ if ( !defined('IN_PHPC') ) {
 
 function event_form()
 {
-	global $vars, $day, $month, $year, $db, $config, $phpc_script;
+	global $vars, $day, $month, $year, $db, $config, $phpc_script,
+               $month_names, $event_types;
 
 	if(isset($vars['id'])) {
 		// modifying
@@ -97,24 +98,28 @@ function event_form()
 		$typeofevent = 1;
 	}
 
+        if($config['hours_24']) {
+                $hour_sequence = create_sequence(0, 23);
+        } else {
+                $hour_sequence = create_sequence(1, 12);
+        }
+        $minute_sequence = create_sequence(0, 59, 5, 'minute_pad');
+        $year_sequence = create_sequence(1970, 2037);
+        $month_sequence = create_sequence(1, 12);
+
 	$html_time = tag('td',
-			create_select('hour', $config['hours_24'] ?
-				'24hour' : '12hour', $hour),
+			create_select('hour', $hour_sequence, $hour),
 			tag('b', ':'),
-			create_select('minute', 'minute', $minute));
+			create_select('minute', $minute_sequence, $minute));
 
 	if(!$config['hours_24']) {
-		$attributes_am = attributes('value="0"');
-		$attributes_pm = attributes('value="1"');
 		if($pm) {
-			$attributes_pm[] = 'selected="selected"';
-		} else {
-			$attributes_am[] = 'selected="selected"';
+                        $value = 1;
+                } else {
+                        $value = 0;
                 }
-		$html_time[] = tag('select',
-			attributes('name="pm"', 'size="1"'),
-			tag('option', $attributes_am, 'AM'),
-			tag('option', $attributes_pm, 'PM'));
+		$html_time->add(create_select('pm', array(_('AM'), _('PM')),
+                                        $value, array(0, 1)));
 	}
 
 	if(isset($id)) $input = create_hidden('id', $id);
@@ -122,6 +127,7 @@ function event_form()
 
 	$attributes = attributes('class="phpc-main"');
 
+        $day_of_month_sequence = get_day_of_month_sequence($month, $year);
 	return tag('form', attributes("action=\"$phpc_script\""),
 			tag('table', $attributes,
 				tag('caption', $title),
@@ -135,29 +141,29 @@ function event_form()
 					tag('tr',
 						tag('th', _('Date of event')),
 						tag('td',
-							create_select('day', 'day', $day),
-							create_select('month', 'month', $month),
-							create_select('year', 'year', $year))),
+							create_select('day', $day_of_month_sequence, $day),
+							create_select('month', $month_names, $month, $month_sequence),
+							create_select('year', $year_sequence, $year))),
 					tag('tr',
 						tag('th', _('Date multiple day event ends')),
 						tag('td',
-							create_select('endday', 'day', $end_day),
-							create_select('endmonth', 'month', $end_month),
-							create_select('endyear', 'year', $end_year))),
+							create_select('endday', $day_of_month_sequence, $end_day),
+							create_select('endmonth', $month_names, $end_month, $month_sequence),
+							create_select('endyear', $year_sequence, $end_year))),
 					tag('tr',
 						tag('th', _('Event type')),
 						tag('td',
 							create_select('typeofevent',
-								'event', $typeofevent))),
+								$event_types, $typeofevent, create_sequence(1, count($event_types))))),
 					tag('tr',
 						tag('th',  _('Time')),
 						$html_time),
 					tag('tr',
 						tag('th', _('Duration')),
 						tag('td',
-							create_select('durationhour', '24hour', $durhr),
-							_('hours') . "\n",
-							create_select('durationmin', 'minute', $durmin),
+							create_select('durationhour', create_sequence(0, 23), $durhr),
+							_('hour(s)') . "\n",
+							create_select('durationmin', $minute_sequence, $durmin),
 							_('minutes') . "\n")),
 					tag('tr',
 						tag('th', _('Subject').' ('.$config['subject_max'].' '._('chars max').')'),

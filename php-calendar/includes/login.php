@@ -46,11 +46,11 @@ function login()
 			return tag('h2', _('Loggin in...'));
 		}
 
-		$html[] = tag('h2', _('Sorry, Invalid Login'));
+		$html->add(tag('h2', _('Sorry, Invalid Login')));
 
 	}
 
-	$html[] = login_form();
+	$html->add(login_form());
 	return $html;
 }
 

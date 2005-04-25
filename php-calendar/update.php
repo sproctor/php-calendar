@@ -1,6 +1,7 @@
 <?php
 /*
     Copyright 2002 Sean Proctor, Nathan Poiro
+    Copyright 2005 Sean Proctor
 
     This file is part of PHP-Calendar.
 
@@ -25,7 +26,34 @@ $phpc_root_path = './';
 
 require_once($phpc_root_path . "includes/calendar.php");
 require_once($phpc_root_path . 'adodb/adodb.inc.php');
-require_once($phpc_root_path . 'config.php');
+require_once($phpc_root_path . 'install.inc.php');
+
+$have_config = false;
+if(file_exists($phpc_root_path . 'config.php')) {
+        require_once($phpc_root_path . 'config.php');
+        $have_config = true;
+} elseif(file_exists($phpc_root_path . 'config.inc.php')) {
+        require_once($phpc_root_path . 'config.inc.php');
+        $have_config = true;
+} elseif(!empty($_GET['configfile'])) {
+        if(file_exists($_GET['configfile'])) {
+                require_once($_GET['configfile']);
+                $have_config = true;
+        } else {
+                echo "<p>File not found</p>\n";
+        }
+} else {
+        echo "<p>No config file found.</p>\n";
+}
+
+if(!$have_config) {
+        echo "<form action=\"update.php\" method=\"get\">\n";
+        echo "Config file (include full path): ";
+        echo "<input name=\"configfile\" type=\"text\" />\n";
+        echo "<input type=\"submit\" value=\"Update\" />\n";
+        echo "</form>";
+        exit;
+}
 
 // grab the DB info from the config file
 if(defined('SQL_HOST')) {
@@ -92,45 +120,38 @@ if(false) {
                 or die(mysql_error());
 }
 
-// update calendars
-$query = "SELECT * FROM ".SQL_PREFIX."calendars LIMIT 0 , 1";
-$result = $db->Execute($query) or db_error('Error in query', $query);
-if($result->FieldCount() == 0) {
-        soft_error("You cannot upgrade a DB with no events.");
-}
-$event = $result->FetchRow();
-if(array_key_exists('calendar', $event)) {
-        $calendarName = $event['calendar'];
-} else {
-        if(array_key_exists('calno', $event)) {
-                $query = "ALTER TABLE ".SQL_PREFIX."calendars\n"
-                        ."CHANGE calno calendar varchar(32)";
-        } else {
-                $query = "ALTER TABLE ".SQL_PREFIX."calendars\n"
-                        ."ADD calendar varchar(32)";
+update_calno('calendars');
+update_calno('events');
+update_calno('users');
+
+echo "<p>Paste this into your config.php:</p>";
+echo "<pre>" . htmlspecialchars(create_config($sql_host, $sql_user, $sql_passwd,
+                        $sql_database, $sql_prefix, $sql_type)) . "</pre>";
+
+function update_calno($table_suffix)
+{
+        global $db, $calendarName;
+        // update calno column in $table_suffix
+        $query = "SELECT * FROM ".SQL_PREFIX."$table_suffix LIMIT 0 , 1";
+        $result = $db->Execute($query) or db_error('Error in query', $query);
+        if($result->FieldCount() == 0) {
+                soft_error("You cannot upgrade a DB with no events.");
         }
-        $db->Execute($query) or db_error("Error in alter", $query);
-        echo "<p>Updated calendar in calendar table</p>";
+        $event = $result->FetchRow();
+        if(array_key_exists('calendar', $event)) {
+                $calendarName = $event['calendar'];
+        } else {
+                if(array_key_exists('calno', $event)) {
+                        $query = "ALTER TABLE ".SQL_PREFIX."$table_suffix\n"
+                                ."CHANGE calno calendar varchar(32)";
+                } else {
+                        $query = "ALTER TABLE ".SQL_PREFIX."$table_suffix\n"
+                                ."ADD calendar varchar(32)";
+                }
+                $db->Execute($query) or db_error("Error in alter", $query);
+                echo "<p>Updated calendar in ".SQL_PREFIX
+                        ."$table_suffix table</p>";
+        }
 }
 
-// update events
-$query = "SELECT * FROM ".SQL_PREFIX."events LIMIT 0 , 1";
-$result = $db->Execute($query) or db_error('Error in query', $query);
-if($result->FieldCount() == 0) {
-        soft_error("You cannot upgrade a DB with no events.");
-}
-$event = $result->FetchRow();
-if(array_key_exists('calendar', $event)) {
-        $calendarName = $event['calendar'];
-} else {
-        if(array_key_exists('calno', $event)) {
-                $query = "ALTER TABLE ".SQL_PREFIX."events\n"
-                        ."CHANGE calno calendar varchar(32)";
-        } else {
-                $query = "ALTER TABLE ".SQL_PREFIX."events\n"
-                        ."ADD calendar varchar(32)";
-        }
-        $db->Execute($query) or db_error("Error in alter", $query);
-        echo "<p>Updated calendar in events table</p>";
-}
 ?>

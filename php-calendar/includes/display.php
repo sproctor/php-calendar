@@ -64,7 +64,7 @@ function display_month($month, $year)
 {
 	$days = tag('tr');
 	for($i = 0; $i < 7; $i++) {
-		$days[] = tag('th', day_name($i));
+		$days->add(tag('th', day_name($i)));
 	}
 
 	return tag('div',
@@ -81,8 +81,7 @@ function display_month($month, $year)
 // return XHTML data for the month
 function create_month($month, $year)
 {
-
-	return array_merge(tag('tbody'), create_weeks(1, $month, $year));
+	return tag('tbody', create_weeks(1, $month, $year));
 }
 
 // creates a display for a particular week and the rest of the weeks until the
@@ -90,10 +89,9 @@ function create_month($month, $year)
 // returns XHTML data for the weeks
 function create_weeks($week_of_month, $month, $year)
 {
-	if($week_of_month > weeks_in_month($month, $year)) return array();
+	if($week_of_month > weeks_in_month($month, $year)) return NULL;
 
-	return array_cons(array_merge(tag('tr'), display_days(1, $week_of_month,
-					$month, $year)),
+	return tag('tr', display_days(1, $week_of_month, $month, $year),
 			create_weeks($week_of_month + 1, $month, $year));
 }
 
@@ -103,7 +101,7 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 {
 	global $db, $phpc_script;
 
-	if($day_of_week > 7) return array();
+	if($day_of_week > 7) return NULL;
 
 	$day_of_month = ($week_of_month - 1) * 7 + $day_of_week
 		- day_of_first($month, $year);
@@ -151,6 +149,7 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 		/* Start off knowing we don't need to close the event
 		 *  list.  loop through each event for the day
 		 */
+                $have_events = false;
 		$html_events = tag('ul');
 		while($row = $result->FetchRow($result)) {
 			$subject = stripslashes($row['subject']);
@@ -159,20 +158,24 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 					$row['starttime'],
 					$row['eventtype']);
 
-			$html_events[] = tag('li',
-				tag('a',
-					attributes(
-                                                "href=\"$phpc_script"
-                                                ."?action=display&amp;"
-                                                ."id=$row[id]\""),
-				($event_time ? "$event_time - " : '')
-                                . $subject));
+			$event = tag('li',
+                                        tag('a',
+                                                attributes(
+                                                        "href=\"$phpc_script"
+                                                        ."?action=display&amp;"
+                                                        ."id=$row[id]\""),
+                                                ($event_time ? "$event_time - "
+                                                 : '')
+                                                . $subject));
+                        $html_events->add($event);
+                        $have_events = true;
 		}
-		if(sizeof($html_events) != 1) $html_day[] = $html_events;
+		if($have_events) $html_day->add($html_events);
 	}
 
-	return array_cons($html_day, display_days($day_of_week + 1,
-				$week_of_month, $month, $year));
+	$html_day->add(display_days($day_of_week + 1, $week_of_month, $month,
+                                $year));
+        return $html_day;
 }
 
 // returns a string representation of $duration for $typeofevent
@@ -229,16 +232,16 @@ function display_day($day, $month, $year)
 						tag('th', _('Description'))
 					     )));
 		if($admin) {
-			$html_table[] = tag('tfoot',
-					tag('tr',
-						tag('td',
-							attributes('colspan="4"'),
-							create_hidden('action', 'event_delete'),
-							create_hidden('day', $day),
-							create_hidden('month', $month),
-							create_hidden('year', $year),
-							create_submit(_('Delete Selected')))));
-		}
+			$html_table->add(tag('tfoot',
+                                                tag('tr',
+                                                        tag('td',
+                                                                attributes('colspan="4"'),
+                                                                create_hidden('action', 'event_delete'),
+                                                                create_hidden('day', $day),
+                                                                create_hidden('month', $month),
+                                                                create_hidden('year', $year),
+                                                                create_submit(_('Delete Selected'))))));
+                }
 
 		$html_body = tag('tbody');
 
@@ -256,32 +259,35 @@ function display_day($day, $month, $year)
                                         attributes('class="phpc-list"'));
 
 			if($admin) {
-                                $html_subject[] = create_checkbox('id',
-                                                $row['id']);
+                                $html_subject->add(create_checkbox('id',
+                                                        $row['id']));
                         }
 
-			$html_subject[] = create_id_link(tag('strong',
-                                                $subject),
-					'display', $row['id']);
+			$html_subject->add(create_id_link(tag('strong',
+                                                        $subject),
+                                                'display', $row['id']));
 
 			if($admin) {
-				$html_subject[] = ' (';
-				$html_subject[] = create_id_link(_('Modify'),
-                                        'event_form', $row['id']);
-				$html_subject[] = ')';
+				$html_subject->add(' (');
+				$html_subject->add(create_id_link(_('Modify'),
+                                                'event_form', $row['id']));
+				$html_subject->add(')');
 			}
 
-			$html_body[] = tag('tr',
-				$html_subject,
-				tag('td', attributes('class="phpc-list"'),
-                                        $time_str),
-				tag('td', attributes('class="phpc-list"'),
-                                        $dur_str),
-				tag('td', attributes('class="phpc-list"'),
-                                        $desc));
+			$html_body->add(tag('tr',
+                                        $html_subject,
+                                        tag('td',
+                                                attributes('class="phpc-list"'),
+                                                $time_str),
+                                        tag('td',
+                                                attributes('class="phpc-list"'),
+                                                $dur_str),
+                                        tag('td',
+                                                attributes('class="phpc-list"'),
+                                                $desc)));
 		}
 
-		$html_table[] = $html_body;
+		$html_table->add($html_body);
 
 		if($admin) $output = tag('form',
 			attributes("action=\"$phpc_script\""),

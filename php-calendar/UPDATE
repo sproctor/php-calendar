@@ -1,0 +1,14 @@
+So far only versions 0.8 and later are supported.
+
+Previous versions of 0.10 and 0.9. You should be able to just copy your
+config.php into the new directory (or just simply overwrite the old directory).
+You may need to install or update ADOdb. Please see the INSTALL file for more
+information.
+
+Either copy your config file over or use the update.php to specify the location.
+Open update.php in your web browser. It should automatically update your old
+database. I highly recommend backing up your database before doing this. I am
+not responsible for any damage done. Copy the text to your config.php (you
+should overwrite an text that was in there previously).
+
+You're done.

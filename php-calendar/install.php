@@ -31,6 +31,7 @@ define('IN_PHPC', true);
 
 require_once($phpc_root_path . 'includes/calendar.php');
 require_once($phpc_root_path . 'adodb/adodb.inc.php');
+require_once($phpc_root_path . 'install.inc.php');
 
 echo '<html>
 <head>
@@ -234,16 +235,8 @@ function install_base()
 	$fp = fopen("$phpc_root_path/config.php", 'w')
 		or die('Couldn\'t open config file.');
 
-	$fstring = "<?php\n"
-		."define('SQL_HOST',     '$my_hostname');\n"
-		."define('SQL_USER',     '$my_username');\n"
-		."define('SQL_PASSWD',   '$my_passwd');\n"
-		."define('SQL_DATABASE', '$my_database');\n"
-		."define('SQL_PREFIX',   '$my_prefix');\n"
-		."define('SQL_TYPE',     '$sql_type');\n"
-		."?>\n";
-
-	fwrite($fp, $fstring)
+	fwrite($fp, create_config($my_hostname, $my_username, $my_passwd,
+                                $mydatabase, $my_prefix, $sql_type)
 		or die("could not write to file");
 	fclose($fp);
 

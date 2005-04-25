@@ -23,168 +23,171 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-function is_attribute_list($var)
-{
-	return (!empty($var) && is_array($var) && isset($var[0])
-			&& $var[0] == 'is_attribute_list');
+$HtmlInline = array('a', 'strong');
+
+class Html {
+        var $tagName;
+        var $attributeList;
+        var $childElements;
+
+        function Html() {
+                $args = func_get_args();
+                return call_user_func_array(array(&$this, '__construct'),
+                                $args);
+        }
+
+        function __construct() {
+                $args = func_get_args();
+                $this->tagName = array_shift($args);
+                $this->attributeList = NULL;
+                $this->childElements = NULL;
+
+                $arg = array_shift($args);
+                if($arg == NULL) return;
+
+                if(is_a($arg, 'AttributeList')) {
+                        $this->attributeList = $arg;
+                        $arg = array_shift($args);
+                }
+
+                do {
+                        if(is_object($arg) && !is_a($arg, 'Html')) {
+                                soft_error(_('Invalid class') . ': '
+                                                . get_class($arg));
+                        }
+                        if($this->childElements == NULL) {
+                                $this->childElements = array();
+                        }
+                        $this->childElements[] = $arg;
+                        $arg = array_shift($args);
+                } while($arg !== NULL);
+        }
+
+        function add($htmlElement) {
+                if($this->childElements == NULL) {
+                        $this->childElements = array();
+                }
+                if(is_array($htmlElement)) {
+                        foreach($htmlElement as $element) {
+                                if(is_object($element)
+                                                && !is_a($element, 'Html')) {
+                                        soft_error(_('Invalid class') . ': '
+                                                        . get_class($element));
+                                }
+                        }
+                        $htmlElement = array_merge($this->childElements,
+                                        $htmlElement);
+                } elseif(is_object($element) && !is_a($element, 'Html')) {
+                        soft_error(_('Invalid class') . ': '
+                                        . get_class($element));
+                }
+                $this->childElements[] = $htmlElement;
+        }
+
+        function prepend($htmlElement) {
+                if($this->childElements == NULL) {
+                        $this->childElements = array();
+                }
+                if(is_array($htmlElement)) {
+                        foreach($htmlElement as $element) {
+                                if(is_object($element)
+                                                && !is_a($element, 'Html')) {
+                                        soft_error(_('Invalid class') . ': '
+                                                        . get_class($element));
+                                }
+                        }
+                        $htmlElement = array_merge($this->childElements,
+                                        $htmlElement);
+                } elseif(is_object($element) && !is_a($element, 'Html')) {
+                        soft_error(_('Invalid class') . ': '
+                                        . get_class($element));
+                }
+                $this->childElements = array_merge($htmlElement,
+                                $this->childElements);
+        }
+
+        function toString() {
+                global $HtmlInline;
+
+                /*echo "<pre>";
+                print_r($this);
+                echo "</pre>";
+                die();*/
+                $output = "<{$this->tagName}";
+
+                if($this->attributeList != NULL) {
+                        $output .= ' ' . $this->attributeList->toString();
+                }
+
+                if($this->childElements == NULL) {
+                        $output .= " />\n";
+                        return $output;
+                }
+
+                $output .= ">";
+
+                foreach($this->childElements as $child) {
+                        if(is_object($child)) {
+                                if(is_a($child, 'Html')) {
+                                        $output .= $child->toString();
+                                } else {
+                                        soft_error(_('Invalid class') . ': '
+                                                        . get_class($child));
+                                }
+                        } else {
+                                $output .= $child;
+                        }
+                }
+
+                $output .= "</{$this->tagName}>";
+
+                if(!in_array($this->tagName, $HtmlInline)) {
+                        $output .= "\n";
+                }
+                return $output;
+        }
 }
 
-function attribute_list_to_string($attrs)
-{
-	$output = '';
-	reset($attrs);
-	if(next($attrs) == false) return $output;
-	while(list(,$value) = each($attrs)) {
-		$output .= ' ' . $value;
-	}
+class AttributeList {
+        var $list;
 
-	return $output;
-}
+        function AttributeList() {
+                $args = func_get_args();
+                return call_user_func_array(array(&$this, '__construct'),
+                                $args);
+        }
 
-function is_tagname($var)
-{
-	return (!empty($var) && is_array($var) && isset($var[0])
-			&& $var[0] == 'is_tagname');
-}
+        function __construct() {
+                $this->list = array();
+                $args = func_get_args();
+                foreach($args as $arg) {
+                        $this->list = array_merge($this->list, $arg);
+                }
+        }
 
-function get_tag_name($html)
-{
-	return $html[1];
-}
+        function add($str) {
+                $this->list[] = $str;
+        }
 
-function remove_tag(&$html)
-{
-	foreach($html as $key => $val) {
-		if(is_tagname($val)) {
-			array_splice($html, $key, 1);
-			return get_tag_name($val);
-		}
-	}
-
-echo "<pre>ack\n";
-var_dump($html);
-echo "</pre>";
-die;
-
-	return NULL;
-}
-
-function remove_attributes(&$html)
-{
-	foreach($html as $key => $val) {
-		if(is_attribute_list($val)) {
-			array_splice($html, $key, 1);
-			return $val;
-		}
-	}
-
-	return NULL;
-}
-
-$new_line = true;
-
-function html_to_string($html)
-{
-	global $new_line;
-
-	$inline = array('a', 'strong');
-
-	$tag_name = remove_tag($html);
-	$attributes = remove_attributes($html);
-	/*
-echo '<pre>';
-var_dump($html);
-echo '</pre>';
-die;
-*/
-
-	if(empty($tag_name)) {
-		echo '<pre>';
-		var_dump($html);
-		echo '</pre>';
-		soft_error('No tag name given');
-	}
-
-	if($new_line || in_array($tag_name, $inline)) {
-		$new_line = false;
-		$output = '';
-	} else $output = "\n";
-
-	$output .= "<$tag_name";
-
-	if(isset($attributes)) {
-		$output .= attribute_list_to_string($attributes);
-	}
-
-	if(sizeof($html) == 0) {
-		$output .= " />\n";
-		$new_line = true;
-		return $output;
-	}
-
-	$output .= ">";
-	//if(!in_array($tag_name, $inline)) $output .= "\n";
-
-	foreach($html as $val) {
-		if(is_array($val)) {
-			$output .= html_to_string($val);
-		} else {
-			$output .= $val;
-		}
-	}
-
-	$output .= "</$tag_name>";
-	if(!in_array($tag_name, $inline)) {
-		$output .= "\n";
-		$new_line = true;
-	}
-	return $output;
+        function toString() {
+                return implode(' ', $this->list);
+        }
 }
 
 function tag()
 {
-	$args = func_get_args();
-	$tag_name = array_shift($args);
-	return array_cons(array('is_tagname', $tag_name), $args);
+        $args = func_get_args();
+        $html = new Html();
+        call_user_func_array(array(&$html, '__construct'), $args);
+        return $html;
 }
 
-function attributes()
+function attributes($args)
 {
-	$attrs = func_get_args();
-        $attribs = array();
-        foreach($attrs as $a) {
-                if(is_array($a)) {
-                        $attribs = array_merge($attribs, $a);
-                } else {
-                        array_push($attribs, $a);
-                }
-        }
-	array_unshift($attribs, 'is_attribute_list');
-
-	return $attribs;
-}
-
-function array_cons($x, $xs)
-{
-        array_unshift($xs, $x);
-	return $xs;
-}
-
-function array_head($array)
-{
-	return $array[0];
-}
-
-function array_tail($array)
-{
-	array_shift($array);
-	return $array;
-}
-
-function array_append($xs, $x)
-{
-	$xs[] = $x;
-	return $xs;
+        $args = func_get_args();
+        $attrs = new AttributeList();
+        call_user_func_array(array(&$attrs, '__construct'), $args);
+        return $attrs;
 }
 
 ?>

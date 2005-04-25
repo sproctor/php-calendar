@@ -48,7 +48,7 @@ function options_submit()
         else
                 $query .= "translate = 0,\n";
 
-        $query .= "anon_permission = '$vars[anon_perm]',\n"
+        $query .= "anon_permission = '$vars[anon_permission]',\n"
                 ."calendar_title = '$vars[calendar_title]',\n"
                 ."subject_max = '$vars[subject_max]'\n"
                 ."WHERE calendar=$calendar_name;";
