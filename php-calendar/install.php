@@ -329,12 +329,17 @@ function add_calendar()
 	global $db, $phpc_root_path, $calendar_name;
 
 	require_once($phpc_root_path . 'config.php');
-	require_once($phpc_root_path . 'includes/db.php');
 
 	$hours_24 = 0;
 	$start_monday = 0;
 	$translate = 1;
 	$calendar_title = 'PHP-Calendar';
+
+        // Make the database connection.
+        $db = NewADOConnection(SQL_TYPE);
+        if(!$db->Connect(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE)) {
+                db_error(_("Could not connect to the database"));
+        }
 
 	$query = "INSERT INTO ".SQL_PREFIX."calendars (calendar, hours_24, "
 	."start_monday, translate, subject_max, calendar_title) "
