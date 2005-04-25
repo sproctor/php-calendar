@@ -29,18 +29,25 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-if(file_exists($phpc_root_path . 'config.php')) {
-        require_once($phpc_root_path . 'config.php');
-} else {
+// Run the installer if we have no config file
+if(!file_exists($phpc_root_path . 'config.php')) {
         require($phpc_root_path . 'install.php');
         exit;
 }
+
+require_once($phpc_root_path . 'config.php');
+require_once($phpc_root_path . 'includes/calendar.php');
+require_once($phpc_root_path . 'adodb/adodb.inc.php');
 
 $phpc_script = $_SERVER['SCRIPT_NAME'];
 $phpc_url = (empty($_SERVER['HTTPS']) ? 'http' : 'https')
 	. "://{$_SERVER['SERVER_NAME']}$phpc_script?{$_SERVER['QUERY_STRING']}";
 
-require_once($phpc_root_path . 'includes/db.php');
+// Make the database connection.
+$db = NewADOConnection(SQL_TYPE);
+if(!$db->Connect(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE)) {
+        db_error(_("Could not connect to the database"));
+}
 
 foreach($_GET as $key => $value) {
 	$vars[$key] = $value;
@@ -62,42 +69,27 @@ if(isset($_SESSION['password'])) {
   $password = $_SESSION['password'];
 }
 
-/*
-   echo "<pre>get vars:</pre>";
-   foreach ($_GET as $key=>$val){
-   echo "<pre>$key: $val</pre>";
-   }
-   echo "<pre>post vars:</pre>";
-   foreach ($_POST as $key=>$val) {
-   echo "<pre>$key: $val</pre>";
-   }
-   echo "<pre>all vars:</pre>";
-   foreach ($vars as $key=>$val) {
-   echo "<pre>$key: $val</pre>";
-   }
- */
-
-$currentday = date('j');
-$currentmonth = date('n');
-$currentyear = date('Y');
-
 if (!isset($vars['month'])) {
-	$month = $currentmonth;
+	$month = date('n');
 } else {
 	$month = $vars['month'];
 }
 
 if(!isset($vars['year'])) {
-	$year = $currentyear;
+	$year = date('Y');
 } else {
-	$year = date('Y', mktime(0,0,0,$month,1,$vars['year']));
+	$year = date('Y', mktime(0, 0, 0, $month, 1, $vars['year']));
 }
 
 if(!isset($vars['day'])) {
-	if($month == $currentmonth) $day = $currentday;
-	else $day = 1;
+	if($month == date('n') && $year == date('Y')) {
+                $day = date('j');
+	} else {
+                $day = 1;
+        }
 } else {
-	$day = ($vars['day'] - 1) % date("t", mktime(0,0,0,$month,1,$year)) + 1;
+	$day = ($vars['day'] - 1) % date('t', mktime(0, 0, 0, $month, 1, $year))
+                + 1;
 }
 
 while($month < 1) $month += 12;

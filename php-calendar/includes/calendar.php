@@ -61,7 +61,7 @@ function db_error($str, $query = "")
 
         $string = "$str<br />".$db->ErrorNo().': '.$db->ErrorMsg();
         if($query != "") {
-                $string .= "<br>"._('SQL query').": $query";
+                $string .= "<br />"._('SQL query').": $query";
         }
         soft_error($string);
 }
@@ -615,7 +615,7 @@ function minute_pad($minute)
 
 function get_day_of_month_sequence($month, $year)
 {
-        $end = date('t', mktime(0, 0, 0, $month, 0, $year, 0));
+        $end = date('t', mktime(0, 0, 0, $month, 1, $year, 0));
         return create_sequence(0, $end);
 }
 

@@ -232,16 +232,21 @@ function install_base()
 	$my_prefix = $_POST['my_prefix'];
 	$my_database = $_POST['my_database'];
 
-	$fp = fopen("$phpc_root_path/config.php", 'w')
-		or die('Couldn\'t open config file.');
+	$fp = fopen($phpc_root_path . 'config.php', 'w')
+		or soft_error('Couldn\'t open config file.');
 
 	fwrite($fp, create_config($my_hostname, $my_username, $my_passwd,
-                                $mydatabase, $my_prefix, $sql_type)
-		or die("could not write to file");
+                                $my_database, $my_prefix, $sql_type))
+		or soft_error("could not write to file");
 	fclose($fp);
 
 	require_once($phpc_root_path . 'config.php');
-	require_once($phpc_root_path . 'includes/db.php');
+
+        // Make the database connection.
+        $db = NewADOConnection(SQL_TYPE);
+        if(!$db->Connect(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE)) {
+                db_error(_("Could not connect to the database"));
+        }
 
 	create_tables();
 
