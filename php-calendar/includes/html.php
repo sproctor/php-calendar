@@ -75,13 +75,14 @@ class Html {
                                                         . get_class($element));
                                 }
                         }
-                        $htmlElement = array_merge($this->childElements,
+                        $this->childElements = array_merge($this->childElements,
                                         $htmlElement);
                 } elseif(is_object($element) && !is_a($element, 'Html')) {
                         soft_error(_('Invalid class') . ': '
                                         . get_class($element));
+                } else {
+                        $this->childElements[] = $htmlElement;
                 }
-                $this->childElements[] = $htmlElement;
         }
 
         function prepend($htmlElement) {
@@ -96,14 +97,14 @@ class Html {
                                                         . get_class($element));
                                 }
                         }
-                        $htmlElement = array_merge($this->childElements,
-                                        $htmlElement);
+                        $this->childElements = array_merge($htmlElement,
+                                        $this->childElements);
                 } elseif(is_object($element) && !is_a($element, 'Html')) {
                         soft_error(_('Invalid class') . ': '
                                         . get_class($element));
+                } else {
+                        array_unshift($this->childElements, $htmlElement);
                 }
-                $this->childElements = array_merge($htmlElement,
-                                $this->childElements);
         }
 
         function toString() {

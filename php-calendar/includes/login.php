@@ -19,7 +19,7 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-if ( !defined('IN_PHPC') ) {
+if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
@@ -38,11 +38,16 @@ function login()
                         $_SESSION['user'] = $user;
                         $_SESSION['password'] = $password;
                         $string = "Location: $phpc_script?";
+                        $arguments = array();
                         if(!empty($vars['lastaction']))
-                                $string .= "action=$lastaction&";
-                        if(!empty($vars['day'])) $string .= "day=$day&";
-                        $string .= "month=$month&year=$year";
-                        header($string);
+                                $arguments[] = "action=$vars[lastaction]";
+                        if(!empty($vars['year']))
+                                $arguments[] = "year=$year";
+                        if(!empty($vars['month']))
+                                $arguments[] = "month=$month";
+                        if(!empty($vars['day']))
+                                $arguments[] = "day=$day";
+                        header($string . implode('&', $arguments));
 			return tag('h2', _('Loggin in...'));
 		}
 
@@ -57,20 +62,33 @@ function login()
 
 function login_form()
 {
-        global $vars, $phpc_script;
+        global $vars, $phpc_script, $day, $year, $month;
 
         $lastaction = empty($vars['lastaction']) ? '' : $vars['lastaction'];
+
+        $submit_data = tag('td', attributes('colspan="2"'),
+                                create_hidden('action', 'login'),
+                                create_submit(_('Submit')));
+
+        if(!empty($vars['lastaction']))
+                $submit_data->prepend(create_hidden('lastaction',
+                                        $vars['lastaction']));
+
+        if(!empty($vars['day']))
+                $submit_data->prepend(create_hidden('day', $day));
+
+        if(!empty($vars['month']))
+                $submit_data->prepend(create_hidden('month', $month));
+
+        if(!empty($vars['year']))
+                $submit_data->prepend(create_hidden('year', $year));
 
 	return tag('form', attributes("action=\"$phpc_script\"",
 				'method="post"'),
 		tag('table', attributes('class="phpc-main"'),
 			tag('caption', _('Log in')),
 			tag('tfoot',
-				tag('tr',
-					tag('td', attributes('colspan="2"'),
-						create_hidden('lastaction', $lastaction),
-						create_hidden('action', 'login'),
-						create_submit(_('Submit'))))),
+				tag('tr', $submit_data)),
 			tag('tbody',
 				tag('tr',
 					tag('th', _('Username').':'),
