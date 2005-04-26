@@ -116,7 +116,7 @@ function event_submit()
 				.".");
 	}
 
-	$uid = check_user();
+	$uid = get_uid($_SESSION['user']);
 
 	$startstamp = mktime($hour, $minute, 0, $month, $day, $year);
 	$endstamp = mktime(0, 0, 0, $end_month, $end_day, $end_year);

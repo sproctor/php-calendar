@@ -208,13 +208,12 @@ function get_duration($duration, $typeofevent)
 // returns the XHTML data for the day
 function display_day($day, $month, $year)
 {
-	global $user, $db, $config, $phpc_script;
+	global $db, $config, $phpc_script;
 
 	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
 	$monthname = month_name($month);
 
-	if(empty($user) && $config['anon_permission'] < 2) $admin = 0;
-	else $admin = 1;
+	$priveleged = check_user() || $config['anon_permission'] >= 2;
 
 	$result = get_events_by_date($day, $month, $year);
 
@@ -231,7 +230,7 @@ function display_day($day, $month, $year)
 						tag('th', _('Duration')),
 						tag('th', _('Description'))
 					     )));
-		if($admin) {
+		if($privileged) {
 			$html_table->add(tag('tfoot',
                                                 tag('tr',
                                                         tag('td',
@@ -258,7 +257,7 @@ function display_day($day, $month, $year)
 			$html_subject = tag('td',
                                         attributes('class="phpc-list"'));
 
-			if($admin) {
+			if($privileged) {
                                 $html_subject->add(create_checkbox('id',
                                                         $row['id']));
                         }
@@ -267,7 +266,7 @@ function display_day($day, $month, $year)
                                                         $subject),
                                                 'display', $row['id']));
 
-			if($admin) {
+			if($privileged) {
 				$html_subject->add(' (');
 				$html_subject->add(create_id_link(_('Modify'),
                                                 'event_form', $row['id']));
@@ -289,7 +288,7 @@ function display_day($day, $month, $year)
 
 		$html_table->add($html_body);
 
-		if($admin) $output = tag('form',
+		if($privileged) $output = tag('form',
 			attributes("action=\"$phpc_script\""),
                         $html_table);
 		else $output = $html_table;
@@ -305,12 +304,9 @@ function display_day($day, $month, $year)
 // returns XHTML data for the event
 function display_id($id)
 {
-	global $user, $db, $year, $month, $day, $config;
+	global $db, $year, $month, $day, $config;
 
 	$row = get_event_by_id($id);
-
-	if(!empty($user) || $config['anon_permission'] >= 2) $admin = 1;
-	else $admin = 0;
 
 	$year = $row['year'];
 	$month = $row['month'];

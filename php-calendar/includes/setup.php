@@ -23,6 +23,11 @@
    This file sets up the global variables to be used later
 */
 
+// Modify these if you need to
+$phpc_script = $_SERVER['SCRIPT_NAME'];
+$phpc_url = (empty($_SERVER['HTTPS']) ? 'http' : 'https')
+	. "://{$_SERVER['SERVER_NAME']}$phpc_script?{$_SERVER['QUERY_STRING']}";
+
 /* FIXME: This file is a fucking mess, clean it up */
 
 if(!defined('IN_PHPC')) {
@@ -40,12 +45,10 @@ if(!defined('SQL_TYPE')) {
         exit;
 }
 
+session_start();
+
 require_once($phpc_root_path . 'includes/calendar.php');
 require_once($phpc_root_path . 'adodb/adodb.inc.php');
-
-$phpc_script = $_SERVER['SCRIPT_NAME'];
-$phpc_url = (empty($_SERVER['HTTPS']) ? 'http' : 'https')
-	. "://{$_SERVER['SERVER_NAME']}$phpc_script?{$_SERVER['QUERY_STRING']}";
 
 // Make the database connection.
 $db = NewADOConnection(SQL_TYPE);
@@ -59,18 +62,6 @@ foreach($_GET as $key => $value) {
 
 foreach($_POST as $key => $value) {
 	$vars[$key] = $value;
-}
-
-session_start();
-
-unset($user);
-unset($password);
-
-if(isset($_SESSION['user'])) {
-  $user = $_SESSION['user'];
-}
-if(isset($_SESSION['password'])) {
-  $password = $_SESSION['password'];
 }
 
 if (!isset($vars['month'])) {

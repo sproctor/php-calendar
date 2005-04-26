@@ -1,7 +1,7 @@
 NEWS
 -----
 
-0.10.3:
+0.10.3 (26 April 2005):
         - fixed an issue creating new users (thanks to Volker Hoffman)
         - changed Unknown time to To Be Announced (suggested by Mark Mason)
         - added a new event option No Time (suggested by Alex Falcone)

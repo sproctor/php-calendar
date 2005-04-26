@@ -147,28 +147,51 @@ function short_month_name($month)
 // if so, returns the UID, otherwise returns 0
 function check_user()
 {
-	global $user, $password, $db, $calendar_name;
+	global $db, $calendar_name;
 
-	if(!isset($user) || !isset($password) || $user == 'anonymous')
-		return 0;
+	if(empty($_SESSION['user']) || $_SESSION['user'] == 'anonymous') {
+		return false;
+        } else {
+                return true;
+        }
+}
 
-	$passwd = md5($password);
+function get_uid($user)
+{
+        global $calendar_name;
 
 	$query= "SELECT uid FROM ".SQL_PREFIX."users\n"
 		."WHERE username = '$user' "
-		."AND password = '$passwd' "
 		."AND calendar = '$calendar_name'";
 
-	$result = $db->Execute($query);
-	if(!$result) {
-                db_error("error checking user", $query);
-	}
-
-	if($result->FieldCount() == 0) return 0;
+	$result = $db->Execute($query)
+                or db_error("error checking user", $query);
 
 	$row = $result->FetchRow();
 
+        if(empty($row)) return 0;
+
 	return $row['uid'];
+}
+
+function verify_user($user, $password)
+{
+        global $calendar_name, $db;
+
+        $passwd = md5($password);
+
+	$query= "SELECT uid FROM ".SQL_PREFIX."users\n"
+		."WHERE username='$user' "
+                ."AND password='$passwd' "
+		."AND calendar='$calendar_name'";
+
+	$result = $db->Execute($query)
+                or db_error("error checking user", $query);
+
+        if($result->FieldCount() <= 0)
+                return false;
+
+	return true;
 }
 
 // takes a time string, and formats it according to type
@@ -517,20 +540,18 @@ function create_checkbox($name, $value = false, $checked = false)
 	return tag('input', $attributes);
 }
 
-// WARNING: this is a non-authoritative answer. don't rely on this to be
-// correct, but it's good enough for setting up the UI.
-function can_add_event ()
+function can_add_event()
 {
-        global $user, $config;
+        global $config;
 
-        return $config['anon_permission'] || isset($user);
+        return $config['anon_permission'] || check_user();
 }
 
 // creates the navbar for the top of the calendar
 // returns XHTML data for the navbar
 function navbar()
 {
-	global $vars, $user, $action, $config, $year, $month, $day;
+	global $vars, $action, $config, $year, $month, $day;
 
 	$html = tag('div', attributes('class="phpc-navbar"'));
 
@@ -554,7 +575,7 @@ function navbar()
 				$month, $day);
 	}
 
-	if(isset($user)) {
+	if(check_user()) {
 		menu_item_append($html, _('Log out'), 'logout',
                                 empty($vars['year']) ? false : $year,
                                 empty($vars['month']) ? false : $month,
@@ -568,7 +589,7 @@ function navbar()
                                 $action);
 	}
 
-	if(isset($user) && $action != 'admin') {
+	if(check_user() && $action != 'admin') {
 		menu_item_append($html, _('Admin'), 'admin');
 	}
 

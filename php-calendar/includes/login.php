@@ -25,7 +25,7 @@ if(!defined('IN_PHPC')) {
 
 function login()
 {
-	global $vars, $day, $month, $year, $user, $password, $phpc_script;
+	global $vars, $day, $month, $year, $phpc_script;
 
 	$html = tag('div');
 
@@ -34,9 +34,10 @@ function login()
 		$user = $vars['username'];
 		$password = $vars['password'];
 
-		if(check_user()){
+		if(verify_user($user, $password)){
                         $_SESSION['user'] = $user;
-                        $_SESSION['password'] = $password;
+                        session_write_close();
+
                         $string = "Location: $phpc_script?";
                         $arguments = array();
                         if(!empty($vars['lastaction']))

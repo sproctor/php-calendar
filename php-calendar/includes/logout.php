@@ -19,7 +19,7 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-if ( !defined('IN_PHPC') ) {
+if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
@@ -27,15 +27,21 @@ function logout()
 {
 	global $vars, $day, $month, $year, $phpc_script;
 
-	session_unregister('user');
-	session_unregister('password');
+        unset($_SESSION['user']);
+        session_write_close();
 
 	$string = "Location: $phpc_script?";
-        if(!empty($vars['lastaction'])) $string .= "action=$vars[lastaction]&";
-        if(!empty($vars['day'])) $string .= "day=$day&";
-        $string .= "month=$month&year=$year";
+        $arguments = array();
+        if(!empty($vars['lastaction']))
+                $arguments[] = "action=$vars[lastaction]";
+        if(!empty($vars['year']))
+                $arguments[] = "year=$year";
+        if(!empty($vars['month']))
+                $arguments[] = "month=$month";
+        if(!empty($vars['day']))
+                $arguments[] = "day=$day";
+        header($string . implode('&', $arguments));
 
-        header($string);
-	exit;
+        return tag('h2', _('Loggin out...'));
 }
 ?>
