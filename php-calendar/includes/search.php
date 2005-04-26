@@ -20,20 +20,39 @@
 
  */
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
+if(!defined('IN_PHPC')) {
+        die("Hacking attempt");
 }
+
+$sort_options = array(
+                'startdate' => _('Start Date'),
+                'subject' => _('Subject')
+                );
+$order_options = array(
+                'ASC' => _('Ascending'),
+                'DESC' => _('Decending')
+                );
 
 function search_results()
 {
-	global $vars, $db, $calendar_name;
+	global $vars, $db, $calendar_name, $sort_options, $order_options;
 
 	$searchstring = $vars['searchstring'];
 
 	$start = "$vars[syear]-$vars[smonth]-$vars[sday]";
 	$end = "$vars[eyear]-$vars[emonth]-$vars[eday]";
+
+        // make sure sort is valid
 	$sort = $vars['sort'];
+        if(array_search($sort, array_keys($sort_options)) === false) {
+                soft_error(_('Invalid sort option') . ": $sort");
+        }
+
+        // make sure order is valid
 	$order = $vars['order'];
+        if(array_search($order, array_keys($order_options)) === false) {
+                soft_error(_('Invalid order option') . ": $order");
+        }
 
 	$keywords = explode(" ", $searchstring);
 
@@ -52,7 +71,7 @@ function search_results()
 		."ORDER BY $sort $order";
 
 	$result = $db->Execute($query)
-		or db_error(_('Encountered an error while searching.', $query));
+		or db_error(_('Encountered an error while searching.'), $query);
 
         $tags = array();
 	while ($row = $result->FetchRow()) {
@@ -94,7 +113,8 @@ function search_results()
 
 function search_form()
 {
-	global $day, $month, $year, $phpc_script, $month_names;
+	global $day, $month, $year, $phpc_script, $month_names, $sort_options,
+               $order_options;
 
         $day_sequence = create_sequence(1, 31);
         $month_sequence = create_sequence(1, 12);
@@ -117,7 +137,7 @@ function search_form()
 					create_select('sday', $day_sequence,
                                                 $day),
 					create_select('smonth', $month_names,
-                                                $month, $month_sequence),
+                                                $month),
 					create_select('syear', $year_sequence,
                                                 $year))),
 			tag('tr',
@@ -126,27 +146,20 @@ function search_form()
 					create_select('eday', $day_sequence,
                                                 $day),
 					create_select('emonth', $month_names,
-                                                $month, $month_sequence),
+                                                $month),
 					create_select('eyear', $year_sequence,
                                                 $year))),
 			tag('tr',
 				tag('td', _('Sort By') . ': '),
 				tag('td',
-                                        create_select('sort',
-                                                array(_('Start Date'),
-                                                        _('Subject')),
-                                                        false,
-                                                        array('startdate',
-                                                                'subject')))),
+                                        create_select('sort', $sort_options,
+                                                false))),
 			tag('tr',
 				tag('td', _('Order') . ': '),
 				tag('td',
-					tag('select',
-						attributes('name="order"'),
-						tag('option', attributes('value="ASC"'),
-							_('Ascending')),
-						tag('option', attributes('value="DES"'),
-							_('Decending'))))));
+                                        create_select('order', $order_options,
+                                                false))));
+
 	return tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'), $html_table);
 }

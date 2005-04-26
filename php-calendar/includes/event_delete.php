@@ -44,26 +44,29 @@ function event_delete()
 
 	$del_array = explode('&', $_SERVER['QUERY_STRING']);
 
-	$html = array();
+	$html = tag('div', attributes('class="box"', 'style="width: 50%"'));
+
+        $ids = 0;
 
 	foreach($del_array as $del_value) {
 		list($drop, $id) = explode("=", $del_value);
 
 		if(preg_match('/^id$/', $drop) == 0) continue;
+                $ids++;
 
 		if(remove_event($id)) {
-			$html[] = tag('p', _('Removed item').": $id");
+			$html->add(tag('p', _('Removed item') . ": $id"));
 		} else {        
-			$html[] = tag('p', _('Could not remove item').": $id");
+			$html->add(tag('p', _('Could not remove item')
+                                                . ": $id"));
 		}
 	}
 
-	if(count($html) == 0) {
-		$html[] = tag('p', _('No items selected.'));
+	if($ids == 0) {
+		$html->add(tag('p', _('No items selected.')));
 	}
 
-	return array_merge(tag('div', attributes('class="box"',
-                                        'style="width: 50%"')), $html);
+        return $html;
 }
 
 ?>

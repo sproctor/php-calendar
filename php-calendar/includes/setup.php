@@ -25,17 +25,21 @@
 
 /* FIXME: This file is a fucking mess, clean it up */
 
-if ( !defined('IN_PHPC') ) {
+if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
 // Run the installer if we have no config file
 if(!file_exists($phpc_root_path . 'config.php')) {
-        require($phpc_root_path . 'install.php');
+        header('Location: install.php');
+        exit;
+}
+require_once($phpc_root_path . 'config.php');
+if(!defined('SQL_TYPE')) {
+        header('Location: install.php');
         exit;
 }
 
-require_once($phpc_root_path . 'config.php');
 require_once($phpc_root_path . 'includes/calendar.php');
 require_once($phpc_root_path . 'adodb/adodb.inc.php');
 
@@ -78,6 +82,13 @@ if (!isset($vars['month'])) {
 if(!isset($vars['year'])) {
 	$year = date('Y');
 } else {
+        if($vars['year'] > 2037) {
+                soft_error(_('That year is too far in the future')
+                        . ": {$vars['year']}");
+        } elseif($vars['year'] < 1970) {
+                soft_error(_('That year is too far in the past')
+                        . ": {$vars['year']}");
+        }
 	$year = date('Y', mktime(0, 0, 0, $month, 1, $vars['year']));
 }
 

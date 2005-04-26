@@ -210,7 +210,7 @@ function formatted_time_string($time, $type)
 }
 
 $event_types = array(
-                _('Normal'),
+                1 => _('Normal'),
                 _('Full Day'),
                 _('To Be Announced'),
                 _('No Time'),
@@ -562,6 +562,9 @@ function navbar()
 				$action);
 	} else {
 		menu_item_append($html, _('Log in'), 'login',
+                                empty($vars['year']) ? false : $year,
+                                empty($vars['month']) ? false : $month,
+				empty($vars['day']) ? false : $day,
                                 $action);
 	}
 
@@ -600,9 +603,9 @@ function create_sequence($start, $end, $interval = 1, $display = NULL)
         $arr = array();
         for ($i = $start; $i <= $end; $i += $interval){
                 if($display) {
-                        $arr[] = call_user_func($display, $i);
+                        $arr[$i] = call_user_func($display, $i);
                 } else {
-                        $arr[] = $i;
+                        $arr[$i] = $i;
                 }
         }
         return $arr;
@@ -621,12 +624,11 @@ function get_day_of_month_sequence($month, $year)
 
 // creates a select element for a form of pre-defined $type
 // returns XHTML data for the element
-function create_select($name, $type, $select, $values = NULL)
+function create_select($name, $type, $select)
 {
 	$html = tag('select', attributes('size="1"', "name=\"$name\""));
 
-        foreach($type as $key => $text) {
-                $value = $values ?  $value = $values[$key] : $text;
+        foreach($type as $value => $text) {
 		$attributes = attributes("value=\"$value\"");
 		if ($select == $value) {
                         $attributes->add('selected="selected"');

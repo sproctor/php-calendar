@@ -14,6 +14,11 @@ NEWS
         - fixed the issue with options being selected incorrectly in the
           admin page
         - added an update script (only supports 0.8 and newer so far)
+        - fixed a bug in search that was causing an error when descending order
+          was chosen
+        - fixed possible SQL injection in search.php
+        - report years that are out of range
+        - creating new users will change the password of old ones if they exist
 
 0.10.2 (04 April 2005):
         - fix a problem where modifying an event didn't pick up the date

@@ -105,7 +105,6 @@ function event_form()
         }
         $minute_sequence = create_sequence(0, 59, 5, 'minute_pad');
         $year_sequence = create_sequence(1970, 2037);
-        $month_sequence = create_sequence(1, 12);
 
 	$html_time = tag('td',
 			create_select('hour', $hour_sequence, $hour),
@@ -119,7 +118,7 @@ function event_form()
                         $value = 0;
                 }
 		$html_time->add(create_select('pm', array(_('AM'), _('PM')),
-                                        $value, array(0, 1)));
+                                        $value));
 	}
 
 	if(isset($id)) $input = create_hidden('id', $id);
@@ -142,19 +141,19 @@ function event_form()
 						tag('th', _('Date of event')),
 						tag('td',
 							create_select('day', $day_of_month_sequence, $day),
-							create_select('month', $month_names, $month, $month_sequence),
+							create_select('month', $month_names, $month),
 							create_select('year', $year_sequence, $year))),
 					tag('tr',
 						tag('th', _('Date multiple day event ends')),
 						tag('td',
 							create_select('endday', $day_of_month_sequence, $end_day),
-							create_select('endmonth', $month_names, $end_month, $month_sequence),
+							create_select('endmonth', $month_names, $end_month),
 							create_select('endyear', $year_sequence, $end_year))),
 					tag('tr',
 						tag('th', _('Event type')),
 						tag('td',
 							create_select('typeofevent',
-								$event_types, $typeofevent, create_sequence(1, count($event_types))))),
+								$event_types, $typeofevent))),
 					tag('tr',
 						tag('th',  _('Time')),
 						$html_time),

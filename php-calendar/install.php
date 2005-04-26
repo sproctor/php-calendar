@@ -279,7 +279,8 @@ function create_tables()
 		."uid integer NOT NULL,\n"
 		."username varchar(32) NOT NULL,\n"
 		."password varchar(32) NOT NULL default '',\n"
-		."PRIMARY KEY (calendar, uid))";
+		."PRIMARY KEY (uid),\n"
+                ."UNIQUE KEY calendar (calendar, username))";
 
 	$query[] = "CREATE TABLE ".SQL_PREFIX."calendars (\n"
 		."calendar varchar(32) NOT NULL,\n"
@@ -296,11 +297,8 @@ function create_tables()
 		.")";
 
 	foreach($query as $sql) {
-		$result = $db->Execute($sql);
-
-		if(!$result) {
-			db_error("Error creating table:", $sql);
-		}
+		$db->Execute($sql)
+                        or db_error("Error creating table:", $sql);
 	}
 }
 
