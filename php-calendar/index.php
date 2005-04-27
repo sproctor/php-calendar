@@ -52,13 +52,12 @@ define('TEXTCOLOR1',   '#000000');
 define('TEXTCOLOR2',   '#FFFFFF');
 
 /*
-   Do not modify anything under this point
-*/
+ * Do not modify anything under this point
+ */
 
 define('IN_PHPC', true);
 
-if(!empty($_GET) && array_key_exists('action', $_GET)
-                        && $_GET['action'] == 'style') {
+if(!empty($_GET['action']) && $_GET['action'] == 'style') {
 	require_once($phpc_root_path . 'includes/style.php');
 	exit;
 }
@@ -70,7 +69,7 @@ $legal_actions = array('event_form', 'event_delete', 'display', 'event_submit',
 		'search', 'login', 'logout', 'admin', 'options_submit',
                 'new_user_submit');
 
-if(!is_int(array_search($action, $legal_actions, true))) {
+if(!in_array($action, $legal_actions, true)) {
 	soft_error(_('Invalid action'));
 }
 

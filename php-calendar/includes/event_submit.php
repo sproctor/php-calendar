@@ -167,6 +167,8 @@ function event_submit()
 	$affected = $db->Affected_Rows($result);
 	if($affected < 1) return tag('div', _('No changes were made.'));
 
+        session_write_close();
+
 	header("Location: $phpc_script?action=display&id=$id");
 	return tag('div', attributes('class="box"'), _('Date updated').": $affected");
 }

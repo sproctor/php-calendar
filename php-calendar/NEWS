@@ -20,6 +20,7 @@ NEWS
         - report years that are out of range
         - creating new users will change the password of old ones if they exist
         - fix login to redirect to the page we were actually just on
+        - update login code to hit the DB less often
 
 0.10.2 (04 April 2005):
         - fix a problem where modifying an event didn't pick up the date

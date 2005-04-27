@@ -45,8 +45,6 @@ if(!defined('SQL_TYPE')) {
         exit;
 }
 
-session_start();
-
 require_once($phpc_root_path . 'includes/calendar.php');
 require_once($phpc_root_path . 'adodb/adodb.inc.php');
 
@@ -55,6 +53,8 @@ $db = NewADOConnection(SQL_TYPE);
 if(!$db->Connect(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE)) {
         db_error(_("Could not connect to the database"));
 }
+
+session_start();
 
 foreach($_GET as $key => $value) {
 	$vars[$key] = $value;
@@ -107,15 +107,12 @@ if(!empty($vars['calendar_name'])) {
         $calendar_name = $vars['calendar_name'];
 }
 
-$query = "SELECT * from ".SQL_PREFIX."calendars "
-."WHERE calendar='$calendar_name'";
+$query = "SELECT * from ".SQL_PREFIX."calendars\n"
+."WHERE calendar='$calendar_name'\n"
+."LIMIT 0,1";
 
-$result = $db->Execute($query);
-
-if(!$result) {
-	soft_error(_('Could not read configuration').": ".$db->ErrorMsg()
-        .': '.$error[message].": $query");
-}
+$result = $db->Execute($query)
+        or db_error(_('Could not read configuration') . ": $query");
 
 $config = $result->FetchRow($result);
 
