@@ -147,8 +147,6 @@ function short_month_name($month)
 // if so, returns the UID, otherwise returns 0
 function check_user()
 {
-	global $db, $calendar_name;
-
 	if(empty($_SESSION['user']) || $_SESSION['user'] == 'anonymous') {
 		return false;
         } else {
@@ -158,7 +156,7 @@ function check_user()
 
 function get_uid($user)
 {
-        global $calendar_name;
+        global $calendar_name, $db;
 
 	$query= "SELECT uid FROM ".SQL_PREFIX."users\n"
 		."WHERE username = '$user' "

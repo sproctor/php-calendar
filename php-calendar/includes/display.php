@@ -213,7 +213,7 @@ function display_day($day, $month, $year)
 	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
 	$monthname = month_name($month);
 
-	$priveleged = check_user() || $config['anon_permission'] >= 2;
+	$privileged = check_user() || $config['anon_permission'] >= 2;
 
 	$result = get_events_by_date($day, $month, $year);
 
