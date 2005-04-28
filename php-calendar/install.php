@@ -25,7 +25,7 @@
 */
 
 $phpc_root_path = './';
-$calendar_name = '0';
+$calendar_id = 0;
 
 define('IN_PHPC', true);
 
@@ -259,47 +259,10 @@ function create_tables()
 {
 	global $db;
 
-	$query = array();
-
-	$query[] = "CREATE TABLE ".SQL_PREFIX."events (\n"
-		."id integer NOT NULL,\n"
-		."uid integer,\n"
-		."startdate date,\n"
-		."enddate date,\n"
-		."starttime time,\n"
-		."duration integer,\n"
-		."eventtype integer,\n"
-		."subject varchar(255),\n"
-		."description text,\n"
-		."calendar varchar(32)\n"
-		.")";
-
-	$query[] = "CREATE TABLE ".SQL_PREFIX."users (\n"
-		."calendar varchar(32) NOT NULL default '0',\n"
-		."uid integer NOT NULL,\n"
-		."username varchar(32) NOT NULL,\n"
-		."password varchar(32) NOT NULL default '',\n"
-		."PRIMARY KEY (uid),\n"
-                ."UNIQUE KEY calendar (calendar, username))";
-
-	$query[] = "CREATE TABLE ".SQL_PREFIX."calendars (\n"
-		."calendar varchar(32) NOT NULL,\n"
-		."hours_24 integer NOT NULL default '0',\n"
-		."start_monday integer NOT NULL default '0',\n"
-		."translate integer NOT NULL default '0',\n"
-		."anon_permission integer NOT NULL default '0',\n"
-		."subject_max integer NOT NULL default '32',\n"
-		."contact_name varchar(255) default NULL,\n"
-		."contact_email varchar(255) default NULL,\n"
-		."calendar_title varchar(255) NOT NULL default '',\n"
-		."URL varchar(200) default NULL,\n"
-		."PRIMARY KEY (calendar)\n"
-		.")";
-
-	foreach($query as $sql) {
-		$db->Execute($sql)
-                        or db_error("Error creating table:", $sql);
-	}
+        $sql = file_get_contents($phpc_root_path . 'tables.sql');
+        $query = preg_replace('/\bphpc_\B/', 'test_', $sql);
+        $db->Execute($query)
+                or db_error("Error creating table:", $query);
 }
 
 function get_admin()
@@ -324,7 +287,7 @@ function get_admin()
 
 function add_calendar()
 {
-	global $db, $phpc_root_path, $calendar_name;
+	global $db, $phpc_root_path, $calendar_id;
 
 	require_once($phpc_root_path . 'config.php');
 
@@ -341,7 +304,7 @@ function add_calendar()
 
 	$query = "INSERT INTO ".SQL_PREFIX."calendars (calendar, hours_24, "
 	."start_monday, translate, subject_max, calendar_title) "
-	."VALUES ('$calendar_name', '$hours_24', '$start_monday', '$translate',"
+	."VALUES ('$calendar_id', '$hours_24', '$start_monday', '$translate',"
 	." '32', '$calendar_title')";
 
 	$result = $db->Execute($query);
@@ -355,7 +318,7 @@ function add_calendar()
 	$query = "insert into ".SQL_PREFIX."users\n"
 		."(uid, username, password, calendar) VALUES\n"
 		."('".$db->GenID(SQL_PREFIX.'uid', 0)."', 'anonymous', '', "
-                ."$calendar_name)";
+                ."$calendar_id)";
 
 	$result = $db->Execute($query);
 	if(!$result) {
@@ -367,7 +330,7 @@ function add_calendar()
 	$query = "insert into ".SQL_PREFIX."users\n"
 		."(uid, username, password, calendar) VALUES\n"
 		."('".$db->GenID(SQL_PREFIX.'uid')."', '$_POST[admin_user]', "
-                ."'$passwd', $calendar_name)";
+                ."'$passwd', $calendar_id)";
 
 	$result = $db->Execute($query);
 	if(!$result) {

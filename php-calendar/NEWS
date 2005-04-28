@@ -1,6 +1,12 @@
 NEWS
 -----
 
+0.11:
+        - moved tables out of install.php into tables.sql
+        - redesigned DB structure to allow for better user support
+          and more complicated events
+        - some UI changes to event_form.php
+
 0.10.3 (26 April 2005):
         - fixed an issue creating new users (thanks to Volker Hoffman)
         - changed Unknown time to To Be Announced (suggested by Mark Mason)

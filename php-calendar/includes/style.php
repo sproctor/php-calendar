@@ -26,23 +26,29 @@
 
 header('Content-Type: text/css');
 
-if(isset($_GET['bgcolor1'])) {
-	$bgcolor1 = $_GET['bgcolor'];
-} else {
-	$bgcolor1 = BG_COLOR1;
-}
-/*
-   FIXME: you get the idea, eventually the colors should be pickable by a user,
-   but we need a real concept of users first
- */
+$bgcolor1 = BG_COLOR1;
 $bgcolor2 = BG_COLOR2;
 $bgcolor3 = BG_COLOR3;
 $bgcolor4 = BG_COLOR4;
 $bgpast = BG_PAST;
 $bgfuture = BG_FUTURE;
+$bginactive = BG_INACTIVE;
 $sepcolor = SEPCOLOR;
 $textcolor1 = TEXTCOLOR1;
 $textcolor2 = TEXTCOLOR2;
+
+// use user specified values if they exist
+if(isset($_GET['bgcolor1'])) $bgcolor1 = $_GET['bgcolor1'];
+if(isset($_GET['bgcolor2'])) $bgcolor2 = $_GET['bgcolor2'];
+if(isset($_GET['bgcolor3'])) $bgcolor3 = $_GET['bgcolor3'];
+if(isset($_GET['bgcolor4'])) $bgcolor4 = $_GET['bgcolor4'];
+if(isset($_GET['bgpast'])) $bgpast = $_GET['bgpast'];
+if(isset($_GET['bgfuture'])) $bgfuture = $_GET['bgfuture'];
+if(isset($_GET['bginactive'])) $bginactive = $_GET['bginactive'];
+if(isset($_GET['sepcolor'])) $sepcolor = $_GET['sepcolor'];
+if(isset($_GET['textcolor1'])) $textcolor1 = $_GET['textcolor1'];
+if(isset($_GET['textcolor2'])) $textcolor2 = $_GET['textcolor2'];
+
 ?>
 body {
   font-family: "Times New Roman", serif;
@@ -78,21 +84,24 @@ h2 {
   background-color: inherit;
 }
 
+input {
+  border: 1px solid <?php echo $sepcolor ?>;
+  color: <?php echo $textcolor1 ?>;
+}
+
 input[type="submit"] {
   background-color: <?php echo $bgcolor3 ?>;
-  color: <?php echo $textcolor1 ?>;
-  border: 1px solid <?php echo $sepcolor ?>;
+}
+
+input[type="submit"]:hover {
+  background-color: <?php echo $textcolor1 ?>;
+  color: <?php echo $bgcolor3 ?>;
 }
 
 .phpc-navbar a {
   background-color: <?php echo $bgcolor3 ?>;
   color: <?php echo $textcolor1 ?>;
   border: 1px solid <?php echo $sepcolor ?>;
-}
-
-input[type="submit"]:hover {
-  background-color: <?php echo $textcolor1 ?>;
-  color: <?php echo $bgcolor3 ?>;
 }
 
 .phpc-navbar a:hover {
@@ -179,10 +188,6 @@ thead, tfoot {
   padding: .5em;
 }
 
-table.phpc-main tbody th {
-  text-align: right;
-}
-
 #calendar {
   table-layout: fixed;
 }
@@ -253,4 +258,33 @@ table.phpc-main li a:hover {
 .phpc-add {
   float: right;
   text-align: right;
+}
+
+textarea.phpc-description {
+  width: 100%;
+  border: 0;
+}
+
+.phpc-general-info, .phpc-time-info, .phpc-date-info {
+  border: 2px solid <?php echo $sepcolor ?>;
+  margin: 2em;
+  background: <?php echo $bgcolor3 ?>;
+  padding: 1em;
+}
+
+.phpc-general-info div, .phpc-time-info div, .phpc-date-info div {
+}
+
+.phpc-general-info h3, .phpc-time-info h3, .phpc-date-info h3 {
+  border-width: 0 0 2px 0;
+  border-style: solid;
+  border-color: <?php echo $sepcolor ?>;
+}
+
+.phpc-general-info h4, .phpc-time-info h4, .phpc-date-info h4 {
+  margin: 1em 0 0 0;
+}
+
+.phpc-misc-info {
+  text-align: center;
 }

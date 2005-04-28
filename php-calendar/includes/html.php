@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 - 2005 Sean Proctor, Nathan Poiro
+   Copyright 2005 Sean Proctor
 
    This file is part of PHP-Calendar.
 
@@ -19,12 +19,16 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-if ( !defined('IN_PHPC') ) {
+if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
 $HtmlInline = array('a', 'strong');
 
+/*
+ * data structure to display XHTML
+ * see function tag() below for usage
+ */
 class Html {
         var $tagName;
         var $attributeList;
@@ -39,8 +43,8 @@ class Html {
         function __construct() {
                 $args = func_get_args();
                 $this->tagName = array_shift($args);
-                $this->attributeList = NULL;
-                $this->childElements = NULL;
+                $this->attributeList = array();
+                $this->childElements = array();
 
                 $arg = array_shift($args);
                 if($arg == NULL) return;
@@ -50,70 +54,51 @@ class Html {
                         $arg = array_shift($args);
                 }
 
-                do {
-                        if(is_object($arg) && !is_a($arg, 'Html')) {
-                                soft_error(_('Invalid class') . ': '
-                                                . get_class($arg));
-                        }
-                        if($this->childElements == NULL) {
-                                $this->childElements = array();
-                        }
-                        $this->childElements[] = $arg;
+                while($arg !== NULL) {
+                        $this->add($arg);
                         $arg = array_shift($args);
-                } while($arg !== NULL);
-        }
-
-        function add($htmlElement) {
-                if($this->childElements == NULL) {
-                        $this->childElements = array();
-                }
-                if(is_array($htmlElement)) {
-                        foreach($htmlElement as $element) {
-                                if(is_object($element)
-                                                && !is_a($element, 'Html')) {
-                                        soft_error(_('Invalid class') . ': '
-                                                        . get_class($element));
-                                }
-                        }
-                        $this->childElements = array_merge($this->childElements,
-                                        $htmlElement);
-                } elseif(is_object($element) && !is_a($element, 'Html')) {
-                        soft_error(_('Invalid class') . ': '
-                                        . get_class($element));
-                } else {
-                        $this->childElements[] = $htmlElement;
                 }
         }
 
-        function prepend($htmlElement) {
-                if($this->childElements == NULL) {
-                        $this->childElements = array();
-                }
-                if(is_array($htmlElement)) {
-                        foreach($htmlElement as $element) {
-                                if(is_object($element)
-                                                && !is_a($element, 'Html')) {
-                                        soft_error(_('Invalid class') . ': '
-                                                        . get_class($element));
+        function add() {
+                $htmlElements = func_get_args();
+                foreach($htmlElements as $htmlElement) {
+                        if(is_array($htmlElement)) {
+                                foreach($htmlElement as $element) {
+                                        $this->add($element);
                                 }
+                        } elseif(is_object($element)
+                                        && !is_a($element, 'Html')) {
+                                soft_error(_('Invalid class') . ': '
+                                                . get_class($element));
+                        } else {
+                                $this->childElements[] = $htmlElement;
                         }
-                        $this->childElements = array_merge($htmlElement,
-                                        $this->childElements);
-                } elseif(is_object($element) && !is_a($element, 'Html')) {
-                        soft_error(_('Invalid class') . ': '
-                                        . get_class($element));
-                } else {
-                        array_unshift($this->childElements, $htmlElement);
+                }
+        }
+
+        function prepend() {
+                $htmlElements = func_get_args();
+                foreach(array_reverse($htmlElements) as $htmlElement) {
+                        if(is_array($htmlElement)) {
+                                foreach(array_reverse($htmlElement)
+                                                as $element) {
+                                        $this->prepend($element);
+                                }
+                        } elseif(is_object($element)
+                                        && !is_a($element, 'Html')) {
+                                soft_error(_('Invalid class') . ': '
+                                                . get_class($element));
+                        } else {
+                                array_unshift($this->childElements,
+                                                $htmlElement);
+                        }
                 }
         }
 
         function toString() {
                 global $HtmlInline;
 
-                /*echo "<pre>";
-                print_r($this);
-                echo "</pre>";
-                die();*/
                 $output = "<{$this->tagName}";
 
                 if($this->attributeList != NULL) {
@@ -149,6 +134,10 @@ class Html {
         }
 }
 
+/*
+ * Data structure to display XML style attributes
+ * see function attributes() below for usage
+ */
 class AttributeList {
         var $list;
 
@@ -161,13 +150,20 @@ class AttributeList {
         function __construct() {
                 $this->list = array();
                 $args = func_get_args();
-                foreach($args as $arg) {
-                        $this->list = array_merge($this->list, $arg);
-                }
+                $this->add($args);
         }
 
-        function add($str) {
-                $this->list[] = $str;
+        function add() {
+                $args = func_get_args();
+                foreach($args as $arg) {
+                        if(is_array($arg)) {
+                                foreach($arg as $attr) {
+                                        $this->add($attr);
+                                }
+                        } else {
+                                $this->list[] = $arg;
+                        }
+                }
         }
 
         function toString() {
@@ -175,6 +171,12 @@ class AttributeList {
         }
 }
 
+/*
+ * creates an Html data structure
+ * arguments are tagName [AttributeList] [Html | array | string] ...
+ * where array contains an array, Html, or a string, same requirements for that
+ * array
+ */
 function tag()
 {
         $args = func_get_args();
@@ -183,7 +185,13 @@ function tag()
         return $html;
 }
 
-function attributes($args)
+/*
+ * creates an AttributeList data structure
+ * arguments are [attribute | array] ...
+ * where attribute is a string of name="value" and array contains arrays or
+ * attributes
+ */
+function attributes()
 {
         $args = func_get_args();
         $attrs = new AttributeList();

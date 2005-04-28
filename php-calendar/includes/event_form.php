@@ -32,12 +32,12 @@ function event_form()
 		// modifying
 		$id = $vars['id'];
 
-		$title = sprintf(_('Editing Event #%d'), $id);
+		$heading = sprintf(_('Editing Event #%d'), $id);
 
 		$row = get_event_by_id($id);
 
-		$subject = stripslashes($row['subject']);
-		$desc = htmlspecialchars(stripslashes($row['description']));
+		$title = $row['title'];
+		$desc = htmlspecialchars($row['description']);
 
 		$year = $row['year'];
 		$month = $row['month'];
@@ -68,7 +68,7 @@ function event_form()
 
 	} else {
 		// case "add":
-		$title = _('Adding event to calendar');
+		$heading = _('Adding event to calendar');
 
 		$subject = '';
                 $desc = '';
@@ -106,10 +106,11 @@ function event_form()
         $minute_sequence = create_sequence(0, 59, 5, 'minute_pad');
         $year_sequence = create_sequence(1970, 2037);
 
-	$html_time = tag('td',
-			create_select('hour', $hour_sequence, $hour),
-			tag('b', ':'),
-			create_select('minute', $minute_sequence, $minute));
+	$html_time = array(create_select('hour', $hour_sequence, $hour,
+                                attributes('class="phpc-time"')),
+                        tag('b', ':'),
+                        create_select('minute', $minute_sequence, $minute,
+                                attributes('class="phpc-time"')));
 
 	if(!$config['hours_24']) {
 		if($pm) {
@@ -117,65 +118,79 @@ function event_form()
                 } else {
                         $value = 0;
                 }
-		$html_time->add(create_select('pm', array(_('AM'), _('PM')),
-                                        $value));
+                $html_time[] = create_select('pm', array(_('AM'), _('PM')),
+                                $value, attributes('class="phpc-time"'));
 	}
 
-	if(isset($id)) $input = create_hidden('id', $id);
-	else $input = '';
+        $hidden_fields = array();
 
-	$attributes = attributes('class="phpc-main"');
+        $hidden_fields[] = create_hidden('action', 'event_submit');
+	if(isset($id)) $hidden_fields[] = create_hidden('id', $id);
 
         $day_of_month_sequence = get_day_of_month_sequence($month, $year);
+
+        $general_info = tag('div', attributes('class="phpc-general-info"'),
+                        tag('h3', _('General Information')),
+                        tag('h4', _('Title') . sprintf
+                                (' ('._('%d character maximum').'): ',
+                                 $config['subject_max'])),
+                        tag('input', attributes('type="text"',
+                                        "maxlength=\"$config[subject_max]\"",
+                                        "size=\"$config[subject_max]\"",
+                                        'name="title"',
+                                        "value=\"$title\"")),
+                        tag('h4', _('Description')),
+                        tag('div',
+                                attributes('style="border: 1px solid black"'),
+                                tag('textarea', attributes(
+                                                'rows="8"',
+                                                'cols="80"',
+                                                'class="phpc-description"',
+                                                'name="description"'),
+                                                $desc)));
+
+        $time_info = tag('div', attributes('class="phpc-time-info"'),
+                        tag('h3',  _('Time Information')),
+                        tag('h4', _('Event type')),
+                        create_select('type', $event_types,
+                                $typeofevent),
+                        tag('h4', _('Start')),
+                        $html_time,
+                        tag('h4', _('Duration')),
+                        create_select('durationhour', create_sequence(0, 23),
+                                $durhr, attributes('class="phpc-time"')),
+                        _('hour(s)')."\n",
+                        create_select('durationmin', $minute_sequence, $durmin,
+                                attributes('class="phpc-time"')),
+                        _('minutes')."\n");
+
+        $date_info = tag('div', attributes('class="phpc-date-info"'),
+                        tag('h3', _('Date Information')),
+                        tag('h4', _('Date of event')),
+                        tag('div',
+                                create_select('day', $day_of_month_sequence,
+                                        $day),
+                                create_select('month', $month_names, $month),
+                                create_select('year', $year_sequence, $year)),
+                        tag('h4', _('Date multiple day event ends')),
+                        tag('div',
+                                create_select('endday', $day_of_month_sequence,
+                                        $end_day),
+                                create_select('endmonth', $month_names,
+                                        $end_month),
+                                create_select('endyear', $year_sequence,
+                                        $end_year)));
+
 	return tag('form', attributes("action=\"$phpc_script\""),
-			tag('table', $attributes,
-				tag('caption', $title),
-				tag('tfoot',
-					tag('tr',
-						tag('td', attributes( 'colspan="2"'),
-							$input,
-							create_submit(_("Submit Event")),
-							create_hidden('action', 'event_submit')))),
-				tag('tbody',
-					tag('tr',
-						tag('th', _('Date of event')),
-						tag('td',
-							create_select('day', $day_of_month_sequence, $day),
-							create_select('month', $month_names, $month),
-							create_select('year', $year_sequence, $year))),
-					tag('tr',
-						tag('th', _('Date multiple day event ends')),
-						tag('td',
-							create_select('endday', $day_of_month_sequence, $end_day),
-							create_select('endmonth', $month_names, $end_month),
-							create_select('endyear', $year_sequence, $end_year))),
-					tag('tr',
-						tag('th', _('Event type')),
-						tag('td',
-							create_select('typeofevent',
-								$event_types, $typeofevent))),
-					tag('tr',
-						tag('th',  _('Time')),
-						$html_time),
-					tag('tr',
-						tag('th', _('Duration')),
-						tag('td',
-							create_select('durationhour', create_sequence(0, 23), $durhr),
-							_('hour(s)') . "\n",
-							create_select('durationmin', $minute_sequence, $durmin),
-							_('minutes') . "\n")),
-					tag('tr',
-						tag('th', _('Subject').' ('.$config['subject_max'].' '._('chars max').')'),
-						tag('td', tag('input', attributes('type="text"',
-									'name="subject"',
-									"value=\"$subject\"")))),
-					tag('tr',
-						tag('th',  _('Description')),
-						tag('td',
-							tag('textarea', attributes('rows="5"',
-									'cols="50"',
-									'name="description"'),
-								$desc))))));
+                        tag('h2', $heading),
+                        tag('div', attributes('class="phpc-misc-info"'),
+                                create_submit(_("Submit Event"))),
+                        $general_info,
+                        $time_info,
+                        $date_info,
+                        tag('div', attributes('class="phpc-misc-info"'),
+                                $hidden_fields,
+                                create_submit(_("Submit Event"))));
 }
 
 ?>

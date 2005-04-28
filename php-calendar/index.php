@@ -25,10 +25,10 @@
 */
 
 /*
-   modify $calendar_name when you create another calendar so that the calendars
+   modify $calendar_id when you create another calendar so that the calendars
    will not all share the same data
 */
-$calendar_name = '0';
+$calendar_id = 0;
 
 /*
    $phpc_root_path gives the location of the base calendar install.
@@ -41,15 +41,16 @@ $phpc_root_path = './';
    You can modify the following defines to change the color scheme of the
    calendar
 */
-define('SEPCOLOR',     '#000000');
-define('BG_COLOR1',    '#FFFFFF');
-define('BG_COLOR2',    'gray');
-define('BG_COLOR3',    'silver');
-define('BG_COLOR4',    '#CCCCCC');
-define('BG_PAST',      'silver');
-define('BG_FUTURE',    'white');
-define('TEXTCOLOR1',   '#000000');
-define('TEXTCOLOR2',   '#FFFFFF');
+define('SEPCOLOR',      '#000000');
+define('BG_COLOR1',     '#FFFFFF');
+define('BG_COLOR2',     'gray');
+define('BG_COLOR3',     'silver');
+define('BG_COLOR4',     '#CCCCCC');
+define('BG_PAST',       'silver');
+define('BG_FUTURE',     'white');
+define('BG_INACTIVE',   'silver');
+define('TEXTCOLOR1',    '#000000');
+define('TEXTCOLOR2',    '#FFFFFF');
 
 /*
  * Do not modify anything under this point

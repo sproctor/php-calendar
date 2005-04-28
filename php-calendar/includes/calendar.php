@@ -159,8 +159,7 @@ function get_uid($user)
         global $calendar_name, $db;
 
 	$query= "SELECT uid FROM ".SQL_PREFIX."users\n"
-		."WHERE username = '$user' "
-		."AND calendar = '$calendar_name'";
+		."WHERE username = '$user'";
 
 	$result = $db->Execute($query)
                 or db_error("error checking user", $query);
@@ -174,14 +173,13 @@ function get_uid($user)
 
 function verify_user($user, $password)
 {
-        global $calendar_name, $db;
+        global $db;
 
         $passwd = md5($password);
 
 	$query= "SELECT uid FROM ".SQL_PREFIX."users\n"
 		."WHERE username='$user' "
-                ."AND password='$passwd' "
-		."AND calendar='$calendar_name'";
+                ."AND password='$passwd' ";
 
 	$result = $db->Execute($query)
                 or db_error("error checking user", $query);
@@ -249,7 +247,7 @@ function create_xhtml($rest)
 		."\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
 	$html = tag('html', attributes('xml:lang="en"'), 
 			tag('head',
-				tag('title', $config['calendar_title']),
+				tag('title', $config['title']),
 				tag('meta',
 					attributes('http-equiv="Content-Type"'
                                                 .' content="text/html;'
@@ -263,7 +261,7 @@ function create_xhtml($rest)
 				.'type="text/css" href="all-ie.css" />'
 				.'<![endif]-->'),
 			tag('body',
-				tag('h1', $config['calendar_title']),
+				tag('h1', $config['title']),
 				navbar(),
 				$rest,
 				link_bar()));
@@ -314,7 +312,7 @@ function link_bar()
 // returns all the events for a particular day
 function get_events_by_date($day, $month, $year)
 {
-	global $calendar_name, $db;
+	global $calendar_id, $db;
 
 /* event types:
 1 - Normal event
@@ -324,30 +322,32 @@ function get_events_by_date($day, $month, $year)
 5 - weekly event
 6 - monthly event
 */
-        $startdate = $db->SQLDate('Y-m-d', 'startdate');
-        $enddate = $db->SQLDate('Y-m-d', 'enddate');
+        $startdate = $db->SQLDate('Y-m-d', 'occurrences.start_date');
+        $enddate = $db->SQLDate('Y-m-d', 'occurrences.end_date');
         $date = "DATE '" . date('Y-m-d', mktime(0, 0, 0, $month, $day, $year))
                 . "'";
         // day of week
-        $dow_startdate = $db->SQLDate('w', 'startdate');
         $dow_date = $db->SQLDate('w', $date);
         // day of month
-        $dom_startdate = $db->SQLDate('d', 'startdate');
         $dom_date = $db->SQLDate('d', $date);
 
-	$query = 'SELECT * FROM '.SQL_PREFIX."events\n"
-		."WHERE $date >= $startdate AND $date <= $enddate\n"
-                // find normal events
-                ."AND (eventtype = 1 OR eventtype = 2 OR eventtype = 3 "
-                ."OR eventtype = 4\n"
-                // find weekly events
-		."OR (eventtype = 5 AND $dow_startdate = $dow_date)\n"
-                // find monthly events
-		."OR (eventtype = 6 AND $dom_startdate = $dom_date)\n"
-                .")\n"
-                // in the current calendar
-		."AND calendar = '$calendar_name'\n"
-		."ORDER BY starttime";
+        $query = 'SELECT * FROM '.SQL_PREFIX."events AS events,
+                ".SQL_PREFIX."occurrences AS occurrences
+                        WHERE occurrences.event_id=events.id
+                        AND (occurrences.start_date IS NULL
+                                        OR $date >= $startdate)
+                        AND (occurrences.end_date IS NULL OR $date <= $enddate)
+                        AND (occurrences.day_of_week IS NULL
+                                        OR occurrences.day_of_week = $dow_date)
+                        AND (occurrences.day_of_month IS NULL
+                                        OR occurrences.day_of_month = $dom_date)
+                        AND (occurrences.month IS NULL
+                                        OR occurrences.month = $month)
+                        AND (occurrences.nth_in_month IS NULL
+                                        OR occurrences.nth_in_month =
+                                        FLOOR(MOD($dom_date, 7)))
+                        AND events.calendar_id = $calendar_id
+                        ORDER BY events.time";
 
 	$result = $db->Execute($query)
 		or db_error(_('Error in get_events_by_date'), $query);
@@ -358,24 +358,24 @@ function get_events_by_date($day, $month, $year)
 // returns the event that corresponds to $id
 function get_event_by_id($id)
 {
-	global $calendar_name, $db;
+	global $calendar_id, $db;
 
-	$events_table = SQL_PREFIX . 'events';
-	$users_table = SQL_PREFIX . 'users';
-
-	$query = "SELECT $events_table.*,\n"
-		.$db->SQLDate('Y', "$events_table.startdate")." AS year,\n"
-		.$db->SQLDate('m', "$events_table.startdate")." AS month,\n"
-		.$db->SQLDate('d', "$events_table.startdate")." AS day,\n"
-		.$db->SQLDate('Y', "$events_table.enddate")." AS end_year,\n"
-		.$db->SQLDate('m', "$events_table.enddate")." AS end_month,\n"
-		.$db->SQLDate('d', "$events_table.enddate")." AS end_day,\n"
-		."$users_table.username\n"
-		."FROM $events_table\n"
-		."LEFT JOIN $users_table\n"
-		."ON ($events_table.uid = $users_table.uid)\n"
-		."WHERE $events_table.id = '$id'\n"
-		."AND $events_table.calendar = '$calendar_name';";
+	$query = "SELECT events.*,\n"
+		.$db->SQLDate('Y', "occurrences.start_date")." AS year,\n"
+		.$db->SQLDate('m', "occurrences.start_date")." AS month,\n"
+		.$db->SQLDate('d', "occurrences.start_date")." AS day,\n"
+		.$db->SQLDate('Y', "occurrences.end_date")." AS end_year,\n"
+		.$db->SQLDate('m', "occurrences.end_date")." AS end_month,\n"
+		.$db->SQLDate('d', "occurrences.end_date")." AS end_day,\n"
+		."users.username\n"
+		."FROM ".SQL_PREFIX."events AS events,\n"
+		.SQL_PREFIX."users AS users,\n"
+                .SQL_PREFIX."occurrences AS occurrences\n"
+		."WHERE events.id = $id\n"
+                ."AND events.uid = users.uid\n"
+                ."AND occurrences.event_id = events.id\n"
+		."AND events.calendar_id = $calendar_id\n"
+                ."LIMIT 0,1";
 
 	$result = $db->Execute($query);
 
@@ -387,7 +387,7 @@ function get_event_by_id($id)
 		soft_error("item doesn't exist!");
 	}
 
-	return $result->FetchRow();
+	return array_map('stripslashes', $result->FetchRow());
 }
 
 // parses a description and adds the appropriate mark-up
@@ -395,7 +395,7 @@ function parse_desc($text)
 {
 
 	// get out the crap, put in breaks
-	$text = nl2br(stripslashes($text));
+	$text = nl2br($text);
 
 	//urls
 	$text = preg_replace("/([[:alpha:]]+:\\/\\/[^<>\s]+[\\w\\/])/i",
@@ -643,16 +643,19 @@ function get_day_of_month_sequence($month, $year)
 
 // creates a select element for a form of pre-defined $type
 // returns XHTML data for the element
-function create_select($name, $type, $select)
+function create_select($name, $type, $select, $attributes = NULL)
 {
-	$html = tag('select', attributes('size="1"', "name=\"$name\""));
+        if(!$attributes) $attributes = attributes();
+
+        $attributes->add('size="1"', "name=\"$name\"");
+	$html = tag('select', $attributes);
 
         foreach($type as $value => $text) {
-		$attributes = attributes("value=\"$value\"");
+		$option_attributes = attributes("value=\"$value\"");
 		if ($select == $value) {
-                        $attributes->add('selected="selected"');
+                        $option_attributes->add('selected="selected"');
                 }
-		$html->add(tag('option', $attributes, $text));
+		$html->add(tag('option', $option_attributes, $text));
 	}
 
 	return $html;

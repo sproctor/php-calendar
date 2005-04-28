@@ -56,12 +56,13 @@ if(!$db->Connect(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE)) {
 
 session_start();
 
-foreach($_GET as $key => $value) {
-	$vars[$key] = $value;
-}
-
-foreach($_POST as $key => $value) {
-	$vars[$key] = $value;
+$vars = array();
+if(get_magic_quotes_gpc()) {
+        $vars = array_merge($vars, $_GET);
+        $vars = array_merge($vars, $_POST);
+} else {
+        $vars = array_merge($vars, array_map('addslashes', $_GET));
+        $vars = array_merge($vars, array_map('addslashes', $_POST));
 }
 
 if (!isset($vars['month'])) {
@@ -103,12 +104,12 @@ if(empty($vars['action'])) {
 	$action = $vars['action'];
 }
 
-if(!empty($vars['calendar_name'])) {
-        $calendar_name = $vars['calendar_name'];
+if(!empty($vars['calendar_id'])) {
+        $calendar_id = $vars['calendar_id'];
 }
 
 $query = "SELECT * from ".SQL_PREFIX."calendars\n"
-."WHERE calendar='$calendar_name'\n"
+."WHERE id=$calendar_id\n"
 ."LIMIT 0,1";
 
 $result = $db->Execute($query)

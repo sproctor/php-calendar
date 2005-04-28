@@ -130,13 +130,11 @@ function event_submit()
 	$enddate = $db->DBDate($endstamp);
 	$duration = $duration_hour * 60 + $duration_min;
 
-	$table = SQL_PREFIX . 'events';
-
 	if($modify) {
 		if(!check_user() && $config['anon_permission'] < 2) {
 			soft_error(_('You do not have permission to modify events.'));
 		}
-		$query = "UPDATE $table\n"
+		$query = "UPDATE ".SQL_PREFIX."events\n"
 			."SET startdate=$startdate,\n"
 			."enddate=$enddate,\n"
 			."starttime='$starttime',\n"
@@ -145,32 +143,47 @@ function event_submit()
 			."description='$description',\n"
 			."eventtype='$typeofevent'\n"
 			."WHERE id='$id'";
+
+                $result = $db->Execute($query)
+                        or db_error(_('Error creating event'), $query);
+
+                $affected = $db->Affected_Rows($result);
+                if($affected < 1) return tag('div', _('No changes were made.'));
 	} else {
 		if(!check_user() && $config['anon_permission'] < 1) {
 			soft_error(_('You do not have permission to post.'));
 		}
 		$id = $db->GenID(SQL_PREFIX . 'sequence');
-		$query = "INSERT INTO $table\n"
-			."(id, uid, startdate, enddate, starttime, duration,"
-			." subject, description, eventtype, calendar)\n"
-			."VALUES ($id, '$uid', $startdate, $enddate,"
-			."'$starttime', '$duration', '$subject',"
-			."'$description', '$typeofevent', '$calendar_name')";
+		$query = "INSERT INTO ".SQL_PREFIX."events\n"
+			."(id, uid, type, time, "
+                        ."duration, subject, description, "
+                        ."calendar_id)\n"
+			."VALUES ($id, $uid, $typeofevent, '$starttime', "
+                        ."'$duration', '$subject', '$description', "
+                        ."'$calendar_id')";
+                $result = $db->Execute($query)
+                        or db_error(_('Error creating event'), $query);
+
+                $values = array('event_id' => $id);
+                if(!empty($startdate)) {
+                        $values['start_date'] = $startdate;
+                }
+                if(!empty($enddate)) {
+                        $value['end_date'] = $enddate;
+                }
+                $query = "INSERT INTO ".SQL_PREFIX."occurrences
+                        (".implode(', ', array_keys($values)).")
+                        VALUES (".implode(', ', $values).")";
+
+                $result = $db->Execute($query)
+                        or db_error(_('Error creating occurrence'), $query);
 	}
 
-	$result = $db->Execute($query);
-
-	if(!$result) {
-		db_error(_('Error processing event'), $query);
-	}
-
-	$affected = $db->Affected_Rows($result);
-	if($affected < 1) return tag('div', _('No changes were made.'));
 
         session_write_close();
 
 	header("Location: $phpc_script?action=display&id=$id");
-	return tag('div', attributes('class="box"'), _('Date updated').": $affected");
+	return tag('div', attributes('class="box"'), _('Date submitted'));
 }
 
 ?>
