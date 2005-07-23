@@ -45,8 +45,8 @@ if(!defined('SQL_TYPE')) {
         exit;
 }
 
-require_once($phpc_root_path . 'includes/calendar.php');
 require_once($phpc_root_path . 'adodb/adodb.inc.php');
+require_once($phpc_root_path . 'includes/calendar.php');
 
 // Make the database connection.
 $db = NewADOConnection(SQL_TYPE);
@@ -116,6 +116,10 @@ $result = $db->Execute($query)
         or db_error(_('Could not read configuration') . ": $query");
 
 $config = $result->FetchRow($result);
+
+if(empty($config)) {
+        soft_error(_('Invalid calendar') . ": $calendar_id");
+}
 
 if($config['translate'] && empty($no_gettext)) {
 

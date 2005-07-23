@@ -23,24 +23,29 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
-function logout()
+function logout($calendar)
 {
-	global $vars, $day, $month, $year, $phpc_script;
+        unset($calendar->session['username']);
+        unset($calendar->session['uid']);
+        $calendar->session_write_close();
 
-        unset($_SESSION['user']);
-        session_write_close();
+	$string = "Location: {$calendar->script}";
 
-	$string = "Location: $phpc_script?";
+        if(isset($calendar->vars['lastaction'])) {
+                $arguments[] = "action={$calendar->vars['lastaction']}";
+                unset($calendar->vars['lastaction']);
+        }
+
         $arguments = array();
-        if(!empty($vars['lastaction']))
-                $arguments[] = "action=$vars[lastaction]";
-        if(!empty($vars['year']))
-                $arguments[] = "year=$year";
-        if(!empty($vars['month']))
-                $arguments[] = "month=$month";
-        if(!empty($vars['day']))
-                $arguments[] = "day=$day";
-        header($string . implode('&', $arguments));
+        foreach($calendar->vars as $key => $var) {
+                if(in_array($key, $calendar->persistent_vars))
+                        $arguments[] = "$key=$var";
+        }
+
+        if(sizeof($arguments) > 0)
+                $string .= '?' . implode('&', $arguments);
+
+        header($string);
 
         return tag('h2', _('Loggin out...'));
 }

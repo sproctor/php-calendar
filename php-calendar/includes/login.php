@@ -23,32 +23,39 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
-function login()
+function login($calendar)
 {
-	global $vars, $day, $month, $year, $phpc_script;
-
 	$html = tag('div');
 
 	//Check password and username
-	if(isset($vars['username'])){
-		$user = $vars['username'];
-		$password = $vars['password'];
+	if(isset($calendar->vars['username'])) {
+                if(!isset($calendar->vars['password']))
+                        $calendar->vars['password'] = '';
 
-		if(verify_user($user, $password)){
-                        $_SESSION['user'] = $user;
-                        session_write_close();
+		$user = $calendar->vars['username'];
+		$password = $calendar->vars['password'];
 
-                        $string = "Location: $phpc_script?";
+		if($calendar->verify_user($user, $password)) {
+                        $calendar->session['username'] = $user;
+                        $calendar->session_write_close();
+
+                        $string = "Location: {$calendar->script}";
+
+                        if(isset($calendar->vars['lastaction'])) {
+                                $arguments[] = "action={$calendar->vars['lastaction']}";
+                                unset($calendar->vars['lastaction']);
+                        }
+
                         $arguments = array();
-                        if(!empty($vars['lastaction']))
-                                $arguments[] = "action=$vars[lastaction]";
-                        if(!empty($vars['year']))
-                                $arguments[] = "year=$year";
-                        if(!empty($vars['month']))
-                                $arguments[] = "month=$month";
-                        if(!empty($vars['day']))
-                                $arguments[] = "day=$day";
-                        header($string . implode('&', $arguments));
+                        foreach($calendar->vars as $key => $var) {
+                                if(in_array($key, $calendar->persistent_vars))
+                                        $arguments[] = "$key=$var";
+                        }
+
+                        if(sizeof($arguments) > 0)
+                                $string .= '?' . implode('&', $arguments);
+
+                        header($string);
 			return tag('h2', _('Loggin in...'));
 		}
 
@@ -56,35 +63,22 @@ function login()
 
 	}
 
-	$html->add(login_form());
+	$html->add(login_form($calendar));
 	return $html;
 }
 
-
-function login_form()
+function login_form($calendar)
 {
-        global $vars, $phpc_script, $day, $year, $month;
-
-        $lastaction = empty($vars['lastaction']) ? '' : $vars['lastaction'];
-
         $submit_data = tag('td', attributes('colspan="2"'),
                                 create_hidden('action', 'login'),
                                 create_submit(_('Submit')));
 
-        if(!empty($vars['lastaction']))
-                $submit_data->prepend(create_hidden('lastaction',
-                                        $vars['lastaction']));
+        foreach($calendar->vars as $key => $var) {
+                if(in_array($key, $calendar->persistent_vars))
+                        $submit_data->prepend(create_hidden($key, $var));
+        }
 
-        if(!empty($vars['day']))
-                $submit_data->prepend(create_hidden('day', $day));
-
-        if(!empty($vars['month']))
-                $submit_data->prepend(create_hidden('month', $month));
-
-        if(!empty($vars['year']))
-                $submit_data->prepend(create_hidden('year', $year));
-
-	return tag('form', attributes("action=\"$phpc_script\"",
+	return tag('form', attributes("action=\"{$calendar->script}\"",
 				'method="post"'),
 		tag('table', attributes('class="phpc-main"'),
 			tag('caption', _('Log in')),
@@ -96,7 +90,8 @@ function login_form()
 					tag('td', create_text('username'))),
 				tag('tr',
 					tag('th', _('Password').':'),
-					tag('td', create_password('password'))))));
+					tag('td', create_password
+                                                ('password'))))));
 }
 
 ?>

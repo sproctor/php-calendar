@@ -47,7 +47,7 @@ class Html {
                 $this->childElements = array();
 
                 $arg = array_shift($args);
-                if($arg == NULL) return;
+                if($arg === NULL) return;
 
                 if(is_a($arg, 'AttributeList')) {
                         $this->attributeList = $arg;
@@ -67,10 +67,10 @@ class Html {
                                 foreach($htmlElement as $element) {
                                         $this->add($element);
                                 }
-                        } elseif(is_object($element)
-                                        && !is_a($element, 'Html')) {
+                        } elseif(is_object($htmlElement)
+                                        && !is_a($htmlElement, 'Html')) {
                                 soft_error(_('Invalid class') . ': '
-                                                . get_class($element));
+                                                . get_class($htmlElement));
                         } else {
                                 $this->childElements[] = $htmlElement;
                         }
@@ -85,10 +85,10 @@ class Html {
                                                 as $element) {
                                         $this->prepend($element);
                                 }
-                        } elseif(is_object($element)
-                                        && !is_a($element, 'Html')) {
+                        } elseif(is_object($htmlElement)
+                                        && !is_a($htmlElement, 'Html')) {
                                 soft_error(_('Invalid class') . ': '
-                                                . get_class($element));
+                                                . get_class($htmlElement));
                         } else {
                                 array_unshift($this->childElements,
                                                 $htmlElement);

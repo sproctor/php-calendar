@@ -23,18 +23,17 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-function event_form()
+function event_form($calendar)
 {
-	global $vars, $day, $month, $year, $db, $config, $phpc_script,
-               $month_names, $event_types;
+	global $month_names, $event_types;
 
-	if(isset($vars['id'])) {
+	if(isset($calendar->vars['id'])) {
 		// modifying
-		$id = $vars['id'];
+		$id = $calendar->vars['id'];
 
 		$heading = sprintf(_('Editing Event #%d'), $id);
 
-		$row = get_event_by_id($id);
+		$row = $calendar->get_event_by_id($id);
 
 		$title = $row['title'];
 		$desc = htmlspecialchars($row['description']);
@@ -53,7 +52,7 @@ function event_form()
 		$durmin = $row['duration'] % 60;
 		$durhr  = floor($row['duration'] / 60);
 
-		if(!$config['hours_24']) {
+		if(!$calendar->get_config('hours_24')) {
 			if($hour > 12) {
 				$pm = true;
 				$hour = $hour - 12;
@@ -70,11 +69,16 @@ function event_form()
 		// case "add":
 		$heading = _('Adding event to calendar');
 
-		$subject = '';
+		$title = '';
                 $desc = '';
+
+                $day = $calendar->day;
+                $month = $calendar->month;
+                $year = $calendar->year;
+
                 if($day == date('j') && $month == date('n')
                                 && $year == date('Y')) {
-                        if($config['hours_24']) {
+                        if($calendar->get_config('hours_24')) {
                                 $hour = date('G');
                         } else {
                                 $hour = date('g');
@@ -98,7 +102,7 @@ function event_form()
 		$typeofevent = 1;
 	}
 
-        if($config['hours_24']) {
+        if($calendar->get_config('hours_24')) {
                 $hour_sequence = create_sequence(0, 23);
         } else {
                 $hour_sequence = create_sequence(1, 12);
@@ -112,7 +116,7 @@ function event_form()
                         create_select('minute', $minute_sequence, $minute,
                                 attributes('class="phpc-time"')));
 
-	if(!$config['hours_24']) {
+	if(!$calendar->get_config('hours_24')) {
 		if($pm) {
                         $value = 1;
                 } else {
@@ -133,10 +137,14 @@ function event_form()
                         tag('h3', _('General Information')),
                         tag('h4', _('Title') . sprintf
                                 (' ('._('%d character maximum').'): ',
-                                 $config['subject_max'])),
+                                 $calendar->get_config('subject_max'))),
                         tag('input', attributes('type="text"',
-                                        "maxlength=\"$config[subject_max]\"",
-                                        "size=\"$config[subject_max]\"",
+                                        'maxlength="'
+                                        . $calendar->get_config('subject_max')
+                                        . '"',
+                                        'size="'
+                                        . $calendar->get_config('subject_max')
+                                        . '"',
                                         'name="title"',
                                         "value=\"$title\"")),
                         tag('h4', _('Description')),
@@ -166,22 +174,33 @@ function event_form()
 
         $date_info = tag('div', attributes('class="phpc-date-info"'),
                         tag('h3', _('Date Information')),
-                        tag('h4', _('Date of event')),
+                        tag('div', attributes('style="border: 1px solid black"'),
+                                tag('h4', create_radio('date_type'), 'Normal'),
+                        tag('h5', _('Date of event')),
+                        tag('div',
+                                create_select('day', $day_of_month_sequence,
+                                        $day),
+                                create_select('month', $month_names, $month),
+                                create_select('year', $year_sequence, $year))),
+                        tag('div', attributes('style="border: 1px solid black"'),
+                                tag('h4', create_radio('date_type'), 'Reoccurring'),
+                        tag('h5', _('Date of event')),
                         tag('div',
                                 create_select('day', $day_of_month_sequence,
                                         $day),
                                 create_select('month', $month_names, $month),
                                 create_select('year', $year_sequence, $year)),
-                        tag('h4', _('Date multiple day event ends')),
+                        tag('h5', _('Date multiple day event ends')),
                         tag('div',
                                 create_select('endday', $day_of_month_sequence,
                                         $end_day),
                                 create_select('endmonth', $month_names,
                                         $end_month),
                                 create_select('endyear', $year_sequence,
-                                        $end_year)));
+                                        $end_year))));
 
-	return tag('form', attributes("action=\"$phpc_script\""),
+	//return tag('form', attributes("action=\"{$calendar->script}\""),
+        return $calendar->create_form(false,
                         tag('h2', $heading),
                         tag('div', attributes('class="phpc-misc-info"'),
                                 create_submit(_("Submit Event"))),

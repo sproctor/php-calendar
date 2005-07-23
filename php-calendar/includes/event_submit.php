@@ -23,56 +23,58 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-function event_submit()
+function event_submit($calendar)
 {
-	global $calendar_name, $day, $month, $year, $db, $vars, $config,
-	       $phpc_script;
-
         /* Validate input */
-	if(isset($vars['id'])) {
-		$id = $vars['id'];
+	if(isset($calendar->vars['id'])) {
+		$id = $calendar->vars['id'];
 		$modify = 1;
 	} else {
 		$modify = 0;
 	}
 
-	if(isset($vars['description'])) {
-		$description = ereg_replace('<[bB][rR][^>]*>', "\n", 
-				$vars['description']);
+	if(isset($calendar->vars['description'])) {
+		$description = addslashes(strip_tags(ereg_replace
+                                        ('<[bB][rR][^>]*>', "\n", 
+                                         $calendar->vars['description']),
+                                        '<a>'));
 	} else {
 		$description = '';
 	}
 
-	if(isset($vars['subject'])) {
-		$subject = addslashes(ereg_replace('<[^>]*>', '', 
-					$vars['subject']));
+	if(isset($calendar->vars['subject'])) {
+		$subject = addslashes(strip_tags($calendar->vars['subject']));
 	} else {
 		$subject = '';
 	}
 
-	if(isset($vars['description'])) {
-		$description = addslashes(ereg_replace('</?([^aA/]|[a-zA-Z_]{2,})[^>]*>',
-					'', $vars['description']));
-	} else {
-		$description = '';
-	}
-
-	if(empty($vars['day'])) soft_error(_('No day was given.'));
-
-	if(empty($vars['month'])) soft_error(_('No month was given.'));
-
-	if(empty($vars['year'])) soft_error(_('No year was given'));
-
-	if(isset($vars['hour'])) {
-                $hour = $vars['hour'];
-	} else {
-                soft_error(_('No hour was given.'));
+	if(empty($calendar->vars['day'])) {
+                soft_error(_('No day was given.'));
+        } else {
+                $day = $calendar->day;
         }
 
-        if(!$config['hours_24'])
-        {
-                if (array_key_exists('pm', $vars) && $vars['pm']) {
-                        if ($hour < 12) {
+	if(empty($calendar->vars['month'])) {
+                soft_error(_('No month was given.'));
+        } else {
+                $month = $calendar->month;
+        }
+
+	if(empty($calendar->vars['year'])) {
+                soft_error(_('No year was given'));
+        } else {
+                $year = $calendar->year;
+        }
+
+	if(!isset($calendar->vars['hour'])) {
+                soft_error(_('No hour was given.'));
+	} else {
+                $hour = $calendar->vars['hour'];
+        }
+
+        if(!$config['hours_24']) {
+                if(!empty($calendar->vars['pm'])) {
+                        if($hour < 12) {
                                 $hour += 12;
                         }
                 } elseif($hour == 12) {
@@ -80,23 +82,29 @@ function event_submit()
                 }
         }
 
-        if(array_key_exists('minute', $vars)) {
-                $minute = $vars['minute'];
-        } else {
+        if(!isset($calendar->vars['minute'])) {
                 soft_error(_('No minute was given.'));
+        } else {
+                $minute = $calendar->vars['minute'];
         }
 
-	if(isset($vars['durationmin']))
-		$duration_min = $vars['durationmin'];
-	else soft_error(_('No duration minute was given.'));
+	if(!isset($calendar->vars['durationmin'])) {
+	        soft_error(_('No duration minute was given.'));
+        } else {
+		$duration_min = $calendar->vars['durationmin'];
+        }
 
-	if(isset($vars['durationhour']))
-		$duration_hour = $vars['durationhour'];
-	else soft_error(_('No duration hour was given.'));
+	if(!isset($calendar->vars['durationhour'])) {
+                soft_error(_('No duration hour was given.'));
+	} else {
+		$duration_hour = $calendar->vars['durationhour'];
+        }
 
-	if(isset($vars['typeofevent']))
-		$typeofevent = $vars['typeofevent'];
-	else soft_error(_('No type of event was given.'));
+	if(!isset($calendar->vars['type'])) {
+                soft_error(_('No type of event was given.'));
+	} else {
+		$type = $calendar->vars['typeofevent'];
+        }
 
 	if(isset($vars['endday']))
 		$end_day = $vars['endday'];

@@ -164,8 +164,8 @@ function add_sql_user_db()
 	$sql_type = $_POST['sql_type'];
 
 	$create_user = isset($_POST['create_user'])
-		&& $_POST['create_user'] = 'yes';
-	$create_db = isset($_POST['create_db']) && $_POST['create_db'] = 'yes';
+		&& $_POST['create_user'] == 'yes';
+	$create_db = isset($_POST['create_db']) && $_POST['create_db'] == 'yes';
 
 	$db = NewADOConnection($sql_type);
 
@@ -257,12 +257,18 @@ function install_base()
 
 function create_tables()
 {
-	global $db;
+	global $db, $phpc_root_path;
 
         $sql = file_get_contents($phpc_root_path . 'tables.sql');
-        $query = preg_replace('/\bphpc_\B/', 'test_', $sql);
-        $db->Execute($query)
-                or db_error("Error creating table:", $query);
+        $sql = preg_replace('/\bphpc_\B/', SQL_PREFIX, $sql);
+        $sql = trim($sql);
+        $queries = explode(';', $sql);
+
+        foreach($queries as $query) {
+                if(empty($query)) continue;
+                $db->Execute($query)
+                        or db_error("Error creating table:", $query);
+        }
 }
 
 function get_admin()
@@ -302,10 +308,10 @@ function add_calendar()
                 db_error(_("Could not connect to the database"));
         }
 
-	$query = "INSERT INTO ".SQL_PREFIX."calendars (calendar, hours_24, "
-	."start_monday, translate, subject_max, calendar_title) "
-	."VALUES ('$calendar_id', '$hours_24', '$start_monday', '$translate',"
-	." '32', '$calendar_title')";
+	$query = "INSERT INTO ".SQL_PREFIX."calendars (id, hours_24, "
+	."start_monday, translate, subject_max, title) "
+	."VALUES (".$db->GenID(SQL_PREFIX.'calendar_id', 0).", '$hours_24', "
+        ."'$start_monday', '$translate', '32', '$calendar_title')";
 
 	$result = $db->Execute($query);
 
@@ -316,9 +322,8 @@ function add_calendar()
 	echo "<p>calendar created</p>\n";
 
 	$query = "insert into ".SQL_PREFIX."users\n"
-		."(uid, username, password, calendar) VALUES\n"
-		."('".$db->GenID(SQL_PREFIX.'uid', 0)."', 'anonymous', '', "
-                ."$calendar_id)";
+		."(uid, username, password) VALUES\n"
+		."('".$db->GenID(SQL_PREFIX.'uid', 0)."', 'anonymous', '')";
 
 	$result = $db->Execute($query);
 	if(!$result) {
@@ -328,9 +333,9 @@ function add_calendar()
 	$passwd = md5($_POST['admin_pass']);
 
 	$query = "insert into ".SQL_PREFIX."users\n"
-		."(uid, username, password, calendar) VALUES\n"
+		."(uid, username, password) VALUES\n"
 		."('".$db->GenID(SQL_PREFIX.'uid')."', '$_POST[admin_user]', "
-                ."'$passwd', $calendar_id)";
+                ."'$passwd')";
 
 	$result = $db->Execute($query);
 	if(!$result) {

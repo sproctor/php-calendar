@@ -63,21 +63,119 @@ if(!empty($_GET['action']) && $_GET['action'] == 'style') {
 	exit;
 }
 
+// Run the installer if we have no config file
+if(!file_exists($phpc_root_path . 'config.php')) {
+        header('Location: install.php');
+        exit;
+}
+require_once($phpc_root_path . 'config.php');
+if(!defined('SQL_TYPE')) {
+        header('Location: install.php');
+        exit;
+}
+
 require_once($phpc_root_path . 'includes/calendar.php');
-require_once($phpc_root_path . 'includes/setup.php');
+require_once($phpc_root_path . 'includes/globals.php');
+require_once($phpc_root_path . 'includes/common.php');
+
+$phpc_script = $_SERVER['SCRIPT_NAME'];
+$phpc_url = (empty($_SERVER['HTTPS']) ? 'http' : 'https')
+	. "://{$_SERVER['SERVER_NAME']}$phpc_script?{$_SERVER['QUERY_STRING']}";
 
 $legal_actions = array('event_form', 'event_delete', 'display', 'event_submit',
 		'search', 'login', 'logout', 'admin', 'options_submit',
                 'new_user_submit');
 
+if(!empty($_REQUEST['action'])) {
+        $action = $_REQUEST['action'];
+} else {
+        $action = 'display';
+}
+
 if(!in_array($action, $legal_actions, true)) {
 	soft_error(_('Invalid action'));
 }
 
-require_once($phpc_root_path . "includes/$action.php");
+$vars = array();
+if(get_magic_quotes_gpc()) {
+        $vars = array_merge($vars, $_GET);
+        $vars = array_merge($vars, $_POST);
+} else {
+        $vars = array_merge($vars, array_map('addslashes', $_GET));
+        $vars = array_merge($vars, array_map('addslashes', $_POST));
+}
 
-eval("\$output = $action();");
+if(empty($vars['action'])) {
+	$action = 'display';
+} else {
+	$action = $vars['action'];
+}
+
+$calendar = new Calendar($phpc_script, $vars);
+
+$output = $calendar->$action();
 
 echo create_xhtml($output);
+
+// takes some xhtml data fragment and adds the calendar-wide menus, etc
+// returns a string containing an XHTML document ready to be output
+function create_xhtml($rest)
+{
+	global $phpc_script, $calendar, $action;
+
+	$output = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
+		."\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
+	$html = tag('html', attributes('xml:lang="en"'), 
+			tag('head',
+				tag('title', $calendar->get_config('title')),
+				tag('meta',
+					attributes('http-equiv="Content-Type"'
+                                                .' content="text/html;'
+                                                .' charset=iso-8859-1"')),
+				tag('link',
+					attributes('rel="stylesheet"'
+						.' type="text/css" href="'
+						.$phpc_script
+						.'?action=style"')),
+				'<!--[if IE]><link rel="stylesheet" '
+				.'type="text/css" href="all-ie.css" />'
+				.'<![endif]-->'),
+			tag('body',
+				tag('h1', $calendar->get_config('title')),
+				$calendar->navbar($action),
+				$rest,
+				link_bar($calendar)));
+
+	return $output . $html->toString();
+}
+
+// returns XHTML data for the links at the bottom of the calendar
+function link_bar($calendar)
+{
+	global $phpc_url;
+
+	$html = tag('div', attributes('class="phpc-footer"'));
+
+	if($calendar->get_config('translate')) {
+		$html->add(tag('p', '[', $calendar->create_link('en',
+                                                array('lang' => 'en')), '] [',
+                                        $calendar->create_link('de',
+                                                array('lang' => 'de')), ']'));
+        }
+
+	$html->add(tag('p', '[',
+			tag('a',
+				attributes('href="http://validator.w3.org/'
+					.'check?url='
+					.rawurlencode($phpc_url)
+					.'"'), _('Valid XHTML 1.1')),
+			'] [',
+			tag('a', attributes('href="http://jigsaw.w3.org/'
+					.'css-validator/check/referer"'),
+					_('Valid CSS2')),
+			']'));
+	return $html;
+}
+
 
 ?>

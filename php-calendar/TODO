@@ -58,6 +58,13 @@ some good ideas: http://mjr.towers.org.uk/blog/2004-7.html#webcal0929
 
  - allow passwords to be changed
 
+ - add attendees for events
+
+ - remove all the header("location: ...") stuff and replace it with the new
+   calendar display stuff (if this gets written)
+
+ - Add RSS feed for events
+
 later:
  - integrate email_events.php (where is this?)
  - abstract things out better to allow for theming, etc. maybe.

@@ -1,6 +1,6 @@
 <?php 
 /*
-   Copyright 2002 - 2005 Sean Proctor, Nathan Poiro
+   Copyright 2002 - 2005 Sean Proctor
 
    This file is part of PHP-Calendar.
 
@@ -19,9 +19,13 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-if ( !defined('IN_PHPC') ) {
+if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
+
+define('CHECK', 1);
+define('TEXT', 2);
+define('DROPDOWN', 3);
 
 function admin()
 {
@@ -32,68 +36,26 @@ function admin()
 	return tag('div', options_form(), new_user_form());
 }
 
-define('CHECK', 1);
-define('TEXT', 2);
-define('DROPDOWN', 3);
-
-// name, text, type, value(s)
-$config_form = array(
-        array('start_monday', _('Start Monday'), CHECK),
-        array('hours_24', _('24 Hour Time'), CHECK),
-        array('translate', _('Translate'), CHECK),
-        array('calendar_title', _('Calendar Title'), TEXT),
-        array('subject_max', _('Maximum Subject Length'), TEXT),
-        array('anon_permission', _('Anonymous Users'), DROPDOWN,
-                array(_('Cannot add nor modify events'),
-                        _('Can add but not modify events'),
-                        _('Can add and modify events'))));
-
-function options_form()
+function new_calendar_form()
 {
-	global $config, $phpc_script, $config_form;
+	global $phpc_script;
 
-        $tbody = tag('tbody');
-
-        foreach($config_form as $element) {
-                $name = $element[0];
-                $text = $element[1];
-                $type = $element[2];
-
-                switch($type) {
-                        case CHECK:
-                                $input = create_checkbox($name, '1',
-                                                $config[$name]);
-                                break;
-                        case TEXT:
-                                $input = create_text($name, $config[$name]);
-                                break;
-                        case DROPDOWN:
-                                $sequence = create_sequence(0,
-                                                count($element[3]) - 1);
-                                $input = create_select($name, $element[3],
-                                                $config[$name], $sequence);
-                                break;
-                        default:
-                                soft_error(_('Unsupported config type')
-                                                . ": $type");
-                }
-
-                $tbody->add(tag('tr',
-                                tag('th', $text.':'),
-                                tag('td', $input)));
-        }
-
-        return tag('form', attributes("action=\"$phpc_script\"",
+	return tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
 			tag('table', attributes('class="phpc-main"'),
-				tag('caption', _('Options')),
+				tag('caption', _('Create New User')),
 				tag('tfoot',
-                                        tag('tr',
-                                                tag('td', attributes('colspan="2"'),
-							create_hidden('action', 'options_submit'),
+					tag('tr',
+						tag('td', attributes('colspan="2"'),
+							create_hidden('action', 'new_calendar_submit'),
 							create_submit(_('Submit'))))),
-				$tbody));
-
+				tag('tbody',
+					tag('tr',
+						tag('th', _('Calendar Name').':'),
+						tag('td', create_text('name'))),
+					tag('tr',
+						tag('th', _('Calendar Owner').':'),
+						tag('td', create_text('owner'))))));
 }
 
 function new_user_form()

@@ -29,77 +29,85 @@ if ( !defined('IN_PHPC') ) {
 
 // picks which view to show based on what data is given
 // returns the appropriate view
-function display()
+function display(&$calendar)
 {
-	global $vars, $day, $month, $year;
+        $vars = $calendar->get_vars();
 
-	if(isset($vars['id'])) return display_id($vars['id']);
-	if(isset($vars['day'])) return display_day($day, $month, $year);
-	if(isset($vars['month'])) return display_month($month, $year);
+	if(isset($vars['id'])) return display_id($calendar);
+	if(isset($vars['day'])) return display_day($calendar);
+	if(isset($vars['month'])) return display_month($calendar);
 	if(isset($vars['year'])) soft_error('year view not yet implemented');
-	return display_month($month, $year);
+	return display_month($calendar);
 }
 
 // creates a menu to navigate the month/year
 // returns XHTML data for the menu
-function month_navbar($month, $year)
+function month_navbar(&$calendar)
 {
+        $year = $calendar->get_year();
+        $month = $calendar->get_month();
+
 	$html = tag('div', attributes('class="phpc-navbar"'));
-	menu_item_append($html, _('last year'), 'display', $year - 1, $month);
-	menu_item_append($html, _('last month'), 'display', $year, $month - 1);
+	$html->add($calendar->create_date_link(_('last year'), 'display',
+                                $year - 1, $month), "\n");
+	$html->add($calendar->create_date_link(_('last month'), 'display',
+                                $year, $month - 1), "\n");
 
 	for($i = 1; $i <= 12; $i++) {
-		menu_item_append($html, short_month_name($i), 'display', $year,
-				$i);
+		$html->add($calendar->create_date_link(short_month_name($i),
+                                        'display', $year, $i), "\n");
 	}
-	menu_item_append($html,  _('next month'), 'display', $year, $month + 1);
-	menu_item_append($html,  _('next year'), 'display', $year + 1, $month);
+	$html->add($calendar->create_date_link(_('next month'), 'display',
+                                $year, $month + 1), "\n");
+	$html->add($calendar->create_date_link(_('next year'), 'display',
+                                $year + 1, $month), "\n");
 
 	return $html;
 }
 
 // creates a tables of the days in the month
 // returns XHTML data for the month
-function display_month($month, $year)
+function display_month(&$calendar)
 {
 	$days = tag('tr');
 	for($i = 0; $i < 7; $i++) {
-		$days->add(tag('th', day_name($i)));
+		$days->add(tag('th', day_name($calendar->get_config(
+                                                        'start_monday')
+                                                ? $i + 1 : $i)));
 	}
 
 	return tag('div',
-                        month_navbar($month, $year),
+                        month_navbar($calendar),
                         tag('table', attributes('class="phpc-main"',
                                         'id="calendar"'),
-                                tag('caption', month_name($month)." $year"),
+                                tag('caption',
+                                        month_name($calendar->get_month())
+                                        .' ' . $calendar->get_year()),
                                 tag('colgroup', attributes('span="7"', 'width="1*"')),
                                 tag('thead', $days),
-                                create_month($month, $year)));
-}
-
-// creates a display for a particular month
-// return XHTML data for the month
-function create_month($month, $year)
-{
-	return tag('tbody', create_weeks(1, $month, $year));
+                                tag('tbody', create_month($calendar))));
 }
 
 // creates a display for a particular week and the rest of the weeks until the
 // end of the month
 // returns XHTML data for the weeks
-function create_weeks($week_of_month, $month, $year)
+function create_month(&$calendar, $week_of_month = 1)
 {
+        $month = $calendar->get_month();
+        $year = $calendar->get_year();
+
 	if($week_of_month > weeks_in_month($month, $year)) return NULL;
 
-	return tag('tr', display_days(1, $week_of_month, $month, $year),
-			create_weeks($week_of_month + 1, $month, $year));
+	return tag('tr', display_days($calendar, $week_of_month),
+			create_month($calendar, $week_of_month + 1));
 }
 
 // displays the day of the week and the following days of the week
 // return XHTML data for the days
-function display_days($day_of_week, $week_of_month, $month, $year)
+function display_days(&$calendar, $week_of_month, $day_of_week = 1)
 {
-	global $db, $phpc_script;
+        $month = $calendar->get_month();
+        $year = $calendar->get_year();
 
 	if($day_of_week > 7) return NULL;
 
@@ -124,27 +132,28 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 			$current_era = 'future';
 		}
 
-                if(can_add_event()) {
+                //if(can_add_event()) {
 		        $html_day = tag('td', attributes('valign="top"',
                                                 "class=\"$current_era\""),
-                                        create_date_link('+', 'event_form',
-                                                $year, $month,
+                                        $calendar->create_date_link('+',
+                                                'event_form', $year, $month,
                                                 $day_of_month,
                                                 array('class="phpc-add"')),
-                                        create_date_link($day_of_month,
-                                                'display', $year, $month,
-                                                $day_of_month,
+                                        $calendar->create_date_link(
+                                                $day_of_month, 'display', $year,
+                                                $month, $day_of_month,
                                                 array('class="date"')));
-                } else {
+                /*} else {
 		        $html_day = tag('td', attributes('valign="top"',
                                                 "class=\"$current_era\""),
                                         create_date_link($day_of_month,
                                                 'display', $year, $month,
                                                 $day_of_month,
                                                 array('class="date"')));
-                }
+                }*/
 
-		$result = get_events_by_date($day_of_month, $month, $year);
+		$result = $calendar->get_events_by_date($day_of_month, $month,
+                                $year);
 
 		/* Start off knowing we don't need to close the event
 		 *  list.  loop through each event for the day
@@ -159,23 +168,18 @@ function display_days($day_of_week, $week_of_month, $month, $year)
 					$row['eventtype']);
 
 			$event = tag('li',
-                                        tag('a',
-                                                attributes(
-                                                        "href=\"$phpc_script"
-                                                        ."?action=display&amp;"
-                                                        ."id=$row[id]\""),
-                                                ($event_time ? "$event_time - "
-                                                 : '')
-                                                . $subject));
+                                        create_id_link(($event_time ?
+                                                        "$event_time - " : '')
+                                                . $subject, 'display',
+                                                $row['id']));
                         $html_events->add($event);
                         $have_events = true;
 		}
 		if($have_events) $html_day->add($html_events);
 	}
 
-	$html_day->add(display_days($day_of_week + 1, $week_of_month, $month,
-                                $year));
-        return $html_day;
+	return array_merge(array($html_day), display_days($calendar,
+                                $week_of_month, $day_of_week + 1));
 }
 
 // returns a string representation of $duration for $typeofevent
@@ -206,9 +210,13 @@ function get_duration($duration, $typeofevent)
 
 // displays a single day in a verbose way to be shown singly
 // returns the XHTML data for the day
-function display_day($day, $month, $year)
+function display_day(&$calendar)
 {
-	global $db, $config, $phpc_script;
+	global $config;
+
+        $day = $calendar->get_day();
+        $month = $calendar->get_month();
+        $year = $calendar->get_year();
 
 	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
 	$monthname = month_name($month);
@@ -262,14 +270,15 @@ function display_day($day, $month, $year)
                                                         $row['id']));
                         }
 
-			$html_subject->add(create_id_link(tag('strong',
-                                                        $subject),
+			$html_subject->add($calendar->create_id_link(tag(
+                                                        'strong', $subject),
                                                 'display', $row['id']));
 
 			if($privileged) {
 				$html_subject->add(' (');
-				$html_subject->add(create_id_link(_('Modify'),
-                                                'event_form', $row['id']));
+				$html_subject->add($calendar->create_id_link(
+                                                _('Modify'), 'event_form',
+                                                $row['id']));
 				$html_subject->add(')');
 			}
 
@@ -289,7 +298,7 @@ function display_day($day, $month, $year)
 		$html_table->add($html_body);
 
 		if($privileged) $output = tag('form',
-			attributes("action=\"$phpc_script\""),
+			attributes("action=\"{$calendar->script}\""),
                         $html_table);
 		else $output = $html_table;
 
@@ -302,9 +311,11 @@ function display_day($day, $month, $year)
 
 // displays a particular event to be show singly
 // returns XHTML data for the event
-function display_id($id)
+function display_id(&$calendar)
 {
-	global $db, $year, $month, $day, $config;
+	global $config;
+
+        $id = $calendar->get_event_id();
 
 	$row = get_event_by_id($id);
 
