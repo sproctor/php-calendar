@@ -165,12 +165,11 @@ function event_submit($calendar)
 		$query = "INSERT INTO ".SQL_PREFIX."events\n"
 			."(id, uid, type, time, "
                         ."duration, subject, description, "
-                        ."calendar_id)\n"
+                        ."calendar)\n"
 			."VALUES ($id, $uid, $typeofevent, '$starttime', "
                         ."'$duration', '$subject', '$description', "
-                        ."'$calendar_id')";
-                $result = $db->Execute($query)
-                        or db_error(_('Error creating event'), $query);
+                        ."'{$calendar->id}')";
+                $result = $db->Execute($query) or db_error($query);
 
                 $values = array('event_id' => $id);
                 if(!empty($startdate)) {

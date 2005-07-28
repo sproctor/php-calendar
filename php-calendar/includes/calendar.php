@@ -54,7 +54,7 @@ class Calendar {
         // internal variables
         var $assured = false;
         var $persistent_vars = array('day', 'month', 'year', 'lastaction',
-                        'calendar_id', 'id');
+                        'cid', 'id');
 
         function Calendar($script, $vars) {
                 $this->vars = $vars;
@@ -180,7 +180,7 @@ class Calendar {
                 $this->db = NewADOConnection(SQL_TYPE);
                 if(!$this->db->Connect(SQL_HOST, SQL_USER, SQL_PASSWD,
                                         SQL_DATABASE)) {
-                        $calendar->db_error();
+                        $this->db_error();
                 }
 
                 if($this->username === false)  {
@@ -244,8 +244,8 @@ class Calendar {
                 if($this->name === false && $this->id === false) {
                         if(!empty($this->vars['name'])) {
                                 $this->name = $this->vars['name'];
-                        } elseif(!empty($this->vars['calendar_id'])) {
-                                $this->id = $this->vars['calendar_id'];
+                        } elseif(!empty($this->vars['cid'])) {
+                                $this->id = $this->vars['cid'];
                         } else {
                                 $this->id = 0;
                         }
@@ -256,7 +256,7 @@ class Calendar {
                         $query = "SELECT id FROM ".SQL_PREFIX."calendars\n"
                                 ."WHERE name='{$this->name}'";
                         $result = $this->db->execute($query)
-                                or db_error($query);
+                                or $this->db_error($query);
                         $row = $result->FetchRow()
                                 or soft_error(_('Could not find a calendar by that name.'));
                         $this->id = $row['id'];
@@ -340,7 +340,7 @@ class Calendar {
                                 AND (occurrences.nth_in_month IS NULL
                                                 OR occurrences.nth_in_month =
                                                 FLOOR(MOD($dom_date, 7)))
-                                AND events.calendar_id = {$this->id}
+                                AND events.calendar = {$this->id}
                                 ORDER BY events.time";
 
                 $result = $this->db->Execute($query)
@@ -349,11 +349,11 @@ class Calendar {
                 return $result;
         }
 
-        // returns the event that corresponds to $id
-        function get_event_by_id($id = false) {
+        // returns the event that for $event_id
+        function get_event_by_id($event_id = false) {
                 $this->assure_data();
 
-                if($id === false) $id = $this->event_id;
+                if($event_id === false) $event_id = $this->event_id;
 
                 $query = "SELECT events.*,
                         ".$db->SQLDate('Y', "occurrences.start_date")." AS year,
@@ -370,13 +370,13 @@ class Calendar {
                                 FROM ".SQL_PREFIX."events AS events,
                         ".SQL_PREFIX."users AS users,
                         ".SQL_PREFIX."occurrences AS occurrences
-                                WHERE events.id = $id
+                                WHERE events.id = $event_id
                                 AND events.uid = users.uid
                                 AND occurrences.event_id = events.id
-                                AND events.calendar_id = $calendar_id
+                                AND events.calendar = {$this->id}
                                 LIMIT 0,1";
 
-                $result = $db->Execute($query) or db_error($query);
+                $result = $db->Execute($query) or $this->db_error($query);
 
                 $event = $result->FetchRow() or
                         soft_error(_('No event with that id.'));
