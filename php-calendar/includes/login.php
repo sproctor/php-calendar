@@ -87,7 +87,7 @@ function login_form($calendar)
 			tag('tbody',
 				tag('tr',
 					tag('th', _('Username').':'),
-					tag('td', create_text('username'))),
+					tag('td', create_input('username'))),
 				tag('tr',
 					tag('th', _('Password').':'),
 					tag('td', create_password

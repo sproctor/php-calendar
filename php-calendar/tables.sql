@@ -1,15 +1,21 @@
+CREATE TABLE phpc_general (
+  version tinyint(4) NOT NULL default '1',
+  default_calendar int(11) NOT NULL default '0'
+);
+
 CREATE TABLE phpc_calendars (
-  id int(2) NOT NULL default '0',
+  id int(11) NOT NULL default '0',
+  name varchar(255) NOT NULL default '',
+  owner int(11) NOT NULL default '0',
   hours_24 int(11) NOT NULL default '0',
   start_monday int(11) NOT NULL default '0',
   translate int(11) NOT NULL default '0',
   anon_permission int(11) NOT NULL default '0',
   subject_max int(11) NOT NULL default '32',
-  contact_name varchar(255) default NULL,
-  contact_email varchar(255) default NULL,
   title varchar(255) NOT NULL default '',
-  URL varchar(200) default NULL,
-  PRIMARY KEY  (id)
+  URL varchar(255) default NULL,
+  PRIMARY KEY (id),
+  KEY name (name)
 );
 
 CREATE TABLE phpc_events (
@@ -20,7 +26,7 @@ CREATE TABLE phpc_events (
   duration int(11) default NULL,
   title varchar(255) NOT NULL default '',
   description text NOT NULL,
-  calendar_id int(2) NOT NULL default '0',
+  calendar int(11) NOT NULL default '0',
   PRIMARY KEY  (id)
 );
 

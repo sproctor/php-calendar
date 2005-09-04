@@ -52,10 +52,10 @@ function new_calendar_form()
 				tag('tbody',
 					tag('tr',
 						tag('th', _('Calendar Name').':'),
-						tag('td', create_text('name'))),
+						tag('td', create_input('name'))),
 					tag('tr',
 						tag('th', _('Calendar Owner').':'),
-						tag('td', create_text('owner'))))));
+						tag('td', create_input('owner'))))));
 }
 
 function new_user_form()
@@ -74,7 +74,7 @@ function new_user_form()
 				tag('tbody',
 					tag('tr',
 						tag('th', _('User Name').':'),
-						tag('td', create_text('user_name'))),
+						tag('td', create_input('user_name'))),
 					tag('tr',
 						tag('th', _('Password').':'),
 						tag('td', create_password('password1'))),

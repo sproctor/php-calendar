@@ -72,7 +72,7 @@ function event_submit($calendar)
                 $hour = $calendar->vars['hour'];
         }
 
-        if(!$config['hours_24']) {
+        if(!$calendar->get_config('hours_24')) {
                 if(!empty($calendar->vars['pm'])) {
                         if($hour < 12) {
                                 $hour += 12;
@@ -103,28 +103,36 @@ function event_submit($calendar)
 	if(!isset($calendar->vars['type'])) {
                 soft_error(_('No type of event was given.'));
 	} else {
-		$type = $calendar->vars['typeofevent'];
+		$type = $calendar->vars['type'];
         }
 
-	if(isset($vars['endday']))
-		$end_day = $vars['endday'];
-	else soft_error(_('No end day was given'));
+        if($type == 1) {
+	if(!isset($calendar->vars['endday'])) {
+                soft_error(_('No end day was given'));
+        } else {
+		$end_day = $calendar->vars['endday'];
+        }
 
-	if(isset($vars['endmonth']))
-		$end_month = $vars['endmonth'];
-	else soft_error(_('No end month was given'));
+	if(isset($calendar->vars['endmonth'])){
+                soft_error(_('No end month was given'));
+        } else {
+		$end_month = $calendar->vars['endmonth'];
+        }
 
-	if(isset($vars['endyear']))
-		$end_year = $vars['endyear'];
-	else soft_error(_('No end year was given'));
+	if(isset($calendar->vars['endyear'])) {
+                soft_error(_('No end year was given'));
+        } else {
+		$end_year = $calendar->vars['endyear'];
+        }
+        }
 
-	if(strlen($subject) > $config['subject_max']) {
+	if(strlen($subject) > $calendar->get_config('subject_max')) {
 		soft_error(_('Your subject was too long')
 				.". $config[subject_max] "._('characters max')
 				.".");
 	}
 
-	$uid = get_uid($_SESSION['user']);
+	$uid = $calendar->get_uid();
 
 	$startstamp = mktime($hour, $minute, 0, $month, $day, $year);
 	$endstamp = mktime(0, 0, 0, $end_month, $end_day, $end_year);
@@ -152,16 +160,18 @@ function event_submit($calendar)
 			."eventtype='$typeofevent'\n"
 			."WHERE id='$id'";
 
-                $result = $db->Execute($query)
-                        or db_error(_('Error creating event'), $query);
+                $result = $calendar->db->Execute($query)
+                        or $calendar->
+                        $calendar->db_error(_('Error creating event'), $query);
 
-                $affected = $db->Affected_Rows($result);
+                $affected = $calendar->db->Affected_Rows($result);
                 if($affected < 1) return tag('div', _('No changes were made.'));
 	} else {
-		if(!check_user() && $config['anon_permission'] < 1) {
+		if(!check_user() &&
+                                $calendar->get_config('anon_permission') < 1) {
 			soft_error(_('You do not have permission to post.'));
 		}
-		$id = $db->GenID(SQL_PREFIX . 'sequence');
+		$id = $calendar->db->GenID(SQL_PREFIX . 'sequence');
 		$query = "INSERT INTO ".SQL_PREFIX."events\n"
 			."(id, uid, type, time, "
                         ."duration, subject, description, "
@@ -169,7 +179,8 @@ function event_submit($calendar)
 			."VALUES ($id, $uid, $typeofevent, '$starttime', "
                         ."'$duration', '$subject', '$description', "
                         ."'{$calendar->id}')";
-                $result = $db->Execute($query) or db_error($query);
+                $result = $calendar->db->Execute($query)
+                        or $calendar->db_error($query);
 
                 $values = array('event_id' => $id);
                 if(!empty($startdate)) {
@@ -182,12 +193,11 @@ function event_submit($calendar)
                         (".implode(', ', array_keys($values)).")
                         VALUES (".implode(', ', $values).")";
 
-                $result = $db->Execute($query)
-                        or db_error(_('Error creating occurrence'), $query);
+                $result = $calendar->db->Execute($query)
+                        or $calendar->db_error($query);
 	}
 
-
-        session_write_close();
+        $calendar->session_write_close();
 
 	header("Location: $phpc_script?action=display&id=$id");
 	return tag('div', attributes('class="box"'), _('Date submitted'));

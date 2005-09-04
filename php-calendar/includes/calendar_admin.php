@@ -65,7 +65,7 @@ function options_form()
                                                 $config[$name]);
                                 break;
                         case TEXT:
-                                $input = create_text($name, $config[$name]);
+                                $input = create_input($name, $config[$name]);
                                 break;
                         case DROPDOWN:
                                 $sequence = create_sequence(0,
@@ -112,7 +112,7 @@ function new_user_form()
 				tag('tbody',
 					tag('tr',
 						tag('th', _('User Name').':'),
-						tag('td', create_text('user_name'))),
+						tag('td', create_input('user_name'))),
 					tag('tr',
 						tag('th', _('Password').':'),
 						tag('td', create_password('password1'))),

@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 Sean Proctor, Nathan Poiro
+   Copyright 2005 Sean Proctor
 
    This file is part of PHP-Calendar.
 
@@ -29,7 +29,7 @@ $calendar_id = 0;
 
 define('IN_PHPC', true);
 
-require_once($phpc_root_path . 'includes/calendar.php');
+require_once($phpc_root_path . 'includes/common.php');
 require_once($phpc_root_path . 'adodb/adodb.inc.php');
 require_once($phpc_root_path . 'install.inc.php');
 
@@ -179,14 +179,14 @@ function add_sql_user_db()
 	}
 
 	if(!$ok) {
-		db_error(_('Could not connect to server.'));
+		db_error($db);
 	}
 
 	if($create_db) {
 		$sql = "CREATE DATABASE $my_database";
 
 		$db->Execute($sql)
-			or db_error(_('error creating db'), $sql);
+			or db_error($db, $sql);
 
 		$string .= "<div>Successfully created database</div>";
 	}
@@ -196,14 +196,14 @@ function add_sql_user_db()
 			case 'mysql':
 				$sql = "GRANT ALL ON accounts.* TO $my_username@$my_hostname identified by '$my_passwd'";
 				$db->Execute($sql)
-					or db_error(_('Could not grant:'), $sql);
+					or db_error($db, $sql);
 				$sql = "GRANT ALL ON $my_database.* to $my_username identified by '$my_passwd'";
 				$db->Execute($sql)
-					or db_error(_('Could not grant:'), $sql);
+					or db_error($db, $sql);
 
 				$sql = "FLUSH PRIVILEGES";
 				$db->Execute($sql)
-					or db_error("Could not flush privileges", $sql);
+					or db_error($db, $sql);
 
 				$string .= "<div>Successfully added user</div>";
 
@@ -245,7 +245,7 @@ function install_base()
         // Make the database connection.
         $db = NewADOConnection(SQL_TYPE);
         if(!$db->Connect(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE)) {
-                db_error(_("Could not connect to the database"));
+                db_error($db);
         }
 
 	create_tables();
@@ -267,7 +267,7 @@ function create_tables()
         foreach($queries as $query) {
                 if(empty($query)) continue;
                 $db->Execute($query)
-                        or db_error("Error creating table:", $query);
+                        or db_error($db, $query);
         }
 }
 
@@ -305,7 +305,7 @@ function add_calendar()
         // Make the database connection.
         $db = NewADOConnection(SQL_TYPE);
         if(!$db->Connect(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE)) {
-                db_error(_("Could not connect to the database"));
+                db_error($db);
         }
 
 	$query = "INSERT INTO ".SQL_PREFIX."calendars (id, hours_24, "
@@ -316,7 +316,7 @@ function add_calendar()
 	$result = $db->Execute($query);
 
 	if(!$result) {
-		db_error("Couldn't create calendar.", $query);
+		db_error($db, $query);
 	}
 
 	echo "<p>calendar created</p>\n";
@@ -327,7 +327,7 @@ function add_calendar()
 
 	$result = $db->Execute($query);
 	if(!$result) {
-		db_error("Could not add anonymous user:", $query);
+		db_error($db, $query);
 	}
 
 	$passwd = md5($_POST['admin_pass']);
@@ -339,7 +339,7 @@ function add_calendar()
 
 	$result = $db->Execute($query);
 	if(!$result) {
-		db_error("Could not add admin:", $query);
+		db_error($db, $query);
 	}
 	
 	echo "<p>admin added; <a href=\"index.php\">View calendar</a></p>";
@@ -347,4 +347,13 @@ function add_calendar()
 }
 
 echo '</form></body></html>';
+
+function db_error($db, $query = false)
+{
+        $string = "<h3>"._('Error in SQL query')."</h3>\n"
+                ."<p>".$db->ErrorNo().': '.$db->ErrorMsg()."</p>\n";
+        if($query) $string .= "<h3>"._('SQL query').":</h3><p>$query</p>\n";
+        soft_error($string);
+}
+
 ?>
