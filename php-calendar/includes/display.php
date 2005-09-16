@@ -98,8 +98,10 @@ function create_month(&$calendar, $week_of_month = 1)
 
 	if($week_of_month > weeks_in_month($month, $year)) return NULL;
 
-	return tag('tr', display_days($calendar, $week_of_month),
-			create_month($calendar, $week_of_month + 1));
+	$html_weeks = tag('tr', display_days($calendar, $week_of_month));
+
+        return array_merge(array($html_weeks), create_month($calendar,
+                                $week_of_month + 1));
 }
 
 // displays the day of the week and the following days of the week

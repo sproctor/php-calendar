@@ -260,28 +260,29 @@ table.phpc-main li a:hover {
   text-align: right;
 }
 
-textarea.phpc-description {
-  width: 100%;
-  border: 0;
+.phpc-form-long-free-question {
+  border: 1px solid <?php echo $sepcolor ?>;
 }
 
-.phpc-general-info, .phpc-time-info, .phpc-date-info {
+.phpc-form-long-free-question textarea {
+  width: 100%;
+  border-width: 0;
+}
+
+.phpc-form-category {
   border: 2px solid <?php echo $sepcolor ?>;
   margin: 2em;
-  background: <?php echo $bgcolor3 ?>;
+  background-color: <?php echo $bgcolor3 ?>;
   padding: 1em;
 }
 
-.phpc-general-info div, .phpc-time-info div, .phpc-date-info div {
-}
-
-.phpc-general-info h3, .phpc-time-info h3, .phpc-date-info h3 {
+.phpc-form-category h3 {
   border-width: 0 0 2px 0;
   border-style: solid;
   border-color: <?php echo $sepcolor ?>;
 }
 
-.phpc-general-info h4, .phpc-time-info h4, .phpc-date-info h4 {
+.phpc-form-category h4 {
   margin: 1em 0 0 0;
 }
 

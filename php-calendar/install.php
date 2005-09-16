@@ -31,7 +31,6 @@ define('IN_PHPC', true);
 
 require_once($phpc_root_path . 'includes/common.php');
 require_once($phpc_root_path . 'adodb/adodb.inc.php');
-require_once($phpc_root_path . 'install.inc.php');
 
 echo '<html>
 <head>
@@ -219,6 +218,19 @@ function add_sql_user_db()
 		."<div><input type=\"submit\" name=\"done_user_db\" value=\"continue\">"
 		."</div>\n";
 
+}
+
+function create_config($sql_hostname, $sql_username, $sql_passwd, $sql_database,
+                $sql_prefix, $sql_type)
+{
+	return "<?php\n"
+		."define('SQL_HOST',     '$sql_hostname');\n"
+		."define('SQL_USER',     '$sql_username');\n"
+		."define('SQL_PASSWD',   '$sql_passwd');\n"
+		."define('SQL_DATABASE', '$sql_database');\n"
+		."define('SQL_PREFIX',   '$sql_prefix');\n"
+		."define('SQL_TYPE',     '$sql_type');\n"
+		."?>\n";
 }
 
 function install_base()

@@ -19,14 +19,32 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-if ( !defined('IN_PHPC') ) {
+if(!defined('IN_PHPC')) {
        die("Hacking attempt");
+}
+
+require_once($phpc_root_path . 'includes/form.php');
+
+function create_form() {
+        $general_category = new Category('General Information');
+        $general_category->add_part(new FreeQuestion("Title", "title", 32));
+        $general_category->add_part(new LongFreeQuestion("Description",
+                                "description"));
+
+        $time_category = new Category('Time Information');
+
+        $form = new Form(2);
+        $form->add_part($general_category);
+        $form->add_part($time_category);
+
+        return $form;
 }
 
 function event_form($calendar)
 {
 	global $month_names, $event_types;
 
+/*
 	if(isset($calendar->vars['id'])) {
 		// modifying
 		$id = $calendar->vars['id'];
@@ -210,6 +228,9 @@ function event_form($calendar)
                         tag('div', attributes('class="phpc-misc-info"'),
                                 $hidden_fields,
                                 create_submit(_("Submit Event"))));
+        */
+        $form = create_form();
+        return $form->get_xhtml();
 }
 
 ?>
