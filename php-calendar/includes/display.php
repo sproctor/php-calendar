@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 - 2005 Sean Proctor, Nathan Poiro
+   Copyright 2005 Sean Proctor
 
    This file is part of PHP-Calendar.
 
@@ -96,7 +96,7 @@ function create_month(&$calendar, $week_of_month = 1)
         $month = $calendar->get_month();
         $year = $calendar->get_year();
 
-	if($week_of_month > weeks_in_month($month, $year)) return NULL;
+	if($week_of_month > weeks_in_month($month, $year)) return array();
 
 	$html_weeks = tag('tr', display_days($calendar, $week_of_month));
 
@@ -111,7 +111,7 @@ function display_days(&$calendar, $week_of_month, $day_of_week = 1)
         $month = $calendar->get_month();
         $year = $calendar->get_year();
 
-	if($day_of_week > 7) return NULL;
+	if($day_of_week > 7) return array();
 
 	$day_of_month = ($week_of_month - 1) * 7 + $day_of_week
 		- day_of_first($month, $year);

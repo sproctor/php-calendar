@@ -139,34 +139,67 @@ class LongFreeQuestion extends AtomicQuestion {
 }
 
 class CompoundQuestion extends Question {
-        var $list;
         var $atomic_question;
+        var $conditionals = array();
 
-        function CompoundQuestion(&$atomic_question, $list = array()) {
+        function CompoundQuestion(&$atomic_question, $conditionals = array()) {
                 $this->atomic_question = &$atomic_question;
 
-                foreach($list as $key => $item) {
+                foreach($conditionals as $key => $item) {
                         $this->add_conditional($key, $item);
                 }
+                $atomic_question->set_parent($this);
         }
 
         function add_conditional($key, &$item) {
-                $list[$key] = &$item;
+                $this->conditionals[$key] = &$item;
                 $item->set_parent($this);
-                $this->question->hook_conditional($key, $item);
+        }
+
+        function get_conditional($key) {
+                return $this->conditionals[$key];
+        }
+
+        function get_xhtml($defaults = array()) {
+                return $this->atomic_question->get_xhtml($defaults);
         }
 }
 
 class RadioQuestion extends AtomicQuestion {
+        var $options = array();
 
-        function RadioQuestion($question, $options = array()) {
+        function RadioQuestion($qid, $question = false, $options = array()) {
                 $this->question = $question;
-                foreach($options as $key => $value) {
-                        $this->add_option($key, $value);
+                foreach($options as $key => $name) {
+                        $this->add_option($key, $name);
                 }
         }
 
-        function add_option($key, $value) {
+        function add_option($key, $name) {
+                $this->options[$key] = $name;
+        }
+
+        function get_xhtml($defaults = array()) {
+                $results = array();
+                if($this->question !== false) {
+                        $results[] = tag('h' . ($this->get_level() + 1),
+                                        $this->question);
+                }
+                foreach($this->options as $key => $name) {
+                        $results[] = tag('div',
+                                        attributes
+                                        ('class=phpc-form-radio-option'),
+                                        tag('input', attributes('type=radio',
+                                                        "name=$qid", "id=$qid",
+                                                        "value=$key")),
+                                $name);
+                        if(is_a($this->parent, 'CompoundQuestion')
+                                && ($hook = $this->parent->get_conditional(
+                                                $key))) {
+                                $results[] = $hook->get_xhtml($defaults);
+                        }
+                }
+                return $results;
         }
 }
 

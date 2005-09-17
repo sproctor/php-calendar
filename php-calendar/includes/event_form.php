@@ -31,7 +31,16 @@ function create_form() {
         $general_category->add_part(new LongFreeQuestion("Description",
                                 "description"));
 
+        $time_radio = new RadioQuestion('time_type', 'Event Type');
+        $time_radio->add_option('normal', _('Normal'));
+        $time_radio->add_option('tba', _('To Be Announced'));
+        $time_radio->add_option('none', _('Not Applicable'));
+
+        $time_compound = new CompoundQuestion($time_radio);
+        $time_compound->add_conditional('normal', new FreeQuestion("Start", "start", 32));
+
         $time_category = new Category('Time Information');
+        $time_category->add_part($time_compound);
 
         $form = new Form(2);
         $form->add_part($general_category);

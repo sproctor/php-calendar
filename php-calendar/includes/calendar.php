@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 - 2005 Sean Proctor, Nathan Poiro
+   Copyright 2005 Sean Proctor
 
    This file is part of PHP-Calendar.
 
@@ -41,7 +41,6 @@ class Calendar {
         var $uid = false;
         var $vars = false;
         var $session = false;
-        var $db = false;
         var $config = false;
 
         // event variables
