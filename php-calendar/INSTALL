@@ -78,7 +78,7 @@ ERROR  db:1044: Access denied for user: 'MySQLusername@localhost'
 
 ERROR  create db:1044: Access denied for user: 'MySQLusername@localhost' to database
 'MySQLdatabasename': CREATE TABLE phpc_events
---You may not have the abilty to create tables.  If not, try steps 7-11.
+--You may not have the abilty to create tables.
 
 ERROR  Software error  Couldn't select database
 --Make sure the name of you MySQL database is correct in the config.php file.  Contact your domain host if necessary.
