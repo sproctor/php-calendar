@@ -19,9 +19,11 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/*
 if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
+*/
 
 $HtmlInline = array('a', 'strong');
 
@@ -43,6 +45,7 @@ class Html {
         function __construct() {
                 $args = func_get_args();
                 $this->tagName = array_shift($args);
+                if($this->tagName === NULL) $this->tagName = '';
                 $this->attributeList = array();
                 $this->childElements = array();
 
@@ -69,7 +72,7 @@ class Html {
                                 }
                         } elseif(is_object($htmlElement)
                                         && !is_a($htmlElement, 'Html')) {
-                                soft_error(_('Invalid class') . ': '
+                                html_error('Invalid class: '
                                                 . get_class($htmlElement));
                         } else {
                                 $this->childElements[] = $htmlElement;
@@ -87,7 +90,7 @@ class Html {
                                 }
                         } elseif(is_object($htmlElement)
                                         && !is_a($htmlElement, 'Html')) {
-                                soft_error(_('Invalid class') . ': '
+                                html_error('Invalid class: '
                                                 . get_class($htmlElement));
                         } else {
                                 array_unshift($this->childElements,
@@ -99,25 +102,28 @@ class Html {
         function toString() {
                 global $HtmlInline;
 
-                $output = "<{$this->tagName}";
+		if($this->tagName != '') {
+			$output = "<{$this->tagName}";
 
-                if($this->attributeList != NULL) {
-                        $output .= ' ' . $this->attributeList->toString();
-                }
+			if($this->attributeList != NULL) {
+				$output .= ' '
+					. $this->attributeList->toString();
+			}
 
-                if($this->childElements == NULL) {
-                        $output .= " />\n";
-                        return $output;
-                }
+			if(sizeof($this->childElements) == 0) {
+				$output .= " />\n";
+				return $output;
+			}
 
-                $output .= ">";
+			$output .= ">";
+		}
 
                 foreach($this->childElements as $child) {
                         if(is_object($child)) {
                                 if(is_a($child, 'Html')) {
                                         $output .= $child->toString();
                                 } else {
-                                        soft_error(_('Invalid class') . ': '
+                                        html_error('Invalid class: '
                                                         . get_class($child));
                                 }
                         } else {
@@ -125,11 +131,14 @@ class Html {
                         }
                 }
 
-                $output .= "</{$this->tagName}>";
+		if($this->tagName != '') {
+			$output .= "</{$this->tagName}>";
 
-                if(!in_array($this->tagName, $HtmlInline)) {
-                        $output .= "\n";
-                }
+			if(!in_array($this->tagName, $HtmlInline)) {
+				$output .= "\n";
+			}
+		}
+
                 return $output;
         }
 }
@@ -199,4 +208,43 @@ function attributes()
         return $attrs;
 }
 
+$html_error_func = 'default_error_handler';
+
+function default_error_handler($str)
+{
+        echo "<html><head><title>Error</title></head>\n"
+                ."<body><h1>Software Error</h1>\n"
+                ."<h2>Message:</h2>\n"
+                ."<pre>$str</pre>\n";
+        if(version_compare(phpversion(), '4.3.0', '>=')) {
+                echo "<h2>Backtrace</h2>\n";
+                echo "<ol>\n";
+                foreach(debug_backtrace() as $bt) {
+                        echo "<li>{$bt['file']}:{$bt['line']} - ";
+                        if(!empty($bt['class']))
+                                echo "{$bt['class']}{$bt['type']}";
+                        echo "{$bt['function']}(" . implode(', ', $bt['args'])
+                                . ")</li>\n";
+                }
+                echo "</ol>\n";
+        }
+        echo "</body></html>\n";
+        exit;
+}
+
+/* call this function if you want a non-default error handler
+ */
+function html_set_error_handler($func)
+{
+        global $html_error_func;
+
+        $html_error_func = $func;
+}
+
+function html_error() {
+        global $html_error_func;
+
+        $args = func_get_args();
+        return call_user_func_array($html_error_func, $args);
+}
 ?>

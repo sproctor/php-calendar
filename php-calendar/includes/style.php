@@ -260,29 +260,29 @@ table.phpc-main li a:hover {
   text-align: right;
 }
 
-.phpc-form-long-free-question {
+.form-long-free-question {
   border: 1px solid <?php echo $sepcolor ?>;
 }
 
-.phpc-form-long-free-question textarea {
+.form-long-free-question textarea {
   width: 100%;
   border-width: 0;
 }
 
-.phpc-form-category {
+.form-group {
   border: 2px solid <?php echo $sepcolor ?>;
   margin: 2em;
   background-color: <?php echo $bgcolor3 ?>;
   padding: 1em;
 }
 
-.phpc-form-category h3 {
+.form-category h3 {
   border-width: 0 0 2px 0;
   border-style: solid;
   border-color: <?php echo $sepcolor ?>;
 }
 
-.phpc-form-category h4 {
+.form-category h4 {
   margin: 1em 0 0 0;
 }
 

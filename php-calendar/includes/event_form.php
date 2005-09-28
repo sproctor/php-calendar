@@ -26,23 +26,26 @@ if(!defined('IN_PHPC')) {
 require_once($phpc_root_path . 'includes/form.php');
 
 function create_form() {
-        $general_category = new Category('General Information');
-        $general_category->add_part(new FreeQuestion("Title", "title", 32));
-        $general_category->add_part(new LongFreeQuestion("Description",
-                                "description"));
+        $general_category = new Group('General Information');
+        $general_category->add_part(new FreeQuestion('title', _('Title'), false,
+                                32, true));
+        $general_category->add_part(new LongFreeQuestion('description',
+                                _('Description')));
 
-        $time_radio = new RadioQuestion('time_type', 'Event Type');
+        $time_radio = new RadioQuestion('time_type', _('Event Type'), array(),
+                        true);
         $time_radio->add_option('normal', _('Normal'));
         $time_radio->add_option('tba', _('To Be Announced'));
         $time_radio->add_option('none', _('Not Applicable'));
 
         $time_compound = new CompoundQuestion($time_radio);
-        $time_compound->add_conditional('normal', new FreeQuestion("Start", "start", 32));
+        $time_compound->add_conditional('normal', new FreeQuestion('start',
+                                _('Start'), false, 32));
 
-        $time_category = new Category('Time Information');
+        $time_category = new Group('Time Information');
         $time_category->add_part($time_compound);
 
-        $form = new Form(2);
+        $form = new Form('index.php', _('Event Form'), 2);
         $form->add_part($general_category);
         $form->add_part($time_category);
 
