@@ -33,7 +33,7 @@ function display(&$calendar)
 {
         $vars = $calendar->get_vars();
 
-	if(isset($vars['id'])) return display_id($calendar);
+	if(isset($vars['eventid'])) return display_event($calendar);
 	if(isset($vars['day'])) return display_day($calendar);
 	if(isset($vars['month'])) return display_month($calendar);
 	if(isset($vars['year'])) soft_error('year view not yet implemented');
@@ -79,7 +79,7 @@ function display_month(&$calendar)
 	return tag('div',
                         month_navbar($calendar),
                         tag('table', attributes('class="phpc-main"',
-                                        'id="calendar"'),
+                                        'id="php-calendar"'),
                                 tag('caption',
                                         month_name($calendar->get_month())
                                         .' ' . $calendar->get_year()),
@@ -90,7 +90,7 @@ function display_month(&$calendar)
 
 // creates a display for a particular week and the rest of the weeks until the
 // end of the month
-// returns XHTML data for the weeks
+// returns HTML data for the weeks
 function create_month(&$calendar, $week_of_month = 1)
 {
         $month = $calendar->get_month();
@@ -105,7 +105,7 @@ function create_month(&$calendar, $week_of_month = 1)
 }
 
 // displays the day of the week and the following days of the week
-// return XHTML data for the days
+// return HTML data for the days
 function display_days(&$calendar, $week_of_month, $day_of_week = 1)
 {
         $month = $calendar->get_month();
@@ -136,7 +136,7 @@ function display_days(&$calendar, $week_of_month, $day_of_week = 1)
 
                 //if(can_add_event()) {
 		        $html_day = tag('td', attributes('valign="top"',
-                                                "class=\"$current_era\""),
+                                                "class=\"phpc-$current_era\""),
                                         $calendar->create_date_link('+',
                                                 'event_form', $year, $month,
                                                 $day_of_month,
@@ -154,26 +154,27 @@ function display_days(&$calendar, $week_of_month, $day_of_week = 1)
                                                 array('class="date"')));
                 }*/
 
-		$result = $calendar->get_events_by_date($day_of_month, $month,
-                                $year);
+		$db = phpc_get_db();
+		$user = phpc_get_user();
 
-		/* Start off knowing we don't need to close the event
-		 *  list.  loop through each event for the day
-		 */
+		$result = $db->get_events_by_date($day_of_month, $month,
+                                $year, $calendar->get_config('id'), $user->id);
+
+		/* loop through each event for the day */
                 $have_events = false;
 		$html_events = tag('ul');
 		while($row = $result->FetchRow($result)) {
-			$subject = stripslashes($row['subject']);
+			$subject = stripslashes($row['title']);
 
 			$event_time = formatted_time_string(
 					$row['starttime'],
-					$row['eventtype']);
+					$row['timetype']);
 
 			$event = tag('li',
-                                        create_id_link(($event_time ?
-                                                        "$event_time - " : '')
-                                                . $subject, 'display',
-                                                $row['id']));
+					$calendar->create_event_link(
+						($event_time ? "$event_time - " 
+						 : '') . $subject, 'display',
+						$row['eventid']));
                         $html_events->add($event);
                         $have_events = true;
 		}
@@ -211,11 +212,9 @@ function get_duration($duration, $typeofevent)
 }
 
 // displays a single day in a verbose way to be shown singly
-// returns the XHTML data for the day
+// returns the HTML data for the day
 function display_day(&$calendar)
 {
-	global $config;
-
         $day = $calendar->get_day();
         $month = $calendar->get_month();
         $year = $calendar->get_year();
@@ -223,9 +222,11 @@ function display_day(&$calendar)
 	$tablename = date('Fy', mktime(0, 0, 0, $month, 1, $year));
 	$monthname = month_name($month);
 
-	$privileged = check_user() || $config['anon_permission'] >= 2;
+	$db = phpc_get_db();
+	$user = phpc_get_user();
 
-	$result = get_events_by_date($day, $month, $year);
+	$result = $db->get_events_by_date($day, $month, $year,
+			$calendar->get_config('id'), $user->id);
 
 	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
 
@@ -240,7 +241,7 @@ function display_day(&$calendar)
 						tag('th', _('Duration')),
 						tag('th', _('Description'))
 					     )));
-		if($privileged) {
+		if(true) {
 			$html_table->add(tag('tfoot',
                                                 tag('tr',
                                                         tag('td',
@@ -256,8 +257,8 @@ function display_day(&$calendar)
 
 		for(; $row; $row = $result->FetchRow()) {
 			//$name = stripslashes($row['username']);
-			$subject = stripslashes($row['subject']);
-			if(empty($subject)) $subject = _('(No subject)');
+			$subject = stripslashes($row['title']);
+			if(empty($subject)) $subject = _('(No title)');
 			$desc = parse_desc($row['description']);
 			$time_str = formatted_time_string($row['starttime'],
 					$row['eventtype']);
@@ -267,20 +268,21 @@ function display_day(&$calendar)
 			$html_subject = tag('td',
                                         attributes('class="phpc-list"'));
 
-			if($privileged) {
-                                $html_subject->add(create_checkbox('id',
-                                                        $row['id']));
+			if(true) {
+                                $html_subject->add(create_checkbox
+						("delete{$row['eventid']}",
+						 'y'));
                         }
 
-			$html_subject->add($calendar->create_id_link(tag(
+			$html_subject->add($calendar->create_event_link(tag(
                                                         'strong', $subject),
-                                                'display', $row['id']));
+                                                'display', $row['eventid']));
 
-			if($privileged) {
+			if(true) {
 				$html_subject->add(' (');
-				$html_subject->add($calendar->create_id_link(
-                                                _('Modify'), 'event_form',
-                                                $row['id']));
+				$html_subject->add($calendar->create_event_link(
+						_('Modify'), 'event_form',
+						$row['eventid']));
 				$html_subject->add(')');
 			}
 
@@ -299,7 +301,7 @@ function display_day(&$calendar)
 
 		$html_table->add($html_body);
 
-		if($privileged) $output = tag('form',
+		if(true) $output = tag('form',
 			attributes("action=\"{$calendar->script}\""),
                         $html_table);
 		else $output = $html_table;
@@ -312,14 +314,10 @@ function display_day(&$calendar)
 }
 
 // displays a particular event to be show singly
-// returns XHTML data for the event
-function display_id(&$calendar)
+// returns HTML data for the event
+function display_event(&$calendar)
 {
-	global $config;
-
-        $id = $calendar->get_event_id();
-
-	$row = get_event_by_id($id);
+	$row = $calendar->get_current_event();
 
 	$year = $row['year'];
 	$month = $row['month'];
@@ -328,21 +326,25 @@ function display_id(&$calendar)
 	$time_str = formatted_time_string($row['starttime'], $row['eventtype'])
 		.' '.$row['startdate'];
 	$dur_str = get_duration($row['duration'], $row['eventtype']);
-	$subject = stripslashes($row['subject']);
-	if(empty($subject)) $subject = _('(No subject)');
+	$subject = stripslashes($row['title']);
+	if(empty($subject)) $subject = _('(No title)');
 	$name = stripslashes($row['username']);
 	$desc = parse_desc($row['description']);
+	$id = $row["eventid"];
 
-        if(check_user() || $config['anon_permission'] >= 2) {
+        if(true) {
                 return tag('div', attributes('class="phpc-main"'),
-                                tag('h2', $subject),
-                                tag('div', 'by ', tag('cite', $name)),
-                                tag('div', create_id_link(_('Modify'), 'event_form',
-                                                $id), "\n", create_id_link(_('Delete'),
-                                                        'event_delete', $id)),
-                                tag('div', tag('div', _('Time').": $time_str"),
-                                        tag('div', _('Duration').": $dur_str")),
-                                tag('p', $desc));
+				tag('h2', $subject),
+				tag('div', 'by ', tag('cite', $name)),
+				tag('div', $calendar->create_event_link(
+						_('Modify'), 'event_form', $id),
+					"\n", $calendar->create_link(
+						_('Delete'),
+						array('action'=>'event_delete',
+							"delete$id"=>'y'))),
+				tag('div', tag('div', _('Time').": $time_str"),
+					tag('div', _('Duration').": $dur_str")),
+				tag('p', $desc));
         } else {
                 return tag('div', attributes('class="phpc-main"'),
                                 tag('h2', $subject),

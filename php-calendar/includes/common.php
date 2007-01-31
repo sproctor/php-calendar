@@ -252,24 +252,4 @@ function create_radio($name, $value = false, $checked = false,
         return create_input($name, $value, 'radio', $attributes);
 }
 
-// creates a select element for a form of pre-defined $type
-// returns XHTML data for the element
-function create_select($name, $type, $select, $attributes = false)
-{
-        if(!$attributes) $attributes = attributes();
-
-        $attributes->add('size="1"', "name=\"$name\"");
-        $html = tag('select', $attributes);
-
-        foreach($type as $value => $text) {
-                $option_attributes = attributes("value=\"$value\"");
-                if ($select == $value) {
-                        $option_attributes->add('selected="selected"');
-                }
-                $html->add(tag('option', $option_attributes, $text));
-        }
-
-        return $html;
-}
-
 ?>

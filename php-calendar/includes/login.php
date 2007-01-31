@@ -39,6 +39,7 @@ function login($calendar)
                         $calendar->session['username'] = $user;
                         $calendar->session_write_close();
 
+			// FIXME: ditch the redirect here
                         $string = "Location: {$calendar->script}";
 
                         if(isset($calendar->vars['lastaction'])) {

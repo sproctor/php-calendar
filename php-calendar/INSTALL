@@ -1,11 +1,12 @@
-****************
-PHP-Calenar 0.10
-****************
+************
+PHP-Calenar
+************
 
 0 Preface
 1 Requirements
 2 Installation
-3 Update
+3 Errors
+4 Translations
 
 ----------
 0 Preface
@@ -78,20 +79,25 @@ ERROR  db:1044: Access denied for user: 'MySQLusername@localhost'
 
 ERROR  create db:1044: Access denied for user: 'MySQLusername@localhost' to database
 'MySQLdatabasename': CREATE TABLE phpc_events
---You may not have the abilty to create tables.
+--You may not have the abilty to create tables.  If not, try steps 7-11.
 
 ERROR  Software error  Couldn't select database
 --Make sure the name of you MySQL database is correct in the config.php file.  Contact your domain host if necessary.
 --Make sure the SQL_PREFIX is set to 'phpc_' in the config.php file
 
----------
-4 UPDATE
----------
+---------------
+4 Translations
+---------------
 
-I think I'm at the point where a database change would require an update script.
-Fortunately, there have been no database changes recently to warrant this. If
-I make a change in the future that would, you can rest assured that I would also
-write and update script to move over your data.
+Getting translations working is not automatic yet.
+
+1) You will need to make sure that you have the locale for the desired language
+installed. This is very much system dependent. On Debian run
+'dpkg-reconfigure locales' as root and select the desired locale.
+
+2) You will need to generate the messages.mo files for each language. In the
+LC_MESSAGES directory for each language you will need to run the command
+'msgfmt -o messages.mo messages.po'
 
 Good luck!
 Sean Proctor

@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 - 2005 Sean Proctor, Nathan Poiro
+   Copyright 2006 Sean Proctor
 
    This file is part of PHP-Calendar.
 
@@ -23,47 +23,33 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-function remove_event($id)
+function event_delete(&$calendar)
 {
-	global $db;
-
-	$sql = 'DELETE FROM '.SQL_PREFIX ."events WHERE id = '$id'";
-	$result = $db->Execute($sql)
-		or db_error(_('Error while removing an event.'), $sql);
-
-	return ($db->Affected_Rows($result) > 0);
-}
-
-function event_delete()
-{
-	global $config;
-
-	if(!check_user() && $config['anon_permission'] < 2) {
+	if(false) {
 		soft_error(_('You do not have permission to delete events.'));
 	}
 
-	$del_array = explode('&', $_SERVER['QUERY_STRING']);
-
 	$html = tag('div', attributes('class="box"', 'style="width: 50%"'));
 
-        $ids = 0;
-
-	foreach($del_array as $del_value) {
-		list($drop, $id) = explode("=", $del_value);
-
-		if(preg_match('/^id$/', $drop) == 0) continue;
-                $ids++;
-
-		if(remove_event($id)) {
-			$html->add(tag('p', _('Removed item') . ": $id"));
-		} else {        
-			$html->add(tag('p', _('Could not remove item')
-                                                . ": $id"));
-		}
+	$delete = array();
+	foreach($calendar->vars as $k => $v) {
+		if(preg_match('/^delete(\d+)$/', $k, $matches) == 0
+				|| $v != 'y')
+			continue;
+		$delete[] = $matches[1];
 	}
 
-	if($ids == 0) {
+	if(count($delete) == 0) {
 		$html->add(tag('p', _('No items selected.')));
+	}
+	// else
+	foreach($delete as $id) {
+		if($calendar->db->delete_event($id)) {
+			$html->add(tag('p', _('Deleted item') . ": $id"));
+		} else {        
+			$html->add(tag('p', _('Could not delete item')
+						. ": $id"));
+		}
 	}
 
         return $html;

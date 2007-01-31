@@ -36,8 +36,10 @@ $required_error_message = "(required)";
 
 /* This class is the base of either a question or a group
  */
-class Part {
-        function get_xhtml($parent, $level, $defaults = array()) {
+class FormPart {
+	var $class = "form-part";
+
+        function get_html($parent, $level, $defaults = array()) {
                 return tag();
         }
 
@@ -53,35 +55,63 @@ class Part {
         function mark_errors($vars) {
                 return $this;
         }
+
+	function error($str) {
+		echo "<html><head><title>Error</title></head>\n"
+			."<body><h1>Software Error</h1>\n"
+			."<h2>Message:</h2>\n"
+			."<pre>$str</pre>\n";
+		if(version_compare(phpversion(), '4.3.0', '>=')) {
+			echo "<h2>Backtrace</h2>\n";
+			echo "<ol>\n";
+			foreach(debug_backtrace() as $bt) {
+				echo "<li>{$bt['file']}:{$bt['line']} - ";
+				if(!empty($bt['class']))
+					echo "{$bt['class']}{$bt['type']}";
+				echo "{$bt['function']}(";
+				if(!empty($bt['args'])) {
+					echo implode(', ', $bt['args']);
+				} else {
+					echo "<em>&lt;unknown&gt;</em>";
+				}
+				echo ")</li>\n";
+			}
+			echo "</ol>\n";
+		}
+		echo "</body></html>\n";
+		exit;
+	}
 }
 
 /* this class is to group multiple questions together
  */
-class Group extends Part {
+class FormGroup extends FormPart {
         var $list = array();
         var $title = false;
 
-        function Group($title = false) {
+        function FormGroup($title = false) {
                 $this->title = $title;
+		$this->class .= " form-group";
         }
 
         /* add a category or question */
         function add_part($item) {
                 global $form_error_func;
 
-                if(!is_a($item, 'Part')) html_error();
+                if(!is_a($item, 'FormPart')) $this->error(
+				_('Cannot add a non-form element to a form.'));
 
                 $this->list[] = $item;
         }
 
-        function get_xhtml($parent, $level, $defaults = array()) {
-                $tag = tag('div', attributes('class=form-group'));
+        function get_html($parent, $level, $defaults = array()) {
+                $tag = tag('div', attributes("class=\"{$this->class}\""));
                 if($this->title !== false) {
                         $tag->add(tag("h$level", $this->title));
                         $level++;
                 }
                 foreach($this->list as $child) {
-                        $tag->add($child->get_xhtml($this, $level,
+                        $tag->add($child->get_html($this, $level,
                                                 $defaults));
                 }
                 return $tag;
@@ -117,17 +147,25 @@ class Group extends Part {
 
 /* this is the base class for all questions
  */
-class Question extends Part {
+class FormQuestion extends FormPart {
+	function FormQuestion() {
+		$this->class .= " form-question";
+	}
 }
 
 /* this class is the base for all types of questions
  */
-class AtomicQuestion extends Question {
+class FormAtomicQuestion extends FormQuestion {
         var $qid = false;
         var $question = false;
         var $description = false;
         var $required = false;
         var $error = false;
+
+	function FormAtomicQuestion() {
+		parent::FormQuestion();
+		$this->class .= " form-atomic-question";
+	}
 
         function process($vars) {
                 if(empty($vars[$this->qid])) {
@@ -164,21 +202,23 @@ class AtomicQuestion extends Question {
 /* This class is for free response questions with responses that are a few
  * sentences long at most
  */
-class FreeQuestion extends AtomicQuestion {
+class FormFreeQuestion extends FormAtomicQuestion {
         var $maxlen;
 
-        function FreeQuestion($qid, $question, $description = false,
+        function FormFreeQuestion($qid, $question, $description = false,
                         $maxlen = false, $required = false) {
+		parent::FormAtomicQuestion();
                 $this->qid = $qid;
                 $this->question = $question;
                 $this->description = $description;
                 $this->maxlen = $maxlen;
                 $this->required = $required;
+		$this->class .= " form-free-question";
         }
 
-        function get_xhtml($parent, $level, $defaults = array()) {
+        function get_html($parent, $level, $defaults = array()) {
                 $attrs = attributes("name=\"{$this->qid}\"",
-                                "id=\"{$this->qid}\"", 'type=\"text\"');
+                                "id=\"{$this->qid}\"", 'type="text"');
                 if(!empty($defaults[$this->qid])) {
                         $attrs->add("value=\"{$defaults[$this->qid]}\"");
                 }
@@ -187,10 +227,10 @@ class FreeQuestion extends AtomicQuestion {
                         $attrs->add("size=\"{$this->maxlen}\"");
                 }
 
-                $tag = tag('');
+                $tag = tag('div', attributes("class=\"{$this->class}\""));
                 $tag->add(tag("h$level", $this->question));
                 if($this->description !== false) {
-                        $tag->add(tag('div', attributes('class="form-question-description"'), $this->description));
+                        $tag->add(tag('div', attributes("class=\"form-question-description\""), $this->description));
                 }
                 $tag->add(tag('input', $attrs));
 
@@ -201,29 +241,165 @@ class FreeQuestion extends AtomicQuestion {
 
 /* this class is for longer free reponse questions
  */
-class LongFreeQuestion extends AtomicQuestion {
+class FormLongFreeQuestion extends FormAtomicQuestion {
 	var $rows;
 
-        function LongFreeQuestion($qid, $question, $description = false,
+        function FormLongFreeQuestion($qid, $question, $description = false,
                         $rows = 8, $required = false) {
+		parent::FormAtomicQuestion();
                 $this->qid = $qid;
                 $this->question = $question;
                 $this->description = $description;
 		$this->rows = $rows;
                 $this->required = $required;
+		$this->class .= " form-long-free-question";
         }
 
-        function get_xhtml($parent, $level, $defaults = array()) {
-                $tag = tag('');
+        function get_html($parent, $level, $defaults = array()) {
+                $tag = tag('div', attributes("class=\"{$this->class}\""));
                 $tag->add(tag("h$level", $this->question));
                 if($this->description !== false) {
                         $tag->add(tag('div', attributes('class="form-question-description"'), $this->description));
                 }
-                $tag->add(tag('div', attributes('class="form-long-free-question"'),
-                                        tag('textarea', attributes
-                                                ("rows=\"{$this->rows}\"",
-                                                 "name=\"{$this->qid}\""),
-                                                '')));
+		$tag->add(tag('textarea', attributes("rows=\"{$this->rows}\"",
+						"name=\"{$this->qid}\""), ''));
+                return $tag;
+        }
+}
+
+/* this class is for date input
+ */
+class FormDateQuestion extends FormAtomicQuestion {
+
+        function FormDateQuestion($qid, $question, $description = false,
+                        $required = false) {
+		parent::FormAtomicQuestion();
+                $this->qid = $qid;
+                $this->question = $question;
+                $this->description = $description;
+                $this->required = $required;
+		$this->class .= " form-date-question";
+        }
+
+        function get_html($parent, $level, $defaults = array()) {
+                $tag = tag();
+                $tag->add(tag("h$level", $this->question));
+                if($this->description !== false) {
+                        $tag->add(tag('div', attributes('class="form-question-description"'), $this->description));
+                }
+		if(!empty($defaults["{$this->qid}-year"])) {
+			$year = $defaults["{$this->qid}-year"];
+		} else {
+			$year = date("Y");
+		}
+		$year_input = create_select_range("{$this->qid}-year", 1970,
+				$year + 20, 1, $year);
+		if(!empty($defaults["{$this->qid}-month"])) {
+			$month = $defaults["{$this->qid}-month"];
+		} else {
+			$month = date("m");
+		}
+		$month_input = create_select_range("{$this->qid}-month", 1, 12,
+				1, $month, "month_name");
+		if(!empty($defaults["{$this->qid}-day"])) {
+			$day = $defaults["{$this->qid}-day"];
+		} else {
+			$day = date("d");
+		}
+		$day_input = create_select_range("{$this->qid}-day", 1, 31, 1,
+				$day);
+                $tag->add(tag('div', attributes("class=\"{$this->class}\""),
+					$year_input, $month_input, $day_input));
+                return $tag;
+        }
+}
+
+/* this class is for time input
+ */
+class FormTimeQuestion extends FormAtomicQuestion {
+
+        function FormTimeQuestion($qid, $question, $description = false,
+                        $required = false) {
+		parent::FormAtomicQuestion();
+                $this->qid = $qid;
+                $this->question = $question;
+                $this->description = $description;
+                $this->required = $required;
+		$this->class .= " form-time-question";
+        }
+
+        function get_html($parent, $level, $defaults = array()) {
+                $tag = tag();
+                $tag->add(tag("h$level", $this->question));
+                if($this->description !== false) {
+                        $tag->add(tag('div', attributes('class="form-question-description"'), $this->description));
+                }
+		if(!empty($defaults["{$this->qid}-hour"])) {
+			$hour = $defaults["{$this->qid}-hour"];
+		} else {
+			$hour = date("g");
+			//24 $hour = date("G");
+		}
+		$hour_input = create_select_range("{$this->qid}-hour", 1, 24, 1,
+				$hour);
+		if(!empty($defaults["{$this->qid}-minute"])) {
+			$minute = $defaults["{$this->qid}-minute"];
+		} else {
+			$minute = date("i");
+		}
+		$minute_input = create_select_range("{$this->qid}-minute", "00",
+				59, 1, $minute);
+		if(!empty($defaults["{$this->qid}-meridiem"])) {
+			$meridiem = $defaults["{$this->qid}-meridiem"];
+		} else {
+			$meridiem = date("a");
+		}
+		$meridiem_input = create_select("{$this->qid}-meridiem",
+				array("am" => _("AM"), "pm" => _("PM")),
+				$meridiem);
+                $tag->add(tag('div', attributes("class=\"{$this->class}\""),
+					$hour_input, $minute_input,
+					$meridiem_input));
+                return $tag;
+        }
+}
+
+/* this class is for a sequence question
+ */
+class FormSequenceQuestion extends FormAtomicQuestion {
+	var $lbound;
+	var $ubound;
+	var $increment;
+	var $default;
+	var $name_func;
+
+        function FormSequenceQuestion($qid, $question, $description = false,
+                        $lbound, $ubound, $increment, $default = false,
+			$name_func = false, $required = false) {
+		parent::FormAtomicQuestion();
+                $this->qid = $qid;
+                $this->question = $question;
+                $this->description = $description;
+                $this->required = $required;
+		$this->lbound = $lbound;
+		$this->ubound = $ubound;
+		$this->increment = $increment;
+		$this->default = $default;
+		$this->name_func = $name_func;
+		$this->class .= " form-date-question";
+        }
+
+        function get_html($parent, $level, $defaults = array()) {
+                $tag = tag();
+                $tag->add(tag("h$level", $this->question));
+                if($this->description !== false) {
+                        $tag->add(tag('div', attributes('class="form-question-description"'), $this->description));
+                }
+		$input = create_select_range($this->qid, $this->lbound,
+				$this->ubound, $this->increment, $this->default,
+				$this->name_func);
+                $tag->add(tag('div', attributes("class=\"{$this->class}\""),
+					$day));
                 return $tag;
         }
 }
@@ -231,15 +407,16 @@ class LongFreeQuestion extends AtomicQuestion {
 /* creates a hidden input
  * FIXME: make this handle a default
  */
-class HiddenField extends AtomicQuestion {
+class FormHiddenField extends FormAtomicQuestion {
         var $value = false;
 
-        function HiddenField($qid, $value = false) {
+        function FormHiddenField($qid, $value = false) {
+		parent::FormAtomicQuestion();
                 $this->qid = $qid;
                 $this->value = $value;
         }
 
-        function get_xhtml($parent, $level, $defaults = array()) {
+        function get_html($parent, $level, $defaults = array()) {
                 return tag('input', attributes('type="hidden"',
                                         "name=\"{$this->qid}\"",
                                         "value=\"{$this->value}\""));
@@ -248,19 +425,21 @@ class HiddenField extends AtomicQuestion {
 
 /* creates a submit button
  */
-class SubmitButton extends AtomicQuestion {
+class FormSubmitButton extends FormAtomicQuestion {
         var $title;
 
-        function SubmitButton($title = false) {
+        function FormSubmitButton($title = false) {
+		parent::FormAtomicQuestion();
                 $this->title = $title;
+		$this->class .= " form-submit";
         }
 
-        function get_xhtml($parent, $level, $defaults = array()) {
+        function get_html($parent, $level, $defaults = array()) {
                 $attrs = attributes('type="submit"');
                 if($this->title !== false) {
                         $attrs->add("value=\"{$this->title}\"");
                 }
-                return tag('div', attributes('class="form-submit"'),
+                return tag('div', attributes("class=\"{$this->class}\""),
                                 tag('input', $attrs));
         }
 }
@@ -268,11 +447,13 @@ class SubmitButton extends AtomicQuestion {
 /* this class is for questions where depending on the answer you need
  * to answer more questions
  */
-class CompoundQuestion extends Question {
+class FormCompoundQuestion extends FormQuestion {
         var $atomic_question = NULL;
         var $conditionals = array();
 
-        function CompoundQuestion($atomic_question, $conditionals = array()) {
+        function FormCompoundQuestion($atomic_question,
+			$conditionals = array()) {
+		parent::FormQuestion();
                 $this->atomic_question = $atomic_question;
 
                 foreach($conditionals as $key => $item) {
@@ -288,8 +469,8 @@ class CompoundQuestion extends Question {
                 return $this->conditionals[$key];
         }
 
-        function get_xhtml($parent, $level, $defaults = array()) {
-                return $this->atomic_question->get_xhtml($this, $level,
+        function get_html($parent, $level, $defaults = array()) {
+                return $this->atomic_question->get_html($this, $level,
                                 $defaults);
         }
 }
@@ -297,17 +478,20 @@ class CompoundQuestion extends Question {
 /* this class is for questions where you need to choose between
  * multiple things
  */
-class RadioQuestion extends AtomicQuestion {
+class FormRadioQuestion extends FormAtomicQuestion {
         var $options = array();
         var $descriptions = array();
 
-        function RadioQuestion($qid, $question = false, $options = array(),
+        function FormRadioQuestion($qid, $question = false, $options = array(),
                         $required = false) {
+		parent::FormAtomicQuestion();
+		$this->qid = $qid;
                 $this->question = $question;
                 foreach($options as $key => $name) {
                         $this->add_option($key, $name);
                 }
                 $this->required = $required;
+		$this->class .= " form-radio-question";
         }
 
         function add_option($key, $title, $description = false) {
@@ -315,31 +499,32 @@ class RadioQuestion extends AtomicQuestion {
                 $this->descriptions[$key] = $description;
         }
 
-        function get_xhtml($parent, $level, $defaults = array()) {
-                $results = tag('');
+        function get_html($parent, $level, $defaults = array()) {
+		$results = tag('div', attributes("class=\"{$this->class}\""));
                 if($this->question !== false) {
                         $results->add(tag("h$level", $this->question));
                         $level++;
                 }
                 foreach($this->options as $key => $name) {
-                        $attrs = attributes('type=radio', 
+                        $attrs = attributes('type="radio"', 
                                         "name=\"{$this->qid}\"",
-                                        "id={$this->qid}\"");
+                                        "id=\"{$this->qid}\"");
                         if($key !== NULL) {
                                 $attrs->add("value=\"$key\"");
                         }
-                        $tag = tag('div', attributes('class=form-radio-option'),
-                                        tag('input', $attrs), $name);
+			$tag = tag('div', tag('input', $attrs), $name);
                         if(!empty($this->descriptions[$key])) {
                                 $tag->add("<span class=\"form-question-description\"> - {$this->descriptions[$key]}</span>");
                         }
-                        $results->add($tag);
 
-                        if(is_a($parent, 'CompoundQuestion')
+                        if(is_a($parent, 'FormCompoundQuestion')
                                 && ($hook = $parent->get_conditional($key))) {
-                                $results->add($hook->get_xhtml($this, $level,
-                                                        $defaults));
+				$tag = tag('div', attributes('class="form-compound-question"'),
+						$tag, $hook->get_html($this,
+							$level, $defaults));
                         }
+
+                        $results->add($tag);
                 }
                 return $results;
         }
@@ -348,11 +533,13 @@ class RadioQuestion extends AtomicQuestion {
 /* this class is for questions where you need to choose between
  * multiple things
  */
-class DropDownQuestion extends AtomicQuestion {
+class FormDropDownQuestion extends FormAtomicQuestion {
         var $options = array();
 
-        function DropDownQuestion($qid, $question = false, $description = false,
-                        $options = array(), $required = false) {
+        function FormDropDownQuestion($qid, $question = false,
+			$description = false, $options = array(),
+			$required = false) {
+		parent::FormAtomicQuestion();
 		$this->qid = $qid;
                 $this->question = $question;
                 $this->description = $description;
@@ -360,6 +547,7 @@ class DropDownQuestion extends AtomicQuestion {
                         $this->add_option($key, $name);
                 }
                 $this->required = $required;
+		$this->class .= " form-atomic-question";
         }
 
         /* add an option with value=$key, and text $name, and figure out
@@ -370,7 +558,7 @@ class DropDownQuestion extends AtomicQuestion {
                 $this->options[$key] = $name;
         }
 
-        function get_xhtml($parent, $level, $defaults = array()) {
+        function get_html($parent, $level, $defaults = array()) {
                 $results = array();
                 if($this->question !== false) {
                         $results[] = tag("h$level", $this->question);
@@ -386,13 +574,13 @@ class DropDownQuestion extends AtomicQuestion {
                                          "name=\"{$this->qid}\""));
                         foreach($this->options as $key => $name) {
                                 $select->add(tag('option', attributes
-                                                        ('class="form-drop-down-option"',
+							("class=\"{$this->class}\"",
                                                          "value=\"$key\""),
                                                         $name));
-                                /* if(is_a($this->parent, 'CompoundQuestion')
+                                /* if(is_a($this->parent, 'FormCompoundQuestion')
                                    && ($hook = $this->parent->get_conditional(
                                    $key))) {
-                                   $results[] = $hook->get_xhtml($defaults);
+                                   $results[] = $hook->get_html($defaults);
                                    } */
                         }
                         $results[] = $select;
@@ -403,24 +591,25 @@ class DropDownQuestion extends AtomicQuestion {
 
 /* this is the main form class
  */
-class Form extends Group {
+class Form extends FormGroup {
         var $level;
         var $vars;
         var $action;
 
         function Form($action, $title = false, $level = 1, $method = false) {
-                parent::Group($title);
-                $this->aciton = $action;
+                parent::FormGroup($title);
+                $this->action = $action;
                 $this->level = $level;
                 $this->method = $method;
+		$this->class .= " form";
         }
 
-        function get_xhtml($defaults = array()) {
+        function get_html($defaults = array()) {
                 $attrs = attributes("action=\"{$this->action}\"");
                 if($this->method !== false) {
                         $attrs->add("method=\"{$this->method}\"");
                 }
-                return tag('form', $attrs, parent::get_xhtml(NULL, $this->level,
+                return tag('form', $attrs, parent::get_html(NULL, $this->level,
                                         $defaults));
         }
 
@@ -434,7 +623,7 @@ class Form extends Group {
 
                 if($vars === false) {
                         if($this->vars === false) {
-                                html_error('No vars');
+                                $this->error('No vars');
                         }
                         $vars = $this->vars;
                 }
