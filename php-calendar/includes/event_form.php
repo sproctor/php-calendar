@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 - 2005 Sean Proctor, Nathan Poiro
+   Copyright 2009 Sean Proctor
 
    This file is part of PHP-Calendar.
 
@@ -32,7 +32,7 @@ function create_form($phpc) {
         $form->add_part(new FormLongFreeQuestion('description',
                                 _('Event Description')));
 
-	$time_type_radio = new FormRadioQuestion('timetype', _('Event Time'),
+	$time_type_radio = new FormRadioQuestion('time_type', _('Event Time'),
 			array(), true);
 	$time_type_radio->add_option('normal', _('Normal'));
 	$time_type_radio->add_option('full', _('Full Day'));
@@ -88,191 +88,6 @@ function event_form($calendar)
 {
 	global $month_names, $event_types;
 
-/*
-	if(isset($calendar->vars['id'])) {
-		// modifying
-		$id = $calendar->vars['id'];
-
-		$heading = sprintf(_('Editing Event #%d'), $id);
-
-		$row = $calendar->get_event_by_id($id);
-
-		$title = $row['title'];
-		$desc = htmlspecialchars($row['description']);
-
-		$year = $row['year'];
-		$month = $row['month'];
-		$day = $row['day'];
-
-                $hour = date('H', strtotime($row['starttime']));
-		$minute = date('i', strtotime($row['starttime']));
-
-		$end_year = $row['end_year'];
-		$end_month = $row['end_month'];
-		$end_day = $row['end_day'];
-
-		$durmin = $row['duration'] % 60;
-		$durhr  = floor($row['duration'] / 60);
-
-		if(!$calendar->get_config('hours_24')) {
-			if($hour > 12) {
-				$pm = true;
-				$hour = $hour - 12;
-			} elseif($hour == 12) {
-                                $pm = true;
-                        } else {
-                                $pm = false;
-                        }
-                }
-
-		$typeofevent = $row['eventtype'];
-
-	} else {
-		// case "add":
-		$heading = _('Adding event to calendar');
-
-		$title = '';
-                $desc = '';
-
-                $day = $calendar->day;
-                $month = $calendar->month;
-                $year = $calendar->year;
-
-                if($day == date('j') && $month == date('n')
-                                && $year == date('Y')) {
-                        if($calendar->get_config('hours_24')) {
-                                $hour = date('G');
-                        } else {
-                                $hour = date('g');
-                                if(date('a') == 'pm') {
-                                        $pm = true;
-                                } else {
-                                        $pm = false;
-                                }
-                        }
-                } else {
-                        $hour = 6;
-                        $pm = true;
-                }
-
-                $minute = 0;
-		$end_day = $day;
-		$end_month = $month;
-		$end_year = $year;
-		$durhr = 1;
-		$durmin = 0;
-		$typeofevent = 1;
-	}
-
-        if($calendar->get_config('hours_24')) {
-                $hour_sequence = create_sequence(0, 23);
-        } else {
-                $hour_sequence = create_sequence(1, 12);
-        }
-        $minute_sequence = create_sequence(0, 59, 5, 'minute_pad');
-        $year_sequence = create_sequence(1970, 2037);
-
-	$html_time = array(create_select('hour', $hour_sequence, $hour,
-                                attributes('class="phpc-time"')),
-                        tag('b', ':'),
-                        create_select('minute', $minute_sequence, $minute,
-                                attributes('class="phpc-time"')));
-
-	if(!$calendar->get_config('hours_24')) {
-		if($pm) {
-                        $value = 1;
-                } else {
-                        $value = 0;
-                }
-                $html_time[] = create_select('pm', array(_('AM'), _('PM')),
-                                $value, attributes('class="phpc-time"'));
-	}
-
-        $hidden_fields = array();
-
-        $hidden_fields[] = create_hidden('action', 'event_submit');
-	if(isset($id)) $hidden_fields[] = create_hidden('id', $id);
-
-        $day_of_month_sequence = get_day_of_month_sequence($month, $year);
-
-        $general_info = tag('div', attributes('class="phpc-general-info"'),
-                        tag('h3', _('General Information')),
-                        tag('h4', _('Title') . sprintf
-                                (' ('._('%d character maximum').'): ',
-                                 $calendar->get_config('subject_max'))),
-                        tag('input', attributes('type="text"',
-                                        'maxlength="'
-                                        . $calendar->get_config('subject_max')
-                                        . '"',
-                                        'size="'
-                                        . $calendar->get_config('subject_max')
-                                        . '"',
-                                        'name="title"',
-                                        "value=\"$title\"")),
-                        tag('h4', _('Description')),
-                        tag('div',
-                                attributes('style="border: 1px solid black"'),
-                                tag('textarea', attributes(
-                                                'rows="8"',
-                                                'cols="80"',
-                                                'class="phpc-description"',
-                                                'name="description"'),
-                                                $desc)));
-
-        $time_info = tag('div', attributes('class="phpc-time-info"'),
-                        tag('h3',  _('Time Information')),
-                        tag('h4', _('Event type')),
-                        create_select('type', $event_types,
-                                $typeofevent),
-                        tag('h4', _('Start')),
-                        $html_time,
-                        tag('h4', _('Duration')),
-                        create_select('durationhour', create_sequence(0, 23),
-                                $durhr, attributes('class="phpc-time"')),
-                        _('hour(s)')."\n",
-                        create_select('durationmin', $minute_sequence, $durmin,
-                                attributes('class="phpc-time"')),
-                        _('minutes')."\n");
-
-        $date_info = tag('div', attributes('class="phpc-date-info"'),
-                        tag('h3', _('Date Information')),
-                        tag('div', attributes('style="border: 1px solid black"'),
-                                tag('h4', create_radio('date_type'), 'Normal'),
-                        tag('h5', _('Date of event')),
-                        tag('div',
-                                create_select('day', $day_of_month_sequence,
-                                        $day),
-                                create_select('month', $month_names, $month),
-                                create_select('year', $year_sequence, $year))),
-                        tag('div', attributes('style="border: 1px solid black"'),
-                                tag('h4', create_radio('date_type'), 'Reoccurring'),
-                        tag('h5', _('Date of event')),
-                        tag('div',
-                                create_select('day', $day_of_month_sequence,
-                                        $day),
-                                create_select('month', $month_names, $month),
-                                create_select('year', $year_sequence, $year)),
-                        tag('h5', _('Date multiple day event ends')),
-                        tag('div',
-                                create_select('endday', $day_of_month_sequence,
-                                        $end_day),
-                                create_select('endmonth', $month_names,
-                                        $end_month),
-                                create_select('endyear', $year_sequence,
-                                        $end_year))));
-
-	//return tag('form', attributes("action=\"{$calendar->script}\""),
-        return $calendar->create_form(false,
-                        tag('h2', $heading),
-                        tag('div', attributes('class="phpc-misc-info"'),
-                                create_submit(_("Submit Event"))),
-                        $general_info,
-                        $time_info,
-                        $date_info,
-                        tag('div', attributes('class="phpc-misc-info"'),
-                                $hidden_fields,
-                                create_submit(_("Submit Event"))));
-        */
         $form = create_form($calendar);
         return $form->get_html();
 }

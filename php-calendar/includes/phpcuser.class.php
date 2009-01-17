@@ -2,39 +2,46 @@
 
 class PhpcUser {
 	var $id;
-	var $username;
-	var $password;
+	var $attempted_login;
 
 	function PhpcUser()
 	{
 		$db = phpc_get_db();
 		$calendar = phpc_get();
+		$this->attempted_login = false;
 
-		if(!empty($calendar->session['uid'])
-				&& !empty($calendar->session['username'])
-				&& !empty($calendar->session['password'])) {
+		if(!empty($calendar->session['uid'])) {
 			$this->id = $calendar->session['uid'];
-			$this->username = $calendar->session['username'];
-			$this->password = $calendar->session['password'];
-		} elseif($result = $db->get_userdata
-				($calendar->vars['username'],
-				 $calendar->vars['password'])) {
-			$this->id = $result['id'];
-			$calendar->session['uid'] = $this->id;
-			$this->username = $result['username'];
-			$calendar->session['username'] = $this->username;
-			$this->password = $result['password'];
-			$calendar->session['password'] = $this->password;
-		} else {
-			$this->id = 0;
-			$this->username = 'guest';
-			$this->password = '';
+			$this->attempted_login = true;
+			return;
 		}
+		
+		if(!empty($calendar->vars['username']) &&
+				 !empty($calendar->vars['password'])) {
+			$result = $db->get_userdata($calendar->vars['username'],
+					$calendar->vars['password']);
+			$this->attempted_login = true;
+			if($result) {
+				$this->id = $result['userID'];
+				$calendar->session['uid'] = $this->id;
+				return;
+			}
+		}
+
+		// we didn't login
+		$this->id = 0;
+		$this->username = 'guest';
+		$this->password = '';
 	}
 
 	function logged_in()
 	{
-		return false;
+		return $this->id != 0;
+	}
+
+	function attempted_login()
+	{
+		return $this->attempted_login;
 	}
 
 	function is_admin()

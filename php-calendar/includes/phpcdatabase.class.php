@@ -16,22 +16,21 @@ class PhpcDatabase {
 
 	}
 
-        function get_events_by_date($day, $month, $year, $calendarid, $userid)
+        function get_events_by_date($calendar, $year, $month, $day)
 	{
                 $startdate = $this->db->SQLDate('Y-m-d', 'startdate');
                 $enddate = $this->db->SQLDate('Y-m-d', 'enddate');
-                $date = "DATE '" . date('Y-m-d', mktime(0, 0, 0, $month, $day,
-                                        $year)) . "'";
+                $date = $this->db->DBDate(date('Y-m-d', mktime(0, 0, 0, $month,
+						$day, $year)));
                 // day of month
                 $dom_date = $this->db->SQLDate('d', $date);
 
-                $query = "SELECT event.title,event.description,"
-			."event.id AS eventid,occurrence.time,"
-			."occurrence.duration\n"
+                $query = "SELECT event.subject,event.description,"
+			."eventID,occurrence.time,occurrence.duration\n"
 			."FROM ".SQL_PREFIX."event AS event\n"
                         ."INNER JOIN ".SQL_PREFIX."occurrence AS occurrence"
-			."	ON (eventid = event.id)\n"
-			."WHERE calendarid = $calendarid"
+			."	USING (eventID)\n"
+			."WHERE calendarID = ".$calendar->get_id()."\n"
 			."	AND (startdate IS NULL\n"
 			."		OR $date >= $startdate)\n"
 			."	AND (enddate IS NULL OR $date <= $enddate)\n"
@@ -54,22 +53,21 @@ class PhpcDatabase {
 
         // returns the event that for $eventid
         function get_event_by_id($eventid, $userid) {
-                $query = "SELECT event.id AS eventid,event.title,"
-			."event.description,event.calendarid,"
+                $query = "SELECT eventid,event.subject,"
+			."event.description,calendarid,"
 			.$this->db->SQLDate('Y', "startdate")." AS year,"
                         .$this->db->SQLDate('m', "startdate")." AS month,"
                         .$this->db->SQLDate('d', "startdate")." AS day,"
                         .$this->db->SQLDate('Y', "enddate")." AS endyear,"
                         .$this->db->SQLDate('m', "enddate")." AS endmonth,"
                         .$this->db->SQLDate('d', "enddate")." AS endday,"
-			."occurrence.id AS occurrenceid,"
-                        ."user.username,user.id AS userid\n"
+			."occurrenceID,user.username,userID\n"
 			."FROM ".SQL_PREFIX."event AS event\n"
                         ."LEFT JOIN ".SQL_PREFIX."user AS user"
-			." ON (userid=user.id)\n"
+			." USING (userid)\n"
                         ."LEFT JOIN ".SQL_PREFIX."occurrence AS occurrence\n"
-			." ON (eventid=event.id)\n"
-			."WHERE event.id=$eventid";
+			." USING (eventid)\n"
+			."WHERE eventID=$eventid";
 
                 $result = $this->db->Execute($query) or $this->db_error($query);
 
@@ -80,7 +78,7 @@ class PhpcDatabase {
 			soft_error(_('No user associated with that event.'));
 		}
 		//echo "<pre>"; print_r($event); echo "</pre>";
-		if($event["occurrenceid"] === NULL) {
+		if($event["occurrenceID"] === NULL) {
 			soft_error(_('No occurrences associated with that event.'));
 		}
                 return array_map('stripslashes', $event);
@@ -88,7 +86,7 @@ class PhpcDatabase {
 
 	function delete_event($id)
 	{
-		$sql = 'DELETE FROM '.SQL_PREFIX ."event WHERE id='$id'";
+		$sql = 'DELETE FROM '.SQL_PREFIX ."event WHERE eventID='$id'";
 		$result = $this->db->Execute($sql)
 			or $this->db_error($sql);
 
@@ -98,7 +96,7 @@ class PhpcDatabase {
 	function get_calendar_by_id($id)
 	{
 		$query = "SELECT * from ".SQL_PREFIX."calendar\n"
-			."WHERE id={$id}\n";
+			."WHERE calendarID={$id}\n";
 
 		$result = $this->db->Execute($query)
 			or $this->db_error($query);
@@ -136,11 +134,19 @@ class PhpcDatabase {
                 return $result->FetchRow();
         }
 
-	function submit_event($event)
+	function submit_event($calendar, $event)
 	{
-		$event_fields = array("id", "userid", "title", "description",
-				"calendarid");
+		$event_fields = array("eventID", "subject", "description");
 		$occur = array();
+
+		if(!empty($event["startyear"]) && !empty($event["startmonth"])
+				&& !empty($event["startday"])) {
+			$occur['startdate'] = $this->db->DBDate(mktime(0, 0, 0,
+						$event["startmonth"],
+						$event["startday"],
+						$event["startyear"]));
+		}
+
 		if(!empty($event["endyear"]) && !empty($event["endmonth"])
 				&& !empty($event["endday"])) {
 			$occur['enddate'] = $this->db->DBDate(mktime(0, 0, 0,
@@ -149,7 +155,7 @@ class PhpcDatabase {
 						$event["endyear"]));
 		}
 
-		/* if we have date-* set start and end dates to that date */
+/*
 		if(!empty($event["date-year"]) && !empty($event["date-month"])
 				&& !empty($event["date-day"])) {
 			$occur['startdate'] = $this->db->DBDate(mktime(0, 0, 0,
@@ -161,7 +167,7 @@ class PhpcDatabase {
 						$event["date-day"],
 						$event["date-year"]));
 		}
-
+*/
 		if($occur["enddate"] < $occur["startdate"]) {
 			soft_error(_('The start of the event cannot be after the end of the event.'));
 		}
@@ -174,12 +180,12 @@ class PhpcDatabase {
 			$occur["duration"] = $duration;
 		}
 
-		if($event["id"]) {
+		if($event["eventID"]) {
 			if(false) {
 				soft_error(_('You do not have permission to modify events.'));
 			}
 			$query = "DELETE FROM ".SQL_PREFIX."occurrence\n"
-				."WHERE eventid={$event['id']}";
+				."WHERE eventid={$event['eventID']}";
 
 			$result = $this->db->Execute($query)
 				or $this->db_error($query);
@@ -187,7 +193,7 @@ class PhpcDatabase {
 			if(false) {
 				soft_error(_('You do not have permission to post.'));
 			}
-			$event["id"] = $this->db->GenID(SQL_PREFIX
+			$event["eventID"] = $this->db->GenID(SQL_PREFIX
 					. 'eventsequence');
 		}
 
@@ -203,19 +209,22 @@ class PhpcDatabase {
 				} elseif(is_int($event[$v])) {
 					$sets[] = "$v={$event[$v]}";
 				} else {
-					soft_error(_('Unexepected type.'));
+					soft_error(_('Unexepected type in \$event[{$v}].'));
 				}
 			}
 		}
+		$user = phpc_get_user();
+		$sets[] = "userID={$user->id}";
+		$sets[] = "calendarID=".$calendar->get_id();
 		$query = "REPLACE INTO ".SQL_PREFIX."event\n"
 			."SET ".join(",", $sets);
                 $result = $this->db->Execute($query)
                         or $this->db_error($query);
 
 		/* create the occurrence */
-		$occur["eventid"] = $event["id"];
+		$occur["eventID"] = $event["eventID"];
 		$sets = array();
-		//echo "<pre>"; print_r($occur); echo "</pre>";
+		echo "<pre>occur:\n"; print_r($occur); echo "</pre>";
 		foreach($occur as $k => $v) {
 			if(is_string($v)) {
 				if($v{0} != "'")
@@ -225,7 +234,7 @@ class PhpcDatabase {
 			} elseif(is_int($v)) {
 				$sets[] = "$k=$v";
 			} else {
-				soft_error(_('Unexepected type.'));
+				soft_error(_("Unexepected type in \$occur[{$k}]."));
 			}
 		}
 		//echo "<pre>"; print_r($sets); echo "</pre>";
@@ -235,7 +244,7 @@ class PhpcDatabase {
                 $result = $this->db->Execute($query)
                         or $this->db_error($query);
 
-		return $occur["eventid"];
+		return $occur["eventID"];
 	}
 
 	// called when there is an error involving the DB

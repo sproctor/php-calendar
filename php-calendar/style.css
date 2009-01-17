@@ -18,26 +18,17 @@
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/* FIXME: give the following phpc classes, so we don't disrupt embedders */
-body {
-  font-family: "Times New Roman", serif;
-  margin: 0 2%;
-  padding: 0;
-  background-color: #FFFFFF;
+#php-calendar a {
   color: #000000;
+  background-color: inherit;
 }
 
-a {
-  color: #000000;
-   background-color: inherit;
-}
-
-a:hover {
+#php-calendar a:hover {
   color: #999999;
   background-color: inherit;
 }
 
-h1 {
+#php-calendar h1 {
   font-size: 200%;
   text-align: center;
   font-family: sans-serif;
@@ -45,7 +36,7 @@ h1 {
   background-color: inherit;
 }
 
-h2 {
+#php-calendar h2 {
   font-size: 175%;
   text-align: center;
   font-family: serif;
@@ -114,8 +105,7 @@ table.phpc-main {
   text-align: justify;
 }
 
-/* FIXME: give the following phpc classes, so we don't disrupt embedders */
-caption {
+#php-calendar caption {
   font-size: 175%;
   color: #000000;
   background-color: #FFFFFF;
@@ -123,16 +113,16 @@ caption {
   font-weight: bolder;
 }
 
-thead th {
+#php-calendar thead th {
   background-color: #C0C0C0;
   color: #000000;
 }
 
-thead {
+#php-calendar thead {
   border: 1px solid #000000;
 }
 
-thead, tfoot {
+#php-calendar thead, #php-calendar tfoot {
   text-align: center;
 }
 
@@ -216,11 +206,19 @@ table.phpc-main li a:hover {
   text-align: right;
 }
 
+.form-textarea {
+  border: groove;
+}
+
 .form-long-free-question textarea {
   width: 100%;
   border-width: 0;
 }
 
+.form-part input {
+}
+
+/*
 .form-group {
   border: 2px solid #000000;
   background-color: #C0C0C0;
@@ -233,6 +231,7 @@ table.phpc-main li a:hover {
   border: 2px solid #000000;
   background-color: gray;
 }
+*/
 
 .form-question {
   border: 1px solid #000000;
@@ -243,6 +242,11 @@ table.phpc-main li a:hover {
 
 .form-question .form-question {
   border-width: 0;
+}
+
+.form-time-question, .form-date-question {
+  padding: 0;
+  margin: 0;
 }
 
 .form h2 {

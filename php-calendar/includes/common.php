@@ -1,6 +1,6 @@
 <?php
 /*
-   Copyright 2002 - 2005 Sean Proctor, Nathan Poiro
+   Copyright 2009 Sean Proctor
 
    This file is part of PHP-Calendar.
 
@@ -62,14 +62,10 @@ function month_name($month)
         return $month_names[$month];
 }
 
-//takes a day number of the week, returns a name
+//takes a day number of the week, returns a name (0 for the beginning)
 function day_name($day)
 {
-	global $config, $day_names;
-
-	if($config['start_monday']) {
-		$day = $day + 1;
-	}
+	global $day_names;
 
 	$day = $day % 7;
 
@@ -145,12 +141,7 @@ function parse_desc($text)
 // returns the day of week number corresponding to 1st of $month
 function day_of_first($month, $year)
 {
-	global $config;
-
-	if(!$config['start_monday'])
-		return date('w', mktime(0, 0, 0, $month, 1, $year));
-	else
-		return (date('w', mktime(0, 0, 0, $month, 1, $year)) + 6) % 7;
+	return date('w', mktime(0, 0, 0, $month, 1, $year));
 }
 
 // returns the number of days in $month
@@ -183,12 +174,6 @@ function create_sequence($start, $end, $interval = 1, $display = NULL)
 function minute_pad($minute)
 {
         return sprintf('%02d', $minute);
-}
-
-function get_day_of_month_sequence($month, $year)
-{
-        $end = date('t', mktime(0, 0, 0, $month, 1, $year, 0));
-        return create_sequence(0, $end);
 }
 
 // creates an input of the specified type for a form
@@ -228,8 +213,8 @@ function create_password($name, $value = false, $extra_attrs = false) {
 
 // creates a checkbox for a form
 // returns XHTML data for the checkbox
-function create_checkbox($name, $value = false, $checked = false,
-                $extra_attrs = false) {
+function create_checkbox($name, $value, $checked = false, $extra_attrs = false)
+{
         if(!empty($checked)) {
                 $attributes = attributes('checked="checked"');
                 $attributes->add($extra_attrs);

@@ -27,36 +27,29 @@ function login($calendar)
 {
 	$html = tag('div');
 
-	//Check password and username
-	if(isset($calendar->vars['username'])) {
-                if(!isset($calendar->vars['password']))
-                        $calendar->vars['password'] = '';
+	$user = phpc_get_user();
 
-		$user = $calendar->vars['username'];
-		$password = $calendar->vars['password'];
+	if($user->attempted_login()) {
 
-		if($calendar->verify_user($user, $password)) {
-                        $calendar->session['username'] = $user;
-                        $calendar->session_write_close();
+		if($user->logged_in()) {
+			$arguments = array();
+			if(isset($calendar->vars['lastaction'])) {
+				$arguments[] = "action={$calendar->vars['lastaction']}";
+				unset($calendar->vars['lastaction']);
+			}
 
-			// FIXME: ditch the redirect here
-                        $string = "Location: {$calendar->script}";
+			foreach($calendar->vars as $key => $var) {
+				if(in_array($key, $calendar->persistent_vars)
+						&& !isset($arguments, $key)) {
+					$arguments[] = "$key=$var";
+				}
+			}
 
-                        if(isset($calendar->vars['lastaction'])) {
-                                $arguments[] = "action={$calendar->vars['lastaction']}";
-                                unset($calendar->vars['lastaction']);
-                        }
+			$string = "";
+			if(sizeof($arguments) > 0)
+				$string .= implode('&', $arguments);
 
-                        $arguments = array();
-                        foreach($calendar->vars as $key => $var) {
-                                if(in_array($key, $calendar->persistent_vars))
-                                        $arguments[] = "$key=$var";
-                        }
-
-                        if(sizeof($arguments) > 0)
-                                $string .= '?' . implode('&', $arguments);
-
-                        header($string);
+			$calendar->redirect($string);
 			return tag('h2', _('Loggin in...'));
 		}
 

@@ -65,15 +65,50 @@ function month_navbar(&$calendar)
 	return $html;
 }
 
+function day_navbar(&$calendar)
+{
+	$html = tag('div', attributes('class="phpc-navbar"'));
+
+	$monthname = month_name($this->month);
+
+	$lasttime = mktime(0, 0, 0, $this->month,
+			$this->day - 1, $this->year);
+	$lastday = date('j', $lasttime);
+	$lastmonth = date('n', $lasttime);
+	$lastyear = date('Y', $lasttime);
+	$lastmonthname = month_name($lastmonth);
+
+	$nexttime = mktime(0, 0, 0, $this->month,
+			$this->day + 1, $this->year);
+	$nextday = date('j', $nexttime);
+	$nextmonth = date('n', $nexttime);
+	$nextyear = date('Y', $nexttime);
+	$nextmonthname = month_name($nextmonth);
+
+	$html->prepend($this->create_date_link(
+				"$lastmonthname $lastday",
+				'display', $lastyear,
+				$lastmonth, $lastday), "\n");
+	$html->add($this->create_date_link(
+				"$nextmonthname $nextday",
+				'display', $nextyear,
+				$nextmonth, $nextday), "\n");
+	return $html;
+
+}
+
 // creates a tables of the days in the month
 // returns XHTML data for the month
 function display_month(&$calendar)
 {
 	$days = tag('tr');
 	for($i = 0; $i < 7; $i++) {
-		$days->add(tag('th', day_name($calendar->get_config(
-                                                        'start_monday')
-                                                ? $i + 1 : $i)));
+		if($calendar->get_config('start_monday')) {
+			$d = $i + 1 % 7;
+		} else {
+			$d = $i;
+		}
+		$days->add(tag('th', day_name($d)));
 	}
 
 	return tag('div',
@@ -106,15 +141,19 @@ function create_month(&$calendar, $week_of_month = 1)
 
 // displays the day of the week and the following days of the week
 // return HTML data for the days
-function display_days(&$calendar, $week_of_month, $day_of_week = 1)
+function display_days(&$calendar, $week_of_month, $day_count = 1)
 {
         $month = $calendar->get_month();
         $year = $calendar->get_year();
+	if($calendar->get_config('start_monday'))
+		$first_day_of_week = 1;
+	else
+		$first_day_of_week = 0;
 
 	if($day_of_week > 7) return array();
 
-	$day_of_month = ($week_of_month - 1) * 7 + $day_of_week
-		- day_of_first($month, $year);
+	$day_of_month = ($week_of_month - 1) * 7 + $day_count
+		- ((7 + day_of_first($month, $year) - $first_day_of_week) % 7);
 
 	if($day_of_month <= 0 || $day_of_month > days_in_month($month, $year)) {
 		$html_day = tag('td', attributes('class="none"'));
@@ -155,16 +194,16 @@ function display_days(&$calendar, $week_of_month, $day_of_week = 1)
                 }*/
 
 		$db = phpc_get_db();
-		$user = phpc_get_user();
 
-		$result = $db->get_events_by_date($day_of_month, $month,
-                                $year, $calendar->get_config('id'), $user->id);
+		$result = $db->get_events_by_date($calendar, $year, $month,
+				$day_of_month);
 
 		/* loop through each event for the day */
                 $have_events = false;
 		$html_events = tag('ul');
 		while($row = $result->FetchRow($result)) {
-			$subject = stripslashes($row['title']);
+			$subject = htmlspecialchars(strip_tags(stripslashes
+						($row['subject'])));
 
 			$event_time = formatted_time_string(
 					$row['starttime'],
@@ -174,7 +213,7 @@ function display_days(&$calendar, $week_of_month, $day_of_week = 1)
 					$calendar->create_event_link(
 						($event_time ? "$event_time - " 
 						 : '') . $subject, 'display',
-						$row['eventid']));
+						$row['eventID']));
                         $html_events->add($event);
                         $have_events = true;
 		}
@@ -223,10 +262,8 @@ function display_day(&$calendar)
 	$monthname = month_name($month);
 
 	$db = phpc_get_db();
-	$user = phpc_get_user();
 
-	$result = $db->get_events_by_date($day, $month, $year,
-			$calendar->get_config('id'), $user->id);
+	$result = $db->get_events_by_date($calendar, $year, $month, $day);
 
 	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
 
@@ -236,7 +273,7 @@ function display_day(&$calendar)
 				tag('caption', "$day $monthname $year"),
 				tag('thead',
 					tag('tr',
-						tag('th', _('Title')),
+						tag('th', _('Subject')),
 						tag('th', _('Time')),
 						tag('th', _('Duration')),
 						tag('th', _('Description'))
@@ -256,9 +293,9 @@ function display_day(&$calendar)
 		$html_body = tag('tbody');
 
 		for(; $row; $row = $result->FetchRow()) {
-			//$name = stripslashes($row['username']);
-			$subject = stripslashes($row['title']);
-			if(empty($subject)) $subject = _('(No title)');
+			$subject = htmlspecialchars(strip_tags(stripslashes
+						($row['subject'])));
+			if(empty($subject)) $subject = _('(No subject)');
 			$desc = parse_desc($row['description']);
 			$time_str = formatted_time_string($row['starttime'],
 					$row['eventtype']);
@@ -326,8 +363,8 @@ function display_event(&$calendar)
 	$time_str = formatted_time_string($row['starttime'], $row['eventtype'])
 		.' '.$row['startdate'];
 	$dur_str = get_duration($row['duration'], $row['eventtype']);
-	$subject = stripslashes($row['title']);
-	if(empty($subject)) $subject = _('(No title)');
+	$subject = htmlspecialchars(strip_tags(stripslashes($row['subject'])));
+	if(empty($subject)) $subject = _('(No subject)');
 	$name = stripslashes($row['username']);
 	$desc = parse_desc($row['description']);
 	$id = $row["eventid"];

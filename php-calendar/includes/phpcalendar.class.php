@@ -57,6 +57,15 @@ class PhpCalendar {
 		
                 $this->vars = &$_REQUEST;
 		$this->session = &$_SESSION;
+
+		/*echo "<pre>VARS:\n";
+		foreach($this->vars as $var => $val) {
+			echo "$var = $val\n";
+		}
+		foreach($_SESSION as $var => $val) {
+			echo "$var = $val\n";
+		}
+		echo "</pre>";*/
         }
 
         // set the session to a non-default location
@@ -206,8 +215,9 @@ class PhpCalendar {
          * usage
          */
         function create_action_link($text, $action, $attribs = NULL) {
-                return $this->create_link($text, array('action' => $action),
-                                $attribs);
+                return tag('div', attributes('class="phpc-menu-item"'),
+				$this->create_link($text,
+					array('action' => $action), $attribs));
         }
 
         function create_event_link($text, $action, $id, $attribs = NULL) {
@@ -231,42 +241,40 @@ class PhpCalendar {
 
         // creates the navbar for the top of the calendar
         // returns HTML data for the navbar
-        function navbar() {
+	function sidebar() {
                 $this->assure_data();
 
 		$user = phpc_get_user();
 
 		$action = $this->get_action();
 
-                $html = tag('div', attributes('class="phpc-navbar"'));
+                $html = tag('div', attributes('class="phpc-sidebar"'));
 
                 // adding a new line after each link so they get some separation
                 if(/*can_add_event() && */ $action != 'add') { 
                         $html->add($this->create_action_link(_('Add Event'),
-                                                'event_form'), "\n");
+						'event_form'));
                 }
 
                 if($action != 'search') {
                         $html->add($this->create_action_link(_('Search'),
-                                                'search'), "\n");
+                                                'search'));
                 }
 
                 if(!empty($this->vars['day']) || !empty($this->vars['eventid'])
                                 || $action != 'display') {
                         $html->add($this->create_action_link(_('View Month'),
-                                                'display'), "\n");
+                                                'display'));
                 }
 
                 if($action != 'display' || !empty($this->vars['id'])) {
                         $html->add($this->create_action_link(_('View date'),
-                                                'display'), "\n");
+                                                'display'));
                 }
 
                 if($user->logged_in()) {
-                        $html->add($this->create_link(_('Log out'),
-                                                array('action' => 'logout',
-                                                        'lastaction'
-                                                        => $action)), "\n");
+                        $html->add($this->create_action_link(_('Log out'),
+						'logout'));
                 } else {
                         $html->add($this->create_link(_('Log in'),
                                                 array('action' => 'login',
@@ -279,36 +287,9 @@ class PhpCalendar {
                                                 'admin'), "\n");
                 }
 
-                if(isset($this->var['display'])
-                                && $this->var['display'] == 'day') {
-                        $monthname = month_name($this->month);
-
-                        $lasttime = mktime(0, 0, 0, $this->month,
-                                        $this->day - 1, $this->year);
-                        $lastday = date('j', $lasttime);
-                        $lastmonth = date('n', $lasttime);
-                        $lastyear = date('Y', $lasttime);
-                        $lastmonthname = month_name($lastmonth);
-
-                        $nexttime = mktime(0, 0, 0, $this->month,
-                                        $this->day + 1, $this->year);
-                        $nextday = date('j', $nexttime);
-                        $nextmonth = date('n', $nexttime);
-                        $nextyear = date('Y', $nexttime);
-                        $nextmonthname = month_name($nextmonth);
-
-                        $html->prepend($this->create_date_link(
-                                                "$lastmonthname $lastday",
-                                                'display', $lastyear,
-                                                $lastmonth, $lastday), "\n");
-                        $html->add($this->create_date_link(
-                                                "$nextmonthname $nextday",
-                                                'display', $nextyear,
-                                                $nextmonth, $nextday), "\n");
-                }
-
                 return $html;
-        }
+	}
+
 
         function get_vars() {
                 $this->assure_data();
@@ -341,6 +322,11 @@ class PhpCalendar {
 
                 return $this->calendar[$name];
         }
+
+	function get_id() {
+		$this->assure_data();
+		return $this->get_config('calendarID');
+	}
 
 	function get_current_event()
 	{

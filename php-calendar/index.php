@@ -71,6 +71,8 @@ if(get_magic_quotes_gpc()) {
         $vars = array_merge($vars, array_map('addslashes', $_POST));
 }
 
+session_start();
+
 $calendar = phpc_get($phpc_script);
 $calendar->set_vars($vars);
 
@@ -88,7 +90,7 @@ $html = tag('html',
 			.'<![endif]-->'),
 		tag('body',
 			tag('h1', $calendar->get_config('title')),
-			$calendar->navbar(),
+			$calendar->sidebar(),
 			$calendar->display(),
 			link_bar($calendar)));
 

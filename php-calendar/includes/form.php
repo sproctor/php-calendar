@@ -261,8 +261,11 @@ class FormLongFreeQuestion extends FormAtomicQuestion {
                 if($this->description !== false) {
                         $tag->add(tag('div', attributes('class="form-question-description"'), $this->description));
                 }
-		$tag->add(tag('textarea', attributes("rows=\"{$this->rows}\"",
-						"name=\"{$this->qid}\""), ''));
+		$tag->add(tag('div', attributes("class=\"form-textarea\""),
+					tag('textarea', attributes
+						("rows=\"{$this->rows}\"",
+						 "name=\"{$this->qid}\""),
+						'')));
                 return $tag;
         }
 }
