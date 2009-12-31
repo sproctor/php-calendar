@@ -1,0 +1,257 @@
+/*
+ * Copyright 2009 Sean Proctor
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+body {
+  font-family: "Times New Roman", serif;
+  margin: 0 2%;
+  padding: 0;
+  background-color: white;
+  color: black;
+}
+
+.php-calendar a {
+  color: black;
+}
+
+.php-calendar a:hover {
+  color: gray;
+}
+
+.php-calendar h1 {
+  text-align: center;
+  color: black;
+}
+
+.php-calendar h2 {
+  text-align: center;
+  color: black;
+}
+
+.php-calendar input[type="submit"] {
+  background-color: silver;
+  color: black;
+  border: 1px solid black;
+}
+
+.php-calendar input[type="submit"]:hover {
+  background-color: black;
+  color: silver;
+}
+
+.phpc-navbar a {
+  text-decoration: underline;
+  margin: 0 .5em;
+}
+
+.phpc-navbar a:hover {
+  color: gray;
+}
+
+.phpc-navbar {
+  margin: .5em 0;
+  text-align: center;
+  border: 1px solid black;
+  background-color: #CCC;
+  padding: 4px;
+}
+
+.phpc-month-nav a {
+  text-decoration: underline;
+  margin: 0 .2em;
+}
+
+.phpc-month-nav {
+  margin: .5em 0;
+  text-align: center;
+  padding: 2px;
+}
+
+.phpc-month-nav .php-present {
+  background: silver;
+}
+
+.php-calendar table {
+  border: 2px solid black;
+  border-collapse: collapse;
+  color: black;
+  background-color: #CCC;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.php-calendar td, .php-calendar th {
+  border: 1px solid black;
+  padding: .25em;
+}
+
+.phpc-container {
+  min-width: 50%;
+}
+
+table.phpc-main {
+  width: 100%;
+}
+
+div.phpc-main {
+  padding: 0;
+}
+
+.phpc-main h2 {
+  text-align: left;
+  margin: 0;
+  background-color: white;
+  padding: 2px .5em; 
+}
+
+.phpc-main div {
+  padding-left: .5em;
+}
+
+.phpc-event {
+  border: 2px solid black;
+  color: black;
+  background-color: #CCC;
+  margin: 0;
+  padding: .5em;
+}
+
+.phpc-event-header {
+  border: 1px solid black;
+  background-color: #AAA;
+  padding: .5em;
+}
+
+.phpc-desc {
+  padding: .5em;
+  margin: 0;
+  text-align: justify;
+}
+
+.php-calendar caption {
+  font-size: 175%;
+  color: black;
+  background-color: white;
+  padding: 2px;
+  font-weight: bolder;
+  margin: 1px;
+}
+
+.php-calendar thead {
+  border: 1px solid black;
+  background-color: silver;
+  color: black;
+}
+
+.php-calendar tfoot {
+  text-align: center;
+}
+
+.phpc-calendar {
+  table-layout: fixed;
+}
+
+.phpc-calendar td, .phpc-calendar th {
+  border-collapse: collapse;
+  border: 2px solid black;
+}
+
+.phpc-calendar td {
+  text-align: left;
+  height: 80px;
+}
+
+td.phpc-past {
+  background-color: #AAA;
+}
+
+td.phpc-future {
+  background-color: #CCC;
+}
+
+td.phpc-present {
+  background-color: white;
+}
+
+td.phpc-none {
+  background-color: gray;
+}
+
+table.phpc-main ul {
+  margin: 2px;
+  padding: 0;
+  list-style-type: none;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px 1px 0 1px;
+}
+
+table.phpc-main li {
+  font-size: 80%;
+  font-weight: normal;
+  padding: 0;
+  border-color: black;
+  border-style: solid;
+  border-width: 0 0 1px 0;
+  margin: 1px 0 1px 0;
+  background-color: #CCC;
+}
+
+table.phpc-main li a {
+  display: block;
+  text-decoration: none;
+  padding: 2px;
+}
+
+table.phpc-main li a:hover {
+  background-color: gray;
+  color: black;
+}
+
+.phpc-footer {
+  text-align: center;
+}
+
+.phpc-button {
+  text-align: center;
+}
+
+.phpc-add {
+  float: right;
+  text-align: right;
+}
+
+#phpc-summary-view {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: solid 2px black; 
+  width: 300px;
+  max-height: 250px;
+  overflow: hidden;
+  padding: 5px;
+}
+
+.phpc-summary-head {
+  border-bottom: solid 1px black;
+}
+
+.form table {
+  width: 100%;
+}
+
+/* \*/ /*/
+  .phpc-calendar { table-layout: auto; }
+/* */
