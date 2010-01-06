@@ -1,0 +1,28 @@
+Q: How do I fit the calendar into the theme of my website?
+A: The only recommended way is if you can use PHP for the page you wish to
+   put the calendar on. You need to include the file "includes/setup.php"
+   at the very beginning of the page. You should include the CSS in the
+   header of the page. You need to include the file "includes/embed.php"
+   where you would like the calendar to show up. Here is an example page:
+
+<?php require_once 'includes/setup.php'; ?>
+<html>
+  <head>
+    <title>Example Embedded Calendar</title>
+    <link rel="stylesheet" type="text/css" href="style.php">
+  </head>
+  <body>
+    <?php require 'includes/embed.php'; ?>
+  </body>
+</html>
+
+Q: How do I allow HTML in the descriptions of events?
+A: Read and follow comments in the function parse_desc() in
+   includes/calendar.php
+
+Q: How do I get the links for translations to appear?
+A: You need to build the .mo files for the languages you want. To do this, go
+   into the directory for each language you want (ex. locale/de/LC_MESSAGES)
+   and run: msgfmt messages.po
+   I have no experience with this in Windows. Read the manual for gettext for
+   more information.
