@@ -67,7 +67,7 @@ function display_event_by_oid($oid)
 				. _(' at ').$event->get_time_span_string()));
 
 	$occurrences = $phpcdb->get_occurrences_by_eid($eid);
-	if(sizeof($occurrences > 1)) {
+	if(sizeof($occurrences) > 1) {
 		$occurrence_div = tag('div');
 		$i = 0;
 		while($i < sizeof($occurrences)) {
