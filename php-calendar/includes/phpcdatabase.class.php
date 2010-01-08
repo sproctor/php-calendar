@@ -17,6 +17,7 @@
 
 require_once("$phpc_includes_path/phpccalendar.class.php");
 require_once("$phpc_includes_path/phpcevent.class.php");
+require_once("$phpc_includes_path/phpcoccurrence.class.php");
 require_once("$phpc_includes_path/phpcuser.class.php");
 
 class PhpcDatabase {
@@ -36,16 +37,17 @@ class PhpcDatabase {
 	// returns all the events for a particular day
 	// $from and $to are timestamps only significant to the date.
 	// an event that happens later in the day of $to is included
-        function get_events_by_date_range($cid, $from, $to)
+        function get_occurrences_by_date_range($cid, $from, $to)
 	{
 		$from_date = date('Y-m-d', $from);
 		$to_date = date('Y-m-d', $to);
 
 		$sql_events = SQL_PREFIX . "events";
 		$sql_occurrences = SQL_PREFIX . "occurrences";
+		$users_table = SQL_PREFIX . 'users';
 
                 $query = "SELECT `subject`, `description`, `$sql_events`.`eid`,"
-		        ." `cid`, `username`, `timetype`, `readonly`, "
+		        ." `cid`, `oid`, `username`, `timetype`, `readonly`, "
 			."HOUR(`starttime`) AS `starthour`, "
 			."MINUTE(`starttime`) AS `startminute`, "
 			."HOUR(`endtime`) AS `endhour`, "
@@ -58,7 +60,7 @@ class PhpcDatabase {
 			."DAY(`enddate`) AS `endday`\n"
 			."FROM `$sql_events`\n"
                         ."INNER JOIN `$sql_occurrences` USING (`eid`)\n"
-			."JOIN `" . SQL_PREFIX . "users` on `uid` = `owner`\n"
+			."JOIN `$users_table` on `uid` = `owner`\n"
 			."WHERE `cid` = $cid\n"
 			."	AND `startdate` <= DATE('$to_date')\n"
 			."	AND `enddate` >= DATE('$from_date')\n"
@@ -70,28 +72,52 @@ class PhpcDatabase {
 
 		$events = array();
 		while($row = $result->fetch_assoc()) {
-			$events[] = create_phpcevent($row);
+			$events[] = new PhpcOccurrence($row);
 		}
 		return $events;
         }
 
 	// returns all the events for a particular day
-        function get_events_by_date($cid, $year, $month, $day)
+        function get_occurrences_by_date($cid, $year, $month, $day)
 	{
 		$stamp = mktime(0, 0, 0, $month, $day, $year);
 
-		return $this->get_events_by_date_range($cid, $stamp, $stamp);
+		return $this->get_occurrences_by_date_range($cid, $stamp,
+				$stamp);
         }
 
 	// returns the event that corresponds to $id
-	function get_event_by_id($eid)
+	function get_event_by_eid($eid)
 	{
 		$events_table = SQL_PREFIX . 'events';
 		$occurrences_table = SQL_PREFIX . 'occurrences';
 		$users_table = SQL_PREFIX . 'users';
 
                 $query = "SELECT `subject`, `description`, `username`, "
-			."`$events_table`.`eid`, `cid`, `timetype`, "
+			."`$events_table`.`eid`, `cid`, `readonly`"
+			."FROM `$events_table`\n"
+			."JOIN `$users_table` on `uid` = `owner`\n"
+			."WHERE `eid` = $eid\n";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error in get_event_by_eid'),
+					$query);
+
+		$result = $sth->fetch_assoc()
+			or soft_error(_("Event doesn't exist") . ": $eid");
+
+		return new PhpcEvent($result);
+	}
+
+	// returns the event that corresponds to $oid
+	function get_occurrence_by_oid($oid)
+	{
+		$events_table = SQL_PREFIX . 'events';
+		$occurrences_table = SQL_PREFIX . 'occurrences';
+		$users_table = SQL_PREFIX . 'users';
+
+                $query = "SELECT `subject`, `description`, `username`, "
+			."`$events_table`.`eid`, `cid`, `oid`, `timetype`, "
 			."`readonly`, "
 			."HOUR(`starttime`) AS `starthour`, "
 			."MINUTE(`starttime`) AS `startminute`, "
@@ -106,18 +132,52 @@ class PhpcDatabase {
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
 			."JOIN `$users_table` on `uid` = `owner`\n"
-			."WHERE `eid` = $eid\n";
+			."WHERE `oid` = $oid\n";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_event_by_id'),
+			or $this->db_error(_('Error in get_occurrences_by_oid'),
 					$query);
 
-
 		$result = $sth->fetch_assoc()
-			or soft_error(_("Event doesn't exist") . ": $eid");
+			or soft_error(_("Event doesn't exist") . ": $oid");
 
-		return new PhpcEvent($result);
+		return new PhpcOccurrence($result);
 	}
+
+        function get_occurrences_by_eid($eid)
+	{
+		$sql_events = SQL_PREFIX . "events";
+		$sql_occurrences = SQL_PREFIX . "occurrences";
+		$users_table = SQL_PREFIX . 'users';
+
+                $query = "SELECT `subject`, `description`, `$sql_events`.`eid`,"
+		        ." `cid`, `oid`, `username`, `timetype`, `readonly`, "
+			."HOUR(`starttime`) AS `starthour`, "
+			."MINUTE(`starttime`) AS `startminute`, "
+			."HOUR(`endtime`) AS `endhour`, "
+			."MINUTE(`endtime`) AS `endminute`, "
+			."YEAR(`startdate`) AS `startyear`, "
+			."MONTH(`startdate`) AS `startmonth`, "
+			."DAY(`startdate`) AS `startday`, "
+			."YEAR(`enddate`) AS `endyear`, "
+			."MONTH(`enddate`) AS `endmonth`, "
+			."DAY(`enddate`) AS `endday`\n"
+			."FROM `$sql_events`\n"
+                        ."INNER JOIN `$sql_occurrences` USING (`eid`)\n"
+			."JOIN `$users_table` on `uid` = `owner`\n"
+			."WHERE `eid` = $eid\n"
+			."	ORDER BY `startdate`, `starttime`";
+
+		$result = $this->dbh->query($query)
+			or $this->db_error(_('Error in get_occurrences_by_eid'),
+					$query);
+
+		$events = array();
+		while($row = $result->fetch_assoc()) {
+			$events[] = new PhpcOccurrence($row);
+		}
+		return $events;
+        }
 
 	function delete_event($eid)
 	{
@@ -129,7 +189,7 @@ class PhpcDatabase {
 			or $this->db_error(_('Error while removing an event.'),
 					$query);
 
-		$rv = ($this->dbh->affected_rows > 0);
+		$rv = $this->dbh->affected_rows > 0;
 
 		$this->delete_occurrences($eid);
 
@@ -458,7 +518,7 @@ class PhpcDatabase {
 
 		$events = array();
 		while($row = $result->fetch_assoc()) {
-			$events[] = create_phpcevent($row);
+			$events[] = new PhpcOccurrence($row);
 		}
 		return $events;
 	}

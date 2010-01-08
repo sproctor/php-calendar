@@ -102,7 +102,7 @@ function create_month($month, $year)
 	$last_day = $wim * 7 - day_of_week($month, 1, $year);
 	$to_stamp = mktime(0, 0, 0, $month, $last_day, $year);
 
-	$results = $phpcdb->get_events_by_date_range($phpcid, $from_stamp,
+	$results = $phpcdb->get_occurrences_by_date_range($phpcid, $from_stamp,
 			$to_stamp);
 	$days_events = array();
 	foreach($results as $event) {
@@ -228,9 +228,9 @@ function create_day($month, $day, $year, $days_events)
 		$event_time = $event->get_time_string();
 
 		$event_html = tag('li',
-				create_event_link($event_time ?
+				create_occurrence_link($event_time ?
 					"$event_time - $subject" : $subject,
-					"display_event", $event->get_eid()));
+					"display_event", $event->get_oid()));
 		$html_events->add($event_html);
 	}
 

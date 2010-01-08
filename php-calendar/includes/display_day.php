@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2010 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,12 @@ function display_day()
 
 	$monthname = month_name($month);
 
-	$results = $phpcdb->get_events_by_date($phpcid, $year, $month, $day);
+	$results = $phpcdb->get_occurrences_by_date($phpcid, $year, $month,
+			$day);
 
 	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
 
 	if(sizeof($results) > 0) {
-
 		$html_table = tag('table', attributes('class="phpc-main"'),
 				tag('caption', "$day $monthname $year"),
 				tag('thead',
@@ -63,6 +63,7 @@ function display_day()
 				continue;
 
 			$eid = $event->get_eid();
+			$oid = $event->get_oid();
 
 			$html_subject = tag('td');
 
@@ -71,9 +72,9 @@ function display_day()
 							$eid));
                         }
 
-			$html_subject->add(create_event_link(tag('strong',
+			$html_subject->add(create_occurrence_link(tag('strong',
                                                         $event->get_subject()),
-						'display_event', $eid));
+						'display_event', $oid));
 
 			if(can_modify_event($event)) {
 				$html_subject->add(' (');

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2010 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +99,10 @@ function event_form() {
 	if(isset($vars['eid'])) {
 		$form->add_hidden('eid', $vars['eid']);
 		// FIXME - change to work with 24-hour time
-		$event = $phpcdb->get_event_by_id($vars['eid']);
+		$events = $phpcdb->get_occurrences_by_eid($vars['eid']);
+		// FIXME make some way to add multiple occurrences,
+		//  and then pre-fill that with the existing occurrences
+		$event = $events[0];
 		$defaults = array(
 				'subject' => $event->get_subject(),
 				'description' => $event->get_desc(),

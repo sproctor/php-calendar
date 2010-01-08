@@ -26,17 +26,28 @@ if ( !defined('IN_PHPC') ) {
 // Full view for a single event
 function display_event()
 {
-	global $phpcdb, $vars;
+	global $vars;
 
 	if(!empty($vars['contentType']) && $vars['contentType'] == 'json')
 		return display_event_json();
+	
+	if(isset($vars['oid']))
+		return display_event_by_oid($vars['oid']);
+	
+	if(isset($vars['eid']))
+		return display_event_by_eid($vars['eid']);
 
-	if(!isset($vars['eid']))
-		soft_error("Argument eid must be defined.");
+	// If we get here, we did something wrong
+	soft_error(_("Invalid arguments."));
+}
 
-	$eid = $vars['eid'];
+function display_event_by_oid($oid)
+{
+	global $phpcdb;
 
-	$event = $phpcdb->get_event_by_id($eid);
+	$event = $phpcdb->get_occurrence_by_oid($oid);
+
+	$eid = $event->get_eid();
 
 	if(!can_read_event($event)) {
 		return tag('p', _("You do not have permission to read this event."));
@@ -52,8 +63,35 @@ function display_event()
 					create_event_link(_('Delete'),
 						'event_delete', $eid)));
 	}
-	$event_header->add(tag('',
-				tag('div', _('When').": ".$event->get_date_string() . _(' at ').$event->get_time_span_string())));
+	$event_header->add(tag('div', _('When').": ".$event->get_date_string()
+				. _(' at ').$event->get_time_span_string()));
+
+	$occurrences = $phpcdb->get_occurrences_by_eid($eid);
+	if(sizeof($occurrences > 1)) {
+		$occurrence_div = tag('div');
+		$i = 0;
+		while($i < sizeof($occurrences)) {
+			if($occurrences[$i]->get_oid() == $oid)
+				break;
+			$i++;
+		}
+		// if we have a previous event
+		$prev = $i - 1;
+		if($prev >= 0) {
+			$occurrence_div->add(create_occurrence_link(_('Previous Occurrence'), 'display_event', $occurrences[$prev]->get_oid()), ' ');
+		}
+		// if we have a future event
+		$next = $i + 1;
+		if($next < sizeof($occurrences)) {
+			$occurrence_div->add(create_occurrence_link(_('Next Occurrence'), 'display_event', $occurrences[$next]->get_oid()), ' ');
+		}
+
+		$occurrence_div->add(create_event_link(
+					_('View All Occurrences'),
+					'display_event', $eid));
+
+		$event_header->add($occurrence_div);
+	}
 
 	$event_tag = tag('div', attributes('class="phpc-event"'),
 			$event_header,
@@ -64,15 +102,55 @@ function display_event()
 			tag('h2', $event->get_subject()), $event_tag);
 }
 
+function display_event_by_eid($eid)
+{
+	global $phpcdb;
+
+	$event = $phpcdb->get_event_by_eid($eid);
+
+	if(!can_read_event($event)) {
+		return tag('p', _("You do not have permission to read this event."));
+	}
+
+	$event_header = tag('div', attributes('class="phpc-event-header"'),
+			tag('div', 'by ', tag('cite', $event->get_username())));
+	// Add modify/delete links if this user has access to this event.
+        if(can_modify_event($event)) {
+		$event_header->add(tag('div',
+					create_event_link(_('Modify'),
+						'event_form', $eid), "\n",
+					create_event_link(_('Delete'),
+						'event_delete', $eid)));
+	}
+
+	$event_tag = tag('div', attributes('class="phpc-event"'),
+			$event_header,
+			tag('p', attributes('class="phpc-desc"'),
+				$event->get_desc()));
+
+	$occurrences_tag = tag('ul');
+	$occurrences = $phpcdb->get_occurrences_by_eid($eid);
+	foreach($occurrences as $occurrence) {
+		$occurrences_tag->add(tag('li', create_occurrence_link(
+						$occurrence->get_date_string()
+						. _(' at ')
+						. $occurrence->get_time_span_string(), 'display_event', $occurrence->get_oid())));
+	}
+
+	return tag('div', attributes('class="phpc-main"'),
+			tag('h2', $event->get_subject()), $event_tag,
+			$occurrences_tag);
+}
+
 // generates a JSON data structure for a particular event
 function display_event_json()
 {
 	global $phpcdb, $vars;
 
-	if(!isset($vars['eid']))
+	if(!isset($vars['oid']))
 		return "";
 
-	$event = $phpcdb->get_event_by_id($vars['eid']);
+	$event = $phpcdb->get_occurrence_by_oid($vars['oid']);
 
 	if(!can_read_event($event))
 		return "";

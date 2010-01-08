@@ -39,7 +39,7 @@ function event_delete()
 	if (empty($vars["confirm"])) {
 		$list = tag('ul');
 		foreach ($eids as $eid) {
-			$event = $phpcdb->get_event_by_id($eid);
+			$event = $phpcdb->get_event_by_eid($eid);
 			$list->add(tag('li', "$eid: ".$event->get_subject()));
 		}
 		$html->add(tag('p', _('Confirm you want to delete:')));
@@ -53,7 +53,7 @@ function event_delete()
 	}
 
 	foreach($eids as $eid) {
-		$event = $phpcdb->get_event_by_id($eid);
+		$event = $phpcdb->get_event_by_eid($eid);
 		if(!can_modify_event($event)) {
 			$html->add(tag('p', _("You do not have permission to remove event: $eid")));
 			continue;

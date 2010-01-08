@@ -360,12 +360,15 @@ function week_of_year($month, $day, $year)
 	return ($days_before_year + $day_of_year + $days_left) / 7;
 }
 
-// creates a link with text $text and GET attributes corresponding to the rest
-// of the arguments.
-// returns tag data for the link
 function create_event_link($text, $action, $eid, $attribs = false)
 {
 	return create_action_link($text, $action, array('eid' => $eid),
+			$attribs);
+}
+
+function create_occurrence_link($text, $action, $oid, $attribs = false)
+{
+	return create_action_link($text, $action, array('oid' => $oid),
 			$attribs);
 }
 
