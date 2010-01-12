@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2010 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ $phpc_includes_path = "$phpc_root_path/includes";
 define('IN_PHPC', true);
 
 require_once("$phpc_includes_path/calendar.php");
+
+if(!function_exists("mysqli_connect"))
+	soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
 
 echo '<html>
 <head>
@@ -129,7 +132,7 @@ function get_server_setup()
 		</tr>
 		<tr>
 		<td>SQL Admin Password:</td>
-		<td><input type="password" name="my_adminpassword"></td>
+		<td><input type="password" name="my_adminpasswd"></td>
 		</tr>
 		<tr>
 		<td colspan="2">
@@ -149,8 +152,8 @@ function add_sql_user_db()
 	$my_prefix = $_POST['my_prefix'];
 	$my_database = $_POST['my_database'];
 	$my_adminname = $_POST['my_adminname'];
-	$my_adminpasswordd = $_POST['my_adminpassword'];
-	$sql_type = "mysql";
+	$my_adminpasswd = $_POST['my_adminpasswd'];
+	$sql_type = "mysqli";
 
 	$create_user = isset($_POST['create_user'])
 		&& $_POST['create_user'] == 'yes';
@@ -159,14 +162,14 @@ function add_sql_user_db()
 	// Make the database connection.
 	if($create_user) {
 		$dbh = new mysqli($my_hostname, $my_adminname,
-				$my_adminpassword);
+				$my_adminpasswd);
 	} else {
 		$dbh = new mysqli($my_hostname, $my_username, $my_passwd);
 	}
 
 	if(mysqli_connect_errno()) {
-		soft_error(_("Database connect failed: "
-					. mysql_connect_error()));
+		soft_error("Database connect failed: "
+					. mysqli_connect_error());
 	}
 
 	$string = "";
@@ -183,11 +186,11 @@ function add_sql_user_db()
 	if($create_user) {
 		$query = "GRANT ALL ON accounts.* TO $my_username@$my_hostname identified by '$my_passwd'";
 		$dbh->query($query)
-			or db_error($dbh, _('Could not grant:'), $query);
+			or db_error($dbh, 'Could not grant:', $query);
 		$query = "GRANT ALL ON $my_database.*\n"
 			."TO $my_username IDENTIFIED BY '$my_passwd'";
 		$dbh->query($query)
-			or db_error($dbh, _('Could not grant:'), $query);
+			or db_error($dbh, 'Could not grant:', $query);
 
 		$query = "FLUSH PRIVILEGES";
 		$dbh->query($query)
@@ -239,8 +242,8 @@ function install_base()
 	// Make the database connection.
 	$dbh = new mysqli(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
 	if(mysqli_connect_errno()) {
-		soft_error(_("Database connect failed: "
-					. mysql_connect_error()));
+		soft_error("Database connect failed: "
+					. mysqli_connect_error());
 	}
 
 	create_tables();
@@ -301,7 +304,7 @@ function create_tables()
 		.") ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
 
 	$dbh->query($query)
-		or db_error($dbh, 'Error creating users table.', $query);
+		or db_error($dbh, 'Error creating config table.', $query);
 
 	$query = "CREATE TABLE `" . SQL_PREFIX . "permissions` (\n"
 		."`cid` int(11) unsigned NOT NULL,\n"
@@ -357,15 +360,15 @@ function add_calendar()
 	// Make the database connection.
 	$dbh = new mysqli(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
 	if(mysqli_connect_errno()) {
-		soft_error(_("Database connect failed: "
-					. mysql_connect_error()));
+		soft_error("Database connect failed: "
+					. mysqli_connect_error());
 	}
 
 	$query = "INSERT INTO ".SQL_PREFIX."calendars\n"
 		."(`cid`) VALUE (1)";
 
 	$dbh->query($query)
-		or db_error($dbh, _('Error reading options'), $query);
+		or db_error($dbh, 'Error reading options', $query);
 
 	$cid = $dbh->insert_id;
 
@@ -410,7 +413,7 @@ echo '</form></body></html>';
 	{
 		$string = "$str<br />" . $dbh->error;
 		if($query != "") {
-			$string .= "<br />"._('SQL query').": $query";
+			$string .= "<br />SQL query: $query";
 		}
 		soft_error($string);
 	}

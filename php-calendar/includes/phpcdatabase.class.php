@@ -29,8 +29,8 @@ class PhpcDatabase {
 		$this->dbh = new mysqli(SQL_HOST, SQL_USER, SQL_PASSWD,
 				SQL_DATABASE);
 		if(mysqli_connect_errno()) {
-			soft_error(_("Database connect failed: "
-					. mysql_connect_error()));
+			soft_error("Database connect failed: "
+					. mysqli_connect_error());
 		}
 	}
 
