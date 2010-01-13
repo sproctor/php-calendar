@@ -26,10 +26,12 @@ class PhpcDatabase {
 	function PhpcDatabase()
 	{
 		// Make the database connection.
-		$this->dbh = new mysqli(SQL_HOST, SQL_USER, SQL_PASSWD,
-				SQL_DATABASE);
+		$this->dbh = new mysqli(SQL_HOST, SQL_USER, SQL_PASSWD);
+		$this->dbh->select_db(SQL_DATABASE);
+
 		if(mysqli_connect_errno()) {
-			soft_error("Database connect failed: "
+			soft_error("Database connect failed ("
+					. mysqli_connect_errno() . "): "
 					. mysqli_connect_error());
 		}
 	}

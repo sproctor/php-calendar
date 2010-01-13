@@ -84,7 +84,7 @@ function event_form() {
 	$yearly_group->add_part(new FormDateQuestion('yearly-until',
 				_('Until')));
 
-        $form->add_part($repeat_type);
+        $when_group->add_part($repeat_type);
 
 	if(can_create_readonly($phpcid))
 		$form->add_part(new FormCheckBoxQuestion('readonly',

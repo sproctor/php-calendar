@@ -161,15 +161,9 @@ function add_sql_user_db()
 
 	// Make the database connection.
 	if($create_user) {
-		$dbh = new mysqli($my_hostname, $my_adminname,
-				$my_adminpasswd);
+		$dbh = connect_db($my_hostname, $my_adminname, $my_adminpasswd);
 	} else {
-		$dbh = new mysqli($my_hostname, $my_username, $my_passwd);
-	}
-
-	if(mysqli_connect_errno()) {
-		soft_error("Database connect failed: "
-					. mysqli_connect_error());
+		$dbh = connect_db($my_hostname, $my_username, $my_passwd);
 	}
 
 	$string = "";
@@ -240,11 +234,7 @@ function install_base()
 	require_once($phpc_root_path . 'config.php');
 
 	// Make the database connection.
-	$dbh = new mysqli(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
-	if(mysqli_connect_errno()) {
-		soft_error("Database connect failed: "
-					. mysqli_connect_error());
-	}
+	$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
 
 	create_tables();
 
@@ -358,11 +348,7 @@ function add_calendar()
 	$calendar_title = 'PHP-Calendar';
 
 	// Make the database connection.
-	$dbh = new mysqli(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
-	if(mysqli_connect_errno()) {
-		soft_error("Database connect failed: "
-					. mysqli_connect_error());
-	}
+	$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
 
 	$query = "INSERT INTO ".SQL_PREFIX."calendars\n"
 		."(`cid`) VALUE (1)";
@@ -408,14 +394,29 @@ function add_calendar()
 
 echo '</form></body></html>';
 
-	// called when there is an error involving the DB
-	function db_error($dbh, $str, $query = "")
-	{
-		$string = "$str<br />" . $dbh->error;
-		if($query != "") {
-			$string .= "<br />SQL query: $query";
-		}
-		soft_error($string);
+// called when there is an error involving the DB
+function db_error($dbh, $str, $query = "")
+{
+	$string = "$str<br />" . $dbh->error;
+
+	if($query != "")
+		$string .= "<br />SQL query: $query";
+
+	soft_error($string);
+}
+
+function connect_db($hostname, $username, $passwd, $database = false)
+{
+	$dbh = new mysqli($hostname, $username, $passwd);
+	if($database)
+		$dbh->select_db($database);
+
+	if(mysqli_connect_errno()) {
+		soft_error("Database connect failed (" . mysqli_connect_errno()
+				. "): " . mysqli_connect_error());
 	}
+
+	return $dbh;
+}
 
 ?>

@@ -1,8 +1,15 @@
 NEWS
 -----
 
-2.0-beta3:
+2.0-beta4 (13 January 2010):
+	- fix another typo in install
+	- select DB outside of the constructor, fixes a problem for at least
+	  one user.
+	
+2.0-beta3 (06 January 2010):
 	- enable delete user in admin
+	- added files missing in beta2
+	- Allow users to create readonly events
 
 2.0-beta2 (31 December 2009):
 	- Switched from PDO to MySQLi to be supported on more setups
