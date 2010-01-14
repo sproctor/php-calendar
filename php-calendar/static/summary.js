@@ -66,6 +66,10 @@ function showSummary(link) {
  
 // hides the event summary information
 function hideSummary(link) {
+	// abort any pending requests
+	if( activeRequest != null )
+		activeRequest.abort();
+
 	$("#phpc-summary-view").hide();
 	setSummaryText('','','');
 }
