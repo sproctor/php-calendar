@@ -20,12 +20,11 @@
    it needs very much work
 */
 
-$phpc_root_path = '../';
+$phpc_root_path = '..';
 $phpc_includes_path = "$phpc_root_path/includes";
+$phpc_config_path = "$phpc_root_path/config.php";
 
 define('IN_PHPC', true);
-
-require_once("$phpc_includes_path/calendar.php");
 
 if(!function_exists("mysqli_connect"))
 	soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
@@ -62,11 +61,9 @@ if(!isset($_POST['my_hostname'])
 
 function check_config()
 {
-	global $phpc_root_path;
+	global $phpc_config_path;
 
-        $config_file = $phpc_root_path . 'config.php';
-
-	if( $file = @fopen($config_file, 'w')) {
+	if( $file = @fopen($phpc_config_path, 'w')) {
                 fclose($file);
 		return true;
 	}
@@ -214,7 +211,7 @@ function create_config($sql_hostname, $sql_username, $sql_passwd, $sql_database,
 
 function install_base()
 {
-	global $phpc_root_path, $dbh;
+	global $phpc_config_path, $dbh;
 
 	$sql_type = "mysql";
 	$my_hostname = $_POST['my_hostname'];
@@ -223,7 +220,7 @@ function install_base()
 	$my_prefix = $_POST['my_prefix'];
 	$my_database = $_POST['my_database'];
 
-	$fp = fopen($phpc_root_path . 'config.php', 'w')
+	$fp = fopen($phpc_config_path, 'w')
 		or soft_error('Couldn\'t open config file.');
 
 	fwrite($fp, create_config($my_hostname, $my_username, $my_passwd,
@@ -231,14 +228,15 @@ function install_base()
 		or soft_error("could not write to file");
 	fclose($fp);
 
-	require_once($phpc_root_path . 'config.php');
+	require_once($phpc_config_path);
 
 	// Make the database connection.
 	$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
 
 	create_tables();
 
-	echo "<p>calendars base created</p>\n"
+	echo "<p>config created at \"". realpath($phpc_config_path) ."\"</p>"
+		."<p>calendars base created</p>\n"
 		."<div><input type=\"submit\" name=\"base\" value=\"continue\">"
 		."</div>\n";
 }
@@ -341,9 +339,9 @@ function get_admin()
 
 function add_calendar()
 {
-	global $dbh, $phpc_root_path;
+	global $dbh, $phpc_config_path;
 
-	require_once($phpc_root_path . 'config.php');
+	require_once($phpc_config_path);
 
 	$calendar_title = 'PHP-Calendar';
 
@@ -417,6 +415,23 @@ function connect_db($hostname, $username, $passwd, $database = false)
 	}
 
 	return $dbh;
+}
+
+// called when some error happens
+function soft_error($str)
+{
+	echo "<html><head><title>Error</title></head>\n",
+	     "<body><h1>Software Error</h1>\n",
+	     "<h2>Message:</h2>\n",
+	     "<pre>$str</pre>\n",
+	     "<h2>Backtrace</h2>\n",
+	     "<ol>\n";
+	foreach(debug_backtrace() as $bt) {
+		echo "<li>$bt[file]:$bt[line] - $bt[function]</li>\n";
+	}
+	echo "</ol>\n",
+	     "</body></html>\n";
+	exit;
 }
 
 ?>
