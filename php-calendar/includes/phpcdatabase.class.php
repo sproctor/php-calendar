@@ -111,6 +111,49 @@ class PhpcDatabase {
 		return new PhpcEvent($result);
 	}
 
+	// returns the tag that corresponds to $tid
+	function get_tag($tid)
+	{
+		$tags_table = SQL_PREFIX . 'tags';
+
+                $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, `tid`"
+			."FROM `$tags_table`\n"
+			."WHERE `tid` = $tid\n";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error in get_tag'), $query);
+
+		$result = $sth->fetch_assoc()
+			or soft_error(_("Tag doesn't exist") . ": $tid");
+
+		return $result;
+	}
+
+	// returns the tags for calendar $cid
+	function get_tags($cid = false)
+	{
+		$tags_table = SQL_PREFIX . 'tags';
+
+		if($cid)
+			$where = "WHERE `cid` = '$cid'\n";
+		else
+			$where = "WHERE `cid` IS NULL\n";
+
+                $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, `tid`"
+			."FROM `$tags_table`\n"
+			.$where;
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error in get_tags'), $query);
+
+		$arr = array();
+		while($result = $sth->fetch_assoc()) {
+			$arr[] = $result;
+		}
+
+		return $arr;
+	}
+
 	// returns the event that corresponds to $oid
 	function get_occurrence_by_oid($oid)
 	{
@@ -281,7 +324,7 @@ class PhpcDatabase {
 			return $perms[$cid][$uid];
 
 		$query = "SELECT * from " . SQL_PREFIX .
-			"permissions WHERE cid=$cid AND uid=$uid";
+			"permissions WHERE `cid`='$cid' AND `uid`='$uid'";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Could not read permissions.'),
@@ -340,11 +383,15 @@ class PhpcDatabase {
 
 	function get_users_with_permissions($cid)
 	{
-		$query = "SELECT * FROM `" . SQL_PREFIX .  "users`\n"
-			."LEFT JOIN (SELECT * FROM `" . SQL_PREFIX
-			.	"permissions`\n"
-			."WHERE `cid`=$cid) AS `permissions`\n"
-			."USING (`uid`)\n";
+		$permissions_table = SQL_PREFIX . "permissions";
+
+		$query = "SELECT `uid`, `username`, `password`, "
+			."`read`, `write`, `readonly`, `modify`, "
+			."`$permissions_table`.`admin` AS `admin`\n"
+			."FROM `" . SQL_PREFIX . "users`\n"
+			."LEFT JOIN `$permissions_table`\n"
+			."USING (`uid`)\n"
+			."WHERE `cid`='$cid'";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Could not get user.'), $query);
@@ -358,7 +405,8 @@ class PhpcDatabase {
 
 	function get_user_by_name($username)
 	{
-		$query= "SELECT * FROM ".SQL_PREFIX."users\n"
+		$query = "SELECT `uid`, `username`, `password`, `admin`\n"
+			."FROM ".SQL_PREFIX."users\n"
 			."WHERE username='$username'";
 
 		$sth = $this->dbh->query($query)
@@ -373,7 +421,8 @@ class PhpcDatabase {
 
 	function get_user($uid)
 	{
-		$query= "SELECT * FROM `".SQL_PREFIX."users`\n"
+		$query = "SELECT `uid`, `username`, `password`, `admin`\n"
+			."FROM ".SQL_PREFIX."users\n"
 			."WHERE `uid`='$uid'";
 
 		$sth = $this->dbh->query($query)

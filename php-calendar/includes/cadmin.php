@@ -130,4 +130,40 @@ function user_list()
 				$tbody));
 }
 
+function tag_list()
+{
+	global $phpc_script, $phpcid, $phpcdb, $vars;
+
+	$tags = $phpcdb->get_tags($phpcid);
+
+	$tbody = tag('tbody');
+
+	foreach ($tags as $tag) {
+		$name = empty($tag['name']) ? _('No Name') : $tag['name'];
+		$tid = $tag['tid'];
+		$tbody->add(tag('tr',
+					tag('th',
+						create_action_link($name,
+							'tag_form',
+							array('tid' => $tid)),
+						create_action_link(_('Delete'),
+							'tag_delete',
+							array('tid' => $tid))
+					   ),
+					tag('td', $tag['text_color']),
+					tag('td', $tag['bg_color'])
+				   ));
+	}
+
+	return tag('table', attributes("class=\"phpc-container\""),
+			tag('caption', _('Calendar Tags')),
+			tag('thead',
+				tag('tr',
+					tag('th', _('Name')),
+					tag('th', _('Text Color')),
+					tag('th', _('Background Color'))
+				   )),
+			$tbody);
+}
+
 ?>
