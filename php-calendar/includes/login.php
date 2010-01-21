@@ -60,8 +60,6 @@ function login_form()
 {
         global $vars, $phpc_script, $day, $year, $month;
 
-        $lastaction = empty($vars['lastaction']) ? '' : $vars['lastaction'];
-
         $submit_data = tag('td', attributes('colspan="2"'),
                                 create_hidden('action', 'login'),
                                 create_submit(_('Log in')));
