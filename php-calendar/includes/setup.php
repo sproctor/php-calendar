@@ -30,7 +30,7 @@ else
 	$phpc_protocol = "http";
 
 $phpc_server = $_SERVER['SERVER_NAME'];
-if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["REMOTE_PORT"] != 80)
+if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
 	$phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
 
 $phpc_url = "$phpc_protocol://$phpc_server$phpc_script?"
