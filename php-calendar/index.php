@@ -16,18 +16,48 @@
  */
 
 /*
-   This file sets up the basics of the calendar. It can be copied to produce
-   a new calendar using the same configuration and database.
-*/
+ * The following variables are intended to be modified to fit your
+ * setup.
+ */
 
 /*
-   copy index.php to a new location and increment $calendar_id when you create
-   another calendar so that the calendars will not all share the same data
-*/
+ * If you want different scripts with different default calendars, you can
+ * copy this script and modify $default_calendar_id to contain the CID of
+ * the calendar you want to be the default
+ */
 $default_calendar_id = 1;
 
-$phpc_root_path = dirname($_SERVER["DOCUMENT_ROOT"] . $_SERVER["PHP_SELF"]);
+$phpc_root_path = dirname($_SERVER["SCRIPT_FILENAME"]);
 $phpc_includes_path = "$phpc_root_path/includes";
+
+$phpc_script = $_SERVER['PHP_SELF'];
+
+if(!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
+	$phpc_protocol = "https";
+else
+	$phpc_protocol = "http";
+
+$phpc_server = $_SERVER['SERVER_NAME'];
+if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
+	$phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
+
+$phpc_url = "$phpc_protocol://$phpc_server$phpc_script?"
+	. $_SERVER['QUERY_STRING'];
+
+/*
+   $phpc_root_path gives the location of the base calendar install.
+   if you move this file to a new location, modify $phpc_root_path to point
+   to the location where the support files for the callendar are located.
+*/
+if(!isset($phpc_root_path)) {
+	$phpc_includes_path = dirname(__FILE__);
+	$phpc_root_path = dirname($phpc_includes_path);
+} elseif(!isset($phpc_includes_path)) {
+	$phpc_includes_path = "$phpc_root_path/includes";
+}
+
+// Remove this line if you must
+ini_set('arg_separator.output', '&amp;');
 
 /*
  * Do not modify anything under this point

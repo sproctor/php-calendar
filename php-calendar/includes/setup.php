@@ -19,40 +19,6 @@
    This file sets up the global variables to be used later
 */
 
-// Modify these if you need to
-// If you need to changed them on a per-script basis, you can move them into
-//   index.php or your script.
-$phpc_script = $_SERVER['PHP_SELF'];
-
-if(!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
-	$phpc_protocol = "https";
-else
-	$phpc_protocol = "http";
-
-$phpc_server = $_SERVER['SERVER_NAME'];
-if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
-	$phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
-
-$phpc_url = "$phpc_protocol://$phpc_server$phpc_script?"
-	. $_SERVER['QUERY_STRING'];
-
-/*
-   $phpc_root_path gives the location of the base calendar install.
-   if you move this file to a new location, modify $phpc_root_path to point
-   to the location where the support files for the callendar are located.
-*/
-if(!isset($phpc_root_path)) {
-	$phpc_includes_path = dirname(__FILE__);
-	$phpc_root_path = dirname($phpc_includes_path);
-} elseif(!isset($phpc_includes_path)) {
-	$phpc_includes_path = "$phpc_root_path/includes";
-}
-
-// Remove this line if you must
-ini_set('arg_separator.output', '&amp;');
-
-// Don't touch anything below here
-
 define('IN_PHPC', true);
 
 // make sure that we have _ defined
