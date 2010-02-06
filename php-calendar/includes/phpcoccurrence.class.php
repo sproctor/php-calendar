@@ -104,11 +104,11 @@ class PhpcOccurrence {
 				$end_time = format_time_string($this->end_hour,
 						$this->end_minute, $hour24);
 				return $start_time.' '._('to').' '.$end_time;
-			case 2:
+			case 1:
 				return _('FULL DAY');
-			case 3:
+			case 2:
 				return _('TBA');
-			case 4:
+			case 3:
 				return '';
 		}
 	}
