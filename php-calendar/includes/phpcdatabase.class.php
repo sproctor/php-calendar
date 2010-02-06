@@ -199,7 +199,7 @@ class PhpcDatabase {
 			."DAY(`enddate`) AS `endday`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
-			."JOIN `$users_table` on `uid` = `owner`\n"
+			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
 			."WHERE `oid` = $oid\n";
 
 		$sth = $this->dbh->query($query)
@@ -232,7 +232,7 @@ class PhpcDatabase {
 			."DAY(`enddate`) AS `endday`\n"
 			."FROM `$sql_events`\n"
                         ."INNER JOIN `$sql_occurrences` USING (`eid`)\n"
-			."JOIN `$users_table` on `uid` = `owner`\n"
+			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
 			."WHERE `eid` = $eid\n"
 			."	ORDER BY `startdate`, `starttime`";
 
@@ -607,7 +607,7 @@ class PhpcDatabase {
 			."DAY(`enddate`) AS `endday`\n"
 			."FROM `$events_table` \n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
-			."JOIN `$users_table` on `uid` = `owner`\n"
+			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
 			."WHERE ($where) "
 			."AND cid = '$cid' "
 			."AND enddate >= DATE '$start' "
