@@ -98,7 +98,7 @@ class PhpcDatabase {
                 $query = "SELECT `subject`, `description`, `username`, "
 			."`$events_table`.`eid`, `cid`, `readonly`"
 			."FROM `$events_table`\n"
-			."JOIN `$users_table` on `uid` = `owner`\n"
+			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
 			."WHERE `eid` = $eid\n";
 
 		$sth = $this->dbh->query($query)

@@ -41,14 +41,13 @@ class PhpcOccurrence {
 		$this->oid = $event['oid'];
 		$this->eid = $event['eid'];
 		$this->cid = $event['cid'];
-		$this->uid = $event['uid'];
-		if($this->uid == 0)
+		$this->uid = $event['owner'];
+		if(empty($event['owner']))
 			$this->username = _('anonymous');
 		elseif(empty($event['username']))
 			$this->username = _('unknown');
 		else
 			$this->username = $event['username'];
-		$this->username = $event['username'];
 		$this->subject = $event['subject'];
 		$this->desc = $event['description'];
 		$this->readonly = $event['readonly'];
