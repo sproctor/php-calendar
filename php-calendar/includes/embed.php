@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-$calendar_title = get_config($phpcid, 'calendar_title');
 echo tag('div', attributes('class="php-calendar"'),
 		tag('h1', $calendar_title),
 		navbar(),

@@ -62,14 +62,14 @@ class PhpcDatabase {
 			."DAY(`enddate`) AS `endday`\n"
 			."FROM `$sql_events`\n"
                         ."INNER JOIN `$sql_occurrences` USING (`eid`)\n"
-			."JOIN `$users_table` on `uid` = `owner`\n"
+			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
 			."WHERE `cid` = $cid\n"
 			."	AND `startdate` <= DATE('$to_date')\n"
 			."	AND `enddate` >= DATE('$from_date')\n"
 			."	ORDER BY `startdate`, `starttime`";
 
 		$result = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_events_by_date'),
+			or $this->db_error(_('Error in get_occurrences_by_date_range'),
 					$query);
 
 		$events = array();
@@ -142,6 +142,29 @@ class PhpcDatabase {
                 $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, `tid`"
 			."FROM `$tags_table`\n"
 			.$where;
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error in get_tags'), $query);
+
+		$arr = array();
+		while($result = $sth->fetch_assoc()) {
+			$arr[] = $result;
+		}
+
+		return $arr;
+	}
+
+	// returns the tags for calendar $eid
+	function get_tags_for_event($eid)
+	{
+		$tags_table = SQL_PREFIX . 'tags';
+		$eventtags_table = SQL_PREFIX . 'eventtags';
+
+                $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
+			."`tid`\n"
+			."FROM `$tags_table`\n"
+			."JOIN `$eventtags_table` USING (`tid`)\n"
+			."WHERE `eid` = '$eid'\n";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Error in get_tags'), $query);
@@ -526,6 +549,33 @@ class PhpcDatabase {
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Error modifying event.'), $query);
+
+		return $sth->affected_rows > 0;
+	}
+
+	function create_tag($cid, $name, $text_color, $bg_color)
+	{
+		$query = "INSERT INTO `" . SQL_PREFIX . "tags`\n"
+			."(`cid`, `name`, `text_color`, `bg_color`)\n"
+			."VALUES ('$cid', '$name', '$text_color', '$bg_color')";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error creating tag.'), $query);
+
+		return $this->dbh->insert_id;
+	}
+
+	function modify_tag($tid, $name, $text_color, $bg_color)
+	{
+		$query = "UPDATE " . SQL_PREFIX . "events\n"
+			."SET\n"
+			."`name`='$name',\n"
+			."`text_color`='$text_color',\n"
+			."`bg_color`='$bg_color'\n"
+			."WHERE `tid`='$tid'";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error modifying tag.'), $query);
 
 		return $sth->affected_rows > 0;
 	}

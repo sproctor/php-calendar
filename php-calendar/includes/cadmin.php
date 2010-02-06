@@ -27,7 +27,7 @@ function cadmin()
                 soft_error(_('You must be logged in as an admin.'));
         }
 
-	return array(config_form(), user_list());
+	return array(config_form(), user_list(), tag_list());
 }
 
 function config_form()

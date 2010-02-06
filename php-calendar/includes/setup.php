@@ -24,26 +24,26 @@ define('IN_PHPC', true);
 // make sure that we have _ defined
 if(!function_exists('_')) {
 	function _($str) { return $str; }
-	$translate = FALSE;
+	$translate = false;
 } else {
-	$translate = TRUE;
+	$translate = true;
 }
 
 require_once("$phpc_includes_path/calendar.php");
 
 // Run the installer if we have no config file
 // This doesn't work when embedded from outside
-if(!file_exists("$phpc_root_path/config.php")) {
+if(!file_exists("$phpc_config_path/config.php")) {
         redirect('install/install.php');
         exit;
 }
-require_once("$phpc_root_path/config.php");
+require_once("$phpc_config_path/config.php");
 if(!defined('SQL_TYPE')) {
         redirect('install/install.php');
         exit;
 }
 
-if(file_exists("$phpc_root_path/install")) {
+if(!defined("PHPC_DEBUG") && file_exists("$phpc_root_path/install")) {
 	soft_error(_("You must remove the install directory."));
 }
 
