@@ -27,9 +27,14 @@
  */
 $default_calendar_id = 1;
 
-$phpc_root_path = dirname($_SERVER["SCRIPT_FILENAME"]);
+/*
+ * $phpc_root_path gives the location of the base calendar install.
+ * if you move this file to a new location, modify $phpc_root_path to point
+ * to the location where the support files for the callendar are located.
+ */
+$phpc_root_path = dirname(__FILE__);
 $phpc_includes_path = "$phpc_root_path/includes";
-
+$phpc_config_file = "$phpc_root_path/config.php";
 $phpc_script = $_SERVER['PHP_SELF'];
 
 if(!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
@@ -41,20 +46,8 @@ $phpc_server = $_SERVER['SERVER_NAME'];
 if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
 	$phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
 
-$phpc_url = "$phpc_protocol://$phpc_server$phpc_script?"
-	. $_SERVER['QUERY_STRING'];
-
-/*
-   $phpc_root_path gives the location of the base calendar install.
-   if you move this file to a new location, modify $phpc_root_path to point
-   to the location where the support files for the callendar are located.
-*/
-if(!isset($phpc_root_path)) {
-	$phpc_includes_path = dirname(__FILE__);
-	$phpc_root_path = dirname($phpc_includes_path);
-} elseif(!isset($phpc_includes_path)) {
-	$phpc_includes_path = "$phpc_root_path/includes";
-}
+$phpc_url = "$phpc_protocol://$phpc_server$phpc_script"
+		. $_SERVER['QUERY_STRING'];
 
 // Remove this line if you must
 ini_set('arg_separator.output', '&amp;');

@@ -33,11 +33,11 @@ require_once("$phpc_includes_path/calendar.php");
 
 // Run the installer if we have no config file
 // This doesn't work when embedded from outside
-if(!file_exists("$phpc_config_path/config.php")) {
+if(!file_exists($phpc_config_file)) {
         redirect('install/install.php');
         exit;
 }
-require_once("$phpc_config_path/config.php");
+require_once($phpc_config_file);
 if(!defined('SQL_TYPE')) {
         redirect('install/install.php');
         exit;
