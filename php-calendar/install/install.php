@@ -242,12 +242,13 @@ function create_tables()
 	global $dbh;
 
 	$query = "CREATE TABLE `" . SQL_PREFIX . "events` (\n"
-		."`eid` int(11) NOT NULL auto_increment,\n"
-		."`cid` int(11) NOT NULL,\n"
-		."`owner` int(11) NOT NULL default 0,\n"
+		."`eid` int(11) unsigned NOT NULL auto_increment,\n"
+		."`cid` int(11) unsigned NOT NULL,\n"
+		."`owner` int(11) unsigned NOT NULL default 0,\n"
 		."`subject` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
 		."`description` text collate utf8_unicode_ci NOT NULL,\n"
 		."`readonly` tinyint(1) NOT NULL default 0,\n"
+		."`catid` int(11) unsigned default NULL,\n"
 		."PRIMARY KEY  (`eid`)\n"
 		.") ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;\n";
 
@@ -255,8 +256,8 @@ function create_tables()
 		or db_error($dbh, 'Error creating events table.', $query);
 
 	$query = "CREATE TABLE `" . SQL_PREFIX . "occurrences` (\n"
-		."`oid` int(11) NOT NULL auto_increment,\n"
-		."`eid` int(11) NOT NULL,\n"
+		."`oid` int(11) unsigned NOT NULL auto_increment,\n"
+		."`eid` int(11) unsigned NOT NULL,\n"
 		."`startdate` date NOT NULL,\n"
 		."`enddate` date NOT NULL,\n"
 		."`starttime` time default NULL,\n"
@@ -311,6 +312,19 @@ function create_tables()
 
 	$dbh->query($query)
 		or db_error($dbh, 'Error creating calendars table.', $query);
+
+	$query = "CREATE TABLE `" . SQL_PREFIX . "categories` (\n"
+		."`catid` int(11) unsigned NOT NULL auto_increment,\n"
+		."`cid` int(11) unsigned NOT NULL auto_increment,\n"
+		."`name` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
+		."`text_color` varchar(255) collate utf8_unicode_ci default NULL,\n"
+		."`bg_color` varchar(255) collate utf8_unicode_ci default NULL,\n"
+		."PRIMARY KEY  (`catid`),\n"
+		."KEY `cid` (`cid`)\n"
+		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+
+	$dbh->query($query)
+		or db_error($dbh, 'Error categories calendars table.', $query);
 }
 
 function get_admin()
