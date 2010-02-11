@@ -6,6 +6,8 @@ NEWS
 	- moved configurable variables into index.php and embed_setup.php
 	    (for standalone and embedded calendar, respectively)
 	- Fixed a few bugs with anonymous users
+	- Addition of categories makes the DB format incompatible with previous
+	    releeases
 
 2.0-beta4 (13 January 2010):
 	- fix another typo in install
