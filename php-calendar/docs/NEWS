@@ -1,8 +1,8 @@
 NEWS
 -----
 
-2.0-beta5:
-	- Added tags for events
+2.0-beta5 (11 February 2010):
+	- Added categories with custom colors for events
 	- moved configurable variables into index.php and embed_setup.php
 	    (for standalone and embedded calendar, respectively)
 	- Fixed a few bugs with anonymous users
