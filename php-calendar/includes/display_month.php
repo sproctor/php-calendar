@@ -227,10 +227,18 @@ function create_day($month, $day, $year, $days_events)
 		$subject = $event->get_subject();
 		$event_time = $event->get_time_string();
 
-		$event_html = tag('li',
+		$style = "";
+		if(!empty($event->text_color))
+			$style .= "color: {$event->text_color};";
+		if(!empty($event->bg_color))
+			$style .= "background-color: {$event->bg_color};";
+
+		$event_html = tag('li', 
 				create_occurrence_link($event_time ?
 					"$event_time - $subject" : $subject,
-					"display_event", $event->get_oid()));
+					"display_event", $event->get_oid(),
+					array("style=\"$style\"")));
+
 		$html_events->add($event_html);
 	}
 

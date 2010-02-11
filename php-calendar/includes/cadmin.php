@@ -27,7 +27,7 @@ function cadmin()
                 soft_error(_('You must be logged in as an admin.'));
         }
 
-	return array(config_form(), user_list(), tag_list());
+	return array(config_form(), user_list(), category_list());
 }
 
 function config_form()
@@ -130,33 +130,37 @@ function user_list()
 				$tbody));
 }
 
-function tag_list()
+function category_list()
 {
 	global $phpc_script, $phpcid, $phpcdb, $vars;
 
-	$tags = $phpcdb->get_tags($phpcid);
+	$categories = $phpcdb->get_categories($phpcid);
 
 	$tbody = tag('tbody');
 
-	foreach ($tags as $tag) {
-		$name = empty($tag['name']) ? _('No Name') : $tag['name'];
-		$tid = $tag['tid'];
+	foreach ($categories as $category) {
+		$name = empty($category['name']) ? _('No Name')
+			: $category['name'];
+		$catid = $category['catid'];
 		$tbody->add(tag('tr',
 					tag('th',
 						create_action_link($name,
-							'tag_form',
-							array('tid' => $tid)),
+							'category_form',
+							array('catid'
+								=> $catid)),
+						" ",
 						create_action_link(_('Delete'),
-							'tag_delete',
-							array('tid' => $tid))
+							'category_delete',
+							array('catid'
+								=> $catid))
 					   ),
-					tag('td', $tag['text_color']),
-					tag('td', $tag['bg_color'])
+					tag('td', $category['text_color']),
+					tag('td', $category['bg_color'])
 				   ));
 	}
 
-	return tag('table', attributes("class=\"phpc-container\""),
-			tag('caption', _('Calendar Tags')),
+	$table = tag('table', attributes("class=\"phpc-container\""),
+			tag('caption', _('Calendar Categories')),
 			tag('thead',
 				tag('tr',
 					tag('th', _('Name')),
@@ -164,6 +168,10 @@ function tag_list()
 					tag('th', _('Background Color'))
 				   )),
 			$tbody);
+
+	return tag('div', attributes('class="phpc-container"'), $table,
+			create_action_link(_('Create category'),
+				'category_form', array('cid' => $phpcid)));
 }
 
 ?>

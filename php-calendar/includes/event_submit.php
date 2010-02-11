@@ -71,16 +71,18 @@ function event_submit()
 	else
 		$readonly = false;
 
+	$catid = empty($vars['catid']) ? false : $vars['catid'];
+
 	if(!isset($vars['eid'])) {
 		$modify = false;
 		$eid = $phpcdb->create_event($phpcid, get_uid(),
 				$vars["subject"], $vars["description"],
-				$readonly);
+				$readonly, $catid);
 	} else {
 		$modify = true;
 		$eid = $vars['eid'];
 		$phpcdb->modify_event($eid, $vars['subject'],
-				$vars['description'], $readonly);
+				$vars['description'], $readonly, $catid);
 		$phpcdb->delete_occurrences($eid);
 	}
 		

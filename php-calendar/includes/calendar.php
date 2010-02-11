@@ -647,7 +647,8 @@ function do_action()
 			'event_submit', 'search', 'login', 'logout', 'admin',
 			'options_submit', 'user_create', 'cadmin',
 			'create_calendar', 'calendar_delete',
-			'user_delete', 'user_permissions_submit');
+			'user_delete', 'user_permissions_submit',
+			'category_form', 'category_submit', 'category_delete');
 
 	if(!in_array($action, $legal_actions, true)) {
 		soft_error(_('Invalid action'));

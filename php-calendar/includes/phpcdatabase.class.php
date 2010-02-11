@@ -47,9 +47,12 @@ class PhpcDatabase {
 		$sql_events = SQL_PREFIX . "events";
 		$sql_occurrences = SQL_PREFIX . "occurrences";
 		$users_table = SQL_PREFIX . 'users';
+		$cats_table = SQL_PREFIX . 'categories';
 
                 $query = "SELECT `subject`, `description`, `$sql_events`.`eid`,"
-		        ." `cid`, `oid`, `username`, `timetype`, `readonly`, "
+		        ." `$sql_events`.`cid`, `oid`, `username`, `timetype`, "
+			."`readonly`, "
+			."`catid`, `name`, `bg_color`, `text_color`, "
 			."HOUR(`starttime`) AS `starthour`, "
 			."MINUTE(`starttime`) AS `startminute`, "
 			."HOUR(`endtime`) AS `endhour`, "
@@ -63,7 +66,8 @@ class PhpcDatabase {
 			."FROM `$sql_events`\n"
                         ."INNER JOIN `$sql_occurrences` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
-			."WHERE `cid` = $cid\n"
+			."LEFT JOIN `$cats_table` USING (`catid`)\n"
+			."WHERE `$sql_events`.`cid` = '$cid'\n"
 			."	AND `startdate` <= DATE('$to_date')\n"
 			."	AND `enddate` >= DATE('$from_date')\n"
 			."	ORDER BY `startdate`, `starttime`";
@@ -94,12 +98,16 @@ class PhpcDatabase {
 		$events_table = SQL_PREFIX . 'events';
 		$occurrences_table = SQL_PREFIX . 'occurrences';
 		$users_table = SQL_PREFIX . 'users';
+		$cats_table = SQL_PREFIX . 'categories';
 
                 $query = "SELECT `subject`, `description`, `username`, "
-			."`$events_table`.`eid`, `cid`, `readonly`"
+			."`$events_table`.`eid`, `$events_table`.`cid`, "
+			."`readonly`, "
+			."`catid`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
-			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
-			."WHERE `eid` = $eid\n";
+			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
+			."LEFT JOIN `$cats_table` USING (`catid`)\n"
+			."WHERE `eid` = '$eid'\n";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Error in get_event_by_eid'),
@@ -111,63 +119,44 @@ class PhpcDatabase {
 		return new PhpcEvent($result);
 	}
 
-	// returns the tag that corresponds to $tid
-	function get_tag($tid)
+	// returns the category that corresponds to $tid
+	function get_category($catid)
 	{
-		$tags_table = SQL_PREFIX . 'tags';
+		$cats_table = SQL_PREFIX . 'categories';
 
-                $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, `tid`"
-			."FROM `$tags_table`\n"
-			."WHERE `tid` = $tid\n";
+                $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
+			."`catid`\n"
+			."FROM `$cats_table`\n"
+			."WHERE `catid` = $catid";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_tag'), $query);
+			or $this->db_error(_('Error in get_category'), $query);
 
 		$result = $sth->fetch_assoc()
-			or soft_error(_("Tag doesn't exist") . ": $tid");
+			or soft_error(_("Category does not exist")
+					. ": $catid");
 
 		return $result;
 	}
 
-	// returns the tags for calendar $cid
-	function get_tags($cid = false)
+	// returns the categories for calendar $cid
+	function get_categories($cid = false)
 	{
-		$tags_table = SQL_PREFIX . 'tags';
+		$cats_table = SQL_PREFIX . 'categories';
 
 		if($cid)
 			$where = "WHERE `cid` = '$cid'\n";
 		else
 			$where = "WHERE `cid` IS NULL\n";
 
-                $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, `tid`"
-			."FROM `$tags_table`\n"
+                $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
+			."`catid`\n"
+			."FROM `$cats_table`\n"
 			.$where;
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_tags'), $query);
-
-		$arr = array();
-		while($result = $sth->fetch_assoc()) {
-			$arr[] = $result;
-		}
-
-		return $arr;
-	}
-
-	// returns the tags for calendar $eid
-	function get_tags_for_event($eid)
-	{
-		$tags_table = SQL_PREFIX . 'tags';
-		$eventtags_table = SQL_PREFIX . 'eventtags';
-
-                $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
-			."`tid`\n"
-			."FROM `$tags_table`\n"
-			."JOIN `$eventtags_table` USING (`tid`)\n"
-			."WHERE `eid` = '$eid'\n";
-
-		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_tags'), $query);
+			or $this->db_error(_('Error in get_categories'),
+					$query);
 
 		$arr = array();
 		while($result = $sth->fetch_assoc()) {
@@ -183,10 +172,12 @@ class PhpcDatabase {
 		$events_table = SQL_PREFIX . 'events';
 		$occurrences_table = SQL_PREFIX . 'occurrences';
 		$users_table = SQL_PREFIX . 'users';
+		$cats_table = SQL_PREFIX . 'categories';
 
                 $query = "SELECT `subject`, `description`, `username`, "
-			."`$events_table`.`eid`, `cid`, `oid`, `timetype`, "
-			."`readonly`, "
+			."`$events_table`.`eid`, `$events_table`.`cid`, `oid`, "
+			."`timetype`, `readonly`, "
+			."`catid`, `name`, `bg_color`, `text_color`, "
 			."HOUR(`starttime`) AS `starthour`, "
 			."MINUTE(`starttime`) AS `startminute`, "
 			."HOUR(`endtime`) AS `endhour`, "
@@ -199,11 +190,12 @@ class PhpcDatabase {
 			."DAY(`enddate`) AS `endday`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
-			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
+			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
+			."LEFT JOIN `$cats_table` USING (`catid`)\n"
 			."WHERE `oid` = $oid\n";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_occurrences_by_oid'),
+			or $this->db_error(_('Error in get_occurrence_by_oid'),
 					$query);
 
 		$result = $sth->fetch_assoc()
@@ -217,9 +209,12 @@ class PhpcDatabase {
 		$sql_events = SQL_PREFIX . "events";
 		$sql_occurrences = SQL_PREFIX . "occurrences";
 		$users_table = SQL_PREFIX . 'users';
+		$cats_table = SQL_PREFIX . 'categories';
 
-                $query = "SELECT `subject`, `description`, `$sql_events`.`eid`,"
-		        ." `cid`, `oid`, `username`, `timetype`, `readonly`, "
+                $query = "SELECT `subject`, `description`, "
+			."`$sql_events`.`eid`, `$sql_events`.`cid`, `oid`, "
+			."`username`, `timetype`, `readonly`, "
+			."`catid`, `name`, `bg_color`, `text_color`, "
 			."HOUR(`starttime`) AS `starthour`, "
 			."MINUTE(`starttime`) AS `startminute`, "
 			."HOUR(`endtime`) AS `endhour`, "
@@ -232,7 +227,8 @@ class PhpcDatabase {
 			."DAY(`enddate`) AS `endday`\n"
 			."FROM `$sql_events`\n"
                         ."INNER JOIN `$sql_occurrences` USING (`eid`)\n"
-			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
+			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
+			."LEFT JOIN `$cats_table` USING (`catid`)\n"
 			."WHERE `eid` = $eid\n"
 			."	ORDER BY `startdate`, `starttime`";
 
@@ -290,6 +286,19 @@ class PhpcDatabase {
 		$this->dbh->query($query2)
 			or $this->db_error(_('Error while calendar config'),
 					$query2);
+
+		return $this->dbh->affected_rows > 0;
+	}
+
+	function delete_category($catid)
+	{
+
+		$query = 'DELETE FROM `'.SQL_PREFIX ."categories`\n"
+			."WHERE `catid` = '$catid'";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error while removing category.'),
+					$query);
 
 		return $this->dbh->affected_rows > 0;
 	}
@@ -500,17 +509,21 @@ class PhpcDatabase {
 			or $this->db_error(_('Error reading options'), $query);
 	}
 
-	function create_event($cid, $uid, $subject, $description, $readonly)
+	function create_event($cid, $uid, $subject, $description, $readonly,
+			$catid = false)
 	{
 		$fmt_readonly = asbool($readonly);
 
+		if(!$catid)
+			$catid = 'NULL';
+
 		$query = "INSERT INTO `" . SQL_PREFIX . "events`\n"
 			."(`cid`, `owner`, `subject`, `description`, "
-			."`readonly`)\n"
+			."`readonly`, `catid`)\n"
 			."VALUES ('$cid', '$uid', '$subject', '$description', "
-			."$fmt_readonly)";
+			."$fmt_readonly, $catid)";
 
-		$sth = $this->dbh->query($query)
+		$this->dbh->query($query)
 			or $this->db_error(_('Error creating event.'), $query);
 
 		return $this->dbh->insert_id;
@@ -553,29 +566,31 @@ class PhpcDatabase {
 		return $sth->affected_rows > 0;
 	}
 
-	function create_tag($cid, $name, $text_color, $bg_color)
+	function create_category($cid, $name, $text_color, $bg_color)
 	{
-		$query = "INSERT INTO `" . SQL_PREFIX . "tags`\n"
+		$query = "INSERT INTO `" . SQL_PREFIX . "categories`\n"
 			."(`cid`, `name`, `text_color`, `bg_color`)\n"
 			."VALUES ('$cid', '$name', '$text_color', '$bg_color')";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error creating tag.'), $query);
+			or $this->db_error(_('Error creating category.'),
+					$query);
 
 		return $this->dbh->insert_id;
 	}
 
-	function modify_tag($tid, $name, $text_color, $bg_color)
+	function modify_category($catid, $name, $text_color, $bg_color)
 	{
-		$query = "UPDATE " . SQL_PREFIX . "events\n"
+		$query = "UPDATE " . SQL_PREFIX . "categories\n"
 			."SET\n"
 			."`name`='$name',\n"
 			."`text_color`='$text_color',\n"
 			."`bg_color`='$bg_color'\n"
-			."WHERE `tid`='$tid'";
+			."WHERE `catid`='$catid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error modifying tag.'), $query);
+			or $this->db_error(_('Error modifying category.'),
+					$query);
 
 		return $sth->affected_rows > 0;
 	}

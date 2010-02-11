@@ -23,6 +23,10 @@ class PhpcEvent {
 	var $subject;
 	var $desc;
 	var $readonly;
+	var $category;
+	var $bg_color;
+	var $text_color;
+	var $catid;
 
 	function PhpcEvent($event)
 	{
@@ -38,6 +42,10 @@ class PhpcEvent {
 		$this->subject = $event['subject'];
 		$this->desc = $event['description'];
 		$this->readonly = $event['readonly'];
+		$this->category = $event['name'];
+		$this->bg_color = $event['bg_color'];
+		$this->text_color = $event['text_color'];
+		$this->catid = $event['catid'];
 	}
 
 	function get_subject()

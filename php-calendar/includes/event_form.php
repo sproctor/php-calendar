@@ -90,6 +90,16 @@ function event_form() {
 		$form->add_part(new FormCheckBoxQuestion('readonly',
 					_('Read-only')));
 
+	$categories = new FormDropdownQuestion('catid', _('Category'));
+	$categories->add_option('', _('None'));
+	$have_categories = false;
+	foreach($phpcdb->get_categories($phpcid) as $category) {
+		$categories->add_option($category['catid'], $category['name']);
+		$have_categories = true;
+	}
+	if($have_categories)
+		$form->add_part($categories);
+
 	if(isset($vars['phpcid']))
 		$form->add_hidden('phpcid', $vars['phpcid']);
 
@@ -118,6 +128,8 @@ function event_form() {
 				'end-minute' => $event->end_minute,
 				'readonly' => $event->is_readonly(),
 				);
+		if(!empty($event->catid))
+			$defaults['catid'] = $event['catid'];
 	} else {
 		$defaults = array(
 				'start-year' => $year,
