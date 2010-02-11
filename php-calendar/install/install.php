@@ -63,17 +63,30 @@ function check_config()
 {
 	global $phpc_config_file;
 
-	return is_writable($phpc_config_file);
+	if(is_writable($phpc_config_file))
+		return true;
+	
+	// Check if we can create the file
+	if($file = @fopen($phpc_config_file, 'a')) {
+		fclose($file);
+		return true;
+	}
+	return false;
 }
 
 function report_config()
 {
-	echo '<p>I could not write your configuration file. This file probably does not yet exist. If that is the case then I need to create it, but I could not. You need to give me permission to write to this file. I suggest logging in with a shell and typing:</p>
+	echo '<p>Your configuration file could not be written to. This file '
+		.'probably does not yet exist. If that is the case, youneed to '
+		.'create it. You need to make sure this script can write to '
+		.'it. We suggest logging in with a shell and typing:</p>
 		<p><code>
 		touch config.php<br>
 		chmod 666 config.php
 		</code></p>
-		<p>or if you only have ftp access, upload a blank file named config.php then use the chmod command to change the permissions of config.php to 666.</p>
+		<p>or if you only have ftp access, upload a blank file named i'
+		.'config.php to your php-calendar directory then use the chmod '
+		.'command to change the permissions of config.php to 666.</p>
 		<input type="submit" value="Retry">';
 }
 
@@ -315,7 +328,7 @@ function create_tables()
 
 	$query = "CREATE TABLE `" . SQL_PREFIX . "categories` (\n"
 		."`catid` int(11) unsigned NOT NULL auto_increment,\n"
-		."`cid` int(11) unsigned NOT NULL auto_increment,\n"
+		."`cid` int(11) unsigned NOT NULL,\n"
 		."`name` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
 		."`text_color` varchar(255) collate utf8_unicode_ci default NULL,\n"
 		."`bg_color` varchar(255) collate utf8_unicode_ci default NULL,\n"
