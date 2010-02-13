@@ -226,6 +226,8 @@ function create_day($month, $day, $year, $days_events)
 
 		$subject = $event->get_subject();
 		$event_time = $event->get_time_string();
+		if(!empty($event_time))
+			$event_time .= ' - ';
 
 		$style = "";
 		if(!empty($event->text_color))
@@ -234,8 +236,7 @@ function create_day($month, $day, $year, $days_events)
 			$style .= "background-color: {$event->bg_color};";
 
 		$event_html = tag('li', 
-				create_occurrence_link($event_time ?
-					"$event_time - $subject" : $subject,
+				create_occurrence_link("$event_time$subject",
 					"display_event", $event->get_oid(),
 					array("style=\"$style\"")));
 

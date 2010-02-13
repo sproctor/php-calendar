@@ -93,11 +93,11 @@ class PhpcOccurrence {
 						$this->minute, get_config(
 							$this->cid,
 							'hours_24'));
-			case 2:
+			case 1:
 				return _('FULL DAY');
-			case 3:
+			case 2:
 				return _('TBA');
-			case 4:
+			case 3:
 				return '';
 		}
 	}

@@ -63,8 +63,12 @@ function display_event_by_oid($oid)
 					create_event_link(_('Delete'),
 						'event_delete', $eid)));
 	}
+	$event_time = $event->get_time_span_string();
+	if(!empty($event_time))
+		$event_time = ' ' . _('at') . " $event_time";
+
 	$event_header->add(tag('div', _('When').": ".$event->get_date_string()
-				. _(' at ').$event->get_time_span_string()));
+				. $event_time));
 
 	$occurrences = $phpcdb->get_occurrences_by_eid($eid);
 	if(sizeof($occurrences) > 1) {
