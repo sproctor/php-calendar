@@ -632,8 +632,11 @@ class FormDropdownQuestion extends FormCompoundQuestion {
 
 		$children = array();
 		foreach($this->options as $value => $name) {
-			$select->add(tag('option', attrs("value=\"$value\""),
-						$name));
+			$attrs = attrs("value=\"$value\"");
+			if(!empty($defaults[$this->qid])
+					&& $defaults[$this->qid] == $value)
+				$attrs->add('selected');
+			$select->add(tag('option', $attrs, $name));
 
 			if(!empty($this->conditionals[$value])) {
 				$children[] = tag('table', attrs("id=\"{$this->qid}-{$value}\""),

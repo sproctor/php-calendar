@@ -129,7 +129,7 @@ function event_form() {
 				'readonly' => $event->is_readonly(),
 				);
 		if(!empty($event->catid))
-			$defaults['catid'] = $event['catid'];
+			$defaults['catid'] = $event->catid;
 	} else {
 		$defaults = array(
 				'start-year' => $year,
