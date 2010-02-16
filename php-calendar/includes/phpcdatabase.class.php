@@ -419,11 +419,11 @@ class PhpcDatabase {
 
 		$query = "SELECT `uid`, `username`, `password`, "
 			."`read`, `write`, `readonly`, `modify`, "
-			."`$permissions_table`.`admin` AS `admin`\n"
+			."`permissions`.`admin` AS `admin`\n"
 			."FROM `" . SQL_PREFIX . "users`\n"
-			."LEFT JOIN `$permissions_table`\n"
-			."USING (`uid`)\n"
-			."WHERE `cid`='$cid'";
+			."LEFT JOIN (SELECT * FROM `$permissions_table`\n"
+			."	WHERE `cid`='$cid') AS `permissions`\n"
+			."USING (`uid`)\n";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Could not get user.'), $query);
