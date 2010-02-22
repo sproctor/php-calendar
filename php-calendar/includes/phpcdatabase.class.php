@@ -39,7 +39,7 @@ class PhpcDatabase {
 	// returns all the events for a particular day
 	// $from and $to are timestamps only significant to the date.
 	// an event that happens later in the day of $to is included
-        function get_occurrences_by_date_range($cid, $from, $to)
+    function get_occurrences_by_date_range($cid, $from, $to)
 	{
 		$from_date = date('Y-m-d', $from);
 		$to_date = date('Y-m-d', $to);
@@ -50,8 +50,8 @@ class PhpcDatabase {
 		$cats_table = SQL_PREFIX . 'categories';
 
                 $query = "SELECT `subject`, `description`, `$sql_events`.`eid`,"
-		        ." `$sql_events`.`cid`, `oid`, `username`, `timetype`, "
-			."`readonly`, "
+		        ." `$sql_events`.`cid`, `oid`, `owner`, `username`, "
+			."`timetype`, `readonly`, "
 			."`catid`, `name`, `bg_color`, `text_color`, "
 			."HOUR(`starttime`) AS `starthour`, "
 			."MINUTE(`starttime`) AS `startminute`, "
@@ -62,7 +62,7 @@ class PhpcDatabase {
 			."DAY(`startdate`) AS `startday`, "
 			."YEAR(`enddate`) AS `endyear`, "
 			."MONTH(`enddate`) AS `endmonth`, "
-			."DAY(`enddate`) AS `endday`\n"
+			."DAY(`enddate`) AS `endday`\n "
 			."FROM `$sql_events`\n"
                         ."INNER JOIN `$sql_occurrences` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
@@ -84,7 +84,7 @@ class PhpcDatabase {
         }
 
 	// returns all the events for a particular day
-        function get_occurrences_by_date($cid, $year, $month, $day)
+    function get_occurrences_by_date($cid, $year, $month, $day)
 	{
 		$stamp = mktime(0, 0, 0, $month, $day, $year);
 
@@ -100,7 +100,7 @@ class PhpcDatabase {
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-                $query = "SELECT `subject`, `description`, `username`, "
+        $query = "SELECT `subject`, `description`, `owner`, `username`, "
 			."`$events_table`.`eid`, `$events_table`.`cid`, "
 			."`readonly`, "
 			."`catid`, `name`, `bg_color`, `text_color`\n"
@@ -174,7 +174,7 @@ class PhpcDatabase {
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-                $query = "SELECT `subject`, `description`, `username`, "
+                $query = "SELECT `subject`, `description`, `owner`, `username`, "
 			."`$events_table`.`eid`, `$events_table`.`cid`, `oid`, "
 			."`timetype`, `readonly`, "
 			."`catid`, `name`, `bg_color`, `text_color`, "
