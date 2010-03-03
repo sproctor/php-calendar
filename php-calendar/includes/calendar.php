@@ -27,20 +27,17 @@ require_once("$phpc_includes_path/html.php");
 require_once("$phpc_includes_path/lib_autolink.php");
 
 // called when some error happens
-function soft_error($str)
+function soft_error($message)
 {
-	echo '<html><head><title>', _('Error'), "</title></head>\n",
-	     '<body><h1>', _('Software Error'), "</h1>\n",
-	     "<h2>", _('Message:'), "</h2>\n",
-	     "<pre>$str</pre>\n",
-	     "<h2>", _('Backtrace'), "</h2>\n",
-	     "<ol>\n";
-	foreach(debug_backtrace() as $bt) {
-		echo "<li>$bt[file]:$bt[line] - $bt[function]</li>\n";
-	}
-	echo "</ol>\n",
-	     "</body></html>\n";
-	exit;
+	throw new Exception($message);
+}
+
+class PermissionException extends Exception {
+}
+
+function permission_error($message)
+{
+	throw new PermissionException($message);
 }
 
 // takes a number of the month, returns the name
@@ -650,13 +647,24 @@ function do_action()
 			'user_delete', 'user_permissions_submit',
 			'category_form', 'category_submit', 'category_delete');
 
-	if(!in_array($action, $legal_actions, true)) {
-		soft_error(_('Invalid action'));
+	try {
+		if(!in_array($action, $legal_actions, true)) {
+			soft_error(_('Invalid action'));
+		}
+
+		require_once("$phpc_includes_path/$action.php");
+
+		eval("\$action_output = $action();");
+	} catch(PermissionException $e) {
+		return tag('div', _('You do not have permission to do that: ')
+		. $e->getMessage());
+	} catch(Exception $e) {
+		return tag('div', attrs('class="phpc-main"'),
+				tag('h2', _('Error')),
+				tag('p', $e->getMessage()),
+				tag('h3', _('Backtrace')),
+				tag('pre', $e->getTraceAsString()));
 	}
-
-	require_once("$phpc_includes_path/$action.php");
-
-	eval("\$action_output = $action();");
 
 	return $action_output;
 }

@@ -29,11 +29,11 @@ function category_submit()
 		if(!isset($vars['cid'])) {
 			$cid = null;
 			if(!is_admin())
-				soft_error(_('You do not have permission to add categories to all calendars.'));
+				permission_error(_('You do not have permission to add categories to all calendars.'));
 		} else { 
 			$cid = $vars['cid'];
 			if(!can_admin_calendar($cid))
-				soft_error(_('You do not have permission to add categories to this calendar.'));
+				permission_error(_('You do not have permission to add categories to this calendar.'));
 		}
 
 		$catid = $phpcdb->create_category($cid, $vars["name"],

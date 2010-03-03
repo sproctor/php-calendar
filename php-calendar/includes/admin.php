@@ -22,7 +22,7 @@ if ( !defined('IN_PHPC') ) {
 function admin()
 {
         if(!is_admin()) {
-                soft_error(_('You must be logged in as an admin.'));
+                permission_error(_('You must be logged in as an admin.'));
         }
 
 	return tag('div', new_user_form(), create_calendar_form(),

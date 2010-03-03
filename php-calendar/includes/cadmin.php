@@ -24,7 +24,7 @@ function cadmin()
 	global $phpcid;
 
         if(!can_admin_calendar($phpcid)) {
-                soft_error(_('You must be logged in as an admin.'));
+                permission_error(_('You must be logged in as an admin.'));
         }
 
 	return array(config_form(), user_list(), category_list());

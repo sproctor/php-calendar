@@ -64,7 +64,7 @@ function event_submit()
 	}
 
 	if(!can_write($phpcid))
-		soft_error(_('You do not have permission to write to this calendar.'));
+		permission_error(_('You do not have permission to write to this calendar.'));
 
 	if(can_create_readonly($phpcid) && !empty($arguments['readonly']))
 		$readonly = true;

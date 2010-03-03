@@ -37,7 +37,7 @@ function options_submit()
 			if(isset($vars[$item[0]])) {
 				$value = $vars[$item[0]];
 			} else {
-				soft_error(_("{$item[0]} was not set."));
+				soft_error($item[0] . _(" was not set."));
 			}
 		}
 
