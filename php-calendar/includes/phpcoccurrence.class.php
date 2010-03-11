@@ -192,6 +192,7 @@ class PhpcOccurrence {
 
 	function get_desc()
 	{
+		return $this->desc;
 		return parse_desc($this->desc);
 	}
 

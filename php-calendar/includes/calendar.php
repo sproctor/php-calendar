@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2010 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -256,7 +256,7 @@ function parse_desc($text)
         $text = strip_tags($text);
 	// if you want to allow some tags, change the previous line to:
 	// $text = strip_tags($text, "a"); // change "a" to the list of tags
-        $text = htmlspecialchars($text, ENT_NOQUOTES);
+        $text = htmlspecialchars($text, ENT_NOQUOTES, "UTF-8");
 	// then uncomment the following line
 	// $text = preg_replace("/&lt;(.+?)&gt;/", "<$1>", $text);
         $text = nl2br($text);

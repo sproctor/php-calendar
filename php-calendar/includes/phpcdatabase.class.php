@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2010 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ class PhpcDatabase {
 					. mysqli_connect_errno() . "): "
 					. mysqli_connect_error());
 		}
+
+		$this->dbh->query("SET NAMES 'utf8'");
 	}
 
 	// returns all the events for a particular day

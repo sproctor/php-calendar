@@ -53,6 +53,8 @@ $phpcdb = new PhpcDatabase;
 
 session_start();
 
+header("Content-Type: text/html; charset=UTF-8");
+
 // Create vars
 foreach($_GET as $key => $value) {
 	if(!get_magic_quotes_gpc())
