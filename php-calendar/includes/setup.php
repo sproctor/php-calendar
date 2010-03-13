@@ -123,14 +123,12 @@ if(empty($vars['contentType']))
 
 // setup translation stuff
 if($translate) {
-	if(isset($vars['lang']) && in_array($vars['lang'], $languages)) {
+	if(isset($vars['lang'])) {
 		$lang = $vars['lang'];
 		setcookie('lang', $vars['lang']);
 	} elseif(isset($_COOKIE['lang'])) {
 		$lang = $_COOKIE['lang'];
-	} elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) && in_array(
-				substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2),
-				$languages)) {
+	} elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
 		$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
 	} else {
 		$lang = 'en';
@@ -138,23 +136,25 @@ if($translate) {
 
 	switch($lang) {
 		case 'de':
-			setlocale(LC_ALL, 'de_DE@euro', 'de_DE', 'de', 'ge');
+			setlocale(LC_ALL, 'de_DE.utf8', 'de', 'ge');
 			break;
 		case 'en':
 			setlocale(LC_ALL, 'en_US', 'C');
 			break;
                 case 'es':
-                        setlocale(LC_ALL, 'es_ES@euro', 'es_ES', 'es');
+                        setlocale(LC_ALL, 'es_ES.utf8', 'es.utf8', 'es');
 			break;
                 case 'it':
-                        setlocale(LC_ALL, 'it_IT@euro', 'it_IT', 'it');
+                        setlocale(LC_ALL, 'it_IT.utf8', 'it');
 			break;
                 case 'ja':
-                        setlocale(LC_ALL, 'ja_JP', 'ja');
+                        setlocale(LC_ALL, 'ja_JP.utf8', 'ja', 'jp');
                         break;
                 case 'nl':
-                        setlocale(LC_ALL, 'nl_NL@euro', 'nl_NL', 'nl');
+                        setlocale(LC_ALL, 'nl_NL.utf8', 'nl');
                         break;
+		default:
+			soft_error("Invalid language identifier.");
 	}
 
 	bindtextdomain('messages', "$phpc_root_path/locale");

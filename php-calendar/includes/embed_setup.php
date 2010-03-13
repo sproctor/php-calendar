@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2010 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ $default_calendar_id = 1;
 $phpc_root_path = dirname(__FILE__);
 $phpc_includes_path = "$phpc_root_path/includes";
 $phpc_config_path = $phpc_root_path;
+$phpc_locale_path = "$phpc_root_path/locale";
 $phpc_script = $_SERVER['PHP_SELF'];
 
 if(!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")

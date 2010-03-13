@@ -219,18 +219,37 @@ function lang_link($lang)
 // returns tag data for the links at the bottom of the calendar
 function link_bar()
 {
-	global $translate, $phpc_url, $phpc_root_path, $languages;
+	global $translate, $phpc_url, $phpc_locale_path;
 
 	$html = tag('div', attributes('class="phpc-footer"'));
 
 	if($translate) {
 		$lang_links = tag('p', '[', lang_link('en'), '] ');
-                foreach($languages as $lang) {
-                        if(file_exists("$phpc_root_path/locale/$lang/LC_MESSAGES/messages.mo")) {
+		$have_langs = false;
+
+		// create links for each existing language translation
+		$handle = opendir($phpc_locale_path);
+
+		if(!$handle) {
+			soft_error("Error reading locale directory.");
+		}
+
+		while(($filename = readdir($handle)) !== false) {
+			$pathname = "$phpc_locale_path/$filename";
+			if(strncmp($filename, ".", 1) == 0
+					|| !is_dir($pathname))
+				continue;
+			$lang = $filename;
+                        if(file_exists("$pathname/LC_MESSAGES/messages.mo")) {
+				$have_langs = true;
                                 $lang_links->add('[', lang_link($lang), '] ');
                         }
-                }
-                $html->add($lang_links);
+		}
+
+		closedir($handle);
+
+		if($have_langs)
+			$html->add($lang_links);
 	}
 
 	$html->add(tag('p', '[',
@@ -635,6 +654,34 @@ function get_config($cid, $option)
 	return $config[$option];
 }
 
+function display_phpc() {
+
+	$navbar = false;
+
+	try {
+		$navbar = navbar();
+		return tag('', $navbar, do_action(), link_bar());
+	} catch(PermissionException $e) {
+		$results = tag('');
+		if($navbar !== false)
+			$results->add($navbar);
+		$results->add(tag('div', _('You do not have permission to do that: ')
+					. $e->getMessage()));
+		return $results;
+	} catch(Exception $e) {
+		$results = tag('');
+		if($navbar !== false)
+			$results->add($navbar);
+		$results->add(tag('div', attrs('class="phpc-main"'),
+					tag('h2', _('Error')),
+					tag('p', $e->getMessage()),
+					tag('h3', _('Backtrace')),
+					tag('pre', $e->getTraceAsString())));
+		return $results;
+	}
+
+}
+
 function do_action()
 {
 	global $action, $phpcid, $phpc_includes_path;
@@ -647,24 +694,13 @@ function do_action()
 			'user_delete', 'user_permissions_submit',
 			'category_form', 'category_submit', 'category_delete');
 
-	try {
-		if(!in_array($action, $legal_actions, true)) {
-			soft_error(_('Invalid action'));
-		}
-
-		require_once("$phpc_includes_path/$action.php");
-
-		eval("\$action_output = $action();");
-	} catch(PermissionException $e) {
-		return tag('div', _('You do not have permission to do that: ')
-		. $e->getMessage());
-	} catch(Exception $e) {
-		return tag('div', attrs('class="phpc-main"'),
-				tag('h2', _('Error')),
-				tag('p', $e->getMessage()),
-				tag('h3', _('Backtrace')),
-				tag('pre', $e->getTraceAsString()));
+	if(!in_array($action, $legal_actions, true)) {
+		soft_error(_('Invalid action'));
 	}
+
+	require_once("$phpc_includes_path/$action.php");
+
+	eval("\$action_output = $action();");
 
 	return $action_output;
 }

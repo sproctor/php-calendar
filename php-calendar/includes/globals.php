@@ -19,8 +19,6 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-$languages = array('de', 'en', 'es', 'it', 'ja', 'nl');
-
 $month_names = array(
                 1 => _('January'),
                 _('February'),

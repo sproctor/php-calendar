@@ -35,6 +35,7 @@ $default_calendar_id = 1;
 $phpc_root_path = dirname(__FILE__);
 $phpc_includes_path = "$phpc_root_path/includes";
 $phpc_config_file = "$phpc_root_path/config.php";
+$phpc_locale_path = "$phpc_root_path/locale";
 $phpc_script = $_SERVER['PHP_SELF'];
 
 if(!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
@@ -66,13 +67,13 @@ $html = tag('html', attributes("lang=\"$lang\""),
 			tag('link',
 				attributes('rel="stylesheet" type="text/css"'
 					." href=\"static/style.css\"")
-			   )),
+			   ),
+			tag('meta', attrs('http-equiv="Content-Type"',
+					   'content="text/html; charset=UTF-8"'))),
 		tag('body',
 			tag('div', attributes('class="php-calendar"'),
 				tag('h1', $calendar_title),
-				navbar(),
-				do_action(),
-				link_bar())));
+				display_phpc())));
 
 echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">', "\n", $html->toString();
 ?>
