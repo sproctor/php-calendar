@@ -58,6 +58,7 @@ ini_set('arg_separator.output', '&amp;');
  */
 
 require_once("$phpc_includes_path/setup.php");
+require_once("$phpc_includes_path/calendar.php");
 
 $calendar_title = get_config($phpcid, 'calendar_title');
 

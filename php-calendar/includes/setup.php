@@ -29,7 +29,7 @@ if(!function_exists('_')) {
 	$translate = true;
 }
 
-require_once("$phpc_includes_path/calendar.php");
+require_once("$phpc_includes_path/util.php");
 
 // Run the installer if we have no config file
 // This doesn't work when embedded from outside
@@ -50,10 +50,6 @@ if(!defined("PHPC_DEBUG") && file_exists("$phpc_root_path/install")) {
 // Make the database connection.
 require_once("$phpc_includes_path/phpcdatabase.class.php");
 $phpcdb = new PhpcDatabase;
-
-session_start();
-
-header("Content-Type: text/html; charset=UTF-8");
 
 // Create vars
 foreach($_GET as $key => $value) {
@@ -77,8 +73,6 @@ if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
 } else {
 	$phpcid = 1;
 }
-
-require_once("$phpc_includes_path/globals.php");
 
 // set day/month/year
 if (!isset($vars['month'])) {
@@ -144,6 +138,9 @@ if($translate) {
                 case 'es':
                         setlocale(LC_ALL, 'es_ES.utf8', 'es.utf8', 'es');
 			break;
+		case 'fr':
+			setlocale(LC_ALL, 'fr_FR.utf8', 'fr.utf8', 'fr');
+			break;
                 case 'it':
                         setlocale(LC_ALL, 'it_IT.utf8', 'it.utf8', 'it');
 			break;
@@ -160,6 +157,10 @@ if($translate) {
 	bindtextdomain('messages', $phpc_locale_path);
 	textdomain('messages');
 }
+
+session_start();
+
+header("Content-Type: text/html; charset=UTF-8");
 
 if ($vars["contentType"] == "json") {
 	echo do_action();

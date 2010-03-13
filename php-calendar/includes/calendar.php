@@ -25,6 +25,7 @@ if ( !defined('IN_PHPC') ) {
 
 require_once("$phpc_includes_path/html.php");
 require_once("$phpc_includes_path/lib_autolink.php");
+require_once("$phpc_includes_path/globals.php");
 
 // called when some error happens
 function soft_error($message)
@@ -604,23 +605,6 @@ function create_sequence($start, $end, $interval = 1, $display = NULL)
 	return $arr;
 }
 
-function minute_pad($minute)
-{
-	return sprintf('%02d', $minute);
-}
-
-function redirect($page) {
-	global $phpc_script, $phpc_server, $phpc_protocol;
-
-	if($page{0} == "/") {
-		$dir = '';
-	} else {
-		$dir = dirname($phpc_script) . "/";
-	}
-
-	header("Location: $phpc_protocol://$phpc_server$dir$page");
-}
-
 function get_config_options()
 {
 	// name, text, type, value(s)
@@ -705,38 +689,4 @@ function do_action()
 	return $action_output;
 }
 
-function addslashes_r($var) {
-	if (is_array($var)) {
-		foreach ($var as $key => $val) {
-			$var[$key] = addslashes_r($val);
-		}
-		return $var;
-	} else
-		return addslashes($var);
-}
-
-function asbool($val)
-{
-	if ($val) return "1";
-	return "0";
-}
-
-function format_time_string($hour, $minute, $hour24)
-{
-	if($hour24) {
-		if($hour >= 12) {
-			$hour -= 12;
-			$pm = ' PM';
-		} else {
-			$pm = ' AM';
-		}
-		if($hour == 0) {
-			$hour = 12;
-		}
-	} else {
-		$pm = '';
-	}
-
-	return sprintf('%d:%02d%s', $hour, $minute, $pm);
-}
 ?>
