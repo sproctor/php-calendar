@@ -1,6 +1,12 @@
 NEWS
 -----
 
+2.0-beta6 (12 March 2010):
+	- Removed Polish translations because it contains errors
+	- Added translation script
+	- Converted calendar fully to UTF-8
+	- Bug fixes
+
 2.0-beta5 (11 February 2010):
 	- Added categories with custom colors for events
 	- moved configurable variables into index.php and embed_setup.php

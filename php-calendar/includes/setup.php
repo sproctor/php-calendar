@@ -136,28 +136,28 @@ if($translate) {
 
 	switch($lang) {
 		case 'de':
-			setlocale(LC_ALL, 'de_DE.utf8', 'de', 'ge');
+			setlocale(LC_ALL, 'de_DE.utf8', 'de.utf8', 'de', 'ge');
 			break;
 		case 'en':
-			setlocale(LC_ALL, 'en_US', 'C');
+			setlocale(LC_ALL, 'C');
 			break;
                 case 'es':
                         setlocale(LC_ALL, 'es_ES.utf8', 'es.utf8', 'es');
 			break;
                 case 'it':
-                        setlocale(LC_ALL, 'it_IT.utf8', 'it');
+                        setlocale(LC_ALL, 'it_IT.utf8', 'it.utf8', 'it');
 			break;
                 case 'ja':
-                        setlocale(LC_ALL, 'ja_JP.utf8', 'ja', 'jp');
+                        setlocale(LC_ALL, 'ja_JP.utf8', 'ja.utf8', 'ja', 'jp');
                         break;
                 case 'nl':
-                        setlocale(LC_ALL, 'nl_NL.utf8', 'nl');
+                        setlocale(LC_ALL, 'nl_NL.utf8', 'nl.utf8', 'nl');
                         break;
 		default:
 			soft_error("Invalid language identifier.");
 	}
 
-	bindtextdomain('messages', "$phpc_root_path/locale");
+	bindtextdomain('messages', $phpc_locale_path);
 	textdomain('messages');
 }
 
