@@ -59,16 +59,6 @@ $short_month_names = array(
 		_('Dec'),
                 );
 
-$event_types = array(
-                1 => _('Normal'),
-                _('Full Day'),
-                _('To Be Announced'),
-                _('No Time'),
-                _('Weekly'),
-                _('Monthly'),
-		_('Yearly'),
-                );
-
 // config stuff
 define('PHPC_CHECK', 1);
 define('PHPC_TEXT', 2);

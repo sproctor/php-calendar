@@ -116,6 +116,7 @@ if(empty($vars['contentType']))
 	$vars['contentType'] = "html";
 
 // setup translation stuff
+$phpc_datefmt = "\%\s j, Y";
 if($translate) {
 	if(isset($vars['lang'])) {
 		$lang = $vars['lang'];
@@ -131,24 +132,30 @@ if($translate) {
 	switch($lang) {
 		case 'de':
 			setlocale(LC_ALL, 'de_DE.utf8', 'de.utf8', 'de', 'ge');
+			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'en':
 			setlocale(LC_ALL, 'C');
 			break;
                 case 'es':
                         setlocale(LC_ALL, 'es_ES.utf8', 'es.utf8', 'es');
+			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'fr':
 			setlocale(LC_ALL, 'fr_FR.utf8', 'fr.utf8', 'fr');
+			$phpc_datefmt = "j \%\s Y";
 			break;
                 case 'it':
                         setlocale(LC_ALL, 'it_IT.utf8', 'it.utf8', 'it');
+			$phpc_datefmt = "j \%\s Y";
 			break;
                 case 'ja':
                         setlocale(LC_ALL, 'ja_JP.utf8', 'ja.utf8', 'ja', 'jp');
+			$phpc_datefmt = "j \%\s Y";
                         break;
                 case 'nl':
                         setlocale(LC_ALL, 'nl_NL.utf8', 'nl.utf8', 'nl');
+			$phpc_datefmt = "j \%\s Y";
                         break;
 		default:
 			soft_error("Invalid language identifier.");
@@ -162,8 +169,4 @@ session_start();
 
 header("Content-Type: text/html; charset=UTF-8");
 
-if ($vars["contentType"] == "json") {
-	echo do_action();
-	exit;
-}
 ?>

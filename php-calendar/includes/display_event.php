@@ -163,7 +163,7 @@ function display_event_json()
 	$date_str = $event->get_date_string();
 
 	return json_encode(array("title" => $event->get_subject(),
-				"time" => "$date_str at $time_str",
+				"time" => "$date_str " . _("at") . " $time_str",
 				"body" => $event->get_desc()));
 }
 

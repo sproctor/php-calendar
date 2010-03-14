@@ -161,20 +161,30 @@ class PhpcOccurrence {
 		return $this->minute;
 	}
 
+	function get_start_time() {
+		return mktime(0, 0, 0, $this->get_month(), $this->get_day(),
+				$this->get_year());
+	}
+
+	function get_end_time() {
+		return mktime(0, 0, 0, $this->get_endmonth(),
+				$this->get_endday(), $this->get_endyear());
+	}
+
 	// takes start and end dates and returns a nice display
 	function get_date_string()
 	{
-		$syear = $this->get_year();
-		$smonth = $this->get_month();
-		$sday = $this->get_day();
-		$eyear = $this->get_endyear();
-		$emonth = $this->get_endmonth();
-		$eday = $this->get_endday();
+		global $phpc_datefmt;
 
-		$str = month_name($smonth) . " $sday, $syear";
+		$start_time = $this->get_start_time();
+		$end_time = $this->get_end_time();
 
-		if($syear != $eyear || $smonth != $emonth || $sday != $eday) {
-			$str .= " - " . month_name($emonth) . " $eday, $eyear";
+		$str = sprintf(date($phpc_datefmt, $start_time),
+				month_name($this->get_month()));
+
+		if($start_time != $end_time) {
+			$str .= ' - ' . sprintf(date($phpc_datefmt, $end_time),
+					month_name($this->get_endmonth()));
 		}
 
 		return $str;

@@ -441,10 +441,10 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
 				$meridiem);
 
                 return array(tag('span', attrs("id=\"{$this->qid}-date\""),
-					_("Date:") . " ", $year_input,
+					_("Date") . " ", $year_input,
 					$month_input, $day_input), " ",
 				tag('span', attrs("id=\"{$this->qid}-time\""),
-					_("Time:") . " ", $hour_input,
+					_("Time") . " ", $hour_input,
 					$minute_input, $meridiem_input));
 	}
 }

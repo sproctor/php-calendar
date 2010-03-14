@@ -60,6 +60,11 @@ ini_set('arg_separator.output', '&amp;');
 require_once("$phpc_includes_path/setup.php");
 require_once("$phpc_includes_path/calendar.php");
 
+if ($vars["contentType"] == "json") {
+	echo do_action();
+	exit;
+}
+
 $calendar_title = get_config($phpcid, 'calendar_title');
 
 $html = tag('html', attributes("lang=\"$lang\""),
