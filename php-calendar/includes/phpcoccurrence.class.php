@@ -180,11 +180,11 @@ class PhpcOccurrence {
 		$end_time = $this->get_end_time();
 
 		$str = sprintf(date($phpc_datefmt, $start_time),
-				month_name($this->get_month()));
+				short_month_name($this->get_month()));
 
 		if($start_time != $end_time) {
 			$str .= ' - ' . sprintf(date($phpc_datefmt, $end_time),
-					month_name($this->get_endmonth()));
+					short_month_name($this->get_endmonth()));
 		}
 
 		return $str;
