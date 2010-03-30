@@ -137,7 +137,7 @@ function display_event_by_eid($eid)
 	foreach($occurrences as $occurrence) {
 		$occurrences_tag->add(tag('li', create_occurrence_link(
 						$occurrence->get_date_string()
-						. _(' at ')
+						. ' ' . _('at') . ' '
 						. $occurrence->get_time_span_string(), 'display_event', $occurrence->get_oid())));
 	}
 

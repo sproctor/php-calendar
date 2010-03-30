@@ -551,15 +551,17 @@ class PhpcDatabase {
 		return $this->dbh->insert_id;
 	}
 
-	function modify_event($eid, $subject, $description, $readonly)
+	function modify_event($eid, $subject, $description, $readonly,
+			$catid = false)
 	{
 		$fmt_readonly = asbool($readonly);
 
-		$query = "UPDATE " . SQL_PREFIX . "events\n"
+		$query = "UPDATE `" . SQL_PREFIX . "events`\n"
 			."SET\n"
-			."subject='$subject',\n"
-			."description='$description',\n"
-			."`readonly`=$fmt_readonly\n"
+			."`subject`='$subject',\n"
+			."`description`='$description',\n"
+			."`readonly`=$fmt_readonly,\n"
+			."`catid`='$catid'\n"
 			."WHERE eid='$eid'";
 
 		$sth = $this->dbh->query($query)

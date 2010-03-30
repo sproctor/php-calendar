@@ -54,14 +54,15 @@ function calendar_delete()
 
 	foreach($ids as $id) {
 		if(!can_admin_calendar($id)) {
-			$html->add(tag('p', _("You do not have permission to remove calendar: $id")));
+			$html->add(tag('p', _("You do not have permission to remove calendar") . ": $id"));
 			continue;
 		}
 
 		if($phpcdb->delete_calendar($id)) {
-			$html->add(tag('p', _("Removed calendar: $id")));
+			$html->add(tag('p', _("Removed calendar") . ": $id"));
 		} else {        
-			$html->add(tag('p', _("Could not remove calendar: $id")));
+			$html->add(tag('p', _("Could not remove calendar")
+						. ": $id"));
 		}
 	}
 
