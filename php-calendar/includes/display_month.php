@@ -212,10 +212,13 @@ function create_day($month, $day, $year, $days_events)
 	}
 
 	$stamp = mktime(0, 0, 0, $month, $day, $year);
-	$results = $days_events[date('Y-m-d', $stamp)];
 
-	$can_read = can_read($phpcid);
-	if(!$can_read || empty ($results))
+	$can_read = can_read($phpcid); 
+	if(!$can_read || !array_key_exists($stamp, $days_events))
+		return $html_day;
+
+	$results = $days_events[date('Y-m-d', $stamp)];
+	if(empty ($results))
 		return $html_day;
 
 	$html_events = tag('ul');

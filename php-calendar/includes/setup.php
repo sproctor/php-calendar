@@ -47,6 +47,12 @@ if(!defined("PHPC_DEBUG") && file_exists("$phpc_root_path/install")) {
 	soft_error(_("You must remove the install directory."));
 }
 
+if(defined('PHPC_DEBUG')) {
+	error_reporting(E_ALL);
+	ini_set('display_errors', 1);
+	ini_set('html_errors', 1);
+}
+
 // Make the database connection.
 require_once("$phpc_includes_path/phpcdatabase.class.php");
 $phpcdb = new PhpcDatabase;
