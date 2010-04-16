@@ -5,6 +5,8 @@ NEWS
 	- Added French translation
 	- Re-arranged includes so month and day names get translated
 	- Fixed XSS with lastaction
+	- Fixed security vulnerabilities discovered by VUPEN Security
+	  http://www.vupen.com
 
 2.0-beta6 (12 March 2010):
 	- Removed Polish translations because it contains errors
