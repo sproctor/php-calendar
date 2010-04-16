@@ -41,7 +41,7 @@ class PhpcDatabase {
 	// returns all the events for a particular day
 	// $from and $to are timestamps only significant to the date.
 	// an event that happens later in the day of $to is included
-    function get_occurrences_by_date_range($cid, $from, $to)
+	function get_occurrences_by_date_range($cid, $from, $to)
 	{
 		$from_date = date('Y-m-d', $from);
 		$to_date = date('Y-m-d', $to);
@@ -86,7 +86,7 @@ class PhpcDatabase {
         }
 
 	// returns all the events for a particular day
-    function get_occurrences_by_date($cid, $year, $month, $day)
+	function get_occurrences_by_date($cid, $year, $month, $day)
 	{
 		$stamp = mktime(0, 0, 0, $month, $day, $year);
 
@@ -213,7 +213,7 @@ class PhpcDatabase {
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-                $query = "SELECT `subject`, `description`, "
+                $query = "SELECT `subject`, `description`, `owner`, "
 			."`$sql_events`.`eid`, `$sql_events`.`cid`, `oid`, "
 			."`username`, `timetype`, `readonly`, "
 			."`catid`, `name`, `bg_color`, `text_color`, "

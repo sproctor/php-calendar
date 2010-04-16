@@ -32,6 +32,12 @@ function logout()
  * TODO: add a logout page here with a redirect to the front page of the
  *       calendar they were just viewing
 
+ if(!empty($vars['lastaction'])) {
+ 	$lastaction = $vars['lastaction'];
+ 	if(!in_array($lastaction, $phpc_valid_actions, true))
+ 		soft_error(_('Invalid action'));
+ 	$arguments[] = "action=$lastaction";
+ }
         if(!empty($vars['lastaction']))
                 $arguments[] = "action=$vars[lastaction]";
  */

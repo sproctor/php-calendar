@@ -27,7 +27,7 @@ require_once("$phpc_includes_path/html.php");
 require_once("$phpc_includes_path/lib_autolink.php");
 require_once("$phpc_includes_path/globals.php");
 
-$phpc_legal_actions = array('event_form', 'event_delete', 'display_month',
+$phpc_valid_actions = array('event_form', 'event_delete', 'display_month',
 		'display_day', 'display_event', 'display_event_json',
 		'event_submit', 'search', 'login', 'logout', 'admin',
 		'options_submit', 'user_create', 'cadmin',
@@ -676,9 +676,9 @@ function display_phpc() {
 
 function do_action()
 {
-	global $action, $phpcid, $phpc_includes_path, $phpc_legal_actions;
+	global $action, $phpcid, $phpc_includes_path, $phpc_valid_actions;
 
-	if(!in_array($action, $phpc_legal_actions, true)) {
+	if(!in_array($action, $phpc_valid_actions, true)) {
 		soft_error(_('Invalid action'));
 	}
 
