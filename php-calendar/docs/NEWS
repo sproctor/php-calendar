@@ -4,6 +4,7 @@ NEWS
 2.0-beta7:
 	- Added French translation
 	- Re-arranged includes so month and day names get translated
+	- Fixed XSS with lastaction
 
 2.0-beta6 (12 March 2010):
 	- Removed Polish translations because it contains errors

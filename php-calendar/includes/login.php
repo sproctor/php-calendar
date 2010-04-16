@@ -21,7 +21,7 @@ if(!defined('IN_PHPC')) {
 
 function login()
 {
-	global $vars, $day, $month, $year, $phpc_script;
+	global $vars, $day, $month, $year, $phpc_script, $phpc_legal_actions;
 
 	$html = tag('div');
 
@@ -33,8 +33,13 @@ function login()
 		if(login_user($user, $password)){
                         $string = "$phpc_script?";
                         $arguments = array();
-                        if(!empty($vars['lastaction']))
-                                $arguments[] = "action={$vars['lastaction']}";
+                        if(!empty($vars['lastaction'])) {
+				$lastaction = $vars['lastaction'];
+				if(!in_array($lastaction, $phpc_legal_actions,
+							true))
+					soft_error(_('Invalid action'));
+                                $arguments[] = "action=$lastaction";
+			}
                         if(!empty($vars['year']))
                                 $arguments[] = "year=$year";
                         if(!empty($vars['month']))

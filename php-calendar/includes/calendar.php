@@ -27,6 +27,14 @@ require_once("$phpc_includes_path/html.php");
 require_once("$phpc_includes_path/lib_autolink.php");
 require_once("$phpc_includes_path/globals.php");
 
+$phpc_legal_actions = array('event_form', 'event_delete', 'display_month',
+		'display_day', 'display_event', 'display_event_json',
+		'event_submit', 'search', 'login', 'logout', 'admin',
+		'options_submit', 'user_create', 'cadmin',
+		'create_calendar', 'calendar_delete',
+		'user_delete', 'user_permissions_submit',
+		'category_form', 'category_submit', 'category_delete');
+
 // called when some error happens
 function soft_error($message)
 {
@@ -668,17 +676,9 @@ function display_phpc() {
 
 function do_action()
 {
-	global $action, $phpcid, $phpc_includes_path;
+	global $action, $phpcid, $phpc_includes_path, $phpc_legal_actions;
 
-	$legal_actions = array('event_form', 'event_delete', 'display_month',
-			'display_day', 'display_event', 'display_event_json',
-			'event_submit', 'search', 'login', 'logout', 'admin',
-			'options_submit', 'user_create', 'cadmin',
-			'create_calendar', 'calendar_delete',
-			'user_delete', 'user_permissions_submit',
-			'category_form', 'category_submit', 'category_delete');
-
-	if(!in_array($action, $legal_actions, true)) {
+	if(!in_array($action, $phpc_legal_actions, true)) {
 		soft_error(_('Invalid action'));
 	}
 
