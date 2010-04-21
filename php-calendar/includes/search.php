@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2010 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ function search_results()
 function search_form()
 {
 	global $day, $month, $year, $phpc_script, $month_names, $sort_options,
-	       $order_options;
+	       $order_options, $phpcid;
 
 	$day_sequence = create_sequence(1, 31);
 	$year_sequence = create_sequence(1970, 2037);
@@ -102,7 +102,8 @@ function search_form()
 				tag('td', tag('input', attributes('type="text"',
 							'name="searchstring"',
 							'size="32"')),
-					create_hidden('action', 'search'))),
+					create_hidden('action', 'search'),
+					create_hidden('phpcid', $phpcid))),
 			tag('tr',
 				tag('td', _('From') . ': '),
 				tag('td',

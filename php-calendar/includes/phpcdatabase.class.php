@@ -604,6 +604,7 @@ class PhpcDatabase {
 		$events_table = SQL_PREFIX . 'events';
 		$occurrences_table = SQL_PREFIX . 'occurrences';
 		$users_table = SQL_PREFIX . 'users';
+		$cats_table = SQL_PREFIX . 'categories';
 
 		$words = array();
 		foreach($keywords as $keyword) {
@@ -613,7 +614,9 @@ class PhpcDatabase {
 		$where = implode(' AND ', $words);
 
                 $query = "SELECT `subject`, `description`, `username`, "
-			."`$events_table`.`eid`, `cid`, `timetype`, "
+			."`$events_table`.`eid`, `$events_table`.`cid`, "
+			."`oid`, `owner`, `username`, `timetype`, `readonly`, "
+			."`catid`, `name`, `bg_color`, `text_color`, "
 			."HOUR(`starttime`) AS `starthour`, "
 			."MINUTE(`starttime`) AS `startminute`, "
 			."HOUR(`endtime`) AS `endhour`, "
@@ -627,10 +630,11 @@ class PhpcDatabase {
 			."FROM `$events_table` \n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
+			."LEFT JOIN `$cats_table` USING (`catid`)\n"
 			."WHERE ($where) "
-			."AND cid = '$cid' "
-			."AND enddate >= DATE '$start' "
-			."AND startdate <= DATE '$end' "
+			."AND `$events_table`.`cid` = '$cid' "
+			."AND `enddate` >= DATE '$start' "
+			."AND `startdate` <= DATE '$end' "
 			."ORDER BY $sort $order";
 
 		if(!($result = $this->dbh->query($query)))
