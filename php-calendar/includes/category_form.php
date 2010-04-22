@@ -42,9 +42,9 @@ function category_form() {
 		$form->add_hidden('catid', $vars['catid']);
 		$category = $phpcdb->get_category($vars['catid']);
 		$defaults = array(
-				'name' => $category['name'],
-				'text-color' => $category['text_color'],
-				'bg-color' => $category['bg_color'],
+				'name' => htmlspecialchars($category['name']),
+				'text-color' => htmlspecialchars($category['text_color']),
+				'bg-color' => htmlspecialchars($category['bg_color']),
 				);
 	} else {
 		$defaults = array();

@@ -154,8 +154,8 @@ function category_list()
 							array('catid'
 								=> $catid))
 					   ),
-					tag('td', $category['text_color']),
-					tag('td', $category['bg_color'])
+					tag('td', htmlspecialchars($category['text_color'])),
+					tag('td', htmlspecialchars($category['bg_color']))
 				   ));
 	}
 

@@ -5,6 +5,9 @@ NEWS
 	- Added French translation
 	- Re-arranged includes so month and day names get translated
 	- Fixed XSS with lastaction
+	- Don't allow HTML characters in text/bg colors
+	- Removed accidental return that exposed descriptions without removing
+	  tags. Don't strip tags, leave them in and replace special chars
 	- Fixed security vulnerabilities discovered by VUPEN Security
 	  http://www.vupen.com
 

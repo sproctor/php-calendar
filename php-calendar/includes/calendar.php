@@ -278,15 +278,9 @@ function link_bar()
 // parses a description and adds the appropriate mark-up
 function parse_desc($text)
 {
-	global $urlmatch;
+	// Don't allow tags and make the description HTML-safe
+        $text = htmlspecialchars($text, ENT_COMPAT, "UTF-8");
 
-	// get out the crap, put in breaks
-        $text = strip_tags($text);
-	// if you want to allow some tags, change the previous line to:
-	// $text = strip_tags($text, "a"); // change "a" to the list of tags
-        $text = htmlspecialchars($text, ENT_NOQUOTES, "UTF-8");
-	// then uncomment the following line
-	// $text = preg_replace("/&lt;(.+?)&gt;/", "<$1>", $text);
         $text = nl2br($text);
 
 	// linkify urls

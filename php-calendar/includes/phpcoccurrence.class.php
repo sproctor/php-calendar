@@ -202,13 +202,7 @@ class PhpcOccurrence {
 
 	function get_desc()
 	{
-		return $this->desc;
 		return parse_desc($this->desc);
-	}
-
-	function get_raw_desc()
-	{
-		return $this->desc;
 	}
 
 	function get_oid()
@@ -229,6 +223,16 @@ class PhpcOccurrence {
 	function is_readonly()
 	{
 		return $this->readonly;
+	}
+
+	function get_text_color()
+	{
+		return htmlspecialchars($this->text_color);
+	}
+
+	function get_bg_color()
+	{
+		return htmlspecialchars($this->bg_color);
 	}
 }
 

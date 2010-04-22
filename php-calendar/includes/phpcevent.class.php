@@ -72,11 +72,6 @@ class PhpcEvent {
 		return parse_desc($this->desc);
 	}
 
-	function get_raw_desc()
-	{
-		return $this->desc;
-	}
-
 	function get_eid()
 	{
 		return $this->eid;
