@@ -1,7 +1,7 @@
 NEWS
 -----
 
-2.0-beta7:
+2.0-beta7 (22 April 2010):
 	- Added French translation
 	- Re-arranged includes so month and day names get translated
 	- Fixed XSS with lastaction
@@ -10,6 +10,7 @@ NEWS
 	  tags. Don't strip tags, leave them in and replace special chars
 	- Fixed security vulnerabilities discovered by VUPEN Security
 	  http://www.vupen.com
+	- Other bug fixes
 
 2.0-beta6 (12 March 2010):
 	- Removed Polish translations because it contains errors
