@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2010 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,8 @@ if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
 	$phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
 
 $phpc_url = "$phpc_protocol://$phpc_server$phpc_script"
-		. $_SERVER['QUERY_STRING'];
+		. (empty($_SERVER['QUERY_STRING']) ? ''
+		   : '?' . $_SERVER['QUERY_STRING']);
 
 // Remove this line if you must
 ini_set('arg_separator.output', '&amp;');
@@ -67,7 +68,7 @@ if ($vars["contentType"] == "json") {
 
 $calendar_title = get_config($phpcid, 'calendar_title');
 
-$html = tag('html', attributes("lang=\"$lang\""),
+$html = tag('html', attrs("lang=\"$lang\""),
 		tag('head',
 			tag('title', $calendar_title),
 			tag('link',

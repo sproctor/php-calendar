@@ -44,7 +44,7 @@ if(!defined('SQL_TYPE')) {
 }
 
 if(!defined("PHPC_DEBUG") && file_exists("$phpc_root_path/install")) {
-	soft_error(_("You must remove the install directory."));
+	display_error(_("You must remove the install directory."));
 }
 
 if(defined('PHPC_DEBUG')) {
@@ -92,7 +92,7 @@ if(!isset($vars['year'])) {
 } else {
 	$time = mktime(0, 0, 0, $month, 1, $vars['year']);
         if(!$time || $time < 0) {
-                soft_error(_('Invalid year') . ": {$vars['year']}");
+                display_error(_('Invalid year') . ": {$vars['year']}");
         }
 	$year = date('Y', $time);
 }
@@ -164,11 +164,13 @@ if($translate) {
 			$phpc_datefmt = "j \%\s Y";
                         break;
 		default:
-			soft_error("Invalid language identifier.");
+			display_error("Invalid language identifier.");
 	}
 
 	bindtextdomain('messages', $phpc_locale_path);
 	textdomain('messages');
+} else {
+	$lang = 'en';
 }
 
 session_start();
