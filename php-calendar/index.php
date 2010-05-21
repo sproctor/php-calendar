@@ -36,7 +36,7 @@ $phpc_root_path = dirname(__FILE__);
 $phpc_includes_path = "$phpc_root_path/includes";
 $phpc_config_file = "$phpc_root_path/config.php";
 $phpc_locale_path = "$phpc_root_path/locale";
-$phpc_script = $_SERVER['PHP_SELF'];
+$phpc_script = htmlentities($_SERVER['PHP_SELF']);
 
 if(!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
 	$phpc_protocol = "https";

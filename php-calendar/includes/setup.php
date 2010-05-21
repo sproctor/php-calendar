@@ -130,7 +130,8 @@ if($translate) {
 	} elseif(isset($_COOKIE['lang'])) {
 		$lang = $_COOKIE['lang'];
 	} elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-		$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+		$lang = substr(htmlentities($_SERVER['HTTP_ACCEPT_LANGUAGE']),
+			0, 2);
 	} else {
 		$lang = 'en';
 	}
