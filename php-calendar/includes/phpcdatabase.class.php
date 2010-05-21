@@ -194,7 +194,7 @@ class PhpcDatabase {
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
-			."WHERE `oid` = $oid\n";
+			."WHERE `oid` = '$oid'\n";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Error in get_occurrence_by_oid'),
@@ -231,7 +231,7 @@ class PhpcDatabase {
                         ."INNER JOIN `$sql_occurrences` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
-			."WHERE `eid` = $eid\n"
+			."WHERE `eid` = '$eid'\n"
 			."	ORDER BY `startdate`, `starttime`";
 
 		$result = $this->dbh->query($query)
