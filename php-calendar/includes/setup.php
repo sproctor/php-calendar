@@ -19,7 +19,9 @@
    This file sets up the global variables to be used later
 */
 
-define('IN_PHPC', true);
+if ( !defined('IN_PHPC') ) {
+       die("Hacking attempt");
+}
 
 // make sure that we have _ defined
 if(!function_exists('_')) {
@@ -124,9 +126,10 @@ if(empty($vars['contentType']))
 // setup translation stuff
 $phpc_datefmt = "\%\s j, Y";
 if($translate) {
+	$phpc_store_lang = false;
 	if(isset($vars['lang'])) {
 		$lang = $vars['lang'];
-		setcookie('lang', $vars['lang']);
+		$phpc_store_lang = true;
 	} elseif(isset($_COOKIE['lang'])) {
 		$lang = $_COOKIE['lang'];
 	} elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
@@ -167,6 +170,9 @@ if($translate) {
 		default:
 			display_error("Invalid language identifier.");
 	}
+
+	if($phpc_store_lang)
+		setcookie('lang', $lang);
 
 	bindtextdomain('messages', $phpc_locale_path);
 	textdomain('messages');

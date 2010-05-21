@@ -57,6 +57,8 @@ ini_set('arg_separator.output', '&amp;');
  * Do not modify anything under this point
  */
 
+define('IN_PHPC', true);
+
 require_once("$phpc_includes_path/setup.php");
 
 if ($vars["contentType"] == "json") {

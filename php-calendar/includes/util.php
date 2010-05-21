@@ -71,4 +71,21 @@ function format_time_string($hour, $minute, $hour24)
 	return sprintf('%d:%02d%s', $hour, $minute, $pm);
 }
 
+// called when some error happens
+function display_error($str)
+{
+	echo '<html><head><title>', _('Error'), "</title></head>\n",
+	     '<body><h1>', _('Software Error'), "</h1>\n",
+	     "<h2>", _('Message:'), "</h2>\n",
+	     "<pre>$str</pre>\n",
+	     "<h2>", _('Backtrace'), "</h2>\n",
+	     "<ol>\n";
+	foreach(debug_backtrace() as $bt) {
+		echo "<li>$bt[file]:$bt[line] - $bt[function]</li>\n";
+	}
+	echo "</ol>\n",
+	     "</body></html>\n";
+	exit;
+}
+
 ?>
