@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
+if ( !defined('IN_PHPC') ) {
+       die("Invalid setup");
+}
+
 echo tag('div', attributes('class="php-calendar"'),
 		tag('h1', $calendar_title),
 		display_phpc())->toString();

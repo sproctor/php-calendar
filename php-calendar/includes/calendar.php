@@ -652,7 +652,7 @@ function display_phpc() {
 		if($navbar !== false)
 			$results->add($navbar);
 		$results->add(tag('div', _('You do not have permission to do that: ')
-					. $e->getMessage()));
+					. htmlentities($e->getMessage())));
 		return $results;
 	} catch(Exception $e) {
 		$results = tag('');
@@ -660,9 +660,9 @@ function display_phpc() {
 			$results->add($navbar);
 		$results->add(tag('div', attrs('class="phpc-main"'),
 					tag('h2', _('Error')),
-					tag('p', $e->getMessage()),
+					tag('p', htmlentities($e->getMessage())),
 					tag('h3', _('Backtrace')),
-					tag('pre', $e->getTraceAsString())));
+					tag('pre', htmlentities($e->getTraceAsString()))));
 		return $results;
 	}
 

@@ -69,9 +69,13 @@ function login_form()
                                 create_hidden('action', 'login'),
                                 create_submit(_('Log in')));
 
-        if(!empty($vars['lastaction']))
+        if(!empty($vars['lastaction'])) {
+		if(!in_array($lastaction, $phpc_valid_actions,
+					true))
+			soft_error(_('Invalid action'));
                 $submit_data->prepend(create_hidden('lastaction',
                                         $vars['lastaction']));
+	}
 
         if(isset($vars['phpcid']))
                 $submit_data->prepend(create_hidden('phpcid', $vars['phpcid']));

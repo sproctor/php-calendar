@@ -676,7 +676,7 @@ class Form extends FormGroup {
 		$form = tag('form', $form_attrs,
 				tag("script",
 					attrs('type="text/javascript"',
-					'src="static/jquery-1.3.2.min.js"'),
+					'src="static/jquery-1.4.2.min.js"'),
 					''),
 				tag("script",
 					attrs('type="text/javascript"',
