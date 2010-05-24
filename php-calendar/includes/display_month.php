@@ -38,7 +38,7 @@ function display_month()
 	$month_navbar = month_navbar($month, $year);
 	return tag('div',
 			tag("script", attributes('type="text/javascript"',
-					'src="static/jquery-1.4.2.min.js"'), ''),
+					'src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"'), ''),
 			tag("script", attributes('type="text/javascript"',
 					'src="static/jquery.hoverIntent.minified.js"'), ''),
 			tag("script", attributes('type="text/javascript"',
