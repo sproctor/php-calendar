@@ -408,17 +408,18 @@ function create_action_link($text, $action, $args = false, $attribs = false)
 
 	$url = "href=\"$phpc_script?";
 	if(isset($vars["phpcid"]))
-		$url .= "phpcid={$vars["phpcid"]}&amp;";
-	$url .= "action=$action";
+		$url .= "phpcid=" . htmlentities($vars["phpcid"]) . "&amp;";
+	$url .= "action=" . htmlentities($action);
 
 	if (!empty($args)) {
 		foreach ($args as $key => $value) {
 			if (is_array($value)) {
 				foreach ($value as $v) {
-					$url .= "&amp;{$key}[]=$v";
+					$url .= "&amp;"
+						. htmlentities("{$key}[]=$v");
 				}
 			} else
-				$url .= "&amp;$key=$value";
+				$url .= "&amp;" . htmlentities("$key=$value");
 		}
 	}
 	$url .= '"';
