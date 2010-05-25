@@ -35,74 +35,76 @@ function display_day()
 
 	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
 
-	if(sizeof($results) > 0) {
-		$html_table = tag('table', attributes('class="phpc-main"'),
-				tag('caption', "$day $monthname $year"),
-				tag('thead',
+	$have_events = false;
+
+	$html_table = tag('table', attributes('class="phpc-main"'),
+			tag('caption', "$day $monthname $year"),
+			tag('thead',
+				tag('tr',
+					tag('th', _('Title')),
+					tag('th', _('Time')),
+					tag('th', _('Description'))
+				   )));
+	if(can_modify($phpcid)) {
+		$html_table->add(tag('tfoot',
 					tag('tr',
-						tag('th', _('Title')),
-						tag('th', _('Time')),
-						tag('th', _('Description'))
-					     )));
-		if(can_modify($phpcid)) {
-			$html_table->add(tag('tfoot',
-                                                tag('tr',
-                                                        tag('td',
-                                                                attributes('colspan="4"'),
-                                                                create_hidden('action', 'event_delete'),
-                                                                create_hidden('day', $day),
-                                                                create_hidden('month', $month),
-                                                                create_hidden('year', $year),
-                                                                create_submit(_('Delete Selected'))))));
-                }
+						tag('td',
+							attributes('colspan="4"'),
+							create_hidden('action', 'event_delete'),
+							create_hidden('day', $day),
+							create_hidden('month', $month),
+							create_hidden('year', $year),
+							create_submit(_('Delete Selected'))))));
+	}
 
-		$html_body = tag('tbody');
+	$html_body = tag('tbody');
 
-		foreach($results as $event) {
-			if(!can_read_event($event))
-				continue;
+	foreach($results as $event) {
+		if(!can_read_event($event))
+			continue;
 
-			$eid = $event->get_eid();
-			$oid = $event->get_oid();
+		$have_events = true;
 
-			$html_subject = tag('td');
+		$eid = $event->get_eid();
+		$oid = $event->get_oid();
 
-			if(can_modify_event($event)) {
-                                $html_subject->add(create_checkbox('eid[]',
-							$eid));
-                        }
+		$html_subject = tag('td');
 
-			$html_subject->add(create_occurrence_link(tag('strong',
-                                                        $event->get_subject()),
-						'display_event', $oid));
+		if(can_modify_event($event)) {
+			$html_subject->add(create_checkbox('eid[]',
+						$eid));
+		}
 
-			if(can_modify_event($event)) {
-				$html_subject->add(' (');
-				$html_subject->add(create_event_link(
+		$html_subject->add(create_occurrence_link(tag('strong',
+						$event->get_subject()),
+					'display_event', $oid));
+
+		if(can_modify_event($event)) {
+			$html_subject->add(" (");
+			$html_subject->add(create_event_link(
 						_('Modify'), 'event_form',
 						$eid));
-				$html_subject->add(')');
-			}
-
-			$html_body->add(tag('tr',
-                                        $html_subject,
-                                        tag('td', $event->get_time_span_string()),
-                                        tag('td', $event->get_desc())));
+			$html_subject->add(')');
 		}
 
-		$html_table->add($html_body);
-
-		if(can_modify($phpcid)) {
-			$output = tag('form',
-					attributes("action=\"$phpc_script\""),
-					$html_table);
-		} else {
-			$output = $html_table;
-		}
-
-	} else {
-		$output = tag('h2', _('No events on this day.'));
+		$html_body->add(tag('tr',
+					$html_subject,
+					tag('td', $event->get_time_span_string()),
+					tag('td', $event->get_desc())));
 	}
+
+	$html_table->add($html_body);
+
+	if(can_modify($phpcid)) {
+		$output = tag('form',
+				attributes("action=\"$phpc_script\""),
+				$html_table);
+	} else {
+		$output = $html_table;
+	}
+
+	if(!$have_events)
+		$output = tag('h2', _('No events on this day.'));
 
 	return $output;
 }
