@@ -63,18 +63,18 @@ function login()
 
 function login_form()
 {
-        global $vars, $phpc_script, $day, $year, $month;
+        global $vars, $phpc_script, $phpc_valid_actions, $day, $year, $month;
 
         $submit_data = tag('td', attributes('colspan="2"'),
                                 create_hidden('action', 'login'),
                                 create_submit(_('Log in')));
 
         if(!empty($vars['lastaction'])) {
-		if(!in_array($lastaction, $phpc_valid_actions,
-					true))
+		$lastaction = $vars['lastaction'];
+		if(!in_array($lastaction, $phpc_valid_actions, true))
 			soft_error(_('Invalid action'));
                 $submit_data->prepend(create_hidden('lastaction',
-                                        $vars['lastaction']));
+                                        $lastaction));
 	}
 
         if(isset($vars['phpcid']))
