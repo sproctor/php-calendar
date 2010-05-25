@@ -341,9 +341,14 @@ class PhpcDatabase {
 					$query);
 
 		$config = array();
+		$have_config = false;
 		while($row = $sth->fetch_assoc()) {
 			$config[$row['config_name']] = $row['config_value'];
+			$have_config = true;
 		}
+
+		if(!$have_config)
+			soft_error(_("Invalid Calendar ID"));
 
 		return $config;
 	}

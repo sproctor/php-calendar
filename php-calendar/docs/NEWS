@@ -3,6 +3,7 @@ NEWS
 
 2.0-beta8:
 	- Fixes SQL-injection and XSS errors discovered by Teemu Vesala
+	  at Qentinal
 
 2.0-beta7 (19 May 2010):
 	- Added French translation

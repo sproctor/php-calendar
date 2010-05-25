@@ -63,12 +63,21 @@ define('IN_PHPC', true);
 require_once("$phpc_includes_path/setup.php");
 require_once("$phpc_includes_path/calendar.php");
 
-if ($vars["contentType"] == "json") {
-	echo do_action();
-	exit;
-}
+try {
+	if ($vars["contentType"] == "json") {
+		echo do_action();
+		exit;
+	}
 
-$calendar_title = get_config($phpcid, 'calendar_title');
+	$calendar_title = get_config($phpcid, 'calendar_title');
+	$content = tag('div', attributes('class="php-calendar"'),
+			tag('h1', $calendar_title),
+			display_phpc());
+} catch(Exception $e) {
+	$calendar_title = $e->getMessage();
+	$content = tag('div', attributes('class="php-calendar"'),
+			$e->getMessage());
+}
 
 $html = tag('html', attrs("lang=\"$lang\""),
 		tag('head',
@@ -79,10 +88,7 @@ $html = tag('html', attrs("lang=\"$lang\""),
 			   ),
 			tag('meta', attrs('http-equiv="Content-Type"',
 					   'content="text/html; charset=UTF-8"'))),
-		tag('body',
-			tag('div', attributes('class="php-calendar"'),
-				tag('h1', $calendar_title),
-				display_phpc())));
+		tag('body', $content));
 
 echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">', "\n", $html->toString();
 ?>
