@@ -85,6 +85,8 @@ if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
 // set day/month/year
 if(isset($vars['month']) && is_numeric($vars['month'])) {
 	$month = $vars['month'];
+	if($month < 1 || $month > 12)
+		display_error(_("Month is out of range."));
 } else {
 	$month = date('n');
 }
@@ -109,9 +111,6 @@ if(isset($vars['day']) && is_numeric($vars['day'])) {
                 $day = 1;
         }
 }
-
-while($month < 1) $month += 12;
-$month = ($month - 1) % 12 + 1;
 
 //set action
 if(empty($vars['action'])) {
