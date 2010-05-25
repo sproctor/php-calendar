@@ -83,31 +83,31 @@ if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
 }
 
 // set day/month/year
-if (!isset($vars['month'])) {
-	$month = date('n');
-} else {
+if(isset($vars['month']) && is_numeric($vars['month'])) {
 	$month = $vars['month'];
+} else {
+	$month = date('n');
 }
 
-if(!isset($vars['year'])) {
-	$year = date('Y');
-} else {
+if(isset($vars['year']) && is_numeric($vars['year'])) {
 	$time = mktime(0, 0, 0, $month, 1, $vars['year']);
         if(!$time || $time < 0) {
                 display_error(_('Invalid year') . ": {$vars['year']}");
         }
 	$year = date('Y', $time);
+} else {
+	$year = date('Y');
 }
 
-if(!isset($vars['day'])) {
+if(isset($vars['day']) && is_numeric($vars['day'])) {
+	$day = ($vars['day'] - 1) % date('t', mktime(0, 0, 0, $month, 1, $year))
+                + 1;
+} else {
 	if($month == date('n') && $year == date('Y')) {
                 $day = date('j');
 	} else {
                 $day = 1;
         }
-} else {
-	$day = ($vars['day'] - 1) % date('t', mktime(0, 0, 0, $month, 1, $year))
-                + 1;
 }
 
 while($month < 1) $month += 12;
