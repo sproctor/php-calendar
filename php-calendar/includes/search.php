@@ -25,17 +25,17 @@ function search_results()
 
 	$searchstring = $vars['searchstring'];
 
-	$start = "$vars[syear]-$vars[smonth]-$vars[sday]";
-	$end = "$vars[eyear]-$vars[emonth]-$vars[eday]";
+	$start = htmlentities("$vars[syear]-$vars[smonth]-$vars[sday]");
+	$end = htmlentities("$vars[eyear]-$vars[emonth]-$vars[eday]");
 
         // make sure sort is valid
-	$sort = $vars['sort'];
+	$sort = htmlentities($vars['sort']);
         if(array_search($sort, array_keys($sort_options)) === false) {
                 soft_error(_('Invalid sort option') . ": $sort");
         }
 
         // make sure order is valid
-	$order = $vars['order'];
+	$order = htmlentities($vars['order']);
         if(array_search($order, array_keys($order_options)) === false) {
                 soft_error(_('Invalid order option') . ": $order");
         }
@@ -47,6 +47,9 @@ function search_results()
 
 	$tags = array();
 	foreach ($results as $event) {
+		if(!can_read_event($event))
+			continue;
+
 		$name = $event->get_username();
 		$subject = $event->get_subject();
 		$desc = $event->get_desc();
