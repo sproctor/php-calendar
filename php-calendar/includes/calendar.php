@@ -200,7 +200,7 @@ function login_user($username, $password)
 	if(!empty($user->admin))
 		$_SESSION["phpc_admin"] = true;
 
-	$_SESSION["token"] = md5(uniqid(rand(), TRUE));
+	setcookie("phpc_user", "1");
 
 	session_write_close();
 

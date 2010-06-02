@@ -103,6 +103,8 @@ function event_form() {
 	if(isset($vars['phpcid']))
 		$form->add_hidden('phpcid', $vars['phpcid']);
 
+	$form->add_hidden('phpc_token', $_SESSION['phpc_token']);
+
 	$form->add_hidden('action', 'event_submit');
 	$form->add_part(new FormSubmitButton("Submit Event"));
 

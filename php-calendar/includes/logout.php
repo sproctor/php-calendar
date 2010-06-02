@@ -24,6 +24,7 @@ function logout()
 	global $vars, $day, $month, $year, $phpc_script;
 
         session_destroy();
+	setcookie("phpc_user", "0");
 
 	$string = "$phpc_script?";
         $arguments = array();

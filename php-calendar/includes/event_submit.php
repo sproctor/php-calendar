@@ -63,6 +63,10 @@ function event_submit()
 			soft_error(_("Unrecognized Time Type."));
 	}
 
+	if(empty($vars["phpc_token"])
+			|| $vars["phpc_token"] != $_SESSION["phpc_token"])
+		soft_error(_("Possible request forgery."));
+
 	if(!can_write($phpcid))
 		permission_error(_('You do not have permission to write to this calendar.'));
 

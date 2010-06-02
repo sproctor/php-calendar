@@ -55,6 +55,8 @@ if(defined('PHPC_DEBUG')) {
 	ini_set('html_errors', 1);
 }
 
+require_once("$phpc_includes_path/calendar.php");
+
 // Make the database connection.
 require_once("$phpc_includes_path/phpcdatabase.class.php");
 $phpcdb = new PhpcDatabase;
@@ -184,6 +186,25 @@ if($translate) {
 }
 
 session_start();
+
+// Expire the session after 30 minutes
+if(isset($_SESSION['phpc_time']) && time() - $_SESSION['phpc_time'] > 1800) {
+	// session is expired
+	session_destroy();
+	$_SESSION = array();
+}
+
+$_SESSION['phpc_time'] = time();
+
+// Create a secret token to check for CSRF
+if(empty($_SESSION["phpc_token"]))
+	$_SESSION["phpc_token"] = md5(uniqid(rand(), TRUE));
+
+// Check if our session timed out and logged us out
+if(!empty($_COOKIE["phpc_user"]) && !is_user()) {
+	setcookie("phpc_user", "0");
+	display_error(_("Session has expired."));
+}
 
 header("Content-Type: text/html; charset=UTF-8");
 
