@@ -193,15 +193,14 @@ function login_user($username, $password)
 	session_regenerate_id();
 
 	$user = $phpcdb->get_user_by_name($username);
-	if(!$user)
-		return false;
-
-	if($user->password != md5($password))
+	if(!$user || $user->password != md5($password))
 		return false;
 
 	$_SESSION["phpc_uid"] = $user->uid;
 	if(!empty($user->admin))
 		$_SESSION["phpc_admin"] = true;
+
+	$_SESSION["token"] = md5(uniqid(rand(), TRUE));
 
 	session_write_close();
 

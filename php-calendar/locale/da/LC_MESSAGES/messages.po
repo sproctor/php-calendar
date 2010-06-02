@@ -1,0 +1,895 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.10.5\n"
+"Report-Msgid-Bugs-To: Sean Proctor <sproctor@gmail.com>\n"
+"POT-Creation-Date: 2010-03-12 18:36-0800\n"
+"PO-Revision-Date: 2010-05-31 15:55+0100\n"
+"Last-Translator: Jesper Jensen <jj@gurusoft.dk>\n"
+"Language-Team: Danish <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: includes/admin.php:25 includes/cadmin.php:27
+msgid "You must be logged in as an admin."
+msgstr "Du skal være logget ind som admin."
+
+#: includes/admin.php:39
+msgid "Create User"
+msgstr "Opret Bruger"
+
+#: includes/admin.php:44 includes/admin.php:103 includes/cadmin.php:82
+#: includes/cadmin.php:121 includes/search.php:99
+msgid "Submit"
+msgstr "Gem"
+
+#: includes/admin.php:47 includes/cadmin.php:124
+msgid "User Name"
+msgstr "Brugernavn"
+
+#: includes/admin.php:50 includes/login.php:98
+msgid "Password"
+msgstr "Kodeord"
+
+#: includes/admin.php:53
+msgid "Confirm Password"
+msgstr "Godkend kodeord"
+
+#: includes/admin.php:56
+msgid "Make Admin"
+msgstr "Opret administrator"
+
+#: includes/admin.php:86 includes/cadmin.php:60
+msgid "Unsupported config type"
+msgstr "Ikke supporteret config type"
+
+#: includes/admin.php:98
+msgid "Create Calendar"
+msgstr "Opret Kalender"
+
+#: includes/admin.php:127
+msgid "Calendar List"
+msgstr "Kalenderliste"
+
+#: includes/admin.php:145
+msgid "User List"
+msgstr "Brugerliste"
+
+#: includes/cadmin.php:78
+msgid "Options"
+msgstr "Indstillinger"
+
+#: includes/cadmin.php:117
+msgid "User Permissions"
+msgstr "Brugerrettigheder"
+
+#: includes/cadmin.php:125
+msgid "Read"
+msgstr "L&aelig;s"
+
+#: includes/cadmin.php:126
+msgid "Write"
+msgstr "Skriv"
+
+#: includes/cadmin.php:127
+msgid "Can Create Read-Only"
+msgstr "Kan oprette skrivebeskyttede"
+
+#: includes/cadmin.php:128 includes/display_day.php:82
+#: includes/display_event.php:61 includes/display_event.php:124
+msgid "Modify"
+msgstr "Rediger"
+
+#: includes/cadmin.php:129 includes/calendar.php:559
+msgid "Admin"
+msgstr "Administrator"
+
+#: includes/cadmin.php:142
+msgid "No Name"
+msgstr "Ikke Navngivet"
+
+#: includes/cadmin.php:152 includes/display_event.php:63
+#: includes/display_event.php:126
+msgid "Delete"
+msgstr "Slet"
+
+#: includes/cadmin.php:163
+msgid "Calendar Categories"
+msgstr "Kalender Kategorier"
+
+#: includes/cadmin.php:166 includes/category_form.php:28
+msgid "Name"
+msgstr "Navn"
+
+#: includes/cadmin.php:167 includes/category_form.php:31
+msgid "Text Color"
+msgstr "Tekstfarve"
+
+#: includes/cadmin.php:168 includes/category_form.php:33
+msgid "Background Color"
+msgstr "Baggrundsfarve"
+
+#: includes/cadmin.php:173
+msgid "Create category"
+msgstr "Opret kategori"
+
+#: includes/calendar.php:528
+msgid "Add Event"
+msgstr "Tilf&oslash;j booking"
+
+#: includes/calendar.php:532 includes/search.php:95
+msgid "Search"
+msgstr "S&oslash;g"
+
+#: includes/calendar.php:536
+msgid "View Month"
+msgstr "Vis M&aring;ned"
+
+#: includes/calendar.php:541
+msgid "View date"
+msgstr "Vis dato"
+
+#: includes/calendar.php:545
+msgid "Log out"
+msgstr "Log ud"
+
+#: includes/calendar.php:549 includes/login.php:65 includes/login.php:86
+msgid "Log in"
+msgstr "Log ind"
+
+#: includes/calendar.php:555
+msgid "Calendar Admin"
+msgstr "Kalender Administrator"
+
+#: includes/calendar.php:628
+msgid "Week Start"
+msgstr "Uge Start"
+
+#: includes/calendar.php:630
+msgid "Monday (non-UK)"
+msgstr "Mandag (ikke-UK)"
+
+#: includes/calendar.php:631
+msgid "Monday (UK)"
+msgstr "Mandag (UK)"
+
+#: includes/calendar.php:632
+msgid "Sunday (USA)"
+msgstr "S&oslash;ndag (USA)"
+
+#: includes/calendar.php:633 includes/globals.php:44
+msgid "Saturday"
+msgstr "L&oslash;rdag"
+
+#: includes/calendar.php:635
+msgid "24 Hour Time"
+msgstr "24 timers ur"
+
+#: includes/calendar.php:636
+msgid "Calendar Title"
+msgstr "Kalender Overskrift"
+
+#: includes/calendar.php:637
+msgid "Maximum Subject Length"
+msgstr "Max Emnel&aelig;ngde"
+
+#: includes/calendar.php:638
+msgid "Public Permissions"
+msgstr "Offentlig Adgang"
+
+#: includes/calendar.php:640
+msgid "Cannot read nor write events"
+msgstr "M&aring; ikke l&aelig;se eller skrive"
+
+#: includes/calendar.php:641
+msgid "Can read but not write events"
+msgstr "M&aring; l&aelig;se men ikke skrive"
+
+#: includes/calendar.php:642
+msgid "Can create but not modify events"
+msgstr "M&aring; oprette men ikke redigere"
+
+#: includes/calendar.php:643
+msgid "Can create and modify events"
+msgstr "M&aring; oprette og redigere"
+
+#: includes/calendar.php:668
+msgid "You do not have permission to do that: "
+msgstr "Du har ikke rettigheder til denne handling: "
+
+#: includes/calendar.php:676
+msgid "Error"
+msgstr "Fejl"
+
+#: includes/calendar.php:678
+msgid "Backtrace"
+msgstr "Backtrace"
+
+#: includes/calendar.php:698
+msgid "Invalid action"
+msgstr "Ugylding handling"
+
+#: includes/calendar_delete.php:29
+msgid "No calendar selected."
+msgstr "Ingen kalender valgt."
+
+#: includes/calendar_delete.php:45 includes/category_delete.php:49
+#: includes/event_delete.php:45 includes/user_delete.php:50
+msgid "Confirm you want to delete:"
+msgstr "Bekr&aelig;ft sletning:"
+
+#: includes/calendar_delete.php:47 includes/category_delete.php:51
+#: includes/event_delete.php:47 includes/user_delete.php:52
+msgid "Confirm"
+msgstr "Bekr&aelig;ft"
+
+#: includes/calendar_delete.php:50 includes/category_delete.php:54
+#: includes/event_delete.php:50 includes/user_delete.php:55
+msgid "Deny"
+msgstr "N&aelig;gt"
+
+#: includes/category_delete.php:29
+msgid "No category selected."
+msgstr "Ingen kategori valgt."
+
+#: includes/category_delete.php:62
+msgid "You do not have permission to delete category: "
+msgstr "Du har ikke rettigheder til at slette kategorien: "
+
+#: includes/category_delete.php:67
+msgid "Removed category: "
+msgstr "Slettet kategori: "
+
+#: includes/category_delete.php:70
+msgid "Could not remove category: "
+msgstr "Kunne ikke slette kategori: "
+
+#: includes/category_form.php:27
+msgid "Category Form"
+msgstr "Kategori Formular"
+
+#: includes/category_submit.php:32
+msgid "You do not have permission to add categories to all calendars."
+msgstr "Du har ikke rettigheder til at tilf&oslash;je kategorier til alle kalendre."
+
+#: includes/category_submit.php:36
+msgid "You do not have permission to add categories to this calendar."
+msgstr "Du har ikke rettigheder til at tilf&oslash;je kategoier til denne kalender."
+
+#: includes/category_submit.php:49
+msgid "Modified category: "
+msgstr "&Aelig;ndret kategori: "
+
+#: includes/category_submit.php:52
+msgid "Created category: "
+msgstr "Oprettet kategori: "
+
+#: includes/category_submit.php:55
+msgid "Error submitting category."
+msgstr "Fejl ved gem kategori."
+
+#: includes/create_calendar.php:27 includes/options_submit.php:27
+#: includes/user_create.php:27 includes/user_permissions_submit.php:27
+msgid "Permission denied"
+msgstr "Adgang n&aelig;gtet"
+
+#: includes/create_calendar.php:52
+msgid "Calendar created."
+msgstr "Kalender oprettet."
+
+#: includes/display_day.php:43
+msgid "Title"
+msgstr "Titel"
+
+#: includes/display_day.php:44
+msgid "Time"
+msgstr "Tid"
+
+#: includes/display_day.php:45 includes/event_form.php:31
+#: includes/search.php:80
+msgid "Description"
+msgstr "Beskrivelse"
+
+#: includes/display_day.php:56
+msgid "Delete Selected"
+msgstr "Slet Valgte"
+
+#: includes/display_day.php:104
+msgid "No events on this day."
+msgstr "Ingen bookinger p&aring; denne dag."
+
+#: includes/display_event.php:41
+msgid "Invalid arguments."
+msgstr "Ugyldigt argument."
+
+#: includes/display_event.php:53 includes/display_event.php:116
+msgid "You do not have permission to read this event."
+msgstr "Du har ikke rettigheder til at l&aelig;se denne booking."
+
+#: includes/display_event.php:68
+msgid "at"
+msgstr "-"
+
+#: includes/display_event.php:70 includes/event_form.php:33
+msgid "When"
+msgstr "Hvorn&aring;r"
+
+#: includes/display_event.php:85
+msgid "Previous Occurrence"
+msgstr "Tidligere Forekomster"
+
+#: includes/display_event.php:90
+msgid "Next Occurrence"
+msgstr "N&aelig;ste Forekomst"
+
+#: includes/display_event.php:94
+msgid "View All Occurrences"
+msgstr "Vis Alle Forekomster"
+
+#: includes/display_event.php:140
+msgid " at "
+msgstr " - "
+
+#: includes/display_month.php:68
+msgid "last year"
+msgstr "foreg&aring;ende &aring;r"
+
+#: includes/display_month.php:70
+msgid "last month"
+msgstr "foreg&aring;ende m&aring;ned"
+
+#: includes/display_month.php:84
+msgid "next month"
+msgstr "n&aelig;ste m&aring;ned"
+
+#: includes/display_month.php:86
+msgid "next year"
+msgstr "n&aelig;ste &aring;r"
+
+#: includes/event_delete.php:29
+msgid "No event selected."
+msgstr "Ingen handling valgt."
+
+#: includes/event_form.php:27
+msgid "Event Form"
+msgstr "Booking Formular"
+
+#: includes/event_form.php:28 includes/globals.php:79 includes/search.php:78
+msgid "Subject"
+msgstr "Emne"
+
+#: includes/event_form.php:35 includes/search.php:107
+msgid "From"
+msgstr "Fra"
+
+#: includes/event_form.php:36 includes/search.php:116
+msgid "To"
+msgstr "Til"
+
+#: includes/event_form.php:38
+msgid "Time Type"
+msgstr "Tidstype"
+
+#: includes/event_form.php:39 includes/globals.php:63
+msgid "Normal"
+msgstr "Normal"
+
+#: includes/event_form.php:40 includes/globals.php:64
+msgid "Full Day"
+msgstr "Hele Dagen"
+
+#: includes/event_form.php:41 includes/globals.php:65
+msgid "To Be Announced"
+msgstr "Ikke oplyst endnu"
+
+#: includes/event_form.php:42 includes/event_form.php:94
+msgid "None"
+msgstr "Ingen"
+
+#: includes/event_form.php:48
+msgid "Repeats"
+msgstr "Gentagelser"
+
+#: includes/event_form.php:50
+msgid "Never"
+msgstr "Aldrig"
+
+#: includes/event_form.php:52
+msgid "Daily"
+msgstr "Daglig"
+
+#: includes/event_form.php:54 includes/globals.php:67
+msgid "Weekly"
+msgstr "Ugentlig"
+
+#: includes/event_form.php:56 includes/globals.php:68
+msgid "Monthly"
+msgstr "M&aring;nedlig"
+
+#: includes/event_form.php:58 includes/globals.php:69
+msgid "Yearly"
+msgstr "&Aring;rlig"
+
+#: includes/event_form.php:60 includes/event_form.php:66
+#: includes/event_form.php:73 includes/event_form.php:80
+msgid "Every"
+msgstr "Hver"
+
+#: includes/event_form.php:61
+msgid "Repeat every how many days?"
+msgstr "Gentag med dages mellemrum?"
+
+#: includes/event_form.php:64 includes/event_form.php:71
+#: includes/event_form.php:78 includes/event_form.php:85
+msgid "Until"
+msgstr "Indtil"
+
+#: includes/event_form.php:67
+msgid "Repeat every how many weeks?"
+msgstr "Gentag med hvor mange ugers mellemrum?"
+
+#: includes/event_form.php:74
+msgid "Repeat every how many months?"
+msgstr "Gentag med hvor mange m&aring;neders mellemrum?"
+
+#: includes/event_form.php:81
+msgid "Repeat every how many years?"
+msgstr "Gentag med hvor mange &aring;rs mellemrum?"
+
+#: includes/event_form.php:91
+msgid "Read-only"
+msgstr "Skrivebeskyttet"
+
+#: includes/event_form.php:93
+msgid "Category"
+msgstr "Kategori"
+
+#: includes/event_submit.php:63
+msgid "Unrecognized Time Type."
+msgstr "Ukendt tidstype."
+
+#: includes/event_submit.php:67
+msgid "You do not have permission to write to this calendar."
+msgstr "Du har ikke skriveadgang til denne kalender."
+
+#: includes/event_submit.php:98
+msgid "Required field \"every-day\" is not set."
+msgstr "P&aring;kr&aring;vet felt \"hver-dag\" er ikke udfyldt."
+
+#: includes/event_submit.php:101
+msgid "every-day must be greater than 1"
+msgstr "hver-dag skal v&aelig;re st&oslash;rre end 1"
+
+#: includes/event_submit.php:118
+msgid "Required field \"every-week\" is not set."
+msgstr "P&aring;kr&aring;vet felt \"hver-uge\" er ikke udfyldt."
+
+#: includes/event_submit.php:120
+msgid "every-week must be greater than 1"
+msgstr "hver-uge skal v&aelig;re st&oslash;rre end 1"
+
+#: includes/event_submit.php:138
+msgid "Required field \"every-month\" is not set."
+msgstr "P&aring;kr&aelig;vet felt \"hver-m&aring;ned\" er ikke udfyldt."
+
+#: includes/event_submit.php:140 includes/event_submit.php:160
+msgid "every-month must be greater than 1"
+msgstr "hver-m&aring;ned skal v&aelig;re st&oslash;rre end 1"
+
+#: includes/event_submit.php:158
+msgid "Required field \"every-year\" is not set."
+msgstr "P&aring;kr&aelig;vet felt \"hver-&aring;r\" er ikke udfyldt."
+
+#: includes/event_submit.php:177
+msgid "Invalid event type."
+msgstr "Ugyldig booking type."
+
+#: includes/event_submit.php:191
+msgid "Error submitting event."
+msgstr "Fejl ved gem handling."
+
+#: includes/form.php:98
+msgid "Cannot add a non-form element to a form."
+msgstr "Kan ikke tilf&oslash;je et ikke-formular element til en formular."
+
+#: includes/form.php:376 includes/form.php:440
+msgid "AM"
+msgstr "AM"
+
+#: includes/form.php:376 includes/form.php:440
+msgid "PM"
+msgstr "PM"
+
+#: includes/form.php:444
+msgid "Date:"
+msgstr "Dato:"
+
+#: includes/form.php:447
+msgid "Time:"
+msgstr "Tid:"
+
+#: includes/globals.php:23
+msgid "January"
+msgstr "Januar"
+
+#: includes/globals.php:24
+msgid "February"
+msgstr "Februar"
+
+#: includes/globals.php:25
+msgid "March"
+msgstr "Marts"
+
+#: includes/globals.php:26
+msgid "April"
+msgstr "April"
+
+#: includes/globals.php:27 includes/globals.php:52
+msgid "May"
+msgstr "Maj"
+
+#: includes/globals.php:28
+msgid "June"
+msgstr "Juni"
+
+#: includes/globals.php:29
+msgid "July"
+msgstr "Juli"
+
+#: includes/globals.php:30
+msgid "August"
+msgstr "August"
+
+#: includes/globals.php:31
+msgid "September"
+msgstr "Septemer"
+
+#: includes/globals.php:32
+msgid "October"
+msgstr "Oktober"
+
+#: includes/globals.php:33
+msgid "November"
+msgstr "November"
+
+#: includes/globals.php:34
+msgid "December"
+msgstr "December"
+
+#: includes/globals.php:38
+msgid "Sunday"
+msgstr "S&oslash;ndag"
+
+#: includes/globals.php:39
+msgid "Monday"
+msgstr "Mandag"
+
+#: includes/globals.php:40
+msgid "Tuesday"
+msgstr "Tirsdag"
+
+#: includes/globals.php:41
+msgid "Wednesday"
+msgstr "Onsdag"
+
+#: includes/globals.php:42
+msgid "Thursday"
+msgstr "Thorsdag"
+
+#: includes/globals.php:43
+msgid "Friday"
+msgstr "Fredag"
+
+#: includes/globals.php:48
+msgid "Jan"
+msgstr "Jan"
+
+#: includes/globals.php:49
+msgid "Feb"
+msgstr "Feb"
+
+#: includes/globals.php:50
+msgid "Mar"
+msgstr "Mar"
+
+#: includes/globals.php:51
+msgid "Apr"
+msgstr "Apr"
+
+#: includes/globals.php:53
+msgid "Jun"
+msgstr "Jun"
+
+#: includes/globals.php:54
+msgid "Jul"
+msgstr "Jul"
+
+#: includes/globals.php:55
+msgid "Aug"
+msgstr "Aug"
+
+#: includes/globals.php:56
+msgid "Sep"
+msgstr "Sep"
+
+#: includes/globals.php:57
+msgid "Oct"
+msgstr "Okt"
+
+#: includes/globals.php:58
+msgid "Nov"
+msgstr "Nov"
+
+#: includes/globals.php:59
+msgid "Dec"
+msgstr "Dec"
+
+#: includes/globals.php:66
+msgid "No Time"
+msgstr "Ikke angivet"
+
+#: includes/globals.php:78
+msgid "Start Date"
+msgstr "Start Dato"
+
+#: includes/globals.php:83
+msgid "Ascending"
+msgstr "Stigende"
+
+#: includes/globals.php:84
+msgid "Decending"
+msgstr "Faldende"
+
+#: includes/login.php:47
+msgid "Logged in."
+msgstr "Logget ind."
+
+#: includes/login.php:50
+msgid "Sorry, Invalid Login"
+msgstr "Ugyldigt login"
+
+#: includes/login.php:90
+msgid "You must have cookies enabled to login."
+msgstr "Du skal have sl&aring;et cookies til for at logge ind."
+
+#: includes/login.php:95
+msgid "Username"
+msgstr "Brugernavn"
+
+#: includes/logout.php:49
+msgid "Loggin out..."
+msgstr "Logger ud..."
+
+#: includes/options_submit.php:40
+msgid " was not set."
+msgstr " var ikke sat."
+
+#: includes/options_submit.php:47
+msgid "Updated options"
+msgstr "Opdaterede indstillinger"
+
+#: includes/phpccalendar.class.php:31
+msgid "(No title)"
+msgstr "(Ingen titel)"
+
+#: includes/phpcdatabase.class.php:78
+msgid "Error in get_occurrences_by_date_range"
+msgstr "Fejl ved get_occurrences_by_date_range"
+
+#: includes/phpcdatabase.class.php:115
+msgid "Error in get_event_by_eid"
+msgstr "Fejl ved get_event_by_eid"
+
+#: includes/phpcdatabase.class.php:119 includes/phpcdatabase.class.php:204
+msgid "Event doesn't exist"
+msgstr "Booking eksisterer ikke"
+
+#: includes/phpcdatabase.class.php:135
+msgid "Error in get_category"
+msgstr "Fejl ved get_category"
+
+#: includes/phpcdatabase.class.php:138
+msgid "Category does not exist"
+msgstr "Kategori eksisterer ikke"
+
+#: includes/phpcdatabase.class.php:160
+msgid "Error in get_categories"
+msgstr "Fejl ved get_categories"
+
+#: includes/phpcdatabase.class.php:200
+msgid "Error in get_occurrence_by_oid"
+msgstr "Fejl ved get_occurrence_by_oid"
+
+#: includes/phpcdatabase.class.php:238
+msgid "Error in get_occurrences_by_eid"
+msgstr "Fejl ved get_occurrences_by_eid"
+
+#: includes/phpcdatabase.class.php:255 includes/phpcdatabase.class.php:271
+msgid "Error while removing an event."
+msgstr "Fejl under sletning af booking."
+
+#: includes/phpcdatabase.class.php:286 includes/phpcdatabase.class.php:317
+msgid "Error while removing a calendar"
+msgstr "Fejl under sletning af kalender"
+
+#: includes/phpcdatabase.class.php:289
+msgid "Error while calendar config"
+msgstr "Fejl under kalenderops&aelig;tning"
+
+#: includes/phpcdatabase.class.php:302
+msgid "Error while removing category."
+msgstr "Fejl under sletning af kategori."
+
+#: includes/phpcdatabase.class.php:322
+msgid "Error while removing "
+msgstr "Fejl under sletning "
+
+#: includes/phpcdatabase.class.php:340
+msgid "Could not read configuration"
+msgstr "Kunne ikke l&aelig;se konfiguration"
+
+#: includes/phpcdatabase.class.php:364
+msgid "Could not read permissions."
+msgstr "Kunne ikke l&aelig;se rettigheder."
+
+#: includes/phpcdatabase.class.php:379 includes/phpcdatabase.class.php:398
+msgid "Could not get calendars."
+msgstr "Kunne ikke hente kalendre."
+
+#: includes/phpcdatabase.class.php:409 includes/phpcdatabase.class.php:431
+msgid "Could not get user."
+msgstr "Kunne ikke hente bruger."
+
+#: includes/phpcdatabase.class.php:447 includes/phpcdatabase.class.php:463
+msgid "Error getting user."
+msgstr "Fejl under indl&aelig;sning af bruger."
+
+#: includes/phpcdatabase.class.php:479
+msgid "Error creating user."
+msgstr "Fejl ved oprettelse af bruger."
+
+#: includes/phpcdatabase.class.php:488 includes/phpcdatabase.class.php:511
+msgid "Error reading options"
+msgstr "Fejl ved l&aelig;sning af indstillinger"
+
+#: includes/phpcdatabase.class.php:500
+msgid "Error creating options"
+msgstr "Fejl ved oprettlese af indstillinger"
+
+#: includes/phpcdatabase.class.php:529 includes/phpcdatabase.class.php:549
+msgid "Error creating event."
+msgstr "Fejl ved oprettelse af booking."
+
+#: includes/phpcdatabase.class.php:566
+msgid "Error modifying event."
+msgstr "Fejl ved &aelig;ndring af booking."
+
+#: includes/phpcdatabase.class.php:578
+msgid "Error creating category."
+msgstr "Fejl ved oprettelse af kategori."
+
+#: includes/phpcdatabase.class.php:594
+msgid "Error modifying category."
+msgstr "Fejl ved &aelig;ndring af kategori."
+
+#: includes/phpcdatabase.class.php:635
+msgid "Error during searching"
+msgstr "Fejl under s&oslash;gning"
+
+#: includes/phpcdatabase.class.php:661
+msgid "Error updating user permissions."
+msgstr "Fejl ved opdatering af brugerrettigheder."
+
+#: includes/phpcdatabase.class.php:670
+msgid "SQL query"
+msgstr "SQL foresp&oslash;rgsel"
+
+#: includes/phpcevent.class.php:37 includes/phpcoccurrence.class.php:50
+msgid "anonymous"
+msgstr "anonym"
+
+#: includes/phpcevent.class.php:39 includes/phpcoccurrence.class.php:52
+msgid "unknown"
+msgstr "ukendt"
+
+#: includes/phpcevent.class.php:54 includes/phpcoccurrence.class.php:80
+msgid "(No subject)"
+msgstr "(Intet emne)"
+
+#: includes/phpcoccurrence.class.php:97 includes/phpcoccurrence.class.php:116
+msgid "FULL DAY"
+msgstr "HELE DAGEN"
+
+#: includes/phpcoccurrence.class.php:99 includes/phpcoccurrence.class.php:118
+msgid "TBA"
+msgstr "TBA"
+
+#: includes/phpcoccurrence.class.php:114
+msgid "to"
+msgstr "til"
+
+#: includes/search.php:34
+msgid "Invalid sort option"
+msgstr "Ugyldig sorteringsindstilling"
+
+#: includes/search.php:40
+msgid "Invalid order option"
+msgstr "Ugyldig grupperingsindstilling"
+
+#: includes/search.php:71
+msgid "No events matched your search criteria."
+msgstr "Ingen bookinger svarede til dine s&oslash;gekriterier."
+
+#: includes/search.php:75
+msgid "Search Results"
+msgstr "S&oslash;geresultater"
+
+#: includes/search.php:79
+msgid "Date Time"
+msgstr "Dato Tid"
+
+#: includes/search.php:101
+msgid "Phrase"
+msgstr "S&aelig;tning"
+
+#: includes/search.php:125
+msgid "Sort By"
+msgstr "Sorter efter"
+
+#: includes/search.php:130
+msgid "Order"
+msgstr "Grupper"
+
+#: includes/setup.php:47
+msgid "You must remove the install directory."
+msgstr "Du skal fjerne installationsmappen"
+
+#: includes/setup.php:95
+msgid "Invalid year"
+msgstr "Ugyldigt &aring;r"
+
+#: includes/user_create.php:31
+msgid "You must specify a user name"
+msgstr "Du skal angive et brugernavn"
+
+#: includes/user_create.php:35
+msgid "You must specify a password"
+msgstr "Du skal angive et kodeord"
+
+#: includes/user_create.php:40
+msgid "Your passwords did not match"
+msgstr "Dine kodeord var ikke ens"
+
+#: includes/user_create.php:54
+msgid "User already exists."
+msgstr "Bruger eksisterer allerede"
+
+#: includes/user_create.php:59
+msgid "Added user."
+msgstr "Tilf&oslash;j bruger."
+
+#: includes/user_delete.php:29
+msgid "You must be an admin to delete events."
+msgstr "Du skal v&aelig;re administrator for at slette bookringer."
+
+#: includes/user_delete.php:34
+msgid "No user selected."
+msgstr "Ingen bruger valgt."
+
+#: includes/user_permissions_submit.php:31
+msgid "No users"
+msgstr "Ingen brugere"
+
+#: includes/user_permissions_submit.php:59
+msgid "No changes to make."
+msgstr "Ingen &aelig;ndringer."
+
+#: includes/user_permissions_submit.php:61
+msgid "Updated users:"
+msgstr "Opdaterede brugere:"
