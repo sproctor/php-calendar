@@ -40,6 +40,7 @@ function new_user_form()
 				tag('tfoot',
 					tag('tr',
 						tag('td', attributes('colspan="2"'),
+							create_hidden('phpc_token', $_SESSION['phpc_token']),
 							create_hidden('action', 'user_create'),
 							create_submit(_('Submit'))))),
 				tag('tbody',
@@ -99,6 +100,7 @@ function create_calendar_form()
 				tag('tfoot',
                                         tag('tr',
                                                 tag('td', attributes('colspan="2"'),
+							create_hidden('phpc_token', $_SESSION['phpc_token']),
 							create_hidden('action', 'create_calendar'),
 							create_submit(_('Submit'))))),
 				$tbody));

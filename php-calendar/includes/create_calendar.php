@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2010 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,11 @@ function create_calendar()
         if(!is_admin()) {
                 return tag('div', _('Permission denied'));
         }
+
+	if(empty($vars['phpc_token'])
+			|| $vars['phpc_token'] != $_SESSION['phpc_token']) {
+		return tag('div', _('Secret token mismatch. Possible request forgery attempt.'));
+	}
 
 	$cid = $phpcdb->create_calendar();
 

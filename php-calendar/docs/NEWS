@@ -6,6 +6,7 @@ NEWS
 	  at Qentinel
 	- Added Danish translation, thanks to Jesper Jensen
 	- Logout users after 30 minutes of inactivity
+	- Protect event and admin forms from CSRF attacks
 
 2.0-beta7 (19 May 2010):
 	- Added French translation

@@ -27,6 +27,11 @@ function user_create()
                 return tag('div', _('Permission denied'));
         }
 
+	if(empty($vars['phpc_token'])
+			|| $vars['phpc_token'] != $_SESSION['phpc_token']) {
+		return tag('div', _('Secret token mismatch. Possible request forgery attempt.'));
+	}
+
         if(empty($vars['user_name'])) {
                 return tag('div', _('You must specify a user name'));
         }
