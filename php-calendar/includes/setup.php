@@ -172,6 +172,10 @@ if($translate) {
                         setlocale(LC_ALL, 'nl_NL.utf8', 'nl.utf8', 'nl');
 			$phpc_datefmt = "j \%\s Y";
                         break;
+		case 'zh':
+			setlocale(LC_ALL, 'zh_CN.utf8', zh.utf8, 'zh');
+			$phpc_datefmt = "j \%\s Y";
+			break;
 		default:
 			display_error("Invalid language identifier.");
 	}
