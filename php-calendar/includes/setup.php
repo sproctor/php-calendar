@@ -173,7 +173,7 @@ if($translate) {
 			$phpc_datefmt = "j \%\s Y";
                         break;
 		case 'zh':
-			setlocale(LC_ALL, 'zh_CN.utf8', zh.utf8, 'zh');
+			setlocale(LC_ALL, 'zh_CN.utf8', 'zh.utf8', 'zh');
 			$phpc_datefmt = "j \%\s Y";
 			break;
 		default:

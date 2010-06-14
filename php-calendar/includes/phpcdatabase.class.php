@@ -72,7 +72,7 @@ class PhpcDatabase {
 			."WHERE `$sql_events`.`cid` = '$cid'\n"
 			."	AND `startdate` <= DATE('$to_date')\n"
 			."	AND `enddate` >= DATE('$from_date')\n"
-			."	ORDER BY `startdate`, `starttime`";
+			."	ORDER BY `startdate`, `starttime`, `oid`";
 
 		$result = $this->dbh->query($query)
 			or $this->db_error(_('Error in get_occurrences_by_date_range'),
@@ -232,7 +232,7 @@ class PhpcDatabase {
 			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
 			."WHERE `eid` = '$eid'\n"
-			."	ORDER BY `startdate`, `starttime`";
+			."	ORDER BY `startdate`, `starttime`, `oid`";
 
 		$result = $this->dbh->query($query)
 			or $this->db_error(_('Error in get_occurrences_by_eid'),
