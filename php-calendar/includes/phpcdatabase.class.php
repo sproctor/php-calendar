@@ -566,13 +566,14 @@ class PhpcDatabase {
 			."`subject`='$subject',\n"
 			."`description`='$description',\n"
 			."`readonly`=$fmt_readonly,\n"
-			."`catid`='$catid'\n"
+			.($catid !== false ? "`catid`='$catid'\n"
+				: "`catid`=NULL\n")
 			."WHERE eid='$eid'";
 
-		$sth = $this->dbh->query($query)
+		$this->dbh->query($query)
 			or $this->db_error(_('Error modifying event.'), $query);
 
-		return $sth->affected_rows > 0;
+		return $this->dbh->affected_rows > 0;
 	}
 
 	function create_category($cid, $name, $text_color, $bg_color)
@@ -601,7 +602,7 @@ class PhpcDatabase {
 			or $this->db_error(_('Error modifying category.'),
 					$query);
 
-		return $sth->affected_rows > 0;
+		return $this->dbh->affected_rows > 0;
 	}
 
 	function search($cid, $keywords, $start, $end, $sort, $order)
