@@ -231,7 +231,20 @@ function create_day($month, $day, $year, $days_events)
 	$html_events = tag('ul');
 	$html_day->add($html_events);
 
+	// Count the number of events
+	$count = 0;
 	foreach($results as $event) {
+		if($count == 8) {
+			$event_html = tag('li',
+					create_action_link_with_date(_("View Additional Events"),
+						'display_day', $year, $month,
+						$day,
+						array('class="phpc-date"')));
+			$html_events->add($event_html);
+			break;
+		}
+
+		$count++;
 		// TODO - make sure we have permission to read the event
 
 		$subject = $event->get_subject();
