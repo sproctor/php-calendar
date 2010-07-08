@@ -32,11 +32,11 @@ $default_calendar_id = 1;
  * if you move this file to a new location, modify $phpc_root_path to point
  * to the location where the support files for the callendar are located.
  */
-$phpc_root_path = dirname(__FILE__);
-$phpc_includes_path = "$phpc_root_path/includes";
-$phpc_config_path = $phpc_root_path;
+$phpc_includes_path = dirname(__FILE__);
+$phpc_root_path = dirname($phpc_includes_path);
+$phpc_config_file = "$phpc_root_path/config.php";
 $phpc_locale_path = "$phpc_root_path/locale";
-$phpc_script = $_SERVER['PHP_SELF'];
+$phpc_script = htmlentities($_SERVER['PHP_SELF']);
 
 if(!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
 	$phpc_protocol = "https";
