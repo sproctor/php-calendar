@@ -65,10 +65,16 @@ function display_month()
 function month_navbar($month, $year)
 {
 	$html = tag('div', attributes('class="phpc-month-nav"'));
+	$prev_month = $month - 1;
+	$prev_year = $year;
+	if($prev_month < 1) {
+		$prev_month += 12;
+		$prev_year--;
+	}
 	menu_item_append_with_date($html, _('last year'), 'display_month',
 			$year - 1, $month);
 	menu_item_append_with_date($html, _('last month'), 'display_month',
-			$year, $month - 1);
+			$prev_year, $prev_month);
 
 	for($i = 1; $i <= 12; $i++) {
 		if($i < $month)
@@ -81,8 +87,15 @@ function month_navbar($month, $year)
 		menu_item_append_with_date($html, short_month_name($i),
 				'display_month', $year, $i, false, $attribs);
 	}
+
+	$next_month = $month + 1;
+	$next_year = $year;
+	if($next_month > 12) {
+		$next_month -= 12;
+		$next_year++;
+	}
 	menu_item_append_with_date($html, _('next month'), 'display_month',
-			$year, $month + 1);
+			$next_year, $next_month);
 	menu_item_append_with_date($html, _('next year'), 'display_month',
 			$year + 1, $month);
 
