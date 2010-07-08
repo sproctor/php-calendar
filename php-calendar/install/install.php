@@ -84,7 +84,7 @@ function report_config()
 		touch config.php<br>
 		chmod 666 config.php
 		</code></p>
-		<p>or if you only have ftp access, upload a blank file named i'
+		<p>or if you only have ftp access, upload a blank file named '
 		.'config.php to your php-calendar directory then use the chmod '
 		.'command to change the permissions of config.php to 666.</p>
 		<input type="submit" value="Retry">';
