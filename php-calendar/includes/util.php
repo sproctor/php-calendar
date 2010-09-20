@@ -19,6 +19,22 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+require_once("$phpc_includes_path/lib_autolink.php");
+
+// called when some error happens
+function soft_error($message)
+{
+	throw new Exception($message);
+}
+
+class PermissionException extends Exception {
+}
+
+function permission_error($message)
+{
+	throw new PermissionException($message);
+}
+
 function minute_pad($minute)
 {
 	return sprintf('%02d', $minute);
@@ -86,6 +102,23 @@ function display_error($str)
 	echo "</ol>\n",
 	     "</body></html>\n";
 	exit;
+}
+
+// parses a description and adds the appropriate mark-up
+function parse_desc($text)
+{
+	// Don't allow tags and make the description HTML-safe
+        $text = htmlspecialchars($text, ENT_COMPAT, "UTF-8");
+
+        $text = nl2br($text);
+
+	// linkify urls
+	$text = autolink($text, 0);
+
+	// linkify emails
+	$text = autolink_email($text);
+
+	return $text;
 }
 
 ?>

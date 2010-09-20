@@ -1,6 +1,12 @@
 NEWS
 -----
 
+2.0-beta9:
+	- Fixes misconfigured default paths for embedded calendars
+	- Limits the month view to displaying 8 events per day.
+	- Fix translation of month and day names, thanks to Michał Osowiecki
+	- Bug Fixes
+
 2.0-beta8 (14 Jun 2010):
 	- Fixes SQL-injection and XSS errors discovered by Teemu Vesala
 	  at Qentinel

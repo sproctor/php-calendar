@@ -24,7 +24,6 @@ if ( !defined('IN_PHPC') ) {
 }
 
 require_once("$phpc_includes_path/html.php");
-require_once("$phpc_includes_path/lib_autolink.php");
 require_once("$phpc_includes_path/globals.php");
 
 $phpc_valid_actions = array('event_form', 'event_delete', 'display_month',
@@ -34,47 +33,6 @@ $phpc_valid_actions = array('event_form', 'event_delete', 'display_month',
 		'create_calendar', 'calendar_delete',
 		'user_delete', 'user_permissions_submit',
 		'category_form', 'category_submit', 'category_delete');
-
-// called when some error happens
-function soft_error($message)
-{
-	throw new Exception($message);
-}
-
-class PermissionException extends Exception {
-}
-
-function permission_error($message)
-{
-	throw new PermissionException($message);
-}
-
-// takes a number of the month, returns the name
-function month_name($month)
-{
-        global $month_names;
-
-	$month = ($month - 1) % 12 + 1;
-        return $month_names[$month];
-}
-
-//takes a day number of the week, returns a name (0 for the beginning)
-function day_name($day)
-{
-	global $day_names;
-
-	$day = $day % 7;
-
-        return $day_names[$day];
-}
-
-function short_month_name($month)
-{
-        global $short_month_names;
-
-	$month = ($month - 1) % 12 + 1;
-        return $short_month_names[$month];
-}
 
 // checks global variables to see if the user is logged in.
 function is_user()
@@ -272,23 +230,6 @@ function link_bar()
 					'Valid CSS2'),
 			']'));
 	return $html;
-}
-
-// parses a description and adds the appropriate mark-up
-function parse_desc($text)
-{
-	// Don't allow tags and make the description HTML-safe
-        $text = htmlspecialchars($text, ENT_COMPAT, "UTF-8");
-
-        $text = nl2br($text);
-
-	// linkify urls
-	$text = autolink($text, 0);
-
-	// linkify emails
-	$text = autolink_email($text);
-
-	return $text;
 }
 
 function day_of_week_start()
@@ -681,6 +622,33 @@ function do_action()
 	eval("\$action_output = $action();");
 
 	return $action_output;
+}
+
+// takes a number of the month, returns the name
+function month_name($month)
+{
+        global $month_names;
+
+	$month = ($month - 1) % 12 + 1;
+        return $month_names[$month];
+}
+
+//takes a day number of the week, returns a name (0 for the beginning)
+function day_name($day)
+{
+	global $day_names;
+
+	$day = $day % 7;
+
+        return $day_names[$day];
+}
+
+function short_month_name($month)
+{
+        global $short_month_names;
+
+	$month = ($month - 1) % 12 + 1;
+        return $short_month_names[$month];
 }
 
 ?>

@@ -23,6 +23,8 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+require_once("$phpc_includes_path/calendar.php");
+
 // Full display for a month
 function display_month()
 {

@@ -55,12 +55,6 @@ if(defined('PHPC_DEBUG')) {
 	ini_set('html_errors', 1);
 }
 
-require_once("$phpc_includes_path/calendar.php");
-
-// Make the database connection.
-require_once("$phpc_includes_path/phpcdatabase.class.php");
-$phpcdb = new PhpcDatabase;
-
 // Create vars
 foreach($_GET as $key => $value) {
 	if(!get_magic_quotes_gpc())
@@ -188,6 +182,10 @@ if($translate) {
 } else {
 	$lang = 'en';
 }
+
+// Make the database connection.
+require_once("$phpc_includes_path/phpcdatabase.class.php");
+$phpcdb = new PhpcDatabase;
 
 session_start();
 
