@@ -161,13 +161,14 @@ function create_month($month, $year)
 // creates a display for a particular week to be embedded in a month table
 function create_week($week_of_month, $month, $year, $days_events)
 {
-	$week_of_year = week_of_year($month, 1, $year) + $week_of_month - 1;
+	$start_day = 1 + ($week_of_month - 1) * 7
+		- day_of_week($month, 1, $year);
+	$week_of_year = week_of_year($month, $start_day, $year);
 
 	$week_html = tag('tr', tag('th', $week_of_year));
 	
 	for($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
-		$day = ($week_of_month - 1) * 7 - day_of_week($month, 1, $year)
-			+ $day_of_week + 1;
+		$day = $start_day + $day_of_week;
 		$week_html->add(create_day($month, $day, $year, $days_events));
 	}
 

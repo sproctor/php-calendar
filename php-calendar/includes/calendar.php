@@ -236,23 +236,7 @@ function day_of_week_start()
 {
 	global $phpcid;
 
-	switch(get_config($phpcid, 'week_start')) {
-		// start Monday
-		case 0:
-		case 1:
-			return 1;
-
-			// Start Sunday
-		case 2:
-			return 0;
-
-			// Start Saturday
-		case 3:
-			return 6;
-
-		default:
-			soft_error("Unsupported start day.");
-	}
+	return get_config($phpcid, 'week_start');
 }
 
 // returns the number of days in the week before the 
@@ -298,20 +282,31 @@ function week_of_year($month, $day, $year)
 
 	$timestamp = mktime(0, 0, 0, $month, $day, $year);
 
-	// week_start = 0 uses ISO 8601
-	if(get_config($phpcid, 'week_start') == 0)
-		return date('W', $timestamp);
+	// week_start = 1 uses ISO 8601 and contains the Jan 4th,
+	//   Most other places the first week contains Jan 1st
+	//   There are a few outliers that start weeks on Monday and use
+	//   Jan 1st for the first week. We'll ignore them for now.
+	if(get_config($phpcid, 'week_start') == 1)
+		$year_contains = 4;
+	else
+		$year_contains = 1;
 	
-	// For calendars where the first partial week is always the first week
+	// $day is the first day of the week relative to the current month,
+	// so it can be negative. If it's in the previous year, we want to use
+	// that negative value, unless the week is also in the previous year,
+	// then we want to switch to using that year.
+	if($day < 1 && $month == 1 && $day > $year_contains - 7) {
+		$day_of_year = $day - 1;
+	} else {
+		$day_of_year = date('z', $timestamp);
+		$year = date('Y', $timestamp);
+	}
 
-	$day_of_year = date('z', $timestamp);
-
-	/* Days in the week before Jan 1. If you want weeks to start on Monday
-	 * make this (x + 6) % 7 */
-	$days_before_year = day_of_week(1, 1, $year);
+	/* Days in the week before Jan 1. */
+	$days_before_year = day_of_week(1, $year_contains, $year);
 
 	// Days left in the week
-	$days_left = 7 - day_of_week_ts($timestamp);
+	$days_left = 8 - day_of_week_ts($timestamp) - $year_contains;
 
 	/* find the number of weeks by adding the days in the week before
 	 * the start of the year, days up to $day, and the days left in
@@ -554,10 +549,9 @@ function get_config_options()
 	return array( 
 			array('week_start', _('Week Start'), PHPC_DROPDOWN,
 				array(
-					_('Monday (non-UK)'),
-					_('Monday (UK)'),
-					_('Sunday (USA)'),
-					_('Saturday')
+					0 => _('Sunday'),
+					1 => _('Monday'),
+					6 => _('Saturday')
 				     )),
 			array('hours_24', _('24 Hour Time'), PHPC_CHECK),
 			array('calendar_title', _('Calendar Title'), PHPC_TEXT),

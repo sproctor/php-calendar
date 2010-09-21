@@ -183,6 +183,8 @@ if($translate) {
 	$lang = 'en';
 }
 
+require_once("$phpc_includes_path/calendar.php");
+
 // Make the database connection.
 require_once("$phpc_includes_path/phpcdatabase.class.php");
 $phpcdb = new PhpcDatabase;
