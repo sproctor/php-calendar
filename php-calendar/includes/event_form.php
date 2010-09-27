@@ -106,7 +106,7 @@ function event_form() {
 	$form->add_hidden('phpc_token', $_SESSION['phpc_token']);
 
 	$form->add_hidden('action', 'event_submit');
-	$form->add_part(new FormSubmitButton("Submit Event"));
+	$form->add_part(new FormSubmitButton(_("Submit Event")));
 
 	if(isset($vars['eid'])) {
 		$form->add_hidden('eid', $vars['eid']);

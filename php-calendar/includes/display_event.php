@@ -54,7 +54,7 @@ function display_event_by_oid($oid)
 	}
 
 	$event_header = tag('div', attributes('class="phpc-event-header"'),
-			tag('div', 'by ', tag('cite', $event->get_username())));
+			tag('div', _('by').' ', tag('cite', $event->get_username())));
 	// Add modify/delete links if this user has access to this event.
         if(can_modify_event($event)) {
 		$event_header->add(tag('div',
@@ -117,7 +117,7 @@ function display_event_by_eid($eid)
 	}
 
 	$event_header = tag('div', attributes('class="phpc-event-header"'),
-			tag('div', 'by ', tag('cite', $event->get_username())));
+			tag('div', _('by').' ', tag('cite', $event->get_username())));
 	// Add modify/delete links if this user has access to this event.
         if(can_modify_event($event)) {
 		$event_header->add(tag('div',
