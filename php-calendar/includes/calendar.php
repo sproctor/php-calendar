@@ -286,10 +286,18 @@ function week_of_year($month, $day, $year)
 	//   Most other places the first week contains Jan 1st
 	//   There are a few outliers that start weeks on Monday and use
 	//   Jan 1st for the first week. We'll ignore them for now.
-	if(get_config($phpcid, 'week_start') == 1)
+	if(get_config($phpcid, 'week_start') == 1) {
 		$year_contains = 4;
-	else
+		// if the week is in December and contains Jan 4th, it's a week
+		// from next year
+		if($month == 12 && $day - 24 >= $year_contains) {
+			$year++;
+			$month = 1;
+			$day -= 31;
+		}
+	} else {
 		$year_contains = 1;
+	}
 	
 	// $day is the first day of the week relative to the current month,
 	// so it can be negative. If it's in the previous year, we want to use
