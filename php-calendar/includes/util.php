@@ -70,7 +70,7 @@ function asbool($val)
 
 function format_time_string($hour, $minute, $hour24)
 {
-	if($hour24) {
+	if(!$hour24) {
 		if($hour >= 12) {
 			$hour -= 12;
 			$pm = ' PM';

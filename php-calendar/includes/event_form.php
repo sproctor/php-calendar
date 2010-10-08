@@ -24,6 +24,7 @@ require_once("$phpc_includes_path/form.php");
 function event_form() {
 	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpcid;
 
+	$hour24 = get_config($phpcid, 'hours_24');
         $form = new Form($phpc_script, _('Event Form'));
         $form->add_part(new FormFreeQuestion('subject', _('Subject'),
 				false, 32, true));
@@ -32,8 +33,9 @@ function event_form() {
 
 	$when_group = new FormGroup(_('When'));
 	$when_group->add_part(new FormDateTimeQuestion('start',
-				_('From')));
-	$when_group->add_part(new FormDateTimeQuestion('end', _('To')));
+				_('From'), $hour24));
+	$when_group->add_part(new FormDateTimeQuestion('end', _('To'),
+				$hour24));
 
 	$time_type = new FormDropDownQuestion('time-type', _('Time Type'));
 	$time_type->add_option('normal', _('Normal'));
@@ -110,7 +112,6 @@ function event_form() {
 
 	if(isset($vars['eid'])) {
 		$form->add_hidden('eid', $vars['eid']);
-		// FIXME - change to work with 24-hour time
 		$events = $phpcdb->get_occurrences_by_eid($vars['eid']);
 		// FIXME make some way to add multiple occurrences,
 		//  and then pre-fill that with the existing occurrences
@@ -140,12 +141,10 @@ function event_form() {
 				'end-month' => $month,
 				'start-day' => $day,
 				'end-day' => $day,
-				'start-hour' => 5,
+				'start-hour' => 17,
 				'start-minute' => 0,
-				'start-meridiem' => 'pm',
-				'end-hour' => 6,
+				'end-hour' => 18,
 				'end-minute' => 0,
-				'end-meridiem' => 'pm',
 				);
 	}
         return $form->get_html($defaults);

@@ -383,18 +383,22 @@ class FormTimeQuestion extends FormAtomicQuestion {
 /* this class is for date input
  */
 class FormDateTimeQuestion extends FormAtomicQuestion {
+	var $hour24;
 
-        function FormDateTimeQuestion($qid, $subject, $description = false,
-                        $required = false) {
+        function FormDateTimeQuestion($qid, $subject, $hour24,
+			$description = false, $required = false) {
 		parent::FormAtomicQuestion();
                 $this->qid = $qid;
                 $this->subject = $subject;
                 $this->description = $description;
                 $this->required = $required;
 		$this->class .= " form-date-time-question";
+		$this->hour24 = $hour24;
         }
 
         function get_specific_html($parent, $defaults = array()) {
+
+		// Year Input
 		if(isset($defaults["{$this->qid}-year"])) {
 			$year = $defaults["{$this->qid}-year"];
 		} else {
@@ -402,6 +406,8 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
 		}
 		$year_input = create_select_range("{$this->qid}-year", 1970,
 				$year + 20, 1, $year);
+
+		// Month Input
 		if(isset($defaults["{$this->qid}-month"])) {
 			$month = $defaults["{$this->qid}-month"];
 		} else {
@@ -409,6 +415,8 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
 		}
 		$month_input = create_select_range("{$this->qid}-month", 1, 12,
 				1, $month, "month_name");
+
+		// Day Input
 		if(isset($defaults["{$this->qid}-day"])) {
 			$day = $defaults["{$this->qid}-day"];
 		} else {
@@ -416,14 +424,27 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
 		}
 		$day_input = create_select_range("{$this->qid}-day", 1, 31, 1,
 				$day);
+
+		// Hour Input
 		if(isset($defaults["{$this->qid}-hour"])) {
-			$hour = $defaults["{$this->qid}-hour"];
+			if($this->hour24)
+				$hour = $defaults["{$this->qid}-hour"];
+			else
+				$hour = date("g", strtotime($defaults["{$this->qid}-hour"] . ':00'));
 		} else {
-			$hour = date("g");
-			// 24-hour $hour = date("G");
+			if($this->hour24)
+				$hour = date("G");
+			else
+				$hour = date("g");
 		}
-		$hour_input = create_select_range("{$this->qid}-hour", 1, 24, 1,
-				$hour);
+
+		if($this->hour24)
+			$hour_input = create_select_range("{$this->qid}-hour",
+					1, 24, 1, $hour);
+		else
+			$hour_input = create_select_range("{$this->qid}-hour",
+					1, 12, 1, $hour);
+
 		if(isset($defaults["{$this->qid}-minute"])) {
 			$minute = $defaults["{$this->qid}-minute"];
 		} else {
@@ -431,21 +452,26 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
 		}
 		$minute_input = create_select_range("{$this->qid}-minute", 0,
 				59, 1, $minute);
-		if(isset($defaults["{$this->qid}-meridiem"])) {
-			$meridiem = $defaults["{$this->qid}-meridiem"];
-		} else {
-			$meridiem = date("a");
+
+		$time_tag = tag('span', attrs("id=\"{$this->qid}-time\""),
+				_("Time") . " ", $hour_input, $minute_input);
+
+		if(!$this->hour24) {
+			if(isset($defaults["{$this->qid}-hour"])) {
+				$meridiem = date("a", strtotime($defaults["{$this->qid}-hour"] . ':00'));
+			} else {
+				$meridiem = date("a");
+			}
+			$meridiem_input = create_select("{$this->qid}-meridiem",
+					array("am" => _("AM"), "pm" => _("PM")),
+					$meridiem);
+			$time_tag->add($meridiem_input);
 		}
-		$meridiem_input = create_select("{$this->qid}-meridiem",
-				array("am" => _("AM"), "pm" => _("PM")),
-				$meridiem);
 
                 return array(tag('span', attrs("id=\"{$this->qid}-date\""),
 					_("Date") . " ", $year_input,
 					$month_input, $day_input), " ",
-				tag('span', attrs("id=\"{$this->qid}-time\""),
-					_("Time") . " ", $hour_input,
-					$minute_input, $meridiem_input));
+					$time_tag);
 	}
 }
 
