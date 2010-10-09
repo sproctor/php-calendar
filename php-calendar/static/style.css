@@ -84,17 +84,14 @@ body {
 }
 
 .php-calendar table {
-  border: 2px solid black;
   border-collapse: collapse;
   color: black;
-  background-color: #CCC;
   margin-left: auto;
   margin-right: auto;
 }
 
 .php-calendar td, .php-calendar th {
-  border: 1px solid black;
-  padding: .25em;
+  border: 1px solid #B8B8B8 ;
 }
 
 .phpc-container {
@@ -118,6 +115,7 @@ div.phpc-main {
 
 .phpc-main div {
   padding-left: .5em;
+  padding-right: .5em;
 }
 
 .phpc-event {
@@ -150,8 +148,6 @@ div.phpc-main {
 }
 
 .php-calendar thead {
-  border: 1px solid black;
-  background-color: silver;
   color: black;
 }
 
@@ -165,7 +161,6 @@ div.phpc-main {
 
 .phpc-calendar td, .phpc-calendar th {
   border-collapse: collapse;
-  border: 2px solid black;
 }
 
 .phpc-calendar td {
@@ -174,19 +169,23 @@ div.phpc-main {
 }
 
 td.phpc-past {
-  background-color: #AAA;
+  background-color: #DDD;
+  padding: 0;
 }
 
 td.phpc-future {
-  background-color: #CCC;
+  background-color: white;
+  padding: 0;
 }
 
 td.phpc-present {
-  background-color: white;
+  background-color: #FFCC33;
+  padding: 0;
 }
 
 td.phpc-none {
-  background-color: gray;
+  background-color: #AAA;
+  padding: 0;
 }
 
 .phpc-main ul {
@@ -238,6 +237,7 @@ td.phpc-none {
   max-height: 250px;
   overflow: hidden;
   padding: 5px;
+  z-index:1;
 }
 
 .phpc-summary-head {
@@ -246,6 +246,11 @@ td.phpc-none {
 
 .form table {
   width: 100%;
+}
+
+div.phpc-date  {
+background-color: #F7F7F7;
+opacity: 0.8;
 }
 
 /* \*/ /*/

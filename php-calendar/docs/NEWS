@@ -4,7 +4,8 @@ NEWS
 2.0-beta9:
 	- Fixes misconfigured default paths for embedded calendars
 	- Limits the month view to displaying 8 events per day.
-	- Fix translation of month and day names, thanks to Michał Osowiecki
+	- Fix translation of month and day names, thanks to Michał Osowiecki.
+	- Event form follows 12/24 hr preference, thanks to Michał Osowiecki.
 	- Bug Fixes
 
 2.0-beta8 (14 Jun 2010):

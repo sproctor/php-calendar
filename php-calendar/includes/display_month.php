@@ -216,22 +216,17 @@ function create_day($month, $day, $year, $days_events)
 		}
 	}
 
+	$date_tag = tag('div', attributes('class="phpc-date"'));
 	if(can_write($phpcid)) {
-		$html_day = tag('td', attributes('valign="top"',
-					"class=\"phpc-$current_era\""),
-				create_action_link_with_date('+',
+		$date_tag->add(create_action_link_with_date('+',
 					'event_form', $year, $month,
-					$day, array('class="phpc-add"')),
-				create_action_link_with_date($day,
-					'display_day', $year, $month, $day,
-					array('class="phpc-date"')));
-	} else {
-		$html_day = tag('td', attributes('valign="top"',
-					"class=\"phpc-$current_era\""),
-				create_action_link_with_date($day,
-					'display_day', $year, $month, $day,
-					array('class="phpc-date"')));
+					$day, array('class="phpc-add"')));
 	}
+	$date_tag->add(create_action_link_with_date($day, 'display_day', $year,
+				$month, $day));
+
+	$html_day = tag('td', attributes('valign="top"',
+				"class=\"phpc-$current_era\""), $date_tag);
 
 	$stamp = mktime(0, 0, 0, $month, $day, $year);
 
