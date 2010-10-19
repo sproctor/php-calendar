@@ -135,6 +135,10 @@ if($translate) {
 	}
 
 	switch($lang) {
+		case 'bg':
+			setlocale(LC_ALL, 'bg_BG.utf8', 'bg.utf8', 'bg');
+			$phpc_datefmt = "j \%\s Y";
+			break;
 		case 'da':
 			setlocale(LC_ALL, 'da_DK.utf8', 'da.utf8', 'da');
 			$phpc_datefmt = "j \%\s Y";

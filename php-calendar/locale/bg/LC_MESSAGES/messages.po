@@ -1,0 +1,956 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Hristo Delchev <hristomail@gmail.com>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: Hristo Delchev <hristomail@gmail.com>\n"
+"POT-Creation-Date: 2010-09-13 09:36+0200\n"
+"PO-Revision-Date: 2010-10-19 17:12-0500\n"
+"Last-Translator: Sean Proctor <sproctor@gmail.com>\n"
+"Language-Team: BULGARIAN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: includes/admin.php:25
+#: includes/cadmin.php:27
+msgid "You must be logged in as an admin."
+msgstr "Трябва да си влезнал като администратор."
+
+#: includes/admin.php:39
+msgid "Create User"
+msgstr "Създай Потребител"
+
+#: includes/admin.php:44
+#: includes/admin.php:103
+#: includes/cadmin.php:82
+#: includes/cadmin.php:121
+#: includes/search.php:99
+msgid "Submit"
+msgstr "Изпрати"
+
+#: includes/admin.php:47
+#: includes/cadmin.php:124
+msgid "User Name"
+msgstr "Потребителско Име"
+
+#: includes/admin.php:50
+#: includes/login.php:98
+msgid "Password"
+msgstr "Парола"
+
+#: includes/admin.php:53
+msgid "Confirm Password"
+msgstr "Потвърди Парола"
+
+#: includes/admin.php:56
+msgid "Make Admin"
+msgstr "Направи Администратор"
+
+#: includes/admin.php:86
+#: includes/cadmin.php:60
+msgid "Unsupported config type"
+msgstr "Типа конфигурация не се поддържа"
+
+#: includes/admin.php:98
+msgid "Create Calendar"
+msgstr "Създай Календар"
+
+#: includes/admin.php:127
+msgid "Calendar List"
+msgstr "Календари"
+
+#: includes/admin.php:145
+msgid "User List"
+msgstr "Потребители"
+
+#: includes/cadmin.php:78
+msgid "Options"
+msgstr "Опции"
+
+#: includes/cadmin.php:117
+msgid "User Permissions"
+msgstr "Потребителски Права"
+
+#: includes/cadmin.php:125
+msgid "Read"
+msgstr "Четене"
+
+#: includes/cadmin.php:126
+msgid "Write"
+msgstr "Запис"
+
+#: includes/cadmin.php:127
+msgid "Can Create Read-Only"
+msgstr "Може да създава само за четене"
+
+#: includes/cadmin.php:128
+#: includes/display_day.php:82
+#: includes/display_event.php:61
+#: includes/display_event.php:124
+msgid "Modify"
+msgstr "Редактирай"
+
+#: includes/cadmin.php:129
+#: includes/calendar.php:559
+msgid "Admin"
+msgstr "Администратор"
+
+#: includes/cadmin.php:142
+msgid "No Name"
+msgstr "Без Име"
+
+#: includes/cadmin.php:152
+#: includes/display_event.php:63
+#: includes/display_event.php:126
+msgid "Delete"
+msgstr "Изтрий"
+
+#: includes/cadmin.php:163
+msgid "Calendar Categories"
+msgstr "Категории"
+
+#: includes/cadmin.php:166
+#: includes/category_form.php:28
+msgid "Name"
+msgstr "Име"
+
+#: includes/cadmin.php:167
+#: includes/category_form.php:31
+msgid "Text Color"
+msgstr "Цвят на текста"
+
+#: includes/cadmin.php:168
+#: includes/category_form.php:33
+msgid "Background Color"
+msgstr "Цвят на фона"
+
+#: includes/cadmin.php:173
+msgid "Create category"
+msgstr "Създай Категория"
+
+#: includes/calendar.php:528
+msgid "Add Event"
+msgstr "Добави Събитие"
+
+#: includes/calendar.php:532
+#: includes/search.php:95
+msgid "Search"
+msgstr "Търси"
+
+#: includes/calendar.php:536
+msgid "View Month"
+msgstr "Месечен Изглед"
+
+#: includes/calendar.php:541
+msgid "View date"
+msgstr "Виж датата"
+
+#: includes/calendar.php:545
+msgid "Log out"
+msgstr "Изход"
+
+#: includes/calendar.php:549
+#: includes/login.php:65
+#: includes/login.php:86
+msgid "Log in"
+msgstr "Вход"
+
+#: includes/calendar.php:555
+msgid "Calendar Admin"
+msgstr "Администриране"
+
+#: includes/calendar.php:628
+msgid "Week Start"
+msgstr "Първи ден от седмицата"
+
+#: includes/calendar.php:630
+msgid "Monday (non-UK)"
+msgstr "Понеделник (non-UK)"
+
+#: includes/calendar.php:631
+msgid "Monday (UK)"
+msgstr "Понеделник (UK)"
+
+#: includes/calendar.php:632
+msgid "Sunday (USA)"
+msgstr "Неделя (USA)"
+
+#: includes/calendar.php:633
+#: includes/globals.php:44
+msgid "Saturday"
+msgstr "Събота"
+
+#: includes/calendar.php:635
+msgid "24 Hour Time"
+msgstr "24-часово време"
+
+#: includes/calendar.php:636
+msgid "Calendar Title"
+msgstr "Заглавие на календара"
+
+#: includes/calendar.php:637
+msgid "Maximum Subject Length"
+msgstr "Максимална брой символи в темата"
+
+#: includes/calendar.php:638
+msgid "Public Permissions"
+msgstr "Неоторизиран Достъп"
+
+#: includes/calendar.php:640
+msgid "Cannot read nor write events"
+msgstr "Не може нито да чете, нито да създава събития"
+
+#: includes/calendar.php:641
+msgid "Can read but not write events"
+msgstr "Може да чете, но не може да записва събития"
+
+#: includes/calendar.php:642
+msgid "Can create but not modify events"
+msgstr "Може да създава, но не може да променя събития"
+
+#: includes/calendar.php:643
+msgid "Can create and modify events"
+msgstr "Може да създава и променя събития"
+
+#: includes/calendar.php:668
+msgid "You do not have permission to do that: "
+msgstr "Нямате необходимите права за да направите това"
+
+#: includes/calendar.php:676
+msgid "Error"
+msgstr "Грешка"
+
+#: includes/calendar.php:678
+msgid "Backtrace"
+msgstr "Backtrace"
+
+#: includes/calendar.php:698
+msgid "Invalid action"
+msgstr "Невалидно действие"
+
+#: includes/calendar_delete.php:29
+msgid "No calendar selected."
+msgstr "Няма избран календар"
+
+#: includes/calendar_delete.php:45
+#: includes/category_delete.php:49
+#: includes/event_delete.php:45
+#: includes/user_delete.php:50
+msgid "Confirm you want to delete:"
+msgstr "Потвръдете изтриването"
+
+#: includes/calendar_delete.php:47
+#: includes/category_delete.php:51
+#: includes/event_delete.php:47
+#: includes/user_delete.php:52
+msgid "Confirm"
+msgstr "Потвърди"
+
+#: includes/calendar_delete.php:50
+#: includes/category_delete.php:54
+#: includes/event_delete.php:50
+#: includes/user_delete.php:55
+msgid "Deny"
+msgstr "Отказ"
+
+#: includes/category_delete.php:29
+msgid "No category selected."
+msgstr "Няма избрана категория"
+
+#: includes/category_delete.php:62
+msgid "You do not have permission to delete category: "
+msgstr "Нямате права за да изтриете категорията"
+
+#: includes/category_delete.php:67
+msgid "Removed category: "
+msgstr "Категорията Изтрита"
+
+#: includes/category_delete.php:70
+msgid "Could not remove category: "
+msgstr "Не може да изтрия категорията"
+
+#: includes/category_form.php:27
+msgid "Category Form"
+msgstr "Форма за Категории"
+
+#: includes/category_submit.php:32
+msgid "You do not have permission to add categories to all calendars."
+msgstr "Нямате права за да добавите категории към всички календари"
+
+#: includes/category_submit.php:36
+msgid "You do not have permission to add categories to this calendar."
+msgstr "Нямате права за да добавите категории към този календар"
+
+#: includes/category_submit.php:49
+msgid "Modified category: "
+msgstr "Категорията променена: "
+
+#: includes/category_submit.php:52
+msgid "Created category: "
+msgstr "Категорията създадена: "
+
+#: includes/category_submit.php:55
+msgid "Error submitting category."
+msgstr "Грешка при създаването на категория."
+
+#: includes/create_calendar.php:27
+#: includes/options_submit.php:27
+#: includes/user_create.php:27
+#: includes/user_permissions_submit.php:27
+msgid "Permission denied"
+msgstr "Правата отказани"
+
+#: includes/create_calendar.php:52
+msgid "Calendar created."
+msgstr "Календара е създаден"
+
+#: includes/display_day.php:43
+msgid "Title"
+msgstr "Заглавие"
+
+#: includes/display_day.php:44
+msgid "Time"
+msgstr "Време"
+
+#: includes/display_day.php:45
+#: includes/event_form.php:31
+#: includes/search.php:80
+msgid "Description"
+msgstr "Описание"
+
+#: includes/display_day.php:56
+msgid "Delete Selected"
+msgstr "Изтрий Избраното"
+
+#: includes/display_day.php:104
+msgid "No events on this day."
+msgstr "Няма събития за този ден."
+
+#: includes/display_event.php:41
+msgid "Invalid arguments."
+msgstr "Невалидни аргументи"
+
+#: includes/display_event.php:53
+#: includes/display_event.php:116
+msgid "You do not have permission to read this event."
+msgstr "Нямате права да прочетете това събитие"
+
+#: includes/display_event.php:68
+msgid "at"
+msgstr "в"
+
+#: includes/display_event.php:70
+#: includes/event_form.php:33
+msgid "When"
+msgstr "Кога"
+
+#: includes/display_event.php:85
+msgid "Previous Occurrence"
+msgstr "Предишно Събитие"
+
+#: includes/display_event.php:90
+msgid "Next Occurrence"
+msgstr "Следващо Събитие"
+
+#: includes/display_event.php:94
+msgid "View All Occurrences"
+msgstr "Виж Всички Събития"
+
+#: includes/display_event.php:140
+msgid " at "
+msgstr " в "
+
+#: includes/display_month.php:68
+msgid "last year"
+msgstr "миналата година"
+
+#: includes/display_month.php:70
+msgid "last month"
+msgstr "миналия месец"
+
+#: includes/display_month.php:84
+msgid "next month"
+msgstr "следващ месец"
+
+#: includes/display_month.php:86
+msgid "next year"
+msgstr "следваща година"
+
+#: includes/event_delete.php:29
+msgid "No event selected."
+msgstr "Няма избрани събития."
+
+#: includes/event_form.php:27
+msgid "Event Form"
+msgstr "Форма за Събития"
+
+#: includes/event_form.php:28
+#: includes/globals.php:79
+#: includes/search.php:78
+msgid "Subject"
+msgstr "Тема"
+
+#: includes/event_form.php:35
+#: includes/search.php:107
+msgid "From"
+msgstr "От"
+
+#: includes/event_form.php:36
+#: includes/search.php:116
+msgid "To"
+msgstr "До"
+
+#: includes/event_form.php:38
+msgid "Time Type"
+msgstr "Времеви тип"
+
+#: includes/event_form.php:39
+#: includes/globals.php:63
+msgid "Normal"
+msgstr "Нормален"
+
+#: includes/event_form.php:40
+#: includes/globals.php:64
+msgid "Full Day"
+msgstr "Цял Ден"
+
+#: includes/event_form.php:41
+#: includes/globals.php:65
+msgid "To Be Announced"
+msgstr "Да бъде обявено"
+
+#: includes/event_form.php:42
+#: includes/event_form.php:94
+msgid "None"
+msgstr "Няма"
+
+#: includes/event_form.php:48
+msgid "Repeats"
+msgstr "Повторения"
+
+#: includes/event_form.php:50
+msgid "Never"
+msgstr "Никога"
+
+#: includes/event_form.php:52
+msgid "Daily"
+msgstr "Дневно"
+
+#: includes/event_form.php:54
+#: includes/globals.php:67
+msgid "Weekly"
+msgstr "Седмично"
+
+#: includes/event_form.php:56
+#: includes/globals.php:68
+msgid "Monthly"
+msgstr "Месечно"
+
+#: includes/event_form.php:58
+#: includes/globals.php:69
+msgid "Yearly"
+msgstr "Годишно"
+
+#: includes/event_form.php:60
+#: includes/event_form.php:66
+#: includes/event_form.php:73
+#: includes/event_form.php:80
+msgid "Every"
+msgstr "Всеки"
+
+#: includes/event_form.php:61
+msgid "Repeat every how many days?"
+msgstr "Колко дни да се повтори?"
+
+#: includes/event_form.php:64
+#: includes/event_form.php:71
+#: includes/event_form.php:78
+#: includes/event_form.php:85
+msgid "Until"
+msgstr "Докато"
+
+#: includes/event_form.php:67
+msgid "Repeat every how many weeks?"
+msgstr "Колко седмици да се повтори?"
+
+#: includes/event_form.php:74
+msgid "Repeat every how many months?"
+msgstr "Колко месеци да се повтори?"
+
+#: includes/event_form.php:81
+msgid "Repeat every how many years?"
+msgstr "Колко години да се повтори?"
+
+#: includes/event_form.php:91
+msgid "Read-only"
+msgstr "Само за четене"
+
+#: includes/event_form.php:93
+msgid "Category"
+msgstr "Категория"
+
+#: includes/event_submit.php:63
+msgid "Unrecognized Time Type."
+msgstr "Неразпознат Времеви Тип"
+
+#: includes/event_submit.php:67
+msgid "You do not have permission to write to this calendar."
+msgstr "Нямате права да записвате в този календар"
+
+#: includes/event_submit.php:98
+msgid "Required field \"every-day\" is not set."
+msgstr "Задължителното поле \"всеки ден\" не е попълнено."
+
+#: includes/event_submit.php:101
+msgid "every-day must be greater than 1"
+msgstr "полето \"всеки ден\" трябва да е по-голямо от 1"
+
+#: includes/event_submit.php:118
+msgid "Required field \"every-week\" is not set."
+msgstr "Задължителното поле \"всяка седмица\" не е попълнено."
+
+#: includes/event_submit.php:120
+msgid "every-week must be greater than 1"
+msgstr "полето \"всяка седмица\" трябва да е по-голямо от 1"
+
+#: includes/event_submit.php:138
+msgid "Required field \"every-month\" is not set."
+msgstr "Задължителното поле \"всеки месец\" не е попълнено."
+
+#: includes/event_submit.php:140
+#: includes/event_submit.php:160
+msgid "every-month must be greater than 1"
+msgstr "полето \"всеки месец\" трябва да е по-голямо от 1"
+
+#: includes/event_submit.php:158
+msgid "Required field \"every-year\" is not set."
+msgstr "Задължителното поле \"всяка година\" не е попълнено."
+
+#: includes/event_submit.php:177
+msgid "Invalid event type."
+msgstr "Невалиден тип на събитието"
+
+#: includes/event_submit.php:191
+msgid "Error submitting event."
+msgstr "Грешка при създаването на събитието"
+
+#: includes/form.php:98
+msgid "Cannot add a non-form element to a form."
+msgstr "Не може да се добави елемент към формата, който не е към нея"
+
+#: includes/form.php:376
+#: includes/form.php:440
+msgid "AM"
+msgstr "AM"
+
+#: includes/form.php:376
+#: includes/form.php:440
+msgid "PM"
+msgstr "PM"
+
+#: includes/form.php:444
+msgid "Date:"
+msgstr "Дата:"
+
+#: includes/form.php:447
+msgid "Time:"
+msgstr "Време:"
+
+#: includes/globals.php:23
+msgid "January"
+msgstr "Януари"
+
+#: includes/globals.php:24
+msgid "February"
+msgstr "Февруари"
+
+#: includes/globals.php:25
+msgid "March"
+msgstr "Март"
+
+#: includes/globals.php:26
+msgid "April"
+msgstr "Април"
+
+#: includes/globals.php:27
+#: includes/globals.php:52
+msgid "May"
+msgstr "Май"
+
+#: includes/globals.php:28
+msgid "June"
+msgstr "Юни"
+
+#: includes/globals.php:29
+msgid "July"
+msgstr "Юли"
+
+#: includes/globals.php:30
+msgid "August"
+msgstr "Август"
+
+#: includes/globals.php:31
+msgid "September"
+msgstr "Септември"
+
+#: includes/globals.php:32
+msgid "October"
+msgstr "Октомври"
+
+#: includes/globals.php:33
+msgid "November"
+msgstr "Ноември"
+
+#: includes/globals.php:34
+msgid "December"
+msgstr "Декември"
+
+#: includes/globals.php:38
+msgid "Sunday"
+msgstr "Неделя"
+
+#: includes/globals.php:39
+msgid "Monday"
+msgstr "Понеделник"
+
+#: includes/globals.php:40
+msgid "Tuesday"
+msgstr "Вторник"
+
+#: includes/globals.php:41
+msgid "Wednesday"
+msgstr "Сряда"
+
+#: includes/globals.php:42
+msgid "Thursday"
+msgstr "Четвъртък"
+
+#: includes/globals.php:43
+msgid "Friday"
+msgstr "Петък"
+
+#: includes/globals.php:48
+msgid "Jan"
+msgstr "Яну"
+
+#: includes/globals.php:49
+msgid "Feb"
+msgstr "Фев"
+
+#: includes/globals.php:50
+msgid "Mar"
+msgstr "Мар"
+
+#: includes/globals.php:51
+msgid "Apr"
+msgstr "Апр"
+
+#: includes/globals.php:53
+msgid "Jun"
+msgstr "Юни"
+
+#: includes/globals.php:54
+msgid "Jul"
+msgstr "Юли"
+
+#: includes/globals.php:55
+msgid "Aug"
+msgstr "Авг"
+
+#: includes/globals.php:56
+msgid "Sep"
+msgstr "Сеп"
+
+#: includes/globals.php:57
+msgid "Oct"
+msgstr "Окт"
+
+#: includes/globals.php:58
+msgid "Nov"
+msgstr "Ное"
+
+#: includes/globals.php:59
+msgid "Dec"
+msgstr "Дек"
+
+#: includes/globals.php:66
+msgid "No Time"
+msgstr "Без Време"
+
+#: includes/globals.php:78
+msgid "Start Date"
+msgstr "Започва на дата"
+
+#: includes/globals.php:83
+msgid "Ascending"
+msgstr "Възходящо"
+
+#: includes/globals.php:84
+msgid "Decending"
+msgstr "Низходящо"
+
+#: includes/login.php:47
+msgid "Logged in."
+msgstr "Логнат."
+
+#: includes/login.php:50
+msgid "Sorry, Invalid Login"
+msgstr "Невалидно потребителско име или парола"
+
+#: includes/login.php:90
+msgid "You must have cookies enabled to login."
+msgstr "Бисквитките в браузъра ви трябва да са разрешени за да можете да влезнете."
+
+#: includes/login.php:95
+msgid "Username"
+msgstr "Потребител"
+
+#: includes/logout.php:49
+msgid "Loggin out..."
+msgstr "Излизане..."
+
+#: includes/options_submit.php:40
+msgid " was not set."
+msgstr " не е настроено"
+
+#: includes/options_submit.php:47
+msgid "Updated options"
+msgstr "Опциите обновени"
+
+#: includes/phpccalendar.class.php:31
+msgid "(No title)"
+msgstr "(Без заглавие)"
+
+#: includes/phpcdatabase.class.php:78
+msgid "Error in get_occurrences_by_date_range"
+msgstr "Грешка при get_occurrences_by_date_range"
+
+#: includes/phpcdatabase.class.php:115
+msgid "Error in get_event_by_eid"
+msgstr "Греша при get_event_by_eid"
+
+#: includes/phpcdatabase.class.php:119
+#: includes/phpcdatabase.class.php:204
+msgid "Event doesn't exist"
+msgstr "Събитието не съществува"
+
+#: includes/phpcdatabase.class.php:135
+msgid "Error in get_category"
+msgstr "Грешка при get_category"
+
+#: includes/phpcdatabase.class.php:138
+msgid "Category does not exist"
+msgstr "Категорията не съществува"
+
+#: includes/phpcdatabase.class.php:160
+msgid "Error in get_categories"
+msgstr "Грешка при get_categories"
+
+#: includes/phpcdatabase.class.php:200
+msgid "Error in get_occurrence_by_oid"
+msgstr "Грешка при get_occurrence_by_oid"
+
+#: includes/phpcdatabase.class.php:238
+msgid "Error in get_occurrences_by_eid"
+msgstr "Грешка при get_occurrences_by_eid"
+
+#: includes/phpcdatabase.class.php:255
+#: includes/phpcdatabase.class.php:271
+msgid "Error while removing an event."
+msgstr "Грешка при изстриването на събитие."
+
+#: includes/phpcdatabase.class.php:286
+#: includes/phpcdatabase.class.php:317
+msgid "Error while removing a calendar"
+msgstr "Грешка при изстриването на календар"
+
+#: includes/phpcdatabase.class.php:289
+msgid "Error while calendar config"
+msgstr "Грешка при изстриването на конфигурация за календар"
+
+#: includes/phpcdatabase.class.php:302
+msgid "Error while removing category."
+msgstr "Грешка при изстриването на категория"
+
+#: includes/phpcdatabase.class.php:322
+msgid "Error while removing "
+msgstr "Грешка при изстриването на "
+
+#: includes/phpcdatabase.class.php:340
+msgid "Could not read configuration"
+msgstr "Не може да вземе конфигурацията"
+
+#: includes/phpcdatabase.class.php:364
+msgid "Could not read permissions."
+msgstr "Не може да вземе потребителските права"
+
+#: includes/phpcdatabase.class.php:379
+#: includes/phpcdatabase.class.php:398
+msgid "Could not get calendars."
+msgstr "Не може да вземе календарите"
+
+#: includes/phpcdatabase.class.php:409
+#: includes/phpcdatabase.class.php:431
+msgid "Could not get user."
+msgstr "Не може да вземе потребителя"
+
+#: includes/phpcdatabase.class.php:447
+#: includes/phpcdatabase.class.php:463
+msgid "Error getting user."
+msgstr "Грешка при вземането на потребителя"
+
+#: includes/phpcdatabase.class.php:479
+msgid "Error creating user."
+msgstr "Грешка при създаването на потребител."
+
+#: includes/phpcdatabase.class.php:488
+#: includes/phpcdatabase.class.php:511
+msgid "Error reading options"
+msgstr "Грешка при вземането на опциите"
+
+#: includes/phpcdatabase.class.php:500
+msgid "Error creating options"
+msgstr "Грешка при създаването на опциите"
+
+#: includes/phpcdatabase.class.php:529
+#: includes/phpcdatabase.class.php:549
+msgid "Error creating event."
+msgstr "Грешка при създаването на събитие"
+
+#: includes/phpcdatabase.class.php:566
+msgid "Error modifying event."
+msgstr "Грешка при промяната на събитие"
+
+#: includes/phpcdatabase.class.php:578
+msgid "Error creating category."
+msgstr "Грешка при създаването на категория"
+
+#: includes/phpcdatabase.class.php:594
+msgid "Error modifying category."
+msgstr "Грешка при промяната на категория"
+
+#: includes/phpcdatabase.class.php:635
+msgid "Error during searching"
+msgstr "Грешка при търсене"
+
+#: includes/phpcdatabase.class.php:661
+msgid "Error updating user permissions."
+msgstr "Грешка при обновяването на потребителските права"
+
+#: includes/phpcdatabase.class.php:670
+msgid "SQL query"
+msgstr "SQL заявка"
+
+#: includes/phpcevent.class.php:37
+#: includes/phpcoccurrence.class.php:50
+msgid "anonymous"
+msgstr "анонимен"
+
+#: includes/phpcevent.class.php:39
+#: includes/phpcoccurrence.class.php:52
+msgid "unknown"
+msgstr "непознат"
+
+#: includes/phpcevent.class.php:54
+#: includes/phpcoccurrence.class.php:80
+msgid "(No subject)"
+msgstr "(Без заглавие)"
+
+#: includes/phpcoccurrence.class.php:97
+#: includes/phpcoccurrence.class.php:116
+msgid "FULL DAY"
+msgstr "ЦЯЛ ДЕН"
+
+#: includes/phpcoccurrence.class.php:99
+#: includes/phpcoccurrence.class.php:118
+msgid "TBA"
+msgstr "ДСО"
+
+#: includes/phpcoccurrence.class.php:114
+msgid "to"
+msgstr "на"
+
+#: includes/search.php:34
+msgid "Invalid sort option"
+msgstr "невалидна опция за сортиране"
+
+#: includes/search.php:40
+msgid "Invalid order option"
+msgstr "невалидна опция за подредба"
+
+#: includes/search.php:71
+msgid "No events matched your search criteria."
+msgstr "няма събития които да отговарят на търсения критерий"
+
+#: includes/search.php:75
+msgid "Search Results"
+msgstr "Резултати от търсенето"
+
+#: includes/search.php:79
+msgid "Date Time"
+msgstr "Дата Час"
+
+#: includes/search.php:101
+msgid "Phrase"
+msgstr "Фраза"
+
+#: includes/search.php:125
+msgid "Sort By"
+msgstr "Сортирай по"
+
+#: includes/search.php:130
+msgid "Order"
+msgstr "Подредба"
+
+#: includes/setup.php:47
+msgid "You must remove the install directory."
+msgstr "Трябва да изтриете папката \"install\""
+
+#: includes/setup.php:95
+msgid "Invalid year"
+msgstr "Невалидна година"
+
+#: includes/user_create.php:31
+msgid "You must specify a user name"
+msgstr "Трябва да въведете потребителско име"
+
+#: includes/user_create.php:35
+msgid "You must specify a password"
+msgstr "Трябва да въведете парола"
+
+#: includes/user_create.php:40
+msgid "Your passwords did not match"
+msgstr "посочените от вас пароли не съвпадат"
+
+#: includes/user_create.php:54
+msgid "User already exists."
+msgstr "Потребителя вече съществува"
+
+#: includes/user_create.php:59
+msgid "Added user."
+msgstr "Потребителя е добавен"
+
+#: includes/user_delete.php:29
+msgid "You must be an admin to delete events."
+msgstr "Трябва да сте администратор за може да изтривате събития"
+
+#: includes/user_delete.php:34
+msgid "No user selected."
+msgstr "няма избран потребител"
+
+#: includes/user_permissions_submit.php:31
+msgid "No users"
+msgstr "няма потребители"
+
+#: includes/user_permissions_submit.php:59
+msgid "No changes to make."
+msgstr "няма промени"
+
+#: includes/user_permissions_submit.php:61
+msgid "Updated users:"
+msgstr "Променени потребители:"
+
