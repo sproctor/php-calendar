@@ -91,7 +91,7 @@ body {
 }
 
 .php-calendar td, .php-calendar th {
-  border: 1px solid #999;
+  border: 1px solid #666;
 }
 
 .phpc-container {
@@ -169,7 +169,7 @@ div.phpc-main {
 }
 
 td.phpc-past {
-  background-color: #F7F7F7;
+  background-color: #DDD;
   padding: 0;
 }
 
@@ -205,13 +205,13 @@ td.phpc-none {
   border-style: solid;
   border-width: 0 0 1px 0;
   margin: 0;
-  background-color: #CCC;
+  background-color: white;
   text-decoration: none;
   padding: 2px;
 }
 
 .phpc-main li a:hover {
-  background-color: gray;
+  background-color: #DDD;
   color: black;
 }
 
@@ -248,11 +248,20 @@ td.phpc-none {
   width: 100%;
 }
 
-div.phpc-date  {
-  background-color: #E7E7E7;
-  opacity: 0.6;
-  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
-  filter: alpha(opacity=60);
+.phpc-none .phpc-date {
+  background-color: #999;
+}
+
+.phpc-past .phpc-date {
+  background-color: #C0C0C0;
+}
+
+.phpc-present .phpc-date {
+  background-color: #EED055;
+}
+
+.phpc-future .phpc-date  {
+  background-color: #D0D0D0;
 }
 
 /* \*/ /*/
