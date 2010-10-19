@@ -11,6 +11,8 @@ NEWS
 	  first week. Calendar admins may need to adjust this option as the
 	  values have changed their meanings.
 	- Updated the style to be a little lighter, thanks to Michał Osowiecki.
+	- Fix modifying events with linebreaks and HTML in the description,
+	  thanks to Kerri McHale
 	- Bug Fixes
 
 2.0-beta8 (14 Jun 2010):

@@ -117,8 +117,8 @@ function event_form() {
 		//  and then pre-fill that with the existing occurrences
 		$event = $events[0];
 		$defaults = array(
-				'subject' => $event->get_subject(),
-				'description' => $event->get_desc(),
+				'subject' => $event->get_raw_subject(),
+				'description' => $event->get_raw_desc(),
 				'start-year' => $event->startyear,
 				'end-year' => $event->endyear,
 				'start-month' => $event->startmonth,
