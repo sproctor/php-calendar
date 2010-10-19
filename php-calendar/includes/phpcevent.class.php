@@ -28,7 +28,7 @@ class PhpcEvent {
 	var $text_color;
 	var $catid;
 
-	function PhpcEvent($event)
+	function __construct($event)
 	{
 		$this->eid = $event['eid'];
 		$this->cid = $event['cid'];
@@ -46,6 +46,10 @@ class PhpcEvent {
 		$this->bg_color = $event['bg_color'];
 		$this->text_color = $event['text_color'];
 		$this->catid = $event['catid'];
+	}
+
+	function get_raw_subject() {
+		return htmlspecialchars($this->subject);
 	}
 
 	function get_subject()
@@ -67,6 +71,11 @@ class PhpcEvent {
 		return $this->uid;
 	}
 
+	function get_raw_desc() {
+		// Don't allow tags and make the description HTML-safe
+		return htmlspecialchars($this->desc, ENT_COMPAT, "UTF-8");
+	}
+
 	function get_desc()
 	{
 		return parse_desc($this->desc);
@@ -86,10 +95,15 @@ class PhpcEvent {
 	{
 		return $this->readonly;
 	}
-}
 
-function create_phpcevent($event)
-{
-	return new PhpcEvent($event);
+	function get_text_color()
+	{
+		return htmlspecialchars($this->text_color);
+	}
+
+	function get_bg_color()
+	{
+		return htmlspecialchars($this->bg_color);
+	}
 }
 ?>

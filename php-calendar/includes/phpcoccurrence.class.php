@@ -15,12 +15,10 @@
  * limitations under the License.
  */
 
-class PhpcOccurrence {
+require_once("$phpc_includes_path/phpcevent.class.php");
+
+class PhpcOccurrence extends PhpcEvent{
 	var $oid;
-	var $eid;
-	var $cid;
-	var $uid;
-	var $username;
 	var $startyear;
 	var $startmonth;
 	var $startday;
@@ -32,33 +30,12 @@ class PhpcOccurrence {
 	var $minute;
 	var $end_hour;
 	var $end_minute;
-	var $subject;
-	var $desc;
-	var $readonly;
-	var $category;
-	var $bg_color;
-	var $text_color;
-	var $catid;
 
-	function PhpcOccurrence($event)
+	function __construct($event)
 	{
+		parent::__construct($event);
+
 		$this->oid = $event['oid'];
-		$this->eid = $event['eid'];
-		$this->cid = $event['cid'];
-		$this->uid = $event['owner'];
-		if(empty($event['owner']))
-			$this->username = _('anonymous');
-		elseif(empty($event['username']))
-			$this->username = _('unknown');
-		else
-			$this->username = $event['username'];
-		$this->subject = $event['subject'];
-		$this->desc = $event['description'];
-		$this->readonly = $event['readonly'];
-		$this->category = $event['name'];
-		$this->bg_color = $event['bg_color'];
-		$this->text_color = $event['text_color'];
-		$this->catid = $event['catid'];
 
 		$this->startyear = $event['startyear'];
 		$this->startmonth = $event['startmonth'];
@@ -72,15 +49,6 @@ class PhpcOccurrence {
 		$this->minute = $event['startminute'];
 		$this->end_hour = $event['endhour'];
 		$this->end_minute = $event['endminute'];
-	}
-
-	function get_subject()
-	{
-		if(empty($this->subject))
-			return _('(No subject)');
-
-		return htmlspecialchars(strip_tags(stripslashes(
-						$this->subject)));
 	}
 
 	// formats the time according to type
@@ -190,49 +158,9 @@ class PhpcOccurrence {
 		return $str;
 	}
 
-	function get_username()
-	{
-		return $this->username;
-	}
-
-	function get_uid()
-	{
-		return $this->uid;
-	}
-
-	function get_desc()
-	{
-		return parse_desc($this->desc);
-	}
-
 	function get_oid()
 	{
 		return $this->oid;
-	}
-
-	function get_eid()
-	{
-		return $this->eid;
-	}
-
-	function get_cid()
-	{
-		return $this->cid;
-	}
-
-	function is_readonly()
-	{
-		return $this->readonly;
-	}
-
-	function get_text_color()
-	{
-		return htmlspecialchars($this->text_color);
-	}
-
-	function get_bg_color()
-	{
-		return htmlspecialchars($this->bg_color);
 	}
 }
 
