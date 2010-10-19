@@ -189,6 +189,8 @@ require_once("$phpc_includes_path/calendar.php");
 require_once("$phpc_includes_path/phpcdatabase.class.php");
 $phpcdb = new PhpcDatabase;
 
+// Set the session to something unique to this setup
+session_name(SQL_PREFIX . SQL_DATABASE . '_SESSION');
 session_start();
 
 // Expire the session after 30 minutes
