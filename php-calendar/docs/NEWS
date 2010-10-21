@@ -1,7 +1,10 @@
 NEWS
 -----
 
-2.0-beta9:
+2.0-beta10:
+	- Added a color picker for categories, by Michal Osowiecki
+
+2.0-beta9 (19 Oct 2010):
 	- Fixes misconfigured default paths for embedded calendars
 	- Limits the month view to displaying 8 events per day.
 	- Fix translation of month and day names, thanks to Michał Osowiecki.

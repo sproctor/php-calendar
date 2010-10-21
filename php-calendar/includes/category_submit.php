@@ -23,6 +23,12 @@ function category_submit()
 {
 	global $vars, $phpcdb;
 
+	$text_color = $vars["text-color"];
+	$bg_color = $vars["bg-color"];
+
+	if(!check_color($text_color) || !check_color($bg_color))
+		soft_error(_("Invalid color."));
+
 	if(!isset($vars['catid'])) {
 		$modify = false;
 
@@ -37,12 +43,12 @@ function category_submit()
 		}
 
 		$catid = $phpcdb->create_category($cid, $vars["name"],
-				$vars["text-color"], $vars['bg-color']);
+				$text_color, $bg_color);
 	} else {
 		$modify = true;
 		$catid = $vars['catid'];
 		$phpcdb->modify_category($catid, $vars['name'],
-				$vars['text-color'], $vars['bg-color']);
+				$text_color, $bg_color);
 	}
 
 	if($modify)
@@ -55,4 +61,7 @@ function category_submit()
 			_('Error submitting category.'));
 }
 
+function check_color($color) {
+	return preg_match('/^#[0-9a-fA-F]{6}$/', $color) == 1;
+}
 ?>
