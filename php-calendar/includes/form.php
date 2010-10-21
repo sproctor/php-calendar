@@ -675,6 +675,111 @@ class FormDropdownQuestion extends FormCompoundQuestion {
         }
 }
 
+/* this class is for colorpickerer
+ */
+class FormColorPicker extends FormAtomicQuestion {
+        function Formcolorpicker($qid, $subject,$selectedcolor=false, $description = false,
+                        $required = false) {
+		parent::FormAtomicQuestion();
+                $this->qid = $qid;
+                $this->subject = $subject;
+                $this->description = $description;
+                $this->required = $required;
+                $this->selectedcolor = $selectedcolor;
+                $this->class .= " form-color-picker";
+        }
+
+        function get_specific_html($parent, $defaults = array()) {
+
+		if(isset($defaults[$this->qid]))
+			$value = $defaults[$this->qid];
+		else 
+			$value = '';
+
+          $tag= tag('table',attrs("style=\"border-collapse:separate\"", "border=\"1\"", "text-align=\" left\"", "cellspacing=\"1\""),tag('tbody',tag('tr',
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFFFFF\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFCCCC\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFCC99\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFFF99\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFFFCC\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #99FF99\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #99FFFF\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CCFFFF\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CCCCFF\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFCCFF\""))),
+            tag('tr',
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CCCCCC\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FF6666\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FF9966\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFFF66\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFFF33\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #66FF99\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #33FFFF\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #66FFFF\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #9999FF\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FF99FF\""))),
+            tag('tr',
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #C0C0C0\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FF0000\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FF9900\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFCC66\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFFF00\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #33FF33\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #66CCCC\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #33CCFF\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #6666CC\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CC66CC\""))),
+            tag('tr',
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #999999\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CC0000\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FF6600\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFCC33\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFCC00\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #33CC00\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #00CCCC\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #3366FF\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #6633FF\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CC33CC\""))),
+            tag('tr',
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #666666\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #990000\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CC6600\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CC9933\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #999900\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #009900\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #339999\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #3333FF\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #6600CC\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #993399\""))),
+            tag('tr',
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #333333\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #660000\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #993300\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #996633\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #666600\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #006600\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #336666\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #000099\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #333399\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #663366\""))),
+            tag('tr',
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #000000\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #330000\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #663300\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #663333\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #333300\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #003300\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #003333\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #000066\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #330099\"")),
+            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #330033\"")))
+            ));
+          return $tag;
+        }
+}
+
+
+
 /* this is the main form class
  */
 class Form extends FormGroup {
@@ -713,7 +818,8 @@ class Form extends FormGroup {
 			$have_hidden = true;
 			$hidden_div->add(tag('input', attrs('type="hidden"',
 							"name=\"$name\"",
-							"value=\"$value\"")));
+							"value=\"$value\"",
+							"id=\"$name\"")));
 		}
 		if($have_hidden)
 			$form->add($hidden_div);

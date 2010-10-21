@@ -27,15 +27,12 @@ function category_form() {
         $form = new Form($phpc_script, _('Category Form'));
         $form->add_part(new FormFreeQuestion('name', _('Name'),
 				false, 32, true));
-        $form->add_part(new FormFreeQuestion('text-color',
-                                _('Text Color')));
-        $form->add_part(new FormFreeQuestion('bg-color',
-                                _('Background Color')));
 
 	if(isset($vars['cid']))
 		$form->add_hidden('cid', $vars['cid']);
 
 	$form->add_hidden('action', 'category_submit');
+	$form->add_part(new FormColorPicker('select_color','Background Color'));
 	$form->add_part(new FormSubmitButton("Submit Category"));
 
 	if(isset($vars['catid'])) {
@@ -46,8 +43,12 @@ function category_form() {
 				'text-color' => htmlspecialchars($category['text_color']),
 				'bg-color' => htmlspecialchars($category['bg_color']),
 				);
+				$form->add_hidden('text-color',$category['text_color']);
+				$form->add_hidden('bg-color',$category['bg_color']);
 	} else {
 		$defaults = array();
+		$form->add_hidden('text-color','#000000');
+		$form->add_hidden('bg-color','#CCCCCC');
 	}
         return $form->get_html($defaults);
 }

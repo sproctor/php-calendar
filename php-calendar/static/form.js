@@ -40,6 +40,33 @@ function copyDate(date1, date2) {
   $("#" + date2 + "-day").val($("#" + date1 + "-day").val());
 }
 
+//based on http://haacked.com/archive/2009/12/29/convert-rgb-to-hex.aspx
+function rgbToHex(color) {
+  if (color.substr(0, 1) == '#') {
+    return color.toUpperCase();
+  }
+  var digits = /(.*?)RGB\((\d+), (\d+), (\d+)\)/.exec(color.toUpperCase());
+  var red =  '0' + parseInt(digits[2]).toString(16);
+  var green = '0' + parseInt(digits[3]).toString(16);
+  var blue = '0' + parseInt(digits[4]).toString(16);
+  return ('#' + red.substring(red.length-2) + green.substring(green.length-2) + blue.substring(blue.length-2)).toUpperCase();
+};
+
+function textcolor(bgcolor) {
+  var red = parseInt(bgcolor.substr(1, 2),16);
+  var green = parseInt(bgcolor.substr(3, 2),16);
+  var blue = parseInt(bgcolor.substr(5, 2),16);
+  var luminance= (red*0.3 + green*0.59 + blue*0.11);
+  if (luminance <128) 
+  {
+    return "#FFFFFF"
+  }
+  else
+  {
+    return "#000000";
+  }
+};
+
 $(document).ready(function(){
   // Generic form stuff
   $(".form-select").each(function(){
@@ -89,4 +116,22 @@ $(document).ready(function(){
       dateRelation = 0;
     }*/
   });
+
+  $(".colorpicker").click(function(){
+    $('td').removeClass('bg-selected');
+    $('#bg-color').val(rgbToHex($(this).css("background-color")));
+    $(this).addClass('bg-selected');
+    $('#text-color').val(textcolor(rgbToHex($(this).css("background-color"))));
+    $('.bg-selected').css("border-color",$('#text-color').val());
+  });
+
+  $("td .colorpicker").each(function(){
+    if (rgbToHex($(this).css("background-color").toUpperCase()) === $('#bg-color').val().toUpperCase())
+    {
+      $(this).addClass('bg-selected');
+      $('.bg-selected').css("border-color",($('#text-color').val()));
+    }
+  });
 });
+
+
