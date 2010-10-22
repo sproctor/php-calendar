@@ -32,7 +32,7 @@ function category_form() {
 		$form->add_hidden('cid', $vars['cid']);
 
 	$form->add_hidden('action', 'category_submit');
-	$form->add_part(new FormColorPicker('select_color','Background Color'));
+	$form->add_part(new FormColorPicker('bg-color','Background Color'));
 	$form->add_part(new FormSubmitButton("Submit Category"));
 
 	if(isset($vars['catid'])) {
@@ -40,15 +40,12 @@ function category_form() {
 		$category = $phpcdb->get_category($vars['catid']);
 		$defaults = array(
 				'name' => htmlspecialchars($category['name']),
-				'text-color' => htmlspecialchars($category['text_color']),
 				'bg-color' => htmlspecialchars($category['bg_color']),
 				);
-				$form->add_hidden('text-color',$category['text_color']);
-				$form->add_hidden('bg-color',$category['bg_color']);
+		$form->add_hidden('text-color', $category['text_color']);
 	} else {
 		$defaults = array();
-		$form->add_hidden('text-color','#000000');
-		$form->add_hidden('bg-color','#CCCCCC');
+		$form->add_hidden('text-color', '#000000');
 	}
         return $form->get_html($defaults);
 }

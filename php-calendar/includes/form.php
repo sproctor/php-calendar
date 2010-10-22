@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2010 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -696,85 +696,36 @@ class FormColorPicker extends FormAtomicQuestion {
 		else 
 			$value = '';
 
-          $tag= tag('table',attrs("style=\"border-collapse:separate\"", "border=\"1\"", "text-align=\" left\"", "cellspacing=\"1\""),tag('tbody',tag('tr',
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFFFFF\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFCCCC\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFCC99\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFFF99\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFFFCC\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #99FF99\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #99FFFF\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CCFFFF\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CCCCFF\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFCCFF\""))),
-            tag('tr',
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CCCCCC\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FF6666\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FF9966\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFFF66\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFFF33\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #66FF99\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #33FFFF\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #66FFFF\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #9999FF\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FF99FF\""))),
-            tag('tr',
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #C0C0C0\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FF0000\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FF9900\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFCC66\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFFF00\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #33FF33\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #66CCCC\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #33CCFF\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #6666CC\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CC66CC\""))),
-            tag('tr',
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #999999\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CC0000\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FF6600\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFCC33\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #FFCC00\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #33CC00\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #00CCCC\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #3366FF\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #6633FF\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CC33CC\""))),
-            tag('tr',
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #666666\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #990000\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CC6600\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #CC9933\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #999900\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #009900\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #339999\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #3333FF\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #6600CC\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #993399\""))),
-            tag('tr',
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #333333\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #660000\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #993300\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #996633\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #666600\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #006600\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #336666\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #000099\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #333399\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #663366\""))),
-            tag('tr',
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #000000\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #330000\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #663300\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #663333\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #333300\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #003300\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #003333\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #000066\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #330099\"")),
-            tag('td',attrs("class=\"colorpicker\"", "style=\"background-color: #330033\"")))
-            ));
-          return $tag;
+		$color_matrix = array(
+				array("#FFFFFF", "#FFCCCC", "#FFCC99", "#FFFF99", "#FFFFCC", "#99FF99", "#99FFFF", "#CCFFFF", "#CCCCFF", "#FFCCFF"),
+				array("#CCCCCC", "#FF6666", "#FF9966", "#FFFF66", "#FFFF33", "#66FF99", "#33FFFF", "#66FFFF", "#9999FF", "#FF99FF"),
+				array("#C0C0C0", "#FF0000", "#FF9900", "#FFCC66", "#FFFF00", "#33FF33", "#66CCCC", "#33CCFF", "#6666CC", "#CC66CC"),
+				array("#999999", "#CC0000", "#FF6600", "#FFCC33", "#FFCC00", "#33CC00", "#00CCCC", "#3366FF", "#6633FF", "#CC33CC"),
+				array("#666666", "#990000", "#CC6600", "#CC9933", "#999900", "#009900", "#339999", "#3333FF", "#6600CC", "#993399"),
+				array("#333333", "#660000", "#993300", "#996633", "#666600", "#006600", "#336666", "#000099", "#333399", "#663366"),
+				array("#000000", "#330000", "#663300", "#663333", "#333300", "#003300", "#003333", "#000066", "#330099", "#330033"));
+
+		$tbody = tag('tbody');
+		foreach($color_matrix as $color_row) {
+			$tr = tag('tr');
+			foreach($color_row as $color) {
+				$class = 'form-color';
+				if($value == $color)
+					$class .= " form-color-selected";
+				$tr->add(tag('td', attrs("class=\"$class\"", "style=\"background-color: $color\"")));
+			}
+			$tbody->add($tr);
+		}
+
+		return tag('',
+				tag('input', attrs('type="hidden"',
+						"name=\"{$this->qid}\"",
+						"value=\"$value\"",
+						"id=\"{$this->qid}\"")),
+				tag('table', attrs('style="border-collapse: separate"',
+						'border="1"', 'text-align="left"',
+						'cellspacing="1"'),
+					$tbody));
         }
 }
 
@@ -804,10 +755,14 @@ class Form extends FormGroup {
                 foreach($this->list as $child) {
                         $table->add($child->get_html($this, $defaults));
                 }
+		if(defined('PHPC_DEBUG'))
+			$jquery_path = 'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js';
+		else
+			$jquery_path = 'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js';
 		$form = tag('form', $form_attrs,
 				tag("script",
 					attrs('type="text/javascript"',
-					'src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"'),
+					"src=\"$jquery_path\""),
 					''),
 				tag("script",
 					attrs('type="text/javascript"',

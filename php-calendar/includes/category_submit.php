@@ -23,6 +23,9 @@ function category_submit()
 {
 	global $vars, $phpcdb;
 
+	if(empty($vars["text-color"]) || empty($vars["bg-color"]))
+		soft_error(_("Color not specified."));
+
 	$text_color = $vars["text-color"];
 	$bg_color = $vars["bg-color"];
 

@@ -264,18 +264,16 @@ td.phpc-none {
   background-color: #D0D0D0;
 }
 
-td.colorpicker {
-padding:2px;
-width:20px;
-height:20px;
-border: 2px none;
+td.form-color {
+  padding: 2px;
+  width: 20px;
+  height: 20px;
+  border-style: none;
 }
 
-td.bg-selected {
-border: 2px  dotted;
-border-color: #000000;
-padding:0px
-
+td.form-color-selected {
+  border: 2px dotted #000000;
+  padding: 0;
 }
 
 /* \*/ /*/

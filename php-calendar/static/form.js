@@ -117,20 +117,20 @@ $(document).ready(function(){
     }*/
   });
 
-  $(".colorpicker").click(function(){
-    $('td').removeClass('bg-selected');
-    $('#bg-color').val(rgbToHex($(this).css("background-color")));
-    $(this).addClass('bg-selected');
-    $('#text-color').val(textcolor(rgbToHex($(this).css("background-color"))));
-    $('.bg-selected').css("border-color",$('#text-color').val());
+  $(".form-color").click(function(){
+    table = $(this).parents('.form-color-picker');
+    table.find('.form-color-selected').removeClass('form-color-selected');
+    selected_color = rgbToHex($(this).css("background-color"));
+    table.find("input").val(selected_color);
+    $(this).addClass('form-color-selected');
+    tcolor = textcolor(selected_color);
+    $('#text-color').val(tcolor);
+    $(this).css("border-color", tcolor);
   });
 
-  $("td .colorpicker").each(function(){
-    if (rgbToHex($(this).css("background-color").toUpperCase()) === $('#bg-color').val().toUpperCase())
-    {
-      $(this).addClass('bg-selected');
-      $('.bg-selected').css("border-color",($('#text-color').val()));
-    }
+  $(".form-color-selected").each(function(){
+    var bordercolor = textcolor(rgbToHex($(this).css("background-color")));
+    $(this).css("border-color", bordercolor);
   });
 });
 
