@@ -49,7 +49,14 @@ function category_submit()
 				$text_color, $bg_color);
 	} else {
 		$modify = true;
+
 		$catid = $vars['catid'];
+		$category = $phpcdb->get_category($catid);
+
+		if(!(empty($category['cid']) && is_admin()
+					|| can_admin_calendar($catid)))
+			soft_error(_("You do not have permission to modify this category."));
+
 		$phpcdb->modify_category($catid, $vars['name'],
 				$text_color, $bg_color);
 	}
