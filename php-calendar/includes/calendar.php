@@ -148,7 +148,9 @@ function login_user($username, $password)
 
 	// Regenerate the session in case our non-logged in version was
 	//   snooped
-	session_regenerate_id();
+	// TODO: Verify that this is needed, and make sure it's called in setup
+	// 	 so it doesn't create issues for embedded users
+	// session_regenerate_id();
 
 	$user = $phpcdb->get_user_by_name($username);
 	if(!$user || $user->password != md5($password))
