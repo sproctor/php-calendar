@@ -23,8 +23,7 @@ require_once("$phpc_includes_path/phpcuser.class.php");
 class PhpcDatabase {
 	var $dbh;
 
-	function PhpcDatabase()
-	{
+	function __construct() {
 		// Make the database connection.
 		$this->dbh = new mysqli(SQL_HOST, SQL_USER, SQL_PASSWD);
 		$this->dbh->select_db(SQL_DATABASE);
@@ -36,6 +35,10 @@ class PhpcDatabase {
 		}
 
 		$this->dbh->query("SET NAMES 'utf8'");
+	}
+
+	function __destruct() {
+		$this->dbh->close();
 	}
 
 	// returns all the events for a particular day
