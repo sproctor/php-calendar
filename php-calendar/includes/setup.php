@@ -136,47 +136,50 @@ if($translate) {
 
 	switch($lang) {
 		case 'bg':
-			setlocale(LC_ALL, 'bg_BG.utf8', 'bg.utf8', 'bg');
+			$locale = setlocale(LC_ALL, 'bg_BG.utf8', 'bg.utf8', 'bg');
 			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'da':
-			setlocale(LC_ALL, 'da_DK.utf8', 'da.utf8', 'da');
+			$locale = setlocale(LC_ALL, 'da_DK.utf8', 'da.utf8', 'da');
 			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'de':
-			setlocale(LC_ALL, 'de_DE.utf8', 'de.utf8', 'de', 'ge');
+			$locale = setlocale(LC_ALL, 'de_DE.utf8', 'de.utf8', 'de', 'ge');
 			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'en':
-			setlocale(LC_ALL, 'C');
+			$locale = setlocale(LC_ALL, 'C');
 			break;
                 case 'es':
-                        setlocale(LC_ALL, 'es_ES.utf8', 'es.utf8', 'es');
+                        $locale = setlocale(LC_ALL, 'es_ES.utf8', 'es.utf8', 'es');
 			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'fr':
-			setlocale(LC_ALL, 'fr_FR.utf8', 'fr.utf8', 'fr');
+			$locale = setlocale(LC_ALL, 'fr_FR.utf8', 'fr.utf8', 'fr');
 			$phpc_datefmt = "j \%\s Y";
 			break;
                 case 'it':
-                        setlocale(LC_ALL, 'it_IT.utf8', 'it.utf8', 'it');
+                        $locale = setlocale(LC_ALL, 'it_IT.utf8', 'it.utf8', 'it');
 			$phpc_datefmt = "j \%\s Y";
 			break;
                 case 'ja':
-                        setlocale(LC_ALL, 'ja_JP.utf8', 'ja.utf8', 'ja', 'jp');
+                        $locale = setlocale(LC_ALL, 'ja_JP.utf8', 'ja.utf8', 'ja', 'jp');
 			$phpc_datefmt = "j \%\s Y";
                         break;
                 case 'nl':
-                        setlocale(LC_ALL, 'nl_NL.utf8', 'nl.utf8', 'nl');
+                        $locale = setlocale(LC_ALL, 'nl_NL.utf8', 'nl.utf8', 'nl');
 			$phpc_datefmt = "j \%\s Y";
                         break;
 		case 'zh':
-			setlocale(LC_ALL, 'zh_CN.utf8', 'zh.utf8', 'zh');
+			$locale = setlocale(LC_ALL, 'zh_CN.utf8', 'zh.utf8', 'zh');
 			$phpc_datefmt = "j \%\s Y";
 			break;
 		default:
 			display_error("Invalid language identifier.");
 	}
+
+	putenv("LC_ALL=$locale");
+	putenv("LANGUAGE=$locale");
 
 	if($phpc_store_lang)
 		setcookie('lang', $lang);
