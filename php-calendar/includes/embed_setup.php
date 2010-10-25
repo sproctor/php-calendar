@@ -53,6 +53,10 @@ $phpc_url = "$phpc_protocol://$phpc_server$phpc_script"
 // Remove this line if you must
 ini_set('arg_separator.output', '&amp;');
 
+// Buffer the output until the script ends. Remove this if you must, but it may
+//   break things in unexpected ways.
+ob_start();
+
 /*
  * Do not modify anything under this point
  */
