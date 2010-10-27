@@ -755,15 +755,7 @@ class Form extends FormGroup {
                 foreach($this->list as $child) {
                         $table->add($child->get_html($this, $defaults));
                 }
-		if(defined('PHPC_DEBUG'))
-			$jquery_path = 'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js';
-		else
-			$jquery_path = 'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js';
 		$form = tag('form', $form_attrs,
-				tag("script",
-					attrs('type="text/javascript"',
-					"src=\"$jquery_path\""),
-					''),
 				tag("script",
 					attrs('type="text/javascript"',
 						'src="static/form.js"'), ''));

@@ -52,6 +52,19 @@ function redirect($page) {
 	header("Location: $phpc_protocol://$phpc_server$dir$page");
 }
 
+function message($message, $page) {
+	if(empty($_SESSION['messages']))
+		$_SESSION['messages'] = array();
+
+	$_SESSION['messages'][] = $message;
+	redirect($page);
+
+	$continue_url = $page . '&amp;clearmsg=1';
+
+	return tag('div', attrs('class="phpc-box"'), "$message ",
+ 		tag('a', attrs("href=\"$continue_url\""), _("continue")));
+}
+
 function addslashes_r($var) {
 	if (is_array($var)) {
 		foreach ($var as $key => $val) {

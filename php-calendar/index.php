@@ -79,13 +79,20 @@ try {
 			$e->getMessage());
 }
 
+if(defined('PHPC_DEBUG'))
+	$jquery_path = 'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js';
+else
+	$jquery_path = 'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js';
+
 $html = tag('html', attrs("lang=\"$lang\""),
 		tag('head',
 			tag('title', $calendar_title),
-			tag('link',
-				attributes('rel="stylesheet" type="text/css"'
-					." href=\"static/style.css\"")
-			   ),
+			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
+					'href="static/style.css"')),
+			tag("script", attrs('type="text/javascript"',
+					"src=\"$jquery_path\""), ''),
+			tag('script', attrs('type="text/javascript"',
+					'src="static/script.js"'), ''),
 			tag('meta', attrs('http-equiv="Content-Type"',
 					   'content="text/html; charset=UTF-8"'))),
 		tag('body', $content));

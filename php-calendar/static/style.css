@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-body {
-  font-family: "Times New Roman", serif;
-  margin: 0 2%;
-  padding: 0;
+html {
   background-color: white;
   color: black;
+}
+
+body {
+  font-family: "Times New Roman", serif;
+  margin: 0 2em;
+  padding: 0;
 }
 
 .php-calendar a {
@@ -274,6 +277,19 @@ td.form-color {
 td.form-color-selected {
   border: 2px dotted #000000;
   padding: 0;
+}
+
+.phpc-message {
+  position: fixed;
+  background-color: #EED055;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.25em;
+  padding: 0.5em 1em;
+  border-style: solid;
+  border-color: #666;
+  border-width: 0 0 1px 0;
 }
 
 /* \*/ /*/

@@ -615,17 +615,35 @@ function display_phpc() {
 
 function do_action()
 {
-	global $action, $phpcid, $phpc_includes_path, $phpc_valid_actions;
+	global $action, $phpcid, $phpc_includes_path, $phpc_valid_actions,
+	       $vars;
 
+	// TODO: use the messaging system to display this
 	if(!in_array($action, $phpc_valid_actions, true)) {
 		soft_error(_('Invalid action'));
+	}
+
+	if(!empty($vars['clearmsg']))
+		$_SESSION['messages'] = NULL;
+
+	$have_message = false;
+	if(!empty($_SESSION['messages'])) {
+		$messages = tag('div', attrs('class="phpc-message"'));
+		foreach($_SESSION['messages'] as $message) {
+			$messages->add($message);
+			$have_message = true;
+		}
+		$_SESSION['messages'] = NULL;
 	}
 
 	require_once("$phpc_includes_path/$action.php");
 
 	eval("\$action_output = $action();");
 
-	return $action_output;
+	if($have_message)
+		return tag('', $messages, $action_output);
+	else
+		return $action_output;
 }
 
 // takes a number of the month, returns the name

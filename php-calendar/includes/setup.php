@@ -216,7 +216,9 @@ if(empty($_SESSION["phpc_token"]))
 // Check if our session timed out and logged us out
 if(!empty($_COOKIE["phpc_user"]) && !is_user()) {
 	setcookie("phpc_user", "0");
-	display_error(_("Session has expired."));
+	if(empty($_SESSION['messages']))
+		$_SESSION['messages'] = array();
+	$_SESSION['messages'][] = _("Session has expired.");
 }
 
 header("Content-Type: text/html; charset=UTF-8");

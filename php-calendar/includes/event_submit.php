@@ -21,7 +21,7 @@ if ( !defined('IN_PHPC') ) {
 
 function event_submit()
 {
-	global $vars, $phpcdb, $phpcid;
+	global $vars, $phpcdb, $phpcid, $phpc_script;
 
 	$potential_fields = array(
 			"subject",
@@ -181,18 +181,19 @@ function event_submit()
 			soft_error(_("Invalid event type."));
 	}
 
-	// echo "<pre>arguments:\n"; print_r($arguments); echo "</pre>";
+	if($eid != 0) {
+		if($modify)
+			$message = _("Modified event: ");
+		else
+			$message = _("Created event: ");
 
-	if($modify)
-		return tag('div', "Modified event: ", create_event_link($eid,
-					'display_event', $eid));
-	if($eid != 0)
-		return tag('div', "Created event: ", create_event_link($eid,
-					'display_event', $eid));
-		// $calendar->redirect("action=display&eventid=$eid");
-	else
-		return tag('div', attributes('class="phpc-error"'),
-				_('Error submitting event.'));
+		return message(tag('', $message, create_event_link($eid,
+						'display_event', $eid)),
+				"$phpc_script?action=display_event&eid=$eid");
+	} else {
+		return message(_('Error submitting event.'),
+				"$phpc_script?action=display_month");
+	}
 }
 
 function get_date($prefix)
