@@ -26,7 +26,8 @@ function event_delete()
 	$html = tag('div', attributes('class="phpc-container"'));
 
 	if(empty($vars["eid"])) {
-		$html->add(tag('p', _('No event selected.')));
+		$message = _('No event selected.');
+		$html->add(tag('p', $message));
 		return $html;
 	}
 
@@ -52,20 +53,50 @@ function event_delete()
 		return $html;
 	}
 
+	$removed_events = array();
+	$unremoved_events = array();
+	$permission_denied = array();
+
 	foreach($eids as $eid) {
 		$event = $phpcdb->get_event_by_eid($eid);
 		if(!can_modify_event($event)) {
-			$html->add(tag('p', _("You do not have permission to remove event: $eid")));
-			continue;
-		}
-
-		if($phpcdb->delete_event($eid)) {
-			$html->add(tag('p', _("Removed event: $eid")));
-		} else {        
-			$html->add(tag('p', _("Could not remove event: $eid")));
+			$permission_denied[] = $eid;
+		} else {
+			if($phpcdb->delete_event($eid)) {
+				$removed_events[] = $eid;
+			} else {
+				$unremoved_events[] = $eid;
+			}
 		}
 	}
 
+	if(sizeof($removed_events) > 0) {
+		if(sizeof($removed_events) == 1)
+			$text = _("Removed event");
+		else
+			$text = _("Removed events");
+		$text .= ': ' . implode(', ', $removed_events);
+		$html->add(tag('p', $text));
+	}
+
+	if(sizeof($unremoved_events) > 0) {
+		if(sizeof($unremoved_events) == 1)
+			$text = _("Could not remove event");
+		else
+			$text = _("Could not remove events");
+		$text .= ': ' . implode(', ', $unremoved_events);
+		$html->add(tag('p', $text));
+	}
+
+	if(sizeof($permission_denied) > 0) {
+		if(sizeof($permission_denied) == 1)
+			$text = _("You do not have permission to remove event");
+		else
+			$text = _("You do not have permission to remove events");
+		$text .= ': ' . implode(', ', $permission_denied);
+		$html->add(tag('p', $text));
+	}
+	
         return $html;
 }
 
