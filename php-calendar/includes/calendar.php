@@ -358,6 +358,8 @@ function create_action_link($text, $action, $args = false, $attribs = false)
 
 	if (!empty($args)) {
 		foreach ($args as $key => $value) {
+			if(empty($value))
+				continue;
 			if (is_array($value)) {
 				foreach ($value as $v) {
 					$url .= "&amp;"
@@ -492,12 +494,12 @@ function navbar()
 
 	if(is_user()) {
 		menu_item_append($html, _('Log out'), 'logout',
-				array_merge($args,
-					array('lastaction' => $action)));
+				array('lasturl' =>
+					urlencode($_SERVER['QUERY_STRING'])));
 	} else {
 		menu_item_append($html, _('Log in'), 'login',
-				array_merge($args,
-					array('lastaction' => $action)));
+				array('lasturl' =>
+					urlencode($_SERVER['QUERY_STRING'])));
 	}
 
 	if(can_admin_calendar($phpcid) && $action != 'cadmin') {
@@ -555,26 +557,39 @@ function create_sequence($start, $end, $interval = 1, $display = NULL)
 
 function get_config_options()
 {
-	// name, text, type, value(s)
-	return array( 
-			array('week_start', _('Week Start'), PHPC_DROPDOWN,
-				array(
-					0 => _('Sunday'),
-					1 => _('Monday'),
-					6 => _('Saturday')
-				     )),
-			array('hours_24', _('24 Hour Time'), PHPC_CHECK),
-			array('calendar_title', _('Calendar Title'), PHPC_TEXT),
-			array('subject_max', _('Maximum Subject Length'), PHPC_TEXT),
-			array('anon_permission', _('Public Permissions'), PHPC_DROPDOWN,
-				array(
-					_('Cannot read nor write events'),
-					_('Can read but not write events'),
-					_('Can create but not modify events'),
-					_('Can create and modify events')
-				     )
-			     ),
-		    );
+	static $options = NULL;
+
+	if($options == NULL) {
+		$timezones = array("NULL" => "System");
+		for($i = -11; $i <= 14; $i++) {
+			$offset = "$i:00";
+			if($i >= 0)
+				$offset = "+$offset";
+			$timezones[$offset] = $offset;
+		}
+		// name, text, type, value(s)
+		$options = array( 
+				array('week_start', _('Week Start'), PHPC_DROPDOWN,
+					array(
+						0 => _('Sunday'),
+						1 => _('Monday'),
+						6 => _('Saturday')
+					     )),
+				array('hours_24', _('24 Hour Time'), PHPC_CHECK),
+				array('calendar_title', _('Calendar Title'), PHPC_TEXT),
+				array('subject_max', _('Maximum Subject Length'), PHPC_TEXT),
+				array('anon_permission', _('Public Permissions'), PHPC_DROPDOWN,
+					array(
+						_('Cannot read nor write events'),
+						_('Can read but not write events'),
+						_('Can create but not modify events'),
+						_('Can create and modify events')
+					     )
+				     ),
+				array('timezone', _('Default Timezone'), PHPC_DROPDOWN, $timezones),
+				);
+	}
+	return $options;
 }
 
 function get_config($cid, $option)

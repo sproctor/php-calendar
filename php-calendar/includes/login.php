@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2010 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ if(!defined('IN_PHPC')) {
 
 function login()
 {
-	global $vars, $day, $month, $year, $phpc_script, $phpc_valid_actions;
+	global $vars, $phpc_script;
 
 	$html = tag('div');
 
@@ -31,24 +31,11 @@ function login()
 		$password = $vars['password'];
 
 		if(login_user($user, $password)){
-                        $string = "$phpc_script?";
-                        $arguments = array();
-                        if(!empty($vars['lastaction'])) {
-				$lastaction = $vars['lastaction'];
-				if(!in_array($lastaction, $phpc_valid_actions,
-							true))
-					soft_error(_('Invalid action'));
-                                $arguments[] = "action=$lastaction";
+			$url = $phpc_script;
+                        if(!empty($vars['lasturl'])) {
+				$url .= '?' . urldecode($vars['lasturl']);
 			}
-                        if(!empty($vars['year']))
-                                $arguments[] = "year=$year";
-                        if(!empty($vars['month']))
-                                $arguments[] = "month=$month";
-                        if(!empty($vars['day']))
-                                $arguments[] = "day=$day";
-                        if(isset($vars['phpcid']))
-                                $arguments[] = "phpcid={$vars['phpcid']}";
-                        redirect($string . implode('&', $arguments));
+                        redirect($url);
 			return tag('h2', _('Logged in.'));
 		}
 
@@ -63,31 +50,17 @@ function login()
 
 function login_form()
 {
-        global $vars, $phpc_script, $phpc_valid_actions, $day, $year, $month;
+        global $vars, $phpc_script;
 
         $submit_data = tag('td', attributes('colspan="2"'),
                                 create_hidden('action', 'login'),
                                 create_submit(_('Log in')));
 
-        if(!empty($vars['lastaction'])) {
-		$lastaction = $vars['lastaction'];
-		if(!in_array($lastaction, $phpc_valid_actions, true))
-			soft_error(_('Invalid action'));
-                $submit_data->prepend(create_hidden('lastaction',
-                                        $lastaction));
+        if(!empty($vars['lasturl'])) {
+		$lasturl = $vars['lasturl'];
+                $submit_data->prepend(create_hidden('lasturl',
+                                        $lasturl));
 	}
-
-        if(isset($vars['phpcid']))
-                $submit_data->prepend(create_hidden('phpcid', $vars['phpcid']));
-
-        if(!empty($vars['day']))
-                $submit_data->prepend(create_hidden('day', $day));
-
-        if(!empty($vars['month']))
-                $submit_data->prepend(create_hidden('month', $month));
-
-        if(!empty($vars['year']))
-                $submit_data->prepend(create_hidden('year', $year));
 
 	return tag('form', attributes("action=\"$phpc_script\"",
 				'method="post"'),

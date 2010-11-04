@@ -21,37 +21,17 @@ if(!defined('IN_PHPC')) {
 
 function logout()
 {
-	global $vars, $day, $month, $year, $phpc_script;
+	global $vars, $phpc_script;
 
         session_destroy();
 	setcookie("phpc_user", "0");
 
-	$string = "$phpc_script?";
-        $arguments = array();
-/* We might not have permission for the last action. We can probably
- * assume that the user is going away.
- * TODO: add a logout page here with a redirect to the front page of the
- *       calendar they were just viewing
+	$url_string = $phpc_script;
+	if(!empty($vars['lasturl'])) {
+		$url_string .= '?' . urldecode($vars['lasturl']);
+	}
 
- if(!empty($vars['lastaction'])) {
- 	$lastaction = $vars['lastaction'];
- 	if(!in_array($lastaction, $phpc_valid_actions, true))
- 		soft_error(_('Invalid action'));
- 	$arguments[] = "action=$lastaction";
- }
-        if(!empty($vars['lastaction']))
-                $arguments[] = "action=$vars[lastaction]";
- */
-
-        if(isset($vars['phpcid']))
-                $arguments[] = "phpcid={$vars['phpcid']}";
-        if(!empty($vars['year']))
-                $arguments[] = "year=$year";
-        if(!empty($vars['month']))
-                $arguments[] = "month=$month";
-        if(!empty($vars['day']))
-                $arguments[] = "day=$day";
-        redirect($string . implode('&', $arguments));
+        redirect($url_string);
 
         return tag('h2', _('Loggin out...'));
 }
