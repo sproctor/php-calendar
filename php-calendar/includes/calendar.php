@@ -187,7 +187,7 @@ function lang_link($lang)
 // returns tag data for the links at the bottom of the calendar
 function link_bar()
 {
-	global $translate, $phpc_url, $phpc_locale_path;
+	global $translate, $phpc_url, $phpc_locale_path, $phpc_tz;
 
 	$html = tag('div', attributes('class="phpc-footer"'));
 
@@ -230,7 +230,8 @@ function link_bar()
 			tag('a', attributes('href="http://jigsaw.w3.org/'
 					.'css-validator/check/referer"'),
 					'Valid CSS2'),
-			']'));
+			']',
+			" [Timezone: $phpc_tz]"));
 	return $html;
 }
 
@@ -594,6 +595,11 @@ function get_config($cid, $option)
 	global $phpcdb;
 
 	$config = $phpcdb->get_calendar_config($cid);
+	if(!isset($config[$option])) {
+		if(defined('PHPC_DEBUG'))
+			soft_error("Undefined config option \"$option\".");
+		return '';
+	}
 	return $config[$option];
 }
 

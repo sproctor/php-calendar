@@ -60,10 +60,10 @@ ini_set('arg_separator.output', '&amp;');
 
 define('IN_PHPC', true);
 
-require_once("$phpc_includes_path/setup.php");
-require_once("$phpc_includes_path/calendar.php");
-
 try {
+	require_once("$phpc_includes_path/setup.php");
+	require_once("$phpc_includes_path/calendar.php");
+
 	if ($vars["contentType"] == "json") {
 		echo do_action();
 		exit;

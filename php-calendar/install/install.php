@@ -168,7 +168,6 @@ function add_sql_user_db()
 	$my_database = $_POST['my_database'];
 	$my_adminname = $_POST['my_adminname'];
 	$my_adminpasswd = $_POST['my_adminpasswd'];
-	$sql_type = "mysqli";
 
 	$create_user = isset($_POST['create_user'])
 		&& $_POST['create_user'] == 'yes';
@@ -231,7 +230,7 @@ function install_base()
 {
 	global $phpc_config_file, $dbh;
 
-	$sql_type = "mysql";
+	$sql_type = "mysqli";
 	$my_hostname = $_POST['my_hostname'];
 	$my_username = $_POST['my_username'];
 	$my_passwd = $_POST['my_passwd'];
@@ -280,11 +279,11 @@ function create_tables()
 	$query = "CREATE TABLE `" . SQL_PREFIX . "occurrences` (\n"
 		."`oid` int(11) unsigned NOT NULL auto_increment,\n"
 		."`eid` int(11) unsigned NOT NULL,\n"
-		."`startdate` date NOT NULL,\n"
-		."`enddate` date NOT NULL,\n"
-		."`starttime` time default NULL,\n"
-		."`endtime` time default NULL,\n"
-		."`timetype` tinyint(4) NOT NULL default '0',\n"
+		."`start_date` date default NULL,\n"
+		."`end_date` date default NULL,\n"
+		."`start_ts` timestamp NULL default NULL,\n"
+		."`end_ts` timestamp NULL default NULL,\n"
+		."`time_type` tinyint(4) NOT NULL default '0',\n"
 		."PRIMARY KEY  (`oid`),\n"
 		."KEY `eid` (`eid`)\n"
 		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=750 ;\n";
@@ -395,7 +394,7 @@ function add_calendar()
 			'subject_max' => '32',
 			'calendar_title' => 'PHP-Calendar',
 			'anon_permission' => '3',
-			'upload_dir' => 'uploads',
+			'timezone' => '',
 			);
 	foreach($config_array as $name => $value) {
 		$query = "INSERT INTO ".SQL_PREFIX."config\n"
