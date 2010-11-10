@@ -24,7 +24,7 @@ require_once("$phpc_includes_path/lib_autolink.php");
 // called when some error happens
 function soft_error($message)
 {
-	throw new Exception($message);
+	throw new Exception(htmlspecialchars($message, ENT_COMPAT, "UTF-8"));
 }
 
 class PermissionException extends Exception {
@@ -32,7 +32,8 @@ class PermissionException extends Exception {
 
 function permission_error($message)
 {
-	throw new PermissionException($message);
+	throw new PermissionException(htmlspecialchars($message, ENT_COMPAT,
+				"UTF-8"));
 }
 
 function minute_pad($minute)

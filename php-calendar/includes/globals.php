@@ -65,7 +65,7 @@ define('PHPC_TEXT', 2);
 define('PHPC_DROPDOWN', 3);
 
 $sort_options = array(
-                'startdate' => _('Start Date'),
+                'start_date' => _('Start Date'),
                 'subject' => _('Subject')
                 );
 

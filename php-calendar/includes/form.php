@@ -666,7 +666,7 @@ class FormDropdownQuestion extends FormCompoundQuestion {
 
 			if(!empty($this->conditionals[$value])) {
 				$children[] = tag('table', attrs("id=\"{$this->qid}-{$value}\""),
-						$this->conditionals[$value]->get_html($defaults));
+						$this->conditionals[$value]->get_html($this, $defaults));
 			}
                 }
 		if(empty($children))

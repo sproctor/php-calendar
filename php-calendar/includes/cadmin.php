@@ -53,8 +53,12 @@ function config_form()
                         case PHPC_DROPDOWN:
                                 $sequence = create_sequence(0,
                                                 count($element[3]) - 1);
+				if(isset($config[$name]))
+					$default = $config[$name];
+				else
+					$default = false;
                                 $input = create_select($name, $element[3],
-                                                $config[$name], $sequence);
+                                                $default, $sequence);
                                 break;
                         default:
                                 soft_error(_('Unsupported config type')

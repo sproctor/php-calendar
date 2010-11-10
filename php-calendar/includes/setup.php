@@ -221,6 +221,11 @@ if(!empty($_COOKIE["phpc_user"]) && !is_user()) {
 	$_SESSION['messages'][] = _("Session has expired.");
 }
 
+$phpc_tz = get_config($phpcid, 'timezone');
+//$phpcdb->set_timezone("US/Eastern");
+if($phpc_tz != "NULL")
+	date_default_timezone_set($phpc_tz); 
+
 header("Content-Type: text/html; charset=UTF-8");
 
 ?>

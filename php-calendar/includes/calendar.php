@@ -495,11 +495,11 @@ function navbar()
 	if(is_user()) {
 		menu_item_append($html, _('Log out'), 'logout',
 				array('lasturl' =>
-					urlencode($_SERVER['QUERY_STRING'])));
+					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
 	} else {
 		menu_item_append($html, _('Log in'), 'login',
 				array('lasturl' =>
-					urlencode($_SERVER['QUERY_STRING'])));
+					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
 	}
 
 	if(can_admin_calendar($phpcid) && $action != 'cadmin') {
@@ -561,11 +561,8 @@ function get_config_options()
 
 	if($options == NULL) {
 		$timezones = array("NULL" => "System");
-		for($i = -11; $i <= 14; $i++) {
-			$offset = "$i:00";
-			if($i >= 0)
-				$offset = "+$offset";
-			$timezones[$offset] = $offset;
+		foreach(timezone_identifiers_list() as $timezone) {
+			$timezones[$timezone] = $timezone;
 		}
 		// name, text, type, value(s)
 		$options = array( 
@@ -612,7 +609,7 @@ function display_phpc() {
 		if($navbar !== false)
 			$results->add($navbar);
 		$results->add(tag('div', _('You do not have permission to do that: ')
-					. htmlentities($e->getMessage())));
+					. $e->getMessage()));
 		return $results;
 	} catch(Exception $e) {
 		$results = tag('');
@@ -620,7 +617,7 @@ function display_phpc() {
 			$results->add($navbar);
 		$results->add(tag('div', attrs('class="phpc-main"'),
 					tag('h2', _('Error')),
-					tag('p', htmlentities($e->getMessage())),
+					tag('p', $e->getMessage()),
 					tag('h3', _('Backtrace')),
 					tag('pre', htmlentities($e->getTraceAsString()))));
 		return $results;

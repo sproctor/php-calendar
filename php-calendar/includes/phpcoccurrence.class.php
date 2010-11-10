@@ -19,15 +19,15 @@ require_once("$phpc_includes_path/phpcevent.class.php");
 
 class PhpcOccurrence extends PhpcEvent{
 	var $oid;
-	var $startyear;
-	var $startmonth;
-	var $startday;
-	var $endyear;
-	var $endmonth;
-	var $endday;
-	var $timetype;
-	var $hour;
-	var $minute;
+	var $start_year;
+	var $start_month;
+	var $start_day;
+	var $end_year;
+	var $end_month;
+	var $end_day;
+	var $time_type;
+	var $start_hour;
+	var $start_minute;
 	var $end_hour;
 	var $end_minute;
 
@@ -37,28 +37,65 @@ class PhpcOccurrence extends PhpcEvent{
 
 		$this->oid = $event['oid'];
 
-		$this->startyear = $event['startyear'];
-		$this->startmonth = $event['startmonth'];
-		$this->startday = $event['startday'];
-		$this->endyear = $event['endyear'];
-		$this->endmonth = $event['endmonth'];
-		$this->endday = $event['endday'];
+		if(!empty($event['start_ts'])) {
+			$start_ts = $event['start_ts'];
+			$this->start_year = date('Y', $start_ts);
+			$this->start_month = date('n', $start_ts);
+			$this->start_day = date('j', $start_ts);
+			$this->start_hour = date('H', $start_ts);
+			$this->start_minute = date('i', $start_ts);
+		}
 
-		$this->timetype = $event['timetype'];
-		$this->hour = $event['starthour'];
-		$this->minute = $event['startminute'];
-		$this->end_hour = $event['endhour'];
-		$this->end_minute = $event['endminute'];
+		if(!empty($event['start_date'])) {
+			if(preg_match('/^(\d{4})(\d{2})(\d{2})$/',
+						$event['start_date'],
+						$start_matches) < 1) {
+				soft_error(_('DB returned an invalid date.')
+						. "({$event['start_date']})");
+			}
+			$this->start_year = $start_matches[1];
+			$this->start_month = $start_matches[2];
+			$this->start_day = $start_matches[3];
+			$this->start_hour = 0;
+			$this->start_minute = 0;
+		}
+
+		if(!empty($event['end_ts'])) {
+			$end_ts = $event['end_ts'];
+			$this->end_year = date('Y', $end_ts);
+			$this->end_month = date('n', $end_ts);
+			$this->end_day = date('j', $end_ts);
+			$this->end_hour = date('H', $end_ts);
+			$this->end_minute = date('i', $end_ts);
+		}
+
+		if(!empty($event['end_date'])) {
+			if(preg_match('/^(\d{4})(\d{2})(\d{2})$/',
+						$event['end_date'],
+						$end_matches) < 1) {
+				soft_error(_('DB returned an invalid date.')
+						. "({$event['start_date']})");
+			}
+			$this->end_year = $end_matches[1];
+			$this->end_month = $end_matches[2];
+			$this->end_day = $end_matches[3];
+			$this->end_hour = 0;
+			$this->end_minute = 0;
+		}
+		
+		$this->time_type = $event['time_type'];
+
+		//echo "<pre>start time: {$event['start_date']}, {$this->start_year} {$this->start_month} {$this->start_day} {$this->start_hour}:{$this->start_minute}, end time: {$event['end_date']}, {$this->end_year} {$this->end_month} {$this->end_day} {$this->end_hour}:{$this->end_minute}, oid: {$this->oid}</pre>";
 	}
 
 	// formats the time according to type
 	// returns the formatted string
 	function get_time_string()
 	{
-		switch($this->timetype) {
+		switch($this->time_type) {
 			default:
-				return format_time_string($this->hour,
-						$this->minute, get_config(
+				return format_time_string($this->start_hour,
+						$this->start_minute, get_config(
 							$this->cid,
 							'hours_24'));
 			case 1:
@@ -72,11 +109,11 @@ class PhpcOccurrence extends PhpcEvent{
 
 	function get_time_span_string()
 	{
-		switch($this->timetype) {
+		switch($this->time_type) {
 			default:
 				$hour24 = get_config($this->cid, 'hours_24');
-				$start_time = format_time_string($this->hour,
-						$this->minute, $hour24);
+				$start_time = format_time_string($this->start_hour,
+						$this->start_minute, $hour24);
 				$end_time = format_time_string($this->end_hour,
 						$this->end_minute, $hour24);
 				return $start_time.' '._('to').' '.$end_time;
@@ -91,42 +128,52 @@ class PhpcOccurrence extends PhpcEvent{
 		
 	function get_year()
 	{
-		return $this->startyear;
+		return $this->start_year;
 	}
 
 	function get_month()
 	{
-		return $this->startmonth;
+		return $this->start_month;
 	}
 
 	function get_day()
 	{
-		return $this->startday;
+		return $this->start_day;
 	}
 
-	function get_endyear()
+	function get_end_year()
 	{
-		return $this->endyear;
+		return $this->end_year;
 	}
 
-	function get_endmonth()
+	function get_end_month()
 	{
-		return $this->endmonth;
+		return $this->end_month;
 	}
 
-	function get_endday()
+	function get_end_day()
 	{
-		return $this->endday;
+		return $this->end_day;
 	}
 
-	function get_hour()
+	function get_start_hour()
 	{
-                return $this->hour;
+                return $this->start_hour;
 	}
 
-	function get_minute()
+	function get_start_minute()
 	{
-		return $this->minute;
+		return $this->start_minute;
+	}
+
+	function get_end_hour()
+	{
+                return $this->end_hour;
+	}
+
+	function get_end_minute()
+	{
+		return $this->end_minute;
 	}
 
 	function get_start_time() {
@@ -135,8 +182,8 @@ class PhpcOccurrence extends PhpcEvent{
 	}
 
 	function get_end_time() {
-		return mktime(0, 0, 0, $this->get_endmonth(),
-				$this->get_endday(), $this->get_endyear());
+		return mktime(0, 0, 0, $this->get_end_month(),
+				$this->get_end_day(), $this->get_end_year());
 	}
 
 	// takes start and end dates and returns a nice display
@@ -152,7 +199,7 @@ class PhpcOccurrence extends PhpcEvent{
 
 		if($start_time != $end_time) {
 			$str .= ' - ' . sprintf(date($phpc_datefmt, $end_time),
-					short_month_name($this->get_endmonth()));
+					short_month_name($this->get_end_month()));
 		}
 
 		return $str;

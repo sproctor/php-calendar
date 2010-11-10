@@ -49,7 +49,7 @@ class PhpcEvent {
 	}
 
 	function get_raw_subject() {
-		return htmlspecialchars($this->subject);
+		return htmlspecialchars($this->subject, ENT_COMPAT, "UTF-8");
 	}
 
 	function get_subject()
@@ -57,8 +57,8 @@ class PhpcEvent {
 		if(empty($this->subject))
 			return _('(No subject)');
 
-		return htmlspecialchars(strip_tags(stripslashes(
-						$this->subject)));
+		return htmlspecialchars(stripslashes($this->subject),
+				ENT_COMPAT, "UTF-8");
 	}
 
 	function get_username()
@@ -98,12 +98,12 @@ class PhpcEvent {
 
 	function get_text_color()
 	{
-		return htmlspecialchars($this->text_color);
+		return htmlspecialchars($this->text_color, ENT_COMPAT, "UTF-8");
 	}
 
 	function get_bg_color()
 	{
-		return htmlspecialchars($this->bg_color);
+		return htmlspecialchars($this->bg_color, ENT_COMPAT, "UTF-8");
 	}
 }
 ?>

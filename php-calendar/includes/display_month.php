@@ -119,8 +119,8 @@ function create_month($month, $year)
 			$to_stamp);
 	$days_events = array();
 	foreach($results as $event) {
-		$end_stamp = mktime(0, 0, 0, $event->get_endmonth(),
-				$event->get_endday(), $event->get_endyear());
+		$end_stamp = mktime(0, 0, 0, $event->get_end_month(),
+				$event->get_end_day(), $event->get_end_year());
 
 		$start_stamp = mktime(0, 0, 0, $event->get_month(),
 				$event->get_day(), $event->get_year());

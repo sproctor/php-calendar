@@ -39,29 +39,47 @@ function event_submit()
 		}
 	}
 
-	$startdate = get_date("start");
-	$enddate = get_date("end");
+	$start_date = NULL;
+	$end_date = NULL;
+	$start_ts = NULL;
+	$end_ts = NULL;
 
-	$starttime = NULL;
-	$endtime = NULL;
 	switch($vars["time-type"]) {
 		case 'normal':
-			$starttime = get_time("start");
-			$endtime = get_time("end");
-			$timetype = 0;
+			$start_ts = get_timestamp("start");
+			$end_ts = get_timestamp("end");
+			$time_type = 0;
 			break;
+
 		case 'full':
-			$timetype = 1;
+			$start_date = get_date("start");
+			$end_date = get_date("end");
+			$time_type = 1;
 			break;
+
 		case 'tba':
-			$timetype = 2;
+			$start_date = get_date("start");
+			$end_date = get_date("end");
+			$time_type = 2;
 			break;
+
 		case 'none':
-			$timetype = 3;
+			$start_date = get_date("start");
+			$end_date = get_date("end");
+			$time_type = 3;
 			break;
+
 		default:
 			soft_error(_("Unrecognized Time Type."));
 	}
+
+	$duration = 0;
+	if($start_date != NULL && $end_date != NULL)
+		$duration = $end_date - $start_date;
+	if($start_ts != NULL && $end_ts != NULL)
+		$duration = $end_ts - $start_ts;
+	if($duration < 0)
+		soft_error(_("An event cannot have an end earlier than its start."));
 
 	if(empty($vars["phpc_token"])
 			|| $vars["phpc_token"] != $_SESSION["phpc_token"])
@@ -90,8 +108,8 @@ function event_submit()
 		$phpcdb->delete_occurrences($eid);
 	}
 		
-	$phpcdb->create_occurrence($eid, $startdate, $enddate, $timetype,
-			$starttime, $endtime);
+	$oid = $phpcdb->create_occurrence($eid, $time_type, $start_ts, $end_ts,
+			$start_date, $end_date);
 
 	$occurrences = 1;
 	switch($vars["repeats"]) {
@@ -106,13 +124,15 @@ function event_submit()
 
 			$daily_until = get_date("daily-until");
 			while($occurrences <= 730) {
-				$startdate = add_days($startdate, $ndays);
-				$enddate = add_days($enddate, $ndays);
+				$start_date = add_days($start_date, $ndays);
+				$start_ts = add_days($start_ts, $ndays);
+				$end_date = add_days($end_date, $ndays);
+				$end_ts = add_days($end_ts, $ndays);
 				if($startdate > $daily_until)
 					break;
-				$phpcdb->create_occurrence($eid, $startdate,
-						$enddate, $timetype,
-						$starttime, $endtime);
+				$phpcdb->create_occurrence($eid, $time_type,
+						$start_ts, $end_ts, $start_date,
+						$end_date);
 				$occurrences++;
 			}
 			break;
@@ -126,13 +146,15 @@ function event_submit()
 
 			$weekly_until = get_date("weekly-until");
 			while($occurrences <= 730) {
-				$startdate = add_days($startdate, $ndays);
-				$enddate = add_days($enddate, $ndays);
+				$start_date = add_days($start_date, $ndays);
+				$start_ts = add_days($start_ts, $ndays);
+				$end_date = add_days($end_date, $ndays);
+				$end_ts = add_days($end_ts, $ndays);
 				if($startdate > $weekly_until)
 					break;
-				$phpcdb->create_occurrence($eid, $startdate,
-						$enddate, $timetype,
-						$starttime, $endtime);
+				$phpcdb->create_occurrence($eid, $time_type,
+						$start_ts, $end_ts, $start_date,
+						$end_date);
 				$occurrences++;
 			}
 			break;
@@ -146,13 +168,15 @@ function event_submit()
 
 			$monthly_until = get_date("monthly-until");
 			while($occurrences <= 730) {
-				$startdate = add_months($startdate, $nmonths);
-				$enddate = add_months($enddate, $nmonths);
+				$start_date = add_months($start_date, $nmonths);
+				$start_ts = add_months($start_ts, $nmonths);
+				$end_date = add_months($end_date, $nmonths);
+				$end_ts = add_months($end_ts, $nmonths);
 				if($startdate > $monthly_until)
 					break;
-				$phpcdb->create_occurrence($eid, $startdate,
-						$enddate, $timetype,
-						$starttime, $endtime);
+				$phpcdb->create_occurrence($eid, $time_type,
+						$start_ts, $end_ts, $start_date,
+						$end_date);
 				$occurrences++;
 			}
 			break;
@@ -166,13 +190,15 @@ function event_submit()
 
 			$yearly_until = get_date("yearly-until");
 			while($occurrences <= 730) {
-				$startdate = add_years($startdate, $nyears);
-				$enddate = add_years($enddate, $nyears);
+				$start_date = add_years($start_date, $nyears);
+				$start_ts = add_years($start_ts, $nyears);
+				$end_date = add_years($end_date, $nyears);
+				$end_ts = add_years($end_ts, $nyears);
 				if($startdate > $yearly_until)
 					break;
-				$phpcdb->create_occurrence($eid, $startdate,
-						$enddate, $timetype,
-						$starttime, $endtime);
+				$phpcdb->create_occurrence($eid, $time_type,
+						$start_ts, $end_ts, $start_date,
+						$end_date);
 				$occurrences++;
 			}
 			break;
@@ -218,9 +244,24 @@ function get_date($prefix)
 	return mktime(0, 0, 0, $month, $day, $year);
 }
 
-function get_time($prefix)
+function get_timestamp($prefix)
 {
 	global $vars;
+
+	if(!isset($vars["{$prefix}-year"]))
+		soft_error(_("Required field {$prefix}-year was not set."));
+	else
+		$year = $vars["{$prefix}-year"];
+
+	if(!isset($vars["{$prefix}-month"]))
+		soft_error(_("Required field {$prefix}-month was not set."));
+	else
+		$month = $vars["{$prefix}-month"];
+
+	if(!isset($vars["{$prefix}-day"]))
+		soft_error(_("Required field {$prefix}-day was not set."));
+	else
+		$day = $vars["{$prefix}-day"];
 
 	if(!isset($vars["{$prefix}-hour"]))
 		soft_error(_("Required field {$prefix}-hour was not set."));
@@ -242,24 +283,36 @@ function get_time($prefix)
 		}
 	}
 		
-	return "{$hour}:{$minute}:00";
+	return mktime($hour, $minute, 0, $month, $day, $year);
 }
 
 function add_days($stamp, $days)
 {
-	return mktime(0, 0, 0, date('m', $stamp), date('d', $stamp) + $days,
+	if($stamp == NULL)
+		return NULL;
+
+	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
+			date('n', $stamp), date('j', $stamp) + $days,
 			date('Y', $stamp));
 }
 
 function add_months($stamp, $months)
 {
-	return mktime(0, 0, 0, date('m', $stamp) + $months, date('d', $stamp),
+	if($stamp == NULL)
+		return NULL;
+
+	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
+			date('m', $stamp) + $months, date('d', $stamp),
 			date('Y', $stamp));
 }
 
 function add_years($stamp, $years)
 {
-	return mktime(0, 0, 0, date('m', $stamp), date('d', $stamp),
+	if($stamp == NULL)
+		return NULL;
+
+	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
+			date('m', $stamp), date('d', $stamp),
 			date('Y', $stamp) + $years);
 }
 ?>

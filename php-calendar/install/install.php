@@ -20,6 +20,8 @@
    it needs very much work
 */
 
+$phpc_db_version = 0;
+
 $phpc_root_path = dirname(dirname(__FILE__));
 $phpc_includes_path = "$phpc_root_path/includes";
 $phpc_config_file = "$phpc_root_path/config.php";
@@ -41,7 +43,9 @@ foreach($_POST as $key => $value) {
 	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">\n";
 }
 
-if(!isset($_POST['my_hostname'])
+if(!isset($_POST['action'])) {
+	get_action();
+} elseif(!isset($_POST['my_hostname'])
 		&& !isset($_POST['my_username'])
 		&& !isset($_POST['my_passwd'])
 		&& !isset($_POST['my_prefix'])
@@ -57,6 +61,11 @@ if(!isset($_POST['my_hostname'])
 	get_admin();
 } else {
 	add_calendar();
+}
+
+function get_action() {
+	echo '<input type="submit" name="action" value="install"><br>';
+	echo '<input type="submit" name="action" value="upgrade">';
 }
 
 function check_config()

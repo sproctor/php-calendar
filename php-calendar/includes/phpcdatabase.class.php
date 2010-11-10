@@ -41,6 +41,23 @@ class PhpcDatabase {
 		$this->dbh->close();
 	}
 
+	private function get_event_fields() {
+		$events_table = SQL_PREFIX . "events";
+		$fields = array('subject', 'description', 'owner', 'eid', 'cid',
+				'readonly', 'catid');
+		return "`$events_table`.`"
+			. implode("`, `$events_table`.`", $fields) . "`\n";
+	}
+
+	private function get_occurrence_fields() {
+		$occ_table = SQL_PREFIX . "occurrences";
+		return $this->get_event_fields() . ", `time_type`, `oid`, "
+			. "UNIX_TIMESTAMP(`start_ts`) AS `start_ts`, "
+			. "DATE_FORMAT(`start_date`, '%Y%m%d') AS `start_date`, "
+			. "UNIX_TIMESTAMP(`end_ts`) AS `end_ts`, "
+			. "DATE_FORMAT(`end_date`, '%Y%m%d') AS `end_date`\n";
+	}
+
 	// returns all the events for a particular day
 	// $from and $to are timestamps only significant to the date.
 	// an event that happens later in the day of $to is included
@@ -49,34 +66,21 @@ class PhpcDatabase {
 		$from_date = date('Y-m-d', $from);
 		$to_date = date('Y-m-d', $to);
 
-		$sql_events = SQL_PREFIX . "events";
-		$sql_occurrences = SQL_PREFIX . "occurrences";
+		$events_table = SQL_PREFIX . "events";
+		$occurrences_table = SQL_PREFIX . "occurrences";
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-                $query = "SELECT `subject`, `description`, `$sql_events`.`eid`,"
-		        ." `$sql_events`.`cid`, `oid`, `owner`, `username`, "
-			."`timetype`, `readonly`, "
-			."`$sql_events`.`catid`, `name`, `bg_color`, "
-			."`text_color`, "
-			."HOUR(`starttime`) AS `starthour`, "
-			."MINUTE(`starttime`) AS `startminute`, "
-			."HOUR(`endtime`) AS `endhour`, "
-			."MINUTE(`endtime`) AS `endminute`, "
-			."YEAR(`startdate`) AS `startyear`, "
-			."MONTH(`startdate`) AS `startmonth`, "
-			."DAY(`startdate`) AS `startday`, "
-			."YEAR(`enddate`) AS `endyear`, "
-			."MONTH(`enddate`) AS `endmonth`, "
-			."DAY(`enddate`) AS `endday`\n "
-			."FROM `$sql_events`\n"
-                        ."INNER JOIN `$sql_occurrences` USING (`eid`)\n"
+                $query = "SELECT " . $this->get_occurrence_fields()
+			.", `username`, `name`, `bg_color`, `text_color`\n"
+			."FROM `$events_table`\n"
+                        ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
-			."WHERE `$sql_events`.`cid` = '$cid'\n"
-			."	AND `startdate` <= DATE('$to_date')\n"
-			."	AND `enddate` >= DATE('$from_date')\n"
-			."	ORDER BY `startdate`, `starttime`, `oid`";
+			."WHERE `$events_table`.`cid` = '$cid'\n"
+			."	AND IF(`start_ts`, DATE(`start_ts`), `start_date`) <= DATE('$to_date')\n"
+			."	AND IF(`end_ts`, DATE(`end_ts`), `end_date`) >= DATE('$from_date')\n"
+			."	ORDER BY `start_ts`, `start_date`, `oid`";
 
 		$result = $this->dbh->query($query)
 			or $this->db_error(_('Error in get_occurrences_by_date_range'),
@@ -106,10 +110,8 @@ class PhpcDatabase {
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-        $query = "SELECT `subject`, `description`, `owner`, `username`, "
-			."`$events_table`.`eid`, `$events_table`.`cid`, "
-			."`readonly`, `$events_table`.`catid`, `name`, "
-			."`bg_color`, `text_color`\n"
+		$query = "SELECT " . $this->get_event_fields()
+			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
 			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
@@ -180,20 +182,8 @@ class PhpcDatabase {
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-                $query = "SELECT `subject`, `description`, `owner`, `username`, "
-			."`$events_table`.`eid`, `$events_table`.`cid`, `oid`, "
-			."`timetype`, `readonly`, `$events_table`.`catid`, "
-			."`name`, `bg_color`, `text_color`, "
-			."HOUR(`starttime`) AS `starthour`, "
-			."MINUTE(`starttime`) AS `startminute`, "
-			."HOUR(`endtime`) AS `endhour`, "
-			."MINUTE(`endtime`) AS `endminute`, "
-			."YEAR(`startdate`) AS `startyear`, "
-			."MONTH(`startdate`) AS `startmonth`, "
-			."DAY(`startdate`) AS `startday`, "
-			."YEAR(`enddate`) AS `endyear`, "
-			."MONTH(`enddate`) AS `endmonth`, "
-			."DAY(`enddate`) AS `endday`\n"
+                $query = "SELECT " . $this->get_occurrence_fields()
+			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
@@ -212,32 +202,19 @@ class PhpcDatabase {
 
         function get_occurrences_by_eid($eid)
 	{
-		$sql_events = SQL_PREFIX . "events";
-		$sql_occurrences = SQL_PREFIX . "occurrences";
+		$events_table = SQL_PREFIX . "events";
+		$occurrences_table = SQL_PREFIX . "occurrences";
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-                $query = "SELECT `subject`, `description`, `owner`, "
-			."`$sql_events`.`eid`, `$sql_events`.`cid`, `oid`, "
-			."`username`, `timetype`, `readonly`, "
-			."`$sql_events`.`catid`, `name`, `bg_color`, "
-			."`text_color`, "
-			."HOUR(`starttime`) AS `starthour`, "
-			."MINUTE(`starttime`) AS `startminute`, "
-			."HOUR(`endtime`) AS `endhour`, "
-			."MINUTE(`endtime`) AS `endminute`, "
-			."YEAR(`startdate`) AS `startyear`, "
-			."MONTH(`startdate`) AS `startmonth`, "
-			."DAY(`startdate`) AS `startday`, "
-			."YEAR(`enddate`) AS `endyear`, "
-			."MONTH(`enddate`) AS `endmonth`, "
-			."DAY(`enddate`) AS `endday`\n"
-			."FROM `$sql_events`\n"
-                        ."INNER JOIN `$sql_occurrences` USING (`eid`)\n"
+                $query = "SELECT " . $this->get_occurrence_fields()
+			.", `username`, `name`, `bg_color`, `text_color`\n"
+			."FROM `$events_table`\n"
+                        ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
 			."WHERE `eid` = '$eid'\n"
-			."	ORDER BY `startdate`, `starttime`, `oid`";
+			."	ORDER BY `start_ts`, `start_date`, `oid`";
 
 		$result = $this->dbh->query($query)
 			or $this->db_error(_('Error in get_occurrences_by_eid'),
@@ -512,10 +489,14 @@ class PhpcDatabase {
 
 	function update_config($cid, $name, $value)
 	{
+		// Don't put quotes around a NULL
+		if($value != "NULL")
+			$value = "'$value'";
+
 		$query = "INSERT ".SQL_PREFIX."config\n"
 			."(`cid`, `config_name`, `config_value`)\n"
-			."VALUES ($cid, '$name', '$value')\n"
-			."ON DUPLICATE KEY UPDATE config_value = '$value'";
+			."VALUES ($cid, '$name', $value)\n"
+			."ON DUPLICATE KEY UPDATE config_value = $value";
 
 		$this->dbh->query($query)
 			or $this->db_error(_('Error reading options'), $query);
@@ -541,20 +522,27 @@ class PhpcDatabase {
 		return $this->dbh->insert_id;
 	}
 
-	function create_occurrence($eid, $startdate, $enddate, $timetype,
-			$starttime = NULL, $endtime = NULL)
+	function create_occurrence($eid, $time_type, $start_ts = NULL,
+			$end_ts = NULL, $start_date = NULL, $end_date = NULL)
 	{
-		$fmt_startdate = date("Y-m-d", $startdate);
-		$fmt_enddate = date("Y-m-d", $enddate);
 
 		$query = "INSERT INTO `" . SQL_PREFIX . "occurrences`\n"
-			."SET `eid` = '$eid', `startdate` = '$fmt_startdate', "
-			."`enddate` = '$fmt_enddate', `timetype` = $timetype";
-		if($starttime !== NULL)
-			$query .= ", `starttime` = '$starttime'";
-		if($endtime !== NULL)
-			$query .= ", `endtime` = '$endtime'";
+			."SET `eid` = '$eid', `time_type` = '$time_type'";
 
+		if($start_date != NULL) {
+			$fmt_start_date = date("Y-m-d", $start_date);
+			$query .= ", `start_date` = '$fmt_start_date'";
+		}
+		if($end_date != NULL) {
+			$fmt_end_date = date("Y-m-d", $end_date);
+			$query .= ", `end_date` = '$fmt_end_date'";
+		}
+		if($start_ts !== NULL)
+			$query .= ", `start_ts` = FROM_UNIXTIME('$start_ts')";
+		if($end_ts !== NULL)
+			$query .= ", `end_ts` = FROM_UNIXTIME('$end_ts')";
+
+		echo "<pre>query: $query</pre>";
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Error creating event.'), $query);
 
@@ -619,35 +607,22 @@ class PhpcDatabase {
 
 		$words = array();
 		foreach($keywords as $keyword) {
-			$words[] = "(subject LIKE '%$keyword%' "
-				."OR description LIKE '%$keyword%')\n";
+			$words[] = "(`subject` LIKE '%$keyword%' "
+				."OR `description` LIKE '%$keyword%')\n";
 		}
 		$where = implode(' AND ', $words);
 
-                $query = "SELECT `subject`, `description`, `username`, "
-			."`$events_table`.`eid`, `$events_table`.`cid`, "
-			."`oid`, `owner`, `username`, `timetype`, `readonly`, "
-			."`$events_table`.`catid`, `name`, `bg_color`, "
-			."`text_color`, "
-			."HOUR(`starttime`) AS `starthour`, "
-			."MINUTE(`starttime`) AS `startminute`, "
-			."HOUR(`endtime`) AS `endhour`, "
-			."MINUTE(`endtime`) AS `endminute`, "
-			."YEAR(`startdate`) AS `startyear`, "
-			."MONTH(`startdate`) AS `startmonth`, "
-			."DAY(`startdate`) AS `startday`, "
-			."YEAR(`enddate`) AS `endyear`, "
-			."MONTH(`enddate`) AS `endmonth`, "
-			."DAY(`enddate`) AS `endday`\n"
+                $query = "SELECT " . $this->get_occurrence_fields()
+			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table` \n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
-			."WHERE ($where) "
-			."AND `$events_table`.`cid` = '$cid' "
-			."AND `enddate` >= DATE '$start' "
-			."AND `startdate` <= DATE '$end' "
-			."ORDER BY $sort $order";
+			."WHERE ($where)\n"
+			."AND `$events_table`.`cid` = '$cid'\n"
+			."AND IF(`start_ts`, DATE(`start_ts`), `start_date`) >= STR_TO_DATE('$start', '%Y%m%d')\n"
+			."AND IF(`end_ts`, DATE(`end_ts`), `end_date`) <= STR_TO_DATE('$end', '%Y%m%d')\n"
+			."ORDER BY `$sort` $order";
 
 		if(!($result = $this->dbh->query($query)))
 			$this->db_error(_('Error during searching'), $query);
@@ -683,11 +658,14 @@ class PhpcDatabase {
 	// called when there is an error involving the DB
 	function db_error($str, $query = "")
 	{
-		$string = "$str<br />" . $this->dbh->error;
+		$string = $str . "<pre>" . htmlspecialchars($this->dbh->error,
+				ENT_COMPAT, "UTF-8") . "</pre>";
 		if($query != "") {
-			$string .= "<br />"._('SQL query').": $query";
+			$string .= "<pre>" . _('SQL query') . ": "
+				. htmlspecialchars($query, ENT_COMPAT, "UTF-8")
+				. "</pre>";
 		}
-		soft_error($string);
+		throw new Exception($string);
 	}
 
 }

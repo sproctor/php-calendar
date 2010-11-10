@@ -25,8 +25,10 @@ function search_results()
 
 	$searchstring = $vars['searchstring'];
 
-	$start = htmlentities("$vars[syear]-$vars[smonth]-$vars[sday]");
-	$end = htmlentities("$vars[eyear]-$vars[emonth]-$vars[eday]");
+	$start = $vars['syear'] . str_pad($vars['smonth'], 2, '0', STR_PAD_LEFT)
+		. str_pad($vars['sday'], 2, '0', STR_PAD_LEFT);
+	$end = $vars['eyear'] . str_pad($vars['emonth'], 2, '0', STR_PAD_LEFT)
+		. str_pad($vars['eday'], 2, '0', STR_PAD_LEFT);
 
         // make sure sort is valid
 	$sort = htmlentities($vars['sort']);
