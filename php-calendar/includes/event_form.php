@@ -233,5 +233,40 @@ function add_repeat_defaults($occs, &$defaults) {
 		return;
 	}
 
+	$ndays = days_between($event->get_start_ts(), $occs[1]->get_start_ts());
+	$repeats_daily = true;
+	for($i = 1; $i < sizeof($occs); $i++) {
+		$cur_occ = $occs[$i];
+		$cur_year = $cur_occ->get_start_year();
+		$cur_month = $cur_occ->get_start_month();
+		$cur_day = $cur_occ->get_start_day();
+		$cur_ndays = days_between($occs[$i - 1]->get_start_ts(),
+				$occs[$i]->get_start_ts());
+		if($cur_ndays != $ndays) {
+echo "cur_day: $cur_day, cur_month: $cur_month, cur_ndays: $cur_ndays<br>";
+			$repeats_daily = false;
+			break;
+		}
+	}
+
+	if($repeats_daily) {
+		// repeats weekly
+		if($ndays % 7 == 0) {
+			$defaults['repeats'] = 'weekly';
+			$defaults['every-week'] = $ndays / 7;
+			$defaults['weekly-until-year'] = $cur_year;
+			$defaults['weekly-until-month'] = $cur_month;
+			$defaults['weekly-until-day'] = $cur_day;
+			return;
+		}
+
+		// repeats daily
+		$defaults['repeats'] = 'daily';
+		$defaults['every-day'] = $ndays;
+		$defaults['daily-until-year'] = $cur_year;
+		$defaults['daily-until-month'] = $cur_month;
+		$defaults['daily-until-day'] = $cur_day;
+		return;
+	}
 }
 ?>

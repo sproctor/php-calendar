@@ -214,6 +214,18 @@ class PhpcOccurrence extends PhpcEvent{
 	function get_time_type() {
 		return $this->time_type;
 	}
+
+	function get_start_ts() {
+		return mktime($this->start_hour, $this->start_minute, 0,
+				$this->start_month, $this->start_day,
+				$this->start_year);
+	}
+
+	function get_end_ts() {
+		return mktime($this->end_hour, $this->end_minute, 0,
+				$this->end_month, $this->end_day,
+				$this->end_year);
+	}
 }
 
 ?>
