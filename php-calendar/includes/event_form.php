@@ -168,7 +168,6 @@ function add_repeat_defaults($occs, &$defaults) {
 	// Test if they repeat every N years
 	$nyears = $occs[1]->get_start_year() - $event->get_start_year();
 	$repeats_yearly = true;
-	//echo "day: $day, month: $month, nyears: $nyears<br>";
 	for($i = 1; $i < sizeof($occs); $i++) {
 		$cur_occ = $occs[$i];
 		$cur_year = $cur_occ->get_start_year();
@@ -193,5 +192,30 @@ function add_repeat_defaults($occs, &$defaults) {
 
 	$nmonths = ($occs[1]->get_start_year() - $year) * 12
 		+ $occs[1]->get_start_month() - $month;
+	//echo "day: $day, month: $month, nmonths: $nmonths<br>";
+	$repeats_monthly = true;
+	for($i = 1; $i < sizeof($occs); $i++) {
+		$cur_occ = $occs[$i];
+		$cur_year = $cur_occ->get_start_year();
+		$cur_month = $cur_occ->get_start_month();
+		$cur_day = $cur_occ->get_start_day();
+		$cur_nmonths = ($cur_year - $occs[$i - 1]->get_start_year())
+			* 12 + $cur_month - $occs[$i - 1]->get_start_month();
+		if($cur_day != $day || $cur_nmonths != $nmonths) {
+//echo "cur_day: $cur_day, cur_month: $cur_month, cur_nmonths: $cur_nmonths<br>";
+			$repeats_monthly = false;
+			break;
+		}
+	}
+
+	if($repeats_monthly) {
+		$defaults['repeats'] = 'monthly';
+		$defaults['every-month'] = $nmonths;
+		$defaults['monthly-until-year'] = $cur_year;
+		$defaults['monthly-until-month'] = $cur_month;
+		$defaults['monthly-until-day'] = $cur_day;
+		return;
+	}
+
 }
 ?>
