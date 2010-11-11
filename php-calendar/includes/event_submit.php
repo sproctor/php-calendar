@@ -115,6 +115,7 @@ function event_submit()
 	switch($vars["repeats"]) {
 		case "never":
 			break;
+
 		case 'daily':
 			if(!isset($vars["every-day"]))
 				soft_error(_("Required field \"every-day\" is not set."));
@@ -128,7 +129,8 @@ function event_submit()
 				$start_ts = add_days($start_ts, $ndays);
 				$end_date = add_days($end_date, $ndays);
 				$end_ts = add_days($end_ts, $ndays);
-				if($startdate > $daily_until)
+				if($start_date > $daily_until
+						|| $start_ts > $daily_until)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
 						$start_ts, $end_ts, $start_date,
@@ -150,7 +152,7 @@ function event_submit()
 				$start_ts = add_days($start_ts, $ndays);
 				$end_date = add_days($end_date, $ndays);
 				$end_ts = add_days($end_ts, $ndays);
-				if($startdate > $weekly_until)
+				if($start_date > $weekly_until)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
 						$start_ts, $end_ts, $start_date,
@@ -172,7 +174,7 @@ function event_submit()
 				$start_ts = add_months($start_ts, $nmonths);
 				$end_date = add_months($end_date, $nmonths);
 				$end_ts = add_months($end_ts, $nmonths);
-				if($startdate > $monthly_until)
+				if($start_date > $monthly_until)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
 						$start_ts, $end_ts, $start_date,
@@ -194,7 +196,7 @@ function event_submit()
 				$start_ts = add_years($start_ts, $nyears);
 				$end_date = add_years($end_date, $nyears);
 				$end_ts = add_years($end_ts, $nyears);
-				if($startdate > $yearly_until)
+				if($start_date > $yearly_until)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
 						$start_ts, $end_ts, $start_date,
