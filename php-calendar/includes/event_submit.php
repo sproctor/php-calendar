@@ -39,11 +39,9 @@ function event_submit()
 		}
 	}
 
-	$start_ts = NULL;
-	$end_ts = NULL;
-
 	$start_ts = get_timestamp("start");
 	$end_ts = get_timestamp("end");
+
 	switch($vars["time-type"]) {
 		case 'normal':
 			$time_type = 0;
@@ -110,7 +108,7 @@ function event_submit()
 			if($ndays < 1)
 				soft_error(_("every-day must be greater than 1"));
 
-			$daily_until = get_date("daily-until");
+			$daily_until = get_timestamp("daily-until");
 			while($occurrences <= 730) {
 				$start_ts = add_days($start_ts, $ndays);
 				$end_ts = add_days($end_ts, $ndays);
@@ -129,7 +127,7 @@ function event_submit()
 				soft_error(_("every-week must be greater than 1"));
 			$ndays = $vars["every-week"] * 7;
 
-			$weekly_until = get_date("weekly-until");
+			$weekly_until = get_timestamp("weekly-until");
 			while($occurrences <= 730) {
 				$start_ts = add_days($start_ts, $ndays);
 				$end_ts = add_days($end_ts, $ndays);
@@ -148,7 +146,7 @@ function event_submit()
 				soft_error(_("every-month must be greater than 1"));
 			$nmonths = $vars["every-month"];
 
-			$monthly_until = get_date("monthly-until");
+			$monthly_until = get_timestamp("monthly-until");
 			while($occurrences <= 730) {
 				$start_ts = add_months($start_ts, $nmonths);
 				$end_ts = add_months($end_ts, $nmonths);
@@ -167,7 +165,7 @@ function event_submit()
 				soft_error(_("every-month must be greater than 1"));
 			$nyears = $vars["every-year"];
 
-			$yearly_until = get_date("yearly-until");
+			$yearly_until = get_timestamp("yearly-until");
 			while($occurrences <= 730) {
 				$start_ts = add_years($start_ts, $nyears);
 				$end_ts = add_years($end_ts, $nyears);
@@ -198,28 +196,6 @@ function event_submit()
 	}
 }
 
-function get_date($prefix)
-{
-	global $vars;
-
-	if(!isset($vars["{$prefix}-year"]))
-		soft_error(_("Required field {$prefix}-year was not set."));
-	else
-		$year = $vars["{$prefix}-year"];
-
-	if(!isset($vars["{$prefix}-month"]))
-		soft_error(_("Required field {$prefix}-month was not set."));
-	else
-		$month = $vars["{$prefix}-month"];
-
-	if(!isset($vars["{$prefix}-day"]))
-		soft_error(_("Required field {$prefix}-day was not set."));
-	else
-		$day = $vars["{$prefix}-day"];
-
-	return mktime(0, 0, 0, $month, $day, $year);
-}
-
 function get_timestamp($prefix)
 {
 	global $vars;
@@ -240,12 +216,12 @@ function get_timestamp($prefix)
 		$day = $vars["{$prefix}-day"];
 
 	if(!isset($vars["{$prefix}-hour"]))
-		soft_error(_("Required field {$prefix}-hour was not set."));
+		$hour = 0;
 	else
 		$hour = $vars["{$prefix}-hour"];
 
 	if(!isset($vars["{$prefix}-minute"]))
-		soft_error(_("Required field {$prefix}-minute was not set."));
+		$minute = 0;
 	else
 		$minute = $vars["{$prefix}-minute"];
 

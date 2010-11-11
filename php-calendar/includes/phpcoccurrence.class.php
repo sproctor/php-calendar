@@ -210,6 +210,10 @@ class PhpcOccurrence extends PhpcEvent{
 	{
 		return $this->oid;
 	}
+
+	function get_time_type() {
+		return $this->time_type;
+	}
 }
 
 ?>

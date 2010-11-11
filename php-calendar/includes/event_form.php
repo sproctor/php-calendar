@@ -131,10 +131,26 @@ function event_form() {
 				'readonly' => $event->is_readonly(),
 				);
 
-		add_repeat_defaults($occs, $defaults);
-
 		if(!empty($event->catid))
 			$defaults['catid'] = $event->catid;
+
+		switch($event->get_time_type()) {
+			case 0:
+				$defaults['time-type'] = 'normal';
+				break;
+			case 1:
+				$defaults['time-type'] = 'full';
+				break;
+			case 2:
+				$defaults['time-type'] = 'tba';
+				break;
+			case 3:
+				$defaults['time-type'] = 'none';
+				break;
+		}
+
+		add_repeat_defaults($occs, $defaults);
+
 	} else {
 		$defaults = array(
 				'start-year' => $year,
