@@ -176,7 +176,7 @@ function event_submit()
 				$end_date = add_months($end_date, $nmonths);
 				$end_ts = add_months($end_ts, $nmonths);
 				if($start_date > $monthly_until
-						|| $start_ts > $weekly_until)
+						|| $start_ts > $monthly_until)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
 						$start_ts, $end_ts, $start_date,
