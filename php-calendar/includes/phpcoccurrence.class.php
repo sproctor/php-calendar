@@ -126,17 +126,17 @@ class PhpcOccurrence extends PhpcEvent{
 		}
 	}
 		
-	function get_year()
+	function get_start_year()
 	{
 		return $this->start_year;
 	}
 
-	function get_month()
+	function get_start_month()
 	{
 		return $this->start_month;
 	}
 
-	function get_day()
+	function get_start_day()
 	{
 		return $this->start_day;
 	}
@@ -177,8 +177,9 @@ class PhpcOccurrence extends PhpcEvent{
 	}
 
 	function get_start_time() {
-		return mktime(0, 0, 0, $this->get_month(), $this->get_day(),
-				$this->get_year());
+		return mktime(0, 0, 0, $this->get_start_month(),
+				$this->get_start_day(),
+				$this->get_start_year());
 	}
 
 	function get_end_time() {
@@ -195,7 +196,7 @@ class PhpcOccurrence extends PhpcEvent{
 		$end_time = $this->get_end_time();
 
 		$str = sprintf(date($phpc_datefmt, $start_time),
-				short_month_name($this->get_month()));
+				short_month_name($this->get_start_month()));
 
 		if($start_time != $end_time) {
 			$str .= ' - ' . sprintf(date($phpc_datefmt, $end_time),

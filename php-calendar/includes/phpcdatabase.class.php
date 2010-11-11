@@ -542,7 +542,6 @@ class PhpcDatabase {
 		if($end_ts !== NULL)
 			$query .= ", `end_ts` = FROM_UNIXTIME('$end_ts')";
 
-		echo "<pre>query: $query</pre>";
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Error creating event.'), $query);
 

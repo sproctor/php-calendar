@@ -122,8 +122,9 @@ function create_month($month, $year)
 		$end_stamp = mktime(0, 0, 0, $event->get_end_month(),
 				$event->get_end_day(), $event->get_end_year());
 
-		$start_stamp = mktime(0, 0, 0, $event->get_month(),
-				$event->get_day(), $event->get_year());
+		$start_stamp = mktime(0, 0, 0, $event->get_start_month(),
+				$event->get_start_day(),
+				$event->get_start_year());
 
 		$diff = $from_stamp - $start_stamp;
 		if($diff > 0)
@@ -133,9 +134,9 @@ function create_month($month, $year)
 
 		// put the event in every day until the end
 		for(; ; $add_days++) {
-			$stamp = mktime(0, 0, 0, $event->get_month(),
-					$event->get_day() + $add_days,
-					$event->get_year());
+			$stamp = mktime(0, 0, 0, $event->get_start_month(),
+					$event->get_start_day() + $add_days,
+					$event->get_start_year());
 
 			if($stamp > $end_stamp || $stamp > $to_stamp)
 				break;

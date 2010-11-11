@@ -16,7 +16,7 @@
  */
 
 if(!defined('IN_PHPC')) {
-       die("Hacking attempt");
+	die("Hacking attempt");
 }
 
 require_once("$phpc_includes_path/form.php");
@@ -25,11 +25,11 @@ function event_form() {
 	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpcid;
 
 	$hour24 = get_config($phpcid, 'hours_24');
-        $form = new Form($phpc_script, _('Event Form'));
-        $form->add_part(new FormFreeQuestion('subject', _('Subject'),
+	$form = new Form($phpc_script, _('Event Form'));
+	$form->add_part(new FormFreeQuestion('subject', _('Subject'),
 				false, 32, true));
-        $form->add_part(new FormLongFreeQuestion('description',
-                                _('Description')));
+	$form->add_part(new FormLongFreeQuestion('description',
+				_('Description')));
 
 	$when_group = new FormGroup(_('When'));
 	$when_group->add_part(new FormDateTimeQuestion('start',
@@ -47,17 +47,17 @@ function event_form() {
 
 	$form->add_part($when_group);
 
-        $repeat_type = new FormDropdownQuestion('repeats', _('Repeats'),
+	$repeat_type = new FormDropdownQuestion('repeats', _('Repeats'),
 			array(), true, 'never');
-        $repeat_type->add_option('never', _('Never'));
+	$repeat_type->add_option('never', _('Never'));
 	$daily_group = new FormGroup();
-        $repeat_type->add_option('daily', _('Daily'), NULL, $daily_group);
+	$repeat_type->add_option('daily', _('Daily'), NULL, $daily_group);
 	$weekly_group = new FormGroup();
-        $repeat_type->add_option('weekly', _('Weekly'), NULL, $weekly_group);
+	$repeat_type->add_option('weekly', _('Weekly'), NULL, $weekly_group);
 	$monthly_group = new FormGroup();
-        $repeat_type->add_option('monthly', _('Monthly'), NULL, $monthly_group);
+	$repeat_type->add_option('monthly', _('Monthly'), NULL, $monthly_group);
 	$yearly_group = new FormGroup();
-        $repeat_type->add_option('yearly', _('Yearly'), NULL, $yearly_group);
+	$repeat_type->add_option('yearly', _('Yearly'), NULL, $yearly_group);
 
 	$every_day = new FormDropdownQuestion('every-day', _('Every'),
 			_('Repeat every how many days?'));
@@ -86,7 +86,7 @@ function event_form() {
 	$yearly_group->add_part(new FormDateQuestion('yearly-until',
 				_('Until')));
 
-        $when_group->add_part($repeat_type);
+	$when_group->add_part($repeat_type);
 
 	if(can_create_readonly($phpcid))
 		$form->add_part(new FormCheckBoxQuestion('readonly',
@@ -112,25 +112,27 @@ function event_form() {
 
 	if(isset($vars['eid'])) {
 		$form->add_hidden('eid', $vars['eid']);
-		$events = $phpcdb->get_occurrences_by_eid($vars['eid']);
-		// FIXME make some way to add multiple occurrences,
-		//  and then pre-fill that with the existing occurrences
-		$event = $events[0];
+		$occs = $phpcdb->get_occurrences_by_eid($vars['eid']);
+		$event = $occs[0];
+
 		$defaults = array(
 				'subject' => $event->get_raw_subject(),
 				'description' => $event->get_raw_desc(),
-				'start-year' => $event->get_year(),
+				'start-year' => $event->get_start_year(),
 				'end-year' => $event->get_end_year(),
-				'start-month' => $event->get_month(),
+				'start-month' => $event->get_start_month(),
 				'end-month' => $event->get_end_month(),
-				'start-day' => $event->get_day(),
+				'start-day' => $event->get_start_day(),
 				'end-day' => $event->get_end_day(),
-				'start-hour' => $event->get_hour(),
-				'start-minute' => $event->get_minute(),
+				'start-hour' => $event->get_start_hour(),
+				'start-minute' => $event->get_start_minute(),
 				'end-hour' => $event->get_end_hour(),
 				'end-minute' => $event->get_end_minute(),
 				'readonly' => $event->is_readonly(),
 				);
+
+		add_repeat_defaults($occs, $defaults);
+
 		if(!empty($event->catid))
 			$defaults['catid'] = $event->catid;
 	} else {
@@ -147,7 +149,49 @@ function event_form() {
 				'end-minute' => 0,
 				);
 	}
-        return $form->get_html($defaults);
+	return $form->get_html($defaults);
 }
 
+function add_repeat_defaults($occs, &$defaults) {
+	// TODO: Handle unevenly spaced occurrences
+
+	$defaults['repeats'] = 'never';
+
+	if(sizeof($occs) < 2)
+		return;
+
+	$event = $occs[0];
+	$day = $event->get_start_day();
+	$month = $event->get_start_month();
+	$year = $event->get_start_year();
+
+	// Test if they repeat every N years
+	$nyears = $occs[1]->get_start_year() - $event->get_start_year();
+	$repeats_yearly = true;
+	//echo "day: $day, month: $month, nyears: $nyears<br>";
+	for($i = 1; $i < sizeof($occs); $i++) {
+		$cur_occ = $occs[$i];
+		$cur_year = $cur_occ->get_start_year();
+		$cur_month = $cur_occ->get_start_month();
+		$cur_day = $cur_occ->get_start_day();
+		$cur_nyears = $cur_year - $occs[$i - 1]->get_start_year();
+		if($cur_day != $day || $cur_month != $month
+				|| $cur_nyears != $nyears) {
+			$repeats_yearly = false;
+			break;
+		}
+	}
+
+	if($repeats_yearly) {
+		$defaults['repeats'] = 'yearly';
+		$defaults['every-year'] = $nyears;
+		$defaults['yearly-until-year'] = $cur_year;
+		$defaults['yearly-until-month'] = $cur_month;
+		$defaults['yearly-until-day'] = $cur_day;
+		return;
+	}
+
+	$nmonths = ($occs[1]->get_start_year() - $year) * 12
+		+ $occs[1]->get_start_month() - $month;
+}
 ?>
