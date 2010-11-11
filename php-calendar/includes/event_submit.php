@@ -39,33 +39,25 @@ function event_submit()
 		}
 	}
 
-	$start_date = NULL;
-	$end_date = NULL;
 	$start_ts = NULL;
 	$end_ts = NULL;
 
+	$start_ts = get_timestamp("start");
+	$end_ts = get_timestamp("end");
 	switch($vars["time-type"]) {
 		case 'normal':
-			$start_ts = get_timestamp("start");
-			$end_ts = get_timestamp("end");
 			$time_type = 0;
 			break;
 
 		case 'full':
-			$start_date = get_date("start");
-			$end_date = get_date("end");
 			$time_type = 1;
 			break;
 
 		case 'tba':
-			$start_date = get_date("start");
-			$end_date = get_date("end");
 			$time_type = 2;
 			break;
 
 		case 'none':
-			$start_date = get_date("start");
-			$end_date = get_date("end");
 			$time_type = 3;
 			break;
 
@@ -73,11 +65,7 @@ function event_submit()
 			soft_error(_("Unrecognized Time Type."));
 	}
 
-	$duration = 0;
-	if($start_date != NULL && $end_date != NULL)
-		$duration = $end_date - $start_date;
-	if($start_ts != NULL && $end_ts != NULL)
-		$duration = $end_ts - $start_ts;
+	$duration = $end_ts - $start_ts;
 	if($duration < 0)
 		soft_error(_("An event cannot have an end earlier than its start."));
 
@@ -108,8 +96,7 @@ function event_submit()
 		$phpcdb->delete_occurrences($eid);
 	}
 		
-	$oid = $phpcdb->create_occurrence($eid, $time_type, $start_ts, $end_ts,
-			$start_date, $end_date);
+	$oid = $phpcdb->create_occurrence($eid, $time_type, $start_ts, $end_ts);
 
 	$occurrences = 1;
 	switch($vars["repeats"]) {
@@ -125,16 +112,12 @@ function event_submit()
 
 			$daily_until = get_date("daily-until");
 			while($occurrences <= 730) {
-				$start_date = add_days($start_date, $ndays);
 				$start_ts = add_days($start_ts, $ndays);
-				$end_date = add_days($end_date, $ndays);
 				$end_ts = add_days($end_ts, $ndays);
-				if($start_date > $daily_until
-						|| $start_ts > $daily_until)
+				if($start_ts > $daily_until)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
-						$start_ts, $end_ts, $start_date,
-						$end_date);
+						$start_ts, $end_ts);
 				$occurrences++;
 			}
 			break;
@@ -148,16 +131,12 @@ function event_submit()
 
 			$weekly_until = get_date("weekly-until");
 			while($occurrences <= 730) {
-				$start_date = add_days($start_date, $ndays);
 				$start_ts = add_days($start_ts, $ndays);
-				$end_date = add_days($end_date, $ndays);
 				$end_ts = add_days($end_ts, $ndays);
-				if($start_date > $weekly_until
-						|| $start_ts > $weekly_until)
+				if($start_ts > $weekly_until)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
-						$start_ts, $end_ts, $start_date,
-						$end_date);
+						$start_ts, $end_ts);
 				$occurrences++;
 			}
 			break;
@@ -171,16 +150,12 @@ function event_submit()
 
 			$monthly_until = get_date("monthly-until");
 			while($occurrences <= 730) {
-				$start_date = add_months($start_date, $nmonths);
 				$start_ts = add_months($start_ts, $nmonths);
-				$end_date = add_months($end_date, $nmonths);
 				$end_ts = add_months($end_ts, $nmonths);
-				if($start_date > $monthly_until
-						|| $start_ts > $monthly_until)
+				if($start_ts > $monthly_until)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
-						$start_ts, $end_ts, $start_date,
-						$end_date);
+						$start_ts, $end_ts);
 				$occurrences++;
 			}
 			break;
@@ -194,16 +169,12 @@ function event_submit()
 
 			$yearly_until = get_date("yearly-until");
 			while($occurrences <= 730) {
-				$start_date = add_years($start_date, $nyears);
 				$start_ts = add_years($start_ts, $nyears);
-				$end_date = add_years($end_date, $nyears);
 				$end_ts = add_years($end_ts, $nyears);
-				if($start_date > $yearly_until
-						|| $start_ts > $yearly_until)
+				if($start_ts > $yearly_until)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
-						$start_ts, $end_ts, $start_date,
-						$end_date);
+						$start_ts, $end_ts);
 				$occurrences++;
 			}
 			break;

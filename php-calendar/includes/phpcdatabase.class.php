@@ -522,25 +522,21 @@ class PhpcDatabase {
 		return $this->dbh->insert_id;
 	}
 
-	function create_occurrence($eid, $time_type, $start_ts = NULL,
-			$end_ts = NULL, $start_date = NULL, $end_date = NULL)
+	function create_occurrence($eid, $time_type, $start_ts, $end_ts)
 	{
 
 		$query = "INSERT INTO `" . SQL_PREFIX . "occurrences`\n"
 			."SET `eid` = '$eid', `time_type` = '$time_type'";
 
-		if($start_date != NULL) {
-			$fmt_start_date = date("Y-m-d", $start_date);
-			$query .= ", `start_date` = '$fmt_start_date'";
+		if($time_type == 0) {
+			$query .= ", `start_ts` = FROM_UNIXTIME('$start_ts')"
+				. ", `end_ts` = FROM_UNIXTIME('$end_ts')";
+		} else {
+			$start_date = date("Y-m-d", $start_ts);
+			$end_date = date("Y-m-d", $end_ts);
+			$query .= ", `start_date` = '$start_date'"
+				. ", `end_date` = '$end_date'";
 		}
-		if($end_date != NULL) {
-			$fmt_end_date = date("Y-m-d", $end_date);
-			$query .= ", `end_date` = '$fmt_end_date'";
-		}
-		if($start_ts !== NULL)
-			$query .= ", `start_ts` = FROM_UNIXTIME('$start_ts')";
-		if($end_ts !== NULL)
-			$query .= ", `end_ts` = FROM_UNIXTIME('$end_ts')";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Error creating event.'), $query);
