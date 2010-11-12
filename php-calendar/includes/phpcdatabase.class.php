@@ -502,6 +502,17 @@ class PhpcDatabase {
 			or $this->db_error(_('Error reading options'), $query);
 	}
 
+	function update_password($uid, $password)
+	{
+		$query = "UPDATE `" . SQL_PREFIX . "users`\n"
+			."SET `password`='$password'\n"
+			."WHERE `uid`='$uid'";
+
+		$this->dbh->query($query)
+			or $this->db_error(_('Error updating password.'),
+					$query);
+	}
+
 	function create_event($cid, $uid, $subject, $description, $readonly,
 			$catid = false)
 	{

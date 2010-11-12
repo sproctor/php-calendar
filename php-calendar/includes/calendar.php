@@ -32,7 +32,8 @@ $phpc_valid_actions = array('event_form', 'event_delete', 'display_month',
 		'options_submit', 'user_create', 'cadmin',
 		'create_calendar', 'calendar_delete',
 		'user_delete', 'user_permissions_submit',
-		'category_form', 'category_submit', 'category_delete');
+		'category_form', 'category_submit', 'category_delete',
+		'settings', 'password_submit');
 
 // checks global variables to see if the user is logged in.
 function is_user()
@@ -497,6 +498,8 @@ function navbar()
 		menu_item_append($html, _('Log out'), 'logout',
 				array('lasturl' =>
 					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
+		if($action != 'settings')
+			menu_item_append($html, _('Settings'), 'settings');
 	} else {
 		menu_item_append($html, _('Log in'), 'login',
 				array('lasturl' =>
