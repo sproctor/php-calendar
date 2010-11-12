@@ -135,6 +135,16 @@ function parse_desc($text)
 	return $text;
 }
 
+function days_in_year($timestamp) {
+	return 365 + date('L', $timestamp);
+}
+
+function add_years($timestamp, $years) {
+	return mktime(date('H', $timestamp), date('i', $timestamp),
+			date('s', $timestamp), date('n', $timestamp),
+			date('j', $timestamp), date('Y', $timestamp) + 1);
+}
+
 function days_between($ts1, $ts2) {
 	// First date always comes first
 	if($ts1 > $ts2)
@@ -143,8 +153,10 @@ function days_between($ts1, $ts2) {
 	// If we're in different years, keep adding years until we're in
 	//   the same year
 	if(date('Y', $ts2) > date('Y', $ts1))
-		return 365 + date('L', $ts1) + days_between(mktime(date('H', $ts1), date('i', $ts1), date('s', $ts1), date('n', $ts1), date('j', $ts1), date('Y', $ts1) + 1), $ts2);
+		return days_in_year($ts1)
+			+ days_between(add_year($ts1, 1), $ts2);
 
+	// The years are equal, subtract day of the year of each
 	return date('z', $ts2) - date('z', $ts1);
 }
 ?>
