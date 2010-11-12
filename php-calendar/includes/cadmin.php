@@ -51,14 +51,12 @@ function config_form()
                                 $input = create_text($name, $config[$name]);
                                 break;
                         case PHPC_DROPDOWN:
-                                $sequence = create_sequence(0,
-                                                count($element[3]) - 1);
 				if(isset($config[$name]))
 					$default = $config[$name];
 				else
 					$default = false;
                                 $input = create_select($name, $element[3],
-                                                $default, $sequence);
+                                                $default);
                                 break;
                         default:
                                 soft_error(_('Unsupported config type')
@@ -105,7 +103,7 @@ function user_list()
 					tag('td', create_checkbox("write{$user['uid']}", "1", !empty($user['write']))),
 					tag('td', create_checkbox("readonly{$user['uid']}", "1", !empty($user['readonly']))),
 					tag('td', create_checkbox("modify{$user['uid']}", "1", !empty($user['modify']))),
-					tag('td', create_checkbox("admin{$user['uid']}", "1", !empty($user['admin'])))
+					tag('td', create_checkbox("admin{$user['uid']}", "1", !empty($user['calendar_admin'])))
 				   ));
 	}
 
