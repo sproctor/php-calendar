@@ -238,33 +238,4 @@ function get_timestamp($prefix)
 	return mktime($hour, $minute, 0, $month, $day, $year);
 }
 
-function add_days($stamp, $days)
-{
-	if($stamp == NULL)
-		return NULL;
-
-	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
-			date('n', $stamp), date('j', $stamp) + $days,
-			date('Y', $stamp));
-}
-
-function add_months($stamp, $months)
-{
-	if($stamp == NULL)
-		return NULL;
-
-	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
-			date('m', $stamp) + $months, date('d', $stamp),
-			date('Y', $stamp));
-}
-
-function add_years($stamp, $years)
-{
-	if($stamp == NULL)
-		return NULL;
-
-	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
-			date('m', $stamp), date('d', $stamp),
-			date('Y', $stamp) + $years);
-}
 ?>

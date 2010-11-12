@@ -139,10 +139,34 @@ function days_in_year($timestamp) {
 	return 365 + date('L', $timestamp);
 }
 
-function add_years($timestamp, $years) {
-	return mktime(date('H', $timestamp), date('i', $timestamp),
-			date('s', $timestamp), date('n', $timestamp),
-			date('j', $timestamp), date('Y', $timestamp) + 1);
+function add_days($stamp, $days)
+{
+	if($stamp == NULL)
+		return NULL;
+
+	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
+			date('n', $stamp), date('j', $stamp) + $days,
+			date('Y', $stamp));
+}
+
+function add_months($stamp, $months)
+{
+	if($stamp == NULL)
+		return NULL;
+
+	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
+			date('m', $stamp) + $months, date('d', $stamp),
+			date('Y', $stamp));
+}
+
+function add_years($stamp, $years)
+{
+	if($stamp == NULL)
+		return NULL;
+
+	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
+			date('m', $stamp), date('d', $stamp),
+			date('Y', $stamp) + $years);
 }
 
 function days_between($ts1, $ts2) {
