@@ -221,9 +221,17 @@ if(!empty($_COOKIE["phpc_user"]) && !is_user()) {
 	$_SESSION['messages'][] = _("Session has expired.");
 }
 
-$tz = get_config($phpcid, 'timezone');
-if(!empty($tz))
-	date_default_timezone_set($tz); 
+$phpc_tz = NULL;
+if(!empty($_SESSION['phpc_uid'])) {
+	$phpc_user = $phpcdb->get_user($_SESSION['phpc_uid']);
+	$phpc_tz = $phpc_user->get_timezone();
+}
+
+if(empty($phpc_tz))
+	$phpc_tz = get_config($phpcid, 'timezone');
+
+if(!empty($phpc_tz))
+	date_default_timezone_set($phpc_tz); 
 $phpc_tz = date_default_timezone_get();
 
 header("Content-Type: text/html; charset=UTF-8");

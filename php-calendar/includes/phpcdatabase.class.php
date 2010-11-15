@@ -58,6 +58,11 @@ class PhpcDatabase {
 			. "DATE_FORMAT(`end_date`, '%Y%m%d') AS `end_date`\n";
 	}
 
+	private function get_user_fields() {
+		$users_table = SQL_PREFIX . "users";
+		return "`$users_table`.`uid`, `username`, `password`, `$users_table`.`admin`, `password_editable`, `timezone`";
+	}
+
 	// returns all the events for a particular day
 	// $from and $to are timestamps only significant to the date.
 	// an event that happens later in the day of $to is included
@@ -408,7 +413,7 @@ class PhpcDatabase {
 
 		$query = "SELECT `uid`, `username`, `password`, "
 			."`read`, `write`, `readonly`, `modify`, "
-			."`permissions`.`admin` AS `admin`\n"
+			."`permissions`.`admin` AS `calendar_admin`\n"
 			."FROM `" . SQL_PREFIX . "users`\n"
 			."LEFT JOIN (SELECT * FROM `$permissions_table`\n"
 			."	WHERE `cid`='$cid') AS `permissions`\n"
@@ -426,8 +431,8 @@ class PhpcDatabase {
 
 	function get_user_by_name($username)
 	{
-		$query = "SELECT `uid`, `username`, `password`, `admin`\n"
-			."FROM ".SQL_PREFIX."users\n"
+		$query = "SELECT " . $this->get_user_fields()
+			."\nFROM ".SQL_PREFIX."users\n"
 			."WHERE username='$username'";
 
 		$sth = $this->dbh->query($query)
@@ -442,7 +447,7 @@ class PhpcDatabase {
 
 	function get_user($uid)
 	{
-		$query = "SELECT `uid`, `username`, `password`, `admin`\n"
+		$query = "SELECT " . $this->get_user_fields()
 			."FROM ".SQL_PREFIX."users\n"
 			."WHERE `uid`='$uid'";
 
@@ -510,6 +515,21 @@ class PhpcDatabase {
 
 		$this->dbh->query($query)
 			or $this->db_error(_('Error updating password.'),
+					$query);
+	}
+
+	function update_timezone($uid, $timezone)
+	{
+		if($timezone != "NULL") {
+			$timezone = "'$timezone'";
+		}
+
+		$query = "UPDATE `" . SQL_PREFIX . "users`\n"
+			."SET `timezone`=$timezone\n"
+			."WHERE `uid`='$uid'";
+
+		$this->dbh->query($query)
+			or $this->db_error(_('Error updating timezone.'),
 					$query);
 	}
 

@@ -33,7 +33,7 @@ $phpc_valid_actions = array('event_form', 'event_delete', 'display_month',
 		'create_calendar', 'calendar_delete',
 		'user_delete', 'user_permissions_submit',
 		'category_form', 'category_submit', 'category_delete',
-		'settings', 'password_submit');
+		'settings', 'password_submit', 'timezone_submit');
 
 // checks global variables to see if the user is logged in.
 function is_user()
