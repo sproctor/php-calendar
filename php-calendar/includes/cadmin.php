@@ -69,7 +69,7 @@ function config_form()
         }
 
 	$hidden_div = tag('div',
-			create_hidden('action', 'options_submit'));
+			create_hidden('action', 'cadmin_submit'));
 	if(isset($vars['phpcid']))
 		$hidden_div->add(create_hidden('phpcid', $vars['phpcid']));
 		

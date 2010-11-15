@@ -68,13 +68,19 @@ function config_form($user)
 {
 	global $phpc_script;
 
-	$timezones = array("NULL" => "Default");
+	$timezones = array("NULL" => _("Default"));
 	foreach(timezone_identifiers_list() as $timezone) {
 		$timezones[$timezone] = $timezone;
 	}
+	$tz_input = create_select('timezone', $timezones,
+			$user->get_timezone());
 
-	$default = $user->get_timezone();
-	$input = create_select('timezone', $timezones, $default);
+	$languages = array("NULL" => _("Default"));
+	foreach(get_languages() as $lang) {
+		$languages[$lang] = $lang;
+	}
+	$lang_input = create_select('language', $languages,
+			$user->get_language());
 
 	return tag('form', attributes("action=\"$phpc_script\"",
 				'method="post"'),
@@ -84,12 +90,15 @@ function config_form($user)
 					tag('tr',
 						tag('td', attributes('colspan="2"'),
 							create_hidden('phpc_token', $_SESSION['phpc_token']),
-							create_hidden('action', 'timezone_submit'),
+							create_hidden('action', 'settings_submit'),
 							create_submit(_('Submit'))))),
 				tag('tbody',
 					tag('tr',
 						tag('th', _('Timezone')),
-						tag('td', $input))
+						tag('td', $tz_input)),
+					tag('tr',
+						tag('th', _('Language')),
+						tag('td', $lang_input))
 				   )));
 }
 

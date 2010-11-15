@@ -19,7 +19,7 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
-function timezone_submit()
+function settings_submit()
 {
 	global $phpcid, $vars, $phpcdb;
 
@@ -38,13 +38,14 @@ function timezone_submit()
 	if(!$user)
 		soft_error(_('Invalid user.'));
 
-        if(empty($vars['timezone'])) {
-                return tag('div', _('You must specify a password'));
+        if(empty($vars['timezone']) || empty($vars['language'])) {
+                return tag('div', _('Form error.'));
 	}
 
-	$phpcdb->update_timezone($uid, $vars['timezone']);
+	$phpcdb->set_timezone($uid, $vars['timezone']);
+	$phpcdb->set_language($uid, $vars['language']);
 
-        return tag('div', _('Timezone updated.'));
+        return tag('div', _('Settings updated.'));
 }
 
 ?>

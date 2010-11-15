@@ -29,11 +29,11 @@ require_once("$phpc_includes_path/globals.php");
 $phpc_valid_actions = array('event_form', 'event_delete', 'display_month',
 		'display_day', 'display_event', 'display_event_json',
 		'event_submit', 'search', 'login', 'logout', 'admin',
-		'options_submit', 'user_create', 'cadmin',
+		'cadmin_submit', 'user_create', 'cadmin',
 		'create_calendar', 'calendar_delete',
 		'user_delete', 'user_permissions_submit',
 		'category_form', 'category_submit', 'category_delete',
-		'settings', 'password_submit', 'timezone_submit');
+		'settings', 'password_submit', 'settings_submit');
 
 // checks global variables to see if the user is logged in.
 function is_user()
@@ -188,37 +188,24 @@ function lang_link($lang)
 // returns tag data for the links at the bottom of the calendar
 function link_bar()
 {
-	global $translate, $phpc_url, $phpc_locale_path, $phpc_tz;
+	global $translate, $phpc_url, $phpc_locale_path, $phpc_tz, $phpc_lang;
 
 	$html = tag('div', attributes('class="phpc-footer"'));
 
 	if($translate) {
-		$lang_links = tag('p', '[', lang_link('en'), '] ');
-		$have_langs = false;
+		$langs = get_languages();
+		if(sizeof($langs) > 1) {
+			$lang_links = tag('p');
 
-		// create links for each existing language translation
-		$handle = opendir($phpc_locale_path);
-
-		if(!$handle) {
-			soft_error("Error reading locale directory.");
-		}
-
-		while(($filename = readdir($handle)) !== false) {
-			$pathname = "$phpc_locale_path/$filename";
-			if(strncmp($filename, ".", 1) == 0
-					|| !is_dir($pathname))
-				continue;
-			$lang = $filename;
-                        if(file_exists("$pathname/LC_MESSAGES/messages.mo")) {
-				$have_langs = true;
-                                $lang_links->add('[', lang_link($lang), '] ');
-                        }
-		}
-
-		closedir($handle);
-
-		if($have_langs)
+			foreach($langs as $lang) {
+				if($phpc_lang == $lang)
+					$lang_link = $lang;
+				else
+					$lang_link = lang_link($lang);
+				$lang_links->add('[', $lang_link, '] ');
+			}
 			$html->add($lang_links);
+		}
 	}
 
 	$html->add(tag('p', '[',
@@ -234,6 +221,34 @@ function link_bar()
 			']',
 			" [Timezone: $phpc_tz]"));
 	return $html;
+}
+
+function get_languages() {
+	global $phpc_locale_path;
+
+	static $langs = NULL;
+
+	if(!empty($langs))
+		return $langs;
+
+	// create links for each existing language translation
+	$handle = opendir($phpc_locale_path);
+
+	if(!$handle)
+		soft_error("Error reading locale directory.");
+
+	$langs = array('en');
+	while(($filename = readdir($handle)) !== false) {
+		$pathname = "$phpc_locale_path/$filename";
+		if(strncmp($filename, ".", 1) == 0 || !is_dir($pathname))
+			continue;
+		if(file_exists("$pathname/LC_MESSAGES/messages.mo"))
+			$langs[] = $filename;
+	}
+
+	closedir($handle);
+
+	return $langs;
 }
 
 function day_of_week_start()
@@ -564,9 +579,13 @@ function get_config_options()
 	static $options = NULL;
 
 	if($options == NULL) {
-		$timezones = array("NULL" => "System");
+		$timezones = array("NULL" => _("System"));
 		foreach(timezone_identifiers_list() as $timezone) {
 			$timezones[$timezone] = $timezone;
+		}
+		$languages = array("NULL" => _("Default"));
+		foreach(get_languages() as $language) {
+			$languages[$language] = $language;
 		}
 		// name, text, type, value(s)
 		$options = array( 
@@ -588,6 +607,7 @@ function get_config_options()
 					     )
 				     ),
 				array('timezone', _('Default Timezone'), PHPC_DROPDOWN, $timezones),
+				array('language', _('Default Language'), PHPC_DROPDOWN, $languages),
 				);
 	}
 	return $options;

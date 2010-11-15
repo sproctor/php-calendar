@@ -60,7 +60,7 @@ class PhpcDatabase {
 
 	private function get_user_fields() {
 		$users_table = SQL_PREFIX . "users";
-		return "`$users_table`.`uid`, `username`, `password`, `$users_table`.`admin`, `password_editable`, `timezone`";
+		return "`$users_table`.`uid`, `username`, `password`, `$users_table`.`admin`, `password_editable`, `timezone`, `language`";
 	}
 
 	// returns all the events for a particular day
@@ -494,20 +494,19 @@ class PhpcDatabase {
 
 	function update_config($cid, $name, $value)
 	{
-		// Don't put quotes around a NULL
-		if($value != "NULL")
-			$value = "'$value'";
+		if($value == "NULL")
+			$value = "";
 
 		$query = "INSERT ".SQL_PREFIX."config\n"
 			."(`cid`, `config_name`, `config_value`)\n"
-			."VALUES ($cid, '$name', $value)\n"
-			."ON DUPLICATE KEY UPDATE config_value = $value";
+			."VALUES ($cid, '$name', '$value')\n"
+			."ON DUPLICATE KEY UPDATE config_value = '$value'";
 
 		$this->dbh->query($query)
 			or $this->db_error(_('Error reading options'), $query);
 	}
 
-	function update_password($uid, $password)
+	function set_password($uid, $password)
 	{
 		$query = "UPDATE `" . SQL_PREFIX . "users`\n"
 			."SET `password`='$password'\n"
@@ -518,7 +517,7 @@ class PhpcDatabase {
 					$query);
 	}
 
-	function update_timezone($uid, $timezone)
+	function set_timezone($uid, $timezone)
 	{
 		if($timezone != "NULL") {
 			$timezone = "'$timezone'";
@@ -530,6 +529,21 @@ class PhpcDatabase {
 
 		$this->dbh->query($query)
 			or $this->db_error(_('Error updating timezone.'),
+					$query);
+	}
+
+	function set_language($uid, $language)
+	{
+		if($language != "NULL") {
+			$language = "'$language'";
+		}
+
+		$query = "UPDATE `" . SQL_PREFIX . "users`\n"
+			."SET `language`=$language\n"
+			."WHERE `uid`='$uid'";
+
+		$this->dbh->query($query)
+			or $this->db_error(_('Error updating language.'),
 					$query);
 	}
 

@@ -62,7 +62,7 @@ function password_submit()
 
         $passwd = md5($vars['password1']);
 
-	$phpcdb->update_password($uid, $passwd);
+	$phpcdb->set_password($uid, $passwd);
 
         return tag('div', _('Password updated.'));
 }

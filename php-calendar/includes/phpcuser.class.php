@@ -22,6 +22,7 @@ class PhpcUser {
 	var $admin;
 	var $password_editable;
 	var $timezone;	
+	var $language;
 
 	function PhpcUser($result)
 	{
@@ -31,6 +32,7 @@ class PhpcUser {
 		$this->admin = $result['admin'];
 		$this->password_editable = $result['password_editable'];
 		$this->timezone = $result['timezone'];
+		$this->language = $result['language'];
 	}
 
 	function get_username()
@@ -53,6 +55,10 @@ class PhpcUser {
 
 	function get_timezone() {
 		return $this->timezone;
+	}
+
+	function get_language() {
+		return $this->language;
 	}
 }
 

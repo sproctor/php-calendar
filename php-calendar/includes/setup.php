@@ -118,23 +118,46 @@ if(empty($vars['action'])) {
 if(empty($vars['contentType']))
 	$vars['contentType'] = "html";
 
+require_once("$phpc_includes_path/calendar.php");
+
+// Make the database connection.
+require_once("$phpc_includes_path/phpcdatabase.class.php");
+$phpcdb = new PhpcDatabase;
+
+// Set the session to something unique to this setup
+session_name(SQL_PREFIX . SQL_DATABASE . '_SESSION');
+session_start();
+
+$phpc_tz = NULL;
+if(!empty($_SESSION['phpc_uid'])) {
+	$phpc_user = $phpcdb->get_user($_SESSION['phpc_uid']);
+	$phpc_user_lang = $phpc_user->get_language();
+	$phpc_tz = $phpc_user->get_timezone();
+}
+
 // setup translation stuff
 $phpc_datefmt = "\%\s j, Y";
 if($translate) {
 	$phpc_store_lang = false;
-	if(isset($vars['lang'])) {
-		$lang = $vars['lang'];
+	$phpc_cal_lang = get_config($phpcid, 'language');
+	if(!empty($vars['lang'])) {
+		$phpc_lang = $vars['lang'];
 		$phpc_store_lang = true;
-	} elseif(isset($_COOKIE['lang'])) {
-		$lang = $_COOKIE['lang'];
-	} elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-		$lang = substr(htmlentities($_SERVER['HTTP_ACCEPT_LANGUAGE']),
-			0, 2);
+	} elseif(!empty($_COOKIE['lang'])) {
+		$phpc_lang = $_COOKIE['lang'];
+	} elseif(!empty($phpc_user_lang)) {
+		$phpc_lang = $phpc_user_lang;
+	} elseif(!empty($phpc_cal_lang)) {
+		$phpc_lang = $phpc_cal_lang;
+	} elseif(!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+		$phpc_lang = substr(htmlentities(
+					$_SERVER['HTTP_ACCEPT_LANGUAGE']),
+				0, 2);
 	} else {
-		$lang = 'en';
+		$phpc_lang = 'en';
 	}
 
-	switch($lang) {
+	switch($phpc_lang) {
 		case 'bg':
 			$locale = setlocale(LC_ALL, 'bg_BG.utf8', 'bg.utf8', 'bg');
 			$phpc_datefmt = "j \%\s Y";
@@ -175,30 +198,22 @@ if($translate) {
 			$phpc_datefmt = "j \%\s Y";
 			break;
 		default:
-			display_error("Invalid language identifier.");
+			$_SESSION['messages'][] = "Invalid language identifier.";
+			$phpc_lang = 'C';
+			$locale = 'C';
 	}
 
 	putenv("LC_ALL=$locale");
 	putenv("LANGUAGE=$locale");
 
 	if($phpc_store_lang)
-		setcookie('lang', $lang);
+		setcookie('lang', $phpc_lang);
 
 	bindtextdomain('messages', $phpc_locale_path);
 	textdomain('messages');
 } else {
-	$lang = 'en';
+	$phpc_lang = 'en';
 }
-
-require_once("$phpc_includes_path/calendar.php");
-
-// Make the database connection.
-require_once("$phpc_includes_path/phpcdatabase.class.php");
-$phpcdb = new PhpcDatabase;
-
-// Set the session to something unique to this setup
-session_name(SQL_PREFIX . SQL_DATABASE . '_SESSION');
-session_start();
 
 // Expire the session after 30 minutes
 if(isset($_SESSION['phpc_time']) && time() - $_SESSION['phpc_time'] > 1800) {
@@ -219,12 +234,6 @@ if(!empty($_COOKIE["phpc_user"]) && !is_user()) {
 	if(empty($_SESSION['messages']))
 		$_SESSION['messages'] = array();
 	$_SESSION['messages'][] = _("Session has expired.");
-}
-
-$phpc_tz = NULL;
-if(!empty($_SESSION['phpc_uid'])) {
-	$phpc_user = $phpcdb->get_user($_SESSION['phpc_uid']);
-	$phpc_tz = $phpc_user->get_timezone();
 }
 
 if(empty($phpc_tz))

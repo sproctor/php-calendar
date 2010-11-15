@@ -19,8 +19,7 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-function options_submit()
-{
+function cadmin_submit() {
 	global $phpcid, $vars, $phpcdb;
 
         if(!is_admin()) {
