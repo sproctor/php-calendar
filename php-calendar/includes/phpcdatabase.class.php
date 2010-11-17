@@ -261,6 +261,18 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows;
 	}
 
+	function delete_occurrence($oid)
+	{
+		$query = 'DELETE FROM `'.SQL_PREFIX ."occurrences`\n"
+			."WHERE `oid` = '$oid'";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error while removing an occurrence.'),
+					$query);
+
+		return $this->dbh->affected_rows;
+	}
+
 	function delete_calendar($id)
 	{
 

@@ -58,10 +58,12 @@ function display_event_by_oid($oid)
 	// Add modify/delete links if this user has access to this event.
         if(can_modify_event($event)) {
 		$event_header->add(tag('div',
-					create_event_link(_('Modify'),
+					create_event_link(_('Modify Event'),
 						'event_form', $eid), "\n",
-					create_event_link(_('Delete'),
-						'event_delete', $eid)));
+					create_event_link(_('Delete Event'),
+						'event_delete', $eid), "\n",
+					create_occurrence_link(_('Remove Occurrence'),
+						'occurrence_delete', $oid)));
 	}
 	$event_time = $event->get_time_span_string();
 	if(!empty($event_time))
@@ -82,12 +84,23 @@ function display_event_by_oid($oid)
 		// if we have a previous event
 		$prev = $i - 1;
 		if($prev >= 0) {
-			$occurrence_div->add(create_occurrence_link(_('Previous Occurrence'), 'display_event', $occurrences[$prev]->get_oid()), ' ');
+			$prev_occur = $occurrences[$prev];
+			$occurrence_div->add(create_occurrence_link(
+						_('Previous occurrence on')
+						. " " .
+						$prev_occur->get_date_string(),
+						'display_event',
+						$prev_occur->get_oid()), ' ');
 		}
 		// if we have a future event
 		$next = $i + 1;
 		if($next < sizeof($occurrences)) {
-			$occurrence_div->add(create_occurrence_link(_('Next Occurrence'), 'display_event', $occurrences[$next]->get_oid()), ' ');
+			$next_occur = $occurrences[$next];
+			$occurrence_div->add(create_occurrence_link(
+						_('Next cccurrence on') . " " .
+						$next_occur->get_date_string(),
+						'display_event',
+						$next_occur->get_oid()), ' ');
 		}
 
 		$occurrence_div->add(create_event_link(
