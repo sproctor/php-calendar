@@ -78,10 +78,7 @@ function create_calendar_form()
                                 $input = create_text($name);
                                 break;
                         case PHPC_DROPDOWN:
-                                $sequence = create_sequence(0,
-                                                count($element[3]) - 1);
-                                $input = create_select($name, $element[3],
-                                                0, $sequence);
+                                $input = create_select($name, $element[3]);
                                 break;
                         default:
                                 soft_error(_('Unsupported config type')

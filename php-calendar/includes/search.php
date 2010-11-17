@@ -131,13 +131,12 @@ function search_form()
 					tag('td', _('Sort By') . ': '),
 					tag('td',
 						create_select('sort',
-							$sort_options, false))),
+							$sort_options))),
 			tag('tr',
 					tag('td', _('Order') . ': '),
 					tag('td',
 						create_select('order',
-							$order_options,
-							false))));
+							$order_options))));
 
 	return tag('form', attributes("action=\"$phpc_script\"",
 				'method="post"'), $html_table);

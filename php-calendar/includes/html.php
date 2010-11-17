@@ -249,14 +249,15 @@ function attrs()
 
 // creates a select element for a form
 // returns HTML data for the element
-function create_select($name, $arr, $default)
+function create_select($name, $arr, $default = false)
 {
 	$html = tag('select', attributes('size="1"', "name=\"$name\"",
 				"id=\"$name\""));
 
 	foreach($arr as $value => $text) {
 		$attributes = attributes("value=\"$value\"");
-		if($value == $default) $attributes->add('selected');
+		if($default !== false && $value == $default)
+			$attributes->add('selected');
 		$html->add(tag('option', $attributes, $text));
 	}
 
