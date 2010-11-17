@@ -27,7 +27,8 @@ function event_form() {
 	$hour24 = get_config($phpcid, 'hours_24');
 	$form = new Form($phpc_script, _('Event Form'));
 	$form->add_part(new FormFreeQuestion('subject', _('Subject'),
-				false, 32, true));
+				false, get_config($phpcid, 'subject_max'),
+				true));
 	$form->add_part(new FormLongFreeQuestion('description',
 				_('Description')));
 
