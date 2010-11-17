@@ -256,7 +256,8 @@ class FormFreeQuestion extends FormAtomicQuestion {
                 }
                 if($this->maxlen !== false) {
                         $attrs->add("maxlength=\"{$this->maxlen}\"");
-                        $attrs->add("size=\"{$this->maxlen}\"");
+			$size = min(50, $this->maxlen);
+                        $attrs->add("size=\"$size\"");
                 }
 
                 return tag('input', $attrs);
