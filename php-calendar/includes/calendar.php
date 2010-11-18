@@ -599,6 +599,7 @@ function get_config_options()
 				array('hours_24', _('24 Hour Time'), PHPC_CHECK),
 				array('calendar_title', _('Calendar Title'), PHPC_TEXT),
 				array('subject_max', _('Maximum Subject Length'), PHPC_TEXT),
+				array('events_max', _('Events Display Daily Maximum'), PHPC_TEXT),
 				array('anon_permission', _('Public Permissions'), PHPC_DROPDOWN,
 					array(
 						_('Cannot read nor write events'),
@@ -614,15 +615,14 @@ function get_config_options()
 	return $options;
 }
 
-function get_config($cid, $option)
-{
+function get_config($cid, $option, $default = '') {
 	global $phpcdb;
 
 	$config = $phpcdb->get_calendar_config($cid);
 	if(!isset($config[$option])) {
 		if(defined('PHPC_DEBUG'))
 			soft_error("Undefined config option \"$option\".");
-		return '';
+		return $default;
 	}
 	return $config[$option];
 }

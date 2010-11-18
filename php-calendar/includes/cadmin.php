@@ -42,19 +42,18 @@ function config_form()
                 $text = $element[1];
                 $type = $element[2];
 
+		if(isset($config[$name]))
+			$default = $config[$name];
+		else
+			$default = false;
                 switch($type) {
                         case PHPC_CHECK:
-                                $input = create_checkbox($name, '1',
-                                                $config[$name]);
+                                $input = create_checkbox($name, '1', $default);
                                 break;
                         case PHPC_TEXT:
-                                $input = create_text($name, $config[$name]);
+                                $input = create_text($name, $default);
                                 break;
                         case PHPC_DROPDOWN:
-				if(isset($config[$name]))
-					$default = $config[$name];
-				else
-					$default = false;
                                 $input = create_select($name, $element[3],
                                                 $default);
                                 break;

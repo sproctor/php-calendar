@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2010 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -244,7 +244,7 @@ function create_day($month, $day, $year, $days_events)
 	// Count the number of events
 	$count = 0;
 	foreach($results as $event) {
-		if($count == 8) {
+		if($count == get_config($phpcid, 'events_max', 8)) {
 			$event_html = tag('li',
 					create_action_link_with_date(_("View Additional Events"),
 						'display_day', $year, $month,
