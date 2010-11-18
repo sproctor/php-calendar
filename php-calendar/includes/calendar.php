@@ -720,9 +720,9 @@ function short_month_name($month)
 function verify_token() {
 	global $vars;
 
-	if(empty($vars["phpc_token"])
-			|| $vars["phpc_token"] != $_SESSION["phpc_token"])
-		soft_error(_("Possible request forgery."));
+	if(!empty($_SESSION["phpc_token"]) && (empty($vars["phpc_token"]) ||
+				$vars["phpc_token"] != $_SESSION["phpc_token"]))
+		soft_error(_("Secret token mismatch. Possible request forgery attempt."));
 }
 
 function generate_token() {
