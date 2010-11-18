@@ -215,18 +215,23 @@ if($translate) {
 	$phpc_lang = 'en';
 }
 
+// Create a secret token to check for CSRF
+if(empty($_SESSION["phpc_token"])) {
+	$phpc_token = generate_token();
+	$_SESSION["phpc_token"] = $phpc_token;
+} else {
+	$phpc_token = $_SESSION["phpc_token"];
+}
+
 // Expire the session after 30 minutes
 if(isset($_SESSION['phpc_time']) && time() - $_SESSION['phpc_time'] > 1800) {
 	// session is expired
 	session_destroy();
 	$_SESSION = array();
+	$_SESSION['phpc_token'] = $phpc_token;
 }
 
 $_SESSION['phpc_time'] = time();
-
-// Create a secret token to check for CSRF
-if(empty($_SESSION["phpc_token"]))
-	$_SESSION["phpc_token"] = md5(uniqid(rand(), TRUE));
 
 // Check if our session timed out and logged us out
 if(!empty($_COOKIE["phpc_user"]) && !is_user()) {

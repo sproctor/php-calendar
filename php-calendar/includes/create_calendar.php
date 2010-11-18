@@ -27,10 +27,7 @@ function create_calendar()
                 return tag('div', _('Permission denied'));
         }
 
-	if(empty($vars['phpc_token'])
-			|| $vars['phpc_token'] != $_SESSION['phpc_token']) {
-		return tag('div', _('Secret token mismatch. Possible request forgery attempt.'));
-	}
+	verify_token();
 
 	$cid = $phpcdb->create_calendar();
 

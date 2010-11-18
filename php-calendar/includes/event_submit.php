@@ -67,9 +67,7 @@ function event_submit()
 	if($duration < 0)
 		soft_error(_("An event cannot have an end earlier than its start."));
 
-	if(empty($vars["phpc_token"])
-			|| $vars["phpc_token"] != $_SESSION["phpc_token"])
-		soft_error(_("Possible request forgery."));
+	verify_token();
 
 	if(!can_write($phpcid))
 		permission_error(_('You do not have permission to write to this calendar.'));

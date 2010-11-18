@@ -146,7 +146,7 @@ function can_read_event($event)
 
 function login_user($username, $password)
 {
-        global $phpcdb;
+        global $phpcdb, $phpc_token;
 
 	// Regenerate the session in case our non-logged in version was
 	//   snooped
@@ -159,6 +159,8 @@ function login_user($username, $password)
 		return false;
 
 	$_SESSION["phpc_uid"] = $user->uid;
+	$phpc_token = generate_token();
+	$_SESSION['phpc_token'] = $phpc_token;
 	if(!empty($user->admin))
 		$_SESSION["phpc_admin"] = true;
 
@@ -713,6 +715,18 @@ function short_month_name($month)
 
 	$month = ($month - 1) % 12 + 1;
         return $short_month_names[$month];
+}
+
+function verify_token() {
+	global $vars;
+
+	if(empty($vars["phpc_token"])
+			|| $vars["phpc_token"] != $_SESSION["phpc_token"])
+		soft_error(_("Possible request forgery."));
+}
+
+function generate_token() {
+	return md5(uniqid(rand(), TRUE));
 }
 
 ?>

@@ -27,10 +27,7 @@ function password_submit()
                 return tag('div', _('You must be logged in.'));
         }
 
-	if(empty($vars['phpc_token'])
-			|| $vars['phpc_token'] != $_SESSION['phpc_token']) {
-		return tag('div', _('Secret token mismatch. Possible request forgery attempt.'));
-	}
+	verify_token();
 
 	$uid = $_SESSION['phpc_uid'];
 	$user = $phpcdb->get_user($uid);
