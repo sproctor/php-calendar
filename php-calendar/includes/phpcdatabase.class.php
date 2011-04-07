@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2011 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,8 +80,9 @@ class PhpcDatabase {
 			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
-			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
-			."LEFT JOIN `$cats_table` USING (`catid`)\n"
+			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
+			."LEFT JOIN `$cats_table` ON `$events_table`.`catid` "
+			."= `$cats_table`.`catid`\n"
 			."WHERE `$events_table`.`cid` = '$cid'\n"
 			."	AND IF(`start_ts`, DATE(`start_ts`), `start_date`) <= DATE('$to_date')\n"
 			."	AND IF(`end_ts`, DATE(`end_ts`), `end_date`) >= DATE('$from_date')\n"
