@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2011 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -485,15 +485,7 @@ function navbar()
 
 	$html = tag('div', attributes('class="phpc-navbar"'));
 
-	$args = array();
-	if(!empty($vars['year']))
-		$args['year'] = $year;
-	
-	if(!empty($vars['month']))
-		$args['month'] = $month;
-
-	if(!empty($vars['day']))
-		$args['day'] = $day;
+	$args = array('year' => $year, 'month' => $month, 'day' => $day);
 
 	if(can_write($phpcid) && $action != 'add') { 
 		menu_item_append($html, _('Add Event'), 'event_form', $args);
@@ -634,10 +626,12 @@ function display_phpc() {
 	$navbar = false;
 
 	try {
+		$content = do_action();
 		$navbar = navbar();
-		return tag('', $navbar, do_action(), link_bar());
+		return tag('', $navbar, $content, link_bar());
 	} catch(PermissionException $e) {
 		$results = tag('');
+		// TODO: make navbar show if there is an error in do_action()
 		if($navbar !== false)
 			$results->add($navbar);
 		$results->add(tag('div', _('You do not have permission to do that: ')

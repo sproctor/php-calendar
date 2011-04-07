@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2011 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ function display_event()
 
 function display_event_by_oid($oid)
 {
-	global $phpcdb;
+	global $phpcdb, $year, $month, $day;
 
 	$event = $phpcdb->get_occurrence_by_oid($oid);
 
@@ -110,6 +110,10 @@ function display_event_by_oid($oid)
 		$event_header->add($occurrence_div);
 	}
 
+	$year = $event->get_start_year();
+	$month = $event->get_start_month();
+	$day = $event->get_start_day();
+
 	$event_tag = tag('div', attributes('class="phpc-event"'),
 			$event_header,
 			tag('p', attributes('class="phpc-desc"'),
@@ -121,7 +125,7 @@ function display_event_by_oid($oid)
 
 function display_event_by_eid($eid)
 {
-	global $phpcdb;
+	global $phpcdb, $year, $month, $day;
 
 	$event = $phpcdb->get_event_by_eid($eid);
 
@@ -147,7 +151,13 @@ function display_event_by_eid($eid)
 
 	$occurrences_tag = tag('ul');
 	$occurrences = $phpcdb->get_occurrences_by_eid($eid);
+	$set_date = false;
 	foreach($occurrences as $occurrence) {
+		if(!$set_date) {
+			$year = $occurrence->get_start_year();
+			$month = $occurrence->get_start_month();
+			$day = $occurrence->get_start_day();
+		}
 		$occurrences_tag->add(tag('li', create_occurrence_link(
 						$occurrence->get_date_string()
 						. ' ' . _('at') . ' '
