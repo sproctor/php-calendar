@@ -162,6 +162,10 @@ if($translate) {
 			$locale = setlocale(LC_ALL, 'bg_BG.utf8', 'bg.utf8', 'bg');
 			$phpc_datefmt = "j \%\s Y";
 			break;
+		case 'ca':
+			$locale = setlocale(LC_ALL, 'ca_ES.utf8', 'ca.utf8', 'ca')
+			$phpc_datefmt = "j \%\s Y";
+			break;
 		case 'da':
 			$locale = setlocale(LC_ALL, 'da_DK.utf8', 'da.utf8', 'da');
 			$phpc_datefmt = "j \%\s Y";
