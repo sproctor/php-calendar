@@ -48,11 +48,12 @@ Make sure PHP and MySQL server are installed and running on your server.
 
 Optionally:
    From the php-calendar/install directory run: php translate.php
-   to automatically setup the translation files.
+   to automatically setup the translation files or open that file in a web
+   browser (ie. http://www.example.com/php-calendar/install/translate.php)
 
 3) Open up a browser window and navigate to the file install.php in your
-   calendar folder of your webpage (example:
-   http://www.mydomain.com/calendar/install.php)
+   calendar folder of your webpage
+  (ie. http://www.example.com/php-calendar/install/install.php)
 
 4) Follow the directions given by the installer.
 
@@ -85,14 +86,19 @@ your tables is, in the config.php file
 4 Translations
 ---------------
 
-1) You will need to make sure that you have the locale for the desired language
-installed. This is very much system dependent. On Debian run
-'dpkg-reconfigure locales' as root and select the desired locale.
+1) Make sure that you have GNU gettext and the PHP gettext module installed. On
+   Debian and Ubuntu the latter is in the package "php-gettext".
 
-2) You will need to generate the messages.mo files for each language. There is
-a script in the install directory to generate the messages.mo files. If for
-some reason you need to do it manually, in the LC_MESSAGES directory for each
-language you will need to run the command: msgfmt -o messages.mo messages.po
+2) You will need to make sure that you have the locale for the desired language
+   installed. This is very much system dependent. On Debian run
+   "dpkg-reconfigure locales" as root and select the desired locale.
+
+3) You will need to generate the messages.mo files for each language. There is
+   a script called "translate.php" in the install directory to generate the
+   messages.mo files. Run the command "php translate.php" from the "install"
+   directory. If for you need to generate it manually, in the "LC_MESSAGES"
+   directory for each language you will need to run the
+   command: msgfmt -o messages.mo messages.po
 
 Good luck!
 Sean Proctor
