@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2011 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -260,7 +260,9 @@ function create_day($month, $day, $year, $days_events)
 		$subject = $event->get_subject();
 		$event_time = $event->get_time_string();
 		if(!empty($event_time))
-			$event_time .= ' - ';
+			$title = "$event_time - $subject";
+		else
+			$title = $subject;
 
 		$style = "";
 		if(!empty($event->text_color))
@@ -270,8 +272,8 @@ function create_day($month, $day, $year, $days_events)
 				.";";
 
 		$event_html = tag('li', 
-				create_occurrence_link("$event_time$subject",
-					"display_event", $event->get_oid(),
+				create_occurrence_link($title, "display_event",
+					$event->get_oid(),
 					array("style=\"$style\"")));
 
 		$html_events->add($event_html);
