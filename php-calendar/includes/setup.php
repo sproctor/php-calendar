@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2011 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -163,7 +163,7 @@ if($translate) {
 			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'ca':
-			$locale = setlocale(LC_ALL, 'ca_ES.utf8', 'ca.utf8', 'ca')
+			$locale = setlocale(LC_ALL, 'ca_ES.utf8', 'ca.utf8', 'ca');
 			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'da':
