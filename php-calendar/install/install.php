@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2011 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,8 +43,21 @@ foreach($_POST as $key => $value) {
 	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">\n";
 }
 
-if(!isset($_POST['action'])) {
+if(empty($_POST['action'])) {
 	get_action();
+} elseif($_POST['action'] == 'upgrade') {
+	if(empty($_POST['version'])) {
+		get_upgrade_version();
+	} elseif($_POST['version'] == "2.0") {
+		if(empty($_POST['timezone']))
+			upgrade_20_form();
+		else
+			upgrade_20_action();
+	} elseif($_POST['version'] == "1.1") {
+		// update from version 1.1
+	} else {
+		// bad version
+	}
 } elseif(!isset($_POST['my_hostname'])
 		&& !isset($_POST['my_username'])
 		&& !isset($_POST['my_passwd'])
@@ -66,6 +79,125 @@ if(!isset($_POST['action'])) {
 function get_action() {
 	echo '<input type="submit" name="action" value="install"><br>';
 	echo '<input type="submit" name="action" value="upgrade">';
+}
+
+function get_upgrade_version() {
+	echo '<h3>Pick the version you are updating from</h3>';
+	echo '<input type="hidden" name="action" value="upgrade">';
+	echo '<select name="version">';
+	echo '<option value="1.1">version 1.1</option>';
+	echo '<option value="2.0">version 2.0-beta4 or later</option>';
+	echo '</select>';
+	echo '<input type="submit" value="Submit">';
+}
+
+function upgrade_20_form() {
+	global $phpc_config_file, $dbh;
+
+	if(!include($phpc_config_file)) {
+		echo '<p>You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
+		return;
+	}
+
+	echo '<div>Timezone: <select name="timezone">';
+	foreach(timezone_identifiers_list() as $timezone) {
+		echo "<option value=\"$timezone\">$timezone</option>\n";
+	}
+	echo "</select></div>";
+	echo "<input type=\"submit\" value=\"Submit\"/>";
+}
+
+function upgrade_20_action() {
+	global $phpc_config_file, $dbh;
+
+	if(!include($phpc_config_file)) {
+		echo '<p>You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
+		return;
+	}
+
+	$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
+
+	$query = "ALTER TABLE `" . SQL_PREFIX . "occurrences`\n"
+		."ADD `start_ts` timestamp NULL default NULL,\n"
+		."ADD `end_ts` timestamp NULL default NULL,\n"
+		."CHANGE `startdate` `start_date` date default NULL,\n"
+		."CHANGE `enddate` `end_date` date default NULL,\n"
+		."CHANGE `timetype` `time_type` tinyint(4) NOT NULL default '0'\n";
+
+/*
+	$dbh->query($query)
+		or db_error($dbh, 'Error adding elements to occurrences table.',
+				$query);
+*/
+
+	echo "<p>Occurrences table update";
+
+	$query = "SELECT `oid`, YEAR(`start_date`) AS `start_year`, "
+		."MONTH(`start_date`) AS `start_month`, "
+		."DAY(`start_date`) AS `start_day`, "
+		."HOUR(`starttime`) AS `start_hour`, "
+		."MINUTE(`starttime`) AS `start_minute`, "
+		."SECOND(`starttime`) AS `start_second`, "
+		."YEAR(`end_date`) AS `end_year`, "
+		."MONTH(`end_date`) AS `end_month`, "
+		."DAY(`end_date`) AS `end_day`, "
+		."HOUR(`endtime`) AS `end_hour`, "
+		."MINUTE(`endtime`) AS `end_minute`, "
+		."SECOND(`endtime`) AS `end_second` "
+		."FROM `" . SQL_PREFIX . "occurrences`\n";
+
+	$occ_result = $dbh->query($query)
+		or db_error($dbh, 'Error selecting old occurrences.', $query);
+
+	while($row = $occ_result->fetch_assoc()) {
+		if($row['start_hour'] !== NULL) {
+			$start_ts = mktime($row['start_hour'],
+					$row['start_minute'],
+					$row['start_second'],
+					$row['start_month'],
+					$row['start_day'],
+					$row['start_year']);
+
+			$end_ts = mktime($row['end_hour'],
+					$row['end_minute'],
+					$row['end_second'],
+					$row['end_month'],
+					$row['end_day'],
+					$row['end_year']);
+
+			$query = "UPDATE `" . SQL_PREFIX . "occurrences`\n"
+				. "SET `start_date` = NULL, "
+				. "`start_ts` = FROM_UNIXTIME($start_ts), "
+				. "`end_ts` = FROM_UNIXTIME($end_ts)\n"
+				. "WHERE `oid` = {$row['oid']}";
+			$dbh->query($query)
+				or db_error($dbh, 'Error updating occurrences.',
+						$query);
+		}
+	}
+
+	echo "<p>Occurrences updated.";
+
+	$query = "ALTER TABLE `" . SQL_PREFIX . "config`\n"
+		."CHANGE `cid` `cid` int(11)\n";
+
+	$dbh->query($query)
+		or db_error($dbh, 'Error modifying config table.',
+				$query);
+	
+	echo "<p>Config table updated.";
+
+	$query = "INSERT INTO ".SQL_PREFIX."config\n"
+		."(`cid`, `config_name`, `config_value`) "
+		."VALUE (NULL, 'version', '0')";
+
+	$dbh->query($query)
+		or db_error($dbh, 'Error adding version.',
+				$query);
+
+	echo "<p>Calendar version updated.";
+
+	echo "<p>Update complete.";
 }
 
 function check_config()
@@ -252,6 +384,13 @@ function install_base()
 
 	create_tables();
 
+	$query = "INSERT INTO ".SQL_PREFIX."config\n"
+		."(`cid`, `config_name`, `config_value`) "
+		."VALUE (NULL, 'version', '0')";
+
+	$dbh->query($query)
+		or db_error($dbh, 'Error adding version.', $query);
+
 	echo "<p>config created at \"". realpath($phpc_config_file) ."\"</p>"
 		."<p>calendars base created</p>\n"
 		."<div><input type=\"submit\" name=\"base\" value=\"continue\">"
@@ -295,7 +434,10 @@ function create_tables()
 		."`uid` int(11) unsigned NOT NULL auto_increment,\n"
 		."`username` varchar(32) collate utf8_unicode_ci NOT NULL,\n"
 		."`password` varchar(32) collate utf8_unicode_ci NOT NULL default '',\n"
-		."`admin` tinyint(4) NOT NULL default '0',\n"
+		."`admin` tinyint(4) NOT NULL DEFAULT '0',\n"
+		."`password_editable` tinyint(1) NOT NULL DEFAULT '1',\n"
+		."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+		."`language` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."PRIMARY KEY  (`uid`)\n"
 		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 
@@ -303,7 +445,7 @@ function create_tables()
 		or db_error($dbh, 'Error creating users table.', $query);
 
 	$query = "CREATE TABLE `" . SQL_PREFIX . "config` (\n"
-		."`cid` int(11) NOT NULL,\n"
+		."`cid` int(11) DEFAULT NULL,\n"
 		."`config_name` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
 		."`config_value` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
 		."UNIQUE KEY `calendar_id` (`cid`,`config_name`)\n"
@@ -389,12 +531,14 @@ function add_calendar()
 
 	$config_array = array(
 			'hours_24' => '0',
-			'week_start' => '2',
+			'week_start' => '0',
 			'translate' => '1',
-			'subject_max' => '32',
+			'subject_max' => '50',
+			'events_max' => '8',
 			'calendar_title' => 'PHP-Calendar',
 			'anon_permission' => '3',
 			'timezone' => '',
+			'language' => '',
 			);
 	foreach($config_array as $name => $value) {
 		$query = "INSERT INTO ".SQL_PREFIX."config\n"
@@ -437,13 +581,15 @@ function db_error($dbh, $str, $query = "")
 function connect_db($hostname, $username, $passwd, $database = false)
 {
 	$dbh = new mysqli($hostname, $username, $passwd);
-	if($database)
-		$dbh->select_db($database);
 
 	if(mysqli_connect_errno()) {
 		soft_error("Database connect failed (" . mysqli_connect_errno()
 				. "): " . mysqli_connect_error());
 	}
+
+	if($database)
+		$dbh->select_db($database);
+	$dbh->query("SET NAMES 'utf8'");
 
 	return $dbh;
 }

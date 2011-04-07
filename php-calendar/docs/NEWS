@@ -4,8 +4,12 @@ NEWS
 2.0-beta10:
 	- Added a color picker for categories, by Michal Osowiecki
 	- Added support for timezones (breaks compatibility with beta9)
-	- Bugfixes (Thanks to Pascal Rigaux)
 	- Updated French by Pascal Rigaux
+	- Properly display modify event for repeating events. Initial patch
+	    from Pascal Rigaux
+	- Added user and calendar settings for timezone and language
+	- Added updater from earlier 2.0 betas
+	- Bugfixes (Thanks to Pascal Rigaux, Hans Eksteen)
 
 2.0-beta9 (19 Oct 2010):
 	- Fixes misconfigured default paths for embedded calendars

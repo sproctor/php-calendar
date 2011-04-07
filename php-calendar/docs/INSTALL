@@ -22,6 +22,7 @@ is in the AUTHORS file).
 ---------------
 
 -PHP 5.0 or higher http://www.php.net/ with MySQLi extension
+  GNU gettext and PHP with gettext support are required for translations
 -MySQL 4.1.3 or higher http://www.mysql.com/
 -SSH or an FTP program which and utilize the CHMOD command
   For SSH on Windows, try putty at
@@ -45,15 +46,15 @@ Make sure PHP and MySQL server are installed and running on your server.
    'calendar' for www.mydomain.com/calendar).  You can call it whatever you
    want.
 
+Optionally:
+   From the php-calendar/install directory run: php translate.php
+   to automatically setup the translation files.
+
 3) Open up a browser window and navigate to the file install.php in your
    calendar folder of your webpage (example:
    http://www.mydomain.com/calendar/install.php)
 
 4) Follow the directions given by the installer.
-
-*** freak out if the above did not work ***
-
-More seriously, if this didn't work, see the section below.
 
 -----------
 3 ERRORS
@@ -84,16 +85,15 @@ your tables is, in the config.php file
 4 Translations
 ---------------
 
-Getting translations working is not automatic yet.
-
 1) You will need to make sure that you have the locale for the desired language
 installed. This is very much system dependent. On Debian run
 'dpkg-reconfigure locales' as root and select the desired locale.
 
-2) You will need to generate the messages.mo files for each language. In the
-LC_MESSAGES directory for each language you will need to run the command
-'msgfmt -o messages.mo messages.po'
+2) You will need to generate the messages.mo files for each language. There is
+a script in the install directory to generate the messages.mo files. If for
+some reason you need to do it manually, in the LC_MESSAGES directory for each
+language you will need to run the command: msgfmt -o messages.mo messages.po
 
 Good luck!
 Sean Proctor
-(See AUTHORS file for contact info)
+sproctor@gmail.com

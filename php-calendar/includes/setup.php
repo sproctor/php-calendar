@@ -198,7 +198,6 @@ if($translate) {
 			$phpc_datefmt = "j \%\s Y";
 			break;
 		default:
-			$_SESSION['messages'][] = "Invalid language identifier.";
 			$phpc_lang = 'C';
 			$locale = 'C';
 	}

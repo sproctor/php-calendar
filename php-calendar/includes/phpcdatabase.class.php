@@ -26,7 +26,6 @@ class PhpcDatabase {
 	function __construct() {
 		// Make the database connection.
 		$this->dbh = new mysqli(SQL_HOST, SQL_USER, SQL_PASSWD);
-		$this->dbh->select_db(SQL_DATABASE);
 
 		if(mysqli_connect_errno()) {
 			soft_error("Database connect failed ("
@@ -34,6 +33,7 @@ class PhpcDatabase {
 					. mysqli_connect_error());
 		}
 
+		$this->dbh->select_db(SQL_DATABASE);
 		$this->dbh->query("SET NAMES 'utf8'");
 	}
 

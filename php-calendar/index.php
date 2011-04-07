@@ -84,7 +84,7 @@ if(defined('PHPC_DEBUG'))
 else
 	$jquery_path = 'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js';
 
-$html = tag('html', attrs("lang=\"$lang\""),
+$html = tag('html', attrs("lang=\"$phpc_lang\""),
 		tag('head',
 			tag('title', $calendar_title),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
