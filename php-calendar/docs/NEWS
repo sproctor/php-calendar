@@ -1,7 +1,7 @@
 NEWS
 -----
 
-2.0-beta10 (8 Jul 2011):
+2.0-beta10 (8 Apr 2011):
 	- Added a color picker for categories, by Michal Osowiecki
 	- Added support for timezones (breaks compatibility with beta9)
 	- Updated French translation by Pascal Rigaux
