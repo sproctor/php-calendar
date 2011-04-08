@@ -54,9 +54,9 @@ if(empty($_POST['action'])) {
 		else
 			upgrade_20_action();
 	} elseif($_POST['version'] == "1.1") {
-		// update from version 1.1
+		echo "<p>Sorry upgrading from version 1.1 is not supported at this time.";
 	} else {
-		// bad version
+		echo "<p>Invalid version identifier.";
 	}
 } elseif(!isset($_POST['my_hostname'])
 		&& !isset($_POST['my_username'])
