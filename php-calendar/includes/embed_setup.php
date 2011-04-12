@@ -65,11 +65,6 @@ define('IN_PHPC', true);
 
 require_once("$phpc_includes_path/setup.php");
 
-if ($vars["contentType"] == "json") {
-	echo do_action();
-	exit;
-}
-
 $calendar_title = get_config($phpcid, 'calendar_title');
 
 ?>

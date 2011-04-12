@@ -62,12 +62,6 @@ define('IN_PHPC', true);
 
 try {
 	require_once("$phpc_includes_path/setup.php");
-	require_once("$phpc_includes_path/calendar.php");
-
-	if ($vars["contentType"] == "json") {
-		echo do_action();
-		exit;
-	}
 
 	$calendar_title = get_config($phpcid, 'calendar_title');
 	$content = tag('div', attributes('class="php-calendar"'),
@@ -80,9 +74,9 @@ try {
 }
 
 if(defined('PHPC_DEBUG'))
-	$jquery_path = 'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js';
+	$jq_min = '';
 else
-	$jquery_path = 'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js';
+	$jq_min = '.min';
 
 $html = tag('html', attrs("lang=\"$phpc_lang\""),
 		tag('head',
@@ -90,7 +84,7 @@ $html = tag('html', attrs("lang=\"$phpc_lang\""),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					'href="static/style.css"')),
 			tag("script", attrs('type="text/javascript"',
-					"src=\"$jquery_path\""), ''),
+					"src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery$jq_min.js\""), ''),
 			tag('script', attrs('type="text/javascript"',
 					'src="static/script.js"'), ''),
 			tag('meta', attrs('http-equiv="Content-Type"',

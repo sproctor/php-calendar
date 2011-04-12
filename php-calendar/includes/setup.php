@@ -251,6 +251,12 @@ if(!empty($phpc_tz))
 	date_default_timezone_set($phpc_tz); 
 $phpc_tz = date_default_timezone_get();
 
+if ($vars["contentType"] == "json") {
+	header("Content-Type: application/json; charset=UTF-8");
+	echo do_action();
+	exit;
+}
+
 header("Content-Type: text/html; charset=UTF-8");
 
 ?>
