@@ -105,5 +105,12 @@ class PhpcEvent {
 	{
 		return htmlspecialchars($this->bg_color, ENT_COMPAT, "UTF-8");
 	}
+
+	function get_category()
+	{
+		if(empty($this->category))
+			return $this->category;
+		return htmlspecialchars($this->category, ENT_COMPAT, "UTF-8");
+	}
 }
 ?>

@@ -54,7 +54,14 @@ function display_event_by_oid($oid)
 	}
 
 	$event_header = tag('div', attributes('class="phpc-event-header"'),
-			tag('div', _('by').' ', tag('cite', $event->get_username())));
+			tag('div', _('by').' ',
+				tag('cite', $event->get_username())));
+
+	$category = $event->get_category();
+	if(!empty($category))
+		$event_header->add(tag('div', _('Category') . ': '
+					. $category));
+
 	// Add modify/delete links if this user has access to this event.
         if(can_modify_event($event)) {
 		$event_header->add(tag('div',
@@ -134,7 +141,14 @@ function display_event_by_eid($eid)
 	}
 
 	$event_header = tag('div', attributes('class="phpc-event-header"'),
-			tag('div', _('by').' ', tag('cite', $event->get_username())));
+			tag('div', _('by').' ',
+				tag('cite', $event->get_username())));
+
+	$category = $event->get_category();
+	if(!empty($category))
+		$event_header->add(tag('div', _('Category') . ': '
+					. $category));
+
 	// Add modify/delete links if this user has access to this event.
         if(can_modify_event($event)) {
 		$event_header->add(tag('div',
@@ -185,8 +199,15 @@ function display_event_json()
 	$time_str = $event->get_time_span_string();
 	$date_str = $event->get_date_string();
 
+	$category = $event->get_category();
+	if(empty($category))
+		$category_text = '';
+	else
+		$category_text = _('Category') . ': ' . $event->get_category();
+
 	return json_encode(array("title" => $event->get_subject(),
 				"time" => "$date_str " . _("at") . " $time_str",
+				"category" => $category_text,
 				"body" => $event->get_desc()));
 }
 
