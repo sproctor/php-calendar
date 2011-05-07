@@ -104,7 +104,7 @@ function display_event_by_oid($oid)
 		if($next < sizeof($occurrences)) {
 			$next_occur = $occurrences[$next];
 			$occurrence_div->add(create_occurrence_link(
-						_('Next cccurrence on') . " " .
+						_('Next occurrence on') . " " .
 						$next_occur->get_date_string(),
 						'display_event',
 						$next_occur->get_oid()), ' ');
