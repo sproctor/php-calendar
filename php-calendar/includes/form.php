@@ -367,7 +367,8 @@ class FormTimeQuestion extends FormAtomicQuestion {
 			$minute = date("i");
 		}
 		$minute_input = create_select_range("{$this->qid}-minute", "00",
-				59, 1, $minute);
+				59, 5, $minute, false,
+				attrs('class="form-combobox"'));
 		if(!empty($defaults["{$this->qid}-meridiem"])) {
 			$meridiem = $defaults["{$this->qid}-meridiem"];
 		} else {
@@ -376,8 +377,10 @@ class FormTimeQuestion extends FormAtomicQuestion {
 		$meridiem_input = create_select("{$this->qid}-meridiem",
 				array("am" => _("AM"), "pm" => _("PM")),
 				$meridiem);
+		$time_input = tag('input', attrs('type="text"',
+					"id=\"{$this->qid}-time\""));
                 return tag('div', attrs("class=\"{$this->class}\""),
-				$hour_input, $minute_input, $meridiem_input);
+				$time_input);
         }
 }
 
@@ -399,32 +402,14 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
 
         function get_specific_html($parent, $defaults = array()) {
 
-		// Year Input
-		if(isset($defaults["{$this->qid}-year"])) {
-			$year = $defaults["{$this->qid}-year"];
+		// Date Input
+		if(isset($defaults["{$this->qid}-date"])) {
 		} else {
-			$year = date("Y");
 		}
-		$year_input = create_select_range("{$this->qid}-year", 1970,
-				$year + 20, 1, $year);
-
-		// Month Input
-		if(isset($defaults["{$this->qid}-month"])) {
-			$month = $defaults["{$this->qid}-month"];
-		} else {
-			$month = date("m");
-		}
-		$month_input = create_select_range("{$this->qid}-month", 1, 12,
-				1, $month, "month_name");
-
-		// Day Input
-		if(isset($defaults["{$this->qid}-day"])) {
-			$day = $defaults["{$this->qid}-day"];
-		} else {
-			$day = date("d");
-		}
-		$day_input = create_select_range("{$this->qid}-day", 1, 31, 1,
-				$day);
+		$date_input = tag('input', attrs('type="text"',
+					'class="form-date"',
+					"name=\"{$this->qid}-date\"",
+					"id=\"{$this->qid}-date\""));
 
 		// Hour Input
 		if(isset($defaults["{$this->qid}-hour"])) {
@@ -439,40 +424,18 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
 				$hour = date("g");
 		}
 
-		if($this->hour24)
-			$hour_input = create_select_range("{$this->qid}-hour",
-					1, 24, 1, $hour);
-		else
-			$hour_input = create_select_range("{$this->qid}-hour",
-					1, 12, 1, $hour);
-
 		if(isset($defaults["{$this->qid}-minute"])) {
 			$minute = $defaults["{$this->qid}-minute"];
 		} else {
 			$minute = date("i");
 		}
-		$minute_input = create_select_range("{$this->qid}-minute", 0,
-				59, 1, $minute);
 
-		$time_tag = tag('span', attrs("id=\"{$this->qid}-time\""),
-				_("Time") . " ", $hour_input, $minute_input);
-
-		if(!$this->hour24) {
-			if(isset($defaults["{$this->qid}-hour"])) {
-				$meridiem = date("a", strtotime($defaults["{$this->qid}-hour"] . ':00'));
-			} else {
-				$meridiem = date("a");
-			}
-			$meridiem_input = create_select("{$this->qid}-meridiem",
-					array("am" => _("AM"), "pm" => _("PM")),
-					$meridiem);
-			$time_tag->add($meridiem_input);
-		}
-
-                return array(tag('span', attrs("id=\"{$this->qid}-date\""),
-					_("Date") . " ", $year_input,
-					$month_input, $day_input), " ",
-					$time_tag);
+		$time_input = tag('input', attrs('type="text"',
+					'class="form-time"',
+					"name=\"{$this->qid}-time\"",
+					"id=\"{$this->qid}-time\""));
+                return array(_("Date") . ": ", $date_input,
+			" " . _('Time') . ": ", $time_input);
 	}
 }
 
@@ -757,6 +720,12 @@ class Form extends FormGroup {
                         $table->add($child->get_html($this, $defaults));
                 }
 		$form = tag('form', $form_attrs,
+				tag('link', attrs('rel="stylesheet"',
+						'type="text/css"',
+						'href="static/jquery-ui-timepicker.css"')),
+				tag("script",
+					attrs('type="text/javascript"',
+						'src="static/jquery.ui.timepicker.js"'), ''),
 				tag("script",
 					attrs('type="text/javascript"',
 						'src="static/form.js"'), ''));

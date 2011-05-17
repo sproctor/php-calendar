@@ -21,20 +21,18 @@ if ( !defined('IN_PHPC') ) {
 
 function settings()
 {
-	global $phpcdb;
+	global $phpcdb, $phpc_user;
 
-        if(!is_user()) {
-                permission_error(_('You must be logged in.'));
-        }
+	if(is_user()) {
+		$forms = array();
 
-	$forms = array();
-	
-	$user = $phpcdb->get_user($_SESSION['phpc_uid']);
-	if($user->is_password_editable())
-		$forms[] = password_form();
-	$forms[] = config_form($user);
-
-	return $forms;
+		if($phpc_user->is_password_editable())
+			$forms[] = password_form();
+		$forms[] = config_form();
+		return $forms;
+	} else {
+		return config_form();
+	}
 }
 
 function password_form()
@@ -64,23 +62,23 @@ function password_form()
 				   )));
 }
 
-function config_form($user)
+function config_form()
 {
-	global $phpc_script;
+	global $phpc_script, $phpc_user_tz, $phpc_user_lang;
 
 	$timezones = array("NULL" => _("Default"));
 	foreach(timezone_identifiers_list() as $timezone) {
 		$timezones[$timezone] = $timezone;
 	}
 	$tz_input = create_select('timezone', $timezones,
-			$user->get_timezone());
+			$phpc_user_tz);
 
 	$languages = array("NULL" => _("Default"));
 	foreach(get_languages() as $lang) {
 		$languages[$lang] = $lang;
 	}
 	$lang_input = create_select('language', $languages,
-			$user->get_language());
+			$phpc_user_lang);
 
 	return tag('form', attributes("action=\"$phpc_script\"",
 				'method="post"'),

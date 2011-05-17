@@ -21,7 +21,7 @@ if(!defined('IN_PHPC')) {
 
 function password_submit()
 {
-	global $phpcid, $vars, $phpcdb;
+	global $phpcid, $vars, $phpcdb, $phpc_user, $phpc_uid;
 
         if(!is_user()) {
                 return tag('div', _('You must be logged in.'));
@@ -29,13 +29,7 @@ function password_submit()
 
 	verify_token();
 
-	$uid = $_SESSION['phpc_uid'];
-	$user = $phpcdb->get_user($uid);
-
-	if(!$user)
-		soft_error(_('Invalid user.'));
-
-	if(!$user->is_password_editable())
+	if(!$phpc_user->is_password_editable())
 		soft_error(_('You do not have permission to change your password.'));
 
         if(!isset($vars['old_password'])) {
@@ -44,7 +38,7 @@ function password_submit()
 		$old_password = $vars['old_password'];
 	}
 
-	if($user->password != md5($old_password)) {
+	if($phpc_user->password != md5($old_password)) {
                 return tag('div', _('The password you entered did not match your old password.'));
 	}
 
@@ -59,7 +53,7 @@ function password_submit()
 
         $passwd = md5($vars['password1']);
 
-	$phpcdb->set_password($uid, $passwd);
+	$phpcdb->set_password($phpc_uid, $passwd);
 
         return tag('div', _('Password updated.'));
 }

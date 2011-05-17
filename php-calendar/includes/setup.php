@@ -128,11 +128,16 @@ $phpcdb = new PhpcDatabase;
 session_name(SQL_PREFIX . SQL_DATABASE . '_SESSION');
 session_start();
 
-$phpc_tz = NULL;
 if(!empty($_SESSION['phpc_uid'])) {
-	$phpc_user = $phpcdb->get_user($_SESSION['phpc_uid']);
+	$phpc_uid = $_SESSION['phpc_uid'];
+	$phpc_user = $phpcdb->get_user($phpc_uid);
 	$phpc_user_lang = $phpc_user->get_language();
-	$phpc_tz = $phpc_user->get_timezone();
+	$phpc_user_tz = $phpc_user->get_timezone();
+} else {
+	if(!empty($_COOKIE['phpc_tz']))
+		$phpc_user_tz = $_COOKIE['phpc_tz'];
+	if(!empty($_COOKIE['phpc_lang']))
+		$phpc_user_lang = $_COOKIE['phpc_lang'];
 }
 
 // setup translation stuff
@@ -143,8 +148,6 @@ if($translate) {
 	if(!empty($vars['lang'])) {
 		$phpc_lang = $vars['lang'];
 		$phpc_store_lang = true;
-	} elseif(!empty($_COOKIE['lang'])) {
-		$phpc_lang = $_COOKIE['lang'];
 	} elseif(!empty($phpc_user_lang)) {
 		$phpc_lang = $phpc_user_lang;
 	} elseif(!empty($phpc_cal_lang)) {
@@ -202,7 +205,7 @@ if($translate) {
 			$phpc_datefmt = "j \%\s Y";
 			break;
 		default:
-			$phpc_lang = 'C';
+			$phpc_lang = 'en';
 			$locale = 'C';
 	}
 
@@ -236,15 +239,28 @@ if(isset($_SESSION['phpc_time']) && time() - $_SESSION['phpc_time'] > 1800) {
 
 $_SESSION['phpc_time'] = time();
 
+if(!empty($vars['clearmsg']))
+	$_SESSION['messages'] = NULL;
+
+$phpc_messages = array();
+
+if(!empty($_SESSION['messages'])) {
+	foreach($_SESSION['messages'] as $message) {
+		$phpc_messages[] = $message;
+	}
+} else {
+	$_SESSION['messages'] = array();
+}
+
 // Check if our session timed out and logged us out
 if(!empty($_COOKIE["phpc_user"]) && !is_user()) {
 	setcookie("phpc_user", "0");
-	if(empty($_SESSION['messages']))
-		$_SESSION['messages'] = array();
-	$_SESSION['messages'][] = _("Session has expired.");
+	message(_("Session has expired."));
 }
 
-if(empty($phpc_tz))
+if(!empty($phpc_user_tz))
+	$phpc_tz = $phpc_user_tz;
+else
 	$phpc_tz = get_config($phpcid, 'timezone');
 
 if(!empty($phpc_tz))

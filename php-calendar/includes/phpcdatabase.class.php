@@ -577,7 +577,12 @@ class PhpcDatabase {
 		$this->dbh->query($query)
 			or $this->db_error(_('Error creating event.'), $query);
 
-		return $this->dbh->insert_id;
+		$eid = $this->dbh->insert_id;
+
+		if($eid <= 0)
+			soft_error("Bad eid creating event.");
+
+		return $eid;
 	}
 
 	function create_occurrence($eid, $time_type, $start_ts, $end_ts)

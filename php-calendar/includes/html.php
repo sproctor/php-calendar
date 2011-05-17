@@ -249,12 +249,16 @@ function attrs()
 
 // creates a select element for a form
 // returns HTML data for the element
-function create_select($name, $arr, $default = false)
+function create_select($name, $options, $default = false, $attrs = false)
 {
-	$html = tag('select', attributes('size="1"', "name=\"$name\"",
-				"id=\"$name\""));
+	if($attrs === false)
+		$attrs = attrs();
 
-	foreach($arr as $value => $text) {
+	$attrs->add("name=\"$name\"");
+	$attrs->add("id=\"$name\"");
+	$html = tag('select', $attrs);
+
+	foreach($options as $value => $text) {
 		$attributes = attributes("value=\"$value\"");
 		if($default !== false && $value == $default)
 			$attributes->add('selected');
@@ -267,9 +271,9 @@ function create_select($name, $arr, $default = false)
 // creates a select element for a form given a certain range
 // returns HTML data for the element
 function create_select_range($name, $lbound, $ubound, $increment = 1,
-		$default = false, $name_function = false)
+		$default = false, $name_function = false, $attrs = false)
 {
-	$arr = array();
+	$options = array();
 
 	for ($i = $lbound; $i <= $ubound; $i += $increment){
 		if($name_function !== false) {
@@ -277,9 +281,9 @@ function create_select_range($name, $lbound, $ubound, $increment = 1,
 		} else {
 			$text = $i;
 		}
-		$arr[$i] = $text;
+		$options[$i] = $text;
 	}
-	return create_select($name, $arr, $default);
+	return create_select($name, $options, $default, $attrs);
 }
 
 ?>

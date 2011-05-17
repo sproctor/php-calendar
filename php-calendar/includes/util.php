@@ -42,7 +42,9 @@ function minute_pad($minute)
 }
 
 function redirect($page) {
-	global $phpc_script, $phpc_server, $phpc_protocol;
+	global $phpc_script, $phpc_server, $phpc_protocol, $phpc_redirect;
+
+	$phpc_redirect = true;
 
 	if($page{0} == "/") {
 		$dir = '';
@@ -53,7 +55,7 @@ function redirect($page) {
 	header("Location: $phpc_protocol://$phpc_server$dir$page");
 }
 
-function message($message, $page) {
+function message_redirect($message, $page) {
 	if(empty($_SESSION['messages']))
 		$_SESSION['messages'] = array();
 
@@ -64,6 +66,12 @@ function message($message, $page) {
 
 	return tag('div', attrs('class="phpc-box"'), "$message ",
  		tag('a', attrs("href=\"$continue_url\""), _("continue")));
+}
+
+function message($message) {
+	global $phpc_messages;
+
+	$phpc_messages[] = $message;
 }
 
 function addslashes_r($var) {

@@ -171,59 +171,25 @@ function login_user($username, $password)
 	return true;
 }
 
-// returns tag data for a link for $lang
-function lang_link($lang)
-{
-	global $phpc_script;
-
-        $str = $_SERVER['QUERY_STRING'];
-        $str = preg_replace("/&lang=\\w*/", '', $str);
-        $str = preg_replace("/lang=\\w*&/", '', $str);
-        $str = preg_replace("/lang=\\w*/", '', $str);
-	if(!empty($str)) {
-		$str = htmlentities($str) . '&amp;';
-	}
-	$str = "{$phpc_script}?{$str}lang=$lang";
-
-	return tag('a', attributes("href=\"$str\""), $lang);
-}
-
 // returns tag data for the links at the bottom of the calendar
 function link_bar()
 {
-	global $translate, $phpc_url, $phpc_locale_path, $phpc_tz, $phpc_lang;
+	global $phpc_url, $phpc_tz, $phpc_lang;
 
-	$html = tag('div', attributes('class="phpc-footer"'));
-
-	if($translate) {
-		$langs = get_languages();
-		if(sizeof($langs) > 1) {
-			$lang_links = tag('p');
-
-			foreach($langs as $lang) {
-				if($phpc_lang == $lang)
-					$lang_link = $lang;
-				else
-					$lang_link = lang_link($lang);
-				$lang_links->add('[', $lang_link, '] ');
-			}
-			$html->add($lang_links);
-		}
-	}
-
-	$html->add(tag('p', '[',
-			tag('a',
-				attributes('href="http://validator.w3.org/'
-					.'check?url='
-					.rawurlencode($phpc_url)
-					.'"'), 'Valid HTML 4.01 Strict'),
-			'] [',
-			tag('a', attributes('href="http://jigsaw.w3.org/'
-					.'css-validator/check/referer"'),
+	return tag('div', attributes('class="phpc-footer"'),
+			tag('p', '[',
+				tag('a',
+					attributes('href="http://validator.w3.org/'
+						.'check?url='
+						.rawurlencode($phpc_url)
+						.'"'), 'Valid HTML 4.01 Strict'),
+				'] [',
+				tag('a', attributes('href="http://jigsaw.w3.org/'
+						.'css-validator/check/referer"'),
 					'Valid CSS2'),
-			']',
-			" [Timezone: $phpc_tz]"));
-	return $html;
+				']',
+				" [" . _('Language') . ": $phpc_lang]" .
+				" [" . _('Timezone') . ": $phpc_tz]"));
 }
 
 function get_languages() {
@@ -504,12 +470,13 @@ function navbar()
 		menu_item_append($html, _('View date'), 'display_day', $args);
 	}
 
+	if($action != 'settings')
+		menu_item_append($html, _('Settings'), 'settings');
+
 	if(is_user()) {
 		menu_item_append($html, _('Log out'), 'logout',
 				array('lasturl' =>
 					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
-		if($action != 'settings')
-			menu_item_append($html, _('Settings'), 'settings');
 	} else {
 		menu_item_append($html, _('Log in'), 'login',
 				array('lasturl' =>
@@ -622,13 +589,28 @@ function get_config($cid, $option, $default = '') {
 }
 
 function display_phpc() {
+	global $phpc_messages, $phpc_redirect;
 
 	$navbar = false;
 
 	try {
 		$content = do_action();
 		$navbar = navbar();
-		return tag('', $navbar, $content, link_bar());
+
+		if(sizeof($phpc_messages) > 0) {
+			$messages = tag('div', attrs('class="phpc-message"'));
+			foreach($phpc_messages as $message) {
+				$messages->add($message);
+			}
+			// If we're redirecting, the messages might not get
+			//   seen, so don't clear them
+			if(empty($phpc_redirect))
+				$_SESSION['messages'] = NULL;
+		} else {
+			$messages = '';
+		}
+
+		return tag('', $messages, $navbar, $content, link_bar());
 	} catch(PermissionException $e) {
 		$results = tag('');
 		// TODO: make navbar show if there is an error in do_action()
@@ -661,27 +643,11 @@ function do_action()
 		soft_error(_('Invalid action'));
 	}
 
-	if(!empty($vars['clearmsg']))
-		$_SESSION['messages'] = NULL;
-
-	$have_message = false;
-	if(!empty($_SESSION['messages'])) {
-		$messages = tag('div', attrs('class="phpc-message"'));
-		foreach($_SESSION['messages'] as $message) {
-			$messages->add($message);
-			$have_message = true;
-		}
-		$_SESSION['messages'] = NULL;
-	}
-
 	require_once("$phpc_includes_path/$action.php");
 
 	eval("\$action_output = $action();");
 
-	if($have_message)
-		return tag('', $messages, $action_output);
-	else
-		return $action_output;
+	return $action_output;
 }
 
 // takes a number of the month, returns the name

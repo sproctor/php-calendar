@@ -23,24 +23,20 @@ function settings_submit()
 {
 	global $phpcid, $vars, $phpcdb;
 
-        if(!is_user()) {
-                return tag('div', _('You must be logged in.'));
-        }
-
 	verify_token();
-
-	$uid = $_SESSION['phpc_uid'];
-	$user = $phpcdb->get_user($uid);
-
-	if(!$user)
-		soft_error(_('Invalid user.'));
 
         if(empty($vars['timezone']) || empty($vars['language'])) {
                 return tag('div', _('Form error.'));
 	}
 
-	$phpcdb->set_timezone($uid, $vars['timezone']);
-	$phpcdb->set_language($uid, $vars['language']);
+	setcookie("phpc_tz", $vars['timezone']);
+	setcookie("phpc_lang", $vars['language']);
+
+	if(is_user()) {
+		$uid = $_SESSION['phpc_uid'];
+		$phpcdb->set_timezone($uid, $vars['timezone']);
+		$phpcdb->set_language($uid, $vars['language']);
+	}
 
         return tag('div', _('Settings updated.'));
 }
