@@ -71,7 +71,7 @@ $sort_options = array(
 
 $order_options = array(
                 'ASC' => _('Ascending'),
-                'DESC' => _('Decending')
+                'DESC' => _('Descending')
                 );
 
 ?>

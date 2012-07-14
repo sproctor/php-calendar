@@ -114,10 +114,13 @@ function create_month($month, $year)
 	$last_day = $wim * 7 - day_of_week($month, 1, $year);
 	$to_stamp = mktime(0, 0, 0, $month, $last_day, $year);
 
+	$max_events = get_config($phpcid, 'events_max', 8);
+
 	$results = $phpcdb->get_occurrences_by_date_range($phpcid, $from_stamp,
 			$to_stamp);
 	$days_events = array();
-	foreach($results as $event) {
+	while($row = $results->fetch_assoc()) {
+		$event = new PhpcOccurrence($row);
 		$end_stamp = mktime(0, 0, 0, $event->get_end_month(),
 				$event->get_end_day(), $event->get_end_year());
 
@@ -143,6 +146,11 @@ function create_month($month, $year)
 			$key = date('Y-m-d', $stamp);
 			if(!isset($days_events[$key]))
 				$days_events[$key] = array();
+			if(sizeof($days_events[$key]) == $max_events)
+				$days_events[$key][] = false;
+			if(sizeof($days_events[$key]) > $max_events)
+				continue;
+			
 			$days_events[$key][] = $event;
 		}
 	}
@@ -241,9 +249,8 @@ function create_day($month, $day, $year, $days_events)
 	$html_day->add($html_events);
 
 	// Count the number of events
-	$count = 0;
 	foreach($results as $event) {
-		if($count == get_config($phpcid, 'events_max', 8)) {
+		if($event == false) {
 			$event_html = tag('li',
 					create_action_link_with_date(_("View Additional Events"),
 						'display_day', $year, $month,
@@ -253,7 +260,6 @@ function create_day($month, $day, $year, $days_events)
 			break;
 		}
 
-		$count++;
 		// TODO - make sure we have permission to read the event
 
 		$subject = $event->get_subject();

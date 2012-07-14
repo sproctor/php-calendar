@@ -92,11 +92,7 @@ class PhpcDatabase {
 			or $this->db_error(_('Error in get_occurrences_by_date_range'),
 					$query);
 
-		$events = array();
-		while($row = $result->fetch_assoc()) {
-			$events[] = new PhpcOccurrence($row);
-		}
-		return $events;
+		return $result;
         }
 
 	// returns all the events for a particular day
@@ -130,7 +126,7 @@ class PhpcDatabase {
 		$result = $sth->fetch_assoc()
 			or soft_error(_("Event doesn't exist") . ": $eid");
 
-		return new PhpcEvent($result);
+		return $result;
 	}
 
 	// returns the category that corresponds to $tid

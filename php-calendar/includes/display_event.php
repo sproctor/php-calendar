@@ -134,7 +134,7 @@ function display_event_by_eid($eid)
 {
 	global $phpcdb, $year, $month, $day;
 
-	$event = $phpcdb->get_event_by_eid($eid);
+	$event = new PhpcEvent($phpcdb->get_event_by_eid($eid));
 
 	if(!can_read_event($event)) {
 		return tag('p', _("You do not have permission to read this event."));

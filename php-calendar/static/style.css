@@ -142,7 +142,7 @@ div.phpc-main {
 }
 
 .php-calendar caption {
-  font-size: 175%;
+  /*font-size: 175%;*/
   color: black;
   background-color: white;
   padding: 2px;
@@ -295,3 +295,7 @@ td.form-color-selected {
 /* \*/ /*/
   .phpc-calendar { table-layout: auto; }
 /* */
+
+div.ui-datepicker, div.ui-timepicker {
+  font-size: 0.9em;
+}

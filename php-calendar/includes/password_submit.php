@@ -21,7 +21,7 @@ if(!defined('IN_PHPC')) {
 
 function password_submit()
 {
-	global $phpcid, $vars, $phpcdb, $phpc_user, $phpc_uid;
+	global $vars, $phpcdb, $phpc_user, $phpc_uid;
 
         if(!is_user()) {
                 return tag('div', _('You must be logged in.'));

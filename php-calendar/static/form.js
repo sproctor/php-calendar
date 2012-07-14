@@ -50,7 +50,7 @@ function rgbToHex(color) {
   var green = '0' + parseInt(digits[3]).toString(16);
   var blue = '0' + parseInt(digits[4]).toString(16);
   return ('#' + red.substring(red.length-2) + green.substring(green.length-2) + blue.substring(blue.length-2)).toUpperCase();
-};
+}
 
 function textcolor(bgcolor) {
   var red = parseInt(bgcolor.substr(1, 2),16);
@@ -65,7 +65,14 @@ function textcolor(bgcolor) {
   {
     return "#000000";
   }
-};
+}
+
+$(function() {
+	$(".form-date").datepicker();
+	$(".form-time").timepicker();
+	//$(".form-combobox").combobox();
+	//$(".form-question .ui-autocomplete-input").attr("size", "2");
+});
 
 $(document).ready(function(){
   // Generic form stuff
@@ -133,5 +140,3 @@ $(document).ready(function(){
     $(this).css("border-color", bordercolor);
   });
 });
-
-

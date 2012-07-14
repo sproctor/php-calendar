@@ -1,4 +1,5 @@
 <?php
+$start_time = microtime(true);
 /*
  * Copyright 2010 Sean Proctor
  *
@@ -83,8 +84,13 @@ $html = tag('html', attrs("lang=\"$phpc_lang\""),
 			tag('title', $calendar_title),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					'href="static/style.css"')),
+			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
+					"href=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/base/jquery-ui.css\"")),
+			html_get_stylesheet_tags(),
 			tag("script", attrs('type="text/javascript"',
-					"src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery$jq_min.js\""), ''),
+					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery$jq_min.js\""), ''),
+			tag("script", attrs('type="text/javascript"',
+					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui$jq_min.js\""), ''),
 			tag('script', attrs('type="text/javascript"',
 					'src="static/script.js"'), ''),
 			tag('meta', attrs('http-equiv="Content-Type"',
@@ -92,4 +98,8 @@ $html = tag('html', attrs("lang=\"$phpc_lang\""),
 		tag('body', $content));
 
 echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">', "\n", $html->toString();
+
+$running_time = microtime(true) - $start_time;
+//echo "<p>Running time: $running_time</p>";
+
 ?>

@@ -286,4 +286,23 @@ function create_select_range($name, $lbound, $ubound, $increment = 1,
 	return create_select($name, $options, $default, $attrs);
 }
 
+$html_stylesheets = array();
+
+function html_add_stylesheet($stylesheet) {
+	global $html_stylesheets;
+
+	$html_stylesheets[] = $stylesheet;
+}
+
+function html_get_stylesheet_tags() {
+	global $html_stylesheets;
+
+	$tags = array();
+	foreach($html_stylesheets as $style) {
+		$tags[] = tag('link', attrs('rel="stylesheet"',
+					'type="text/css"',
+					"href=\"$style\""));
+	}
+	return $tags;
+}
 ?>
