@@ -74,14 +74,20 @@ function message($message) {
 	$phpc_messages[] = $message;
 }
 
-function addslashes_r($var) {
-	if (is_array($var)) {
-		foreach ($var as $key => $val) {
-			$var[$key] = addslashes_r($val);
-		}
-		return $var;
-	} else
-		return addslashes($var);
+function stripslashes_r($var) {
+	if (is_array($var))
+		return array_map("stripslashes_r", $var);
+	else
+		return stripslashes($var);
+}
+
+function real_escape_r($var) {
+	global $phpcdb;
+
+	if(is_array($var))
+		return array_map("real_escape_r", $var);
+	else
+		return mysqli_real_escape_string($phpcdb->dbh, $var);
 }
 
 function asbool($val)
@@ -186,7 +192,7 @@ function days_between($ts1, $ts2) {
 	//   the same year
 	if(date('Y', $ts2) > date('Y', $ts1))
 		return days_in_year($ts1)
-			+ days_between(add_year($ts1, 1), $ts2);
+			+ days_between(add_years($ts1, 1), $ts2);
 
 	// The years are equal, subtract day of the year of each
 	return date('z', $ts2) - date('z', $ts1);

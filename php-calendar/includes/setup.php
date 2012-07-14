@@ -55,20 +55,21 @@ if(defined('PHPC_DEBUG')) {
 	ini_set('html_errors', 1);
 }
 
+// Make the database connection.
+require_once("$phpc_includes_path/phpcdatabase.class.php");
+$phpcdb = new PhpcDatabase;
+
+// Set the session to something unique to this setup
+session_name(SQL_PREFIX . SQL_DATABASE . '_SESSION');
+session_start();
+
 // Create vars
-foreach($_GET as $key => $value) {
-	if(!get_magic_quotes_gpc())
-		$vars[$key] = addslashes_r($value);
-	else
-		$vars[$key] = $value;
+if(get_magic_quotes_gpc()) {
+	$_GET = stripslashes_r($_GET);
+	$_POST = stripslashes_r($_POST);
 }
 
-foreach($_POST as $key => $value) {
-	if(!get_magic_quotes_gpc())
-		$vars[$key] = addslashes_r($value);
-	else
-		$vars[$key] = $value;
-}
+$vars = array_merge(real_escape_r($_GET), real_escape_r($_POST));
 
 if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
         $phpcid = $vars['phpcid'];
@@ -119,14 +120,6 @@ if(empty($vars['contentType']))
 	$vars['contentType'] = "html";
 
 require_once("$phpc_includes_path/calendar.php");
-
-// Make the database connection.
-require_once("$phpc_includes_path/phpcdatabase.class.php");
-$phpcdb = new PhpcDatabase;
-
-// Set the session to something unique to this setup
-session_name(SQL_PREFIX . SQL_DATABASE . '_SESSION');
-session_start();
 
 if(!empty($_SESSION['phpc_uid'])) {
 	$phpc_uid = $_SESSION['phpc_uid'];
