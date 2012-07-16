@@ -50,7 +50,7 @@ function user_create()
 
         $passwd = md5($vars['password1']);
 
-	$user = $phpcdb->get_user($vars["user_name"]);
+	$user = $phpcdb->get_user_by_name($vars["user_name"]);
 
         if($user) {
 		soft_error(_('User already exists.'));
