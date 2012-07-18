@@ -34,7 +34,7 @@ class PhpcDatabase {
 		}
 
 		$this->dbh->select_db(SQL_DATABASE);
-		$this->dbh->query("SET NAMES 'utf8'");
+		$this->dbh->set_charset("utf8");
 	}
 
 	function __destruct() {
