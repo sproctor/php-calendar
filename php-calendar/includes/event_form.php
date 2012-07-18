@@ -22,7 +22,13 @@ if(!defined('IN_PHPC')) {
 require_once("$phpc_includes_path/form.php");
 
 function event_form() {
-	return display_form();
+	global $vars;
+
+	if(empty($vars["submit_form"]))
+		return display_form();
+
+	// else
+	return process_form();
 }
 
 function display_form() {
@@ -122,19 +128,23 @@ function display_form() {
 		$occs = $phpcdb->get_occurrences_by_eid($vars['eid']);
 		$event = $occs[0];
 
+		$start_date = $event->get_start_month() . "/"
+			. $event->get_start_day() . "/"
+			. $event->get_start_year();
+		$end_date = $event->get_end_month() . "/"
+			. $event->get_end_day() . "/"
+			. $event->get_end_year();
+		$start_time = $event->get_start_hour() . ":"
+			. $event->get_start_minute();
+		$end_time = $event->get_end_hour() . ":"
+			. $event->get_end_minute();
 		$defaults = array(
 				'subject' => $event->get_raw_subject(),
 				'description' => $event->get_raw_desc(),
-				'start-year' => $event->get_start_year(),
-				'end-year' => $event->get_end_year(),
-				'start-month' => $event->get_start_month(),
-				'end-month' => $event->get_end_month(),
-				'start-day' => $event->get_start_day(),
-				'end-day' => $event->get_end_day(),
-				'start-hour' => $event->get_start_hour(),
-				'start-minute' => $event->get_start_minute(),
-				'end-hour' => $event->get_end_hour(),
-				'end-minute' => $event->get_end_minute(),
+				'start-date' => $start_date,
+				'end-date' => $end_date,
+				'start-time' => $start_time,
+				'end-time' => $end_time,
 				'readonly' => $event->is_readonly(),
 				);
 
@@ -160,16 +170,10 @@ function display_form() {
 
 	} else {
 		$defaults = array(
-				'start-year' => $year,
-				'end-year' => $year,
-				'start-month' => $month,
-				'end-month' => $month,
-				'start-day' => $day,
-				'end-day' => $day,
-				'start-hour' => 17,
-				'start-minute' => 0,
-				'end-hour' => 18,
-				'end-minute' => 0,
+				'start-date' => "$month/$day/$year",
+				'end-date' => "$month/$day/$year",
+				'start-time' => "17:00",
+				'end-time' => "18:00",
 				);
 	}
 	return $form->get_html($defaults);
@@ -456,41 +460,32 @@ function get_timestamp($prefix)
 {
 	global $vars;
 
-	if(!isset($vars["{$prefix}-year"]))
-		soft_error(_("Required field {$prefix}-year was not set."));
-	else
-		$year = $vars["{$prefix}-year"];
+	if(!isset($vars["$prefix-date"]))
+		soft_error(sprintf(_("Required field \"%s\" year was not set."),
+					$prefix));
 
-	if(!isset($vars["{$prefix}-month"]))
-		soft_error(_("Required field {$prefix}-month was not set."));
-	else
-		$month = $vars["{$prefix}-month"];
-
-	if(!isset($vars["{$prefix}-day"]))
-		soft_error(_("Required field {$prefix}-day was not set."));
-	else
-		$day = $vars["{$prefix}-day"];
-
-	if(!isset($vars["{$prefix}-hour"]))
+	if(!isset($vars["$prefix-time"])) {
 		$hour = 0;
-	else
-		$hour = $vars["{$prefix}-hour"];
-
-	if(!isset($vars["{$prefix}-minute"]))
 		$minute = 0;
-	else
-		$minute = $vars["{$prefix}-minute"];
-
-	if(isset($vars["{$prefix}-meridiem"])) {
-		if($vars["{$prefix}-meridiem"] == "pm") {
-			if($hour < 12)
-				$hour += 12;
-		} else {
-			if($hour == 12)
-				$hour = 0;
+	} else {
+		if(!preg_match('/(\d+):(\d+)/', $vars["$prefix-time"],
+					$time_matches)) {
+			soft_error(sprintf(_("Malformed time in \"%s\" time."),
+						$prefix));
 		}
+		$hour = $time_matches[1];
+		$minute = $time_matches[2];
 	}
-		
+
+	if(!preg_match('/(\d+)\/(\d+)\/(\d+)/', $vars["$prefix-date"],
+				$date_matches)) {
+		soft_error(sprintf(_("Malformed time in \"%s\" date."),
+					$prefix));
+	}
+	$month = $date_matches[1];
+	$day = $date_matches[2];
+	$year = $date_matches[3];
+
 	return mktime($hour, $minute, 0, $month, $day, $year);
 }
 ?>

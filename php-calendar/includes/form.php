@@ -405,37 +405,25 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
         function get_specific_html($parent, $defaults = array()) {
 
 		// Date Input
-		if(isset($defaults["{$this->qid}-date"])) {
-		} else {
-		}
-		$date_input = tag('input', attrs('type="text"',
-					'class="form-date"',
-					"name=\"{$this->qid}-date\"",
-					"id=\"{$this->qid}-date\""));
+		$date_attrs = attrs('type="text"',
+				'class="form-date"',
+				"name=\"{$this->qid}-date\"",
+				"id=\"{$this->qid}-date\"");
+		if(isset($defaults["{$this->qid}-date"]))
+			$date_attrs->add("value=\"{$defaults["{$this->qid}-date"]}\"");
+		$date_input = tag('input', $date_attrs);
 
-		// Hour Input
-		if(isset($defaults["{$this->qid}-hour"])) {
-			if($this->hour24)
-				$hour = $defaults["{$this->qid}-hour"];
-			else
-				$hour = date("g", strtotime($defaults["{$this->qid}-hour"] . ':00'));
-		} else {
-			if($this->hour24)
-				$hour = date("G");
-			else
-				$hour = date("g");
+		// Time Input
+		$time_attrs = attrs('type="text"',
+				'class="form-time"',
+				"name=\"{$this->qid}-time\"",
+				"id=\"{$this->qid}-time\"");
+		if(isset($defaults["{$this->qid}-time"])) {
+			$time_attrs->add("value=\"{$defaults["{$this->qid}-time"]}\"");
 		}
 
-		if(isset($defaults["{$this->qid}-minute"])) {
-			$minute = $defaults["{$this->qid}-minute"];
-		} else {
-			$minute = date("i");
-		}
+		$time_input = tag('input', $time_attrs);
 
-		$time_input = tag('input', attrs('type="text"',
-					'class="form-time"',
-					"name=\"{$this->qid}-time\"",
-					"id=\"{$this->qid}-time\""));
                 return array(_("Date") . ": ", $date_input,
 			" " . _('Time') . ": ", $time_input);
 	}
