@@ -176,20 +176,22 @@ function link_bar()
 {
 	global $phpc_url, $phpc_tz, $phpc_lang;
 
-	return tag('div', attributes('class="phpc-footer"'),
-			tag('p', '[',
-				tag('a',
-					attributes('href="http://validator.w3.org/'
-						.'check?url='
-						.rawurlencode($phpc_url)
-						.'"'), 'Valid HTML 4.01 Strict'),
-				'] [',
-				tag('a', attributes('href="http://jigsaw.w3.org/'
-						.'css-validator/check/referer"'),
-					'Valid CSS2'),
-				']',
-				" [" . _('Language') . ": $phpc_lang]" .
-				" [" . _('Timezone') . ": $phpc_tz]"));
+	$links = tag('p', "[" . _('Language') . ": $phpc_lang]" .
+			" [" . _('Timezone') . ": $phpc_tz]");
+
+	if(defined('PHPC_DEBUG')) {
+		$links->add(array(' [', tag('a',
+						attributes('href="http://validator.w3.org/check?url='
+							. rawurlencode($phpc_url)
+							. '"'),
+						'Validate HTML'),
+					'] [',
+					tag('a', attributes('href="http://jigsaw.w3.org/css-validator/check/referer"'),
+						'Validate CSS'),
+					']'));
+	}
+
+	return tag('div', attributes('class="phpc-footer"'), $links);
 }
 
 function get_languages() {
