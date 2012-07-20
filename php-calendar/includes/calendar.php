@@ -28,7 +28,7 @@ require_once("$phpc_includes_path/globals.php");
 
 $phpc_valid_actions = array('event_form', 'event_delete', 'display_month',
 		'display_day', 'display_event', 'display_event_json',
-		'event_submit', 'search', 'login', 'logout', 'admin',
+		'search', 'login', 'logout', 'admin',
 		'cadmin_submit', 'user_create', 'cadmin',
 		'create_calendar', 'calendar_delete',
 		'user_delete', 'user_permissions_submit',
