@@ -29,8 +29,10 @@ function settings_submit()
                 return tag('div', _('Form error.'));
 	}
 
-	setcookie("phpc_tz", $vars['timezone']);
-	setcookie("phpc_lang", $vars['language']);
+	// Expire 20 years in the future, give or take.
+	$expiration_time = time() + 20 * 365 * 24 * 60 * 60;
+	setcookie("phpc_tz", $vars['timezone'], $expiration_time);
+	setcookie("phpc_lang", $vars['language'], $expiration_time);
 
 	if(is_user()) {
 		$uid = $_SESSION['phpc_uid'];
