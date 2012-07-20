@@ -26,16 +26,6 @@ if ( !defined('IN_PHPC') ) {
 require_once("$phpc_includes_path/html.php");
 require_once("$phpc_includes_path/globals.php");
 
-$phpc_valid_actions = array('event_form', 'event_delete', 'display_month',
-		'display_day', 'display_event', 'display_event_json',
-		'search', 'login', 'logout', 'admin',
-		'cadmin_submit', 'user_create', 'cadmin',
-		'create_calendar', 'calendar_delete',
-		'user_delete', 'user_permissions_submit',
-		'category_form', 'category_submit', 'category_delete',
-		'settings', 'password_submit', 'settings_submit',
-		'occurrence_delete');
-
 // checks global variables to see if the user is logged in.
 function is_user()
 {
@@ -637,13 +627,10 @@ function display_phpc() {
 
 function do_action()
 {
-	global $action, $phpcid, $phpc_includes_path, $phpc_valid_actions,
-	       $vars;
+	global $action, $phpcid, $phpc_includes_path, $vars;
 
-	// TODO: use the messaging system to display this
-	if(!in_array($action, $phpc_valid_actions, true)) {
+	if(!preg_match('/^\w+$/', $action))
 		soft_error(_('Invalid action'));
-	}
 
 	require_once("$phpc_includes_path/$action.php");
 
