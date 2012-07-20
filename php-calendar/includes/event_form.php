@@ -52,7 +52,6 @@ function display_form() {
 	$time_type->add_option('normal', _('Normal'));
 	$time_type->add_option('full', _('Full Day'));
 	$time_type->add_option('tba', _('To Be Announced'));
-	$time_type->add_option('none', _('None'));
 
 	$when_group->add_part($time_type);
 
@@ -160,9 +159,6 @@ function display_form() {
 				break;
 			case 2:
 				$defaults['time-type'] = 'tba';
-				break;
-			case 3:
-				$defaults['time-type'] = 'none';
 				break;
 		}
 
@@ -315,10 +311,6 @@ function process_form()
 
 		case 'tba':
 			$time_type = 2;
-			break;
-
-		case 'none':
-			$time_type = 3;
 			break;
 
 		default:
