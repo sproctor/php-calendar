@@ -68,7 +68,8 @@ function config_form()
 
 	$timezones = array("NULL" => _("Default"));
 	foreach(timezone_identifiers_list() as $timezone) {
-		$timezones[$timezone] = $timezone;
+		if(preg_match('/^(Africa|America|Antarctica|Arctic|Asia|Atlantic|Australia|Europe|India|Pacific)/', $timezone))
+			$timezones[$timezone] = $timezone;
 	}
 	$tz_input = create_select('timezone', $timezones,
 			$phpc_user_tz);
