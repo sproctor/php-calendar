@@ -28,12 +28,7 @@ function logout()
 	setcookie("phpc_login", "", time() - 3600);
 	setcookie("phpc_login_series", "", time() - 3600);
 
-	$url_string = $phpc_script;
-	if(!empty($vars['lasturl'])) {
-		$url_string .= '?' . urldecode($vars['lasturl']);
-	}
-
-        redirect($url_string);
+        redirect($phpc_script);
 
         return tag('h2', _('Loggin out...'));
 }
