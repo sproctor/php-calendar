@@ -23,8 +23,17 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+// make sure that we have _ defined
+if(!function_exists('_')) {
+	function _($str) { return $str; }
+	$phpc_translate = false;
+} else {
+	$phpc_translate = true;
+}
+
 require_once("$phpc_includes_path/html.php");
 require_once("$phpc_includes_path/globals.php");
+require_once("$phpc_includes_path/util.php");
 
 // checks global variables to see if the user is logged in.
 function is_user()
@@ -136,7 +145,7 @@ function can_read_event($event)
 
 function login_user($username, $password)
 {
-        global $phpcdb, $phpc_token;
+        global $phpcdb, $phpc_uid;
 
 	// Regenerate the session in case our non-logged in version was
 	//   snooped
@@ -148,13 +157,22 @@ function login_user($username, $password)
 	if(!$user || $user->password != md5($password))
 		return false;
 
-	$_SESSION["phpc_uid"] = $user->uid;
-	$phpc_token = generate_token();
-	$_SESSION['phpc_token'] = $phpc_token;
+	$phpc_uid = $user->uid;
+	$_SESSION["phpc_uid"] = $phpc_uid;
+	$_SESSION['phpc_token'] = phpc_get_token();
+
+	$login_token = phpc_get_token();
+	$series_token = phpc_get_token();
+	$phpcdb->add_login_token($phpc_uid, $series_token, $login_token);
+
+	// TODO: Add a remember me checkbox to the login form, and have the
+	//	cookies expire at the end of the session if it's not checked
+	$expiration_time = time() + 20 * 365 * 24 * 60 * 60;
+	setcookie("phpc_uid", $phpc_uid, $expiration_time);
+	setcookie("phpc_login", $login_token, $expiration_time);
+	setcookie("phpc_login_series", $series_token, $expiration_time);
 	if(!empty($user->admin))
 		$_SESSION["phpc_admin"] = true;
-
-	setcookie("phpc_user", "1");
 
 	session_write_close();
 
@@ -673,9 +691,4 @@ function verify_token() {
 				$vars["phpc_token"] != $_SESSION["phpc_token"]))
 		soft_error(_("Secret token mismatch. Possible request forgery attempt."));
 }
-
-function generate_token() {
-	return md5(uniqid(rand(), TRUE));
-}
-
 ?>

@@ -4,4 +4,8 @@ $(document).ready(function() {
       padding += 2.25;
       $("body").css("padding-top", padding + "em");
   });
+
+  /*$('#phpc-tzcont').select(function() {
+      cont_val = this.value();
+  });*/
 });

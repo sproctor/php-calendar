@@ -197,4 +197,95 @@ function days_between($ts1, $ts2) {
 	// The years are equal, subtract day of the year of each
 	return date('z', $ts2) - date('z', $ts1);
 }
+
+// Stolen from Drupal
+function phpc_random_bytes($count) {
+	// $random_state does not use drupal_static as it stores random bytes.
+	static $random_state, $bytes, $php_compatible;
+	// Initialize on the first call. The contents of $_SERVER includes a
+	// mix of user-specific and system information that varies a little
+	// with each page.
+	if (!isset($random_state)) {
+		$random_state = print_r($_SERVER, TRUE);
+		if (function_exists('getmypid')) {
+			// Further initialize with the somewhat random PHP process ID.
+			$random_state .= getmypid();
+		}
+		$bytes = '';
+	}
+	if (strlen($bytes) < $count) {
+		// PHP versions prior 5.3.4 experienced openssl_random_pseudo_bytes()
+		// locking on Windows and rendered it unusable.
+		if (!isset($php_compatible)) {
+			$php_compatible = version_compare(PHP_VERSION, '5.3.4', '>=');
+		}
+		// /dev/urandom is available on many *nix systems and is
+		// considered the best commonly available pseudo-random source.
+		if ($fh = @fopen('/dev/urandom', 'rb')) {
+			// PHP only performs buffered reads, so in reality it
+			// will always read at least 4096 bytes. Thus, it costs
+			// nothing extra to read and store that much so as to
+			// speed any additional invocations.
+			$bytes .= fread($fh, max(4096, $count));
+			fclose($fh);
+		}
+		// openssl_random_pseudo_bytes() will find entropy in a
+		// system-dependent  way.
+		elseif ($php_compatible && function_exists('openssl_random_pseudo_bytes')) {
+			$bytes .= openssl_random_pseudo_bytes($count - strlen($bytes));
+		}
+		// If /dev/urandom is not available or returns no bytes, this
+		// loop will generate a good set of pseudo-random bytes on any
+		// system.
+		// Note that it may be important that our $random_state is
+		// passed through hash() prior to being rolled into $output,
+		// that the two hash()
+		// invocations are different, and that the extra input into the
+		// first one - the microtime() - is prepended rather than
+		// appended. This is to avoid directly leaking $random_state
+		// via the $output stream, which could allow for trivial
+		// prediction of further "random" numbers.
+		while (strlen($bytes) < $count) {
+			$random_state = hash('sha256', microtime() . mt_rand() . $random_state);
+			$bytes .= hash('sha256', mt_rand() . $random_state, TRUE);
+		}
+	}
+	$output = substr($bytes, 0, $count);
+	$bytes = substr($bytes, $count);
+	return $output;
+}
+
+// Adapted from Drupal
+function phpc_get_private_key() {
+	static $key;
+
+	if(!isset($key))
+		$key = phpc_hash_base64(phpc_random_bytes(55));
+
+	return $key;
+}
+
+function phpc_get_token($value='') {
+	return phpc_hmac_base64($value, session_id() . phpc_get_private_key()
+			. phpc_get_hash_salt());
+}
+
+// Stolen from Drupal
+function phpc_hmac_base64($data, $key) {
+	$hmac = base64_encode(hash_hmac('sha256', $data, $key, TRUE));
+	// Modify the hmac so it's safe to use in URLs.
+	return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
+}
+
+// Stolen from Drupal
+function phpc_hash_base64($data) {
+	$hash = base64_encode(hash('sha256', $data, TRUE));
+	// Modify the hash so it's safe to use in URLs.
+	return strtr($hash, array('+' => '-', '/' => '_', '=' => ''));
+}
+
+// Adapted from Drupal
+function phpc_get_hash_salt() {
+	return hash('sha256', SQL_HOST . SQL_USER . SQL_PASSWD . SQL_DATABASE . SQL_PREFIX);
+}
 ?>

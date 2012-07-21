@@ -709,6 +709,49 @@ class PhpcDatabase {
 					$query);
 	}
 
+	function get_login_token($uid, $series) {
+		$query = "SELECT token FROM ".SQL_PREFIX."logins\n"
+			."WHERE `uid`='$uid' AND `series`='$series'";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_("Error getting login token."),
+					$query);
+
+		$result = $sth->fetch_assoc();
+		if(!$result)
+			return false;
+		return $result["token"];
+	}
+
+	function add_login_token($uid, $series, $token) {
+		$query = "INSERT INTO ".SQL_PREFIX."logins\n"
+			."(`uid`, `series`, `token`)\n"
+			."VALUES ('$uid', '$series', '$token')";
+
+		$this->dbh->query($query)
+			or $this->db_error(_("Error adding login token."),
+					$query);
+	}
+
+	function update_login_token($uid, $series, $token) {
+		$query = "UPDATE ".SQL_PREFIX."logins\n"
+			."SET `token`='$token'\n"
+			."WHERE `uid`='$uid' AND `series`='$series'";
+
+		$this->dbh->query($query)
+			or $this->db_error(_("Error updating login token."),
+					$query);
+	}
+
+	function remove_login_tokens($uid) {
+		$query = "DELETE FROM ".SQL_PREFIX."logins\n"
+			."WHERE `uid`='$uid'";
+
+		$this->dbh->query($query)
+			or $this->db_error(_("Error removing login tokens."),
+					$query);
+	}
+
 	// called when there is an error involving the DB
 	function db_error($str, $query = "")
 	{

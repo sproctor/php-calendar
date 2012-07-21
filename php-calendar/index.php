@@ -1,7 +1,6 @@
 <?php
-$start_time = microtime(true);
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +61,7 @@ ini_set('arg_separator.output', '&amp;');
 define('IN_PHPC', true);
 
 try {
+	require_once("$phpc_includes_path/calendar.php");
 	require_once("$phpc_includes_path/setup.php");
 
 	$calendar_title = get_config($phpcid, 'calendar_title');
@@ -85,12 +85,12 @@ $html = tag('html', attrs("lang=\"$phpc_lang\""),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					'href="static/style.css"')),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/base/jquery-ui.css\"")),
+					"href=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/base/jquery-ui.css\"")),
 			html_get_stylesheet_tags(),
 			tag("script", attrs('type="text/javascript"',
-					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery$jq_min.js\""), ''),
+					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery$jq_min.js\""), ''),
 			tag("script", attrs('type="text/javascript"',
-					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui$jq_min.js\""), ''),
+					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui$jq_min.js\""), ''),
 			tag('script', attrs('type="text/javascript"',
 					'src="static/script.js"'), ''),
 			tag('meta', attrs('http-equiv="Content-Type"',
@@ -98,8 +98,5 @@ $html = tag('html', attrs("lang=\"$phpc_lang\""),
 		tag('body', $content));
 
 echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">', "\n", $html->toString();
-
-$running_time = microtime(true) - $start_time;
-//echo "<p>Running time: $running_time</p>";
 
 ?>

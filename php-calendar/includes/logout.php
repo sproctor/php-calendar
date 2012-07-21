@@ -24,7 +24,9 @@ function logout()
 	global $vars, $phpc_script;
 
         session_destroy();
-	setcookie("phpc_user", "0");
+	setcookie("phpc_uid", "", time() - 3600);
+	setcookie("phpc_login", "", time() - 3600);
+	setcookie("phpc_login_series", "", time() - 3600);
 
 	$url_string = $phpc_script;
 	if(!empty($vars['lasturl'])) {

@@ -23,16 +23,6 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-// make sure that we have _ defined
-if(!function_exists('_')) {
-	function _($str) { return $str; }
-	$translate = false;
-} else {
-	$translate = true;
-}
-
-require_once("$phpc_includes_path/util.php");
-
 // Run the installer if we have no config file
 // This doesn't work when embedded from outside
 if(!file_exists($phpc_config_file)) {
@@ -55,6 +45,8 @@ if(defined('PHPC_DEBUG')) {
 	ini_set('html_errors', 1);
 }
 
+require_once("$phpc_includes_path/calendar.php");
+
 // Make the database connection.
 require_once("$phpc_includes_path/phpcdatabase.class.php");
 $phpcdb = new PhpcDatabase;
@@ -62,6 +54,35 @@ $phpcdb = new PhpcDatabase;
 // Set the session to something unique to this setup
 session_name(SQL_PREFIX . SQL_DATABASE . '_SESSION');
 session_start();
+
+if(empty($_SESSION["phpc_uid"])) {
+	if(!empty($_COOKIE["phpc_login"]) && !empty($_COOKIE["phpc_uid"])
+			&& !empty($_COOKIE["phpc_login_series"])) {
+		$phpc_uid = $_COOKIE["phpc_uid"];
+		$phpc_login_series = $_COOKIE["phpc_login_series"];
+		$token = $phpcdb->get_login_token($phpc_uid,
+					$phpc_login_series);
+		if($token) {
+			if($token == $_COOKIE["phpc_login"]) {
+				$user = $phpcdb->get_user($phpc_uid);
+				$_SESSION["phpc_uid"] = $user->uid;
+				if(!empty($user->admin))
+					$_SESSION["phpc_admin"] = true;
+				$new_token = phpc_get_token();
+				$expiration_time = time() + 20 * 365 * 24 * 60 * 60;
+				setcookie("phpc_login", $new_token, $expiration_time);
+				$phpcdb->update_login_token($phpc_uid,
+						$phpc_login_series, $new_token);
+			} else {
+				$phpcdb->remove_login_tokens($phpc_uid);
+				soft_error(_("Possible hacking attempt on your account."));
+			}
+		} else {
+			$phpc_uid = 0;
+		}
+	}
+			
+}
 
 // Create vars
 if(get_magic_quotes_gpc()) {
@@ -119,8 +140,6 @@ if(empty($vars['action'])) {
 if(empty($vars['contentType']))
 	$vars['contentType'] = "html";
 
-require_once("$phpc_includes_path/calendar.php");
-
 if(!empty($_SESSION['phpc_uid'])) {
 	$phpc_uid = $_SESSION['phpc_uid'];
 	$phpc_user = $phpcdb->get_user($phpc_uid);
@@ -135,12 +154,10 @@ if(!empty($_SESSION['phpc_uid'])) {
 
 // setup translation stuff
 $phpc_datefmt = "\%\s j, Y";
-if($translate) {
-	$phpc_store_lang = false;
+if($phpc_translate) {
 	$phpc_cal_lang = get_config($phpcid, 'language');
 	if(!empty($vars['lang'])) {
 		$phpc_lang = $vars['lang'];
-		$phpc_store_lang = true;
 	} elseif(!empty($phpc_user_lang)) {
 		$phpc_lang = $phpc_user_lang;
 	} elseif(!empty($phpc_cal_lang)) {
@@ -205,9 +222,6 @@ if($translate) {
 	putenv("LC_ALL=$locale");
 	putenv("LANGUAGE=$locale");
 
-	if($phpc_store_lang)
-		setcookie('lang', $phpc_lang);
-
 	bindtextdomain('messages', $phpc_locale_path);
 	textdomain('messages');
 } else {
@@ -216,21 +230,8 @@ if($translate) {
 
 // Create a secret token to check for CSRF
 if(empty($_SESSION["phpc_token"])) {
-	$phpc_token = generate_token();
-	$_SESSION["phpc_token"] = $phpc_token;
-} else {
-	$phpc_token = $_SESSION["phpc_token"];
+	$_SESSION["phpc_token"] = phpc_get_token();
 }
-
-// Expire the session after 30 minutes
-if(isset($_SESSION['phpc_time']) && time() - $_SESSION['phpc_time'] > 1800) {
-	// session is expired
-	session_destroy();
-	$_SESSION = array();
-	$_SESSION['phpc_token'] = $phpc_token;
-}
-
-$_SESSION['phpc_time'] = time();
 
 if(!empty($vars['clearmsg']))
 	$_SESSION['messages'] = NULL;
@@ -243,12 +244,6 @@ if(!empty($_SESSION['messages'])) {
 	}
 } else {
 	$_SESSION['messages'] = array();
-}
-
-// Check if our session timed out and logged us out
-if(!empty($_COOKIE["phpc_user"]) && !is_user()) {
-	setcookie("phpc_user", "0");
-	message(_("Session has expired."));
 }
 
 if(!empty($phpc_user_tz))
