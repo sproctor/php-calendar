@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -298,6 +298,14 @@ class FormLongFreeQuestion extends FormAtomicQuestion {
         }
 }
 
+function form_date_input($qid, $defaults) {
+	$date_attrs = attrs('type="text"', 'class="form-date"',
+			"name=\"$qid-date\"", "id=\"$qid-date\"");
+	if(isset($defaults["$qid-date"]))
+		$date_attrs->add("value=\"{$defaults["$qid-date"]}\"");
+	return tag('input', $date_attrs);
+}
+
 /* this class is for date input
  */
 class FormDateQuestion extends FormAtomicQuestion {
@@ -313,31 +321,18 @@ class FormDateQuestion extends FormAtomicQuestion {
         }
 
         function get_specific_html($parent, $defaults = array()) {
-		if(!empty($defaults["{$this->qid}-year"])) {
-			$year = $defaults["{$this->qid}-year"];
-		} else {
-			$year = date("Y");
-		}
-		$year_input = create_select_range("{$this->qid}-year", 1970,
-				$year + 20, 1, $year);
-		if(!empty($defaults["{$this->qid}-month"])) {
-			$month = $defaults["{$this->qid}-month"];
-		} else {
-			$month = date("m");
-		}
-		$month_input = create_select_range("{$this->qid}-month", 1, 12,
-				1, $month, "month_name");
-		if(!empty($defaults["{$this->qid}-day"])) {
-			$day = $defaults["{$this->qid}-day"];
-		} else {
-			$day = date("d");
-		}
-		$day_input = create_select_range("{$this->qid}-day", 1, 31, 1,
-				$day);
-
                 return tag('div', attrs("class=\"{$this->class}\""),
-				$year_input, $month_input, $day_input);
+				form_date_input($this->qid, $defaults));
         }
+}
+
+function form_time_input($qid, $defaults) {
+	$time_attrs = attrs('type="text"', 'class="form-time"',
+			"name=\"$qid-time\"", "id=\"$qid-time\"");
+	if(isset($defaults["$qid-time"]))
+		$time_attrs->add("value=\"{$defaults["$qid-time"]}\"");
+
+	return tag('input', $time_attrs);
 }
 
 /* this class is for time input
@@ -355,34 +350,8 @@ class FormTimeQuestion extends FormAtomicQuestion {
         }
 
         function get_specific_html($parent, $defaults = array()) {
-		if(!empty($defaults["{$this->qid}-hour"])) {
-			$hour = $defaults["{$this->qid}-hour"];
-		} else {
-			$hour = date("g");
-			//24 $hour = date("G");
-		}
-		$hour_input = create_select_range("{$this->qid}-hour", 1, 24, 1,
-				$hour);
-		if(!empty($defaults["{$this->qid}-minute"])) {
-			$minute = $defaults["{$this->qid}-minute"];
-		} else {
-			$minute = date("i");
-		}
-		$minute_input = create_select_range("{$this->qid}-minute", "00",
-				59, 5, $minute, false,
-				attrs('class="form-combobox"'));
-		if(!empty($defaults["{$this->qid}-meridiem"])) {
-			$meridiem = $defaults["{$this->qid}-meridiem"];
-		} else {
-			$meridiem = date("a");
-		}
-		$meridiem_input = create_select("{$this->qid}-meridiem",
-				array("am" => _("AM"), "pm" => _("PM")),
-				$meridiem);
-		$time_input = tag('input', attrs('type="text"',
-					"id=\"{$this->qid}-time\""));
                 return tag('div', attrs("class=\"{$this->class}\""),
-				$time_input);
+				form_time_input($this->qid, $defaults));
         }
 }
 
@@ -404,28 +373,10 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
 
         function get_specific_html($parent, $defaults = array()) {
 
-		// Date Input
-		$date_attrs = attrs('type="text"',
-				'class="form-date"',
-				"name=\"{$this->qid}-date\"",
-				"id=\"{$this->qid}-date\"");
-		if(isset($defaults["{$this->qid}-date"]))
-			$date_attrs->add("value=\"{$defaults["{$this->qid}-date"]}\"");
-		$date_input = tag('input', $date_attrs);
-
-		// Time Input
-		$time_attrs = attrs('type="text"',
-				'class="form-time"',
-				"name=\"{$this->qid}-time\"",
-				"id=\"{$this->qid}-time\"");
-		if(isset($defaults["{$this->qid}-time"])) {
-			$time_attrs->add("value=\"{$defaults["{$this->qid}-time"]}\"");
-		}
-
-		$time_input = tag('input', $time_attrs);
-
-                return array(_("Date") . ": ", $date_input,
-			" " . _('Time') . ": ", $time_input);
+                return array(_("Date") . ": ",
+				form_date_input($this->qid, $defaults),
+				" " . _('Time') . ": ",
+				form_time_input($this->qid, $defaults));
 	}
 }
 
