@@ -170,6 +170,10 @@ function display_form() {
 				'end-date' => "$month/$day/$year",
 				'start-time' => "17:00",
 				'end-time' => "18:00",
+				'daily-until-date' => "$month/$day/$year",
+				'weekly-until-date' => "$month/$day/$year",
+				'monthly-until-date' => "$month/$day/$year",
+				'yearly-until-date' => "$month/$day/$year",
 				);
 	}
 	return $form->get_html($defaults);
@@ -191,89 +195,75 @@ function add_repeat_defaults($occs, &$defaults) {
 	// Test if they repeat every N years
 	$nyears = $occs[1]->get_start_year() - $event->get_start_year();
 	$repeats_yearly = true;
+	$nmonths = ($occs[1]->get_start_year() - $year) * 12
+		+ $occs[1]->get_start_month() - $month;
+	$repeats_monthly = true;
+	$ndays = days_between($event->get_start_ts(), $occs[1]->get_start_ts());
+	$repeats_daily = true;
+
 	for($i = 1; $i < sizeof($occs); $i++) {
 		$cur_occ = $occs[$i];
 		$cur_year = $cur_occ->get_start_year();
 		$cur_month = $cur_occ->get_start_month();
 		$cur_day = $cur_occ->get_start_day();
+
+		// Check year
 		$cur_nyears = $cur_year - $occs[$i - 1]->get_start_year();
 		if($cur_day != $day || $cur_month != $month
 				|| $cur_nyears != $nyears) {
 			$repeats_yearly = false;
-			break;
 		}
-	}
 
-	if($repeats_yearly) {
-		$defaults['repeats'] = 'yearly';
-		$defaults['every-year'] = $nyears;
-		$defaults['yearly-until-year'] = $cur_year;
-		$defaults['yearly-until-month'] = $cur_month;
-		$defaults['yearly-until-day'] = $cur_day;
-		return;
-	}
-
-	$nmonths = ($occs[1]->get_start_year() - $year) * 12
-		+ $occs[1]->get_start_month() - $month;
-	//echo "day: $day, month: $month, nmonths: $nmonths<br>";
-	$repeats_monthly = true;
-	for($i = 1; $i < sizeof($occs); $i++) {
-		$cur_occ = $occs[$i];
-		$cur_year = $cur_occ->get_start_year();
-		$cur_month = $cur_occ->get_start_month();
-		$cur_day = $cur_occ->get_start_day();
+		// Check month
 		$cur_nmonths = ($cur_year - $occs[$i - 1]->get_start_year())
 			* 12 + $cur_month - $occs[$i - 1]->get_start_month();
 		if($cur_day != $day || $cur_nmonths != $nmonths) {
-//echo "cur_day: $cur_day, cur_month: $cur_month, cur_nmonths: $cur_nmonths<br>";
 			$repeats_monthly = false;
-			break;
 		}
-	}
 
-	if($repeats_monthly) {
-		$defaults['repeats'] = 'monthly';
-		$defaults['every-month'] = $nmonths;
-		$defaults['monthly-until-year'] = $cur_year;
-		$defaults['monthly-until-month'] = $cur_month;
-		$defaults['monthly-until-day'] = $cur_day;
-		return;
-	}
-
-	$ndays = days_between($event->get_start_ts(), $occs[1]->get_start_ts());
-	$repeats_daily = true;
-	for($i = 1; $i < sizeof($occs); $i++) {
-		$cur_occ = $occs[$i];
-		$cur_year = $cur_occ->get_start_year();
-		$cur_month = $cur_occ->get_start_month();
-		$cur_day = $cur_occ->get_start_day();
+		// Check day
 		$cur_ndays = days_between($occs[$i - 1]->get_start_ts(),
 				$occs[$i]->get_start_ts());
 		if($cur_ndays != $ndays) {
-echo "cur_day: $cur_day, cur_month: $cur_month, cur_ndays: $cur_ndays<br>";
 			$repeats_daily = false;
-			break;
 		}
 	}
+
+	$defaults['yearly-until-date'] = "$cur_month/$cur_day/$cur_year";
+	$defaults['monthly-until-date'] = "$cur_month/$cur_day/$cur_year";
+	$defaults['weekly-until-date'] = "$cur_month/$cur_day/$cur_year";
+	$defaults['daily-until-date'] = "$cur_month/$cur_day/$cur_year";
 
 	if($repeats_daily) {
 		// repeats weekly
 		if($ndays % 7 == 0) {
 			$defaults['repeats'] = 'weekly';
 			$defaults['every-week'] = $ndays / 7;
-			$defaults['weekly-until-year'] = $cur_year;
-			$defaults['weekly-until-month'] = $cur_month;
-			$defaults['weekly-until-day'] = $cur_day;
-			return;
+		} else {
+			$defaults['every-week'] = 1;
+
+			// repeats daily
+			$defaults['repeats'] = 'daily';
+			$defaults['every-day'] = $ndays;
 		}
 
-		// repeats daily
-		$defaults['repeats'] = 'daily';
-		$defaults['every-day'] = $ndays;
-		$defaults['daily-until-year'] = $cur_year;
-		$defaults['daily-until-month'] = $cur_month;
-		$defaults['daily-until-day'] = $cur_day;
-		return;
+	} else {
+		$defaults['every-day'] = 1;
+		$defaults['every-week'] = 1;
+	}
+
+	if($repeats_monthly) {
+		$defaults['repeats'] = 'monthly';
+		$defaults['every-month'] = $nmonths;
+	} else {
+		$defaults['every-month'] = 1;
+	}
+
+	if($repeats_yearly) {
+		$defaults['repeats'] = 'yearly';
+		$defaults['every-year'] = $nyears;
+	} else {
+		$defaults['every-year'] = 1;
 	}
 }
 
