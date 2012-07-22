@@ -33,7 +33,6 @@ function display_day()
 	$results = $phpcdb->get_occurrences_by_date($phpcid, $year, $month,
 			$day);
 
-echo "<br>$month $day $year<br>";
 	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
 
 	$have_events = false;
