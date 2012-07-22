@@ -88,11 +88,11 @@ class PhpcDatabase {
 			."	AND IF(`end_ts`, DATE(`end_ts`), `end_date`) >= DATE('$from_date')\n"
 			."	ORDER BY `start_ts`, `start_date`, `oid`";
 
-		$result = $this->dbh->query($query)
+		$results = $this->dbh->query($query)
 			or $this->db_error(_('Error in get_occurrences_by_date_range'),
 					$query);
 
-		return $result;
+		return $results;
         }
 
 	// returns all the events for a particular day
