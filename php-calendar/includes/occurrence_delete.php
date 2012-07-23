@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ if ( !defined('IN_PHPC') ) {
 
 function occurrence_delete()
 {
-	global $vars, $phpcdb;
+	global $vars, $phpcdb, $phpc_script;
 
 	$html = tag('div', attributes('class="phpc-container"'));
 
@@ -66,6 +66,8 @@ function occurrence_delete()
 		} else {
 			if($phpcdb->delete_occurrence($oid)) {
 				$removed_occurs[] = $oid;
+				// TODO: Verify that the event still has occurences.
+				$eid = $occur->get_eid();
 			} else {
 				$unremoved_occurs[] = $oid;
 			}
@@ -99,7 +101,8 @@ function occurrence_delete()
 		$html->add(tag('p', $text));
 	}
 	
-        return $html;
+        return message_redirect($html,
+			"$phpc_script?action=display_event&eid=$eid");
 }
 
 ?>

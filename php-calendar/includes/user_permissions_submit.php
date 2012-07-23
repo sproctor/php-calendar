@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ if(!defined('IN_PHPC')) {
 
 function user_permissions_submit()
 {
-	global $phpcid, $vars, $phpcdb;
+	global $phpcid, $vars, $phpcdb, $phpc_script;
 
         if(!can_admin_calendar($phpcid)) {
                 return tag('div', _('Permission denied'));
@@ -56,10 +56,11 @@ function user_permissions_submit()
 		}
 	}
 	if(sizeof($users) == 0)
-		return tag("div", _('No changes to make.'));
+		$message = _('No changes to make.');
 	else
-		return tag('div', _('Updated users:').' '
-				.implode(', ', $users));
+		$message = _('Updated users:').' ' .implode(', ', $users);
+
+	return message_redirect($message, "$phpc_script?action=cadmin");
 }
 
 ?>

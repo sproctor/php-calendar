@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,8 +51,9 @@ function redirect($page) {
 	} else {
 		$dir = dirname($phpc_script) . "/";
 	}
+	$url = "$phpc_protocol://$phpc_server$dir$page";
 
-	header("Location: $phpc_protocol://$phpc_server$dir$page");
+	header("Location: $url");
 }
 
 function message_redirect($message, $page) {

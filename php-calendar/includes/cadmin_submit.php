@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ if ( !defined('IN_PHPC') ) {
 }
 
 function cadmin_submit() {
-	global $phpcid, $vars, $phpcdb;
+	global $phpcid, $vars, $phpcdb, $phpc_script;
 
         if(!is_admin()) {
                 return tag('div', _('Permission denied'));
@@ -43,7 +43,8 @@ function cadmin_submit() {
 		$phpcdb->update_config($phpcid, $item[0], $value);
 	}
 
-        return tag('div', _('Updated options'));
+        return message_redirect(_('Updated options'),
+			"$phpc_script?action=cadmin");
 }
 
 ?>

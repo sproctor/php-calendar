@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,17 @@ if ( !defined('IN_PHPC') ) {
 
 function category_submit()
 {
-	global $vars, $phpcdb;
+	global $vars, $phpcdb, $phpc_script;
 
-	if(empty($vars["text-color"]) || empty($vars["bg-color"]))
-		soft_error(_("Color not specified."));
+	if(empty($vars["text-color"]) || empty($vars["bg-color"])) {
+		$page = "$phpc_script?action=category_form";
+		if(!empty($vars["cid"]))
+			$page .= "&cid={$vars["cid"]}";
+		if(!empty($vars["catid"]))
+			$page .= "&catid={$vars["catid"]}";
+
+		return message_redirect(_("Color not specified."), $page);
+	}
 
 	$text_color = $vars["text-color"];
 	$bg_color = $vars["bg-color"];
@@ -61,11 +68,15 @@ function category_submit()
 				$text_color, $bg_color);
 	}
 
+	$page = "$phpc_script?action=cadmin";
+
 	if($modify)
-		return tag('div', _("Modified category: ") . $catid);
+		return message_redirect(_("Modified category: ") . $catid,
+				$page);
 
 	if($catid > 0)
-		return tag('div', _("Created category: ") . $catid);
+		return message_redirect(_("Created category: ") . $catid,
+				$page);
 
 	return tag('div', attributes('class="phpc-error"'),
 			_('Error submitting category.'));

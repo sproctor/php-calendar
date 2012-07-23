@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ if(!defined('IN_PHPC')) {
 
 function create_calendar()
 {
-	global $vars, $phpcdb;
+	global $vars, $phpcdb, $phpc_script;
 
         if(!is_admin()) {
                 return tag('div', _('Permission denied'));
@@ -51,7 +51,8 @@ function create_calendar()
 		$phpcdb->create_config($cid, $name, $value);
 	}
 
-        return tag('div', _('Calendar created.'));
+        return message_redirect(_('Calendar created.'),
+			"$phpc_script?action=admin");
 }
 
 ?>
