@@ -429,11 +429,12 @@ function process_form()
 		else
 			$message = _("Created event: ");
 
-		return message(tag('', $message, create_event_link($eid,
-						'display_event', $eid)),
+		return message_redirect(tag('', $message,
+					create_event_link($eid, 'display_event',
+						$eid)),
 				"$phpc_script?action=display_event&eid=$eid");
 	} else {
-		return message(_('Error submitting event.'),
+		return message_redirect(_('Error submitting event.'),
 				"$phpc_script?action=display_month");
 	}
 }
