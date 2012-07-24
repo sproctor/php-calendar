@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2011 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ if ( !defined('IN_PHPC') ) {
 // Full display for a month
 function display_month()
 {
-	global $phpcid, $month, $year;
+	global $month, $year;
 
 	$heading_html = tag('tr');
 	$heading_html->add(tag('th', 'W'));
@@ -104,7 +104,7 @@ function month_navbar($month, $year)
 // creates a display for a particular month to be embedded in a full view
 function create_month($month, $year)
 {
-	global $phpcdb, $phpcid;
+	global $phpcdb, $phpc_cal, $phpcid;
 
 	$wim = weeks_in_month($month, $year);
 
@@ -114,7 +114,7 @@ function create_month($month, $year)
 	$last_day = $wim * 7 - day_of_week($month, 1, $year);
 	$to_stamp = mktime(0, 0, 0, $month, $last_day, $year);
 
-	$max_events = get_config($phpcid, 'events_max', 8);
+	$max_events = $phpc_cal->get_config('events_max', 8);
 
 	$results = $phpcdb->get_occurrences_by_date_range($phpcid, $from_stamp,
 			$to_stamp);
@@ -184,7 +184,7 @@ function create_week($week_of_month, $month, $year, $days_events)
 // displays the day of the week and the following days of the week
 function create_day($month, $day, $year, $days_events)
 {
-	global $phpc_script, $phpcid;
+	global $phpc_script, $phpc_cal;
 
 	if($day <= 0) {
 		$month--;
@@ -223,7 +223,7 @@ function create_day($month, $day, $year, $days_events)
 	}
 
 	$date_tag = tag('div', attributes('class="phpc-date"'));
-	if(can_write($phpcid)) {
+	if($phpc_cal->can_write()) {
 		$date_tag->add(create_action_link_with_date('+',
 					'event_form', $year, $month,
 					$day, array('class="phpc-add"')));
@@ -236,7 +236,7 @@ function create_day($month, $day, $year, $days_events)
 
 	$stamp = mktime(0, 0, 0, $month, $day, $year);
 
-	$can_read = can_read($phpcid); 
+	$can_read = $phpc_cal->can_read(); 
 	$key = date('Y-m-d', $stamp);
 	if(!$can_read || !array_key_exists($key, $days_events))
 		return $html_day;

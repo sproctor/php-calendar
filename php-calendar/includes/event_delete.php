@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ function event_delete()
 
 	foreach($eids as $eid) {
 		$event = new PhpcEvent($phpcdb->get_event_by_eid($eid));
-		if(!can_modify_event($event)) {
+		if(!$event->can_modify()) {
 			$permission_denied[] = $eid;
 		} else {
 			if($phpcdb->delete_event($eid)) {

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2011 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ require_once("$phpc_includes_path/phpcuser.class.php");
 
 class PhpcDatabase {
 	var $dbh;
+	var $calendars;
 
 	function __construct() {
 		// Make the database connection.
@@ -323,14 +324,9 @@ class PhpcDatabase {
 
 	function get_calendar_config($cid)
 	{
-		static $config = NULL;
-
-		if ($config != NULL)
-			return $config;
-
 		// Load configuration
-		$query = "SELECT * from " . SQL_PREFIX .
-			"config WHERE cid=$cid";
+		$query = "SELECT * from " . SQL_PREFIX ."config\n"
+			."WHERE `cid`=$cid";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Could not read configuration'),
@@ -371,35 +367,39 @@ class PhpcDatabase {
 
 	function get_calendars()
 	{
-		$query = "SELECT `cid`, `config_value` AS `title`\n"
-			."FROM `" . SQL_PREFIX .  "calendars`\n"
-			."JOIN `" . SQL_PREFIX . "config` USING (`cid`)\n"
-			."WHERE `config_name`=\"calendar_title\"";
+		$query = "SELECT `cid`\n"
+			."FROM `" . SQL_PREFIX .  "calendars`\n";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Could not get calendars.'),
 					$query);
 
-		$calendars = array();
 		while($result = $sth->fetch_assoc()) {
-			$calendars[] = new PhpcCalendar($result);
+			$cid = $result["cid"];
+			$config = $this->get_calendar_config($cid);
+			if(empty($this->calendars[$cid]))
+				$this->calendars[$cid] = new PhpcCalendar(
+						$result, $config);
 		}
-		return $calendars;
+		return $this->calendars;
 	}
 
 	function get_calendar($cid)
 	{
-		$query = "SELECT `cid`, `config_value` AS `title`\n"
-			."FROM `" . SQL_PREFIX .  "calendars`\n"
-			."JOIN `" . SQL_PREFIX . "config` USING (`cid`)\n"
-			."WHERE `config_name`=\"calendar_title\" "
-			."AND `cid`='$cid'";
+		if(empty($this->calendars[$cid])) {
+			$query = "SELECT `cid`\n"
+				."FROM `" . SQL_PREFIX .  "calendars`\n"
+				."WHERE `cid`='$cid'";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Could not get calendars.'),
+			$sth = $this->dbh->query($query)
+				or $this->db_error(_('Could not get calendar.'),
 					$query);
+			$this->calendars[$cid] = new PhpcCalendar(
+					$sth->fetch_assoc(),
+					$this->get_calendar_config($cid));
+		}
 
-		return new PhpcCalendar($sth->fetch_assoc());
+		return $this->calendars[$cid];
 	}
 
 	function get_users()
@@ -503,9 +503,6 @@ class PhpcDatabase {
 
 	function update_config($cid, $name, $value)
 	{
-		if($value == "NULL")
-			$value = "";
-
 		$query = "INSERT ".SQL_PREFIX."config\n"
 			."(`cid`, `config_name`, `config_value`)\n"
 			."VALUES ($cid, '$name', '$value')\n"
@@ -528,12 +525,8 @@ class PhpcDatabase {
 
 	function set_timezone($uid, $timezone)
 	{
-		if($timezone != "NULL") {
-			$timezone = "'$timezone'";
-		}
-
 		$query = "UPDATE `" . SQL_PREFIX . "users`\n"
-			."SET `timezone`=$timezone\n"
+			."SET `timezone`='$timezone'\n"
 			."WHERE `uid`='$uid'";
 
 		$this->dbh->query($query)
@@ -543,12 +536,8 @@ class PhpcDatabase {
 
 	function set_language($uid, $language)
 	{
-		if($language != "NULL") {
-			$language = "'$language'";
-		}
-
 		$query = "UPDATE `" . SQL_PREFIX . "users`\n"
-			."SET `language`=$language\n"
+			."SET `language`='$language'\n"
 			."WHERE `uid`='$uid'";
 
 		$this->dbh->query($query)

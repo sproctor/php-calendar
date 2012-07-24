@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2011 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,6 +100,8 @@ if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
 	$phpcid = 1;
 }
 
+$phpc_cal = $phpcdb->get_calendar($phpcid);
+
 // set day/month/year
 if(isset($vars['month']) && is_numeric($vars['month'])) {
 	$month = $vars['month'];
@@ -155,7 +157,7 @@ if(!empty($_SESSION['phpc_uid'])) {
 // setup translation stuff
 $phpc_datefmt = "\%\s j, Y";
 if($phpc_translate) {
-	$phpc_cal_lang = get_config($phpcid, 'language');
+	$phpc_cal_lang = $phpc_cal->get_config('language');
 	if(!empty($vars['lang'])) {
 		$phpc_lang = $vars['lang'];
 	} elseif(!empty($phpc_user_lang)) {
@@ -228,11 +230,6 @@ if($phpc_translate) {
 	$phpc_lang = 'en';
 }
 
-// Create a secret token to check for CSRF
-if(empty($_SESSION["phpc_token"])) {
-	$_SESSION["phpc_token"] = phpc_get_token();
-}
-
 if(!empty($vars['clearmsg']))
 	$_SESSION['messages'] = NULL;
 
@@ -249,7 +246,7 @@ if(!empty($_SESSION['messages'])) {
 if(!empty($phpc_user_tz))
 	$phpc_tz = $phpc_user_tz;
 else
-	$phpc_tz = get_config($phpcid, 'timezone');
+	$phpc_tz = $phpc_cal->get_config('timezone', false);
 
 if(!empty($phpc_tz))
 	date_default_timezone_set($phpc_tz); 

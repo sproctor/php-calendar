@@ -21,7 +21,7 @@ if ( !defined('IN_PHPC') ) {
 
 function category_submit()
 {
-	global $vars, $phpcdb, $phpc_script;
+	global $vars, $phpcdb, $phpc_script, $phpcid, $phpc_cal;
 
 	if(empty($vars["text-color"]) || empty($vars["bg-color"])) {
 		$page = "$phpc_script?action=category_form";
@@ -48,7 +48,11 @@ function category_submit()
 				permission_error(_('You do not have permission to add categories to all calendars.'));
 		} else { 
 			$cid = $vars['cid'];
-			if(!can_admin_calendar($cid))
+			if($cid == $phpcid)
+				$calendar = $phpc_cal;
+			else
+				$calendar = $phpcdb->get_calendar($cid);
+			if(!$calendar->can_admin())
 				permission_error(_('You do not have permission to add categories to this calendar.'));
 		}
 
@@ -60,8 +64,9 @@ function category_submit()
 		$catid = $vars['catid'];
 		$category = $phpcdb->get_category($catid);
 
-		if(!(empty($category['cid']) && is_admin()
-					|| can_admin_calendar($catid)))
+		if(!(empty($category['cid']) && is_admin() ||
+					$phpcdb->get_calendar($category["cid"])
+					->can_admin()))
 			soft_error(_("You do not have permission to modify this category."));
 
 		$phpcdb->modify_category($catid, $vars['name'],

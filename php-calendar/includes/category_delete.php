@@ -58,7 +58,8 @@ function category_delete()
 
 	foreach($categories as $category) {
 		if((empty($category['cid']) && !is_admin()) ||
-					!can_admin_calendar($category['cid'])) {
+					!$phpcdb->get_calendar($category['cid'])
+					->can_admin()) {
 			$html->add(tag('p', _("You do not have permission to delete category: ") . $category['catid']));
 			continue;
 		}

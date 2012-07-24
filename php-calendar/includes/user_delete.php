@@ -26,7 +26,7 @@ function user_delete()
 	$html = tag('div', attributes('class="phpc-container"'));
 
 	if(!is_admin()) {
-		$html->add(tag('p', _('You must be an admin to delete events.')));
+		$html->add(tag('p', _('You must be an admin to delete users.')));
 		return $html;
 	}
 
@@ -58,11 +58,6 @@ function user_delete()
 	}
 
 	foreach($ids as $id) {
-		if(!can_admin_calendar($id)) {
-			$html->add(tag('p', _("You do not have permission to remove calendar: $id")));
-			continue;
-		}
-
 		if($phpcdb->delete_user($id)) {
 			$html->add(tag('p', _("Removed user: $id")));
 		} else {        

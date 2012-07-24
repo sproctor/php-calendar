@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,6 @@ if ( !defined('IN_PHPC') ) {
 }
 
 echo tag('div', attributes('class="php-calendar"'),
-		tag('h1', $calendar_title),
+		tag('h1', $phpc_cal->get_title()),
 		display_phpc())->toString();
 ?>

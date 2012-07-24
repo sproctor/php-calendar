@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2011 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,12 +32,12 @@ function event_form() {
 }
 
 function display_form() {
-	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpcid;
+	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal;
 
-	$hour24 = get_config($phpcid, 'hours_24');
+	$hour24 = $phpc_cal->get_config('hours_24');
 	$form = new Form($phpc_script, _('Event Form'));
 	$form->add_part(new FormFreeQuestion('subject', _('Subject'),
-				false, get_config($phpcid, 'subject_max'),
+				false, $phpc_cal->get_config('subject_max'),
 				true));
 	$form->add_part(new FormLongFreeQuestion('description',
 				_('Description')));
@@ -98,14 +98,14 @@ function display_form() {
 
 	$when_group->add_part($repeat_type);
 
-	if(can_create_readonly($phpcid))
+	if($phpc_cal->can_create_readonly())
 		$form->add_part(new FormCheckBoxQuestion('readonly',
 					_('Read-only')));
 
 	$categories = new FormDropdownQuestion('catid', _('Category'));
 	$categories->add_option('', _('None'));
 	$have_categories = false;
-	foreach($phpcdb->get_categories($phpcid) as $category) {
+	foreach($phpc_cal->get_categories() as $category) {
 		$categories->add_option($category['catid'], $category['name']);
 		$have_categories = true;
 	}
@@ -114,8 +114,6 @@ function display_form() {
 
 	if(isset($vars['phpcid']))
 		$form->add_hidden('phpcid', $vars['phpcid']);
-
-	$form->add_hidden('phpc_token', $_SESSION['phpc_token']);
 
 	$form->add_hidden('action', 'event_form');
 	$form->add_hidden('submit_form', 'submit_form');
@@ -269,7 +267,7 @@ function add_repeat_defaults($occs, &$defaults) {
 
 function process_form()
 {
-	global $vars, $phpcdb, $phpcid, $phpc_script;
+	global $vars, $phpcdb, $phpc_cal, $phpcid, $phpc_script;
 
 	$potential_fields = array(
 			"subject",
@@ -313,10 +311,10 @@ function process_form()
 
 	verify_token();
 
-	if(!can_write($phpcid))
+	if(!$phpc_cal->can_write())
 		permission_error(_('You do not have permission to write to this calendar.'));
 
-	if(can_create_readonly($phpcid) && !empty($arguments['readonly']))
+	if($phpc_cal->can_create_readonly() && !empty($arguments['readonly']))
 		$readonly = true;
 	else
 		$readonly = false;

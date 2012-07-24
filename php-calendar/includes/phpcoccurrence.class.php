@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,7 @@ class PhpcOccurrence extends PhpcEvent{
 	var $end_hour;
 	var $end_minute;
 
-	function __construct($event)
-	{
+	function __construct($event) {
 		parent::__construct($event);
 
 		$this->oid = $event['oid'];
@@ -84,8 +83,6 @@ class PhpcOccurrence extends PhpcEvent{
 		}
 		
 		$this->time_type = $event['time_type'];
-
-		//echo "<pre>start time: {$event['start_date']}, {$this->start_year} {$this->start_month} {$this->start_day} {$this->start_hour}:{$this->start_minute}, end time: {$event['end_date']}, {$this->end_year} {$this->end_month} {$this->end_day} {$this->end_hour}:{$this->end_minute}, oid: {$this->oid}</pre>";
 	}
 
 	// formats the time according to type
@@ -95,8 +92,8 @@ class PhpcOccurrence extends PhpcEvent{
 		switch($this->time_type) {
 			default:
 				return format_time_string($this->start_hour,
-						$this->start_minute, get_config(
-							$this->cid,
+						$this->start_minute,
+						$this->cal->get_config(
 							'hours_24'));
 			case 1: // FULL DAY
 			case 3: // None
@@ -110,7 +107,7 @@ class PhpcOccurrence extends PhpcEvent{
 	{
 		switch($this->time_type) {
 			default:
-				$hour24 = get_config($this->cid, 'hours_24');
+				$hour24 = $this->cal->get_config('hours_24');
 				$start_time = format_time_string($this->start_hour,
 						$this->start_minute, $hour24);
 				$end_time = format_time_string($this->end_hour,

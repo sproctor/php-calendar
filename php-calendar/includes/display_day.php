@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ if ( !defined('IN_PHPC') ) {
 // View for a single day
 function display_day()
 {
-	global $phpcid, $phpc_script, $phpcdb, $day, $month, $year;
+	global $phpcid, $phpc_cal, $phpc_script, $phpcdb, $day, $month, $year;
 
 	$monthname = month_name($month);
 
@@ -45,7 +45,7 @@ function display_day()
 					tag('th', _('Time')),
 					tag('th', _('Description'))
 				   )));
-	if(can_modify($phpcid)) {
+	if($phpc_cal->can_modify()) {
 		$html_table->add(tag('tfoot',
 					tag('tr',
 						tag('td',
@@ -62,7 +62,7 @@ function display_day()
 	while($row = $results->fetch_assoc()) {
 		$event = new PhpcOccurrence($row);
 
-		if(!can_read_event($event))
+		if(!$event->can_read())
 			continue;
 
 		$have_events = true;
@@ -72,7 +72,7 @@ function display_day()
 
 		$html_subject = tag('td');
 
-		if(can_modify_event($event)) {
+		if($event->can_modify()) {
 			$html_subject->add(create_checkbox('eid[]',
 						$eid));
 		}
@@ -81,7 +81,7 @@ function display_day()
 						$event->get_subject()),
 					'display_event', $oid));
 
-		if(can_modify_event($event)) {
+		if($event->can_modify()) {
 			$html_subject->add(" (");
 			$html_subject->add(create_event_link(
 						_('Modify'), 'event_form',
@@ -97,7 +97,7 @@ function display_day()
 
 	$html_table->add($html_body);
 
-	if(can_modify($phpcid)) {
+	if($phpc_cal->can_modify()) {
 		$output = tag('form',
 				attributes("action=\"$phpc_script\""),
 				$html_table);

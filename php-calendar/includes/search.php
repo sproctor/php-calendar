@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ function search_results()
 
 	$tags = array();
 	foreach ($results as $event) {
-		if(!can_read_event($event))
+		if(!$event->can_read()
 			continue;
 
 		$name = $event->get_username();

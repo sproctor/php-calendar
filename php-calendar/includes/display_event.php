@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2011 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ function display_event_by_oid($oid)
 
 	$eid = $event->get_eid();
 
-	if(!can_read_event($event)) {
+	if(!$event->can_read()) {
 		return tag('p', _("You do not have permission to read this event."));
 	}
 
@@ -63,7 +63,7 @@ function display_event_by_oid($oid)
 					. $category));
 
 	// Add modify/delete links if this user has access to this event.
-        if(can_modify_event($event)) {
+        if($event->can_modify()) {
 		$event_header->add(tag('div',
 					create_event_link(_('Modify Event'),
 						'event_form', $eid), "\n",
@@ -136,7 +136,7 @@ function display_event_by_eid($eid)
 
 	$event = new PhpcEvent($phpcdb->get_event_by_eid($eid));
 
-	if(!can_read_event($event)) {
+	if(!$event->can_read()) {
 		return tag('p', _("You do not have permission to read this event."));
 	}
 
@@ -150,7 +150,7 @@ function display_event_by_eid($eid)
 					. $category));
 
 	// Add modify/delete links if this user has access to this event.
-        if(can_modify_event($event)) {
+        if($event->can_modify()) {
 		$event_header->add(tag('div',
 					create_event_link(_('Modify'),
 						'event_form', $eid), "\n",
@@ -193,7 +193,7 @@ function display_event_json()
 
 	$event = $phpcdb->get_occurrence_by_oid($vars['oid']);
 
-	if(!can_read_event($event))
+	if(!$event->can_read())
 		return "";
 
 	$time_str = $event->get_time_span_string();

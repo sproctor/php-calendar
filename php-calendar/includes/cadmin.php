@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ if ( !defined('IN_PHPC') ) {
 
 function cadmin()
 {
-	global $phpcid;
+	global $phpc_cal;
 
-        if(!can_admin_calendar($phpcid)) {
+        if(!$phpc_cal->can_admin()) {
                 permission_error(_('You must be logged in as an admin.'));
         }
 
@@ -32,10 +32,10 @@ function cadmin()
 
 function config_form()
 {
-	global $phpcid, $phpc_script, $phpcdb, $vars;
+	global $phpc_cal, $phpc_script, $vars;
 
         $tbody = tag('tbody');
-	$config = $phpcdb->get_calendar_config($phpcid);
+	$config = $phpc_cal->get_config();
 
         foreach(get_config_options() as $element) {
                 $name = $element[0];
@@ -133,9 +133,9 @@ function user_list()
 
 function category_list()
 {
-	global $phpc_script, $phpcid, $phpcdb, $vars;
+	global $phpc_script, $phpcid, $phpc_cal, $vars;
 
-	$categories = $phpcdb->get_categories($phpcid);
+	$categories = $phpc_cal->get_categories();
 
 	$tbody = tag('tbody');
 

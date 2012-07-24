@@ -53,7 +53,8 @@ function calendar_delete()
 	}
 
 	foreach($ids as $id) {
-		if(!can_admin_calendar($id)) {
+		$calendar = $phpcdb->get_calendar($id);
+		if(!$calendar->can_admin()) {
 			$html->add(tag('p', _("You do not have permission to remove calendar") . ": $id"));
 			continue;
 		}

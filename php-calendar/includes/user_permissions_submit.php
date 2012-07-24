@@ -21,9 +21,9 @@ if(!defined('IN_PHPC')) {
 
 function user_permissions_submit()
 {
-	global $phpcid, $vars, $phpcdb, $phpc_script;
+	global $phpcid, $phpc_cal, $vars, $phpcdb, $phpc_script;
 
-        if(!can_admin_calendar($phpcid)) {
+        if(!$phpc_cal->can_admin()) {
                 return tag('div', _('Permission denied'));
         }
 

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2011 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,98 +51,6 @@ function is_admin()
 	return !empty($_SESSION["phpc_admin"]);
 }
 
-function is_owner($event)
-{
-	if (empty($_SESSION["phpc_uid"]))
-		return false;
-	
-	return $_SESSION["phpc_uid"] == $event->get_uid();
-}
-
-function can_admin_calendar($cid)
-{
-	global $phpcdb;
-
-	if (!is_user())
-		return false;
-
-	$perms = $phpcdb->get_permissions($cid, $_SESSION["phpc_uid"]);
-
-	return is_admin() || !empty($perms["admin"]);
-}
-
-function can_write($cid)
-{
-	global $phpcdb;
-
-	if (get_config($cid, 'anon_permission') >= 2)
-		return true;
-
-	if (!is_user())
-		return false;
-
-	$perms = $phpcdb->get_permissions($cid, $_SESSION["phpc_uid"]);
-
-	return can_admin_calendar($cid) || !empty($perms["write"]);
-}
-
-function can_modify($cid)
-{
-	global $phpcdb;
-
-	if (get_config($cid, 'anon_permission') >= 3)
-		return true;
-	
-	if (!is_user())
-		return false;
-
-	$perms = $phpcdb->get_permissions($cid, $_SESSION["phpc_uid"]);
-
-	return can_admin_calendar($cid) || !empty($perms["modify"]);
-}
-
-function can_read($cid)
-{
-	global $phpcdb;
-
-	if (get_config($cid, 'anon_permission') >= 1)
-		return true;
-	
-	if (!is_user())
-		return false;
-
-	$perms = $phpcdb->get_permissions($cid, $_SESSION["phpc_uid"]);
-
-	return can_admin_calendar($cid) || !empty($perms["read"]);
-}
-
-function can_create_readonly($cid)
-{
-	global $phpcdb;
-
-	if (!is_user())
-		return false;
-
-	$perms = $phpcdb->get_permissions($cid, $_SESSION["phpc_uid"]);
-
-	return can_admin_calendar($cid) || !empty($perms["readonly"]);
-}
-
-// returns whether or not the current user can modify $event
-function can_modify_event($event)
-{
-	$cid = $event->get_cid();
-
-	return can_admin_calendar($cid) || is_owner($event)
-		|| (can_modify($cid) && !$event->is_readonly());
-}
-
-// returns whether or not the current user can read $event
-function can_read_event($event)
-{
-	return can_read($event->get_cid());
-}
-
 function login_user($username, $password)
 {
         global $phpcdb, $phpc_uid;
@@ -159,9 +67,9 @@ function login_user($username, $password)
 
 	$phpc_uid = $user->uid;
 	$_SESSION["phpc_uid"] = $phpc_uid;
-	$_SESSION['phpc_token'] = phpc_get_token();
 
 	$login_token = phpc_get_token();
+	$_SESSION['phpc_login'] = $login_token;
 	$series_token = phpc_get_token();
 	$phpcdb->add_login_token($phpc_uid, $series_token, $login_token);
 
@@ -232,9 +140,9 @@ function get_languages() {
 
 function day_of_week_start()
 {
-	global $phpcid;
+	global $phpc_cal;
 
-	return get_config($phpcid, 'week_start');
+	return $phpc_cal->get_config('week_start');
 }
 
 // returns the number of days in the week before the 
@@ -276,15 +184,13 @@ function weeks_in_month($month, $year)
 // return the week number corresponding to the $day.
 function week_of_year($month, $day, $year)
 {
-	global $phpcid;
-
 	$timestamp = mktime(0, 0, 0, $month, $day, $year);
 
 	// week_start = 1 uses ISO 8601 and contains the Jan 4th,
 	//   Most other places the first week contains Jan 1st
 	//   There are a few outliers that start weeks on Monday and use
 	//   Jan 1st for the first week. We'll ignore them for now.
-	if(get_config($phpcid, 'week_start') == 1) {
+	if(day_of_week_start() == 1) {
 		$year_contains = 4;
 		// if the week is in December and contains Jan 4th, it's a week
 		// from next year
@@ -457,13 +363,13 @@ function create_checkbox($name, $value, $checked = false)
 // returns tag data for the navbar
 function navbar()
 {
-	global $vars, $action, $year, $month, $day, $phpcid;
+	global $vars, $action, $year, $month, $day, $phpc_cal;
 
 	$html = tag('div', attributes('class="phpc-navbar"'));
 
 	$args = array('year' => $year, 'month' => $month, 'day' => $day);
 
-	if(can_write($phpcid) && $action != 'add') { 
+	if($phpc_cal->can_write() && $action != 'add') { 
 		menu_item_append($html, _('Add Event'), 'event_form', $args);
 	}
 
@@ -493,7 +399,7 @@ function navbar()
 					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
 	}
 
-	if(can_admin_calendar($phpcid) && $action != 'cadmin') {
+	if($phpc_cal->can_admin() && $action != 'cadmin') {
 		menu_item_append($html, _('Calendar Admin'), 'cadmin');
 	}
 
@@ -551,11 +457,11 @@ function get_config_options()
 	static $options = NULL;
 
 	if($options == NULL) {
-		$timezones = array("NULL" => _("System"));
+		$timezones = array("" => _("System"));
 		foreach(timezone_identifiers_list() as $timezone) {
 			$timezones[$timezone] = $timezone;
 		}
-		$languages = array("NULL" => _("Default"));
+		$languages = array("" => _("Default"));
 		foreach(get_languages() as $language) {
 			$languages[$language] = $language;
 		}
@@ -586,16 +492,28 @@ function get_config_options()
 	return $options;
 }
 
-function get_config($cid, $option, $default = '') {
-	global $phpcdb;
+function get_calendar_list() {
+	global $phpc_script, $phpcdb;
 
-	$config = $phpcdb->get_calendar_config($cid);
-	if(!isset($config[$option])) {
-		if(defined('PHPC_DEBUG'))
-			soft_error("Undefined config option \"$option\".");
-		return $default;
+	$calendar_list = tag('div', attributes('class="phpc-navbar"'));
+
+	$count = 0;
+	foreach($phpcdb->get_calendars() as $calendar) {
+		if(!$calendar->can_read())
+			continue;
+
+		$title = $calendar->get_title();
+		$cid = $calendar->get_cid();
+		$count++;
+
+		$attrs = attributes("href=\"$phpc_script?phpcid=$cid\"");
+		$calendar_list->add(tag('a', $attrs, $title));
 	}
-	return $config[$option];
+
+	if($count <= 1)
+		return '';
+
+	return $calendar_list;
 }
 
 function display_phpc() {
@@ -620,7 +538,8 @@ function display_phpc() {
 			$messages = '';
 		}
 
-		return tag('', $messages, $navbar, $content, link_bar());
+		return tag('', $messages, get_calendar_list(), $navbar,
+				$content, link_bar());
 	} catch(PermissionException $e) {
 		$results = tag('');
 		// TODO: make navbar show if there is an error in do_action()
@@ -645,7 +564,7 @@ function display_phpc() {
 
 function do_action()
 {
-	global $action, $phpcid, $phpc_includes_path, $vars;
+	global $action, $phpc_includes_path, $vars;
 
 	if(!preg_match('/^\w+$/', $action))
 		soft_error(_('Invalid action'));
@@ -685,10 +604,12 @@ function short_month_name($month)
 }
 
 function verify_token() {
-	global $vars;
+	if(!is_user())
+		return true;
 
-	if(!empty($_SESSION["phpc_token"]) && (empty($vars["phpc_token"]) ||
-				$vars["phpc_token"] != $_SESSION["phpc_token"]))
+	echo "<pre>session: {$_SESSION["phpc_login"]}\ncookie: {$_COOKIE["phpc_login"]}</pre>";
+	if(empty($_SESSION["phpc_login"]) || empty($_COOKIE["phpc_login"])
+			|| $_COOKIE["phpc_login"] != $_SESSION["phpc_login"])
 		soft_error(_("Secret token mismatch. Possible request forgery attempt."));
 }
 ?>

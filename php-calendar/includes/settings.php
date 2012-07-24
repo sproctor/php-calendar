@@ -46,7 +46,6 @@ function password_form()
 				tag('tfoot',
 					tag('tr',
 						tag('td', attributes('colspan="2"'),
-							create_hidden('phpc_token', $_SESSION['phpc_token']),
 							create_hidden('action', 'password_submit'),
 							create_submit(_('Submit'))))),
 				tag('tbody',
@@ -66,7 +65,7 @@ function config_form()
 {
 	global $phpc_script, $phpc_user_tz, $phpc_user_lang;
 
-	$timezones = array("NULL" => _("Default"));
+	$timezones = array("" => _("Default"));
 	foreach(timezone_identifiers_list() as $timezone) {
 		if(preg_match('/^(Africa|America|Antarctica|Arctic|Asia|Atlantic|Australia|Europe|India|Pacific)/', $timezone))
 			$timezones[$timezone] = $timezone;
@@ -74,7 +73,7 @@ function config_form()
 	$tz_input = create_select('timezone', $timezones,
 			$phpc_user_tz);
 
-	$languages = array("NULL" => _("Default"));
+	$languages = array("" => _("Default"));
 	foreach(get_languages() as $lang) {
 		$languages[$lang] = $lang;
 	}
@@ -88,7 +87,6 @@ function config_form()
 				tag('tfoot',
 					tag('tr',
 						tag('td', attributes('colspan="2"'),
-							create_hidden('phpc_token', $_SESSION['phpc_token']),
 							create_hidden('action', 'settings'),
 							create_hidden('phpc_submit', 'settings'),
 							create_submit(_('Submit'))))),
@@ -108,14 +106,18 @@ function settings_submit()
 
 	verify_token();
 
-        if(empty($vars['timezone']) || empty($vars['language'])) {
-                return tag('div', _('Form error.'));
-	}
-
 	// Expire 20 years in the future, give or take.
 	$expiration_time = time() + 20 * 365 * 24 * 60 * 60;
-	setcookie("phpc_tz", $vars['timezone'], $expiration_time);
-	setcookie("phpc_lang", $vars['language'], $expiration_time);
+	// One hour in the past
+	$past_time = time() - 3600;
+	if(!empty($vars["timezone"]))
+		setcookie("phpc_tz", $vars['timezone'], $expiration_time);
+	else
+		setcookie("phpc_tz", '', $past_time);
+	if(!empty($vars["language"]))
+		setcookie("phpc_lang", $vars['language'], $expiration_time);
+	else
+		setcookie("phpc_lang", '', $past_time);
 
 	if(is_user()) {
 		$uid = $_SESSION['phpc_uid'];

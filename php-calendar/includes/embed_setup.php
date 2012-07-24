@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,5 @@ ob_start();
 define('IN_PHPC', true);
 
 require_once("$phpc_includes_path/setup.php");
-
-$calendar_title = get_config($phpcid, 'calendar_title');
 
 ?>

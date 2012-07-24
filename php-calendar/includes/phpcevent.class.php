@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,12 @@ class PhpcEvent {
 	var $bg_color;
 	var $text_color;
 	var $catid;
+	var $cal;
 
 	function __construct($event)
 	{
+		global $phpcid, $phpc_cal;
+
 		$this->eid = $event['eid'];
 		$this->cid = $event['cid'];
 		$this->uid = $event['owner'];
@@ -46,6 +49,11 @@ class PhpcEvent {
 		$this->bg_color = $event['bg_color'];
 		$this->text_color = $event['text_color'];
 		$this->catid = $event['catid'];
+
+		if($this->cid == $phpcid)
+			$this->cal = $phpc_cal;
+		else
+			$this->cal = $phpcdb->get_calendar($this->cid);
 	}
 
 	function get_raw_subject() {
@@ -112,5 +120,27 @@ class PhpcEvent {
 			return $this->category;
 		return htmlspecialchars($this->category, ENT_COMPAT, "UTF-8");
 	}
+
+	function is_owner()
+	{
+		if (empty($_SESSION["phpc_uid"]))
+			return false;
+
+		return $_SESSION["phpc_uid"] == $this->get_uid();
+	}
+
+	// returns whether or not the current user can modify $event
+	function can_modify()
+	{
+		return $this->cal->can_admin() || $this->is_owner()
+			|| ($this->cal->can_modify() && !$this->is_readonly());
+	}
+
+	// returns whether or not the current user can read $event
+	function can_read()
+	{
+		return $this->cal->can_read();
+	}
+
 }
 ?>

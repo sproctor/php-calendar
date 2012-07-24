@@ -61,7 +61,7 @@ function occurrence_delete()
 
 	foreach($oids as $oid) {
 		$occur = $phpcdb->get_occurrence_by_oid($oid);
-		if(!can_modify_event($occur)) {
+		if(!$occur->can_modify()) {
 			$permission_denied[] = $oid;
 		} else {
 			if($phpcdb->delete_occurrence($oid)) {
