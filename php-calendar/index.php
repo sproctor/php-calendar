@@ -64,7 +64,7 @@ try {
 	require_once("$phpc_includes_path/calendar.php");
 	require_once("$phpc_includes_path/setup.php");
 
-	$calendar_title = get_config($phpcid, 'calendar_title');
+	$calendar_title = $phpc_cal->get_title();
 	$content = tag('div', attributes('class="php-calendar"'),
 			tag('h1', $calendar_title),
 			display_phpc());
