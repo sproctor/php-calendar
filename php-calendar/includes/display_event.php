@@ -55,7 +55,7 @@ function display_event_by_oid($oid)
 
 	$event_header = tag('div', attributes('class="phpc-event-header"'),
 			tag('div', _('by').' ',
-				tag('cite', $event->get_username())));
+				tag('cite', $event->get_author())));
 
 	$category = $event->get_category();
 	if(!empty($category))
@@ -142,7 +142,7 @@ function display_event_by_eid($eid)
 
 	$event_header = tag('div', attributes('class="phpc-event-header"'),
 			tag('div', _('by').' ',
-				tag('cite', $event->get_username())));
+				tag('cite', $event->get_author())));
 
 	$category = $event->get_category();
 	if(!empty($category))
@@ -196,6 +196,7 @@ function display_event_json()
 	if(!$event->can_read())
 		return "";
 
+	$author = _("by") . " " . $event->get_author();
 	$time_str = $event->get_time_span_string();
 	$date_str = $event->get_date_string();
 
@@ -206,6 +207,7 @@ function display_event_json()
 		$category_text = _('Category') . ': ' . $event->get_category();
 
 	return json_encode(array("title" => $event->get_subject(),
+				"author" => $author,
 				"time" => "$date_str " . _("at") . " $time_str",
 				"category" => $category_text,
 				"body" => $event->get_desc()));

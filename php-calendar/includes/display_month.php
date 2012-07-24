@@ -44,6 +44,7 @@ function display_month()
 			tag("div", attributes('id="phpc-summary-view"'), 
 				tag("div", attributes('class="phpc-summary-head"'),
 					tag("div", attributes('id="phpc-summary-title"'), ''),
+					tag("div", attributes('id="phpc-summary-author"'), ''),
 					tag("div", attributes('id="phpc-summary-category"'), ''),
 					tag("div", attributes('id="phpc-summary-time"'), '')),
 				tag("div", attributes('id="phpc-summary-body"'), '')),

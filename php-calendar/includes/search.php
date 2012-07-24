@@ -52,7 +52,7 @@ function search_results()
 		if(!$event->can_read()
 			continue;
 
-		$name = $event->get_username();
+		$name = $event->get_author();
 		$subject = $event->get_subject();
 		$desc = $event->get_desc();
 		$date = $event->get_date_string();

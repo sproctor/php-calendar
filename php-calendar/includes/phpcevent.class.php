@@ -19,7 +19,7 @@ class PhpcEvent {
 	var $eid;
 	var $cid;
 	var $uid;
-	var $username;
+	var $author;
 	var $subject;
 	var $desc;
 	var $readonly;
@@ -37,11 +37,11 @@ class PhpcEvent {
 		$this->cid = $event['cid'];
 		$this->uid = $event['owner'];
 		if(empty($event['owner']))
-			$this->username = _('anonymous');
+			$this->author = _('anonymous');
 		elseif(empty($event['username']))
-			$this->username = _('unknown');
+			$this->author = _('unknown');
 		else
-			$this->username = $event['username'];
+			$this->author = $event['username'];
 		$this->subject = $event['subject'];
 		$this->desc = $event['description'];
 		$this->readonly = $event['readonly'];
@@ -69,9 +69,9 @@ class PhpcEvent {
 				ENT_COMPAT, "UTF-8");
 	}
 
-	function get_username()
+	function get_author()
 	{
-		return $this->username;
+		return $this->author;
 	}
 
 	function get_uid()

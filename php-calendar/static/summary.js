@@ -14,8 +14,9 @@ $(document).ready(function() {
 });
  
 // sets he specified text in the floating div
-function setSummaryText(title,time,description,category) {
+function setSummaryText(title,author,time,description,category) {
 	$("#phpc-summary-title").html(title);
+	$("#phpc-summary-author").html(author);
 	$("#phpc-summary-time").html(time);
 	$("#phpc-summary-body").html(description);
 	$("#phpc-summary-category").html(category);
@@ -46,7 +47,8 @@ function showSummaryDiv(link) {
 function showSummary(link) {
 	if( cache[link.href] != null ) {
 		var data = cache[link.href];
-		setSummaryText(data.title,data.time,data.body,data.category);
+		setSummaryText(data.title,data.author,data.time,data.body,
+				data.category);
 		showSummaryDiv(link);
 	}
 	else {
@@ -58,8 +60,8 @@ function showSummary(link) {
 		activeRequest = $.getJSON(link.href + "&contentType=json",
 			function(data) {
 				cache[link.href] = data;
-				setSummaryText(data.title,data.time,data.body,
-					data.category);
+				setSummaryText(data.title,data.author,data.time,
+					data.body,data.category);
 				showSummaryDiv(link);
 				activeRequest = null;
 			});
@@ -73,5 +75,5 @@ function hideSummary(link) {
 		activeRequest.abort();
 
 	$("#phpc-summary-view").hide();
-	setSummaryText('','','','');
+	setSummaryText('','','','','');
 }
