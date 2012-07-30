@@ -21,7 +21,7 @@ if ( !defined('IN_PHPC') ) {
 
 function category_submit()
 {
-	global $vars, $phpcdb, $phpc_script, $phpcid, $phpc_cal;
+	global $vars, $phpcdb, $phpc_script, $phpc_cal;
 
 	if(empty($vars["text-color"]) || empty($vars["bg-color"])) {
 		$page = "$phpc_script?action=category_form";
@@ -48,10 +48,7 @@ function category_submit()
 				permission_error(_('You do not have permission to add categories to all calendars.'));
 		} else { 
 			$cid = $vars['cid'];
-			if($cid == $phpcid)
-				$calendar = $phpc_cal;
-			else
-				$calendar = $phpcdb->get_calendar($cid);
+			$calendar = $phpcdb->get_calendar($cid);
 			if(!$calendar->can_admin())
 				permission_error(_('You do not have permission to add categories to this calendar.'));
 		}

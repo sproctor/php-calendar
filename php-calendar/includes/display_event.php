@@ -69,6 +69,8 @@ function display_event_by_oid($oid)
 						'event_form', $eid), "\n",
 					create_event_link(_('Delete Event'),
 						'event_delete', $eid), "\n",
+					create_occurrence_link(_('Modify Occurrence'),
+						'occur_form', $oid), "\n",
 					create_occurrence_link(_('Remove Occurrence'),
 						'occurrence_delete', $oid)));
 	}
@@ -154,6 +156,8 @@ function display_event_by_eid($eid)
 		$event_header->add(tag('div',
 					create_event_link(_('Modify'),
 						'event_form', $eid), "\n",
+					create_event_link(_('Add Occurrence'),
+						'occur_form', $eid), "\n",
 					create_event_link(_('Delete'),
 						'event_delete', $eid)));
 	}

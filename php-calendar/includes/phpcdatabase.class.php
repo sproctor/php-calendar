@@ -149,7 +149,8 @@ class PhpcDatabase {
 					$query);
 
 		$result = $sth->fetch_assoc()
-			or soft_error(_("Event doesn't exist") . ": $oid");
+			or soft_error(_("Event doesn't exist with oid")
+					. ": $oid");
 
 		return $result;
 	}
@@ -222,7 +223,7 @@ class PhpcDatabase {
 					$query);
 
 		$result = $sth->fetch_assoc()
-			or soft_error(_("Event doesn't exist") . ": $oid");
+			or soft_error(_("Event doesn't exist with oid") . ": $oid");
 
 		return new PhpcOccurrence($result);
 	}
@@ -623,7 +624,7 @@ class PhpcDatabase {
 	{
 
 		$query = "UPDATE `" . SQL_PREFIX . "occurrences`\n"
-			."SET `eid` = '$eid', `time_type` = '$time_type'";
+			."SET `time_type` = '$time_type'";
 
 		if($time_type == 0) {
 			$query .= ", `start_ts` = FROM_UNIXTIME('$start_ts')"
