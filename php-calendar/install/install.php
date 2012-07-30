@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2011 Sean Proctor
+ * Copyright 2012 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,11 +48,14 @@ if(empty($_POST['action'])) {
 } elseif($_POST['action'] == 'upgrade') {
 	if(empty($_POST['version'])) {
 		get_upgrade_version();
-	} elseif($_POST['version'] == "2.0") {
+	} elseif($_POST['version'] == "2.0beta10") {
+		create_logins_table();
+	} elseif($_POST['version'] == "2.0beta9") {
 		if(empty($_POST['timezone']))
 			upgrade_20_form();
 		else
 			upgrade_20_action();
+		create_login_table();
 	} elseif($_POST['version'] == "1.1") {
 		echo "<p>Sorry upgrading from version 1.1 is not supported at this time.";
 	} else {
@@ -82,22 +85,23 @@ function get_action() {
 }
 
 function get_upgrade_version() {
+	if(!include($phpc_config_file)) {
+		echo '<p>You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
+		return;
+	}
+
 	echo '<h3>Pick the version you are updating from</h3>';
 	echo '<input type="hidden" name="action" value="upgrade">';
 	echo '<select name="version">';
 	echo '<option value="1.1">version 1.1</option>';
-	echo '<option value="2.0">version 2.0-beta4 or later</option>';
+	echo '<option value="2.0beta9">version 2.0-beta4 to beta9</option>';
+	echo '<option value="2.0beta10">version 2.0-beta10</option>';
 	echo '</select>';
 	echo '<input type="submit" value="Submit">';
 }
 
 function upgrade_20_form() {
 	global $phpc_config_file, $dbh;
-
-	if(!include($phpc_config_file)) {
-		echo '<p>You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
-		return;
-	}
 
 	echo '<div>Timezone: <select name="timezone">';
 	foreach(timezone_identifiers_list() as $timezone) {
@@ -124,11 +128,9 @@ function upgrade_20_action() {
 		."CHANGE `enddate` `end_date` date default NULL,\n"
 		."CHANGE `timetype` `time_type` tinyint(4) NOT NULL default '0'\n";
 
-/*
 	$dbh->query($query)
 		or db_error($dbh, 'Error adding elements to occurrences table.',
 				$query);
-*/
 
 	echo "<p>Occurrences table update";
 
@@ -444,16 +446,7 @@ function create_tables()
 	$dbh->query($query)
 		or db_error($dbh, 'Error creating users table.', $query);
 
-	$query = "CREATE TABLE `" . SQL_PREFIX . "logins` (\n"
-		."`uid` int(11) unsigned NOT NULL,\n"
-		."`series` char(43) collate utf8_unicode_ci NOT NULL,\n"
-		."`token` char(43) collate utf8_unicode_ci NOT NULL\n"
-		."`ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
-		."PRIMARY KEY  (`uid`, `series`)\n"
-		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
-
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating logins table.', $query);
+	create_logins_table();
 
 	$query = "CREATE TABLE `" . SQL_PREFIX . "config` (\n"
 		."`cid` int(11) DEFAULT NULL,\n"
@@ -620,6 +613,21 @@ function soft_error($str)
 	echo "</ol>\n",
 	     "</body></html>\n";
 	exit;
+}
+
+function create_logins_table() {
+	global $dbh;
+
+	$query = "CREATE TABLE `" . SQL_PREFIX . "logins` (\n"
+		."`uid` int(11) unsigned NOT NULL,\n"
+		."`series` char(43) collate utf8_unicode_ci NOT NULL,\n"
+		."`token` char(43) collate utf8_unicode_ci NOT NULL\n"
+		."`ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
+		."PRIMARY KEY  (`uid`, `series`)\n"
+		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
+
+	$dbh->query($query)
+		or db_error($dbh, 'Error creating logins table.', $query);
 }
 
 ?>
