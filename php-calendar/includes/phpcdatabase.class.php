@@ -51,7 +51,6 @@ class PhpcDatabase {
 	}
 
 	private function get_occurrence_fields() {
-		$occ_table = SQL_PREFIX . "occurrences";
 		return $this->get_event_fields() . ", `time_type`, `oid`, "
 			. "UNIX_TIMESTAMP(`start_ts`) AS `start_ts`, "
 			. "DATE_FORMAT(`start_date`, '%Y%m%d') AS `start_date`, "
@@ -105,11 +104,10 @@ class PhpcDatabase {
 				$stamp);
         }
 
-	// returns the event that corresponds to $id
+	// returns the event that corresponds to eid
 	function get_event_by_eid($eid)
 	{
 		$events_table = SQL_PREFIX . 'events';
-		$occurrences_table = SQL_PREFIX . 'occurrences';
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
@@ -126,6 +124,32 @@ class PhpcDatabase {
 
 		$result = $sth->fetch_assoc()
 			or soft_error(_("Event doesn't exist") . ": $eid");
+
+		return $result;
+	}
+
+	// returns the event that corresponds to oid
+	function get_event_by_oid($oid)
+	{
+		$events_table = SQL_PREFIX . 'events';
+		$occurrences_table = SQL_PREFIX . 'occurrences';
+		$users_table = SQL_PREFIX . 'users';
+		$cats_table = SQL_PREFIX . 'categories';
+
+		$query = "SELECT " . $this->get_event_fields()
+			.", `username`, `name`, `bg_color`, `text_color`\n"
+			."FROM `$events_table`\n"
+			."LEFT JOIN `$occurrences_table` USING (`eid`)\n"
+			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
+			."LEFT JOIN `$cats_table` USING (`catid`)\n"
+			."WHERE `oid` = '$oid'\n";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error in get_event_by_oid'),
+					$query);
+
+		$result = $sth->fetch_assoc()
+			or soft_error(_("Event doesn't exist") . ": $oid");
 
 		return $result;
 	}
@@ -326,7 +350,7 @@ class PhpcDatabase {
 	{
 		// Load configuration
 		$query = "SELECT * from " . SQL_PREFIX ."config\n"
-			."WHERE `cid`=$cid";
+			."WHERE `cid`='$cid'";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Could not read configuration'),
@@ -474,7 +498,7 @@ class PhpcDatabase {
 	{
 		$query = "INSERT into `".SQL_PREFIX."users`\n"
 			."(`username`, `password`, `admin`) VALUES\n"
-			."('$username', '$password', $make_admin)";
+			."('$username', '$password', '$make_admin')";
 
 		$this->dbh->query($query)
 			or $this->db_error(_('Error creating user.'), $query);
@@ -495,7 +519,7 @@ class PhpcDatabase {
 	{
 		$query = "INSERT INTO ".SQL_PREFIX."config\n"
 			."(`cid`, `config_name`, `config_value`)\n"
-			."VALUES ($cid, '$name', '$value')";
+			."VALUES ('$cid', '$name', '$value')";
 
 		$this->dbh->query($query)
 			or $this->db_error(_('Error creating options'), $query);
@@ -505,8 +529,8 @@ class PhpcDatabase {
 	{
 		$query = "INSERT ".SQL_PREFIX."config\n"
 			."(`cid`, `config_name`, `config_value`)\n"
-			."VALUES ($cid, '$name', '$value')\n"
-			."ON DUPLICATE KEY UPDATE config_value = '$value'";
+			."VALUES ('$cid', '$name', '$value')\n"
+			."ON DUPLICATE KEY UPDATE config_value='$value'";
 
 		$this->dbh->query($query)
 			or $this->db_error(_('Error reading options'), $query);
@@ -552,6 +576,8 @@ class PhpcDatabase {
 
 		if(!$catid)
 			$catid = 'NULL';
+		else
+			$catid = "'$catid'";
 
 		$query = "INSERT INTO `" . SQL_PREFIX . "events`\n"
 			."(`cid`, `owner`, `subject`, `description`, "
@@ -587,9 +613,35 @@ class PhpcDatabase {
 		}
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error creating event.'), $query);
+			or $this->db_error(_('Error creating occurrence.'),
+					$query);
 
 		return $this->dbh->insert_id;
+	}
+
+	function modify_occurrence($oid, $time_type, $start_ts, $end_ts)
+	{
+
+		$query = "UPDATE `" . SQL_PREFIX . "occurrences`\n"
+			."SET `eid` = '$eid', `time_type` = '$time_type'";
+
+		if($time_type == 0) {
+			$query .= ", `start_ts` = FROM_UNIXTIME('$start_ts')"
+				. ", `end_ts` = FROM_UNIXTIME('$end_ts')";
+		} else {
+			$start_date = date("Y-m-d", $start_ts);
+			$end_date = date("Y-m-d", $end_ts);
+			$query .= ", `start_date` = '$start_date'"
+				. ", `end_date` = '$end_date'";
+		}
+
+		$query .= "\nWHERE `oid`='$oid'";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error modifying occurrence.'),
+					$query);
+
+		return $this->dbh->affected_rows > 0;
 	}
 
 	function modify_event($eid, $subject, $description, $readonly,
@@ -690,7 +742,7 @@ class PhpcDatabase {
 
 		$query = "INSERT INTO ".SQL_PREFIX."permissions\n"
 			."(`cid`, `uid`, ".implode(", ", $names).")\n"
-			."VALUES ($cid, $uid, ".implode(", ", $values).")\n"
+			."VALUES ('$cid', '$uid', ".implode(", ", $values).")\n"
 			."ON DUPLICATE KEY UPDATE ".implode(", ", $sets);
 
 		if(!($sth = $this->dbh->query($query)))
