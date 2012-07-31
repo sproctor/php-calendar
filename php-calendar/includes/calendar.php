@@ -53,7 +53,7 @@ function is_admin()
 
 function login_user($username, $password)
 {
-        global $phpcdb, $phpc_uid;
+        global $phpcdb;
 
 	// Regenerate the session in case our non-logged in version was
 	//   snooped
@@ -65,24 +65,38 @@ function login_user($username, $password)
 	if(!$user || $user->password != md5($password))
 		return false;
 
-	$phpc_uid = $user->uid;
-	$_SESSION["phpc_uid"] = $phpc_uid;
+	phpc_do_login($user);
 
+	return true;
+}
+
+function phpc_do_login($user, $series_token = false) {
+        global $phpcdb, $phpc_uid;
+
+	$phpc_uid = $user->uid;
 	$login_token = phpc_get_token();
+	$_SESSION["phpc_uid"] = $phpc_uid;
 	$_SESSION['phpc_login'] = $login_token;
-	$series_token = phpc_get_token();
-	$phpcdb->add_login_token($phpc_uid, $series_token, $login_token);
+
+	if(!$series_token) {
+		$series_token = phpc_get_token();
+		$phpcdb->add_login_token($phpc_uid, $series_token,
+				$login_token);
+	} else {
+		$phpcdb->update_login_token($phpc_uid, $series_token,
+				$login_token);
+	}
 
 	// TODO: Add a remember me checkbox to the login form, and have the
 	//	cookies expire at the end of the session if it's not checked
-	$expiration_time = time() + 20 * 365 * 24 * 60 * 60;
+
+	// expire credentials in 30 days.
+	$expiration_time = time() + 30 * 24 * 60 * 60;
 	setcookie("phpc_uid", $phpc_uid, $expiration_time);
 	setcookie("phpc_login", $login_token, $expiration_time);
 	setcookie("phpc_login_series", $series_token, $expiration_time);
 	if(!empty($user->admin))
 		$_SESSION["phpc_admin"] = true;
-
-	session_write_close();
 
 	return true;
 }
@@ -607,7 +621,6 @@ function verify_token() {
 	if(!is_user())
 		return true;
 
-	echo "<pre>session: {$_SESSION["phpc_login"]}\ncookie: {$_COOKIE["phpc_login"]}</pre>";
 	if(empty($_SESSION["phpc_login"]) || empty($_COOKIE["phpc_login"])
 			|| $_COOKIE["phpc_login"] != $_SESSION["phpc_login"])
 		soft_error(_("Secret token mismatch. Possible request forgery attempt."));

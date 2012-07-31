@@ -44,6 +44,8 @@ function minute_pad($minute)
 function redirect($page) {
 	global $phpc_script, $phpc_server, $phpc_protocol, $phpc_redirect;
 
+	session_write_close();
+
 	$phpc_redirect = true;
 
 	if($page{0} == "/") {

@@ -69,14 +69,7 @@ if(empty($_SESSION["phpc_uid"])) {
 		if($token) {
 			if($token == $_COOKIE["phpc_login"]) {
 				$user = $phpcdb->get_user($phpc_uid);
-				$_SESSION["phpc_uid"] = $user->uid;
-				if(!empty($user->admin))
-					$_SESSION["phpc_admin"] = true;
-				$new_token = phpc_get_token();
-				$expiration_time = time() + 20 * 365 * 24 * 60 * 60;
-				setcookie("phpc_login", $new_token, $expiration_time);
-				$phpcdb->update_login_token($phpc_uid,
-						$phpc_login_series, $new_token);
+				phpc_do_login($user, $phpc_login_series);
 			} else {
 				$phpcdb->remove_login_tokens($phpc_uid);
 				soft_error(_("Possible hacking attempt on your account."));
@@ -225,11 +218,14 @@ if($phpc_translate) {
 			$locale = 'C';
 	}
 
+	putenv("LANG=$locale");
 	putenv("LC_ALL=$locale");
 	putenv("LANGUAGE=$locale");
+	setlocale(LC_ALL, $locale);
 
-	bindtextdomain('messages', $phpc_locale_path);
-	textdomain('messages');
+	$domain = "messages";
+	bindtextdomain($domain, $phpc_locale_path);
+	textdomain($domain);
 } else {
 	$phpc_lang = 'en';
 }
