@@ -49,7 +49,7 @@ function search_results()
 
 	$tags = array();
 	foreach ($results as $event) {
-		if(!$event->can_read()
+		if(!$event->can_read())
 			continue;
 
 		$name = $event->get_author();
