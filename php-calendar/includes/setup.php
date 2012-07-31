@@ -58,6 +58,10 @@ session_start();
 if(empty($_SESSION["phpc_uid"])) {
 	if(!empty($_COOKIE["phpc_login"]) && !empty($_COOKIE["phpc_uid"])
 			&& !empty($_COOKIE["phpc_login_series"])) {
+		// Cleanup before we check their token so they can't login with
+		//   an ancient token
+		$phpcdb->cleanup_login_tokens();
+
 		$phpc_uid = $_COOKIE["phpc_uid"];
 		$phpc_login_series = $_COOKIE["phpc_login_series"];
 		$token = $phpcdb->get_login_token($phpc_uid,

@@ -4,9 +4,12 @@ NEWS
 2.0-beta11:
 	- Changed date/time entry to date/time picker
 	- Added category to event/occurrence/summary views
+	- Added author to summary in month view
 	- Allow anonymous users to save tz/lang settings.
 	- Updated to jquery 1.7.2
 	- Make connections persistent until logged out
+	- Added links for add/modify occurrences
+	- Take user to a useful page after form submissions
 
 2.0-beta10 (8 Apr 2011):
 	- Added a color picker for categories, by Michal Osowiecki

@@ -777,7 +777,7 @@ class PhpcDatabase {
 
 	function update_login_token($uid, $series, $token) {
 		$query = "UPDATE ".SQL_PREFIX."logins\n"
-			."SET `token`='$token'\n"
+			."SET `token`='$token', `atime`=NOW()\n"
 			."WHERE `uid`='$uid' AND `series`='$series'";
 
 		$this->dbh->query($query)
@@ -791,6 +791,15 @@ class PhpcDatabase {
 
 		$this->dbh->query($query)
 			or $this->db_error(_("Error removing login tokens."),
+					$query);
+	}
+
+	function cleanup_login_tokens() {
+		$query = "DELETE FROM ".SQL_PREFIX."logins\n"
+			."WHERE `atime` < DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+
+		$this->dbh->query($query)
+			or $this->db_error(_("Error cleaning login tokens."),
 					$query);
 	}
 
