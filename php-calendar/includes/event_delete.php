@@ -27,7 +27,7 @@ function event_delete()
 
 	if(empty($vars["eid"])) {
 		$message = _('No event selected.');
-		$html->add(tag('p', $message));
+		$html->add(tag('div', $message));
 		return $html;
 	}
 
@@ -43,7 +43,7 @@ function event_delete()
 			$event = new PhpcEvent($phpcdb->get_event_by_eid($eid));
 			$list->add(tag('li', "$eid: ".$event->get_subject()));
 		}
-		$html->add(tag('p', _('Confirm you want to delete:')));
+		$html->add(tag('div', _('Confirm you want to delete:')));
 		$html->add($list);
 		$html->add(" [ ", create_action_link(_('Confirm'),
 					"event_delete", array("eid" => $eids,
@@ -76,7 +76,7 @@ function event_delete()
 		else
 			$text = _("Removed events");
 		$text .= ': ' . implode(', ', $removed_events);
-		$html->add(tag('p', $text));
+		$html->add(tag('div', $text));
 	}
 
 	if(sizeof($unremoved_events) > 0) {
@@ -85,7 +85,7 @@ function event_delete()
 		else
 			$text = _("Could not remove events");
 		$text .= ': ' . implode(', ', $unremoved_events);
-		$html->add(tag('p', $text));
+		$html->add(tag('div', $text));
 	}
 
 	if(sizeof($permission_denied) > 0) {
@@ -94,10 +94,10 @@ function event_delete()
 		else
 			$text = _("You do not have permission to remove events");
 		$text .= ': ' . implode(', ', $permission_denied);
-		$html->add(tag('p', $text));
+		$html->add(tag('div', $text));
 	}
 	
-        return $html;
+        return message_redirect($html, $phpc_script);
 }
 
 ?>
