@@ -25,8 +25,12 @@ class PhpcDatabase {
 	var $calendars;
 
 	function __construct() {
+		if(!defined("SQL_PORT"))
+			define("SQL_PORT", ini_get("mysqli.default_port"));
+
 		// Make the database connection.
-		$this->dbh = new mysqli(SQL_HOST, SQL_USER, SQL_PASSWD);
+		$this->dbh = new mysqli(SQL_HOST, SQL_USER, SQL_PASSWD,
+			SQL_DATABASE, SQL_PORT);
 
 		if(mysqli_connect_errno()) {
 			soft_error("Database connect failed ("
@@ -34,7 +38,6 @@ class PhpcDatabase {
 					. mysqli_connect_error());
 		}
 
-		$this->dbh->select_db(SQL_DATABASE);
 		$this->dbh->set_charset("utf8");
 	}
 
