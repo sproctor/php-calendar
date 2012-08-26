@@ -621,7 +621,7 @@ function create_logins_table() {
 	$query = "CREATE TABLE `" . SQL_PREFIX . "logins` (\n"
 		."`uid` int(11) unsigned NOT NULL,\n"
 		."`series` char(43) collate utf8_unicode_ci NOT NULL,\n"
-		."`token` char(43) collate utf8_unicode_ci NOT NULL\n"
+		."`token` char(43) collate utf8_unicode_ci NOT NULL,\n"
 		."`atime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
 		."PRIMARY KEY  (`uid`, `series`)\n"
 		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
