@@ -104,7 +104,7 @@ function display_form() {
 
 	$form->add_part(new FormSubmitButton(_("Submit Occurrence")));
 
-	return $form->get_html($defaults);
+	return $form->get_form($defaults);
 }
 
 function process_form()

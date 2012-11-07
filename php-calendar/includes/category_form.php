@@ -47,7 +47,7 @@ function category_form() {
 		$defaults = array();
 		$form->add_hidden('text-color', '#000000');
 	}
-        return $form->get_html($defaults);
+        return $form->get_form($defaults);
 }
 
 ?>

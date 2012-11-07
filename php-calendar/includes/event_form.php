@@ -174,7 +174,7 @@ function display_form() {
 				'yearly-until-date' => "$month/$day/$year",
 				);
 	}
-	return $form->get_html($defaults);
+	return $form->get_form($defaults);
 }
 
 function add_repeat_defaults($occs, &$defaults) {
