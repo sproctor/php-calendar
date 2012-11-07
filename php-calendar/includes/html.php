@@ -34,12 +34,6 @@ class Html {
         var $childElements;
 	var $error_func;
 
-        function Html() {
-                $args = func_get_args();
-                return call_user_func_array(array(&$this, '__construct'),
-                                $args);
-        }
-
         function __construct() {
 		$this->error_func = array(&$this, 'default_error_handler');
                 $args = func_get_args();
@@ -179,12 +173,6 @@ class Html {
  */
 class AttributeList {
         var $list;
-
-        function AttributeList() {
-                $args = func_get_args();
-                return call_user_func_array(array(&$this, '__construct'),
-                                $args);
-        }
 
         function __construct() {
                 $this->list = array();
