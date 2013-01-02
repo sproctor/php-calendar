@@ -1,7 +1,7 @@
 NEWS
 -----
 
-2.0-beta11:
+2.0-beta11 (2 Jan 2013):
 	- Changed date/time entry to date/time picker
 	- Added category to event/occurrence/summary views
 	- Added author to summary in month view

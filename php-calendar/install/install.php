@@ -48,18 +48,28 @@ if(empty($_POST['action'])) {
 } elseif($_POST['action'] == 'upgrade') {
 	if(empty($_POST['version'])) {
 		get_upgrade_version();
-	} elseif($_POST['version'] == "2.0beta10") {
-		create_logins_table();
-	} elseif($_POST['version'] == "2.0beta9") {
-		if(empty($_POST['timezone']))
-			upgrade_20_form();
-		else
-			upgrade_20_action();
-		create_login_table();
-	} elseif($_POST['version'] == "1.1") {
-		echo "<p>Sorry upgrading from version 1.1 is not supported at this time.";
 	} else {
-		echo "<p>Invalid version identifier.";
+		if(!include($phpc_config_file)) {
+			echo '<p>You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
+			return;
+		}
+
+		$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
+		
+
+		if($_POST['version'] == "2.0beta10") {
+			create_logins_table();
+			echo "<p>Update complete.";
+		} elseif($_POST['version'] == "2.0beta9") {
+			if(empty($_POST['timezone']))
+				upgrade_20_form();
+			else
+				upgrade_20_action();
+		} elseif($_POST['version'] == "1.1") {
+			echo "<p>Sorry upgrading from version 1.1 is not supported at this time.";
+		} else {
+			echo "<p>Invalid version identifier.";
+		}
 	}
 } elseif(!isset($_POST['my_hostname'])
 		&& !isset($_POST['my_username'])
@@ -85,6 +95,8 @@ function get_action() {
 }
 
 function get_upgrade_version() {
+	global $phpc_config_file;
+
 	if(!include($phpc_config_file)) {
 		echo '<p>You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
 		return;
@@ -101,8 +113,6 @@ function get_upgrade_version() {
 }
 
 function upgrade_20_form() {
-	global $phpc_config_file, $dbh;
-
 	echo '<div>Timezone: <select name="timezone">';
 	foreach(timezone_identifiers_list() as $timezone) {
 		echo "<option value=\"$timezone\">$timezone</option>\n";
@@ -114,12 +124,6 @@ function upgrade_20_form() {
 function upgrade_20_action() {
 	global $phpc_config_file, $dbh;
 
-	if(!include($phpc_config_file)) {
-		echo '<p>You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
-		return;
-	}
-
-	$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
 
 	$query = "ALTER TABLE `" . SQL_PREFIX . "occurrences`\n"
 		."ADD `start_ts` timestamp NULL default NULL,\n"
@@ -198,6 +202,8 @@ function upgrade_20_action() {
 				$query);
 
 	echo "<p>Calendar version updated.";
+
+	create_logins_table();
 
 	echo "<p>Update complete.";
 }
@@ -628,6 +634,8 @@ function create_logins_table() {
 
 	$dbh->query($query)
 		or db_error($dbh, 'Error creating logins table.', $query);
+
+	echo "<p>Logins table updated.";
 }
 
 ?>
