@@ -1,6 +1,10 @@
 NEWS
 -----
 
+2.0-beta12 (4 Jan 2013):
+	- Added files missing from previous release
+	- Updated to JQuery 1.8.3 and JQuery UI 1.9.2
+
 2.0-beta11 (2 Jan 2013):
 	- Changed date/time entry to date/time picker
 	- Added category to event/occurrence/summary views
