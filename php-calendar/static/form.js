@@ -70,8 +70,6 @@ function textcolor(bgcolor) {
 $(function() {
 	$(".form-date").datepicker();
 	$(".form-time").timepicker();
-	//$(".form-combobox").combobox();
-	//$(".form-question .ui-autocomplete-input").attr("size", "2");
 });
 
 $(document).ready(function(){
