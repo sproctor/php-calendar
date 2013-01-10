@@ -31,7 +31,7 @@ class PhpcEvent {
 
 	function __construct($event)
 	{
-		global $phpcid, $phpc_cal;
+		global $phpcid, $phpc_cal, $phpcdb;
 
 		$this->eid = $event['eid'];
 		$this->cid = $event['cid'];
