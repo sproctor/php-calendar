@@ -54,9 +54,15 @@ function config_form()
                                 $input = create_text($name, $default);
                                 break;
                         case PHPC_DROPDOWN:
-                                $input = create_select($name, $element[3],
+				$choices = $element[3];
+                                $input = create_select($name, $choices,
                                                 $default);
                                 break;
+			case PHPC_MULTI_DROPDOWN:
+				$choices = $element[3];
+				$input = create_multi_select($name, $choices,
+						$default);
+				break;
                         default:
                                 soft_error(_('Unsupported config type')
                                                 . ": $type");

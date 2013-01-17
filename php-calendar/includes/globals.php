@@ -63,6 +63,7 @@ $short_month_names = array(
 define('PHPC_CHECK', 1);
 define('PHPC_TEXT', 2);
 define('PHPC_DROPDOWN', 3);
+define('PHPC_MULTI_DROPDOWN', 4);
 
 $sort_options = array(
                 'start_date' => _('Start Date'),
