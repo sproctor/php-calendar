@@ -20,6 +20,52 @@ $(document).ready(function(){
     function() { showSummary(this); },
     function() { hideSummary(this); });
 
+  // Multi select stuff
+  var select_id = 1;
+  var options = new Array();
+  var default_option = false;
+  $(".phpc-multi-select").each(function() {
+    var master_id = "phpc-multi-master"+select_id
+    $(this).before("<select class=\"phpc-multi-master\" id=\""+master_id+"\"></select>");
+    $(this).children().each(function() {
+      if($(this).prop("tagName") == "OPTION") {
+        var val = $(this).attr("value");
+        $("#"+master_id).append("<option value=\""+val+"\">"+$(this).text()+"</option>");
+        options[val] = [this];
+        if($(this).attr("selected") == "selected")
+          default_option = val;
+      } else if($(this).prop("tagName") == "OPTGROUP") {
+        var val = $(this).attr("label");
+        var sub_options = new Array();
+        $("#"+master_id).append("<option value=\""+val+"\">"+val+"</option>");
+        $(this).children().each(function() {
+          sub_options.push(this);
+          if($(this).attr("selected") == "selected")
+            default_option = val;
+        });
+        options[val] = sub_options;
+      }
+    });
+    if(default_option !== false)
+      $("#"+master_id).val(default_option);
+    var select = this;
+    $("#"+master_id).each(function() {
+      var val = $("#"+master_id+" option:selected").attr("value");
+      $(select).empty();
+      for(var key in options[val]) {
+        $(select).append(options[val][key]);
+      }
+    });
+    $("#"+master_id).change(function() {
+      var val = $("#"+master_id+" option:selected").attr("value");
+      $(select).empty();
+      for(var key in options[val]) {
+        $(select).append(options[val][key]);
+      }
+    });
+    select_id++;
+  });
+
   // Generic form stuff
   $(".form-select").each(function(){
     formSelectUpdate($(this));
