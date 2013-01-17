@@ -37,10 +37,6 @@ function display_month()
 
 	$month_navbar = month_navbar($month, $year);
 	return tag('div',
-			tag("script", attributes('type="text/javascript"',
-					'src="static/jquery.hoverIntent.minified.js"'), ''),
-			tag("script", attributes('type="text/javascript"',
-					'src="static/summary.js"'), ''),
 			tag("div", attributes('id="phpc-summary-view"'), 
 				tag("div", attributes('class="phpc-summary-head"'),
 					tag("div", attributes('id="phpc-summary-title"'), ''),

@@ -663,7 +663,9 @@ function get_header_tags($path)
 			tag('script', attrs('type="text/javascript"',
 					"src=\"$path/phpc.js\""), ''),
 			tag("script", attrs('type="text/javascript"',
-					"src=\"$path/jquery.ui.timepicker.js\""), '')
+					"src=\"$path/jquery.ui.timepicker.js\""), ''),
+			tag("script", attributes('type="text/javascript"',
+					"src=\"$path/jquery.hoverIntent.minified.js\""), ''),
 		  )->toString();
 }
 ?>
