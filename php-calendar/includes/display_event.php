@@ -123,13 +123,13 @@ function display_event_by_oid($oid)
 	$month = $event->get_start_month();
 	$day = $event->get_start_day();
 
-	$event_tag = tag('div', attributes('class="phpc-event"'),
-			$event_header,
-			tag('p', attributes('class="phpc-desc"'),
-				$event->get_desc()));
+	$desc_tag = tag('div', attributes('class="phpc-desc"'),
+			tag('h3', _("Description")),
+			tag('p', $event->get_desc()));
 
-	return tag('div', attributes('class="phpc-main"'),
-			tag('h2', $event->get_subject()), $event_tag);
+	return tag('div', attributes('class="phpc-main phpc-event"'),
+			tag('h2', $event->get_subject()), $event_header,
+			$desc_tag);
 }
 
 function display_event_by_eid($eid)
@@ -153,7 +153,7 @@ function display_event_by_eid($eid)
 
 	// Add modify/delete links if this user has access to this event.
         if($event->can_modify()) {
-		$event_header->add(tag('div',
+		$event_header->add(tag('div', attrs('class="phpc-navbar"'),
 					create_event_link(_('Modify'),
 						'event_form', $eid), "\n",
 					create_event_link(_('Add Occurrence'),
@@ -162,10 +162,9 @@ function display_event_by_eid($eid)
 						'event_delete', $eid)));
 	}
 
-	$event_tag = tag('div', attributes('class="phpc-event"'),
-			$event_header,
-			tag('p', attributes('class="phpc-desc"'),
-				$event->get_desc()));
+	$desc_tag = tag('div', attributes('class="phpc-desc"'),
+			tag('h3', _("Description")),
+			tag('p', $event->get_desc()));
 
 	$occurrences_tag = tag('ul');
 	$occurrences = $phpcdb->get_occurrences_by_eid($eid);
@@ -176,14 +175,24 @@ function display_event_by_eid($eid)
 			$month = $occurrence->get_start_month();
 			$day = $occurrence->get_start_day();
 		}
-		$occurrences_tag->add(tag('li', create_occurrence_link(
-						$occurrence->get_date_string()
-						. ' ' . _('at') . ' '
-						. $occurrence->get_time_span_string(), 'display_event', $occurrence->get_oid())));
+		$oid = $occurrence->get_oid();
+		$occ_tag = tag('li', create_occurrence_link(
+					$occurrence->get_date_string()
+					. ' ' . _('at') . ' '
+					. $occurrence->get_time_span_string(),
+					'display_event',
+					$oid));
+		if($event->can_modify()) {
+			$occ_tag->add(" ",
+					create_occurrence_link(_('Edit'), 'occur_form', $oid), " ",
+					create_occurrence_link(_('Remove'), 'occurrence_delete', $oid));
+		}
+		$occurrences_tag->add($occ_tag);
 	}
 
-	return tag('div', attributes('class="phpc-main"'),
-			tag('h2', $event->get_subject()), $event_tag,
+	return tag('div', attributes('class="phpc-main phpc-event"'),
+			tag('h2', $event->get_subject()), $event_header,
+			$desc_tag, tag('h3', _('Occurrences')),
 			$occurrences_tag);
 }
 
