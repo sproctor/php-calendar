@@ -235,7 +235,7 @@ function attrs()
 }
 
 
-// creates a select element for a form
+// creates a select tag element for a form
 // returns HTML data for the element
 function create_select($name, $options, $default = false, $attrs = false)
 {
@@ -244,16 +244,53 @@ function create_select($name, $options, $default = false, $attrs = false)
 
 	$attrs->add("name=\"$name\"");
 	$attrs->add("id=\"$name\"");
-	$html = tag('select', $attrs);
+	$select = tag('select', $attrs);
 
 	foreach($options as $value => $text) {
-		$attributes = attributes("value=\"$value\"");
-		if($default !== false && $value == $default)
+		$attributes = attrs("value=\"$value\"");
+		if($value === $default)
 			$attributes->add('selected');
-		$html->add(tag('option', $attributes, $text));
+		$select->add(tag('option', $attributes, $text));
 	}
 
-	return $html;
+	return $select;
+}
+
+// creates a two stage select input
+// returns HTML data for the elements
+function create_multi_select($name, $option_lists, $default = false,
+		$attrs = false)
+{
+	if($attrs === false)
+		$attrs = attrs();
+
+	$attrs->add("name=\"$name\"");
+	$attrs->add("id=\"$name\"");
+	$attrs->add("class=\"phpc-multi-select\"");
+	$select = tag('select', $attrs);
+
+	foreach($option_lists as $category => $options) { 
+		if(is_array($options)) { 
+			$group = tag('optgroup', attrs("label=\"$category\""));
+			$select->add($group);
+			foreach($options as $value => $text) {
+				$attributes = attrs("value=\"$value\"");
+				if($value === $default)
+					$attributes->add('selected');
+				$text = str_replace('_', ' ', $text);
+				$group->add(tag('option', $attributes, $text));
+			}
+		} else {
+			$value = $options;
+			$text = $category;
+			$attributes = attrs("value=\"$value\"");
+			if($value === $default)
+				$attributes->add('selected');
+			$select->add(tag('option', $attributes, $text));
+		}
+	}
+
+	return $select;
 }
 
 // creates a select element for a form given a certain range
@@ -272,25 +309,5 @@ function create_select_range($name, $lbound, $ubound, $increment = 1,
 		$options[$i] = $text;
 	}
 	return create_select($name, $options, $default, $attrs);
-}
-
-$html_stylesheets = array();
-
-function html_add_stylesheet($stylesheet) {
-	global $html_stylesheets;
-
-	$html_stylesheets[] = $stylesheet;
-}
-
-function html_get_stylesheet_tags() {
-	global $html_stylesheets;
-
-	$tags = array();
-	foreach($html_stylesheets as $style) {
-		$tags[] = tag('link', attrs('rel="stylesheet"',
-					'type="text/css"',
-					"href=\"$style\""));
-	}
-	return $tags;
 }
 ?>

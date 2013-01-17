@@ -28,8 +28,6 @@ if(!defined('IN_PHPC')) {
 
 require_once('html.php');
 
-html_add_stylesheet('static/jquery-ui-timepicker.css');
-
 $required_error_message = "(required)";
 
 /* This class is the base of either a question or a group
@@ -664,13 +662,7 @@ class Form extends FormGroup {
                 foreach($this->list as $child) {
                         $table->add($child->get_html($this, $defaults));
                 }
-		$form = tag('form', $form_attrs,
-				tag("script",
-					attrs('type="text/javascript"',
-						'src="static/jquery.ui.timepicker.js"'), ''),
-				tag("script",
-					attrs('type="text/javascript"',
-						'src="static/form.js"'), ''));
+		$form = tag('form', $form_attrs);
 		$hidden_div = tag('div');
 		$have_hidden = false;
 		foreach($this->hidden as $name => $value) {

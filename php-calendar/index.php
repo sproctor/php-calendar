@@ -74,25 +74,10 @@ try {
 			$e->getMessage());
 }
 
-if(defined('PHPC_DEBUG'))
-	$jq_min = '';
-else
-	$jq_min = '.min';
-
 $html = tag('html', attrs("lang=\"$phpc_lang\""),
 		tag('head',
 			tag('title', $calendar_title),
-			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					'href="static/style.css"')),
-			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css\"")),
-			html_get_stylesheet_tags(),
-			tag("script", attrs('type="text/javascript"',
-					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery$jq_min.js\""), ''),
-			tag("script", attrs('type="text/javascript"',
-					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui$jq_min.js\""), ''),
-			tag('script', attrs('type="text/javascript"',
-					'src="static/script.js"'), ''),
+			get_header_tags("static"),
 			tag('meta', attrs('http-equiv="Content-Type"',
 					   'content="text/html; charset=UTF-8"'))),
 		tag('body', $content));

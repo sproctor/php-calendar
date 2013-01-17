@@ -470,40 +470,54 @@ function get_config_options()
 {
 	static $options = NULL;
 
-	if($options == NULL) {
-		$timezones = array("" => _("System"));
-		foreach(timezone_identifiers_list() as $timezone) {
-			$timezones[$timezone] = $timezone;
-		}
-		$languages = array("" => _("Default"));
-		foreach(get_languages() as $language) {
-			$languages[$language] = $language;
-		}
-		// name, text, type, value(s)
-		$options = array( 
-				array('week_start', _('Week Start'), PHPC_DROPDOWN,
-					array(
-						0 => _('Sunday'),
-						1 => _('Monday'),
-						6 => _('Saturday')
-					     )),
-				array('hours_24', _('24 Hour Time'), PHPC_CHECK),
-				array('calendar_title', _('Calendar Title'), PHPC_TEXT),
-				array('subject_max', _('Maximum Subject Length'), PHPC_TEXT),
-				array('events_max', _('Events Display Daily Maximum'), PHPC_TEXT),
-				array('anon_permission', _('Public Permissions'), PHPC_DROPDOWN,
-					array(
-						_('Cannot read nor write events'),
-						_('Can read but not write events'),
-						_('Can create but not modify events'),
-						_('Can create and modify events')
-					     )
-				     ),
-				array('timezone', _('Default Timezone'), PHPC_DROPDOWN, $timezones),
-				array('language', _('Default Language'), PHPC_DROPDOWN, $languages),
-				);
+	if($options === NULL) {
+		$options = init_config_options();
 	}
 	return $options;
+}
+
+function init_config_options() {
+	$timezones = array();
+	$timezones[_("System")] = NULL;
+	foreach(timezone_identifiers_list() as $timezone) {
+		$sp = explode("/", $timezone, 2);
+		$continent = $sp[0];
+		if(empty($sp[1])) {
+			$timezones[$continent] = $timezone;
+		} else {
+			$area = $sp[1];
+			if(empty($timezones[$continent]))
+				$timezones[$continent] = array();
+			$timezones[$continent][$timezone] = $area;
+		}
+	}
+	$languages = array("" => _("Default"));
+	foreach(get_languages() as $language) {
+		$languages[$language] = $language;
+	}
+	// name, text, type, value(s)
+	return array( 
+			array('week_start', _('Week Start'), PHPC_DROPDOWN,
+				array(
+					0 => _('Sunday'),
+					1 => _('Monday'),
+					6 => _('Saturday')
+				     )),
+			array('hours_24', _('24 Hour Time'), PHPC_CHECK),
+			array('calendar_title', _('Calendar Title'), PHPC_TEXT),
+			array('subject_max', _('Maximum Subject Length'), PHPC_TEXT),
+			array('events_max', _('Events Display Daily Maximum'), PHPC_TEXT),
+			array('anon_permission', _('Public Permissions'), PHPC_DROPDOWN,
+				array(
+					_('Cannot read nor write events'),
+					_('Can read but not write events'),
+					_('Can create but not modify events'),
+					_('Can create and modify events')
+				     )
+			     ),
+			array('timezone', _('Default Timezone'), PHPC_MULTI_DROPDOWN, $timezones),
+			array('language', _('Default Language'), PHPC_DROPDOWN, $languages),
+			);
 }
 
 function get_calendar_list() {
@@ -624,5 +638,32 @@ function verify_token() {
 	if(empty($_SESSION["phpc_login"]) || empty($_COOKIE["phpc_login"])
 			|| $_COOKIE["phpc_login"] != $_SESSION["phpc_login"])
 		soft_error(_("Secret token mismatch. Possible request forgery attempt."));
+}
+
+function get_header_tags($path)
+{
+	global $phpc_protocol;
+
+	if(defined('PHPC_DEBUG'))
+		$jq_min = '';
+	else
+		$jq_min = '.min';
+
+	return tag('',
+			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
+					"href=\"$path/phpc.css\"")),
+			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
+					"href=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css\"")),
+			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
+					"href=\"$path/jquery-ui-timepicker.css")),
+			tag("script", attrs('type="text/javascript"',
+					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery$jq_min.js\""), ''),
+			tag("script", attrs('type="text/javascript"',
+					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui$jq_min.js\""), ''),
+			tag('script', attrs('type="text/javascript"',
+					"src=\"$path/phpc.js\""), ''),
+			tag("script", attrs('type="text/javascript"',
+					"src=\"$path/jquery.ui.timepicker.js\""), '')
+		  )->toString();
 }
 ?>
