@@ -649,7 +649,7 @@ function get_header_tags($path)
 	else
 		$jq_min = '.min';
 
-	return tag('',
+	return array(
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/phpc.css\"")),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
@@ -666,6 +666,11 @@ function get_header_tags($path)
 					"src=\"$path/jquery.ui.timepicker.js\""), ''),
 			tag("script", attributes('type="text/javascript"',
 					"src=\"$path/jquery.hoverIntent.minified.js\""), ''),
-		  )->toString();
+		  );
+}
+
+function embed_header($path)
+{
+	echo tag('', get_header_tags())->toString();
 }
 ?>
