@@ -111,7 +111,7 @@ class PhpcCalendar {
 		$this->require_user_perms();
 
 		return $this->can_admin()
-			|| !empty($$this->user_perms["modify"]);
+			|| !empty($this->user_perms["modify"]);
 	}
 
 	function can_create_readonly()
