@@ -65,12 +65,7 @@ function config_form()
 {
 	global $phpc_script, $phpc_user_tz, $phpc_user_lang;
 
-	$timezones = array("" => _("Default"));
-	foreach(timezone_identifiers_list() as $timezone) {
-		if(preg_match('/^(Africa|America|Antarctica|Arctic|Asia|Atlantic|Australia|Europe|India|Pacific)/', $timezone))
-			$timezones[$timezone] = $timezone;
-	}
-	$tz_input = create_select('timezone', $timezones,
+	$tz_input = create_multi_select('timezone', get_timezone_list(),
 			$phpc_user_tz);
 
 	$languages = array("" => _("Default"));

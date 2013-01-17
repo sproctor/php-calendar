@@ -477,20 +477,6 @@ function get_config_options()
 }
 
 function init_config_options() {
-	$timezones = array();
-	$timezones[_("System")] = NULL;
-	foreach(timezone_identifiers_list() as $timezone) {
-		$sp = explode("/", $timezone, 2);
-		$continent = $sp[0];
-		if(empty($sp[1])) {
-			$timezones[$continent] = $timezone;
-		} else {
-			$area = $sp[1];
-			if(empty($timezones[$continent]))
-				$timezones[$continent] = array();
-			$timezones[$continent][$timezone] = $area;
-		}
-	}
 	$languages = array("" => _("Default"));
 	foreach(get_languages() as $language) {
 		$languages[$language] = $language;
@@ -515,9 +501,27 @@ function init_config_options() {
 					_('Can create and modify events')
 				     )
 			     ),
-			array('timezone', _('Default Timezone'), PHPC_MULTI_DROPDOWN, $timezones),
+			array('timezone', _('Default Timezone'), PHPC_MULTI_DROPDOWN, get_timezone_list()),
 			array('language', _('Default Language'), PHPC_DROPDOWN, $languages),
 			);
+}
+
+function get_timezone_list() {
+	$timezones = array();
+	$timezones[_("Default")] = "";
+	foreach(timezone_identifiers_list() as $timezone) {
+		$sp = explode("/", $timezone, 2);
+		$continent = $sp[0];
+		if(empty($sp[1])) {
+			$timezones[$continent] = $timezone;
+		} else {
+			$area = $sp[1];
+			if(empty($timezones[$continent]))
+				$timezones[$continent] = array();
+			$timezones[$continent][$timezone] = $area;
+		}
+	}
+	return $timezones;
 }
 
 function get_calendar_list() {
