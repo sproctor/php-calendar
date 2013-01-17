@@ -655,7 +655,7 @@ function get_header_tags($path)
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css\"")),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"$path/jquery-ui-timepicker.css")),
+					"href=\"$path/jquery-ui-timepicker.css\"")),
 			tag("script", attrs('type="text/javascript"',
 					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery$jq_min.js\""), ''),
 			tag("script", attrs('type="text/javascript"',
