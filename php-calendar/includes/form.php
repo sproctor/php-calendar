@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2013 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -328,20 +328,24 @@ class FormDateQuestion extends FormAtomicQuestion {
         }
 }
 
-function form_time_input($qid, $defaults) {
+function form_time_input($qid, $defaults, $hour24) {
+	$showPeriod = $hour24 ? "false" : "true";
 	$time_attrs = attrs('type="text"', 'class="form-time"',
 			"name=\"$qid-time\"", "id=\"$qid-time\"");
 	if(isset($defaults["$qid-time"]))
 		$time_attrs->add("value=\"{$defaults["$qid-time"]}\"");
 
-	return tag('input', $time_attrs);
+	return array(tag('input', $time_attrs),
+			tag('script', attrs('type="text/javascript"'),
+				"\$('#$qid-time').timepicker({showPeriod: $showPeriod, showLeadingZero: false });"));
 }
 
 /* this class is for time input
  */
 class FormTimeQuestion extends FormAtomicQuestion {
+	var $hour24;
 
-        function __construct($qid, $subject, $description = false,
+        function __construct($qid, $subject, $hour24, $description = false,
                         $required = false) {
 		parent::__construct();
                 $this->qid = $qid;
@@ -349,11 +353,12 @@ class FormTimeQuestion extends FormAtomicQuestion {
                 $this->description = $description;
                 $this->required = $required;
 		$this->class .= " form-time-question";
+		$this->hour24 = $hour24;
         }
 
         protected function get_specific_html($parent, $defaults) {
                 return tag('div', attrs("class=\"{$this->class}\""),
-				form_time_input($this->qid, $defaults));
+				form_time_input($this->qid, $defaults, $this->hour24));
         }
 }
 
@@ -361,8 +366,9 @@ class FormTimeQuestion extends FormAtomicQuestion {
  */
 class FormDateTimeQuestion extends FormAtomicQuestion {
 	var $hour24;
+	var $date_format;
 
-        function __construct($qid, $subject, $hour24,
+        function __construct($qid, $subject, $hour24, $date_format,
 			$description = false, $required = false) {
 		parent::__construct();
                 $this->qid = $qid;
@@ -371,6 +377,7 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
                 $this->required = $required;
 		$this->class .= " form-date-time-question";
 		$this->hour24 = $hour24;
+		$this->date_format = $date_format;
         }
 
         protected function get_specific_html($parent, $defaults) {
@@ -378,7 +385,7 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
                 return array(_("Date") . ": ",
 				form_date_input($this->qid, $defaults),
 				" " . _('Time') . ": ",
-				form_time_input($this->qid, $defaults));
+				form_time_input($this->qid, $defaults, $this->hour24));
 	}
 }
 

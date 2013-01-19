@@ -35,6 +35,7 @@ function display_form() {
 	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal;
 
 	$hour24 = $phpc_cal->get_config('hours_24');
+	$date_format = $phpc_cal->get_config('date_format');
 	$form = new Form($phpc_script, _('Event Form'));
 	$form->add_part(new FormFreeQuestion('subject', _('Subject'),
 				false, $phpc_cal->get_config('subject_max'),
@@ -44,9 +45,9 @@ function display_form() {
 
 	$when_group = new FormGroup(_('When'));
 	$when_group->add_part(new FormDateTimeQuestion('start',
-				_('From'), $hour24));
+				_('From'), $hour24, $date_format));
 	$when_group->add_part(new FormDateTimeQuestion('end', _('To'),
-				$hour24));
+				$hour24, $date_format));
 
 	$time_type = new FormDropDownQuestion('time-type', _('Time Type'));
 	$time_type->add_option('normal', _('Normal'));
@@ -131,17 +132,13 @@ function display_form() {
 		$end_date = $event->get_end_month() . "/"
 			. $event->get_end_day() . "/"
 			. $event->get_end_year();
-		$start_time = $event->get_start_hour() . ":"
-			. $event->get_start_minute();
-		$end_time = $event->get_end_hour() . ":"
-			. $event->get_end_minute();
 		$defaults = array(
 				'subject' => $event->get_raw_subject(),
 				'description' => $event->get_raw_desc(),
 				'start-date' => $start_date,
 				'end-date' => $end_date,
-				'start-time' => $start_time,
-				'end-time' => $end_time,
+				'start-time' => $event->get_start_time(),
+				'end-time' => $event->get_end_time(),
 				'readonly' => $event->is_readonly(),
 				);
 
@@ -163,11 +160,12 @@ function display_form() {
 		add_repeat_defaults($occs, $defaults);
 
 	} else {
+		$hour24 = $phpc_cal->get_config('hours_24');
 		$defaults = array(
 				'start-date' => "$month/$day/$year",
 				'end-date' => "$month/$day/$year",
-				'start-time' => "17:00",
-				'end-time' => "18:00",
+				'start-time' => format_time_string(17, 0, $hour24),
+				'end-time' => format_time_string(18, 0, $hour24),
 				'daily-until-date' => "$month/$day/$year",
 				'weekly-until-date' => "$month/$day/$year",
 				'monthly-until-date' => "$month/$day/$year",
@@ -306,8 +304,10 @@ function process_form()
 	}
 
 	$duration = $end_ts - $start_ts;
-	if($duration < 0)
-		soft_error(_("An event cannot have an end earlier than its start."));
+	if($duration < 0) {
+		message(_("An event cannot have an end earlier than its start."));
+		return display_form();
+	}
 
 	verify_token();
 
@@ -449,13 +449,25 @@ function get_timestamp($prefix)
 		$hour = 0;
 		$minute = 0;
 	} else {
-		if(!preg_match('/(\d+):(\d+)/', $vars["$prefix-time"],
+		if(!preg_match('/(\d+):(\d+)\s?(\w+)?/', $vars["$prefix-time"],
 					$time_matches)) {
 			soft_error(sprintf(_("Malformed time in \"%s\" time."),
 						$prefix));
 		}
 		$hour = $time_matches[1];
 		$minute = $time_matches[2];
+		if(isset($time_matches[3])) {
+			$period = $time_matches[3];
+			if($hour == 12)
+				$hour = 0;
+			if(strcasecmp("am", $period) == 0) {
+				// AM
+			} else if(strcasecmp("pm", $period) == 0) {
+				$hour += 12;
+			} else {
+				soft_error(_("Unrecognized period: ") . $period);
+			}
+		}
 	}
 
 	if(!preg_match('/(\d+)\/(\d+)\/(\d+)/', $vars["$prefix-date"],

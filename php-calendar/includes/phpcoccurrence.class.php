@@ -93,8 +93,7 @@ class PhpcOccurrence extends PhpcEvent{
 			default:
 				return format_time_string($this->start_hour,
 						$this->start_minute,
-						$this->cal->get_config(
-							'hours_24'));
+						$this->cal->get_config('hours_24'));
 			case 1: // FULL DAY
 			case 3: // None
 				return '';
@@ -172,12 +171,26 @@ class PhpcOccurrence extends PhpcEvent{
 	}
 
 	function get_start_time() {
+		global $phpc_cal;
+		return format_time_string($this->start_hour,
+				$this->start_minute,
+				$phpc_cal->get_config('hours_24'));
+	}
+
+	function get_end_time() {
+		global $phpc_cal;
+		return format_time_string($this->end_hour,
+				$this->end_minute,
+				$phpc_cal->get_config('hours_24'));
+	}
+
+	function get_start_timestamp() {
 		return mktime(0, 0, 0, $this->get_start_month(),
 				$this->get_start_day(),
 				$this->get_start_year());
 	}
 
-	function get_end_time() {
+	function get_end_timestamp() {
 		return mktime(0, 0, 0, $this->get_end_month(),
 				$this->get_end_day(), $this->get_end_year());
 	}
@@ -187,8 +200,8 @@ class PhpcOccurrence extends PhpcEvent{
 	{
 		global $phpc_datefmt;
 
-		$start_time = $this->get_start_time();
-		$end_time = $this->get_end_time();
+		$start_time = $this->get_start_timestamp();
+		$end_time = $this->get_end_timestamp();
 
 		$str = sprintf(date($phpc_datefmt, $start_time),
 				short_month_name($this->get_start_month()));

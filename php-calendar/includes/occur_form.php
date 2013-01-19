@@ -35,13 +35,14 @@ function display_form() {
 	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal;
 
 	$hour24 = $phpc_cal->get_config('hours_24');
+	$date_format = $phpc_cal->get_config('date_format');
 	$form = new Form($phpc_script, _('Occurrence Form'));
 
 	$when_group = new FormGroup(_('When'));
 	$when_group->add_part(new FormDateTimeQuestion('start',
-				_('From'), $hour24));
+				_('From'), $hour24, $date_format));
 	$when_group->add_part(new FormDateTimeQuestion('end', _('To'),
-				$hour24));
+				$hour24, $date_format));
 
 	$time_type = new FormDropDownQuestion('time-type', _('Time Type'));
 	$time_type->add_option('normal', _('Normal'));
@@ -66,15 +67,11 @@ function display_form() {
 		$end_date = $occ->get_end_month() . "/"
 			. $occ->get_end_day() . "/"
 			. $occ->get_end_year();
-		$start_time = $occ->get_start_hour() . ":"
-			. $occ->get_start_minute();
-		$end_time = $occ->get_end_hour() . ":"
-			. $occ->get_end_minute();
 		$defaults = array(
 				'start-date' => $start_date,
 				'end-date' => $end_date,
-				'start-time' => $start_time,
-				'end-time' => $end_time,
+				'start-time' => $occ->get_start_time(),
+				'end-time' => $occ->get_end_time(),
 				);
 
 		switch($occ->get_time_type()) {
@@ -94,8 +91,8 @@ function display_form() {
 		$defaults = array(
 				'start-date' => "$month/$day/$year",
 				'end-date' => "$month/$day/$year",
-				'start-time' => "17:00",
-				'end-time' => "18:00",
+				'start-time' => format_time_string(17, 0, $hour24),
+				'end-time' => format_time_string(18, 0, $hour24),
 				);
 	}
 
