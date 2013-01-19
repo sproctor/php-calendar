@@ -35,17 +35,13 @@ function config_form()
 	global $phpc_cal, $phpc_script, $vars;
 
         $tbody = tag('tbody');
-	$config = $phpc_cal->get_config();
 
         foreach(get_config_options() as $element) {
                 $name = $element[0];
                 $text = $element[1];
                 $type = $element[2];
+		$default = $phpc_cal->get_config($name, false);
 
-		if(isset($config[$name]))
-			$default = $config[$name];
-		else
-			$default = false;
                 switch($type) {
                         case PHPC_CHECK:
                                 $input = create_checkbox($name, '1', $default);

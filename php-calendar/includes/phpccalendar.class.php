@@ -42,14 +42,10 @@ class PhpcCalendar {
 		return $this->cid;
 	}
 
-	function get_config($option = false, $default = '') {
-		// if no option is given, return all
-		if($option === false)
-			return $this->config;
-
+	function get_config($option, $default = '') {
 		if(!isset($this->config[$option])) {
 			if(defined('PHPC_DEBUG'))
-				soft_error("Undefined config option \"$option\".");
+				message("Undefined config option \"$option\".");
 			return $default;
 		}
 		return $this->config[$option];
