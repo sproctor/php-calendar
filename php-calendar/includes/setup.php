@@ -230,6 +230,9 @@ if($phpc_translate) {
 	$phpc_lang = 'en';
 }
 
+// Must be included after translation is setup
+require_once("$phpc_includes_path/globals.php");
+
 if(!empty($vars['clearmsg']))
 	$_SESSION['messages'] = NULL;
 

@@ -32,7 +32,6 @@ if(!function_exists('_')) {
 }
 
 require_once("$phpc_includes_path/html.php");
-require_once("$phpc_includes_path/globals.php");
 require_once("$phpc_includes_path/util.php");
 
 // checks global variables to see if the user is logged in.
@@ -503,6 +502,7 @@ function init_config_options() {
 			     ),
 			array('timezone', _('Default Timezone'), PHPC_MULTI_DROPDOWN, get_timezone_list()),
 			array('language', _('Default Language'), PHPC_DROPDOWN, $languages),
+			array('date_format', _('Date Format'), PHPC_DROPDOWN, get_date_format_list()),
 			);
 }
 
@@ -522,6 +522,13 @@ function get_timezone_list() {
 		}
 	}
 	return $timezones;
+}
+
+function get_date_format_list()
+{
+	return array(	_("Month Day Year"),
+			_("Year Month Day"),
+			_("Day Month Year"));
 }
 
 function get_calendar_list() {
