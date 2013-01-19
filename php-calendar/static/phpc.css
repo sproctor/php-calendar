@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Sean Proctor
+ * Copyright 2013 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,23 +121,14 @@ div.phpc-main {
   padding-right: .5em;
 }
 
-.phpc-event {
-  border: 2px solid black;
-  color: black;
-  background-color: #CCC;
-  margin: 0;
-  padding: .5em;
-}
-
 .phpc-event-header {
-  border: 1px solid black;
-  background-color: #AAA;
   padding: .5em;
 }
 
-.phpc-desc {
+.phpc-desc p {
+  border: 1px solid black;
+  background-color: #DDD;
   padding: .5em;
-  margin: 0;
   text-align: justify;
 }
 
@@ -191,16 +182,19 @@ td.phpc-none {
   padding: 0;
 }
 
-.phpc-main ul {
-  margin: 2px;
-  padding: 0;
-  list-style-type: none;
+.phpc-calendar ul {
   border-color: black;
   border-style: solid;
   border-width: 1px 1px 0 1px;
 }
 
-.phpc-main li a {
+.phpc-main ul {
+  list-style-type: none;
+  margin: 2px;
+  padding: 0;
+}
+
+.phpc-calendar li a {
   display: block;
   font-size: 80%;
   font-weight: normal;
@@ -213,7 +207,7 @@ td.phpc-none {
   padding: 2px;
 }
 
-.phpc-main li a:hover {
+.phpc-calendar li a:hover {
   background-color: #DDD;
   color: black;
 }
