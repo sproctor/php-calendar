@@ -3,7 +3,6 @@ var cache = new Object;
  
 $(function() {
 	$(".form-date").datepicker();
-	$(".form-time").timepicker();
 });
 
 $(document).ready(function(){
