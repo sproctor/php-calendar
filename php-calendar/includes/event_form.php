@@ -468,8 +468,8 @@ function get_timestamp($prefix)
 		}
 	}
 
-	if(!preg_match('/(\d+)[\/-](\d+)[\/-](\d+)/', $vars["$prefix-date"],
-				$date_matches)) {
+	if(!preg_match('/(\d+)[\/\-\ ](\d+)[\/\-\ ](\d+)/',
+				$vars["$prefix-date"], $date_matches)) {
 		soft_error(sprintf(_("Malformed time in \"%s\" date."),
 					$prefix));
 	}
