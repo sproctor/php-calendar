@@ -300,19 +300,22 @@ class FormLongFreeQuestion extends FormAtomicQuestion {
         }
 }
 
-function form_date_input($qid, $defaults) {
+function form_date_input($qid, $defaults, $dateFormat) {
 	$date_attrs = attrs('type="text"', 'class="form-date"',
 			"name=\"$qid-date\"", "id=\"$qid-date\"");
 	if(isset($defaults["$qid-date"]))
 		$date_attrs->add("value=\"{$defaults["$qid-date"]}\"");
-	return tag('input', $date_attrs);
+	return array(tag('input', $date_attrs),
+			tag('script', attrs('type="text/javascript"'),
+				"\$('#$qid-date').datepicker({dateFormat: \"$dateFormat\" });"));
 }
 
 /* this class is for date input
  */
 class FormDateQuestion extends FormAtomicQuestion {
+	var $date_format;
 
-        function __construct($qid, $subject, $description = false,
+        function __construct($qid, $subject, $date_format, $description = false,
                         $required = false) {
 		parent::__construct();
                 $this->qid = $qid;
@@ -320,11 +323,30 @@ class FormDateQuestion extends FormAtomicQuestion {
                 $this->description = $description;
                 $this->required = $required;
 		$this->class .= " form-date-question";
+		$this->date_format = $date_format;
         }
 
         protected function get_specific_html($parent, $defaults) {
+		switch($this->date_format) {
+			case 0: // Month Day Year
+				$dateFormat = "mm/dd/yy";
+				$date_string = "MM/DD/YYYY";
+				break;
+			case 1: // Year Month Day
+				$dateFormat = "yy-mm-dd";
+				$date_string = "YYYY-MM-DD";
+				break;
+			case 2: // Day Month Year
+				$dateFormat = "dd-mm-yy";
+				$date_string = "DD-MM-YYYY";
+				break;
+			default:
+				soft_error("Unrecognized date format.");
+		}
+
                 return tag('div', attrs("class=\"{$this->class}\""),
-				form_date_input($this->qid, $defaults));
+				form_date_input($this->qid, $defaults,
+					$dateFormat));
         }
 }
 
@@ -381,11 +403,29 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
         }
 
         protected function get_specific_html($parent, $defaults) {
+		switch($this->date_format) {
+			case 0: // Month Day Year
+				$dateFormat = "mm/dd/yy";
+				$date_string = "MM/DD/YYYY";
+				break;
+			case 1: // Year Month Day
+				$dateFormat = "yy-mm-dd";
+				$date_string = "YYYY-MM-DD";
+				break;
+			case 2: // Day Month Year
+				$dateFormat = "dd-mm-yy";
+				$date_string = "DD-MM-YYYY";
+				break;
+			default:
+				soft_error("Unrecognized date format.");
+		}
 
-                return array(_("Date") . ": ",
-				form_date_input($this->qid, $defaults),
+                return array(_("Date") . " ($date_string): ",
+				form_date_input($this->qid, $defaults,
+					$dateFormat),
 				" " . _('Time') . ": ",
-				form_time_input($this->qid, $defaults, $this->hour24));
+				form_time_input($this->qid, $defaults,
+					$this->hour24));
 	}
 }
 

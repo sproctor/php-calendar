@@ -95,8 +95,36 @@ function real_escape_r($var) {
 
 function asbool($val)
 {
-	if ($val) return "1";
-	return "0";
+	return $val ? "1" : "0";
+}
+
+function format_date_string($year, $month, $day, $date_format)
+{
+	$month_name = short_month_name($month);
+	switch($date_format) {
+		case 0: // Month Day Year
+			return "$month_name $day, $year";
+		case 1: // Year Month Day
+			return "$year $month_name $day";
+		case 2: // Day Month Year
+			return "$day $month_name $year";
+		default:
+			soft_error("Invalid date_format");
+	}
+}
+
+function format_short_date_string($year, $month, $day, $date_format)
+{
+	switch($date_format) {
+		case 0: // Month Day Year
+			return "$month/$day/$year";
+		case 1: // Year Month Day
+			return "$year-$month-$day";
+		case 2: // Day Month Year
+			return "$day-$month-$year";
+		default:
+			soft_error("Invalid date_format");
+	}
 }
 
 function format_time_string($hour, $minute, $hour24)

@@ -1,10 +1,6 @@
 var activeRequest = null;
 var cache = new Object;
  
-$(function() {
-	$(".form-date").datepicker();
-});
-
 $(document).ready(function(){
   // Add space at top of page for messages
   padding = 0;

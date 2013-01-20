@@ -1,6 +1,11 @@
 NEWS
 -----
 
+2.0-rc1
+	- Split timezone entry into two dropdowns
+	- Add date format settings
+	- Critical bug fixes
+
 2.0-beta12 (4 Jan 2013):
 	- Added files missing from previous release
 	- Updated to JQuery 1.8.3 and JQuery UI 1.9.2

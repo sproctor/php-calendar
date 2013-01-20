@@ -91,9 +91,7 @@ class PhpcOccurrence extends PhpcEvent{
 	{
 		switch($this->time_type) {
 			default:
-				return format_time_string($this->start_hour,
-						$this->start_minute,
-						$this->cal->get_config('hours_24'));
+				return $this->get_start_time();
 			case 1: // FULL DAY
 			case 3: // None
 				return '';
@@ -107,10 +105,8 @@ class PhpcOccurrence extends PhpcEvent{
 		switch($this->time_type) {
 			default:
 				$hour24 = $this->cal->get_config('hours_24');
-				$start_time = format_time_string($this->start_hour,
-						$this->start_minute, $hour24);
-				$end_time = format_time_string($this->end_hour,
-						$this->end_minute, $hour24);
+				$start_time = $this->get_start_time();
+				$end_time = $this->get_end_time();
 				return $start_time.' '._('to').' '.$end_time;
 			case 1: // FULL DAY
 			case 3: // None
@@ -170,18 +166,40 @@ class PhpcOccurrence extends PhpcEvent{
 		return $this->end_minute;
 	}
 
+	function get_start_date() {
+		return format_date_string($this->start_year, $this->start_month,
+				$this->start_day,
+				$this->cal->get_config('date_format'));
+	}
+
+	function get_short_start_date() {
+		return format_short_date_string($this->start_year,
+				$this->start_month, $this->start_day,
+				$this->cal->get_config('date_format'));
+	}
+
 	function get_start_time() {
-		global $phpc_cal;
 		return format_time_string($this->start_hour,
 				$this->start_minute,
-				$phpc_cal->get_config('hours_24'));
+				$this->cal->get_config('hours_24'));
+	}
+
+	function get_end_date() {
+		return format_date_string($this->end_year, $this->end_month,
+				$this->end_day,
+				$this->cal->get_config('date_format'));
+	}
+
+	function get_short_end_date() {
+		return format_short_date_string($this->end_year,
+				$this->end_month, $this->end_day,
+				$this->cal->get_config('date_format'));
 	}
 
 	function get_end_time() {
-		global $phpc_cal;
 		return format_time_string($this->end_hour,
 				$this->end_minute,
-				$phpc_cal->get_config('hours_24'));
+				$this->cal->get_config('hours_24'));
 	}
 
 	function get_start_timestamp() {
@@ -198,18 +216,13 @@ class PhpcOccurrence extends PhpcEvent{
 	// takes start and end dates and returns a nice display
 	function get_date_string()
 	{
-		global $phpc_datefmt;
-
 		$start_time = $this->get_start_timestamp();
 		$end_time = $this->get_end_timestamp();
 
-		$str = sprintf(date($phpc_datefmt, $start_time),
-				short_month_name($this->get_start_month()));
+		$str = $this->get_start_date();
 
-		if($start_time != $end_time) {
-			$str .= ' - ' . sprintf(date($phpc_datefmt, $end_time),
-					short_month_name($this->get_end_month()));
-		}
+		if($start_time != $end_time)
+			$str .= ' - ' . $this->get_end_date();
 
 		return $str;
 	}

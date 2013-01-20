@@ -152,7 +152,6 @@ if(!empty($_SESSION['phpc_uid'])) {
 }
 
 // setup translation stuff
-$phpc_datefmt = "\%\s j, Y";
 if($phpc_translate) {
 	$phpc_cal_lang = $phpc_cal->get_config('language');
 	if(!empty($vars['lang'])) {
@@ -172,46 +171,36 @@ if($phpc_translate) {
 	switch($phpc_lang) {
 		case 'bg':
 			$locale = setlocale(LC_ALL, 'bg_BG.utf8', 'bg.utf8', 'bg');
-			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'ca':
 			$locale = setlocale(LC_ALL, 'ca_ES.utf8', 'ca.utf8', 'ca');
-			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'da':
 			$locale = setlocale(LC_ALL, 'da_DK.utf8', 'da.utf8', 'da');
-			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'de':
 			$locale = setlocale(LC_ALL, 'de_DE.utf8', 'de.utf8', 'de', 'ge');
-			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'en':
 			$locale = setlocale(LC_ALL, 'C');
 			break;
                 case 'es':
                         $locale = setlocale(LC_ALL, 'es_ES.utf8', 'es.utf8', 'es');
-			$phpc_datefmt = "j \%\s Y";
 			break;
 		case 'fr':
 			$locale = setlocale(LC_ALL, 'fr_FR.utf8', 'fr.utf8', 'fr');
-			$phpc_datefmt = "j \%\s Y";
 			break;
                 case 'it':
                         $locale = setlocale(LC_ALL, 'it_IT.utf8', 'it.utf8', 'it');
-			$phpc_datefmt = "j \%\s Y";
 			break;
                 case 'ja':
                         $locale = setlocale(LC_ALL, 'ja_JP.utf8', 'ja.utf8', 'ja', 'jp');
-			$phpc_datefmt = "j \%\s Y";
                         break;
                 case 'nl':
                         $locale = setlocale(LC_ALL, 'nl_NL.utf8', 'nl.utf8', 'nl');
-			$phpc_datefmt = "j \%\s Y";
                         break;
 		case 'zh':
 			$locale = setlocale(LC_ALL, 'zh_CN.utf8', 'zh.utf8', 'zh');
-			$phpc_datefmt = "j \%\s Y";
 			break;
 		default:
 			$phpc_lang = 'en';

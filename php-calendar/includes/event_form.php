@@ -74,28 +74,29 @@ function display_form() {
 			_('Repeat every how many days?'));
 	$every_day->add_options(create_sequence(1, 30));
 	$daily_group->add_part($every_day);
-	$daily_group->add_part(new FormDateQuestion('daily-until', _('Until')));
+	$daily_group->add_part(new FormDateQuestion('daily-until', _('Until'),
+				$date_format));
 
 	$every_week = new FormDropdownQuestion('every-week', _('Every'),
 			_('Repeat every how many weeks?'));
 	$every_week->add_options(create_sequence(1, 30));
 	$weekly_group->add_part($every_week);
 	$weekly_group->add_part(new FormDateQuestion('weekly-until',
-				_('Until')));
+				_('Until'), $date_format));
 
 	$every_month = new FormDropdownQuestion('every-month', _('Every'),
 			_('Repeat every how many months?'));
 	$every_month->add_options(create_sequence(1, 30));
 	$monthly_group->add_part($every_month);
 	$monthly_group->add_part(new FormDateQuestion('monthly-until',
-				_('Until')));
+				_('Until'), $date_format));
 
 	$every_year = new FormDropdownQuestion('every-year', _('Every'),
 			_('Repeat every how many years?'));
 	$every_year->add_options(create_sequence(1, 30));
 	$yearly_group->add_part($every_year);
 	$yearly_group->add_part(new FormDateQuestion('yearly-until',
-				_('Until')));
+				_('Until'), $date_format));
 
 	$when_group->add_part($repeat_type);
 
@@ -126,17 +127,11 @@ function display_form() {
 		$occs = $phpcdb->get_occurrences_by_eid($vars['eid']);
 		$event = $occs[0];
 
-		$start_date = $event->get_start_month() . "/"
-			. $event->get_start_day() . "/"
-			. $event->get_start_year();
-		$end_date = $event->get_end_month() . "/"
-			. $event->get_end_day() . "/"
-			. $event->get_end_year();
 		$defaults = array(
 				'subject' => $event->get_raw_subject(),
 				'description' => $event->get_raw_desc(),
-				'start-date' => $start_date,
-				'end-date' => $end_date,
+				'start-date' => $event->get_short_start_date(),
+				'end-date' => $event->get_short_end_date(),
 				'start-time' => $event->get_start_time(),
 				'end-time' => $event->get_end_time(),
 				'readonly' => $event->is_readonly(),
@@ -161,15 +156,18 @@ function display_form() {
 
 	} else {
 		$hour24 = $phpc_cal->get_config('hours_24');
+		$datefmt = $phpc_cal->get_config('date_format');
+		$date_string = format_short_date_string($year, $month, $day,
+				$datefmt);
 		$defaults = array(
-				'start-date' => "$month/$day/$year",
-				'end-date' => "$month/$day/$year",
+				'start-date' => $date_string,
+				'end-date' => $date_string,
 				'start-time' => format_time_string(17, 0, $hour24),
 				'end-time' => format_time_string(18, 0, $hour24),
-				'daily-until-date' => "$month/$day/$year",
-				'weekly-until-date' => "$month/$day/$year",
-				'monthly-until-date' => "$month/$day/$year",
-				'yearly-until-date' => "$month/$day/$year",
+				'daily-until-date' => $date_string,
+				'weekly-until-date' => $date_string,
+				'monthly-until-date' => $date_string,
+				'yearly-until-date' => $date_string,
 				);
 	}
 	return $form->get_form($defaults);
@@ -439,7 +437,7 @@ function process_form()
 
 function get_timestamp($prefix)
 {
-	global $vars;
+	global $vars, $phpc_cal;
 
 	if(!isset($vars["$prefix-date"]))
 		soft_error(sprintf(_("Required field \"%s\" year was not set."),
@@ -470,14 +468,31 @@ function get_timestamp($prefix)
 		}
 	}
 
-	if(!preg_match('/(\d+)\/(\d+)\/(\d+)/', $vars["$prefix-date"],
+	if(!preg_match('/(\d+)[\/-](\d+)[\/-](\d+)/', $vars["$prefix-date"],
 				$date_matches)) {
 		soft_error(sprintf(_("Malformed time in \"%s\" date."),
 					$prefix));
 	}
-	$month = $date_matches[1];
-	$day = $date_matches[2];
-	$year = $date_matches[3];
+	
+	switch($phpc_cal->get_config('date_format')) {
+		case 0: // Month Day Year
+			$month = $date_matches[1];
+			$day = $date_matches[2];
+			$year = $date_matches[3];
+			break;
+		case 1: // Year Month Day
+			$year = $date_matches[1];
+			$month = $date_matches[2];
+			$day = $date_matches[3];
+			break;
+		case 2: // Day Month Year
+			$day = $date_matches[1];
+			$month = $date_matches[2];
+			$year = $date_matches[3];
+			break;
+		default:
+			soft_error("Invalid date_format");
+	}
 
 	return mktime($hour, $minute, 0, $month, $day, $year);
 }
