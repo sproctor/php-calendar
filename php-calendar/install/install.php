@@ -541,6 +541,7 @@ function add_calendar()
 
 	$config_array = array(
 			'hours_24' => '0',
+			'date_format' => '0',
 			'week_start' => '0',
 			'translate' => '1',
 			'subject_max' => '50',
