@@ -21,7 +21,7 @@ if ( !defined('IN_PHPC') ) {
 
 function event_delete()
 {
-	global $vars, $phpcdb;
+	global $vars, $phpcdb, $phpc_script;
 
 	$html = tag('div', attributes('class="phpc-container"'));
 
