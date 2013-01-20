@@ -79,6 +79,9 @@ function create_calendar_form()
                         case PHPC_DROPDOWN:
                                 $input = create_select($name, $element[3]);
                                 break;
+                        case PHPC_MULTI_DROPDOWN:
+                                $input = create_multi_select($name, $element[3]);
+                                break;
                         default:
                                 soft_error(_('Unsupported config type')
                                                 . ": $type");
