@@ -39,30 +39,8 @@ function config_form()
         foreach(get_config_options() as $element) {
                 $name = $element[0];
                 $text = $element[1];
-                $type = $element[2];
 		$default = $phpc_cal->get_config($name, false);
-
-                switch($type) {
-                        case PHPC_CHECK:
-                                $input = create_checkbox($name, '1', $default);
-                                break;
-                        case PHPC_TEXT:
-                                $input = create_text($name, $default);
-                                break;
-                        case PHPC_DROPDOWN:
-				$choices = $element[3];
-                                $input = create_select($name, $choices,
-                                                $default);
-                                break;
-			case PHPC_MULTI_DROPDOWN:
-				$choices = $element[3];
-				$input = create_multi_select($name, $choices,
-						$default);
-				break;
-                        default:
-                                soft_error(_('Unsupported config type')
-                                                . ": $type");
-                }
+		$input = create_config_input($element, $default);
 
                 $tbody->add(tag('tr',
                                 tag('th', $text),

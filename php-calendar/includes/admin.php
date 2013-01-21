@@ -65,27 +65,8 @@ function create_calendar_form()
         $tbody = tag('tbody');
 
         foreach(get_config_options() as $element) {
-                $name = $element[0];
                 $text = $element[1];
-                $type = $element[2];
-
-                switch($type) {
-                        case PHPC_CHECK:
-                                $input = create_checkbox($name, '1');
-                                break;
-                        case PHPC_TEXT:
-                                $input = create_text($name);
-                                break;
-                        case PHPC_DROPDOWN:
-                                $input = create_select($name, $element[3]);
-                                break;
-                        case PHPC_MULTI_DROPDOWN:
-                                $input = create_multi_select($name, $element[3]);
-                                break;
-                        default:
-                                soft_error(_('Unsupported config type')
-                                                . ": $type");
-                }
+		$input = create_config_input($element);
 
                 $tbody->add(tag('tr',
                                 tag('th', $text),

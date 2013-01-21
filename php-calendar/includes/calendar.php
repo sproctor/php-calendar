@@ -684,4 +684,30 @@ function embed_header($path)
 {
 	echo tag('', get_header_tags())->toString();
 }
+
+function create_config_input($element, $default = false)
+{
+	$name = $element[0];
+	$type = $element[2];
+
+	switch($type) {
+		case PHPC_CHECK:
+			$input = create_checkbox($name, '1', $default);
+			break;
+		case PHPC_TEXT:
+			$input = create_text($name, $default);
+			break;
+		case PHPC_DROPDOWN:
+			$choices = $element[3];
+			$input = create_select($name, $choices, $default);
+			break;
+		case PHPC_MULTI_DROPDOWN:
+			$choices = $element[3];
+			$input = create_multi_select($name, $choices, $default);
+			break;
+		default:
+			soft_error(_('Unsupported config type') . ": $type");
+	}
+	return $input;
+}
 ?>
