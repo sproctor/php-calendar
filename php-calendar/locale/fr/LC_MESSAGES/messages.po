@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 2.0-beta12\n"
 "Report-Msgid-Bugs-To: Sean Proctor <sproctor@gmail.com>\n"
 "POT-Creation-Date: 2004-04-14 16:20-0400\n"
-"PO-Revision-Date: 2013-01-18 18:51+0100\n"
+"PO-Revision-Date: 2013-01-21 13:17+0100\n"
 "Last-Translator: ziggy <ziginfo@wanadoo.fr>\n"
 "Language-Team: France\n"
 "MIME-Version: 1.0\n"
@@ -117,7 +117,7 @@ msgstr "effacer"
 
 #: includes/cadmin.php:163
 msgid "Calendar Categories"
-msgstr "Cat&eacute;dories Agenda"
+msgstr "Cat&eacute;gories Agenda"
 
 #: includes/cadmin.php:166 includes/category_form.php:28
 msgid "Name"
@@ -190,6 +190,22 @@ msgstr "Samedi"
 #: includes/calendar.php:635
 msgid "24 Hour Time"
 msgstr "24H"
+
+#: includes/calendar.php:494
+msgid "Events Display Daily Maximum"
+msgstr "Nombre max d'affichage par Jour"
+
+#: includes/calendar.php:503
+msgid "Default Timezone"
+msgstr "Fuseau Horaire"
+
+#: includes/calendar.php:504
+msgid "Default Language"
+msgstr "Langue par D&eacute;faut"
+
+#: includes/calendar.php:505
+msgid "Date Format"
+msgstr "Format de Date"
 
 #: includes/calendar.php:636
 msgid "Calendar Title"
@@ -378,11 +394,11 @@ msgstr "Mois-Pr&eacute;c&eacute;dent"
 
 #: includes/display_month.php:84
 msgid "next month"
-msgstr "Mois-Prochain"
+msgstr "Mois-Suivant"
 
 #: includes/display_month.php:86
 msgid "next year"
-msgstr "Ann&eacute;e-Prochaine"
+msgstr "Ann&eacute;e-Suivante"
 
 #: includes/event_delete.php:29
 msgid "No event selected."
@@ -408,11 +424,11 @@ msgstr "&Agrave;"
 msgid "Time Type"
 msgstr "Type d'Horaire"
 
-#: includes/event_form.php:39 includes/globals.php:63
+#: includes/event_form.php:40 includes/globals.php:63
 msgid "Normal"
 msgstr "Normale"
 
-#: includes/event_form.php:40 includes/globals.php:64
+#: includes/event_form.php:39 includes/globals.php:64
 msgid "Full Day"
 msgstr "Journ&eacute;e enti&egrave;re"
 
@@ -534,13 +550,17 @@ msgstr "Erreur d'envoi"
 msgid "Cannot add a non-form element to a form."
 msgstr "Erreur"
 
-#: includes/form.php:376 includes/form.php:440
-msgid "AM"
-msgstr ""
+#: includes/form.php:331 includes/form.php:407
+msgid "Month Day Year"
+msgstr "Mois Jour An"
 
-#: includes/form.php:376 includes/form.php:440
-msgid "PM"
-msgstr ""
+#: includes/form.php:335 includes/form.php:411
+msgid "Year Month Day"
+msgstr "An Mois Jour"
+
+#: includes/form.php:339 includes/form.php:415
+msgid "Day Month Year"
+msgstr "Jour Mois An"
 
 #: includes/form.php:444
 msgid "Date:"
@@ -720,7 +740,7 @@ msgstr ""
 
 #: includes/phpcdatabase.class.php:119 includes/phpcdatabase.class.php:204
 msgid "Event doesn't exist"
-msgstr ""
+msgstr "L'&Eacute;v&eacute;nement n'existe pas !"
 
 #: includes/phpcdatabase.class.php:135
 msgid "Error in get_category"
@@ -744,7 +764,7 @@ msgstr ""
 
 #: includes/phpcdatabase.class.php:255 includes/phpcdatabase.class.php:271
 msgid "Error while removing an event."
-msgstr ""
+msgstr "Erreur"
 
 #: includes/phpcdatabase.class.php:286 includes/phpcdatabase.class.php:317
 msgid "Error while removing a calendar"
@@ -752,15 +772,15 @@ msgstr ""
 
 #: includes/phpcdatabase.class.php:289
 msgid "Error while calendar config"
-msgstr ""
+msgstr "Erreur"
 
 #: includes/phpcdatabase.class.php:302
 msgid "Error while removing category."
-msgstr ""
+msgstr "Erreur"
 
 #: includes/phpcdatabase.class.php:322
 msgid "Error while removing "
-msgstr ""
+msgstr "Erreur"
 
 #: includes/phpcdatabase.class.php:340
 msgid "Could not read configuration"
@@ -776,7 +796,7 @@ msgstr "Impossible d'acc&eacute;der aux agenda"
 
 #: includes/phpcdatabase.class.php:409 includes/phpcdatabase.class.php:431
 msgid "Could not get user."
-msgstr ""
+msgstr "Impossible de trouver cet utilisateur"
 
 #: includes/phpcdatabase.class.php:447 includes/phpcdatabase.class.php:463
 msgid "Error getting user."
