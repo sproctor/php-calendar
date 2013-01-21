@@ -1,7 +1,10 @@
 NEWS
 -----
 
-2.0-rc1
+2.0-rc2 (21 Jan 21013):
+	- Fixed broken admin page
+
+2.0-rc1 (20 Jan 2013):
 	- Split timezone entry into two dropdowns
 	- Add date format settings
 	- Critical bug fixes
