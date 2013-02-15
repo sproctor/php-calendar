@@ -21,8 +21,8 @@
   BARS: #CCC
   DESCRIPTION: #DDD
   BORDER, HOVERS: #666
-  DAY - NONE: #999
-  DAY - PAST: #C0C0C0
+  DAY - NONE: #777
+  DAY - PAST: #AAA
   DAY - PRESENT: #EED055
   DAY - FUTURE: #D0D0D0
   */
@@ -148,11 +148,22 @@ div.phpc-main {
   padding: .5em;
 }
 
+.phpc-event-creator{
+
+}
+
+.phpc-event-time{
+
+}
+
+.phpc-event-menu a{
+float:right;
+margin:.25em;
+padding:.25em;
+border:1px solid #666;
+}
+
 .phpc-desc p {
-  /*
-  border: 1px solid #000;
-  background-color: #DDD;
-  */
   padding: .5em;
   text-align: justify;
 }
@@ -203,15 +214,14 @@ td.phpc-none {
   padding: 0;
 }
 
-.phpc-calendar ul {
-  border-color: #000;
-  border-style: solid;
-  border-width: 1px 1px 0 1px;
+.phpc-calendar ul li {
+  border: 1px solid #000;
+  margin:0.1em;
 }
 
 .phpc-main ul {
   list-style-type: none;
-  margin: 2px;
+  /*margin: 2px;*/
   padding: 0;
 }
 
@@ -273,11 +283,11 @@ padding:5px 3px;
 }
 
 .phpc-none .phpc-date {
-  background-color: #999;
+  background-color: #777;
 }
 
 .phpc-past .phpc-date {
-  background-color: #C0C0C0;
+  background-color: #AAA;
 }
 
 .phpc-present .phpc-date {
