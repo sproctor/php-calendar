@@ -120,7 +120,7 @@ function link_bar()
 					']'));
 	}
 
-	return tag('div', attributes('class="phpc-footer"'), $links);
+	return tag('div', attributes('class="phpc-footer phpc-bar"'), $links);
 }
 
 function get_languages() {
@@ -330,6 +330,8 @@ function create_action_link($text, $action, $args = false, $attribs = false)
 function menu_item_append(&$html, $name, $action, $args = false,
 		$attribs = false)
 {
+	$name=str_replace(' ','&nbsp;',$name); /*not breaking space on menus*/
+
 	if(!is_object($html)) {
 		soft_error('Html is not a valid Html class.');
 	}
@@ -341,6 +343,8 @@ function menu_item_append(&$html, $name, $action, $args = false,
 function menu_item_append_with_date(&$html, $name, $action, $year = false,
 		$month = false, $day = false, $attribs = false)
 {
+	$name=str_replace(' ','&nbsp;',$name);
+
 	if(!is_object($html)) {
 		soft_error('Html is not a valid Html class.');
 	}
@@ -410,7 +414,7 @@ function navbar()
 {
 	global $vars, $action, $year, $month, $day, $phpc_cal;
 
-	$html = tag('div', attributes('class="phpc-navbar"'));
+	$html = tag('div', attributes('class="phpc-navbar phpc-bar"'));
 
 	$args = array('year' => $year, 'month' => $month, 'day' => $day);
 
