@@ -47,7 +47,8 @@ $phpc_server = $_SERVER['SERVER_NAME'];
 if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
 	$phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
 
-$phpc_url = "$phpc_protocol://$phpc_server$phpc_script"
+$phpc_home_url ="$phpc_protocol://$phpc_server$phpc_script";
+$phpc_url = $phpc_home_url
 		. (empty($_SERVER['QUERY_STRING']) ? ''
 		   : '?' . $_SERVER['QUERY_STRING']);
 
@@ -66,7 +67,8 @@ try {
 
 	$calendar_title = $phpc_cal->get_title();
 	$content = tag('div', attributes('class="php-calendar"'),
-			tag('h1', $calendar_title),
+			tag('a',attributes("href='$phpc_home_url'"),
+			tag('h1', $calendar_title)),
 			display_phpc());
 } catch(Exception $e) {
 	$calendar_title = $e->getMessage();
