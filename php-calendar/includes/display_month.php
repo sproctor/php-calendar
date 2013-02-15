@@ -219,7 +219,9 @@ function create_day($month, $day, $year, $days_events)
 		}
 	}
 
-	$date_tag = tag('div', attributes('class="phpc-date"'));
+	$click=create_plain_link($day, 'display_day', $year,$month, $day);
+	$date_tag = tag('div', attributes('class="phpc-date" onclick="window.location.href =\''.$click.'\'"'));
+	
 	if($phpc_cal->can_write()) {
 		$date_tag->add(create_action_link_with_date('+',
 					'event_form', $year, $month,
