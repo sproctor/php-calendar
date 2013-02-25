@@ -36,7 +36,7 @@ if(!defined('SQL_TYPE')) {
 }
 
 if(!defined("PHPC_DEBUG") && file_exists("$phpc_root_path/install")) {
-	display_error(_("You must remove the install directory."));
+	display_error(_("You must remove the install directory to start using the calendar. If you see this error but you must install the database, delete the config.php file."));
 }
 
 if(defined('PHPC_DEBUG')) {

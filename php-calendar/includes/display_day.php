@@ -60,6 +60,9 @@ function display_day()
 	$html_body = tag('tbody');
 
 	while($row = $results->fetch_assoc()) {
+	
+		if (isset($row['catid']) && !$phpcdb->is_cat_visible(get_uid(),$row['catid'])) continue; /* if not visible, jump the loop */
+			
 		$event = new PhpcOccurrence($row);
 
 		if(!$event->can_read())

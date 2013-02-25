@@ -62,17 +62,6 @@ text-decoration: none;
   color: #000;
 }
 
-.php-calendar input[type="submit"] {
-  background-color: #fff;
-  color: #000;
-  border: 1px solid #000;
-}
-
-.php-calendar input[type="submit"]:hover {
-  background-color: #000;
-  color: #fff;
-}
-
 .phpc-navbar a {
   text-decoration: underline;
   margin: 0 .5em;
@@ -122,6 +111,12 @@ text-decoration: none;
 
 .phpc-container {
   min-width: 50%;
+}
+
+.php-create-category {
+  margin-left: auto;
+  margin-right: auto;
+  text-align:center;
 }
 
 table.phpc-main {
@@ -280,6 +275,7 @@ td.phpc-none {
 .phpc-date  /*S*/
 {
 padding:5px 3px;
+border: 0px !important;
 }
 
 .phpc-none .phpc-date {
@@ -321,6 +317,12 @@ td.form-color-selected {
   border-style: solid;
   border-color: #666;
   border-width: 0 0 1px 0;
+}
+
+.phpc-logged
+{
+	z-index:1;
+	float: right;
 }
 
 /* \*/ /*/

@@ -570,7 +570,7 @@ function get_date_format_list()
 function get_calendar_list() {
 	global $phpc_script, $phpcdb;
 
-	$calendar_list = tag('div', attributes('class="phpc-navbar"'));
+	$calendar_list = tag('div', attributes('class="phpc-navbar phpc-callist"'));
 
 	$count = 0;
 	foreach($phpcdb->get_calendars() as $calendar) {
@@ -721,6 +721,10 @@ function get_header_tags($path)
 					"src=\"$path/tableUI.js\""), ''),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/tableUI.css\"")),
+			tag("script", attrs('type="text/javascript"',
+					"src=\"$path/jquery.formalize.min.js\""), ''),
+			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
+					"href=\"$path/formalize.css\"")),
 		  );
 }
 

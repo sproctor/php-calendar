@@ -117,7 +117,11 @@ function create_month($month, $year)
 			$to_stamp);
 	$days_events = array();
 	while($row = $results->fetch_assoc()) {
+
+		if (isset($row['catid']) && !$phpcdb->is_cat_visible(get_uid(),$row['catid'])) continue; /* if not visible, jump the loop */
+		
 		$event = new PhpcOccurrence($row);
+
 		$end_stamp = mktime(0, 0, 0, $event->get_end_month(),
 				$event->get_end_day(), $event->get_end_year());
 
@@ -147,7 +151,6 @@ function create_month($month, $year)
 				$days_events[$key][] = false;
 			if(sizeof($days_events[$key]) > $max_events)
 				continue;
-			
 			$days_events[$key][] = $event;
 		}
 	}
@@ -161,129 +164,129 @@ function create_month($month, $year)
 	return $month_table;
 }
 
-// creates a display for a particular week to be embedded in a month table
-function create_week($week_of_month, $month, $year, $days_events)
-{
-	$start_day = 1 + ($week_of_month - 1) * 7
-		- day_of_week($month, 1, $year);
-	$week_of_year = week_of_year($month, $start_day, $year);
+	// creates a display for a particular week to be embedded in a month table
+	function create_week($week_of_month, $month, $year, $days_events)
+	{
+		$start_day = 1 + ($week_of_month - 1) * 7
+			- day_of_week($month, 1, $year);
+		$week_of_year = week_of_year($month, $start_day, $year);
 
-	$week_html = tag('tr', tag('th', $week_of_year));
-	
-	for($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
-		$day = $start_day + $day_of_week;
-		$week_html->add(create_day($month, $day, $year, $days_events));
+		$week_html = tag('tr', tag('th', $week_of_year));
+		
+		for($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
+			$day = $start_day + $day_of_week;
+			$week_html->add(create_day($month, $day, $year, $days_events));
+		}
+
+			return $week_html;
 	}
 
-        return $week_html;
-}
+	// displays the day of the week and the following days of the week
+	function create_day($month, $day, $year, $days_events)
+	{
+		global $phpc_script, $phpc_cal;
 
-// displays the day of the week and the following days of the week
-function create_day($month, $day, $year, $days_events)
-{
-	global $phpc_script, $phpc_cal;
-
-	if($day <= 0) {
-		$month--;
-		if($month < 1) {
-			$month = 12;
-			$year--;
-		}
-		$day += days_in_month($month, $year);
-		$current_era = 'none';
-	} elseif($day > days_in_month($month, $year)) {
-		$day -= days_in_month($month, $year);
-		$month++;
-		if($month > 12) {
-			$month = 1;
-			$year++;
-		}
-		$current_era = 'none';
-	} else {
-		$currentday = date('j');
-		$currentmonth = date('n');
-		$currentyear = date('Y');
-
-		// set whether the date is in the past or future/present
-		if($currentyear == $year && $currentmonth == $month
-				&& $currentday == $day) {
-			$current_era = 'present';
-		} elseif($currentyear > $year || $currentyear == $year
-				&& ($currentmonth > $month
-					|| $currentmonth == $month 
-					&& $currentday > $day
-				   )) {
-			$current_era = 'past';
+		if($day <= 0) {
+			$month--;
+			if($month < 1) {
+				$month = 12;
+				$year--;
+			}
+			$day += days_in_month($month, $year);
+			$current_era = 'none';
+		} elseif($day > days_in_month($month, $year)) {
+			$day -= days_in_month($month, $year);
+			$month++;
+			if($month > 12) {
+				$month = 1;
+				$year++;
+			}
+			$current_era = 'none';
 		} else {
-			$current_era = 'future';
+			$currentday = date('j');
+			$currentmonth = date('n');
+			$currentyear = date('Y');
+
+			// set whether the date is in the past or future/present
+			if($currentyear == $year && $currentmonth == $month
+					&& $currentday == $day) {
+				$current_era = 'present';
+			} elseif($currentyear > $year || $currentyear == $year
+					&& ($currentmonth > $month
+						|| $currentmonth == $month 
+						&& $currentday > $day
+					   )) {
+				$current_era = 'past';
+			} else {
+				$current_era = 'future';
+			}
 		}
-	}
 
-	$click=create_plain_link($day, 'display_day', $year,$month, $day);
-	$date_tag = tag('div', attributes('class="phpc-date" onclick="window.location.href =\''.$click.'\'"'));
-	
-	if($phpc_cal->can_write()) {
-		$date_tag->add(create_action_link_with_date('+',
-					'event_form', $year, $month,
-					$day, array('class="phpc-add"')));
-	}
-	$date_tag->add(create_action_link_with_date($day, 'display_day', $year,
-				$month, $day));
+		$click=create_plain_link($day, 'display_day', $year,$month, $day);
+		$date_tag = tag('div', attributes('class="phpc-date" onclick="window.location.href =\''.$click.'\'"'));
+		
+		if($phpc_cal->can_write()) {
+			$date_tag->add(create_action_link_with_date('+',
+						'event_form', $year, $month,
+						$day, array('class="phpc-add"')));
+		}
+		$date_tag->add(create_action_link_with_date($day, 'display_day', $year,
+					$month, $day));
 
-	$html_day = tag('td', attributes('valign="top"',
-				"class=\"phpc-$current_era\""), $date_tag);
+		$html_day = tag('td', attributes('valign="top"',
+					"class=\"phpc-$current_era\""), $date_tag);
 
-	$stamp = mktime(0, 0, 0, $month, $day, $year);
+		$stamp = mktime(0, 0, 0, $month, $day, $year);
 
-	$can_read = $phpc_cal->can_read(); 
-	$key = date('Y-m-d', $stamp);
-	if(!$can_read || !array_key_exists($key, $days_events))
-		return $html_day;
+		$can_read = $phpc_cal->can_read(); 
+		$key = date('Y-m-d', $stamp);
+		if(!$can_read || !array_key_exists($key, $days_events))
+			return $html_day;
 
-	$results = $days_events[$key];
-	if(empty($results))
-		return $html_day;
+		$results = $days_events[$key];
+		if(empty($results))
+			return $html_day;
 
-	$html_events = tag('ul');
-	$html_day->add($html_events);
+		$html_events = tag('ul');
+		$html_day->add($html_events);
 
-	// Count the number of events
-	foreach($results as $event) {
-		if($event == false) {
-			$event_html = tag('li',
-					create_action_link_with_date(_("View Additional Events"),
-						'display_day', $year, $month,
-						$day,
-						array('class="phpc-date"')));
+		// Count the number of events
+		foreach($results as $event) {
+			if($event == false) {
+				$event_html = tag('li',
+						create_action_link_with_date(_("View Additional Events"),
+							'display_day', $year, $month,
+							$day,
+							array('class="phpc-date"')));
+				$html_events->add($event_html);
+				break;
+			}
+
+			// TODO - make sure we have permission to read the event
+
+			$subject = $event->get_subject();
+			$event_time = $event->get_time_string();
+			if(!empty($event_time))
+				$title = "$event_time - $subject";
+			else
+				$title = $subject;
+
+			$style = "";
+			if(!empty($event->text_color))
+				$style .= "color: ".$event->get_text_color().";";
+			if(!empty($event->bg_color))
+				$style .= "background-color: ".$event->get_bg_color()
+					.";";
+
+			$event_html = tag('li', 
+					create_occurrence_link($title, "display_event",
+						$event->get_oid(),
+						array("style=\"$style\"")));
+
 			$html_events->add($event_html);
-			break;
 		}
 
-		// TODO - make sure we have permission to read the event
-
-		$subject = $event->get_subject();
-		$event_time = $event->get_time_string();
-		if(!empty($event_time))
-			$title = "$event_time - $subject";
-		else
-			$title = $subject;
-
-		$style = "";
-		if(!empty($event->text_color))
-			$style .= "color: ".$event->get_text_color().";";
-		if(!empty($event->bg_color))
-			$style .= "background-color: ".$event->get_bg_color()
-				.";";
-
-		$event_html = tag('li', 
-				create_occurrence_link($title, "display_event",
-					$event->get_oid(),
-					array("style=\"$style\"")));
-
-		$html_events->add($event_html);
+		return $html_day;
 	}
-
-	return $html_day;
-}
 
 ?>

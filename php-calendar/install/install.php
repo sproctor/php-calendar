@@ -33,9 +33,15 @@ if(!function_exists("mysqli_connect"))
 
 echo '<html>
 <head>
-<title>install php calendar</title>
+<link rel="stylesheet" type="text/css" href="../static/phpc.css"/>
+<link rel="stylesheet" type="text/css" href="../static/formalize.css"/>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script type="text/javascript" src="../static/jquery.formalize.min.js"></script>
+<title>PHP Calendar Installation</title>
 </head>
 <body>
+<h1>PHP Calendar</h1>
+<p>Welcome to the PHP Calendar installation process.</p>
 <form method="post" action="install.php">
 ';
 
@@ -49,8 +55,9 @@ if(empty($_POST['action'])) {
 	if(empty($_POST['version'])) {
 		get_upgrade_version();
 	} else {
-		if(!include($phpc_config_file)) {
-			echo '<p>You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
+		if(!file_exists($phpc_config_file)) {
+			echo '<p><span style="font-weight:bold;">ERROR</span>: You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.</p>';
+			echo '<br/><input type="button" onclick="window.location.reload()" value="Reload"/>';
 			return;
 		}
 
@@ -59,16 +66,16 @@ if(empty($_POST['action'])) {
 
 		if($_POST['version'] == "2.0beta10") {
 			create_logins_table();
-			echo "<p>Update complete.";
+			echo "<p>Update complete.</p>";
 		} elseif($_POST['version'] == "2.0beta9") {
 			if(empty($_POST['timezone']))
 				upgrade_20_form();
 			else
 				upgrade_20_action();
 		} elseif($_POST['version'] == "1.1") {
-			echo "<p>Sorry upgrading from version 1.1 is not supported at this time.";
+			echo "<p>Sorry upgrading from version 1.1 is not supported at this time.</p>";
 		} else {
-			echo "<p>Invalid version identifier.";
+			echo "<p>Invalid version identifier.</p>";
 		}
 	}
 } elseif(!isset($_POST['my_hostname'])
@@ -77,7 +84,7 @@ if(empty($_POST['action'])) {
 		&& !isset($_POST['my_prefix'])
 		&& !isset($_POST['my_database'])) {
 	get_server_setup();
-} elseif((isset($_POST['create_user']) || isset($_POST['create_db']))
+} elseif((isset($_POST['create_user']) || isset($_POST['create_db'])|| isset($_POST['drop_tbl']))
 		&& !isset($_POST['done_user_db'])) {
 	add_sql_user_db();
 } elseif(!isset($_POST['base'])) {
@@ -90,25 +97,26 @@ if(empty($_POST['action'])) {
 }
 
 function get_action() {
-	echo '<input type="submit" name="action" value="install"><br>';
-	echo '<input type="submit" name="action" value="upgrade">';
+	echo '<input type="submit" name="action" value="install"/><span style="display: inline-block; width:50px;"></span>';
+	echo '<input type="submit" name="action" value="upgrade"/>';
 }
 
 function get_upgrade_version() {
 	global $phpc_config_file;
 
-	if(!include($phpc_config_file)) {
-		echo '<p>You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
+	if(!file_exists($phpc_config_file)) {
+		echo '<p><span style="font-weight:bold;">ERROR</span>: You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
+		echo '<br/><input type="button" onclick="window.location.reload()" value="Reload"/>';
 		return;
 	}
 
 	echo '<h3>Pick the version you are updating from</h3>';
-	echo '<input type="hidden" name="action" value="upgrade">';
+	echo '<input type="hidden" name="action" value="upgrade"/>';
 	echo '<select name="version">';
 	echo '<option value="1.1">version 1.1</option>';
 	echo '<option value="2.0beta9">version 2.0-beta4 to beta9</option>';
 	echo '<option value="2.0beta10">version 2.0-beta10</option>';
-	echo '</select>';
+	echo '</select><span style="display: inline-block; width:50px;"></span>';
 	echo '<input type="submit" value="Submit">';
 }
 
@@ -182,7 +190,7 @@ function upgrade_20_action() {
 		}
 	}
 
-	echo "<p>Occurrences updated.";
+	echo "<p>Occurrences updated.</p>";
 
 	$query = "ALTER TABLE `" . SQL_PREFIX . "config`\n"
 		."CHANGE `cid` `cid` int(11)\n";
@@ -201,11 +209,11 @@ function upgrade_20_action() {
 		or db_error($dbh, 'Error adding version.',
 				$query);
 
-	echo "<p>Calendar version updated.";
+	echo "<p>Calendar version updated.</p>";
 
 	create_logins_table();
 
-	echo "<p>Update complete.";
+	echo "<p>Update complete.</p>";
 }
 
 function check_config()
@@ -229,14 +237,14 @@ function report_config()
 		.'probably does not yet exist. If that is the case, youneed to '
 		.'create it. You need to make sure this script can write to '
 		.'it. We suggest logging in with a shell and typing:</p>
-		<p><code>
-		touch config.php<br>
+		<p><pre>
+		touch config.php
 		chmod 666 config.php
-		</code></p>
+		</pre></p>
 		<p>or if you only have ftp access, upload a blank file named '
 		.'config.php to your php-calendar directory then use the chmod '
 		.'command to change the permissions of config.php to 666.</p>
-		<input type="submit" value="Retry">';
+		<input type="submit" value="Retry"/>';
 }
 
 function get_server_setup()
@@ -245,9 +253,10 @@ function get_server_setup()
 		return report_config();
 
 	echo '
+		<h3>Step 1: Database</h3>
 		<table class="display">
 		<tr>
-		<td>SQL server hostname:</td>
+		<td>SQL Server Hostname:</td>
 		<td><input type="text" name="my_hostname" value="localhost"></td>
 		</tr>
 		<tr>
@@ -268,18 +277,25 @@ function get_server_setup()
 		</tr>
 		<tr>
 		<td colspan="2">
-		  <input type="checkbox" name="create_db" value="yes">
-		  create the database (don\'t check this if it already exists)
+		  <input type="checkbox" name="create_db" value="yes"/>
+		  Create the database (don\'t check this if it already exists)
+		</td>
+		</tr>
+		<tr>
+		<td colspan="2">
+		  <input type="checkbox" name="drop_tbl" value="yes"/>
+		  Drop existing tables (check this if there are in the database existing tables with the same name)
 		</td>
 		</tr>
 		<tr><td colspan="2">
-		  <input type="checkbox" name="create_user" value="yes">
-		  Should the user info supplied above be created? Do not check
-		  this if the user already exists
+		<span style="font-weight:bold;">Optional: user creation on database</span>
 		</td></tr>
 		<tr><td colspan="2">
-		  You only need to provide the following information if you
-		  need to create a user
+		If the credentials supplied above are new, you have to be the database administrator.
+		</td></tr>
+		<tr><td colspan="2">
+		 <input type="checkbox" name="create_user" value="yes">
+			Check this if you want to do it and provide admin user and password.
 		</td></tr>
 		<tr>
 		<td>SQL Admin name:</td>
@@ -312,6 +328,8 @@ function add_sql_user_db()
 	$create_user = isset($_POST['create_user'])
 		&& $_POST['create_user'] == 'yes';
 	$create_db = isset($_POST['create_db']) && $_POST['create_db'] == 'yes';
+	
+	$drop_tbl = isset($_POST['drop_tbl']) && $_POST['drop_tbl'] == 'yes';
 
 	// Make the database connection.
 	if($create_user) {
@@ -320,7 +338,7 @@ function add_sql_user_db()
 		$dbh = connect_db($my_hostname, $my_username, $my_passwd);
 	}
 
-	$string = "";
+	$string = "<h3>Step 2: Database Setup</h3>";
 
 	if($create_db) {
 		$query = "CREATE DATABASE $my_database";
@@ -328,7 +346,21 @@ function add_sql_user_db()
 		$dbh->query($query)
 			or db_error($dbh, 'error creating db', $query);
 
-		$string .= "<div>Successfully created database</div>";
+		$string .= "<p>Successfully created database</p>";
+	}
+	
+	if($drop_tbl) {
+		$query = "DROP DATABASE $my_database";
+
+		$dbh->query($query)
+			or db_error($dbh, 'error dropping db', $query);
+			
+		$query = "CREATE DATABASE $my_database";
+
+		$dbh->query($query)
+			or db_error($dbh, 'error creating db', $query);
+
+		$string .= "<p>Successfully dropped and recreated tables</p>";
 	}
 
 	if($create_user) {
@@ -344,11 +376,11 @@ function add_sql_user_db()
 		$dbh->query($query)
 			or db_error($dbh, "Could not flush privileges", $query);
 
-		$string .= "<div>Successfully added user</div>";
+		$string .= "<p>Successfully added user</p>";
 	}
 
 	echo "$string\n"
-		."<div><input type=\"submit\" name=\"done_user_db\" value=\"continue\">"
+		."<div><input type=\"submit\" name=\"done_user_db\" value=\"continue\"/>"
 		."</div>\n";
 
 }
@@ -399,8 +431,8 @@ function install_base()
 	$dbh->query($query)
 		or db_error($dbh, 'Error adding version.', $query);
 
-	echo "<p>config created at \"". realpath($phpc_config_file) ."\"</p>"
-		."<p>calendars base created</p>\n"
+	echo "<p>Config file created at \"". realpath($phpc_config_file) ."\"</p>"
+		."<p>Calendars database created</p>\n"
 		."<div><input type=\"submit\" name=\"base\" value=\"continue\">"
 		."</div>\n";
 }
@@ -446,8 +478,17 @@ function create_tables()
 		."`password_editable` tinyint(1) NOT NULL DEFAULT '1',\n"
 		."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."`language` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+		."`gid` int(3),\n"
 		."PRIMARY KEY  (`uid`)\n"
 		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+
+	$dbh->query($query)
+		or db_error($dbh, 'Error creating users table.', $query);
+		
+		$query = "CREATE TABLE `" . SQL_PREFIX . "groups` (\n"
+		."`gid` int(3),\n"
+		."`catid` int(3)\n"
+		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
 
 	$dbh->query($query)
 		or db_error($dbh, 'Error creating users table.', $query);
@@ -480,9 +521,19 @@ function create_tables()
 
 	$query = "CREATE TABLE `" . SQL_PREFIX . "calendars` (\n"
 		."`cid` int(11) unsigned NOT NULL auto_increment,\n"
+		."`hours_24` int(1) NOT NULL,\n"
+		."`date_format` int(1) NOT NULL,\n"
+		."`week_start` int(1) NOT NULL,\n"
+		."`translate` int(1) NOT NULL,\n"
+		."`subject_max` int(4) NOT NULL,\n"
+		."`events_max` int(2) NOT NULL,\n"
+		."`calendar_title` varchar(50) COLLATE utf8_unicode_ci NOT NULL,\n"
+		."`anon_permission` int(1) NOT NULL,\n"
+		."`timezone` varchar(40) COLLATE utf8_unicode_ci NOT NULL,\n"
+		."`language` varchar(7) COLLATE utf8_unicode_ci NOT NULL,\n"
 		."PRIMARY KEY  (`cid`)\n"
 		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-
+		
 	$dbh->query($query)
 		or db_error($dbh, 'Error creating calendars table.', $query);
 
@@ -502,10 +553,10 @@ function create_tables()
 
 function get_admin()
 {
-
+	echo '<h3>Step 4: Administration account</h3>';
 	echo "<table>\n"
-		."<tr><td colspan=\"2\">The following is to log in to the "
-		."calendar (not the SQL admin)</td></tr>\n"
+		."<tr><td colspan=\"2\">Now you must create the calendar administrative "
+		."account.</td></tr>\n"
 		."<tr><td>\n"
 		."Admin name:\n"
 		."</td><td>\n"
@@ -515,7 +566,7 @@ function get_admin()
 		."</td><td>\n"
 		."<input type=\"password\" name=\"admin_pass\" />\n"
 		."</td></tr><tr><td colspan=\"2\">"
-		."<input type=\"submit\" value=\"Create Admin\" />\n"
+		."<input type=\"submit\" value=\"Create Admin Account\" />\n"
 		."</td></tr></table>\n";
 
 }
@@ -559,8 +610,10 @@ function add_calendar()
 		$dbh->query($query)
 			or db_error($dbh, 'Error creating options.', $query);
 	}
-
-	echo "<p>saved default configuration</p>\n";
+	
+	echo "<h3>Final Step</h3>\n";
+	
+	echo "<p>Saved default configuration</p>\n";
 
 	$passwd = md5($_POST['admin_pass']);
 
@@ -571,8 +624,9 @@ function add_calendar()
 	$dbh->query($query)
 		or db_error($dbh, 'Error adding admin.', $query);
 	
-	echo "<p>Admin created.</p>";
-	echo "<p>You delete the install directory and you should change the permissions on config.php so only your webserver can read it.</p>";
+	echo "<p>Admin account created.</p>";
+	echo "<p>To be able to use the calendar, now you must delete the install directory.</p>";
+	echo "<p>You should also change the permissions on config.php so only your webserver can read it.</p>";
 	echo "<p><a href=\"../index.php\">View calendar</a></p>";
 }
 
@@ -608,8 +662,7 @@ function connect_db($hostname, $username, $passwd, $database = false)
 // called when some error happens
 function soft_error($str)
 {
-	echo "<html><head><title>Error</title></head>\n",
-	     "<body><h1>Software Error</h1>\n",
+	echo "<h1>Software Error</h1>\n",
 	     "<h2>Message:</h2>\n",
 	     "<pre>$str</pre>\n",
 	     "<h2>Backtrace</h2>\n",
@@ -617,14 +670,14 @@ function soft_error($str)
 	foreach(debug_backtrace() as $bt) {
 		echo "<li>$bt[file]:$bt[line] - $bt[function]</li>\n";
 	}
-	echo "</ol>\n",
-	     "</body></html>\n";
+	echo "</ol>\n";
 	exit;
 }
 
 function create_logins_table() {
 	global $dbh;
-
+	
+	echo '<h3>Step 3: Database Created</h3>';
 	$query = "CREATE TABLE `" . SQL_PREFIX . "logins` (\n"
 		."`uid` int(11) unsigned NOT NULL,\n"
 		."`series` char(43) collate utf8_unicode_ci NOT NULL,\n"
@@ -636,7 +689,7 @@ function create_logins_table() {
 	$dbh->query($query)
 		or db_error($dbh, 'Error creating logins table.', $query);
 
-	echo "<p>Logins table updated.";
+	echo "<p>Logins table updated.</p>";
 }
 
 ?>
