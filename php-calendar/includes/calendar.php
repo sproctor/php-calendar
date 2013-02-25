@@ -120,7 +120,7 @@ function link_bar()
 					']'));
 	}
 
-	return tag('div', attributes('class="phpc-footer"'), $links);
+	return tag('div', attributes('class="phpc-footer phpc-bar"'), $links);
 }
 
 function get_languages() {
@@ -262,6 +262,38 @@ function create_action_link_with_date($text, $action, $year = false,
 	return create_action_link($text, $action, $args, $attribs);
 }
 
+/*S*/
+function create_plain_link($text, $action, $year = false,
+		$month = false, $day = false, $attribs = false)
+{
+	global $phpc_script, $vars;
+	$args = array();
+	if($year !== false) $args["year"] = $year;
+	if($month !== false) $args["month"] = $month;
+	if($day !== false) $args["day"] = $day;
+
+	$url ="".$phpc_script."?";
+	if(isset($vars["phpcid"]))
+		$url .= "phpcid=" . htmlentities($vars["phpcid"]) . "&amp;";
+	$url .= "action=" . htmlentities($action);
+	
+	if (!empty($args)) {
+		foreach ($args as $key => $value) {
+			if(empty($value))
+				continue;
+			if (is_array($value)) {
+				foreach ($value as $v) {
+					$url .= "&amp;"
+						. htmlentities("{$key}[]=$v");
+				}
+			} else
+				$url .= "&amp;" . htmlentities("$key=$value");
+		}
+	}
+	$url .= '';
+	return $url;
+}
+
 function create_action_link($text, $action, $args = false, $attribs = false)
 {
 	global $phpc_script, $vars;
@@ -298,6 +330,8 @@ function create_action_link($text, $action, $args = false, $attribs = false)
 function menu_item_append(&$html, $name, $action, $args = false,
 		$attribs = false)
 {
+	$name=str_replace(' ','&nbsp;',$name); /*not breaking space on menus*/
+
 	if(!is_object($html)) {
 		soft_error('Html is not a valid Html class.');
 	}
@@ -309,6 +343,8 @@ function menu_item_append(&$html, $name, $action, $args = false,
 function menu_item_append_with_date(&$html, $name, $action, $year = false,
 		$month = false, $day = false, $attribs = false)
 {
+	$name=str_replace(' ','&nbsp;',$name);
+
 	if(!is_object($html)) {
 		soft_error('Html is not a valid Html class.');
 	}
@@ -378,7 +414,7 @@ function navbar()
 {
 	global $vars, $action, $year, $month, $day, $phpc_cal;
 
-	$html = tag('div', attributes('class="phpc-navbar"'));
+	$html = tag('div', attributes('class="phpc-navbar phpc-bar"'));
 
 	$args = array('year' => $year, 'month' => $month, 'day' => $day);
 
@@ -534,7 +570,7 @@ function get_date_format_list()
 function get_calendar_list() {
 	global $phpc_script, $phpcdb;
 
-	$calendar_list = tag('div', attributes('class="phpc-navbar"'));
+	$calendar_list = tag('div', attributes('class="phpc-navbar phpc-callist"'));
 
 	$count = 0;
 	foreach($phpcdb->get_calendars() as $calendar) {
@@ -659,24 +695,36 @@ function get_header_tags($path)
 		$jq_min = '';
 	else
 		$jq_min = '.min';
+		
+		$theme='excite-bike';
+		$jquery_version="1.9.0";
+		$jqueryui_version="1.10.0";
 
 	return array(
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/phpc.css\"")),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css\"")),
+					"href=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/themes/$theme/jquery-ui.css\"")),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/jquery-ui-timepicker.css\"")),
 			tag("script", attrs('type="text/javascript"',
-					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery$jq_min.js\""), ''),
+					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
 			tag("script", attrs('type="text/javascript"',
-					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui$jq_min.js\""), ''),
+					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
 			tag('script', attrs('type="text/javascript"',
 					"src=\"$path/phpc.js\""), ''),
 			tag("script", attrs('type="text/javascript"',
 					"src=\"$path/jquery.ui.timepicker.js\""), ''),
 			tag("script", attributes('type="text/javascript"',
 					"src=\"$path/jquery.hoverIntent.minified.js\""), ''),
+			tag("script", attrs('type="text/javascript"',
+					"src=\"$path/tableUI.js\""), ''),
+			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
+					"href=\"$path/tableUI.css\"")),
+			tag("script", attrs('type="text/javascript"',
+					"src=\"$path/jquery.formalize.min.js\""), ''),
+			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
+					"href=\"$path/formalize.css\"")),
 		  );
 }
 

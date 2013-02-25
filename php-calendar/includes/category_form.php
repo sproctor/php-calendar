@@ -33,6 +33,7 @@ function category_form() {
 
 	$form->add_hidden('action', 'category_submit');
 	$form->add_part(new FormColorPicker('bg-color','Background Color'));
+	$form->add_part(new FormFreeQuestion('groups','Visibile to Groups'));
 	$form->add_part(new FormSubmitButton("Submit Category"));
 
 	if(isset($vars['catid'])) {
@@ -41,6 +42,7 @@ function category_form() {
 		$defaults = array(
 				'name' => htmlspecialchars($category['name']),
 				'bg-color' => htmlspecialchars($category['bg_color']),
+				'groups' => htmlspecialchars(implode(',',$category['gid'])),
 				);
 		$form->add_hidden('text-color', $category['text_color']);
 	} else {

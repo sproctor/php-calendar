@@ -124,8 +124,11 @@ function category_list()
 			: $category['name'];
 		$catid = $category['catid'];
 		$tbody->add(tag('tr',
-					tag('th',
-						create_action_link($name,
+					tag('th',$name),
+					tag('td', htmlspecialchars($category['text_color'])),
+					tag('td', htmlspecialchars($category['bg_color'])),
+					tag('td', implode(',',$category['gid'])),
+					tag('td', create_action_link(_('Edit'),
 							'category_form',
 							array('catid'
 								=> $catid)),
@@ -133,10 +136,7 @@ function category_list()
 						create_action_link(_('Delete'),
 							'category_delete',
 							array('catid'
-								=> $catid))
-					   ),
-					tag('td', htmlspecialchars($category['text_color'])),
-					tag('td', htmlspecialchars($category['bg_color']))
+								=> $catid)))
 				   ));
 	}
 
@@ -146,13 +146,16 @@ function category_list()
 				tag('tr',
 					tag('th', _('Name')),
 					tag('th', _('Text Color')),
-					tag('th', _('Background Color'))
+					tag('th', _('Background Color')),
+					tag('th', _('Visible to User Group')),
+					tag('th', _('Actions'))					
 				   )),
 			$tbody);
 
 	return tag('div', attributes('class="phpc-container"'), $table,
+			tag('div', attributes('class="php-create-category"'),
 			create_action_link(_('Create category'),
-				'category_form', array('cid' => $phpcid)));
+				'category_form', array('cid' => $phpcid))));
 }
 
 ?>

@@ -54,32 +54,34 @@ function display_event_by_oid($oid)
 	}
 
 	$event_header = tag('div', attributes('class="phpc-event-header"'),
-			tag('div', _('by').' ',
+			tag('div',attributes('class="phpc-event-creator"'), _('by').' ',
 				tag('cite', $event->get_author())));
 
 	$category = $event->get_category();
 	if(!empty($category))
-		$event_header->add(tag('div', _('Category') . ': '
+		$event_header->add(tag('div',attributes('class="phpc-event-cats"'), _('Category') . ': '
 					. $category));
 
+	$event_time = $event->get_time_span_string();
+	if(!empty($event_time))
+		$event_time = ' ' . _('at') . " $event_time";
+
+	$event_header->add(tag('div',attributes('class="phpc-event-time"'), _('When').": ".$event->get_date_string()
+				. $event_time));
+				
 	// Add modify/delete links if this user has access to this event.
         if($event->can_modify()) {
-		$event_header->add(tag('div',
-					create_event_link(_('Modify Event'),
+		$event_header->add(tag('div',attributes('class="phpc-event-menu"'),
+					create_event_link(_('Modify'),
 						'event_form', $eid), "\n",
-					create_event_link(_('Delete Event'),
+					create_event_link(_('Delete'),
 						'event_delete', $eid), "\n",
 					create_occurrence_link(_('Modify Occurrence'),
 						'occur_form', $oid), "\n",
 					create_occurrence_link(_('Remove Occurrence'),
 						'occurrence_delete', $oid)));
 	}
-	$event_time = $event->get_time_span_string();
-	if(!empty($event_time))
-		$event_time = ' ' . _('at') . " $event_time";
 
-	$event_header->add(tag('div', _('When').": ".$event->get_date_string()
-				. $event_time));
 
 	$occurrences = $phpcdb->get_occurrences_by_eid($eid);
 	if(sizeof($occurrences) > 1) {
@@ -153,7 +155,7 @@ function display_event_by_eid($eid)
 
 	// Add modify/delete links if this user has access to this event.
         if($event->can_modify()) {
-		$event_header->add(tag('div', attrs('class="phpc-navbar"'),
+		$event_header->add(tag('div', attrs('class="phpc-event-menu"'),
 					create_event_link(_('Modify'),
 						'event_form', $eid), "\n",
 					create_event_link(_('Add Occurrence'),
@@ -192,8 +194,8 @@ function display_event_by_eid($eid)
 
 	return tag('div', attributes('class="phpc-main phpc-event"'),
 			tag('h2', $event->get_subject()), $event_header,
-			$desc_tag, tag('h3', _('Occurrences')),
-			$occurrences_tag);
+			$desc_tag, tag ('div',attributes('class="phpc-occ"'),tag('h3', _('Occurrences')),
+			$occurrences_tag));
 }
 
 // generates a JSON data structure for a particular event
@@ -219,9 +221,12 @@ function display_event_json()
 	else
 		$category_text = _('Category') . ': ' . $event->get_category();
 
+		if ($time_str!="") $time="$date_str " . _("from") . " $time_str";
+		else $time="$date_str ";
+		
 	return json_encode(array("title" => $event->get_subject(),
 				"author" => $author,
-				"time" => "$date_str " . _("at") . " $time_str",
+				"time" => $time,
 				"category" => $category_text,
 				"body" => $event->get_desc()));
 }

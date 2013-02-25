@@ -54,7 +54,10 @@ function new_user_form()
 						tag('td', create_password('password2'))),
 					tag('tr',
 						tag('th', _('Make Admin')),
-						tag('td', create_checkbox('make_admin', '1')))
+						tag('td', create_checkbox('make_admin', '1'))),
+					tag('tr',
+						tag('th', _('Group')),
+						tag('td', create_text('group')))
 				   )));
 }
 
@@ -92,14 +95,16 @@ function calendar_list()
 
         $tbody = tag('tbody');
 
+		$tbody->add(tag('tr', tag('th', _("Calendar")),
+					tag('th', _("Action"))));
         foreach($phpcdb->get_calendars() as $calendar) {
                 $title = $calendar->get_title();
                 $cid = $calendar->get_cid();
 
                 $tbody->add(tag('tr',
-                                tag('th', create_action_link($title, "cadmin",
-						array("phpcid" => $cid))),
-                                tag('td', create_action_link("delete",
+                                tag('th', $title),
+                                tag('td',create_action_link("Edit", "cadmin",
+						array("phpcid" => $cid)),"   ", create_action_link("Delete",
 						"calendar_delete",
 						array("cid" => $cid)))));
         }
@@ -115,9 +120,13 @@ function user_list()
 
         $tbody = tag('tbody');
 
+		$tbody->add(tag('tr', tag('th', _("Username")),
+					tag('th', _("Group")),
+					tag('th', _("Action"))));
         foreach($phpcdb->get_users() as $user) {
 		$tbody->add(tag('tr', tag('th', $user->username),
-					tag('td', create_action_link("delete",
+					tag('td', $user->group),
+					tag('td', create_action_link("Delete",
 							"user_delete",
 							array("uid" => $user->uid)))));
 	}

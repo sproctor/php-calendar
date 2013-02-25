@@ -49,14 +49,21 @@ function user_create()
 
 	$make_admin = empty($vars['make_admin']) ? 0 : 1;
 
+	    if(empty($vars['group'])) {
+                return message_redirect(_('You must specify a user group'),
+				$form_page);
+        }
+		
         $passwd = md5($vars['password1']);
+		
+		$group=$vars['group'];
 
 	if($phpcdb->get_user_by_name($vars["user_name"]))
 		return message_redirect(_('User already exists.'), $form_page);
 	
-	$phpcdb->create_user($vars["user_name"], $passwd, $make_admin);
+	$phpcdb->create_user($vars["user_name"], $passwd, $make_admin, $group);
 
-        return message_redirect(_('Added user.'), $form_page);
+        return message_redirect(_('Added user. Now set its permission inside the Calendar Admin'), $form_page);
 }
 
 ?>
