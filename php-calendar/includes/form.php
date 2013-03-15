@@ -307,7 +307,7 @@ function form_date_input($qid, $defaults, $dateFormat) {
 		$date_attrs->add("value=\"{$defaults["$qid-date"]}\"");
 	return array(tag('input', $date_attrs),
 			tag('script', attrs('type="text/javascript"'),
-				"\$('#$qid-date').datepicker({dateFormat: \"$dateFormat\" });"));
+				"\$('#$qid-date').datepicker({dateFormat: \"$dateFormat\", firstDay: ".day_of_week_start()." });")); /**** */
 }
 
 /* this class is for date input

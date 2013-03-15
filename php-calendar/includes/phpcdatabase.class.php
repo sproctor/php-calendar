@@ -63,7 +63,7 @@ class PhpcDatabase {
 
 	private function get_user_fields() {
 		$users_table = SQL_PREFIX . "users";
-		return "`$users_table`.`uid`, `username`, `password`, `$users_table`.`admin`, `password_editable`, `timezone`, `language`";
+		return "`$users_table`.`uid`, `username`, `password`, `$users_table`.`admin`, `password_editable`, `timezone`, `language`, `gid`";
 	}
 
 	// returns all the events for a particular day
@@ -79,7 +79,7 @@ class PhpcDatabase {
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-                $query = "SELECT " . $this->get_occurrence_fields()
+        $query = "SELECT " . $this->get_occurrence_fields()
 			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
@@ -97,6 +97,21 @@ class PhpcDatabase {
 
 		return $results;
         }
+		
+	/* if category is visible to user id */
+	function is_cat_visible($uid,$catid)
+	{
+	    $users_table = SQL_PREFIX . 'users';
+	   	$groups_table = SQL_PREFIX . 'groups';
+		
+		if (is_admin()) return true;
+		
+		$query = "SELECT * FROM `" . $users_table. "` JOIN `" . $groups_table. "` ON (`" . $users_table. "`.gid = `" . $groups_table. "`.gid) WHERE `catid`=".$catid." AND `uid`=".$uid ;	
+		
+		$results = $this->dbh->query($query)
+			or false;
+		return $results->num_rows;
+	}
 
 	// returns all the events for a particular day
 	function get_occurrences_by_date($cid, $year, $month, $day)
@@ -158,26 +173,46 @@ class PhpcDatabase {
 		return $result;
 	}
 
-	// returns the category that corresponds to $tid
+	// returns the category that corresponds to $catid
 	function get_category($catid)
 	{
 		$cats_table = SQL_PREFIX . 'categories';
 
-                $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
+        $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
 			."`catid`\n"
 			."FROM `$cats_table`\n"
 			."WHERE `catid` = $catid";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Error in get_category'), $query);
-
+			
 		$result = $sth->fetch_assoc()
-			or soft_error(_("Category does not exist")
+			or soft_error(_("Category doesn't exist with catid")
 					. ": $catid");
+	
+		$result['gid']=$this->get_groups($catid);
 
 		return $result;
 	}
 
+function get_groups($catid)
+{
+	$groups_table = SQL_PREFIX . 'groups';
+
+        $query = "SELECT `gid`\n"
+			."FROM `$groups_table`\n"
+			."WHERE `catid` = $catid";
+
+		$gth = $this->dbh->query($query)
+			or $this->db_error(_('Error in get_category'), $query);
+					
+		$group = array();
+		while($row = $gth->fetch_assoc()) {
+			$group[] = $row['gid'];
+		}					
+	return $group;
+}
+	
 	// returns the categories for calendar $cid
 	function get_categories($cid = false)
 	{
@@ -188,8 +223,7 @@ class PhpcDatabase {
 		else
 			$where = "WHERE `cid` IS NULL\n";
 
-                $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
-			."`catid`\n"
+         $query = "SELECT `catid`\n"
 			."FROM `$cats_table`\n"
 			.$where;
 
@@ -199,7 +233,7 @@ class PhpcDatabase {
 
 		$arr = array();
 		while($result = $sth->fetch_assoc()) {
-			$arr[] = $result;
+			$arr[] = $this->get_category($result['catid']);
 		}
 
 		return $arr;
@@ -304,15 +338,10 @@ class PhpcDatabase {
 
 		$query1 = 'DELETE FROM `'.SQL_PREFIX ."calendars`\n"
 			."WHERE cid='$id'";
-		$query2 = 'DELETE FROM `'.SQL_PREFIX ."config`\n"
-			."WHERE cid='$id'";
 
 		$sth = $this->dbh->query($query1)
 			or $this->db_error(_('Error while removing a calendar'),
 					$query1);
-		$this->dbh->query($query2)
-			or $this->db_error(_('Error while calendar config'),
-					$query2);
 
 		return $this->dbh->affected_rows > 0;
 	}
@@ -353,7 +382,7 @@ class PhpcDatabase {
 	function get_calendar_config($cid)
 	{
 		// Load configuration
-		$query = "SELECT * from " . SQL_PREFIX ."config\n"
+		$query = "SELECT * from " . SQL_PREFIX ."calendars\n"
 			."WHERE `cid`='$cid'";
 
 		$sth = $this->dbh->query($query)
@@ -362,11 +391,14 @@ class PhpcDatabase {
 
 		$config = array();
 		$have_config = false;
-		while($row = $sth->fetch_assoc()) {
-			$config[$row['config_name']] = $row['config_value'];
-			$have_config = true;
+		
+		$row = $sth->fetch_assoc(); //single row
+		foreach ($row as $key=>$value)
+		{
+		$config[$key]=$value;
+		$have_config = true;		
 		}
-
+		
 		if(!$have_config)
 			soft_error(_("Invalid Calendar ID"));
 
@@ -498,11 +530,11 @@ class PhpcDatabase {
 			return false;
 	}
 
-	function create_user($username, $password, $make_admin)
+	function create_user($username, $password, $make_admin, $gid)
 	{
 		$query = "INSERT into `".SQL_PREFIX."users`\n"
-			."(`username`, `password`, `admin`) VALUES\n"
-			."('$username', '$password', '$make_admin')";
+			."(`username`, `password`, `admin`, `gid`) VALUES\n"
+			."('$username', '$password', '$make_admin', '$gid')";
 
 		$this->dbh->query($query)
 			or $this->db_error(_('Error creating user.'), $query);
@@ -519,27 +551,27 @@ class PhpcDatabase {
 		return $this->dbh->insert_id;
 	}
 
-	function create_config($cid, $name, $value)
-	{
-		$query = "INSERT INTO ".SQL_PREFIX."config\n"
-			."(`cid`, `config_name`, `config_value`)\n"
-			."VALUES ('$cid', '$name', '$value')";
-
-		$this->dbh->query($query)
-			or $this->db_error(_('Error creating options'), $query);
-	}
-
 	function update_config($cid, $name, $value)
 	{
-		$query = "INSERT ".SQL_PREFIX."config\n"
-			."(`cid`, `config_name`, `config_value`)\n"
-			."VALUES ('$cid', '$name', '$value')\n"
-			."ON DUPLICATE KEY UPDATE config_value='$value'";
+		$query = "UPDATE ".SQL_PREFIX."calendars \n"
+		."SET `".$name."`='$value'\n"
+		."WHERE `cid`='$cid'";
 
 		$this->dbh->query($query)
 			or $this->db_error(_('Error reading options'), $query);
 	}
 
+	function create_config($cid, $name, $value)
+	{
+	
+		$query = "UPDATE ".SQL_PREFIX."calendars \n"
+			."SET `".$name."`='$value'\n"
+			."WHERE `cid`='$cid'"; 
+
+		$this->dbh->query($query)
+			or $this->db_error(_('Error creating options'), $query);
+	}
+	
 	function set_password($uid, $password)
 	{
 		$query = "UPDATE `" . SQL_PREFIX . "users`\n"
@@ -668,7 +700,7 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows > 0;
 	}
 
-	function create_category($cid, $name, $text_color, $bg_color)
+	function create_category($cid, $name, $text_color,$bg_color, $groups)
 	{
 		$query = "INSERT INTO `" . SQL_PREFIX . "categories`\n"
 			."(`cid`, `name`, `text_color`, `bg_color`)\n"
@@ -677,11 +709,26 @@ class PhpcDatabase {
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Error creating category.'),
 					$query);
+		
+		$ret_id=$this->dbh->insert_id;
+		
+		$group_arr=explode(',',$groups);
+		
+		foreach ($group_arr as $grp)
+		{
+		$query = "INSERT INTO `" . SQL_PREFIX . "groups`\n"
+			."(`gid`, `catid`)\n"
+			."VALUES ('$grp', '$ret_id')";
 
-		return $this->dbh->insert_id;
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error creating category.'),
+					$query);
+		}
+		
+		return $ret_id;
 	}
 
-	function modify_category($catid, $name, $text_color, $bg_color)
+	function modify_category($catid, $name, $text_color, $bg_color, $groups)
 	{
 		$query = "UPDATE " . SQL_PREFIX . "categories\n"
 			."SET\n"
@@ -694,6 +741,29 @@ class PhpcDatabase {
 			or $this->db_error(_('Error modifying category.'),
 					$query);
 
+					
+		$group_arr=explode(',',$groups);
+		
+		
+		foreach ($group_arr as $grp)
+		{
+			/* not very clever here.. */
+			$query = "SELECT * FROM `" . SQL_PREFIX . "groups` WHERE `catid`=".$catid." AND `gid`=".$grp ;	
+
+			$results = $this->dbh->query($query)
+				or false;
+			if ($results->num_rows==0)
+			{
+				$query = "INSERT INTO `" . SQL_PREFIX . "groups`\n"
+					."(`gid`, `catid`)\n"
+					."VALUES ('$grp', '$catid')";
+
+				$gth = $this->dbh->query($query)
+					or $this->db_error(_('Error creating category.'),
+							$query);
+			}
+		}
+		
 		return $this->dbh->affected_rows > 0;
 	}
 

@@ -126,7 +126,12 @@ class PhpcCalendar {
 
 		if(!isset($this->categories))
 			$this->categories = $phpcdb->get_categories($this->cid);
-
+		
+		foreach ($this->categories as $k=>$cat)
+		{
+		if (!$phpcdb->is_cat_visible(get_uid(), $cat['catid']))
+			unset($this->categories[$k]);
+		}
 		return $this->categories;
 	}
 }
