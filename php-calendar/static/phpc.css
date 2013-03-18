@@ -38,11 +38,6 @@ body {
   padding: 0;
 }
 
-/* webkit fix */
-a:-webkit-any-link {
-text-decoration: none;
-}
-
 .php-calendar a {
   color: #000;
 }
@@ -52,9 +47,13 @@ text-decoration: none;
 }
 
 .php-calendar h1 {
-  text-decoration:none;
   text-align: center;
   color: #000;
+}
+
+.php-calendar h1 a {
+  text-decoration: none;
+  display: block;
 }
 
 .php-calendar h2 {

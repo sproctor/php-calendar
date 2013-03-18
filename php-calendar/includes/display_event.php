@@ -84,7 +84,7 @@ function display_event_by_oid($oid)
 
 
 	$occurrences = $phpcdb->get_occurrences_by_eid($eid);
-	if(sizeof($occurrences) > 1) {
+	//if(sizeof($occurrences) > 1) {
 		$occurrence_div = tag('div');
 		$i = 0;
 		while($i < sizeof($occurrences)) {
@@ -119,7 +119,7 @@ function display_event_by_oid($oid)
 					'display_event', $eid));
 
 		$event_header->add($occurrence_div);
-	}
+	//}
 
 	$year = $event->get_start_year();
 	$month = $event->get_start_month();

@@ -71,8 +71,9 @@ try {
 	$calendar_title = $phpc_cal->get_title();
 	$content = tag('div', attributes('class="php-calendar"'),
 			tag('div',attributes('class="phpc-logged"'), $welcome),
-			tag('a', attributes("href='$phpc_home_url'"),
-			tag('h1', $calendar_title)),
+			tag('h1',
+				tag('a', attributes("href='$phpc_home_url'"),
+					$calendar_title)),
 			display_phpc());
 } catch(Exception $e) {
 	$calendar_title = $e->getMessage();
