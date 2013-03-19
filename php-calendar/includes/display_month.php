@@ -48,9 +48,16 @@ function display_month()
                         tag('table',
 				attributes('class="phpc-main phpc-calendar"'),
                                 tag('caption', month_name($month)." $year"),
-                                tag('colgroup', attributes('span="7"',
-						'width="14%"'),
-					tag('col', attributes('width="3%"'))),
+                                tag('colgroup',
+					tag('col', attributes('class="phpc-week"')),
+					tag('col', attributes('class="phpc-day"')),
+					tag('col', attributes('class="phpc-day"')),
+					tag('col', attributes('class="phpc-day"')),
+					tag('col', attributes('class="phpc-day"')),
+					tag('col', attributes('class="phpc-day"')),
+					tag('col', attributes('class="phpc-day"')),
+					tag('col', attributes('class="phpc-day"'))
+				   ),
                                 tag('thead', $heading_html),
                                 create_month($month, $year)),
 			$month_navbar);
@@ -233,8 +240,8 @@ function create_month($month, $year)
 		$date_tag->add(create_action_link_with_date($day, 'display_day', $year,
 					$month, $day));
 
-		$html_day = tag('td', attributes('valign="top"',
-					"class=\"phpc-$current_era\""), $date_tag);
+		$html_day = tag('td', attributes("class=\"phpc-$current_era\""),
+				$date_tag);
 
 		$stamp = mktime(0, 0, 0, $month, $day, $year);
 

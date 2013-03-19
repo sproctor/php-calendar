@@ -183,8 +183,17 @@ border:1px solid #666;
   table-layout: fixed;
 }
 
+col.phpc-week {
+  width: 3%;
+}
+
+col.phpc-day {
+  width: 14%;
+}
+
 .phpc-calendar td, .phpc-calendar th {
   border-collapse: collapse;
+  vertical-align: text-top;
 }
 
 .phpc-calendar td {
@@ -249,6 +258,13 @@ td.phpc-none {
 .phpc-add {
   float: right;
   text-align: right;
+  border: solid 1px #000;
+  text-decoration: none;
+}
+
+.phpc-add:hover {
+  background-color: #666;
+  color: #000;
 }
 
 #phpc-summary-view {
@@ -271,10 +287,14 @@ td.phpc-none {
   width: 100%;
 }
 
-.phpc-date  /*S*/
-{
-padding:5px 3px;
-border: 0px !important;
+.phpc-date  /*S*/ {
+  padding: 5px 3px;
+  cursor: pointer;
+}
+
+.phpc-date a {
+  display: block;
+  text-decoration: none;
 }
 
 .phpc-none .phpc-date {
