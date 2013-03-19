@@ -721,10 +721,6 @@ function get_header_tags($path)
 					"src=\"$path/tableUI.js\""), ''),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/tableUI.css\"")),
-			tag("script", attrs('type="text/javascript"',
-					"src=\"$path/jquery.formalize.min.js\""), ''),
-			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"$path/formalize.css\"")),
 		  );
 }
 
