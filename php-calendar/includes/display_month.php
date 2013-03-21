@@ -229,16 +229,19 @@ function create_month($month, $year)
 			}
 		}
 
-		$click=create_plain_link($day, 'display_day', $year,$month, $day);
-		$date_tag = tag('div', attributes('class="phpc-date" onclick="window.location.href =\''.$click.'\'"'));
-		
+		$click = create_plain_link($day, 'display_day', $year, $month,
+				$day);
+		$date_tag = tag('div', attributes('class="phpc-date"',
+					"onclick=\"window.location.href='$click'\""),
+				create_action_link_with_date($day,
+					'display_day', $year, $month, $day));
+
 		if($phpc_cal->can_write()) {
 			$date_tag->add(create_action_link_with_date('+',
 						'event_form', $year, $month,
-						$day, array('class="phpc-add"')));
+						$day,
+						array('class="phpc-add"')));
 		}
-		$date_tag->add(create_action_link_with_date($day, 'display_day', $year,
-					$month, $day));
 
 		$html_day = tag('td', attributes("class=\"phpc-$current_era\""),
 				$date_tag);

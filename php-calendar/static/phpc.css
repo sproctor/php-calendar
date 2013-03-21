@@ -18,9 +18,9 @@
   COLORS KEY
   BACKGROUND, INPUT: #FFF
   FONT: #000
-  BARS: #CCC
+  BARS, HOVER BG: #CCC
   DESCRIPTION: #DDD
-  BORDER, HOVERS: #666
+  BORDER, HOVER FG: #666
   DAY - NONE: #777
   DAY - PAST: #AAA
   DAY - PRESENT: #EED055
@@ -48,7 +48,6 @@ body {
 
 .php-calendar h1 {
   text-align: center;
-  color: #000;
 }
 
 .php-calendar h1 a {
@@ -58,16 +57,10 @@ body {
 
 .php-calendar h2 {
   text-align: center;
-  color: #000;
 }
 
 .phpc-navbar a {
-  text-decoration: underline;
   margin: 0 .5em;
-}
-
-.phpc-navbar a:hover {
-  color: #666;
 }
 
 .phpc-navbar {
@@ -83,7 +76,6 @@ body {
 }
 
 .phpc-month-nav a {
-  text-decoration: underline;
   margin: 0 .2em;
 }
 
@@ -115,7 +107,7 @@ body {
 .php-create-category {
   margin-left: auto;
   margin-right: auto;
-  text-align:center;
+  text-align: center;
 }
 
 table.phpc-main {
@@ -150,11 +142,11 @@ div.phpc-main {
 
 }
 
-.phpc-event-menu a{
-float:right;
-margin:.25em;
-padding:.25em;
-border:1px solid #666;
+.phpc-event-menu a {
+  float: right;
+  margin: .25em;
+  padding: .25em;
+  border: 1px solid #666;
 }
 
 .phpc-desc p {
@@ -163,7 +155,6 @@ border:1px solid #666;
 }
 
 .php-calendar caption {
-  /*font-size: 175%;*/
   color: #000;
   background-color: #fff;
   padding: 2px;
@@ -198,33 +189,20 @@ col.phpc-day {
 
 .phpc-calendar td {
   text-align: left;
-  height: 100px; /*S*/
+  height: 100px;
 }
 
-td.phpc-past {
-  padding: 0;
-}
-
-td.phpc-future {
-  padding: 0;
-}
-
-td.phpc-present {
-  padding: 0;
-}
-
-td.phpc-none {
+td.phpc-past, td.phpc-present, td.phpc-future, td.phpc-none {
   padding: 0;
 }
 
 .phpc-calendar ul li {
   border: 1px solid #000;
-  margin:0.1em;
+  margin: 0.1em;
 }
 
 .phpc-main ul {
   list-style-type: none;
-  /*margin: 2px;*/
   padding: 0;
 }
 
@@ -232,14 +210,11 @@ td.phpc-none {
   display: block;
   font-size: 80%;
   font-weight: normal;
-  border-color: #000;
-  border-style: solid;
-  border-width: 0 0 1px 0;
   margin: 0;
   background-color: #fff;
   text-decoration: none;
   padding: 2px;
-  color:#000 !important;/*S*/
+  color: #000;
 }
 
 .phpc-calendar li a:hover {
@@ -247,23 +222,19 @@ td.phpc-none {
   color: #000;
 }
 
-.phpc-footer {
-  /*text-align: center;*/
-}
-
 .phpc-button {
   text-align: center;
 }
 
-.phpc-add {
+a.phpc-add {
   float: right;
-  text-align: right;
   border: solid 1px #000;
   text-decoration: none;
+  padding: 0 2px;
 }
 
-.phpc-add:hover {
-  background-color: #666;
+a.phpc-add:hover {
+  background-color: #CCC;
   color: #000;
 }
 
@@ -287,14 +258,15 @@ td.phpc-none {
   width: 100%;
 }
 
-.phpc-date  /*S*/ {
-  border: 1px solid #666;
+.phpc-date {
+  border-width: 0 0 1px 0 !important;
+  border-style: solid;
+  border-color: #666;
   padding: 5px 3px;
   cursor: pointer;
 }
 
-.phpc-date a {
-  display: block;
+.phpc-date > a {
   text-decoration: none;
 }
 
@@ -339,10 +311,13 @@ td.form-color-selected {
   border-width: 0 0 1px 0;
 }
 
-.phpc-logged
-{
-	z-index:1;
-	float: right;
+.phpc-logged {
+  z-index: 1;
+  float: right;
+}
+
+.form-submit div {
+  text-align: center;
 }
 
 /* \*/ /*/

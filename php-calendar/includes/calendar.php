@@ -696,15 +696,15 @@ function get_header_tags($path)
 	else
 		$jq_min = '.min';
 		
-		$theme='excite-bike';
-		$jquery_version="1.9.0";
-		$jqueryui_version="1.10.0";
+		$theme='smoothness';
+		$jquery_version="1.9.1";
+		$jqueryui_version="1.10.2";
 
 	return array(
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/phpc.css\"")),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/themes/$theme/jquery-ui.css\"")),
+					"href=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/themes/$theme/jquery-ui$jq_min.css\"")),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/jquery-ui-timepicker.css\"")),
 			tag("script", attrs('type="text/javascript"',
