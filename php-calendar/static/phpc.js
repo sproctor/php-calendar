@@ -9,6 +9,13 @@ $(document).ready(function(){
       $("body").css("padding-top", padding + "em");
   });
 
+  // Add theme to appropriate items
+  $(".phpc-add").button({
+      text: false,
+      icons: { primary: "ui-icon-plus" }
+    });
+  $("input[type=submit], input[type=checkbox]").button();
+
   // Summary init
   $("#phpc-summary-view").hide();
   $(".phpc-calendar li a").hoverIntent(

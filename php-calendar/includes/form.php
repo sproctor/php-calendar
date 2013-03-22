@@ -582,8 +582,9 @@ class FormCheckBoxQuestion extends FormAtomicQuestion {
 			$attrs->add("checked=\"checked\"");
 
 		$tag = tag('div', tag('input', $attrs));
-		if(!empty($this->descr))
-			$tag->add(tag('span', attrs('class="form-question-description"'),
+		if(!empty($this->desc))
+			$tag->add(tag('label', attrs("for=\"{$this->qid}\"",
+							'class="form-question-description"'),
 						$this->desc));
 
                 return $tag;

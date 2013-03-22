@@ -101,7 +101,7 @@ function display_form() {
 	$when_group->add_part($repeat_type);
 
 	if($phpc_cal->can_create_readonly())
-		$form->add_part(new FormCheckBoxQuestion('readonly',
+		$form->add_part(new FormCheckBoxQuestion('readonly', false,
 					_('Read-only')));
 
 	$categories = new FormDropdownQuestion('catid', _('Category'));
