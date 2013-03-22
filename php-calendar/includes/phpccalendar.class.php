@@ -18,15 +18,28 @@
 class PhpcCalendar {
 	var $cid;
 	var $title;
-	var $config;
 	var $user_perms;
 	var $categories;
+	var $hours_24;
+	var $date_format;
+	var $week_start;
+	var $subject_max;
+	var $events_max;
+	var $anon_permission;
+	var $timezone;
+	var $language;
 
-	function PhpcCalendar($result, $config)
-	{
+	function PhpcCalendar($result) {
 		$this->cid = $result['cid'];
-		$this->title = $config['calendar_title'];
-		$this->config = $config;
+		$this->title = $result['title'];
+		$this->hours_24 = $result['hours_24'];
+		$this->date_format = $result['date_format'];
+		$this->week_start = $result['week_start'];
+		$this->subject_max = $result['subject_max'];
+		$this->events_max = $result['events_max'];
+		$this->anon_permission = $result['anon_permission'];
+		$this->timezone = $result['timezone'];
+		$this->language = $result['language'];
 	}
 
 	function get_title()
@@ -42,18 +55,9 @@ class PhpcCalendar {
 		return $this->cid;
 	}
 
-	function get_config($option, $default = '') {
-		if(!isset($this->config[$option])) {
-			if(defined('PHPC_DEBUG'))
-				message("Undefined config option \"$option\".");
-			return $default;
-		}
-		return $this->config[$option];
-	}
-
 	function can_read()
 	{
-		if ($this->get_config('anon_permission') >= 1)
+		if ($this->anon_permission >= 1)
 			return true;
 
 		if (!is_user())
@@ -66,7 +70,7 @@ class PhpcCalendar {
 
 	function can_write()
 	{
-		if ($this->get_config('anon_permission') >= 2)
+		if ($this->anon_permission >= 2)
 			return true;
 
 		if (!is_user())
@@ -98,7 +102,7 @@ class PhpcCalendar {
 
 	function can_modify()
 	{
-		if ($this->get_config('anon_permission') >= 3)
+		if ($this->anon_permission >= 3)
 			return true;
 
 		if (!is_user())

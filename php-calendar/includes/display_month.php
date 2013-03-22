@@ -118,7 +118,7 @@ function create_month($month, $year)
 	$last_day = $wim * 7 - day_of_week($month, 1, $year);
 	$to_stamp = mktime(0, 0, 0, $month, $last_day, $year);
 
-	$max_events = $phpc_cal->get_config('events_max', 8);
+	$max_events = $phpc_cal->events_max;
 
 	$results = $phpcdb->get_occurrences_by_date_range($phpcid, $from_stamp,
 			$to_stamp);

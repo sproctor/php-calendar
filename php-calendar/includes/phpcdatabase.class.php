@@ -379,32 +379,6 @@ function get_groups($catid)
 		return $rv;
 	}
 
-	function get_calendar_config($cid)
-	{
-		// Load configuration
-		$query = "SELECT * from " . SQL_PREFIX ."calendars\n"
-			."WHERE `cid`='$cid'";
-
-		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Could not read configuration'),
-					$query);
-
-		$config = array();
-		$have_config = false;
-		
-		$row = $sth->fetch_assoc(); //single row
-		foreach ($row as $key=>$value)
-		{
-		$config[$key]=$value;
-		$have_config = true;		
-		}
-		
-		if(!$have_config)
-			soft_error(_("Invalid Calendar ID"));
-
-		return $config;
-	}
-
 	function get_permissions($cid, $uid)
 	{
 		static $perms = array();
@@ -427,7 +401,7 @@ function get_groups($catid)
 
 	function get_calendars()
 	{
-		$query = "SELECT `cid`\n"
+		$query = "SELECT *\n"
 			."FROM `" . SQL_PREFIX .  "calendars`\n";
 
 		$sth = $this->dbh->query($query)
@@ -436,10 +410,9 @@ function get_groups($catid)
 
 		while($result = $sth->fetch_assoc()) {
 			$cid = $result["cid"];
-			$config = $this->get_calendar_config($cid);
 			if(empty($this->calendars[$cid]))
-				$this->calendars[$cid] = new PhpcCalendar(
-						$result, $config);
+				$this->calendars[$cid] = new PhpcCalendar
+					($result);
 		}
 		return $this->calendars;
 	}
@@ -447,16 +420,15 @@ function get_groups($catid)
 	function get_calendar($cid)
 	{
 		if(empty($this->calendars[$cid])) {
-			$query = "SELECT `cid`\n"
+			$query = "SELECT *\n"
 				."FROM `" . SQL_PREFIX .  "calendars`\n"
 				."WHERE `cid`='$cid'";
 
 			$sth = $this->dbh->query($query)
 				or $this->db_error(_('Could not get calendar.'),
 					$query);
-			$this->calendars[$cid] = new PhpcCalendar(
-					$sth->fetch_assoc(),
-					$this->get_calendar_config($cid));
+			$this->calendars[$cid] = new PhpcCalendar
+				($sth->fetch_assoc());
 		}
 
 		return $this->calendars[$cid];

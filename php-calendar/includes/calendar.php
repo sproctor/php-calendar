@@ -155,7 +155,7 @@ function day_of_week_start()
 {
 	global $phpc_cal;
 
-	return $phpc_cal->get_config('week_start');
+	return $phpc_cal->week_start;
 }
 
 // returns the number of days in the week before the 
@@ -400,12 +400,17 @@ function create_password($name)
 
 // creates a checkbox for a form
 // returns tag data for the checkbox
-function create_checkbox($name, $value, $checked = false)
+function create_checkbox($name, $value, $checked = false, $label = false)
 {
-	$attributes = attributes("name=\"$name\"", 'type="checkbox"',
-			"value=\"$value\"");
+	$attributes = attributes("id=\"$name\"", "name=\"$name\"",
+			'type="checkbox"', "value=\"$value\"");
 	if(!empty($checked)) $attributes->add('checked="checked"');
-	return tag('input', $attributes);
+	$input = tag('input', $attributes);
+	if($label !== false)
+		return array($input, tag('label', attributes("for=\"$name\""),
+					$label));
+	else
+		return $input;
 }
 
 // creates the navbar for the top of the calendar
@@ -525,7 +530,7 @@ function init_config_options() {
 					6 => _('Saturday')
 				     )),
 			array('hours_24', _('24 Hour Time'), PHPC_CHECK),
-			array('calendar_title', _('Calendar Title'), PHPC_TEXT),
+			array('title', _('Calendar Title'), PHPC_TEXT),
 			array('subject_max', _('Maximum Subject Length'), PHPC_TEXT),
 			array('events_max', _('Events Display Daily Maximum'), PHPC_TEXT),
 			array('anon_permission', _('Public Permissions'), PHPC_DROPDOWN,
@@ -729,14 +734,16 @@ function embed_header($path)
 	echo tag('', get_header_tags())->toString();
 }
 
+// $element: { name, text, type, value(s) }
 function create_config_input($element, $default = false)
 {
 	$name = $element[0];
+	$text = $element[1];
 	$type = $element[2];
 
 	switch($type) {
 		case PHPC_CHECK:
-			$input = create_checkbox($name, '1', $default);
+			$input = create_checkbox($name, '1', $default, $text);
 			break;
 		case PHPC_TEXT:
 			$input = create_text($name, $default);

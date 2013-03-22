@@ -34,8 +34,8 @@ function occur_form() {
 function display_form() {
 	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal;
 
-	$hour24 = $phpc_cal->get_config('hours_24');
-	$date_format = $phpc_cal->get_config('date_format');
+	$hour24 = $phpc_cal->hours_24;
+	$date_format = $phpc_cal->date_format;
 	$form = new Form($phpc_script, _('Occurrence Form'));
 
 	$when_group = new FormGroup(_('When'));

@@ -39,7 +39,7 @@ function config_form()
         foreach(get_config_options() as $element) {
                 $name = $element[0];
                 $text = $element[1];
-		$default = $phpc_cal->get_config($name, false);
+		$default = $phpc_cal->$name;
 		$input = create_config_input($element, $default);
 
                 $tbody->add(tag('tr',

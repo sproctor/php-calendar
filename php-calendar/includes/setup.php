@@ -26,17 +26,17 @@ if ( !defined('IN_PHPC') ) {
 // Run the installer if we have no config file
 // This doesn't work when embedded from outside
 if(!file_exists($phpc_config_file)) {
-        redirect('install/install.php');
+        redirect('install.php');
         exit;
 }
 require_once($phpc_config_file);
 if(!defined('SQL_TYPE')) {
-        redirect('install/install.php');
+        redirect('install.php');
         exit;
 }
 
-if(!defined("PHPC_DEBUG") && file_exists("$phpc_root_path/install")) {
-	display_error(_("You must remove the install directory to start using the calendar. If you see this error but you must install the database, delete the config.php file."));
+if(!defined("PHPC_DEBUG") && file_exists("$phpc_root_path/install.php")) {
+	display_error(_("You must remove the install script to start using the calendar. If you see this error but you must install the database, goto <a href=\"install.php\">install.php</a>"));
 }
 
 if(defined('PHPC_DEBUG')) {
@@ -153,13 +153,12 @@ if(!empty($_SESSION['phpc_uid'])) {
 
 // setup translation stuff
 if($phpc_translate) {
-	$phpc_cal_lang = $phpc_cal->get_config('language');
 	if(!empty($vars['lang'])) {
 		$phpc_lang = $vars['lang'];
 	} elseif(!empty($phpc_user_lang)) {
 		$phpc_lang = $phpc_user_lang;
-	} elseif(!empty($phpc_cal_lang)) {
-		$phpc_lang = $phpc_cal_lang;
+	} elseif(!empty($phpc_cal->language)) {
+		$phpc_lang = $phpc_cal->language;
 	} elseif(!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
 		$phpc_lang = substr(htmlentities(
 					$_SERVER['HTTP_ACCEPT_LANGUAGE']),
@@ -238,7 +237,7 @@ if(!empty($_SESSION['messages'])) {
 if(!empty($phpc_user_tz))
 	$phpc_tz = $phpc_user_tz;
 else
-	$phpc_tz = $phpc_cal->get_config('timezone', false);
+	$phpc_tz = $phpc_cal->timezone;
 
 if(!empty($phpc_tz))
 	date_default_timezone_set($phpc_tz); 

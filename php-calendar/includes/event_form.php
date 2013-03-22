@@ -34,12 +34,11 @@ function event_form() {
 function display_form() {
 	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal;
 
-	$hour24 = $phpc_cal->get_config('hours_24');
-	$date_format = $phpc_cal->get_config('date_format');
+	$hour24 = $phpc_cal->hours_24;
+	$date_format = $phpc_cal->date_format;
 	$form = new Form($phpc_script, _('Event Form'));
 	$form->add_part(new FormFreeQuestion('subject', _('Subject'),
-				false, $phpc_cal->get_config('subject_max'),
-				true));
+				false, $phpc_cal->subject_max, true));
 	$form->add_part(new FormLongFreeQuestion('description',
 				_('Description')));
 
@@ -155,8 +154,8 @@ function display_form() {
 		add_repeat_defaults($occs, $defaults);
 
 	} else {
-		$hour24 = $phpc_cal->get_config('hours_24');
-		$datefmt = $phpc_cal->get_config('date_format');
+		$hour24 = $phpc_cal->hours_24;
+		$datefmt = $phpc_cal->date_format;
 		$date_string = format_short_date_string($year, $month, $day,
 				$datefmt);
 		$defaults = array(
@@ -474,7 +473,7 @@ function get_timestamp($prefix)
 					$prefix));
 	}
 	
-	switch($phpc_cal->get_config('date_format')) {
+	switch($phpc_cal->date_format) {
 		case 0: // Month Day Year
 			$month = $date_matches[1];
 			$day = $date_matches[2];

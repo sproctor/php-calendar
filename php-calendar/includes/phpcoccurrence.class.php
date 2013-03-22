@@ -104,7 +104,7 @@ class PhpcOccurrence extends PhpcEvent{
 	{
 		switch($this->time_type) {
 			default:
-				$hour24 = $this->cal->get_config('hours_24');
+				$hour24 = $this->cal->hours_24;
 				$start_time = $this->get_start_time();
 				$end_time = $this->get_end_time();
 				return $start_time.' '._('to').' '.$end_time;
@@ -169,37 +169,37 @@ class PhpcOccurrence extends PhpcEvent{
 	function get_start_date() {
 		return format_date_string($this->start_year, $this->start_month,
 				$this->start_day,
-				$this->cal->get_config('date_format'));
+				$this->cal->date_format);
 	}
 
 	function get_short_start_date() {
 		return format_short_date_string($this->start_year,
 				$this->start_month, $this->start_day,
-				$this->cal->get_config('date_format'));
+				$this->cal->date_format);
 	}
 
 	function get_start_time() {
 		return format_time_string($this->start_hour,
 				$this->start_minute,
-				$this->cal->get_config('hours_24'));
+				$this->cal->hours_24);
 	}
 
 	function get_end_date() {
 		return format_date_string($this->end_year, $this->end_month,
 				$this->end_day,
-				$this->cal->get_config('date_format'));
+				$this->cal->date_format);
 	}
 
 	function get_short_end_date() {
 		return format_short_date_string($this->end_year,
 				$this->end_month, $this->end_day,
-				$this->cal->get_config('date_format'));
+				$this->cal->date_format);
 	}
 
 	function get_end_time() {
 		return format_time_string($this->end_hour,
 				$this->end_minute,
-				$this->cal->get_config('hours_24'));
+				$this->cal->hours_24);
 	}
 
 	function get_start_timestamp() {

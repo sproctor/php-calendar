@@ -59,12 +59,9 @@ body {
   text-align: center;
 }
 
-.phpc-navbar a {
+.phpc-bar a {
   margin: 0 .5em;
-}
-
-.phpc-navbar {
-  /*text-align: center;*/
+  text-decoration: none;
 }
 
 .phpc-bar {
@@ -164,10 +161,6 @@ div.phpc-main {
 
 .php-calendar tfoot {
   text-align: center;
-}
-
-.phpc-calendar {
-  table-layout: fixed;
 }
 
 col.phpc-week {
@@ -306,17 +299,14 @@ td.form-color-selected {
   float: right;
 }
 
-.form-checkbox-question label {
-  font-size: .9em;
+/* labels associated with checkboxes */
+.php-calendar label, .php-calendar input[type=submit] {
+  font-size: .8em;
 }
 
 .form-submit div {
   text-align: center;
 }
-
-/* \*/ /*/
-  .phpc-calendar { table-layout: auto; }
-/* */
 
 div.ui-datepicker, div.ui-timepicker {
   font-size: 0.9em;
