@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2013 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +33,8 @@ if(!function_exists("mysqli_connect"))
 
 echo '<html>
 <head>
-<link rel="stylesheet" type="text/css" href="../static/phpc.css"/>
-<link rel="stylesheet" type="text/css" href="../static/formalize.css"/>
+<link rel="stylesheet" type="text/css" href="static/phpc.css"/>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-<script type="text/javascript" src="../static/jquery.formalize.min.js"></script>
 <title>PHP Calendar Installation</title>
 </head>
 <body>
@@ -191,25 +189,6 @@ function upgrade_20_action() {
 	}
 
 	echo "<p>Occurrences updated.</p>";
-
-	$query = "ALTER TABLE `" . SQL_PREFIX . "config`\n"
-		."CHANGE `cid` `cid` int(11)\n";
-
-	$dbh->query($query)
-		or db_error($dbh, 'Error modifying config table.',
-				$query);
-	
-	echo "<p>Config table updated.";
-
-	$query = "INSERT INTO ".SQL_PREFIX."config\n"
-		."(`cid`, `config_name`, `config_value`) "
-		."VALUE (NULL, 'version', '0')";
-
-	$dbh->query($query)
-		or db_error($dbh, 'Error adding version.',
-				$query);
-
-	echo "<p>Calendar version updated.</p>";
 
 	create_logins_table();
 
@@ -424,13 +403,6 @@ function install_base()
 
 	create_tables();
 
-	$query = "INSERT INTO ".SQL_PREFIX."config\n"
-		."(`cid`, `config_name`, `config_value`) "
-		."VALUE (NULL, 'version', '0')";
-
-	$dbh->query($query)
-		or db_error($dbh, 'Error adding version.', $query);
-
 	echo "<p>Config file created at \"". realpath($phpc_config_file) ."\"</p>"
 		."<p>Calendars database created</p>\n"
 		."<div><input type=\"submit\" name=\"base\" value=\"continue\">"
@@ -494,16 +466,6 @@ function create_tables()
 		or db_error($dbh, 'Error creating users table.', $query);
 
 	create_logins_table();
-
-	$query = "CREATE TABLE `" . SQL_PREFIX . "config` (\n"
-		."`cid` int(11) DEFAULT NULL,\n"
-		."`config_name` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
-		."`config_value` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
-		."UNIQUE KEY `calendar_id` (`cid`,`config_name`)\n"
-		.") ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
-
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating config table.', $query);
 
 	$query = "CREATE TABLE `" . SQL_PREFIX . "permissions` (\n"
 		."`cid` int(11) unsigned NOT NULL,\n"
@@ -602,10 +564,11 @@ function add_calendar()
 			'timezone' => '',
 			'language' => '',
 			);
+	// TODO turn this into one query merged with the previous one
 	foreach($config_array as $name => $value) {
-		$query = "INSERT INTO ".SQL_PREFIX."config\n"
-			."(`cid`, `config_name`, `config_value`)\n"
-			."VALUES ('$cid', '$name', '$value')";
+		$query = "UPDATE ".SQL_PREFIX."calendars\n"
+			."SET `$name`='$value'\n"
+			."WHERE `cid`='$cid'";
 
 		$dbh->query($query)
 			or db_error($dbh, 'Error creating options.', $query);
