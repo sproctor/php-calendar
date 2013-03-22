@@ -49,16 +49,16 @@ function user_permissions_submit()
 				$different = true;
 		}
 
-		if ($different)
-		{
-			$users[] = $uid;
+		if ($different) {
+			$user = $phpcdb->get_user($uid);
+			$users[] = $user->get_username();
 			$phpcdb->update_permissions($phpcid, $uid, $new_perms);
 		}
 	}
 	if(sizeof($users) == 0)
 		$message = _('No changes to make.');
 	else
-		$message = _('Updated users:').' ' .implode(', ', $users);
+		$message = _('Updated user(s):').' ' .implode(', ', $users);
 
 	return message_redirect($message, "$phpc_script?action=cadmin");
 }

@@ -78,11 +78,11 @@ function user_list()
 					tag('th', $user['username'],
 						create_hidden('uid[]',
 							$user['uid'])),
-					tag('td', create_checkbox("read{$user['uid']}", "1", !empty($user['read']))),
-					tag('td', create_checkbox("write{$user['uid']}", "1", !empty($user['write']))),
-					tag('td', create_checkbox("readonly{$user['uid']}", "1", !empty($user['readonly']))),
-					tag('td', create_checkbox("modify{$user['uid']}", "1", !empty($user['modify']))),
-					tag('td', create_checkbox("admin{$user['uid']}", "1", !empty($user['calendar_admin'])))
+					tag('td', create_checkbox("read{$user['uid']}", "1", !empty($user['read']), _('Read'))),
+					tag('td', create_checkbox("write{$user['uid']}", "1", !empty($user['write']), _('Write'))),
+					tag('td', create_checkbox("readonly{$user['uid']}", "1", !empty($user['readonly']), _('Read-only'))),
+					tag('td', create_checkbox("modify{$user['uid']}", "1", !empty($user['modify']), _('Modify'))),
+					tag('td', create_checkbox("admin{$user['uid']}", "1", !empty($user['calendar_admin']), _('Admin')))
 				   ));
 	}
 

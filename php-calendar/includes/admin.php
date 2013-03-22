@@ -54,7 +54,7 @@ function new_user_form()
 						tag('td', create_password('password2'))),
 					tag('tr',
 						tag('th', _('Make Admin')),
-						tag('td', create_checkbox('make_admin', '1'))),
+						tag('td', create_checkbox('make_admin', '1', false, _('Admin')))),
 					tag('tr',
 						tag('th', _('Group')),
 						tag('td', create_text('group')))
