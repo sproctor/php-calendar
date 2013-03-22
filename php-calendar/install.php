@@ -486,7 +486,6 @@ function create_tables()
 		."`hours_24` int(1) NOT NULL,\n"
 		."`date_format` int(1) NOT NULL,\n"
 		."`week_start` int(1) NOT NULL,\n"
-		."`translate` int(1) NOT NULL,\n"
 		."`subject_max` int(4) NOT NULL,\n"
 		."`events_max` int(2) NOT NULL,\n"
 		."`calendar_title` varchar(50) COLLATE utf8_unicode_ci NOT NULL,\n"
@@ -556,7 +555,6 @@ function add_calendar()
 			'hours_24' => '0',
 			'date_format' => '0',
 			'week_start' => '0',
-			'translate' => '1',
 			'subject_max' => '50',
 			'events_max' => '8',
 			'calendar_title' => 'PHP-Calendar',
