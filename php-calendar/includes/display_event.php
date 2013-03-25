@@ -151,7 +151,7 @@ function display_event_by_eid($eid)
 
 	// Add modify/delete links if this user has access to this event.
         if($event->can_modify()) {
-		$event_header->add(tag('div', attrs('class="phpc-event-menu"'),
+		$event_header->add(tag('div', attrs('class="phpc-bar ui-widget-content"'),
 					create_event_link(_('Modify'),
 						'event_form', $eid), "\n",
 					create_event_link(_('Add Occurrence'),
@@ -174,7 +174,8 @@ function display_event_by_eid($eid)
 			$day = $occurrence->get_start_day();
 		}
 		$oid = $occurrence->get_oid();
-		$occ_tag = tag('li', create_occurrence_link(
+		$occ_tag = tag('li', attrs('class="ui-widget-content"'),
+				create_occurrence_link(
 					$occurrence->get_date_string()
 					. ' ' . _('at') . ' '
 					. $occurrence->get_time_span_string(),

@@ -140,6 +140,8 @@ function category_list()
 				   ));
 	}
 
+	$create_link = create_action_link(_('Create category'), 'category_form',
+			array('cid' => $phpcid));
 	$table = tag('table', attributes("class=\"phpc-container\""),
 			tag('caption', _('Calendar Categories')),
 			tag('thead',
@@ -150,12 +152,13 @@ function category_list()
 					tag('th', _('Visible to User Group')),
 					tag('th', _('Actions'))					
 				   )),
-			$tbody);
+			$tbody,
+			tag('tfoot',
+				tag('tr',
+					tag('td', attributes('colspan="5"'),
+						$create_link))));
 
-	return tag('div', attributes('class="phpc-container"'), $table,
-			tag('div', attributes('class="php-create-category"'),
-			create_action_link(_('Create category'),
-				'category_form', array('cid' => $phpcid))));
+	return tag('div', attributes('class="phpc-container"'), $table);
 }
 
 ?>

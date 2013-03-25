@@ -27,11 +27,6 @@
   DAY - FUTURE: #D0D0D0
   */
 
-html {
-  background-color: #fff;
-  color: #000;
-}
-
 body {
   margin: 0 2em;
   padding: 0;
@@ -52,7 +47,6 @@ body {
 
 .phpc-bar a {
   margin: 0 .25em;
-  padding: 0 4px;
   text-decoration: none;
 }
 
@@ -100,7 +94,6 @@ div.phpc-main {
 .phpc-main h2 {
   text-align: left;
   margin: 0;
-  background-color: #fff;
   padding: 2px .5em; 
 }
 
@@ -113,22 +106,9 @@ div.phpc-main {
   padding: .5em;
 }
 
-.phpc-event-creator{
-
-}
-
-.phpc-event-time{
-
-}
-
-.phpc-event-menu {
-  padding: 4px 0;
-}
-
-.phpc-event-menu a {
+.phpc-event li a {
   text-decoration: none;
   margin: 0 .25em;
-  padding: 0 .25em;
 }
 
 .phpc-desc p {
@@ -196,16 +176,20 @@ a.phpc-add {
   display: none;
   position: absolute;
   background-color: #fff;
-  border: solid 2px #000; 
+  border: 1px solid #000; 
   width: 300px;
   max-height: 250px;
   overflow: hidden;
-  padding: 5px;
-  z-index:1;
+  z-index: 1;
 }
 
-.phpc-summary-head {
-  border-bottom: solid 1px #000;
+#phpc-summary-head {
+  border-bottom: 1px solid #000;
+  padding: 5px;
+}
+
+#phpc-summary-body {
+  padding: 5px;
 }
 
 .form table {
@@ -239,16 +223,8 @@ td.form-color-selected {
 }
 
 .phpc-message {
-  position: fixed;
-  background-color: #EED055;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1.25em;
-  padding: 0.5em 1em;
-  border-style: solid;
-  border-color: #666;
-  border-width: 0 0 1px 0;
+  padding: 4px;
+  margin: .25em 0;
 }
 
 .phpc-logged {
@@ -257,8 +233,10 @@ td.form-color-selected {
 }
 
 /* labels associated with checkboxes */
-.php-calendar label, .php-calendar input[type=submit] {
-  font-size: .8em;
+.php-calendar label,
+.php-calendar input[type=submit],
+.php-calendar tfoot a {
+  font-size: .9em !important;
 }
 
 .form-submit div {
@@ -266,5 +244,5 @@ td.form-color-selected {
 }
 
 div.ui-datepicker, div.ui-timepicker {
-  font-size: 0.9em;
+  font-size: .9em;
 }

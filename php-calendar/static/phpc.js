@@ -15,16 +15,18 @@ $(document).ready(function(){
       icons: { primary: "ui-icon-plus" }
     });
   $(".php-calendar input[type=submit], .php-calendar input[type=checkbox]").button();
+  $(".php-calendar tfoot a").button();
   $(".phpc-date, .phpc-calendar li a, .phpc-event-menu a").on('mouseover mouseout',
       function (event) {
         $(this).toggleClass("ui-state-hover", event.type == 'mouseover');
       });
+  // fancy corners
+  $(".phpc-calendar li a, .phpc-message, .phpc-bar, .php-calendar h1").addClass("ui-corner-all");
+  // add jquery ui style classes
   $(".php-calendar th").addClass("ui-widget-header");
   $(".php-calendar td").addClass("ui-widget-content");
   $(".phpc-calendar li a").addClass("ui-state-default");
-  $(".phpc-calendar li a").addClass("ui-corner-all");
-  $(".phpc-event-menu").addClass("ui-widget-content");
-  $(".phpc-event-menu a").addClass("ui-state-default");
+  $(".phpc-message").addClass("ui-state-highlight");
 
   // Summary init
   $("#phpc-summary-view").hide();

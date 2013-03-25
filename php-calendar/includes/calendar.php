@@ -101,7 +101,7 @@ function phpc_do_login($user, $series_token = false) {
 }
 
 // returns tag data for the links at the bottom of the calendar
-function link_bar()
+function footer()
 {
 	global $phpc_url, $phpc_tz, $phpc_lang;
 
@@ -615,8 +615,8 @@ function display_phpc() {
 			$messages = '';
 		}
 
-		return tag('', $messages, get_calendar_list(), $navbar,
-				$content, link_bar());
+		return tag('', get_calendar_list(), $navbar, $messages,
+				$content, footer());
 	} catch(PermissionException $e) {
 		$results = tag('');
 		// TODO: make navbar show if there is an error in do_action()
@@ -699,8 +699,8 @@ function get_header_tags($path)
 		$jq_min = '.min';
 		
 	//$theme = 'excite-bike';
-	//$theme = 'ui-lightness';
-	$theme = 'ui-darkness';
+	$theme = 'ui-lightness';
+	//$theme = 'ui-darkness';
 	$jquery_version = "1.9.1";
 	$jqueryui_version = "1.10.2";
 	$jpicker_version = "1.1.6";

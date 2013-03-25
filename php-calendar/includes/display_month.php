@@ -38,7 +38,7 @@ function display_month()
 	$month_navbar = month_navbar($month, $year);
 	return tag('div',
 			tag("div", attributes('id="phpc-summary-view"'), 
-				tag("div", attributes('class="phpc-summary-head"'),
+				tag("div", attributes('id="phpc-summary-head"'),
 					tag("div", attributes('id="phpc-summary-title"'), ''),
 					tag("div", attributes('id="phpc-summary-author"'), ''),
 					tag("div", attributes('id="phpc-summary-category"'), ''),
