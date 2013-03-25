@@ -105,22 +105,19 @@ function link_bar()
 {
 	global $phpc_url, $phpc_tz, $phpc_lang;
 
-	$links = tag('p', "[" . _('Language') . ": $phpc_lang]" .
+	$tag = tag('div', attributes('class="phpc-bar ui-widget-content"'),
+			"[" . _('Language') . ": $phpc_lang]" .
 			" [" . _('Timezone') . ": $phpc_tz]");
 
 	if(defined('PHPC_DEBUG')) {
-		$links->add(array(' [', tag('a',
-						attributes('href="http://validator.w3.org/check?url='
-							. rawurlencode($phpc_url)
-							. '"'),
-						'Validate HTML'),
-					'] [',
-					tag('a', attributes('href="http://jigsaw.w3.org/css-validator/check/referer"'),
-						'Validate CSS'),
-					']'));
+		$tag->add(tag('a', attributes('href="http://validator.w3.org/check?url='
+						. rawurlencode($phpc_url)
+						. '"'), 'Validate HTML'));
+		$tag->add(tag('a', attributes('href="http://jigsaw.w3.org/css-validator/check/referer"'),
+					'Validate CSS'));
 	}
 
-	return tag('div', attributes('class="phpc-footer phpc-bar"'), $links);
+	return $tag;
 }
 
 function get_languages() {
@@ -419,7 +416,7 @@ function navbar()
 {
 	global $vars, $action, $year, $month, $day, $phpc_cal;
 
-	$html = tag('div', attributes('class="phpc-navbar phpc-bar"'));
+	$html = tag('div', attributes('class="phpc-bar ui-widget-header"'));
 
 	$args = array('year' => $year, 'month' => $month, 'day' => $day);
 
@@ -575,7 +572,7 @@ function get_date_format_list()
 function get_calendar_list() {
 	global $phpc_script, $phpcdb;
 
-	$calendar_list = tag('div', attributes('class="phpc-navbar phpc-callist"'));
+	$calendar_list = tag('div', attributes('class="phpc-bar phpc-callist"'));
 
 	$count = 0;
 	foreach($phpcdb->get_calendars() as $calendar) {
@@ -701,9 +698,12 @@ function get_header_tags($path)
 	else
 		$jq_min = '.min';
 		
-		$theme='smoothness';
-		$jquery_version="1.9.1";
-		$jqueryui_version="1.10.2";
+	//$theme = 'excite-bike';
+	//$theme = 'ui-lightness';
+	$theme = 'ui-darkness';
+	$jquery_version = "1.9.1";
+	$jqueryui_version = "1.10.2";
+	$jpicker_version = "1.1.6";
 
 	return array(
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
@@ -722,10 +722,14 @@ function get_header_tags($path)
 					"src=\"$path/jquery.ui.timepicker.js\""), ''),
 			tag("script", attributes('type="text/javascript"',
 					"src=\"$path/jquery.hoverIntent.minified.js\""), ''),
-			tag("script", attrs('type="text/javascript"',
+			/*tag("script", attrs('type="text/javascript"',
 					"src=\"$path/tableUI.js\""), ''),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"$path/tableUI.css\"")),
+					"href=\"$path/tableUI.css\"")),*/
+			tag("script", attrs('type="text/javascript"',
+					"src=\"$path/jpicker-$jpicker_version$jq_min.js\""), ''),
+			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
+					"href=\"$path/jPicker-$jpicker_version$jq_min.css\"")),
 		  );
 }
 

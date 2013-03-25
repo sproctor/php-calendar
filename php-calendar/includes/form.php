@@ -18,6 +18,7 @@
 /* this file is a generic form class
  * after an object is added to any part, you can modify that object without
  * affecting the form
+ * Requires gettext and jqueryui
  */
 
 /*
@@ -28,7 +29,7 @@ if(!defined('IN_PHPC')) {
 
 require_once('html.php');
 
-$required_error_message = "(required)";
+$required_error_message = '('._('required').')';
 
 /* This class is the base of either a question or a group
  */
@@ -651,36 +652,11 @@ class FormColorPicker extends FormAtomicQuestion {
 		else 
 			$value = '';
 
-		$color_matrix = array(
-				array("#FFFFFF", "#FFCCCC", "#FFCC99", "#FFFF99", "#FFFFCC", "#99FF99", "#99FFFF", "#CCFFFF", "#CCCCFF", "#FFCCFF"),
-				array("#CCCCCC", "#FF6666", "#FF9966", "#FFFF66", "#FFFF33", "#66FF99", "#33FFFF", "#66FFFF", "#9999FF", "#FF99FF"),
-				array("#C0C0C0", "#FF0000", "#FF9900", "#FFCC66", "#FFFF00", "#33FF33", "#66CCCC", "#33CCFF", "#6666CC", "#CC66CC"),
-				array("#999999", "#CC0000", "#FF6600", "#FFCC33", "#FFCC00", "#33CC00", "#00CCCC", "#3366FF", "#6633FF", "#CC33CC"),
-				array("#666666", "#990000", "#CC6600", "#CC9933", "#999900", "#009900", "#339999", "#3333FF", "#6600CC", "#993399"),
-				array("#333333", "#660000", "#993300", "#996633", "#666600", "#006600", "#336666", "#000099", "#333399", "#663366"),
-				array("#000000", "#330000", "#663300", "#663333", "#333300", "#003300", "#003333", "#000066", "#330099", "#330033"));
-
-		$tbody = tag('tbody');
-		foreach($color_matrix as $color_row) {
-			$tr = tag('tr');
-			foreach($color_row as $color) {
-				$class = 'form-color';
-				if($value == $color)
-					$class .= " form-color-selected";
-				$tr->add(tag('td', attrs("class=\"$class\"", "style=\"background-color: $color\"")));
-			}
-			$tbody->add($tr);
-		}
-
-		return tag('',
-				tag('input', attrs('type="hidden"',
-						"name=\"{$this->qid}\"",
-						"value=\"$value\"",
-						"id=\"{$this->qid}\"")),
-				tag('table', attrs('style="border-collapse: separate"',
-						'border="1"', 'text-align="left"',
-						'cellspacing="1"'),
-					$tbody));
+		return tag('input', attrs('type="text"',
+					'class="form-color-input"',
+					"name=\"{$this->qid}\"",
+					"value=\"$value\"",
+					"id=\"{$this->qid}\""));
         }
 }
 

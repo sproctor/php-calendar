@@ -69,10 +69,10 @@ function display_event_by_oid($oid)
 	$event_header->add(tag('div',attributes('class="phpc-event-time"'), _('When').": ".$event->get_date_string()
 				. $event_time));
 				
+	$menu_tag = tag('div', attrs('class="phpc-event-menu"')); 
 	// Add modify/delete links if this user has access to this event.
         if($event->can_modify()) {
-		$event_header->add(tag('div',attributes('class="phpc-event-menu"'),
-					create_event_link(_('Modify'),
+		$menu_tag->add(array(create_event_link(_('Modify'),
 						'event_form', $eid), "\n",
 					create_event_link(_('Delete'),
 						'event_delete', $eid), "\n",
@@ -84,42 +84,38 @@ function display_event_by_oid($oid)
 
 
 	$occurrences = $phpcdb->get_occurrences_by_eid($eid);
-	//if(sizeof($occurrences) > 1) {
-		$occurrence_div = tag('div');
-		$i = 0;
-		while($i < sizeof($occurrences)) {
-			if($occurrences[$i]->get_oid() == $oid)
-				break;
-			$i++;
-		}
-		// if we have a previous event
-		$prev = $i - 1;
-		if($prev >= 0) {
-			$prev_occur = $occurrences[$prev];
-			$occurrence_div->add(create_occurrence_link(
-						_('Previous occurrence on')
-						. " " .
-						$prev_occur->get_date_string(),
-						'display_event',
-						$prev_occur->get_oid()), ' ');
-		}
-		// if we have a future event
-		$next = $i + 1;
-		if($next < sizeof($occurrences)) {
-			$next_occur = $occurrences[$next];
-			$occurrence_div->add(create_occurrence_link(
-						_('Next occurrence on') . " " .
-						$next_occur->get_date_string(),
-						'display_event',
-						$next_occur->get_oid()), ' ');
-		}
+		//$occurrence_div = tag('div', );
+	$i = 0;
+	while($i < sizeof($occurrences)) {
+		if($occurrences[$i]->get_oid() == $oid)
+			break;
+		$i++;
+	}
+	// if we have a previous event
+	$prev = $i - 1;
+	if($prev >= 0) {
+		$prev_occur = $occurrences[$prev];
+		$menu_tag->add(create_occurrence_link(
+					_('Previous occurrence on') . " " .
+					$prev_occur->get_date_string(),
+					'display_event',
+					$prev_occur->get_oid()), ' ');
+	}
+	// if we have a future event
+	$next = $i + 1;
+	if($next < sizeof($occurrences)) {
+		$next_occur = $occurrences[$next];
+		$menu_tag->add(create_occurrence_link(
+					_('Next occurrence on') . " " .
+					$next_occur->get_date_string(),
+					'display_event',
+					$next_occur->get_oid()), ' ');
+	}
 
-		$occurrence_div->add(create_event_link(
-					_('View All Occurrences'),
-					'display_event', $eid));
+	$menu_tag->add(create_event_link(_('View All Occurrences'),
+				'display_event', $eid));
 
-		$event_header->add($occurrence_div);
-	//}
+	$event_header->add($menu_tag);
 
 	$year = $event->get_start_year();
 	$month = $event->get_start_month();

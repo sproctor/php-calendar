@@ -69,9 +69,9 @@ try {
 	if (isset($phpc_user)) $welcome='Welcome '.$phpc_user->username;
 	
 	$calendar_title = $phpc_cal->get_title();
-	$content = tag('div', attributes('class="php-calendar"'),
-			tag('div',attributes('class="phpc-logged"'), $welcome),
-			tag('h1',
+	$content = tag('div', attributes('class="php-calendar ui-widget"'),
+			tag('div', attributes('class="phpc-logged ui-widget-content"'), $welcome),
+			tag('h1', attrs('class="ui-widget-header"'),
 				tag('a', attributes("href='$phpc_home_url'"),
 					$calendar_title)),
 			display_phpc());
@@ -84,6 +84,8 @@ try {
 $html = tag('html', attrs("lang=\"$phpc_lang\""),
 		tag('head',
 			tag('title', $calendar_title),
+			tag('link', attrs('rel="icon"',
+					"href=\"static/office-calendar.png\"")),
 			get_header_tags("static"),
 			tag('meta', attrs('http-equiv="Content-Type"',
 					   'content="text/html; charset=UTF-8"'))),

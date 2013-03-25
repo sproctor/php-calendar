@@ -29,7 +29,7 @@ function display_month()
 	global $month, $year;
 
 	$heading_html = tag('tr');
-	$heading_html->add(tag('th', 'W'));
+	$heading_html->add(tag('th', _('W')));
 	for($i = 0; $i < 7; $i++) {
 		$d = ($i + day_of_week_start()) % 7;
 		$heading_html->add(tag('th', day_name($d)));
@@ -67,7 +67,7 @@ function display_month()
 // returns XHTML data for the menu
 function month_navbar($month, $year)
 {
-	$html = tag('div', attributes('class="phpc-month-nav"'));
+	$html = tag('div', attributes('class="phpc-bar ui-widget-content"'));
 	$prev_month = $month - 1;
 	$prev_year = $year;
 	if($prev_month < 1) {
@@ -171,132 +171,135 @@ function create_month($month, $year)
 	return $month_table;
 }
 
-	// creates a display for a particular week to be embedded in a month table
-	function create_week($week_of_month, $month, $year, $days_events)
-	{
-		$start_day = 1 + ($week_of_month - 1) * 7
-			- day_of_week($month, 1, $year);
-		$week_of_year = week_of_year($month, $start_day, $year);
+// creates a display for a particular week to be embedded in a month table
+function create_week($week_of_month, $month, $year, $days_events)
+{
+	$start_day = 1 + ($week_of_month - 1) * 7
+		- day_of_week($month, 1, $year);
+	$week_of_year = week_of_year($month, $start_day, $year);
 
-		$week_html = tag('tr', tag('th', $week_of_year));
+	$week_html = tag('tr', tag('th', $week_of_year));
 		
-		for($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
-			$day = $start_day + $day_of_week;
-			$week_html->add(create_day($month, $day, $year, $days_events));
-		}
-
-			return $week_html;
+	for($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
+		$day = $start_day + $day_of_week;
+		$week_html->add(create_day($month, $day, $year, $days_events));
 	}
 
-	// displays the day of the week and the following days of the week
-	function create_day($month, $day, $year, $days_events)
-	{
-		global $phpc_script, $phpc_cal;
+	return $week_html;
+}
 
-		if($day <= 0) {
-			$month--;
-			if($month < 1) {
-				$month = 12;
-				$year--;
-			}
-			$day += days_in_month($month, $year);
-			$current_era = 'none';
-		} elseif($day > days_in_month($month, $year)) {
-			$day -= days_in_month($month, $year);
-			$month++;
-			if($month > 12) {
-				$month = 1;
-				$year++;
-			}
-			$current_era = 'none';
+// displays the day of the week and the following days of the week
+function create_day($month, $day, $year, $days_events)
+{
+	global $phpc_script, $phpc_cal;
+
+	$date_class = 'ui-state-default';
+	$current_era = '';
+	if($day <= 0) {
+		$month--;
+		if($month < 1) {
+			$month = 12;
+			$year--;
+		}
+		$day += days_in_month($month, $year);
+		$date_class .= ' phpc-shadow';
+	} elseif($day > days_in_month($month, $year)) {
+		$day -= days_in_month($month, $year);
+		$month++;
+		if($month > 12) {
+			$month = 1;
+			$year++;
+		}
+		$date_class .= ' phpc-shadow';
+	} else {
+		$currentday = date('j');
+		$currentmonth = date('n');
+		$currentyear = date('Y');
+
+		// set whether the date is in the past or future/present
+		if($currentyear == $year && $currentmonth == $month
+				&& $currentday == $day) {
+			//$current_era = 'present';
+			$date_class .= ' ui-state-highlight';
+		} elseif($currentyear > $year || $currentyear == $year
+				&& ($currentmonth > $month
+					|| $currentmonth == $month 
+					&& $currentday > $day
+				   )) {
+			//$current_era = 'past';
 		} else {
-			$currentday = date('j');
-			$currentmonth = date('n');
-			$currentyear = date('Y');
-
-			// set whether the date is in the past or future/present
-			if($currentyear == $year && $currentmonth == $month
-					&& $currentday == $day) {
-				$current_era = 'present';
-			} elseif($currentyear > $year || $currentyear == $year
-					&& ($currentmonth > $month
-						|| $currentmonth == $month 
-						&& $currentday > $day
-					   )) {
-				$current_era = 'past';
-			} else {
-				$current_era = 'future';
-			}
+			//$current_era = 'future';
 		}
-
-		$click = create_plain_link($day, 'display_day', $year, $month,
-				$day);
-		$date_tag = tag('div', attributes('class="phpc-date"',
-					"onclick=\"window.location.href='$click'\""),
-				create_action_link_with_date($day,
-					'display_day', $year, $month, $day));
-
-		if($phpc_cal->can_write()) {
-			$date_tag->add(create_action_link_with_date('+',
-						'event_form', $year, $month,
-						$day,
-						array('class="phpc-add"')));
-		}
-
-		$html_day = tag('td', attributes("class=\"phpc-$current_era\""),
-				$date_tag);
-
-		$stamp = mktime(0, 0, 0, $month, $day, $year);
-
-		$can_read = $phpc_cal->can_read(); 
-		$key = date('Y-m-d', $stamp);
-		if(!$can_read || !array_key_exists($key, $days_events))
-			return $html_day;
-
-		$results = $days_events[$key];
-		if(empty($results))
-			return $html_day;
-
-		$html_events = tag('ul');
-		$html_day->add($html_events);
-
-		// Count the number of events
-		foreach($results as $event) {
-			if($event == false) {
-				$event_html = tag('li',
-						create_action_link_with_date(_("View Additional Events"),
-							'display_day', $year, $month,
-							$day,
-							array('class="phpc-date"')));
-				$html_events->add($event_html);
-				break;
-			}
-
-			// TODO - make sure we have permission to read the event
-
-			$subject = $event->get_subject();
-			$event_time = $event->get_time_string();
-			if(!empty($event_time))
-				$title = "$event_time - $subject";
-			else
-				$title = $subject;
-
-			$style = "";
-			if(!empty($event->text_color))
-				$style .= "color: ".$event->get_text_color().";";
-			if(!empty($event->bg_color))
-				$style .= "background-color: ".$event->get_bg_color()
-					.";";
-
-			$event_html = tag('li', 
-					create_occurrence_link($title, "display_event",
-						$event->get_oid(),
-						array("style=\"$style\"")));
-
-			$html_events->add($event_html);
-		}
-
-		return $html_day;
 	}
+
+	$click = create_plain_link($day, 'display_day', $year, $month,
+			$day);
+	$date_tag = tag('div', attributes("class=\"phpc-date $date_class\"",
+				"onclick=\"window.location.href='$click'\""),
+			create_action_link_with_date($day,
+				'display_day', $year, $month, $day));
+
+	if($phpc_cal->can_write()) {
+		$date_tag->add(create_action_link_with_date('+',
+					'event_form', $year, $month,
+					$day,
+					array('class="phpc-add"')));
+	}
+
+	$html_day = tag('td', attributes("class=\"$current_era\""),
+			$date_tag);
+
+	$stamp = mktime(0, 0, 0, $month, $day, $year);
+
+	$can_read = $phpc_cal->can_read(); 
+	$key = date('Y-m-d', $stamp);
+	if(!$can_read || !array_key_exists($key, $days_events))
+		return $html_day;
+
+	$results = $days_events[$key];
+	if(empty($results))
+		return $html_day;
+
+	$html_events = tag('ul');
+	$html_day->add($html_events);
+
+	// Count the number of events
+	foreach($results as $event) {
+		if($event == false) {
+			$event_html = tag('li',
+					create_action_link_with_date(_("View Additional Events"),
+						'display_day', $year, $month,
+						$day,
+						array('class="phpc-date"')));
+			$html_events->add($event_html);
+			break;
+		}
+
+		// TODO - make sure we have permission to read the event
+
+		$subject = $event->get_subject();
+		$event_time = $event->get_time_string();
+		if(!empty($event_time))
+			$title = "$event_time - $subject";
+		else
+			$title = $subject;
+
+		$style = "";
+		if(!empty($event->text_color))
+			$style .= "color: ".$event->get_text_color().";";
+		if(!empty($event->bg_color))
+			$style .= "background-color: ".$event->get_bg_color()
+				.";";
+
+		$event_html = tag('li',
+				create_occurrence_link($title, "display_event",
+					$event->get_oid(),
+					array("style=\"$style\"")));
+
+		$html_events->add($event_html);
+	}
+
+	return $html_day;
+}
 
 ?>

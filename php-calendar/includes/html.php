@@ -103,7 +103,7 @@ class Html {
 			}
 
 			if(sizeof($this->childElements) == 0) {
-				$output .= ">\n";
+				$output .= "/>\n";
 				return $output;
 			}
 

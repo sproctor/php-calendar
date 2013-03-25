@@ -14,7 +14,17 @@ $(document).ready(function(){
       text: false,
       icons: { primary: "ui-icon-plus" }
     });
-  $("input[type=submit], input[type=checkbox]").button();
+  $(".php-calendar input[type=submit], .php-calendar input[type=checkbox]").button();
+  $(".phpc-date, .phpc-calendar li a, .phpc-event-menu a").on('mouseover mouseout',
+      function (event) {
+        $(this).toggleClass("ui-state-hover", event.type == 'mouseover');
+      });
+  $(".php-calendar th").addClass("ui-widget-header");
+  $(".php-calendar td").addClass("ui-widget-content");
+  $(".phpc-calendar li a").addClass("ui-state-default");
+  $(".phpc-calendar li a").addClass("ui-corner-all");
+  $(".phpc-event-menu").addClass("ui-widget-content");
+  $(".phpc-event-menu a").addClass("ui-state-default");
 
   // Summary init
   $("#phpc-summary-view").hide();
@@ -75,6 +85,14 @@ $(document).ready(function(){
   $(".form-select").change(function(){
     formSelectUpdate($(this));
   });
+  $(".form-color-input").jPicker({
+      window: {
+        position: {
+          x: 0,
+          y: 0 
+        }
+      }
+    });
 
   // Calendar specific/hacky stuff
   $("#time-type").change(function(){
