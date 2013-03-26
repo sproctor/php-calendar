@@ -488,10 +488,11 @@ function create_tables()
 		."`week_start` int(1) NOT NULL,\n"
 		."`subject_max` int(4) NOT NULL,\n"
 		."`events_max` int(2) NOT NULL,\n"
-		."`calendar_title` varchar(50) COLLATE utf8_unicode_ci NOT NULL,\n"
+		."`calendar_title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n"
 		."`anon_permission` int(1) NOT NULL,\n"
-		."`timezone` varchar(40) COLLATE utf8_unicode_ci NOT NULL,\n"
-		."`language` varchar(7) COLLATE utf8_unicode_ci NOT NULL,\n"
+		."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+		."`language` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+		."`theme` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."PRIMARY KEY  (`cid`)\n"
 		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 		

@@ -27,6 +27,9 @@ $(document).ready(function(){
   $(".php-calendar td").addClass("ui-widget-content");
   $(".phpc-calendar li a").addClass("ui-state-default");
   $(".phpc-message").addClass("ui-state-highlight");
+  $("#phpc-summary-view").addClass("ui-widget");
+  $("#phpc-summary-view").addClass("ui-widget-content");
+  $("#phpc-summary-view").addClass("ui-corner-all");
 
   // Summary init
   $("#phpc-summary-view").hide();

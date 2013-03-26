@@ -36,7 +36,7 @@ function display_month()
 	}
 
 	$month_navbar = month_navbar($month, $year);
-	return tag('div',
+	return tag('',
 			tag("div", attributes('id="phpc-summary-view"'), 
 				tag("div", attributes('id="phpc-summary-head"'),
 					tag("div", attributes('id="phpc-summary-title"'), ''),
@@ -194,7 +194,6 @@ function create_day($month, $day, $year, $days_events)
 	global $phpc_script, $phpc_cal;
 
 	$date_class = 'ui-state-default';
-	$current_era = '';
 	if($day <= 0) {
 		$month--;
 		if($month < 1) {
@@ -219,16 +218,7 @@ function create_day($month, $day, $year, $days_events)
 		// set whether the date is in the past or future/present
 		if($currentyear == $year && $currentmonth == $month
 				&& $currentday == $day) {
-			//$current_era = 'present';
 			$date_class .= ' ui-state-highlight';
-		} elseif($currentyear > $year || $currentyear == $year
-				&& ($currentmonth > $month
-					|| $currentmonth == $month 
-					&& $currentday > $day
-				   )) {
-			//$current_era = 'past';
-		} else {
-			//$current_era = 'future';
 		}
 	}
 
@@ -246,8 +236,7 @@ function create_day($month, $day, $year, $days_events)
 					array('class="phpc-add"')));
 	}
 
-	$html_day = tag('td', attributes("class=\"$current_era\""),
-			$date_tag);
+	$html_day = tag('td', $date_tag);
 
 	$stamp = mktime(0, 0, 0, $month, $day, $year);
 

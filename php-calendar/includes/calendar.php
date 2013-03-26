@@ -539,9 +539,47 @@ function init_config_options() {
 				     )
 			     ),
 			array('timezone', _('Default Timezone'), PHPC_MULTI_DROPDOWN, get_timezone_list()),
-			array('language', _('Default Language'), PHPC_DROPDOWN, $languages),
-			array('date_format', _('Date Format'), PHPC_DROPDOWN, get_date_format_list()),
-			);
+			array('language', _('Default Language'), PHPC_DROPDOWN,
+				$languages),
+			array('date_format', _('Date Format'), PHPC_DROPDOWN,
+					get_date_format_list()),
+			array('theme', _('Theme'), PHPC_DROPDOWN,
+					get_theme_list()),
+	);
+}
+
+function get_theme_list() {
+	$themes = array(
+			'black-tie',
+			'blitzer',
+			'cupertino',
+			'dark-hive',
+			'dot-luv',
+			'eggplant',
+			'excite-bike',
+			'flick',
+			'hot-sneaks',
+			'humanity',
+			'le-frog',
+			'mint-choc',
+			'overcast',
+			'pepper-grinder',
+			'redmond',
+			'smoothness',
+			'south-street',
+			'start',
+			'sunny',
+			'swanky-purse',
+			'trontastic',
+			'ui-darkness',
+			'ui-lightness',
+			'vader');
+
+	$theme_list = array(NULL => _('Default'));
+	foreach($themes as $theme) {
+		$theme_list[$theme] = $theme;
+	}
+	return $theme_list;	
 }
 
 function get_timezone_list() {
@@ -691,16 +729,16 @@ function verify_token() {
 
 function get_header_tags($path)
 {
-	global $phpc_protocol;
+	global $phpc_protocol, $phpc_cal;
 
 	if(defined('PHPC_DEBUG'))
 		$jq_min = '';
 	else
 		$jq_min = '.min';
 		
-	//$theme = 'excite-bike';
-	$theme = 'ui-lightness';
-	//$theme = 'ui-darkness';
+	$theme = $phpc_cal->theme;
+	if(empty($theme))
+		$theme = 'smoothness';
 	$jquery_version = "1.9.1";
 	$jqueryui_version = "1.10.2";
 	$jpicker_version = "1.1.6";

@@ -175,8 +175,6 @@ a.phpc-add {
 #phpc-summary-view {
   display: none;
   position: absolute;
-  background-color: #fff;
-  border: 1px solid #000; 
   width: 300px;
   max-height: 250px;
   overflow: hidden;
@@ -184,7 +182,7 @@ a.phpc-add {
 }
 
 #phpc-summary-head {
-  border-bottom: 1px solid #000;
+  border-bottom-width: 1px solid inherit;
   padding: 5px;
 }
 

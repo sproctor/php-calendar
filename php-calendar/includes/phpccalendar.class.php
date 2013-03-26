@@ -28,6 +28,7 @@ class PhpcCalendar {
 	var $anon_permission;
 	var $timezone;
 	var $language;
+	var $theme;
 
 	function PhpcCalendar($result) {
 		$this->cid = $result['cid'];
@@ -40,6 +41,7 @@ class PhpcCalendar {
 		$this->anon_permission = $result['anon_permission'];
 		$this->timezone = $result['timezone'];
 		$this->language = $result['language'];
+		$this->theme = $result['theme'];
 	}
 
 	function get_title()
