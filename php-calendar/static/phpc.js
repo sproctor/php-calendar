@@ -14,8 +14,8 @@ $(document).ready(function(){
       text: false,
       icons: { primary: "ui-icon-plus" }
     });
-  $(".php-calendar input[type=submit], .php-calendar input[type=checkbox]").button();
-  $(".php-calendar tfoot a").button();
+  $(".php-calendar input[type=submit], .php-calendar tfoot a").button();
+  $(".php-calendar input[type=checkbox] + label").prev().button();
   $(".phpc-date, .phpc-calendar li a, .phpc-event-menu a").on('mouseover mouseout',
       function (event) {
         $(this).toggleClass("ui-state-hover", event.type == 'mouseover');
