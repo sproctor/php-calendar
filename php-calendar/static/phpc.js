@@ -2,14 +2,10 @@ var activeRequest = null;
 var cache = new Object;
  
 $(document).ready(function(){
-  // Add space at top of page for messages
-  padding = 0;
-  $(".phpc-message").each(function() {
-      padding += 2.25;
-      $("body").css("padding-top", padding + "em");
-  });
-
   // Add theme to appropriate items
+  // All widgets
+  $(".phpc-calendar li a, .phpc-message, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged, .php-calendar td, .php-calendar th, .phpc-message, .phpc-callist").addClass("ui-widget");
+  // Buttons
   $(".phpc-add").button({
       text: false,
       icons: { primary: "ui-icon-plus" }
@@ -21,15 +17,11 @@ $(document).ready(function(){
         $(this).toggleClass("ui-state-hover", event.type == 'mouseover');
       });
   // fancy corners
-  $(".phpc-calendar li a, .phpc-message, .phpc-bar, .php-calendar h1").addClass("ui-corner-all");
+  $(".phpc-calendar li a, .phpc-message, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged").addClass("ui-corner-all");
   // add jquery ui style classes
-  $(".php-calendar th").addClass("ui-widget-header");
-  $(".php-calendar td").addClass("ui-widget-content");
-  $(".phpc-calendar li a").addClass("ui-state-default");
-  $(".phpc-message").addClass("ui-state-highlight");
-  $("#phpc-summary-view").addClass("ui-widget");
-  $("#phpc-summary-view").addClass("ui-widget-content");
-  $("#phpc-summary-view").addClass("ui-corner-all");
+  $(".php-calendar th, .phpc-callist").addClass("ui-widget-header");
+  $(".php-calendar td, #phpc-summary-view").addClass("ui-widget-content");
+  $(".phpc-calendar li a, .phpc-message").addClass("ui-state-default");
 
   // Summary init
   $("#phpc-summary-view").hide();

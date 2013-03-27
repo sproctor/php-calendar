@@ -34,6 +34,7 @@ body {
 
 .php-calendar h1 {
   text-align: center;
+  font-size: 2em !important;
 }
 
 .php-calendar h1 a {
@@ -43,6 +44,12 @@ body {
 
 .php-calendar h2 {
   text-align: center;
+}
+
+.phpc-bar {
+  margin: .5em 0;
+  text-align: center;
+  padding: 4px;
 }
 
 .phpc-bar a {
@@ -59,12 +66,6 @@ body {
 .php-calendar .ui-state-default a {
   opacity: 1;
   filter:Alpha(Opacity=100);
-}
-
-.phpc-bar {
-  margin: .25em 0;
-  text-align: center;
-  padding: 4px;
 }
 
 .php-calendar table {
@@ -138,12 +139,9 @@ col.phpc-day {
 }
 
 .phpc-calendar td {
+  padding: 0;
   text-align: left;
   height: 100px;
-}
-
-td.phpc-past, td.phpc-present, td.phpc-future, td.phpc-none {
-  padding: 0;
 }
 
 .phpc-calendar li {
@@ -222,10 +220,11 @@ td.form-color-selected {
 
 .phpc-message {
   padding: 4px;
-  margin: .25em 0;
+  margin: .5em 0;
 }
 
 .phpc-logged {
+  padding: 4px;
   z-index: 1;
   float: right;
 }
