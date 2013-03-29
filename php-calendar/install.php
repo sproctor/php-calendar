@@ -589,7 +589,7 @@ function add_calendar()
 	echo "<p>Admin account created.</p>";
 	echo "<p>To be able to use the calendar, now you must delete the install directory.</p>";
 	echo "<p>You should also change the permissions on config.php so only your webserver can read it.</p>";
-	echo "<p><a href=\"../index.php\">View calendar</a></p>";
+	echo "<p><a href=\"index.php\">View calendar</a></p>";
 }
 
 echo '</form></body></html>';
