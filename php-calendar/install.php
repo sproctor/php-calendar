@@ -28,6 +28,8 @@ $phpc_config_file = "$phpc_root_path/config.php";
 
 define('IN_PHPC', true);
 
+if(file_exists($phpc_config_file)) { header('Location: index.php');}
+
 if(!function_exists("mysqli_connect"))
 	soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
 
