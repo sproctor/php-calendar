@@ -180,7 +180,7 @@ a.phpc-add {
 }
 
 #phpc-summary-head {
-  border-bottom-width: 1px solid inherit;
+  border-bottom: 1px solid inherit;
   padding: 5px;
 }
 
