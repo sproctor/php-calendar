@@ -4,7 +4,7 @@ var cache = new Object;
 $(document).ready(function(){
   // Add theme to appropriate items
   // All widgets
-  $(".phpc-calendar li a, .phpc-message, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged, .php-calendar td, .php-calendar th, .phpc-message, .phpc-callist").addClass("ui-widget");
+  $(".phpc-calendar li a, .phpc-message, .phpc-date, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged, .php-calendar td, .php-calendar th, .phpc-message, .phpc-callist").addClass("ui-widget");
   // Buttons
   $(".phpc-add").button({
       text: false,
@@ -85,7 +85,7 @@ $(document).ready(function(){
   $(".form-color-input").jPicker({
       window: {
         position: {
-          x: 0,
+          x: 'screenCenter',
           y: 0 
         }
       }
@@ -132,21 +132,6 @@ $(document).ready(function(){
     }*/
   });
 
-  $(".form-color").click(function(){
-    table = $(this).parents('.form-color-picker');
-    table.find('.form-color-selected').removeClass('form-color-selected');
-    selected_color = rgbToHex($(this).css("background-color"));
-    table.find("input").val(selected_color);
-    $(this).addClass('form-color-selected');
-    tcolor = textcolor(selected_color);
-    $('#text-color').val(tcolor);
-    $(this).css("border-color", tcolor);
-  });
-
-  $(".form-color-selected").each(function(){
-    var bordercolor = textcolor(rgbToHex($(this).css("background-color")));
-    $(this).css("border-color", bordercolor);
-  });
 });
 
 function formSelectUpdate(select) {
