@@ -488,7 +488,7 @@ function create_tables()
 		."`week_start` int(1) NOT NULL,\n"
 		."`subject_max` int(4) NOT NULL,\n"
 		."`events_max` int(2) NOT NULL,\n"
-		."`calendar_title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n"
+		."`title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n"
 		."`anon_permission` int(1) NOT NULL,\n"
 		."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."`language` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
@@ -558,7 +558,7 @@ function add_calendar()
 			'week_start' => '0',
 			'subject_max' => '50',
 			'events_max' => '8',
-			'calendar_title' => 'PHP-Calendar',
+			'title' => 'PHP-Calendar',
 			'anon_permission' => '3',
 			'timezone' => '',
 			'language' => '',
