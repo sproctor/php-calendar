@@ -230,3 +230,7 @@ td.form-color-selected {
 div.ui-datepicker, div.ui-timepicker {
   font-size: .9em;
 }
+
+.php-calendar.ui-widget {
+font-size: 1em;
+}
