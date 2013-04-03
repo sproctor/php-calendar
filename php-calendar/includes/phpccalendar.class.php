@@ -17,7 +17,7 @@
 
 class PhpcCalendar {
 	var $cid;
-	var $title;
+	var $calendar_title;
 	var $user_perms;
 	var $categories;
 	var $hours_24;
@@ -32,7 +32,7 @@ class PhpcCalendar {
 
 	function PhpcCalendar($result) {
 		$this->cid = $result['cid'];
-		$this->title = $result['title'];
+		$this->calendar_title = $result['calendar_title'];
 		$this->hours_24 = $result['hours_24'];
 		$this->date_format = $result['date_format'];
 		$this->week_start = $result['week_start'];
@@ -46,10 +46,10 @@ class PhpcCalendar {
 
 	function get_title()
 	{
-		if(empty($this->title))
+		if(empty($this->calendar_title))
 			return _('(No title)');
 
-		return htmlspecialchars($this->title);
+		return htmlspecialchars($this->calendar_title);
 	}
 
 	function get_cid()
