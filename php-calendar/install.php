@@ -28,8 +28,6 @@ $phpc_config_file = "$phpc_root_path/config.php";
 
 define('IN_PHPC', true);
 
-if(file_exists($phpc_config_file)) { header('Location: index.php');}
-
 if(!function_exists("mysqli_connect"))
 	soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
 
@@ -40,8 +38,17 @@ echo '<html>
 <title>PHP Calendar Installation</title>
 </head>
 <body>
-<h1>PHP Calendar</h1>
-<p>Welcome to the PHP Calendar installation process.</p>
+<h1>PHP Calendar</h1>';
+
+if(file_exists($phpc_config_file)) {
+	include_once($phpc_config_file);
+	if(defined("SQL_HOST")) {
+		echo '<p>The calendar has already been installed. <a href="index.php">Installed calendar</a>';
+		exit;
+	}
+}
+
+echo '<p>Welcome to the PHP Calendar installation process.</p>
 <form method="post" action="install.php">
 ';
 
@@ -397,8 +404,6 @@ function install_base()
                                 $my_database, $my_prefix, $sql_type))
 		or soft_error("could not write to file");
 	fclose($fp);
-
-	require_once($phpc_config_file);
 
 	// Make the database connection.
 	$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
