@@ -58,7 +58,7 @@ ini_set('arg_separator.output', '&amp;');
 /*
  * Do not modify anything under this point
  */
-
+if (!defined('IN_PHPC'))
 define('IN_PHPC', true);
 
 try {
