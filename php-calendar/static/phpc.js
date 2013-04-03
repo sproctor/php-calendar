@@ -88,6 +88,9 @@ $(document).ready(function(){
           x: 'screenCenter',
           y: 0 
         }
+      },
+      images: {
+        clientPath: imagePath
       }
     });
 
