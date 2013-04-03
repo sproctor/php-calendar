@@ -43,7 +43,8 @@ echo '<html>
 if(file_exists($phpc_config_file)) {
 	include_once($phpc_config_file);
 	if(defined("SQL_HOST")) {
-		echo '<p>The calendar has already been installed. <a href="index.php">Installed calendar</a>';
+		echo '<p>The calendar has already been installed. <a href="index.php">Installed calendar</a></p>';
+		echo '<p>If you want to install again, manually delete config.php</p>';
 		exit;
 	}
 }
