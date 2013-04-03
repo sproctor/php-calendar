@@ -13,19 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
- /*
-  COLORS KEY
-  BACKGROUND, INPUT: #FFF
-  FONT: #000
-  BARS, HOVER BG: #CCC
-  DESCRIPTION: #DDD
-  BORDER, HOVER FG: #666
-  DAY - NONE: #777
-  DAY - PAST: #AAA
-  DAY - PRESENT: #EED055
-  DAY - FUTURE: #D0D0D0
-  */
 
 body {
   margin: 0 2em;
