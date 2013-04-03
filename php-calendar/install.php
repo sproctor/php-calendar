@@ -403,10 +403,11 @@ function install_base()
 
 	fwrite($fp, create_config($my_hostname, $my_username, $my_passwd,
                                 $my_database, $my_prefix, $sql_type))
-		or soft_error("could not write to file");
+		or soft_error("Could not write to file");
 	fclose($fp);
 
 	// Make the database connection.
+	include($phpc_config_file);
 	$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
 
 	create_tables();
