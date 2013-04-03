@@ -527,7 +527,7 @@ function init_config_options() {
 					6 => _('Saturday')
 				     )),
 			array('hours_24', _('24 Hour Time'), PHPC_CHECK),
-			array('title', _('Calendar Title'), PHPC_TEXT),
+			array('calendar_title', _('Calendar Title'), PHPC_TEXT),
 			array('subject_max', _('Maximum Subject Length'), PHPC_TEXT),
 			array('events_max', _('Events Display Daily Maximum'), PHPC_TEXT),
 			array('anon_permission', _('Public Permissions'), PHPC_DROPDOWN,
