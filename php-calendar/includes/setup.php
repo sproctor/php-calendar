@@ -35,10 +35,6 @@ if(!defined('SQL_TYPE')) {
         exit;
 }
 
-if(!defined("PHPC_DEBUG") && file_exists("$phpc_root_path/install.php")) {
-	display_error(_("You must remove the install script to start using the calendar. If you see this error but you must install the database, goto <a href=\"install.php\">install.php</a>"));
-}
-
 if(defined('PHPC_DEBUG')) {
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
