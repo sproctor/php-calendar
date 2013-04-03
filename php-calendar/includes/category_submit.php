@@ -89,6 +89,6 @@ function category_submit()
 }
 
 function check_color($color) {
-	return preg_match('/^#[0-9a-fA-F]{6}$/', $color) == 1;
+	return preg_match('/^[#]{0,1}[0-9a-fA-F]{6}$/', $color) == 1;
 }
 ?>
