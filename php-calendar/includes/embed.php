@@ -19,7 +19,27 @@ if ( !defined('IN_PHPC') ) {
        die("Invalid setup");
 }
 
-echo tag('div', attributes('class="php-calendar"'),
-		tag('h1', $phpc_cal->get_title()),
-		display_phpc())->toString();
+try {
+	require_once("$phpc_includes_path/calendar.php");
+	require_once("$phpc_includes_path/setup.php");
+
+	$welcome='Welcome anonymous user';
+	if (isset($phpc_user)) $welcome='Welcome '.$phpc_user->username;
+	
+	$calendar_title = $phpc_cal->get_title();
+	$content = tag('div', attributes('class="php-calendar ui-widget"'),
+			tag('div', attributes('class="phpc-logged ui-widget-content"'), $welcome),
+			tag('h1', attrs('class="ui-widget-header"'),
+				tag('a', attributes("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'"),
+					$calendar_title)),
+			display_phpc());
+} catch(Exception $e) {
+	$calendar_title = $e->getMessage();
+	$content = tag('div', attributes('class="php-calendar"'),
+			$e->getMessage());
+}
+$head = tag('div', attrs('class="phpc-head"'),
+			get_header_tags("static"));
+echo $head->toString();
+echo $content->toString();
 ?>
