@@ -110,6 +110,7 @@ class PhpcDatabase {
 		
 		$results = $this->dbh->query($query)
 			or false;
+		if (!$results) return 0;
 		return $results->num_rows;
 	}
 
