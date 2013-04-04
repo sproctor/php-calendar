@@ -47,8 +47,10 @@ $phpc_server = $_SERVER['SERVER_NAME'];
 if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
 	$phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
 
-$phpc_url = "$phpc_protocol://$phpc_server$phpc_script"
-		. $_SERVER['QUERY_STRING'];
+$phpc_home_url="$phpc_protocol://$phpc_server$phpc_script";
+$phpc_url = $phpc_home_url
+		. (empty($_SERVER['QUERY_STRING']) ? ''
+		   : '?' . $_SERVER['QUERY_STRING']);
 
 // Remove this line if you must
 ini_set('arg_separator.output', '&amp;');
@@ -60,7 +62,7 @@ ob_start();
 /*
  * Do not modify anything under this point
  */
-
+if (!defined('IN_PHPC'))
 define('IN_PHPC', true);
 
 require_once("$phpc_includes_path/setup.php");
