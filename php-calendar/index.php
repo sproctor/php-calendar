@@ -70,6 +70,7 @@ try {
 	
 	$calendar_title = $phpc_cal->get_title();
 	$content = tag('div', attributes('class="php-calendar ui-widget"'),
+			tag('br', attributes('style="clear:both;"')),
 			tag('div', attributes('class="phpc-logged ui-widget-content"'), $welcome),
 			tag('h1', attrs('class="ui-widget-header"'),
 				tag('a', attributes("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'"),
