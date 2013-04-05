@@ -662,7 +662,7 @@ function display_phpc() {
 			$results->add($navbar);
 		$msg = _('You do not have permission to do that: ')
 					. $e->getMessage();
-		$results->add(tag('div', $msg));
+		$results->add(tag('div', attrs('class="phpc-message ui-state-error"'), $msg));
 		if(is_user())
 			return $results;
 		else
