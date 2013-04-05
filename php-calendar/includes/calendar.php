@@ -106,7 +106,7 @@ function footer()
 {
 	global $phpc_url, $phpc_tz, $phpc_lang;
 
-	$tag = tag('div', attributes('class="phpc-bar ui-widget-content"'),
+	$tag = tag('div', attributes('class="phpc-bar ui-widget-content ui-widget-header"'),
 			"[" . _('Language') . ": $phpc_lang]" .
 			" [" . _('Timezone') . ": $phpc_tz]");
 
