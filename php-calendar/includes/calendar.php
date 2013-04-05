@@ -725,11 +725,17 @@ function short_month_name($month)
 }
 
 function verify_token() {
+	global $phpc_prefix;
+
 	if(!is_user())
 		return true;
 
-	if(empty($_SESSION["phpc_login"]) || empty($_COOKIE["phpc_login"])
-			|| $_COOKIE["phpc_login"] != $_SESSION["phpc_login"])
+	//echo "<pre>cookie: " . $_COOKIE["{$phpc_prefix}login"] . "\n";
+	//echo "session: " . $_SESSION["phpc_login"] . "</pre>";
+
+	if(empty($_SESSION["phpc_login"])
+			|| empty($_COOKIE["{$phpc_prefix}login"])
+			|| $_COOKIE["{$phpc_prefix}login"] != $_SESSION["phpc_login"])
 		soft_error(_("Secret token mismatch. Possible request forgery attempt."));
 }
 

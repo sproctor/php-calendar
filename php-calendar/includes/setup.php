@@ -53,7 +53,7 @@ $phpcdb = new PhpcDatabase;
 session_name($phpc_prefix . 'SESSION');
 session_start();
 
-if(empty($_SESSION["{$phpc_prefix}uid"])) {
+if(empty($_SESSION["phpc_uid"])) {
 	if(!empty($_COOKIE["{$phpc_prefix}login"])
 			&& !empty($_COOKIE["{$phpc_prefix}uid"])
 			&& !empty($_COOKIE["{$phpc_prefix}login_series"])) {

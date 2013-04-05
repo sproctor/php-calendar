@@ -68,8 +68,12 @@ function display_event_by_oid($oid)
 
 	$event_header->add(tag('div',attributes('class="phpc-event-time"'), _('When').": ".$event->get_date_string()
 				. $event_time));
+	$event_header->add(tag('div', _('Created at: '), $event->ctime));
+	if(!empty($event->mtime))
+		$event_header->add(tag('div', ('Last modified at: '),
+				$event->mtime));
 				
-	$menu_tag = tag('div', attrs('class="phpc-event-menu"')); 
+	$menu_tag = tag('div', attrs('class="phpc-bar ui-widget-content"')); 
 	// Add modify/delete links if this user has access to this event.
         if($event->can_modify()) {
 		$menu_tag->add(array(create_event_link(_('Modify'),
@@ -79,7 +83,8 @@ function display_event_by_oid($oid)
 					create_occurrence_link(_('Modify Occurrence'),
 						'occur_form', $oid), "\n",
 					create_occurrence_link(_('Remove Occurrence'),
-						'occurrence_delete', $oid)));
+						'occurrence_delete', $oid),
+					"\n"));
 	}
 
 
@@ -143,6 +148,11 @@ function display_event_by_eid($eid)
 	$event_header = tag('div', attributes('class="phpc-event-header"'),
 			tag('div', _('by').' ',
 				tag('cite', $event->get_author())));
+
+	$event_header->add(tag('div', _('Created at: '), $event->ctime));
+	if(!empty($event->mtime))
+		$event_header->add(tag('div', ('Last modified at: '),
+				$event->mtime));
 
 	$category = $event->get_category();
 	if(!empty($category))

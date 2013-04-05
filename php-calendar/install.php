@@ -442,7 +442,9 @@ function create_tables()
 		."`description` text collate utf8_unicode_ci NOT NULL,\n"
 		."`readonly` tinyint(1) NOT NULL default 0,\n"
 		."`catid` int(11) unsigned default NULL,\n"
-		."PRIMARY KEY  (`eid`)\n"
+		."`ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
+		."`mtime` timestamp NULL DEFAULT NULL,\n"
+		."PRIMARY KEY (`eid`)\n"
 		.") ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;\n";
 
 	$dbh->query($query)

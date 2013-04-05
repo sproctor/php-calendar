@@ -48,7 +48,7 @@ class PhpcDatabase {
 	private function get_event_fields() {
 		$events_table = SQL_PREFIX . "events";
 		$fields = array('subject', 'description', 'owner', 'eid', 'cid',
-				'readonly', 'catid');
+				'readonly', 'catid', 'ctime', 'mtime');
 		return "`$events_table`.`"
 			. implode("`, `$events_table`.`", $fields) . "`\n";
 	}
@@ -282,6 +282,7 @@ class PhpcDatabase {
 	function get_visible_categories($uid, $cid = false)
 	{
 		$cats_table = SQL_PREFIX . 'categories';
+		$user_groups_table = SQL_PREFIX . 'user_groups';
 
 		$where_cid = "`cid` IS NULL";
 		if($cid)
@@ -741,6 +742,7 @@ class PhpcDatabase {
 			."`subject`='$subject',\n"
 			."`description`='$description',\n"
 			."`readonly`=$fmt_readonly,\n"
+			."`mtime`=NOW(),\n"
 			.($catid !== false ? "`catid`='$catid'\n"
 				: "`catid`=NULL\n")
 			."WHERE eid='$eid'";

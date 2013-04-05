@@ -97,7 +97,8 @@ function config_form()
 
 function settings_submit()
 {
-	global $phpcid, $vars, $phpcdb, $phpc_user_tz, $phpc_user_lang;
+	global $phpcid, $vars, $phpcdb, $phpc_user_tz, $phpc_user_lang,
+	       $phpc_prefix;
 
 	verify_token();
 
@@ -106,13 +107,13 @@ function settings_submit()
 	// One hour in the past
 	$past_time = time() - 3600;
 	if(!empty($vars["timezone"]))
-		setcookie("phpc_tz", $vars['timezone'], $expiration_time);
+		setcookie("{$phpc_prefix}tz", $vars['timezone'], $expiration_time);
 	else
-		setcookie("phpc_tz", '', $past_time);
+		setcookie("{$phpc_prefix}tz", '', $past_time);
 	if(!empty($vars["language"]))
-		setcookie("phpc_lang", $vars['language'], $expiration_time);
+		setcookie("{$phpc_prefix}lang", $vars['language'], $expiration_time);
 	else
-		setcookie("phpc_lang", '', $past_time);
+		setcookie("{$phpc_prefix}lang", '', $past_time);
 
 	if(is_user()) {
 		$uid = $_SESSION['phpc_uid'];

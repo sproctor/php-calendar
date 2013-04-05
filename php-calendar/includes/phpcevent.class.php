@@ -27,6 +27,8 @@ class PhpcEvent {
 	var $bg_color;
 	var $text_color;
 	var $catid;
+	var $ctime;
+	var $mtime;
 	var $cal;
 
 	function __construct($event)
@@ -49,6 +51,8 @@ class PhpcEvent {
 		$this->bg_color = $event['bg_color'];
 		$this->text_color = $event['text_color'];
 		$this->catid = $event['catid'];
+		$this->ctime = $event['ctime'];
+		$this->mtime = $event['mtime'];
 
 		if($this->cid == $phpcid)
 			$this->cal = $phpc_cal;
