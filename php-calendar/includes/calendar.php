@@ -411,6 +411,29 @@ function create_checkbox($name, $value, $checked = false, $label = false)
 		return $input;
 }
 
+// creates the user menu
+// returns tag data for the menu
+function userMenu()
+{
+	global $action;
+
+	$html=tag('span',attributes('style="font-weight: bold; margin-left:1em;"'));
+	
+	if($action != 'settings')
+		menu_item_append($html, _('Settings'), 'settings');
+		
+	if(is_user()) {
+		menu_item_append($html, _('Log out'), 'logout',
+				array('lasturl' =>
+					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
+	} else {
+		menu_item_append($html, _('Log in'), 'login',
+				array('lasturl' =>
+					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
+	}
+	return $html;
+}
+
 // creates the navbar for the top of the calendar
 // returns tag data for the navbar
 function navbar()
@@ -436,19 +459,6 @@ function navbar()
 
 	if($action != 'display_day' && !empty($vars['day'])) {
 		menu_item_append($html, _('View date'), 'display_day', $args);
-	}
-
-	if($action != 'settings')
-		menu_item_append($html, _('Settings'), 'settings');
-
-	if(is_user()) {
-		menu_item_append($html, _('Log out'), 'logout',
-				array('lasturl' =>
-					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
-	} else {
-		menu_item_append($html, _('Log in'), 'login',
-				array('lasturl' =>
-					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
 	}
 
 	if($phpc_cal->can_admin() && $action != 'cadmin') {
