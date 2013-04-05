@@ -41,6 +41,8 @@ if(defined('PHPC_DEBUG')) {
 	ini_set('html_errors', 1);
 }
 
+$phpc_prefix = "phpc_" . SQL_PREFIX . SQL_DATABASE;
+
 require_once("$phpc_includes_path/calendar.php");
 
 // Make the database connection.
@@ -48,22 +50,23 @@ require_once("$phpc_includes_path/phpcdatabase.class.php");
 $phpcdb = new PhpcDatabase;
 
 // Set the session to something unique to this setup
-session_name(SQL_PREFIX . SQL_DATABASE . '_SESSION');
+session_name($phpc_prefix . 'SESSION');
 session_start();
 
-if(empty($_SESSION["phpc_uid"])) {
-	if(!empty($_COOKIE["phpc_login"]) && !empty($_COOKIE["phpc_uid"])
-			&& !empty($_COOKIE["phpc_login_series"])) {
+if(empty($_SESSION["{$phpc_prefix}uid"])) {
+	if(!empty($_COOKIE["{$phpc_prefix}login"])
+			&& !empty($_COOKIE["{$phpc_prefix}uid"])
+			&& !empty($_COOKIE["{$phpc_prefix}login_series"])) {
 		// Cleanup before we check their token so they can't login with
 		//   an ancient token
 		$phpcdb->cleanup_login_tokens();
 
-		$phpc_uid = $_COOKIE["phpc_uid"];
-		$phpc_login_series = $_COOKIE["phpc_login_series"];
+		$phpc_uid = $_COOKIE["{$phpc_prefix}uid"];
+		$phpc_login_series = $_COOKIE["{$phpc_prefix}login_series"];
 		$token = $phpcdb->get_login_token($phpc_uid,
 					$phpc_login_series);
 		if($token) {
-			if($token == $_COOKIE["phpc_login"]) {
+			if($token == $_COOKIE["{$phpc_prefix}login"]) {
 				$user = $phpcdb->get_user($phpc_uid);
 				phpc_do_login($user, $phpc_login_series);
 			} else {
@@ -141,10 +144,10 @@ if(!empty($_SESSION['phpc_uid'])) {
 	$phpc_user_lang = $phpc_user->get_language();
 	$phpc_user_tz = $phpc_user->get_timezone();
 } else {
-	if(!empty($_COOKIE['phpc_tz']))
-		$phpc_user_tz = $_COOKIE['phpc_tz'];
-	if(!empty($_COOKIE['phpc_lang']))
-		$phpc_user_lang = $_COOKIE['phpc_lang'];
+	if(!empty($_COOKIE["{$phpc_prefix}tz"]))
+		$phpc_user_tz = $_COOKIE["{$phpc_prefix}tz"];
+	if(!empty($_COOKIE["{$phpc_prefix}lang"]))
+		$phpc_user_lang = $_COOKIE["{$phpc_prefix}lang"];
 }
 
 // setup translation stuff

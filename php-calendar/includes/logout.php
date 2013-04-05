@@ -21,12 +21,12 @@ if(!defined('IN_PHPC')) {
 
 function logout()
 {
-	global $vars, $phpc_script;
+	global $vars, $phpc_script, $phpc_prefix;
 
         session_destroy();
-	setcookie("phpc_uid", "", time() - 3600);
-	setcookie("phpc_login", "", time() - 3600);
-	setcookie("phpc_login_series", "", time() - 3600);
+	setcookie("{$phpc_prefix}uid", "", time() - 3600);
+	setcookie("{$phpc_prefix}login", "", time() - 3600);
+	setcookie("{$phpc_prefix}login_series", "", time() - 3600);
 
         redirect($phpc_script);
 

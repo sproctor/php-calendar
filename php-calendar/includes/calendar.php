@@ -70,7 +70,7 @@ function login_user($username, $password)
 }
 
 function phpc_do_login($user, $series_token = false) {
-        global $phpcdb, $phpc_uid;
+        global $phpcdb, $phpc_uid, $phpc_prefix;
 
 	$phpc_uid = $user->uid;
 	$login_token = phpc_get_token();
@@ -91,9 +91,10 @@ function phpc_do_login($user, $series_token = false) {
 
 	// expire credentials in 30 days.
 	$expiration_time = time() + 30 * 24 * 60 * 60;
-	setcookie("phpc_uid", $phpc_uid, $expiration_time);
-	setcookie("phpc_login", $login_token, $expiration_time);
-	setcookie("phpc_login_series", $series_token, $expiration_time);
+	setcookie("{$phpc_prefix}uid", $phpc_uid, $expiration_time);
+	setcookie("{$phpc_prefix}login", $login_token, $expiration_time);
+	setcookie("{$phpc_prefix}login_series", $series_token,
+			$expiration_time);
 	if(!empty($user->admin))
 		$_SESSION["phpc_admin"] = true;
 
