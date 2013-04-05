@@ -340,7 +340,7 @@ function menu_item_append(&$html, $name, $action, $args = false,
 function menu_item_append_with_date(&$html, $name, $action, $year = false,
 		$month = false, $day = false, $attribs = false)
 {
-	$name=str_replace(' ','&nbsp;',$name);
+	$name = str_replace(' ','&nbsp;',$name);
 
 	if(!is_object($html)) {
 		soft_error('Html is not a valid Html class.');
@@ -632,7 +632,7 @@ function get_calendar_list() {
 }
 
 function display_phpc() {
-	global $phpc_messages, $phpc_redirect;
+	global $phpc_messages, $phpc_redirect, $phpc_script;
 
 	$navbar = false;
 
@@ -660,9 +660,14 @@ function display_phpc() {
 		// TODO: make navbar show if there is an error in do_action()
 		if($navbar !== false)
 			$results->add($navbar);
-		$results->add(tag('div', _('You do not have permission to do that: ')
-					. $e->getMessage()));
-		return $results;
+		$msg = _('You do not have permission to do that: ')
+					. $e->getMessage();
+		$results->add(tag('div', $msg));
+		if(is_user())
+			return $results;
+		else
+			return message_redirect($msg,
+					"$phpc_script?action=login");
 	} catch(Exception $e) {
 		$results = tag('');
 		if($navbar !== false)
