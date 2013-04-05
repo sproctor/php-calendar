@@ -621,7 +621,7 @@ function add_calendar()
 		or db_error($dbh, 'Error adding admin.', $query);
 	
 	echo "<p>Admin account created.</p>";
-	echo "<p>To be able to use the calendar, now you must delete the install directory.</p>";
+	echo "<p>Now you should delete install.php file from root directory (for security reasons).</p>";
 	echo "<p>You should also change the permissions on config.php so only your webserver can read it.</p>";
 	echo "<p><a href=\"index.php\">View calendar</a></p>";
 }
