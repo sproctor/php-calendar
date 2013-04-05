@@ -109,8 +109,8 @@ class PhpcDatabase {
 		$query = "SELECT * FROM `" . $users_table. "` JOIN `" . $groups_table. "` ON (`" . $users_table. "`.gid = `" . $groups_table. "`.gid) WHERE `catid`=".$catid." AND `uid`=".$uid ;	
 		
 		$results = $this->dbh->query($query)
-			or false;
-		if (!$results) return 0;
+			or return false;
+
 		return $results->num_rows;
 	}
 
