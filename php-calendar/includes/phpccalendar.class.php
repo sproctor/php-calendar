@@ -29,6 +29,7 @@ class PhpcCalendar {
 	var $timezone;
 	var $language;
 	var $theme;
+	var $groups;
 
 	function PhpcCalendar($result) {
 		$this->cid = $result['cid'];
@@ -127,18 +128,28 @@ class PhpcCalendar {
 			|| !empty($this->user_perms["readonly"]);
 	}
 
+	function get_visible_categories($uid) {
+		global $phpcdb;
+
+		return $phpcdb->get_visible_categories($uid, $this->cid);
+	}
+		
 	function get_categories() {
 		global $phpcdb;
 
-		if(!isset($this->categories))
+		if(!isset($this->categories)) {
 			$this->categories = $phpcdb->get_categories($this->cid);
-		
-		foreach ($this->categories as $k=>$cat)
-		{
-		if (!$phpcdb->is_cat_visible(get_uid(), $cat['catid']))
-			unset($this->categories[$k]);
 		}
 		return $this->categories;
+	}
+
+	function get_groups() {
+		global $phpcdb;
+
+		if(!isset($this->groups)) {
+			$this->groups = $phpcdb->get_groups($this->cid);
+		}
+		return $this->groups;
 	}
 }
 

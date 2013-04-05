@@ -631,6 +631,46 @@ class FormDropdownQuestion extends FormCompoundQuestion {
         }
 }
 
+/* this class is for questions where you need to choose between
+ * multiple things
+ */
+class FormMultipleSelectQuestion extends FormCompoundQuestion {
+
+        function __construct($qid, $subject = false,
+			$description = false, $required = false) {
+		parent::__construct();
+		$this->qid = $qid;
+                $this->subject = $subject;
+                $this->description = $description;
+                $this->required = $required;
+		$this->class .= " form-multi-select-question";
+        }
+
+        protected function get_specific_html($parent, $defaults) {
+		$select = tag('select', attrs("id=\"{$this->qid}\"",
+					"name=\"{$this->qid}\"",
+					'multiple="multiple"',
+					'class="form-select"'));
+
+		$children = array();
+		foreach($this->options as $value => $name) {
+			$attrs = attrs("value=\"$value\"");
+			if(!empty($defaults[$this->qid])
+					&& $defaults[$this->qid] == $value)
+				$attrs->add('selected');
+			$select->add(tag('option', $attrs, $name));
+
+			if(!empty($this->conditionals[$value])) {
+				$children[] = tag('table', attrs("id=\"{$this->qid}-{$value}\""),
+						$this->conditionals[$value]->get_html($this, $defaults));
+			}
+                }
+		if(empty($children))
+			return $select;
+		return array($select, $children);
+        }
+}
+
 /* this class is for colorpickerer
  */
 class FormColorPicker extends FormAtomicQuestion {

@@ -49,7 +49,7 @@ if(file_exists($phpc_config_file)) {
 			."FROM `" . SQL_PREFIX .  "calendars`\n";
 
 		$sth = $dbh->query($query)
-			or $this->db_error(_('Could not get calendars.'),
+			or db_error(_('Could not get calendars.'),
 					$query);
 
 		if($sth->fetch_assoc()) {
@@ -478,13 +478,23 @@ function create_tables()
 	$dbh->query($query)
 		or db_error($dbh, 'Error creating users table.', $query);
 		
-		$query = "CREATE TABLE `" . SQL_PREFIX . "groups` (\n"
-		."`gid` int(3),\n"
-		."`catid` int(3)\n"
+	$query = "CREATE TABLE `" . SQL_PREFIX . "groups` (\n"
+		."`gid` int(11) NOT NULL AUTO_INCREMENT,\n"
+		."`cid` int(11),\n"
+		."`name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+		."PRIMARY KEY (`gid`)\n"
 		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
 
 	$dbh->query($query)
-		or db_error($dbh, 'Error creating users table.', $query);
+		or db_error($dbh, 'Error creating groups table.', $query);
+
+	$query = "CREATE TABLE `" . SQL_PREFIX . "user_groups` (\n"
+		."`gid` int(11),\n"
+		."`uid` int(11)\n"
+		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
+
+	$dbh->query($query)
+		or db_error($dbh, 'Error creating user groups table.', $query);
 
 	create_logins_table();
 
@@ -523,6 +533,7 @@ function create_tables()
 	$query = "CREATE TABLE `" . SQL_PREFIX . "categories` (\n"
 		."`catid` int(11) unsigned NOT NULL auto_increment,\n"
 		."`cid` int(11) unsigned NOT NULL,\n"
+		."`gid` int(11) unsigned DEFAULT NULL,\n"
 		."`name` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
 		."`text_color` varchar(255) collate utf8_unicode_ci default NULL,\n"
 		."`bg_color` varchar(255) collate utf8_unicode_ci default NULL,\n"

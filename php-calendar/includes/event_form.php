@@ -106,7 +106,7 @@ function display_form() {
 	$categories = new FormDropdownQuestion('catid', _('Category'));
 	$categories->add_option('', _('None'));
 	$have_categories = false;
-	foreach($phpc_cal->get_categories() as $category) {
+	foreach($phpc_cal->get_visible_categories(get_uid()) as $category) {
 		$categories->add_option($category['catid'], $category['name']);
 		$have_categories = true;
 	}

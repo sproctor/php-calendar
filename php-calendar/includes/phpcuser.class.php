@@ -23,7 +23,7 @@ class PhpcUser {
 	var $password_editable;
 	var $timezone;	
 	var $language;
-	var $group;
+	var $groups;
 
 	function PhpcUser($result)
 	{
@@ -34,7 +34,6 @@ class PhpcUser {
 		$this->password_editable = $result['password_editable'];
 		$this->timezone = $result['timezone'];
 		$this->language = $result['language'];
-		$this->group = $result['gid'];
 	}
 
 	function get_username()
@@ -63,8 +62,13 @@ class PhpcUser {
 		return $this->language;
 	}
 	
-	function get_group() {
-		return $this->group;
+	function get_groups() {
+		global $phpcdb;
+
+		if(!isset($this->groups))
+			$this->groups = $phpcdb->get_user_groups($this->uid);
+
+		return $this->groups;
 	}
 }
 

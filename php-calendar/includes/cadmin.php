@@ -27,7 +27,7 @@ function cadmin()
                 permission_error(_('You must be logged in as an admin.'));
         }
 
-	return array(config_form(), user_list(), category_list());
+	return array(config_form(), user_list(), category_list(), group_list());
 }
 
 function config_form()
@@ -127,7 +127,7 @@ function category_list()
 					tag('th',$name),
 					tag('td', htmlspecialchars($category['text_color'])),
 					tag('td', htmlspecialchars($category['bg_color'])),
-					tag('td', implode(',',$category['gid'])),
+					tag('td', htmlspecialchars($category['gid'])),
 					tag('td', create_action_link(_('Edit'),
 							'category_form',
 							array('catid'
@@ -156,6 +156,47 @@ function category_list()
 			tag('tfoot',
 				tag('tr',
 					tag('td', attributes('colspan="5"'),
+						$create_link))));
+
+	return tag('div', attributes('class="phpc-container"'), $table);
+}
+
+function group_list() {
+	global $phpc_script, $phpcid, $phpc_cal, $vars;
+
+	$groups = $phpc_cal->get_groups();
+
+	$tbody = tag('tbody');
+
+	foreach ($groups as $group) {
+		$name = empty($group['name']) ? _('No Name')
+			: $group['name'];
+		$id = $group['gid'];
+		$tbody->add(tag('tr',
+					tag('th', $name),
+					tag('td', create_action_link(_('Edit'),
+							'group_form',
+							array('gid' => $id)),
+						" ",
+						create_action_link(_('Delete'),
+							'group_delete',
+							array('gid' => $id)))
+				   ));
+	}
+
+	$create_link = create_action_link(_('Create group'), 'group_form',
+			array('cid' => $phpcid));
+	$table = tag('table', attributes("class=\"phpc-container\""),
+			tag('caption', _('Calendar Groups')),
+			tag('thead',
+				tag('tr',
+					tag('th', _('Name')),
+					tag('th', _('Actions'))
+				   )),
+			$tbody,
+			tag('tfoot',
+				tag('tr',
+					tag('td', attributes('colspan="2"'),
 						$create_link))));
 
 	return tag('div', attributes('class="phpc-container"'), $table);

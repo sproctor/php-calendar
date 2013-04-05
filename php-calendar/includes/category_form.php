@@ -28,13 +28,23 @@ function category_form() {
         $form->add_part(new FormFreeQuestion('name', _('Name'),
 				false, 32, true));
 
-	if(isset($vars['cid']))
+	if(isset($vars['cid'])) {
 		$form->add_hidden('cid', $vars['cid']);
+		$cid = $vars['cid'];
+	} else {
+		$cid = $phpcid;
+	}
 
 	$form->add_hidden('action', 'category_submit');
 	$form->add_part(new FormColorPicker('text-color','Text Color'));
 	$form->add_part(new FormColorPicker('bg-color','Background Color'));
-	$form->add_part(new FormFreeQuestion('groups','Visibile to Groups'));
+	$group_question = new FormDropDownQuestion('gid',
+			_('Visible to groups'));
+	$group_question->add_option('', _('None'));
+	foreach($phpcdb->get_groups($cid) as $group) {
+		$group_question->add_option($group['gid'], $group['name']);
+	}
+	$form->add_part($group_question);
 	$form->add_part(new FormSubmitButton("Submit Category"));
 
 	if(isset($vars['catid'])) {
@@ -44,7 +54,7 @@ function category_form() {
 				'name' => htmlspecialchars($category['name']),
 				'text-color' => htmlspecialchars(str_replace('#', '', $category['text_color'])),
 				'bg-color' => htmlspecialchars(str_replace('#', '', $category['bg_color'])),
-				'groups' => htmlspecialchars(implode(',',$category['gid'])),
+				'gid' => htmlspecialchars($category['gid']),
 				);
 	} else {
 		$defaults = array(

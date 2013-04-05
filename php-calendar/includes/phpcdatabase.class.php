@@ -63,7 +63,7 @@ class PhpcDatabase {
 
 	private function get_user_fields() {
 		$users_table = SQL_PREFIX . "users";
-		return "`$users_table`.`uid`, `username`, `password`, `$users_table`.`admin`, `password_editable`, `timezone`, `language`, `gid`";
+		return "`$users_table`.`uid`, `username`, `password`, `$users_table`.`admin`, `password_editable`, `timezone`, `language`";
 	}
 
 	// returns all the events for a particular day
@@ -178,8 +178,8 @@ class PhpcDatabase {
 	{
 		$cats_table = SQL_PREFIX . 'categories';
 
-        $query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
-			."`catid`\n"
+		$query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
+			."`gid`, `catid`\n"
 			."FROM `$cats_table`\n"
 			."WHERE `catid` = $catid";
 
@@ -190,28 +190,62 @@ class PhpcDatabase {
 			or soft_error(_("Category doesn't exist with catid")
 					. ": $catid");
 	
-		$result['gid']=$this->get_groups($catid);
-
 		return $result;
 	}
 
-function get_groups($catid)
-{
-	$groups_table = SQL_PREFIX . 'groups';
+	function get_group($gid) {
+		$groups_table = SQL_PREFIX . 'groups';
 
-        $query = "SELECT `gid`\n"
+		$query = "SELECT `name`, `gid`, `cid`\n"
 			."FROM `$groups_table`\n"
-			."WHERE `catid` = $catid";
+			."WHERE `gid` = $gid";
 
-		$gth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_category'), $query);
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error in get_group'), $query);
+			
+		$result = $sth->fetch_assoc()
+			or soft_error(_("Group doesn't exist with gid")
+					. ": $gid");
+	
+		return $result;
+	}
+
+	function get_groups($cid) {
+		$groups_table = SQL_PREFIX . 'groups';
+
+		$query = "SELECT `gid`, `name`, `cid`\n"
+			."FROM `$groups_table`\n"
+			."WHERE `cid` = $cid";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error in get_groups'), $query);
 					
-		$group = array();
-		while($row = $gth->fetch_assoc()) {
-			$group[] = $row['gid'];
+		$groups = array();
+		while($row = $sth->fetch_assoc()) {
+			$groups[] = $row;
 		}					
-	return $group;
-}
+		return $groups;
+	}
+
+	function get_user_groups($uid) {
+		$groups_table = SQL_PREFIX . 'groups';
+		$user_groups_table = SQL_PREFIX . 'user_groups';
+
+		$query = "SELECT `gid`, `name`\n"
+			."FROM `$groups_table`\n"
+			."INNER JOIN `$user_groups_table` USING (`gid`)\n"
+			."WHERE `uid` = $uid";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error in get_user_groups'),
+					$query);
+					
+		$groups = array();
+		while($row = $sth->fetch_assoc()) {
+			$groups[] = $row;
+		}					
+		return $groups;
+	}
 	
 	// returns the categories for calendar $cid
 	function get_categories($cid = false)
@@ -223,7 +257,8 @@ function get_groups($catid)
 		else
 			$where = "WHERE `cid` IS NULL\n";
 
-         $query = "SELECT `catid`\n"
+		$query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
+			."`gid`, `catid`\n"
 			."FROM `$cats_table`\n"
 			.$where;
 
@@ -233,7 +268,35 @@ function get_groups($catid)
 
 		$arr = array();
 		while($result = $sth->fetch_assoc()) {
-			$arr[] = $this->get_category($result['catid']);
+			$arr[] = $result;
+		}
+
+		return $arr;
+	}
+
+	// returns the categories for calendar $cid
+	//   if there are no 
+	function get_visible_categories($uid, $cid = false)
+	{
+		$cats_table = SQL_PREFIX . 'categories';
+
+		$where_cid = "`cid` IS NULL";
+		if($cid)
+			$where_cid = "($where_cid OR `cid` = '$cid')";
+
+		$query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
+			."`gid`, `catid`\n"
+			."FROM `$cats_table`\n"
+			."LEFT JOIN `$user_groups_table` USING (`gid`)\n"
+			."WHERE (`uid` IS NULL OR `uid` = '$uid') AND $where_cid\n";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error in get_visible_categories'),
+					$query);
+
+		$arr = array();
+		while($result = $sth->fetch_assoc()) {
+			$arr[] = $result;
 		}
 
 		return $arr;
@@ -354,6 +417,19 @@ function get_groups($catid)
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Error while removing category.'),
+					$query);
+
+		return $this->dbh->affected_rows > 0;
+	}
+
+	function delete_group($gid)
+	{
+
+		$query = 'DELETE FROM `'.SQL_PREFIX ."groups`\n"
+			."WHERE `gid` = '$gid'";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error while removing group.'),
 					$query);
 
 		return $this->dbh->affected_rows > 0;
@@ -502,11 +578,11 @@ function get_groups($catid)
 			return false;
 	}
 
-	function create_user($username, $password, $make_admin, $gid)
+	function create_user($username, $password, $make_admin)
 	{
 		$query = "INSERT into `".SQL_PREFIX."users`\n"
-			."(`username`, `password`, `admin`, `gid`) VALUES\n"
-			."('$username', '$password', '$make_admin', '$gid')";
+			."(`username`, `password`, `admin`) VALUES\n"
+			."('$username', '$password', '$make_admin')";
 
 		$this->dbh->query($query)
 			or $this->db_error(_('Error creating user.'), $query);
@@ -672,70 +748,61 @@ function get_groups($catid)
 		return $this->dbh->affected_rows > 0;
 	}
 
-	function create_category($cid, $name, $text_color,$bg_color, $groups)
-	{
+	function create_category($cid, $name, $text_color, $bg_color,
+			$gid = false) {
+		$gid_key = $gid ? ', `gid`' : '';
+		$gid_value = $gid ? ", '$gid'" : '';
 		$query = "INSERT INTO `" . SQL_PREFIX . "categories`\n"
-			."(`cid`, `name`, `text_color`, `bg_color`)\n"
-			."VALUES ('$cid', '$name', '$text_color', '$bg_color')";
+			."(`cid`, `name`, `text_color`, `bg_color`$gid_key)\n"
+			."VALUES ('$cid', '$name', '$text_color', '$bg_color'$gid_value)";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Error creating category.'),
 					$query);
 		
-		$ret_id=$this->dbh->insert_id;
-		
-		$group_arr=explode(',',$groups);
-		
-		foreach ($group_arr as $grp)
-		{
-		$query = "INSERT INTO `" . SQL_PREFIX . "groups`\n"
-			."(`gid`, `catid`)\n"
-			."VALUES ('$grp', '$ret_id')";
-
-		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error creating category.'),
-					$query);
-		}
-		
-		return $ret_id;
+		return $this->dbh->insert_id;
 	}
 
-	function modify_category($catid, $name, $text_color, $bg_color, $groups)
+	function create_group($cid, $name)
+	{
+		$query = "INSERT INTO `" . SQL_PREFIX . "groups`\n"
+			."(`cid`, `name`)\n"
+			."VALUES ('$cid', '$name')";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error creating group.'), $query);
+		
+		return $this->dbh->insert_id;
+	}
+
+	function modify_category($catid, $name, $text_color, $bg_color, $gid)
 	{
 		$query = "UPDATE " . SQL_PREFIX . "categories\n"
 			."SET\n"
 			."`name`='$name',\n"
 			."`text_color`='$text_color',\n"
 			."`bg_color`='$bg_color'\n"
+			."`gid`='$gid'\n"
 			."WHERE `catid`='$catid'";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(_('Error modifying category.'),
 					$query);
 
-					
-		$group_arr=explode(',',$groups);
-		
-		
-		foreach ($group_arr as $grp)
-		{
-			/* not very clever here.. */
-			$query = "SELECT * FROM `" . SQL_PREFIX . "groups` WHERE `catid`=".$catid." AND `gid`=".$grp ;	
+		return $this->dbh->affected_rows > 0;
+	}
 
-			$results = $this->dbh->query($query)
-				or false;
-			if ($results->num_rows==0)
-			{
-				$query = "INSERT INTO `" . SQL_PREFIX . "groups`\n"
-					."(`gid`, `catid`)\n"
-					."VALUES ('$grp', '$catid')";
+	function modify_group($gid, $name)
+	{
+		$query = "UPDATE " . SQL_PREFIX . "groups\n"
+			."SET\n"
+			."`name`='$name',\n"
+			."WHERE `gid`='$gid'";
 
-				$gth = $this->dbh->query($query)
-					or $this->db_error(_('Error creating category.'),
-							$query);
-			}
-		}
-		
+		$sth = $this->dbh->query($query)
+			or $this->db_error(_('Error modifying group.'),
+					$query);
+
 		return $this->dbh->affected_rows > 0;
 	}
 

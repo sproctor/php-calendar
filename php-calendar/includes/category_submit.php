@@ -55,9 +55,8 @@ function category_submit()
 			if(!$calendar->can_admin())
 				permission_error(_('You do not have permission to add categories to this calendar.'));
 		}
-		$groups=$vars['groups'];
 		$catid = $phpcdb->create_category($cid, $vars["name"],
-				$text_color, $bg_color, $groups);
+				$text_color, $bg_color, $vars['gid']);
 	} else {
 		$modify = true;
 
@@ -69,9 +68,8 @@ function category_submit()
 					->can_admin()))
 			soft_error(_("You do not have permission to modify this category."));
 			
-		$groups=$vars['groups'];
 		$phpcdb->modify_category($catid, $vars['name'],
-				$text_color, $bg_color, $groups);
+				$text_color, $bg_color, $vars['gid']);
 	}
 
 	$page = "$phpc_script?action=cadmin";
