@@ -1,5 +1,5 @@
 <?php
-
+require("php-mo.php");
 $locale_dir = "../locale";
 
 $handle = opendir($locale_dir);
@@ -14,11 +14,9 @@ while(($filename = readdir($handle)) !== false) {
 	if(strncmp($filename, ".", 1) == 0 || !is_dir($pathname))
 		continue;
 	$msgs_path = "$pathname/LC_MESSAGES";
-	$cmd = "msgfmt -o$msgs_path/messages.mo $msgs_path/messages.po";
-	echo "Translating \"$filename\" using command \"$cmd\"\n";
-	passthru($cmd);
+	phpmo_convert("$msgs_path/messages.po", "$msgs_path/messages.mo", true);
+	echo "Translating \"$filename\" using phpmo\n";
 }
 
 closedir($handle);
-
 ?>
