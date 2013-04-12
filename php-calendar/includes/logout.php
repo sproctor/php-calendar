@@ -21,13 +21,9 @@ if(!defined('IN_PHPC')) {
 
 function logout()
 {
-	global $vars, $phpc_script, $phpc_prefix;
+	global $vars, $phpc_script;
 
-        session_destroy();
-	setcookie("{$phpc_prefix}uid", "", time() - 3600);
-	setcookie("{$phpc_prefix}login", "", time() - 3600);
-	setcookie("{$phpc_prefix}login_series", "", time() - 3600);
-
+	phpc_do_logout();
         redirect($phpc_script);
 
         return tag('h2', _('Loggin out...'));
