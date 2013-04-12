@@ -101,6 +101,14 @@ function phpc_do_login($user, $series_token = false) {
 	return true;
 }
 
+function phpc_do_logout() {
+	global $phpc_prefix;
+   	session_destroy();
+	setcookie("{$phpc_prefix}uid", "", time() - 3600);
+	setcookie("{$phpc_prefix}login", "", time() - 3600);
+	setcookie("{$phpc_prefix}login_series", "", time() - 3600);
+}
+
 // returns tag data for the links at the bottom of the calendar
 function footer()
 {
