@@ -65,8 +65,8 @@ try {
 	require_once("$phpc_includes_path/calendar.php");
 	require_once("$phpc_includes_path/setup.php");
 
-	$welcome='Welcome anonymous user';
-	if (isset($phpc_user)) $welcome='Welcome '.$phpc_user->username;
+	$welcome=_('Welcome anonymous user');
+	if (isset($phpc_user)) $welcome=_('Welcome').' '.$phpc_user->username;
 	
 	$calendar_title = $phpc_cal->get_title();
 	$content = tag('div', attributes('class="php-calendar ui-widget"'),
