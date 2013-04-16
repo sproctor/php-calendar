@@ -628,7 +628,7 @@ function get_calendar_list() {
 }
 
 function display_phpc() {
-	global $phpc_messages, $phpc_redirect, $phpc_script;
+	global $phpc_messages, $phpc_redirect, $phpc_script, $phpc_prefix;
 
 	$navbar = false;
 

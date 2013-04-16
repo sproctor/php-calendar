@@ -59,6 +59,8 @@ function redirect($page) {
 }
 
 function message_redirect($message, $page) {
+	global $phpc_prefix;
+
 	if(empty($_SESSION["{$phpc_prefix}messages"]))
 		$_SESSION["{$phpc_prefix}messages"] = array();
 
