@@ -24,13 +24,10 @@ class PhpcDatabase {
 	var $dbh;
 	var $calendars;
 
-	function __construct() {
-		if(!defined("SQL_PORT"))
-			define("SQL_PORT", ini_get("mysqli.default_port"));
-
+	function __construct($host, $username, $passwd, $dbname, $port) {
 		// Make the database connection.
-		$this->dbh = new mysqli(SQL_HOST, SQL_USER, SQL_PASSWD,
-			SQL_DATABASE, SQL_PORT);
+		$this->dbh = new mysqli($host, $username, $passwd, $dbname,
+				$port);
 
 		if(mysqli_connect_errno()) {
 			soft_error("Database connect failed ("
@@ -590,6 +587,8 @@ class PhpcDatabase {
 
 		$this->dbh->query($query)
 			or $this->db_error(_('Error creating user.'), $query);
+
+		$this->dbh->insert_id;
 	}
 
 	function create_calendar()

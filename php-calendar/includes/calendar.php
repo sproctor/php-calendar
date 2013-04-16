@@ -35,19 +35,16 @@ require_once("$phpc_includes_path/html.php");
 require_once("$phpc_includes_path/util.php");
 
 // checks global variables to see if the user is logged in.
-function is_user()
-{
-	return isset($_SESSION["phpc_uid"]);
+function is_user() {
+	global $phpc_user;
+
+	return $phpc_user->uid > 0;
 }
 
-function get_uid()
-{
-	return isset($_SESSION["phpc_uid"]) ? $_SESSION["phpc_uid"] : 0;
-}
+function is_admin() {
+	global $phpc_user;
 
-function is_admin()
-{
-	return !empty($_SESSION["phpc_admin"]);
+	return $phpc_user->admin;
 }
 
 function login_user($username, $password)
@@ -70,19 +67,19 @@ function login_user($username, $password)
 }
 
 function phpc_do_login($user, $series_token = false) {
-        global $phpcdb, $phpc_uid, $phpc_prefix;
+        global $phpcdb, $phpc_prefix;
 
-	$phpc_uid = $user->uid;
+	$uid = $user->uid;
 	$login_token = phpc_get_token();
-	$_SESSION["phpc_uid"] = $phpc_uid;
-	$_SESSION['phpc_login'] = $login_token;
+	$_SESSION["{$phpc_prefix}uid"] = $uid;
+	$_SESSION["{$phpc_prefix}login"] = $login_token;
 
 	if(!$series_token) {
 		$series_token = phpc_get_token();
-		$phpcdb->add_login_token($phpc_uid, $series_token,
+		$phpcdb->add_login_token($uid, $series_token,
 				$login_token);
 	} else {
-		$phpcdb->update_login_token($phpc_uid, $series_token,
+		$phpcdb->update_login_token($uid, $series_token,
 				$login_token);
 	}
 
@@ -91,12 +88,10 @@ function phpc_do_login($user, $series_token = false) {
 
 	// expire credentials in 30 days.
 	$expiration_time = time() + 30 * 24 * 60 * 60;
-	setcookie("{$phpc_prefix}uid", $phpc_uid, $expiration_time);
+	setcookie("{$phpc_prefix}uid", $uid, $expiration_time);
 	setcookie("{$phpc_prefix}login", $login_token, $expiration_time);
 	setcookie("{$phpc_prefix}login_series", $series_token,
 			$expiration_time);
-	if(!empty($user->admin))
-		$_SESSION["phpc_admin"] = true;
 
 	return true;
 }
@@ -649,7 +644,7 @@ function display_phpc() {
 			// If we're redirecting, the messages might not get
 			//   seen, so don't clear them
 			if(empty($phpc_redirect))
-				$_SESSION['messages'] = NULL;
+				$_SESSION["{$phpc_prefix}messages"] = NULL;
 		} else {
 			$messages = '';
 		}
@@ -731,11 +726,11 @@ function verify_token() {
 		return true;
 
 	//echo "<pre>cookie: " . $_COOKIE["{$phpc_prefix}login"] . "\n";
-	//echo "session: " . $_SESSION["phpc_login"] . "</pre>";
+	//echo "session: " . $_SESSION["{$phpc_prefix}login"] . "</pre>";
 
-	if(empty($_SESSION["phpc_login"])
+	if(empty($_SESSION["{$phpc_prefix}login"])
 			|| empty($_COOKIE["{$phpc_prefix}login"])
-			|| $_COOKIE["{$phpc_prefix}login"] != $_SESSION["phpc_login"])
+			|| $_COOKIE["{$phpc_prefix}login"] != $_SESSION["{$phpc_prefix}login"])
 		soft_error(_("Secret token mismatch. Possible request forgery attempt."));
 }
 

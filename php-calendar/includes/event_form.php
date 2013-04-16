@@ -32,7 +32,8 @@ function event_form() {
 }
 
 function display_form() {
-	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal;
+	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal,
+	       $phpc_user;
 
 	$hour24 = $phpc_cal->hours_24;
 	$date_format = $phpc_cal->date_format;
@@ -106,7 +107,7 @@ function display_form() {
 	$categories = new FormDropdownQuestion('catid', _('Category'));
 	$categories->add_option('', _('None'));
 	$have_categories = false;
-	foreach($phpc_cal->get_visible_categories(get_uid()) as $category) {
+	foreach($phpc_cal->get_visible_categories($phpc_user->get_uid()) as $category) {
 		$categories->add_option($category['catid'], $category['name']);
 		$have_categories = true;
 	}
@@ -262,7 +263,7 @@ function add_repeat_defaults($occs, &$defaults) {
 
 function process_form()
 {
-	global $vars, $phpcdb, $phpc_cal, $phpcid, $phpc_script;
+	global $vars, $phpcdb, $phpc_cal, $phpcid, $phpc_script, $phpc_user;
 
 	$potential_fields = array(
 			"subject",
@@ -320,7 +321,7 @@ function process_form()
 
 	if(!isset($vars['eid'])) {
 		$modify = false;
-		$eid = $phpcdb->create_event($phpcid, get_uid(),
+		$eid = $phpcdb->create_event($phpcid, $phpc_user->get_uid(),
 				$vars["subject"], $vars["description"],
 				$readonly, $catid);
 	} else {

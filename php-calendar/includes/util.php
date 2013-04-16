@@ -59,10 +59,10 @@ function redirect($page) {
 }
 
 function message_redirect($message, $page) {
-	if(empty($_SESSION['messages']))
-		$_SESSION['messages'] = array();
+	if(empty($_SESSION["{$phpc_prefix}messages"]))
+		$_SESSION["{$phpc_prefix}messages"] = array();
 
-	$_SESSION['messages'][] = $message;
+	$_SESSION["{$phpc_prefix}messages"][] = $message;
 	redirect($page);
 
 	$continue_url = $page . '&amp;clearmsg=1';

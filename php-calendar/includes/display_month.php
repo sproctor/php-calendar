@@ -129,10 +129,10 @@ function create_month($month, $year)
 			$to_stamp);
 	$days_events = array();
 	while($row = $results->fetch_assoc()) {
-
-		if (isset($row['catid']) && !$phpcdb->is_cat_visible(get_uid(),$row['catid'])) continue; /* if not visible, jump the loop */
-		
 		$event = new PhpcOccurrence($row);
+
+		if(!$event->can_read())
+			continue;
 
 		$end_stamp = mktime(0, 0, 0, $event->get_end_month(),
 				$event->get_end_day(), $event->get_end_year());

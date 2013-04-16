@@ -21,7 +21,7 @@ if(!defined('IN_PHPC')) {
 
 function password_submit()
 {
-	global $vars, $phpcdb, $phpc_user, $phpc_uid;
+	global $vars, $phpcdb, $phpc_user;
 
         if(!is_user()) {
                 return tag('div', _('You must be logged in.'));
@@ -53,7 +53,7 @@ function password_submit()
 
         $passwd = md5($vars['password1']);
 
-	$phpcdb->set_password($phpc_uid, $passwd);
+	$phpcdb->set_password($phpc_user->get_uid(), $passwd);
 
         return tag('div', _('Password updated.'));
 }

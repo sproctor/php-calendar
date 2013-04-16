@@ -98,7 +98,7 @@ function config_form()
 function settings_submit()
 {
 	global $phpcid, $vars, $phpcdb, $phpc_user_tz, $phpc_user_lang,
-	       $phpc_prefix;
+	       $phpc_prefix, $phpc_user;
 
 	verify_token();
 
@@ -116,7 +116,7 @@ function settings_submit()
 		setcookie("{$phpc_prefix}lang", '', $past_time);
 
 	if(is_user()) {
-		$uid = $_SESSION['phpc_uid'];
+		$uid = $phpc_user->get_uid();
 		$phpcdb->set_timezone($uid, $vars['timezone']);
 		$phpcdb->set_language($uid, $vars['language']);
 		$phpc_user_tz = $vars["timezone"];

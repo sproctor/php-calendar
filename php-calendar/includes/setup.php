@@ -47,13 +47,14 @@ require_once("$phpc_includes_path/calendar.php");
 
 // Make the database connection.
 require_once("$phpc_includes_path/phpcdatabase.class.php");
-$phpcdb = new PhpcDatabase;
+if(!defined("SQL_PORT"))
+	define("SQL_PORT", ini_get("mysqli.default_port"));
+$phpcdb = new PhpcDatabase(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE,
+		SQL_PORT);
 
-// Set the session to something unique to this setup
-session_name($phpc_prefix . 'SESSION');
 session_start();
 
-if(empty($_SESSION["phpc_uid"])) {
+if(empty($_SESSION["{$phpc_prefix}uid"])) {
 	if(!empty($_COOKIE["{$phpc_prefix}login"])
 			&& !empty($_COOKIE["{$phpc_prefix}uid"])
 			&& !empty($_COOKIE["{$phpc_prefix}login_series"])) {
@@ -138,17 +139,26 @@ if(empty($vars['action'])) {
 if(empty($vars['contentType']))
 	$vars['contentType'] = "html";
 
-if(!empty($_SESSION['phpc_uid'])) {
-	$phpc_uid = $_SESSION['phpc_uid'];
-	$phpc_user = $phpcdb->get_user($phpc_uid);
-	$phpc_user_lang = $phpc_user->get_language();
-	$phpc_user_tz = $phpc_user->get_timezone();
+if(!empty($_SESSION["{$phpc_prefix}uid"])) {
+	$phpc_user = $phpcdb->get_user($_SESSION["{$phpc_prefix}uid"]);
 } else {
-	if(!empty($_COOKIE["{$phpc_prefix}tz"]))
-		$phpc_user_tz = $_COOKIE["{$phpc_prefix}tz"];
-	if(!empty($_COOKIE["{$phpc_prefix}lang"]))
-		$phpc_user_lang = $_COOKIE["{$phpc_prefix}lang"];
+	$anonymous = array('uid' => 0,
+			'username' => 'anonymous',
+			'password' => '',
+			'admin' => false,
+			'password_editable' => false,
+			'timezone' => NULL,
+			'language' => NULL,
+			);
+	if(isset($_COOKIE["{$phpc_prefix}tz"]))
+		$anonymous['timezone'] = $_COOKIE["{$phpc_prefix}tz"];
+	if(isset($_COOKIE["{$phpc_prefix}lang"]))
+		$anonymous['language'] = $_COOKIE["{$phpc_prefix}lang"];
+	$phpc_user = new PhpcUser($anonymous);
 }
+
+$phpc_user_lang = $phpc_user->get_language();
+$phpc_user_tz = $phpc_user->get_timezone();
 
 // setup translation stuff
 if($phpc_translate) {
@@ -221,16 +231,14 @@ if($phpc_translate) {
 require_once("$phpc_includes_path/globals.php");
 
 if(!empty($vars['clearmsg']))
-	$_SESSION['messages'] = NULL;
+	$_SESSION["{$phpc_prefix}messages"] = NULL;
 
 $phpc_messages = array();
 
-if(!empty($_SESSION['messages'])) {
-	foreach($_SESSION['messages'] as $message) {
+if(!empty($_SESSION["{$phpc_prefix}messages"])) {
+	foreach($_SESSION["{$phpc_prefix}messages"] as $message) {
 		$phpc_messages[] = $message;
 	}
-} else {
-	$_SESSION['messages'] = array();
 }
 
 if(!empty($phpc_user_tz))

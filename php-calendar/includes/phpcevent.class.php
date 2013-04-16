@@ -125,12 +125,10 @@ class PhpcEvent {
 		return htmlspecialchars($this->category, ENT_COMPAT, "UTF-8");
 	}
 
-	function is_owner()
-	{
-		if (empty($_SESSION["phpc_uid"]))
-			return false;
+	function is_owner() {
+		global $phpc_user;
 
-		return $_SESSION["phpc_uid"] == $this->get_uid();
+		return $phpc_user->get_uid() == $this->get_uid();
 	}
 
 	// returns whether or not the current user can modify $event
@@ -141,9 +139,13 @@ class PhpcEvent {
 	}
 
 	// returns whether or not the current user can read $event
-	function can_read()
-	{
-		return $this->cal->can_read();
+	function can_read() {
+		global $phpcdb, $phpc_user;
+
+		$visible_category = !isset($this->catid)
+			|| $phpcdb->is_cat_visible($phpc_user->get_uid(),
+					$this->catid);
+		return $this->cal->can_read() && $visible_category;
 	}
 
 }

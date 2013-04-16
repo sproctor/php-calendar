@@ -95,11 +95,11 @@ class PhpcCalendar {
 	}
 
 	function require_user_perms() {
-		global $phpcdb;
+		global $phpcdb, $phpc_user;
 
 		if(!isset($this->user_perms))
 			$this->user_perms = $phpcdb->get_permissions($this->cid,
-					$_SESSION["phpc_uid"]);
+					$phpc_user->get_uid());
 
 	}
 

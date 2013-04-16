@@ -26,7 +26,8 @@ if ( !defined('IN_PHPC') ) {
 // View for a single day
 function display_day()
 {
-	global $phpcid, $phpc_cal, $phpc_script, $phpcdb, $day, $month, $year;
+	global $phpcid, $phpc_cal, $phpc_user, $phpc_script, $phpcdb, $day,
+	       $month, $year;
 
 	$monthname = month_name($month);
 
@@ -61,7 +62,9 @@ function display_day()
 
 	while($row = $results->fetch_assoc()) {
 	
-		if (isset($row['catid']) && !$phpcdb->is_cat_visible(get_uid(),$row['catid'])) continue; /* if not visible, jump the loop */
+		// TODO: this should go into $event->can_read()
+		if (isset($row['catid']) && !$phpcdb->is_cat_visible($phpc_user->get_uid(), $row['catid']))
+			continue; /* if not visible, jump the loop */
 			
 		$event = new PhpcOccurrence($row);
 
