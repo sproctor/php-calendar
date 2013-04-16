@@ -786,7 +786,7 @@ class PhpcDatabase {
 			."SET\n"
 			."`name`='$name',\n"
 			."`text_color`='$text_color',\n"
-			."`bg_color`='$bg_color'\n"
+			."`bg_color`='$bg_color',\n"
 			."`gid`='$gid'\n"
 			."WHERE `catid`='$catid'";
 
