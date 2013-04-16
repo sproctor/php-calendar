@@ -96,12 +96,20 @@ function phpc_do_login($user, $series_token = false) {
 	return true;
 }
 
+function phpc_do_logout() {
+	global $phpc_prefix;
+   	session_destroy();
+	setcookie("{$phpc_prefix}uid", "", time() - 3600);
+	setcookie("{$phpc_prefix}login", "", time() - 3600);
+	setcookie("{$phpc_prefix}login_series", "", time() - 3600);
+}
+
 // returns tag data for the links at the bottom of the calendar
 function footer()
 {
 	global $phpc_url, $phpc_tz, $phpc_lang;
 
-	$tag = tag('div', attributes('class="phpc-bar ui-widget-content"'),
+	$tag = tag('div', attributes('class="phpc-bar ui-widget-content ui-widget-header"'),
 			"[" . _('Language') . ": $phpc_lang]" .
 			" [" . _('Timezone') . ": $phpc_tz]");
 
@@ -406,6 +414,29 @@ function create_checkbox($name, $value, $checked = false, $label = false)
 		return $input;
 }
 
+// creates the user menu
+// returns tag data for the menu
+function userMenu()
+{
+	global $action;
+
+	$html=tag('span',attributes('style="font-weight: bold; margin-left:1em;"'));
+	
+	if($action != 'settings')
+		menu_item_append($html, _('Settings'), 'settings');
+		
+	if(is_user()) {
+		menu_item_append($html, _('Log out'), 'logout',
+				array('lasturl' =>
+					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
+	} else {
+		menu_item_append($html, _('Log in'), 'login',
+				array('lasturl' =>
+					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
+	}
+	return $html;
+}
+
 // creates the navbar for the top of the calendar
 // returns tag data for the navbar
 function navbar()
@@ -431,19 +462,6 @@ function navbar()
 
 	if($action != 'display_day' && !empty($vars['day'])) {
 		menu_item_append($html, _('View date'), 'display_day', $args);
-	}
-
-	if($action != 'settings')
-		menu_item_append($html, _('Settings'), 'settings');
-
-	if(is_user()) {
-		menu_item_append($html, _('Log out'), 'logout',
-				array('lasturl' =>
-					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
-	} else {
-		menu_item_append($html, _('Log in'), 'login',
-				array('lasturl' =>
-					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
 	}
 
 	if($phpc_cal->can_admin() && $action != 'cadmin') {

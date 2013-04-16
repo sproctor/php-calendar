@@ -19,16 +19,15 @@ if(!defined('IN_PHPC')) {
         die("Hacking attempt");
 }
 
+require_once("$phpc_includes_path/form.php");
+
 function search_results()
 {
 	global $vars, $phpcdb, $phpcid, $sort_options, $order_options;
 
 	$searchstring = $vars['searchstring'];
-
-	$start = $vars['syear'] . str_pad($vars['smonth'], 2, '0', STR_PAD_LEFT)
-		. str_pad($vars['sday'], 2, '0', STR_PAD_LEFT);
-	$end = $vars['eyear'] . str_pad($vars['emonth'], 2, '0', STR_PAD_LEFT)
-		. str_pad($vars['eday'], 2, '0', STR_PAD_LEFT);
+	$start = $vars['search-from-date'];
+	$end =  $vars['search-to-date'];
 
         // make sure sort is valid
 	$sort = htmlentities($vars['sort']);
@@ -93,53 +92,24 @@ function search_form()
 {
 	global $day, $month, $year, $phpc_script, $month_names, $sort_options,
 	       $order_options, $phpcid;
-
-	$day_sequence = create_sequence(1, 31);
-	$year_sequence = create_sequence(1970, 2037);
-	$html_table = tag('table',
-			tag('caption', _('Search')),
-			tag('tfoot',
-				tag('tr',
-					tag('td', attributes('colspan="2"'),
-						create_submit(_('Submit'))))),
-			tag('tr',
-				tag('td', _('Phrase') . ': '),
-				tag('td', tag('input', attributes('type="text"',
-							'name="searchstring"',
-							'size="32"')),
-					create_hidden('action', 'search'),
-					create_hidden('phpcid', $phpcid))),
-			tag('tr',
-				tag('td', _('From') . ': '),
-				tag('td',
-					create_select('sday', $day_sequence,
-						$day),
-					create_select('smonth', $month_names,
-						$month),
-					create_select('syear', $year_sequence,
-						$year))),
-			tag('tr',
-				tag('td', _('To') . ': '),
-				tag('td',
-					create_select('eday', $day_sequence,
-						$day),
-					create_select('emonth', $month_names,
-						$month),
-					create_select('eyear', $year_sequence,
-						$year))),
-			tag('tr',
-					tag('td', _('Sort By') . ': '),
-					tag('td',
-						create_select('sort',
-							$sort_options))),
-			tag('tr',
-					tag('td', _('Order') . ': '),
-					tag('td',
-						create_select('order',
-							$order_options))));
-
-	return tag('form', attributes("action=\"$phpc_script\"",
-				'method="post"'), $html_table);
+		   
+	$form = new Form($phpc_script, _('Search'),'post');
+    	$form->add_part(new FormFreeQuestion('searchstring', _('Phrase'),
+				false, 32, true));
+	$form->add_hidden('action', 'search');
+	$form->add_hidden('phpcid', $phpcid);
+	$form->add_part(new FormDateQuestion('search-from', _('From'),
+				3));
+	$form->add_part(new FormDateQuestion('search-to', _('To'),
+				3));
+	$sort = new FormDropdownQuestion('sort', _('Sort By'));
+	$sort->add_options($sort_options);
+	$form->add_part($sort);
+	$order = new FormDropdownQuestion('order', _('Order'));
+	$order->add_options($order_options);
+	$form->add_part($order);
+	$form->add_part(new FormSubmitButton(_("Search")));
+	return $form->get_form();
 }
 
 function search()
