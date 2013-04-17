@@ -70,7 +70,7 @@ function display_event_by_oid($oid)
 				. $event_time));
 	$event_header->add(tag('div', _('Created at: '), $event->ctime));
 	if(!empty($event->mtime))
-		$event_header->add(tag('div', ('Last modified at: '),
+		$event_header->add(tag('div', _('Last modified at: '),
 				$event->mtime));
 				
 	$menu_tag = tag('div', attrs('class="phpc-bar ui-widget-content"')); 
