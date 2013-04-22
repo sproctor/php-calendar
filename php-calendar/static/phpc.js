@@ -11,10 +11,14 @@ $(document).ready(function(){
       icons: { primary: "ui-icon-plus" }
     });
   $(".php-calendar input[type=submit], .php-calendar tfoot a").button();
-  $(".php-calendar input[type=checkbox] + label").prev().button();
+  // $(".php-calendar input[type=checkbox] + label").prev().button();
   $(".phpc-date, .phpc-calendar li a").on('mouseover mouseout',
       function (event) {
-        $(this).toggleClass("ui-state-hover", event.type == 'mouseover');
+        $(this).toggleClass("ui-state-hover");
+      });
+  $(".phpc-date .phpc-add").on('mouseover mouseout',
+      function (event) {
+        $(this).parent(".phpc-date").toggleClass("ui-state-hover");
       });
   // fancy corners
   $(".phpc-calendar li a, .phpc-message, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged").addClass("ui-corner-all");
