@@ -25,7 +25,11 @@ function admin()
                 permission_error(_('You must be logged in as an admin.'));
         }
 
-	return tag('div', new_user_form(), create_calendar_form(),
+	$menu = tag('div', attrs('class="phpc-bar ui-widget-content"'),
+			create_action_link(_('Import from PHP-Calendar 1.1'),
+				'import_form'));
+
+	return tag('div', $menu, new_user_form(), create_calendar_form(),
 			calendar_list(), user_list());
 }
 
