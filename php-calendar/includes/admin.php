@@ -19,8 +19,9 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-function admin()
-{
+function admin() {
+	global $phpc_version;
+
         if(!is_admin()) {
                 permission_error(_('You must be logged in as an admin.'));
         }
@@ -29,8 +30,11 @@ function admin()
 			create_action_link(_('Import from PHP-Calendar 1.1'),
 				'import_form'));
 
+	$version = tag('div', attrs('class="phpc-bar ui-widget-content"'),
+			_('Version') . ": $phpc_version");
+
 	return tag('div', $menu, new_user_form(), create_calendar_form(),
-			calendar_list(), user_list());
+			calendar_list(), user_list(), $version);
 }
 
 function new_user_form()

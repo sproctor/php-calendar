@@ -23,6 +23,8 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+$phpc_version = "2.0-rc3";
+
 // Run the installer if we have no config file
 // This doesn't work when embedded from outside
 if(!file_exists($phpc_config_file)) {
