@@ -19,8 +19,6 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
-$HtmlInline = array('a', 'strong');
-
 /*
  * data structure to display XHTML
  * see function tag() below for usage
@@ -90,8 +88,6 @@ class Html {
         }
 
         function toString() {
-                global $HtmlInline;
-
 		$output = '';
 
 		if($this->tagName != '') {
@@ -124,11 +120,7 @@ class Html {
                 }
 
 		if($this->tagName != '') {
-			$output .= "</{$this->tagName}>";
-
-			if(!in_array($this->tagName, $HtmlInline)) {
-				$output .= "\n";
-			}
+			$output .= "</{$this->tagName}>\n";
 		}
 
                 return $output;
@@ -139,19 +131,17 @@ class Html {
 			."<body><h1>Software Error</h1>\n"
 			."<h2>Message:</h2>\n"
 			."<pre>$str</pre>\n";
-		if(version_compare(phpversion(), '4.3.0', '>=')) {
-			echo "<h2>Backtrace</h2>\n";
-			echo "<ol>\n";
-			foreach(debug_backtrace() as $bt) {
-				echo "<li>{$bt['file']}:{$bt['line']} - ";
-				if(!empty($bt['class']))
-					echo "{$bt['class']}{$bt['type']}";
-				echo "{$bt['function']}(" . implode(', ',
-							$bt['args'])
-					. ")</li>\n";
-			}
-			echo "</ol>\n";
+		echo "<h2>Backtrace</h2>\n";
+		echo "<ol>\n";
+		foreach(debug_backtrace() as $bt) {
+			echo "<li>{$bt['file']}:{$bt['line']} - ";
+			if(!empty($bt['class']))
+				echo "{$bt['class']}{$bt['type']}";
+			echo "{$bt['function']}(" . implode(', ',
+						$bt['args'])
+				. ")</li>\n";
 		}
+		echo "</ol>\n";
 		echo "</body></html>\n";
 		exit;
 	}
