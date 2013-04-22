@@ -30,6 +30,7 @@ class PhpcOccurrence extends PhpcEvent{
 	var $start_minute;
 	var $end_hour;
 	var $end_minute;
+	var $duration;
 
 	function __construct($event) {
 		parent::__construct($event);
@@ -83,6 +84,11 @@ class PhpcOccurrence extends PhpcEvent{
 		}
 		
 		$this->time_type = $event['time_type'];
+		
+		if(!empty($event['end_ts'])) {
+		
+		$this->duration=$event['end_ts'] - $event['start_ts'];
+		}
 	}
 
 	// formats the time according to type
@@ -224,6 +230,28 @@ class PhpcOccurrence extends PhpcEvent{
 		if($start_time != $end_time)
 			$str .= ' - ' . $this->get_end_date();
 
+		return $str;
+	}
+	
+	function get_datetime_string()
+	{
+		if ($this->duration <= 86400 && $this->start_day==$this->end_day)
+		{
+		//normal behaviour
+		
+		$event_time = $this->get_time_span_string();
+		if(!empty($event_time))
+			$event_time = ' ' . _('at') . " $event_time";
+	
+		$str= $this->get_date_string() . $event_time;	
+		}
+		else
+		{
+		//format on multiple days
+	
+		$str= ' ' ._('From').' ' . $this->get_start_date() .' ' .	_('at') .' ' . 	$this->get_start_time() . ' ' ._('to'). ' ' .$this->get_end_date() .' ' . _('at') .' ' . $this->get_end_time();	
+			
+		}
 		return $str;
 	}
 
