@@ -62,12 +62,9 @@ function display_event_by_oid($oid)
 		$event_header->add(tag('div',attributes('class="phpc-event-cats"'), _('Category') . ': '
 					. $category));
 
-	$event_time = $event->get_time_span_string();
-	if(!empty($event_time))
-		$event_time = ' ' . _('at') . " $event_time";
-
-	$event_header->add(tag('div',attributes('class="phpc-event-time"'), _('When').": ".$event->get_date_string()
-				. $event_time));
+	$event_header->add(tag('div',attributes('class="phpc-event-time"'),
+				_('When').": ".$event->get_datetime_string()));
+	
 	$event_header->add(tag('div', _('Created at: '), $event->ctime));
 	if(!empty($event->mtime))
 		$event_header->add(tag('div', _('Last modified at: '),
