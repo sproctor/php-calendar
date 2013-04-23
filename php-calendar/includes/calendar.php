@@ -460,7 +460,7 @@ function navbar()
 			$args);
 	}
 
-	if($action != 'display_day' && !empty($vars['day'])) {
+	if($action == 'display_event') {
 		menu_item_append($html, _('View date'), 'display_day', $args);
 	}
 
@@ -470,34 +470,6 @@ function navbar()
 
 	if(is_admin() && $action != 'admin') {
 		menu_item_append($html, _('Admin'), 'admin');
-	}
-
-	if($action == 'display_day') {
-		$monthname = month_name($month);
-
-		$lasttime = mktime(0, 0, 0, $month, $day - 1, $year);
-		$lastday = date('j', $lasttime);
-		$lastmonth = date('n', $lasttime);
-		$lastyear = date('Y', $lasttime);
-		$lastmonthname = month_name($lastmonth);
-
-		$last_args = array('year' => $lastyear, 'month' => $lastmonth,
-				'day' => $lastday);
-
-		menu_item_prepend($html, "$lastmonthname $lastday",
-				'display_day', $last_args);
-
-		$nexttime = mktime(0, 0, 0, $month, $day + 1, $year);
-		$nextday = date('j', $nexttime);
-		$nextmonth = date('n', $nexttime);
-		$nextyear = date('Y', $nexttime);
-		$nextmonthname = month_name($nextmonth);
-
-		$next_args = array('year' => $nextyear, 'month' => $nextmonth,
-				'day' => $nextday);
-
-		menu_item_append($html, "$nextmonthname $nextday",
-				'display_day', $next_args);
 	}
 
 	return $html;
