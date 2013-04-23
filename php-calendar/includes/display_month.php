@@ -93,16 +93,6 @@ function month_navbar($month, $year) {
 			$year + 1, $month);
 
 	for($i = 1; $i <= 12; $i++) {
-		// We don't do anything with these
-		/*
-		if($i < $month)
-			$attribs = 'class="phpc-past"';
-		elseif($i == $month)
-			$attribs = 'class="phpc-present"';
-		else
-			$attribs = 'class="phpc-future"';
-		*/
-
 		menu_item_append_with_date($months_tag, short_month_name($i),
 				'display_month', $year, $i);
 	}
@@ -272,7 +262,10 @@ function create_day($month, $day, $year, $days_events)
 		// TODO - make sure we have permission to read the event
 
 		$subject = $event->get_subject();
-		$event_time = $event->get_time_string();
+		if($event->get_start_timestamp() >= $stamp)
+			$event_time = $event->get_time_string();
+		else
+			$event_time = '(' . _('continued') . ')';
 		if(!empty($event_time))
 			$title = "$event_time - $subject";
 		else
