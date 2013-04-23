@@ -20,7 +20,7 @@
    it needs very much work
 */
 
-$phpc_db_version = 0;
+$phpc_db_version = 1;
 
 $phpc_root_path = dirname(__FILE__);
 $phpc_includes_path = "$phpc_root_path/includes";
@@ -34,11 +34,13 @@ if(!function_exists("mysqli_connect"))
 echo '<html>
 <head>
 <link rel="stylesheet" type="text/css" href="static/phpc.css"/>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <title>PHP Calendar Installation</title>
 </head>
 <body>
 <h1>PHP Calendar</h1>';
+
+$must_upgrade = false;
 
 if(file_exists($phpc_config_file)) {
 	include_once($phpc_config_file);
@@ -48,15 +50,37 @@ if(file_exists($phpc_config_file)) {
 		$query = "SELECT *\n"
 			."FROM `" . SQL_PREFIX .  "calendars`\n";
 
-		$sth = $dbh->query($query)
-			or db_error(_('Could not get calendars.'),
-					$query);
+		$sth = $dbh->query($query);
+		$have_calendar = $sth && $sth->fetch_assoc();
 
-		if($sth->fetch_assoc()) {
-		
-			echo '<p>The calendar has already been installed. <a href="index.php">Installed calendar</a></p>';
-			echo '<p>If you want to install again, manually delete config.php</p>';
-			exit;
+		echo "<pre>have calendar: $have_calendar</pre>";
+
+		$existing_version = 0;
+
+		$query = "SELECT version\n"
+			."FROM `" . SQL_PREFIX .  "version`\n";
+
+
+		$sth = $dbh->query($query);
+		if($sth) {
+			$result = $sth->fetch_assoc();
+			if(!empty($result['version']))
+				$existing_version = $result['version'];
+		}
+
+		echo "<pre>existing version: $existing_version</pre>";
+		if($have_calendar) {
+
+			$must_upgrade = true;
+
+			if($existing_version > $phpc_db_version) {
+				echo "<p>DB version is newer than the upgrader.</p>";
+				exit;
+			} elseif($existing_version == $phpc_db_version) {
+				echo '<p>The calendar has already been installed. <a href="index.php">Installed calendar</a></p>';
+				echo '<p>If you want to install again, manually delete config.php</p>';
+				exit;
+			}
 		}
 	}
 }
@@ -75,25 +99,22 @@ if(empty($_POST['action'])) {
 	if(empty($_POST['version'])) {
 		get_upgrade_version();
 	} else {
-		if(!file_exists($phpc_config_file)) {
-			echo '<p><span style="font-weight:bold;">ERROR</span>: You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.</p>';
-			echo '<br/><input type="button" onclick="window.location.reload()" value="Reload"/>';
-			return;
-		}
 
-		$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
-		
-
-		if($_POST['version'] == "2.0beta10") {
-			create_logins_table();
+		if($_POST['version'] == "2.0beta11") {
+			upgrade_20beta11();
+			echo "<p>Update complete.</p>";
+		} elseif($_POST['version'] == "2.0beta10") {
+			upgrade_20beta10();
 			echo "<p>Update complete.</p>";
 		} elseif($_POST['version'] == "2.0beta9") {
+			upgrade_20beta10();
+			echo "<p>Update complete.</p>";
 			if(empty($_POST['timezone']))
 				upgrade_20_form();
 			else
 				upgrade_20_action();
 		} elseif($_POST['version'] == "1.1") {
-			echo "<p>Sorry upgrading from version 1.1 is not supported at this time.</p>";
+			echo "<p>You must first install the calendar into a new location, then import the old events through the Admin section.</p>";
 		} else {
 			echo "<p>Invalid version identifier.</p>";
 		}
@@ -136,6 +157,7 @@ function get_upgrade_version() {
 	echo '<option value="1.1">version 1.1</option>';
 	echo '<option value="2.0beta9">version 2.0-beta4 to beta9</option>';
 	echo '<option value="2.0beta10">version 2.0-beta10</option>';
+	echo '<option value="2.0beta11">version 2.0-beta11 to rc2</option>';
 	echo '</select><span style="display: inline-block; width:50px;"></span>';
 	echo '<input type="submit" value="Submit">';
 }
@@ -212,9 +234,69 @@ function upgrade_20_action() {
 
 	echo "<p>Occurrences updated.</p>";
 
-	create_logins_table();
+	upgrade_20beta10();
 
 	echo "<p>Update complete.</p>";
+}
+
+function upgrade_20beta10() {
+	create_logins_table();
+	upgrade_20beta11();
+}
+
+function upgrade_20beta11() {
+	add_event_time();
+	add_calendar_config();
+	create_version_table();
+}
+
+function add_event_time() {
+	global $dbh;
+
+	$query = "ALTER TABLE `" . SQL_PREFIX . "events`\n"
+		."ADD `ctime` timestamp NOT NULL default CURRENT_TIMESTAMP,\n"
+		."ADD `mtime` timestamp NULL default NULL";
+
+	$dbh->query($query)
+		or db_error($dbh, 'Error adding time elements to events table.',
+				$query);
+}
+
+function add_calendar_config() {
+	global $dbh;
+
+	$query = "ALTER TABLE `" . SQL_PREFIX . "calendars`\n"
+		."ADD `hours_24` tinyint(1) NOT NULL DEFAULT 0,\n"
+		."ADD `date_format` tinyint(1) NOT NULL DEFAULT 0,\n"
+		."ADD `week_start` tinyint(1) NOT NULL DEFAULT 0,\n"
+		."ADD `subject_max` smallint(5) unsigned NOT NULL DEFAULT 50,\n"
+		."ADD `events_max` tinyint(3) unsigned NOT NULL DEFAULT 8,\n"
+		."ADD `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'PHP-Calendar',\n"
+		."ADD `anon_permission` tinyint(1) NOT NULL DEFAULT 1,\n"
+		."ADD `timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+		."ADD `language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+		."ADD `theme` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL";
+
+	$dbh->query($query)
+		or db_error($dbh, 'Error adding time elements to events table.',
+				$query);
+}
+
+function create_version_table() {
+	global $phpc_db_version, $dbh;
+
+	$query = "CREATE TABLE `" . SQL_PREFIX . "version` (\n"
+		."`version` SMALLINT unsigned NOT NULL DEFAULT '$phpc_db_version'"
+		.") ENGINE=MyISAM ;";
+
+	$dbh->query($query)
+		or db_error($dbh, 'Error creating version table.', $query);
+
+	$query = "REPLACE INTO `" . SQL_PREFIX . "version`\n"
+		."SET `version`='$phpc_db_version'";
+
+	$dbh->query($query)
+		or db_error($dbh, 'Error creating version row.', $query);
 }
 
 function check_config()
@@ -396,7 +478,7 @@ function create_config($sql_hostname, $sql_username, $sql_passwd, $sql_database,
 		."define('SQL_DATABASE', '$sql_database');\n"
 		."define('SQL_PREFIX',   '$sql_prefix');\n"
 		."define('SQL_TYPE',     '$sql_type');\n"
-		."?>\n";
+		."?".">\n"; // Break this up to fix syntax HL in vim
 }
 
 function install_base()
@@ -472,8 +554,8 @@ function create_tables()
 		."`admin` tinyint(4) NOT NULL DEFAULT '0',\n"
 		."`password_editable` tinyint(1) NOT NULL DEFAULT '1',\n"
 		."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."`language` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."`gid` int(3),\n"
+		."`language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+		."`gid` int(11),\n"
 		."PRIMARY KEY  (`uid`)\n"
 		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 
@@ -516,16 +598,16 @@ function create_tables()
 
 	$query = "CREATE TABLE `" . SQL_PREFIX . "calendars` (\n"
 		."`cid` int(11) unsigned NOT NULL auto_increment,\n"
-		."`hours_24` int(1) NOT NULL,\n"
-		."`date_format` int(1) NOT NULL,\n"
-		."`week_start` int(1) NOT NULL,\n"
-		."`subject_max` int(4) NOT NULL,\n"
-		."`events_max` int(2) NOT NULL,\n"
-		."`title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n"
-		."`anon_permission` int(1) NOT NULL,\n"
+		."`hours_24` tinyint(1) NOT NULL DEFAULT 0,\n"
+		."`date_format` tinyint(1) NOT NULL DEFAULT 0,\n"
+		."`week_start` tinyint(1) NOT NULL DEFAULT 0,\n"
+		."`subject_max` smallint(5) unsigned NOT NULL DEFAULT 50,\n"
+		."`events_max` tinyint(4) unsigned NOT NULL DEFAULT 8,\n"
+		."`title` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'PHP-Calendar',\n"
+		."`anon_permission` tinyint(1) NOT NULL DEFAULT 1,\n"
 		."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."`language` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."`theme` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+		."`language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+		."`theme` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."PRIMARY KEY  (`cid`)\n"
 		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 		
@@ -544,7 +626,9 @@ function create_tables()
 		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 
 	$dbh->query($query)
-		or db_error($dbh, 'Error categories calendars table.', $query);
+		or db_error($dbh, 'Error creating categories table.', $query);
+
+	create_version_table();
 }
 
 function get_admin()
@@ -586,27 +670,6 @@ function add_calendar()
 
 	$cid = $dbh->insert_id;
 
-	$config_array = array(
-			'hours_24' => '0',
-			'date_format' => '0',
-			'week_start' => '0',
-			'subject_max' => '50',
-			'events_max' => '8',
-			'title' => 'PHP-Calendar',
-			'anon_permission' => '3',
-			'timezone' => '',
-			'language' => '',
-			);
-	// TODO turn this into one query merged with the previous one
-	foreach($config_array as $name => $value) {
-		$query = "UPDATE ".SQL_PREFIX."calendars\n"
-			."SET `$name`='$value'\n"
-			."WHERE `cid`='$cid'";
-
-		$dbh->query($query)
-			or db_error($dbh, 'Error creating options.', $query);
-	}
-	
 	echo "<h3>Final Step</h3>\n";
 	
 	echo "<p>Saved default configuration</p>\n";
