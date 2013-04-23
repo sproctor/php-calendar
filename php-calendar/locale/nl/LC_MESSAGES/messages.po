@@ -2,7 +2,6 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -24,7 +23,6 @@ msgid "error creating db"
 msgstr "databse fout: Creation error"
 
 #: install.php:190 install.php:193
-#, fuzzy
 msgid "Could not grant:"
 msgstr "kon dit niet toestaan"
 
@@ -157,17 +155,14 @@ msgid "FULL DAY"
 msgstr "gehele dag"
 
 #: includes/calendar.php:165
-#, fuzzy
 msgid "Normal"
 msgstr "normaal termijn"
 
 #: includes/calendar.php:167
-#, fuzzy
 msgid "Full Day"
 msgstr "gehele dag"
 
 #: includes/calendar.php:169
-#, fuzzy
 msgid "Unknown Time"
 msgstr "onbekend tijdstip"
 
@@ -176,7 +171,6 @@ msgid "Weekly"
 msgstr "wekelijks"
 
 #: includes/calendar.php:176
-#, fuzzy
 msgid "Monthly"
 msgstr "maandelijk"
 
@@ -189,12 +183,10 @@ msgid "Error in get_event_by_id"
 msgstr "fout in get_event_by_id"
 
 #: includes/calendar.php:433
-#, fuzzy
 msgid "Add Event"
 msgstr "soort termijn"
 
 #: includes/calendar.php:438 includes/search.php:98
-#, fuzzy
 msgid "Search"
 msgstr "zoeken"
 
@@ -219,7 +211,6 @@ msgid "Options"
 msgstr "opties"
 
 #: includes/calendar.php:545
-#, fuzzy
 msgid "Event"
 msgstr "soort termijn"
 
@@ -264,12 +255,10 @@ msgid "minutes"
 msgstr "minuten"
 
 #: includes/display.php:164
-#, fuzzy
 msgid "No duration"
 msgstr "lengte tijd"
 
 #: includes/display.php:189
-#, fuzzy
 msgid "Title"
 msgstr "titel"
 
@@ -298,22 +287,18 @@ msgid "No events on this day."
 msgstr "vandaag geen termijn"
 
 #: includes/display.php:285
-#, fuzzy
 msgid "Delete"
 msgstr "verwijderen"
 
 #: includes/event_delete.php:56
-#, fuzzy
 msgid "Removed item"
 msgstr "verwijderd termijn"
 
 #: includes/event_delete.php:58
-#, fuzzy
 msgid "Could not remove item"
 msgstr "kon niet worden verwijderd: "
 
 #: includes/event_delete.php:63
-#, fuzzy
 msgid "No items selected."
 msgstr "maak een keuze"
 
@@ -323,17 +308,14 @@ msgid "Modifying id #%d"
 msgstr "wijzig id #%d"
 
 #: includes/event_form.php:73
-#, fuzzy
 msgid "Adding event to calendar"
 msgstr "termijn wordt toegevoegd"
 
 #: includes/event_form.php:136
-#, fuzzy
 msgid "Submit Event"
 msgstr "betref"
 
 #: includes/event_form.php:140
-#, fuzzy
 msgid "Date of event"
 msgstr "normaal termijn"
 
@@ -342,7 +324,6 @@ msgid "Date multiple day event ends"
 msgstr "datum met meerdere termijnen eidigd hier"
 
 #: includes/event_form.php:152
-#, fuzzy
 msgid "Event type"
 msgstr "soort termijn"
 
@@ -351,7 +332,6 @@ msgid "Subject"
 msgstr "betref"
 
 #: includes/event_form.php:167
-#, fuzzy
 msgid "(255 chars max)"
 msgstr " (255)"
 
@@ -424,7 +404,6 @@ msgid "Sorry, Invalid Login"
 msgstr "sorry, foutieve aanmelding"
 
 #: includes/login.php:72 includes/options.php:77 includes/search.php:102
-#, fuzzy
 msgid "Submit"
 msgstr "betref"
 
@@ -445,12 +424,10 @@ msgid "Permission denied"
 msgstr "geen toestimming gekregen"
 
 #: includes/options.php:80
-#, fuzzy
 msgid "Start Monday"
 msgstr "staart op maandag"
 
 #: includes/options.php:84
-#, fuzzy
 msgid "24 hour"
 msgstr "24 uur laten zien"
 
@@ -467,17 +444,14 @@ msgid "Anonymous Permission"
 msgstr ""
 
 #: includes/search.php:58
-#, fuzzy
 msgid "Search Results"
 msgstr "zoek resultaten"
 
 #: includes/search.php:62
-#, fuzzy
 msgid "Date Time"
 msgstr "datum tijd"
 
 #: includes/search.php:87
-#, fuzzy
 msgid "No events."
 msgstr "geen termijn"
 
@@ -498,7 +472,6 @@ msgid "Sort By"
 msgstr "sorteren naar"
 
 #: includes/search.php:127
-#, fuzzy
 msgid "Start Date"
 msgstr "start datum"
 
@@ -518,31 +491,27 @@ msgstr "dalend"
 msgid "Could not read configuration"
 msgstr "kan de configuratie niet lezen"
 
-#, fuzzy
-#~ msgid "Daily"
-#~ msgstr "dagelijks"
+#: msgid "Daily"
+#: msgstr "dagelijks"
 
-#~ msgid "Add Item"
-#~ msgstr "voeg id toe"
+#: msgid "Add Item"
+#: msgstr "voeg id toe"
 
-#~ msgid "Nothing to modify."
-#~ msgstr "niets te wijzigen."
+#: msgid "Nothing to modify."
+#: msgstr "niets te wijzigen."
 
-#, fuzzy
-#~ msgid "Event Date"
-#~ msgstr "datum termijn"
+#: msgid "Event Date"
+#: msgstr "datum termijn"
 
-#, fuzzy
-#~ msgid "nextval error"
-#~ msgstr "nextval fout"
+#: msgid "nextval error"
+#: msgstr "nextval fout"
 
-#~ msgid "Name"
-#~ msgstr "naam"
+#: msgid "Name"
+#: msgstr "naam"
 
-#~ msgid "days"
-#~ msgstr "dagen"
+#: msgid "days"
+#: msgstr "dagen"
 
-#, fuzzy
-#~ msgid "Username:"
-#~ msgstr "naam gebruiker:"
+#: msgid "Username:"
+#: msgstr "naam gebruiker:"
 
