@@ -1,6 +1,16 @@
 NEWS
 -----
 
+2.0-rc3 (current branch):
+	- Move to Github + Transifex
+	- Database changes
+	- UI Tweaks
+	- Updated libraries
+	- JqueryUI themes
+	- User permissions for categories
+	- Improved installation
+	- Simpler internationalization
+
 2.0-rc2 (21 Jan 21013):
 	- Fixed broken admin page
 	- Removed outdated docs and put links to online docs in README
