@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the PHP-Calendar package.
 # Marc Bless <marc.bless@gmx.de>
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.10.5\n"
@@ -25,7 +24,6 @@ msgid "error creating db"
 msgstr "Fehler beim Erzeugen der Datenbank"
 
 #: install.php:190 install.php:193
-#, fuzzy
 msgid "Could not grant:"
 msgstr ""
 
@@ -335,7 +333,6 @@ msgid "Subject"
 msgstr "Betreff"
 
 #: includes/event_form.php:167
-#, fuzzy
 msgid "(255 chars max)"
 msgstr " (255)"
 
@@ -495,30 +492,26 @@ msgstr "Absteigend"
 msgid "Could not read configuration"
 msgstr "Konfiguration nicht lesbar"
 
-#, fuzzy
-#~ msgid "Daily"
-#~ msgstr "Tag"
+#: msgid "Daily"
+#: msgstr "Tag"
 
-#~ msgid "Add Item"
-#~ msgstr "Termin erstellen"
+#: msgid "Add Item"
+#: msgstr "Termin erstellen"
 
-#~ msgid "Nothing to modify."
-#~ msgstr "Nichts zum &auml;ndern ausgew&auml;hlt."
+#: msgid "Nothing to modify."
+#: msgstr "Nichts zum &auml;ndern ausgew&auml;hlt."
 
-#, fuzzy
-#~ msgid "Event Date"
-#~ msgstr "Terminart"
+#: msgid "Event Date"
+#: msgstr "Terminart"
 
-#, fuzzy
-#~ msgid "nextval error"
-#~ msgstr "n&auml;chste Jahr"
+#: msgid "nextval error"
+#: msgstr "n&auml;chste Jahr"
 
-#~ msgid "Name"
-#~ msgstr "Name"
+#: msgid "Name"
+#: msgstr "Name"
 
-#~ msgid "days"
-#~ msgstr "Tage"
+#: msgid "days"
+#: msgstr "Tage"
 
-#, fuzzy
-#~ msgid "Username:"
-#~ msgstr "Benutzername"
+#: msgid "Username:"
+#: msgstr "Benutzername"
