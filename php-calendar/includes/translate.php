@@ -49,7 +49,7 @@ function translate() {
 			$out="$msgs_path/messages.mo";
 			write_mo_file($hash, $out);
 		}
-		$output_tag->add(tag('div', sprintf(_('Translating "%s"'),
+		$output_tag->add(tag('div', sprintf(_('Translated "%s"'),
 					$filename)));
 	}
 
