@@ -28,7 +28,9 @@ function admin() {
 
 	$menu = tag('div', attrs('class="phpc-bar ui-widget-content"'),
 			create_action_link(_('Import from PHP-Calendar 1.1'),
-				'import_form'));
+				'import_form'),
+			create_action_link(_('Generate translations'),
+				'translate'));
 
 	$version = tag('div', attrs('class="phpc-bar ui-widget-content"'),
 			_('Version') . ": $phpc_version");
