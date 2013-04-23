@@ -24,6 +24,11 @@ require_once("$phpc_includes_path/form.php");
 function import_form() {
 	global $vars;
 
+	if(!is_admin()) {
+		permission_error(_('Need to be admin'));
+		exit;
+	}
+
 	if(empty($vars["submit_form"]))
 		return display_form();
 
@@ -58,11 +63,6 @@ function display_form() {
 
 function process_form() {
 	global $vars, $phpcdb, $phpc_cal, $phpcid, $phpc_script;
-
-	if(!is_admin()) {
-		permission_error(_('Need to be admin'));
-		exit;
-	}
 
 	if(!empty($vars['port']) && strlen($vars['port']) > 0) {
 		$port = $vars['port'];
