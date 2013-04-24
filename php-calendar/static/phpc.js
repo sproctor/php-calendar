@@ -11,6 +11,8 @@ $(document).ready(function(){
       icons: { primary: "ui-icon-plus" }
     });
   $(".php-calendar input[type=submit], .php-calendar tfoot a").button();
+  // The buttons are too hard to read waiting on:
+  //    http://wiki.jqueryui.com/w/page/12137730/Checkbox
   // $(".php-calendar input[type=checkbox] + label").prev().button();
   $(".phpc-date, .phpc-calendar li a").on('mouseover mouseout',
       function (event) {
@@ -99,6 +101,13 @@ $(document).ready(function(){
     });
 
   // Calendar specific/hacky stuff
+  if($("#phpc-modify").length > 0 && !$("#phpc-modify").prop("checked"))
+    toggle_when(false);
+
+  $("#phpc-modify").click(function() {
+      toggle_when($(this).prop("checked"));
+    });
+
   $("#time-type").change(function(){
     if($(this).val() == "normal") {
       $("#start-time").show();
@@ -140,6 +149,10 @@ $(document).ready(function(){
   });
 
 });
+
+function toggle_when(on) {
+  $('.phpc-when input[name!="phpc-modify"], .phpc-when select').prop('disabled', !on);
+}
 
 function formSelectUpdate(select) {
   var idPrefix = "#" + select.attr("name") + "-";

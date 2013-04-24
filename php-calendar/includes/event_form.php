@@ -43,7 +43,12 @@ function display_form() {
 	$form->add_part(new FormLongFreeQuestion('description',
 				_('Description')));
 
-	$when_group = new FormGroup(_('When'));
+	$when_group = new FormGroup(_('When'), 'phpc-when');
+	if(isset($vars['eid'])) {
+		$when_group->add_part(new FormCheckBoxQuestion('phpc-modify',
+					false,
+					_('Change the event date and time')));
+	}
 	$when_group->add_part(new FormDateTimeQuestion('start',
 				_('From'), $hour24, $date_format));
 	$when_group->add_part(new FormDateTimeQuestion('end', _('To'),
@@ -265,22 +270,11 @@ function process_form()
 {
 	global $vars, $phpcdb, $phpc_cal, $phpcid, $phpc_script, $phpc_user;
 
-	$potential_fields = array(
-			"subject",
-			"description",
-			"eventid",
-			"time-type",
-			"repeats",
-			"readonly",
-			);
+	// When modifying events, this is the value of the checkbox that
+	//   determines if the date should change
+	$modify_occur = isset($vars['eid']) && isset($vars['phpc-modify']) && !$vars['phpc-modify'];
 
-	$arguments = array();
-	foreach($potential_fields as $field) {
-		if(isset($vars[$field])) {
-			$arguments[$field] = $vars[$field];
-		}
-	}
-
+	if($modify_occur) {
 	$start_ts = get_timestamp("start");
 	$end_ts = get_timestamp("end");
 
@@ -306,13 +300,14 @@ function process_form()
 		message(_("An event cannot have an end earlier than its start."));
 		return display_form();
 	}
+	}
 
 	verify_token();
 
 	if(!$phpc_cal->can_write())
 		permission_error(_('You do not have permission to write to this calendar.'));
 
-	if($phpc_cal->can_create_readonly() && !empty($arguments['readonly']))
+	if($phpc_cal->can_create_readonly() && !empty($vars['readonly']))
 		$readonly = true;
 	else
 		$readonly = false;
@@ -329,9 +324,11 @@ function process_form()
 		$eid = $vars['eid'];
 		$phpcdb->modify_event($eid, $vars['subject'],
 				$vars['description'], $readonly, $catid);
-		$phpcdb->delete_occurrences($eid);
+		if($modify_occur)
+			$phpcdb->delete_occurrences($eid);
 	}
-		
+	
+	if($modify_occur) {
 	$oid = $phpcdb->create_occurrence($eid, $time_type, $start_ts, $end_ts);
 
 	$occurrences = 1;
@@ -417,6 +414,7 @@ function process_form()
 
 		default:
 			soft_error(_("Invalid event type."));
+	}
 	}
 
 	if($eid != 0) {

@@ -87,9 +87,11 @@ class FormGroup extends FormPart {
         var $list = array();
         var $title = false;
 
-        function __construct($title = false) {
+        function __construct($title = false, $class = false) {
                 $this->title = $title;
 		$this->class .= " form-group";
+		if($class !== false)
+			$this->class = " $class";
         }
 
         /* add a category or question */
