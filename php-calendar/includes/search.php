@@ -32,13 +32,13 @@ function search_results()
         // make sure sort is valid
 	$sort = htmlentities($vars['sort']);
         if(array_search($sort, array_keys($sort_options)) === false) {
-                soft_error(_('Invalid sort option') . ": $sort");
+                soft_error(__('Invalid sort option') . ": $sort");
         }
 
         // make sure order is valid
 	$order = htmlentities($vars['order']);
         if(array_search($order, array_keys($order_options)) === false) {
-                soft_error(_('Invalid order option') . ": $order");
+                soft_error(__('Invalid order option') . ": $order");
         }
 
 	$keywords = explode(" ", $searchstring);
@@ -72,16 +72,16 @@ function search_results()
 
 	if(sizeof($tags) == 0) {
 		$html = tag('div', tag('strong',
-					_('No events matched your search criteria.')));
+					__('No events matched your search criteria.')));
 	} else {
 		$html = tag('table',
 				attributes('class="phpc-main"'),
-				tag('caption', _('Search Results')),
+				tag('caption', __('Search Results')),
 				tag('thead',
 					tag('tr',
-						tag('th', _('Subject')),
-						tag('th', _('Date Time')),
-						tag('th', _('Description')))));
+						tag('th', __('Subject')),
+						tag('th', __('Date Time')),
+						tag('th', __('Description')))));
 		foreach($tags as $tag) $html->add($tag);
 	}
 
@@ -93,22 +93,22 @@ function search_form()
 	global $day, $month, $year, $phpc_script, $month_names, $sort_options,
 	       $order_options, $phpcid;
 		   
-	$form = new Form($phpc_script, _('Search'),'post');
-    	$form->add_part(new FormFreeQuestion('searchstring', _('Phrase'),
+	$form = new Form($phpc_script, __('Search'),'post');
+    	$form->add_part(new FormFreeQuestion('searchstring', __('Phrase'),
 				false, 32, true));
 	$form->add_hidden('action', 'search');
 	$form->add_hidden('phpcid', $phpcid);
-	$form->add_part(new FormDateQuestion('search-from', _('From'),
+	$form->add_part(new FormDateQuestion('search-from', __('From'),
 				3));
-	$form->add_part(new FormDateQuestion('search-to', _('To'),
+	$form->add_part(new FormDateQuestion('search-to', __('To'),
 				3));
-	$sort = new FormDropdownQuestion('sort', _('Sort By'));
+	$sort = new FormDropdownQuestion('sort', __('Sort By'));
 	$sort->add_options($sort_options);
 	$form->add_part($sort);
-	$order = new FormDropdownQuestion('order', _('Order'));
+	$order = new FormDropdownQuestion('order', __('Order'));
 	$order->add_options($order_options);
 	$form->add_part($order);
-	$form->add_part(new FormSubmitButton(_("Search")));
+	$form->add_part(new FormSubmitButton(__("Search")));
 	return $form->get_form();
 }
 

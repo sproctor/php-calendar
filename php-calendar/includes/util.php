@@ -70,7 +70,7 @@ function message_redirect($message, $page) {
 	$continue_url = $page . '&amp;clearmsg=1';
 
 	return tag('div', attrs('class="phpc-box"'), "$message ",
- 		tag('a', attrs("href=\"$continue_url\""), _("continue")));
+ 		tag('a', attrs("href=\"$continue_url\""), __("continue")));
 }
 
 function message($message) {
@@ -151,11 +151,11 @@ function format_time_string($hour, $minute, $hour24)
 // called when some error happens
 function display_error($str)
 {
-	echo '<html><head><title>', _('Error'), "</title></head>\n",
-	     '<body><h1>', _('Software Error'), "</h1>\n",
-	     "<h2>", _('Message:'), "</h2>\n",
+	echo '<html><head><title>', __('Error'), "</title></head>\n",
+	     '<body><h1>', __('Software Error'), "</h1>\n",
+	     "<h2>", __('Message:'), "</h2>\n",
 	     "<pre>$str</pre>\n",
-	     "<h2>", _('Backtrace'), "</h2>\n",
+	     "<h2>", __('Backtrace'), "</h2>\n",
 	     "<ol>\n";
 	foreach(debug_backtrace() as $bt) {
 		echo "<li>$bt[file]:$bt[line] - $bt[function]</li>\n";

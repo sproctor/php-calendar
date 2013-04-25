@@ -29,7 +29,7 @@ if(!defined('IN_PHPC')) {
 
 require_once('html.php');
 
-$required_error_message = '('._('required').')';
+$required_error_message = '('.__('required').')';
 
 /* This class is the base of either a question or a group
  */
@@ -99,7 +99,7 @@ class FormGroup extends FormPart {
                 global $form_error_func;
 
                 if(!is_a($item, 'FormPart')) $this->error(
-				_('Cannot add a non-form element to a form.'));
+				__('Cannot add a non-form element to a form.'));
 
                 $this->list[] = $item;
         }
@@ -427,10 +427,10 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
 				soft_error("Unrecognized date format.");
 		}
 
-                return array(_("Date") . " ($date_string): ",
+                return array(__("Date") . " ($date_string): ",
 				form_date_input($this->qid, $defaults,
 					$dateFormat),
-				" " . _('Time') . ": ",
+				" " . __('Time') . ": ",
 				form_time_input($this->qid, $defaults,
 					$this->hour24));
 	}

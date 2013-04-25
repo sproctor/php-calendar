@@ -48,7 +48,7 @@ class PhpcCalendar {
 	function get_title()
 	{
 		if(empty($this->title))
-			return _('(No title)');
+			return __('(No title)');
 
 		return htmlspecialchars($this->title);
 	}

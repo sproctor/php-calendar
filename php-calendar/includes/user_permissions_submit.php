@@ -24,11 +24,11 @@ function user_permissions_submit()
 	global $phpcid, $phpc_cal, $vars, $phpcdb, $phpc_script;
 
         if(!$phpc_cal->can_admin()) {
-                return tag('div', _('Permission denied'));
+                return tag('div', __('Permission denied'));
         }
 
         if(empty($vars['uid'])) {
-                return tag('div', _('No users'));
+                return tag('div', __('No users'));
         }
 
 	$users = array();
@@ -56,9 +56,9 @@ function user_permissions_submit()
 		}
 	}
 	if(sizeof($users) == 0)
-		$message = _('No changes to make.');
+		$message = __('No changes to make.');
 	else
-		$message = _('Updated user(s):').' ' .implode(', ', $users);
+		$message = __('Updated user(s):').' ' .implode(', ', $users);
 
 	return message_redirect($message, "$phpc_script?action=cadmin");
 }

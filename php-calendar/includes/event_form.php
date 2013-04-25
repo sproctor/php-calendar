@@ -37,80 +37,80 @@ function display_form() {
 
 	$hour24 = $phpc_cal->hours_24;
 	$date_format = $phpc_cal->date_format;
-	$form = new Form($phpc_script, _('Event Form'));
-	$form->add_part(new FormFreeQuestion('subject', _('Subject'),
+	$form = new Form($phpc_script, __('Event Form'));
+	$form->add_part(new FormFreeQuestion('subject', __('Subject'),
 				false, $phpc_cal->subject_max, true));
 	$form->add_part(new FormLongFreeQuestion('description',
-				_('Description')));
+				__('Description')));
 
-	$when_group = new FormGroup(_('When'), 'phpc-when');
+	$when_group = new FormGroup(__('When'), 'phpc-when');
 	if(isset($vars['eid'])) {
 		$when_group->add_part(new FormCheckBoxQuestion('phpc-modify',
 					false,
-					_('Change the event date and time')));
+					__('Change the event date and time')));
 	}
 	$when_group->add_part(new FormDateTimeQuestion('start',
-				_('From'), $hour24, $date_format));
-	$when_group->add_part(new FormDateTimeQuestion('end', _('To'),
+				__('From'), $hour24, $date_format));
+	$when_group->add_part(new FormDateTimeQuestion('end', __('To'),
 				$hour24, $date_format));
 
-	$time_type = new FormDropDownQuestion('time-type', _('Time Type'));
-	$time_type->add_option('normal', _('Normal'));
-	$time_type->add_option('full', _('Full Day'));
-	$time_type->add_option('tba', _('To Be Announced'));
+	$time_type = new FormDropDownQuestion('time-type', __('Time Type'));
+	$time_type->add_option('normal', __('Normal'));
+	$time_type->add_option('full', __('Full Day'));
+	$time_type->add_option('tba', __('To Be Announced'));
 
 	$when_group->add_part($time_type);
 
 	$form->add_part($when_group);
 
-	$repeat_type = new FormDropdownQuestion('repeats', _('Repeats'),
+	$repeat_type = new FormDropdownQuestion('repeats', __('Repeats'),
 			array(), true, 'never');
-	$repeat_type->add_option('never', _('Never'));
+	$repeat_type->add_option('never', __('Never'));
 	$daily_group = new FormGroup();
-	$repeat_type->add_option('daily', _('Daily'), NULL, $daily_group);
+	$repeat_type->add_option('daily', __('Daily'), NULL, $daily_group);
 	$weekly_group = new FormGroup();
-	$repeat_type->add_option('weekly', _('Weekly'), NULL, $weekly_group);
+	$repeat_type->add_option('weekly', __('Weekly'), NULL, $weekly_group);
 	$monthly_group = new FormGroup();
-	$repeat_type->add_option('monthly', _('Monthly'), NULL, $monthly_group);
+	$repeat_type->add_option('monthly', __('Monthly'), NULL, $monthly_group);
 	$yearly_group = new FormGroup();
-	$repeat_type->add_option('yearly', _('Yearly'), NULL, $yearly_group);
+	$repeat_type->add_option('yearly', __('Yearly'), NULL, $yearly_group);
 
-	$every_day = new FormDropdownQuestion('every-day', _('Every'),
-			_('Repeat every how many days?'));
+	$every_day = new FormDropdownQuestion('every-day', __('Every'),
+			__('Repeat every how many days?'));
 	$every_day->add_options(create_sequence(1, 30));
 	$daily_group->add_part($every_day);
-	$daily_group->add_part(new FormDateQuestion('daily-until', _('Until'),
+	$daily_group->add_part(new FormDateQuestion('daily-until', __('Until'),
 				$date_format));
 
-	$every_week = new FormDropdownQuestion('every-week', _('Every'),
-			_('Repeat every how many weeks?'));
+	$every_week = new FormDropdownQuestion('every-week', __('Every'),
+			__('Repeat every how many weeks?'));
 	$every_week->add_options(create_sequence(1, 30));
 	$weekly_group->add_part($every_week);
 	$weekly_group->add_part(new FormDateQuestion('weekly-until',
-				_('Until'), $date_format));
+				__('Until'), $date_format));
 
-	$every_month = new FormDropdownQuestion('every-month', _('Every'),
-			_('Repeat every how many months?'));
+	$every_month = new FormDropdownQuestion('every-month', __('Every'),
+			__('Repeat every how many months?'));
 	$every_month->add_options(create_sequence(1, 30));
 	$monthly_group->add_part($every_month);
 	$monthly_group->add_part(new FormDateQuestion('monthly-until',
-				_('Until'), $date_format));
+				__('Until'), $date_format));
 
-	$every_year = new FormDropdownQuestion('every-year', _('Every'),
-			_('Repeat every how many years?'));
+	$every_year = new FormDropdownQuestion('every-year', __('Every'),
+			__('Repeat every how many years?'));
 	$every_year->add_options(create_sequence(1, 30));
 	$yearly_group->add_part($every_year);
 	$yearly_group->add_part(new FormDateQuestion('yearly-until',
-				_('Until'), $date_format));
+				__('Until'), $date_format));
 
 	$when_group->add_part($repeat_type);
 
 	if($phpc_cal->can_create_readonly())
 		$form->add_part(new FormCheckBoxQuestion('readonly', false,
-					_('Read-only')));
+					__('Read-only')));
 
-	$categories = new FormDropdownQuestion('catid', _('Category'));
-	$categories->add_option('', _('None'));
+	$categories = new FormDropdownQuestion('catid', __('Category'));
+	$categories->add_option('', __('None'));
 	$have_categories = false;
 	foreach($phpc_cal->get_visible_categories($phpc_user->get_uid()) as $category) {
 		$categories->add_option($category['catid'], $category['name']);
@@ -125,7 +125,7 @@ function display_form() {
 	$form->add_hidden('action', 'event_form');
 	$form->add_hidden('submit_form', 'submit_form');
 
-	$form->add_part(new FormSubmitButton(_("Submit Event")));
+	$form->add_part(new FormSubmitButton(__("Submit Event")));
 
 	if(isset($vars['eid'])) {
 		$form->add_hidden('eid', $vars['eid']);
@@ -292,12 +292,12 @@ function process_form()
 			break;
 
 		default:
-			soft_error(_("Unrecognized Time Type."));
+			soft_error(__("Unrecognized Time Type."));
 	}
 
 	$duration = $end_ts - $start_ts;
 	if($duration < 0) {
-		message(_("An event cannot have an end earlier than its start."));
+		message(__("An event cannot have an end earlier than its start."));
 		return display_form();
 	}
 	}
@@ -305,7 +305,7 @@ function process_form()
 	verify_token();
 
 	if(!$phpc_cal->can_write())
-		permission_error(_('You do not have permission to write to this calendar.'));
+		permission_error(__('You do not have permission to write to this calendar.'));
 
 	if($phpc_cal->can_create_readonly() && !empty($vars['readonly']))
 		$readonly = true;
@@ -338,10 +338,10 @@ function process_form()
 
 		case 'daily':
 			if(!isset($vars["every-day"]))
-				soft_error(_("Required field \"every-day\" is not set."));
+				soft_error(__("Required field \"every-day\" is not set."));
 			$ndays = $vars["every-day"];
 			if($ndays < 1)
-				soft_error(_("every-day must be greater than 1"));
+				soft_error(__("every-day must be greater than 1"));
 
 			$daily_until = get_timestamp("daily-until");
 			while($occurrences <= 730) {
@@ -357,9 +357,9 @@ function process_form()
 
 		case 'weekly':
 			if(!isset($vars["every-week"]))
-				soft_error(_("Required field \"every-week\" is not set."));
+				soft_error(__("Required field \"every-week\" is not set."));
 			if($vars["every-week"] < 1)
-				soft_error(_("every-week must be greater than 1"));
+				soft_error(__("every-week must be greater than 1"));
 			$ndays = $vars["every-week"] * 7;
 
 			$weekly_until = get_timestamp("weekly-until");
@@ -376,9 +376,9 @@ function process_form()
 
 		case 'monthly':
 			if(!isset($vars["every-month"]))
-				soft_error(_("Required field \"every-month\" is not set."));
+				soft_error(__("Required field \"every-month\" is not set."));
 			if($vars["every-month"] < 1)
-				soft_error(_("every-month must be greater than 1"));
+				soft_error(__("every-month must be greater than 1"));
 			$nmonths = $vars["every-month"];
 
 			$monthly_until = get_timestamp("monthly-until");
@@ -395,9 +395,9 @@ function process_form()
 
 		case 'yearly':
 			if(!isset($vars["every-year"]))
-				soft_error(_("Required field \"every-year\" is not set."));
+				soft_error(__("Required field \"every-year\" is not set."));
 			if($vars["every-year"] < 1)
-				soft_error(_("every-month must be greater than 1"));
+				soft_error(__("every-month must be greater than 1"));
 			$nyears = $vars["every-year"];
 
 			$yearly_until = get_timestamp("yearly-until");
@@ -413,22 +413,22 @@ function process_form()
 			break;
 
 		default:
-			soft_error(_("Invalid event type."));
+			soft_error(__("Invalid event type."));
 	}
 	}
 
 	if($eid != 0) {
 		if($modify)
-			$message = _("Modified event: ");
+			$message = __("Modified event: ");
 		else
-			$message = _("Created event: ");
+			$message = __("Created event: ");
 
 		return message_redirect(tag('', $message,
 					create_event_link($eid, 'display_event',
 						$eid)),
 				"$phpc_script?action=display_event&eid=$eid");
 	} else {
-		return message_redirect(_('Error submitting event.'),
+		return message_redirect(__('Error submitting event.'),
 				"$phpc_script?action=display_month");
 	}
 }
@@ -438,7 +438,7 @@ function get_timestamp($prefix)
 	global $vars, $phpc_cal;
 
 	if(!isset($vars["$prefix-date"]))
-		soft_error(sprintf(_("Required field \"%s\" year was not set."),
+		soft_error(sprintf(__("Required field \"%s\" year was not set."),
 					$prefix));
 
 	if(!isset($vars["$prefix-time"])) {
@@ -447,7 +447,7 @@ function get_timestamp($prefix)
 	} else {
 		if(!preg_match('/(\d+):(\d+)\s?(\w+)?/', $vars["$prefix-time"],
 					$time_matches)) {
-			soft_error(sprintf(_("Malformed time in \"%s\" time."),
+			soft_error(sprintf(__("Malformed time in \"%s\" time."),
 						$prefix));
 		}
 		$hour = $time_matches[1];
@@ -461,14 +461,14 @@ function get_timestamp($prefix)
 			} else if(strcasecmp("pm", $period) == 0) {
 				$hour += 12;
 			} else {
-				soft_error(_("Unrecognized period: ") . $period);
+				soft_error(__("Unrecognized period: ") . $period);
 			}
 		}
 	}
 
 	if(!preg_match('/(\d+)[\/\-\ ](\d+)[\/\-\ ](\d+)/',
 				$vars["$prefix-date"], $date_matches)) {
-		soft_error(sprintf(_("Malformed time in \"%s\" date."),
+		soft_error(sprintf(__("Malformed time in \"%s\" date."),
 					$prefix));
 	}
 	

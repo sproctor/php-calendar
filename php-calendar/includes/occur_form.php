@@ -36,18 +36,18 @@ function display_form() {
 
 	$hour24 = $phpc_cal->hours_24;
 	$date_format = $phpc_cal->date_format;
-	$form = new Form($phpc_script, _('Occurrence Form'));
+	$form = new Form($phpc_script, __('Occurrence Form'));
 
-	$when_group = new FormGroup(_('When'));
+	$when_group = new FormGroup(__('When'));
 	$when_group->add_part(new FormDateTimeQuestion('start',
-				_('From'), $hour24, $date_format));
-	$when_group->add_part(new FormDateTimeQuestion('end', _('To'),
+				__('From'), $hour24, $date_format));
+	$when_group->add_part(new FormDateTimeQuestion('end', __('To'),
 				$hour24, $date_format));
 
-	$time_type = new FormDropDownQuestion('time-type', _('Time Type'));
-	$time_type->add_option('normal', _('Normal'));
-	$time_type->add_option('full', _('Full Day'));
-	$time_type->add_option('tba', _('To Be Announced'));
+	$time_type = new FormDropDownQuestion('time-type', __('Time Type'));
+	$time_type->add_option('normal', __('Normal'));
+	$time_type->add_option('full', __('Full Day'));
+	$time_type->add_option('tba', __('To Be Announced'));
 
 	$when_group->add_part($time_type);
 
@@ -99,7 +99,7 @@ function display_form() {
 	$form->add_hidden('action', 'occur_form');
 	$form->add_hidden('submit_form', 'submit_form');
 
-	$form->add_part(new FormSubmitButton(_("Submit Occurrence")));
+	$form->add_part(new FormSubmitButton(__("Submit Occurrence")));
 
 	return $form->get_form($defaults);
 }
@@ -109,7 +109,7 @@ function process_form()
 	global $vars, $phpcdb, $phpc_cal, $phpcid, $phpc_script;
 
 	if(!isset($vars['eid']) && !isset($vars['oid']))
-		soft_error(_("Cannot create occurrence."));
+		soft_error(__("Cannot create occurrence."));
 
 	$start_ts = get_timestamp("start");
 	$end_ts = get_timestamp("end");
@@ -128,22 +128,22 @@ function process_form()
 			break;
 
 		default:
-			soft_error(_("Unrecognized Time Type."));
+			soft_error(__("Unrecognized Time Type."));
 	}
 
 	$duration = $end_ts - $start_ts;
 	if($duration < 0)
-		soft_error(_("An event cannot have an end earlier than its start."));
+		soft_error(__("An event cannot have an end earlier than its start."));
 
 	verify_token();
 
 	if(!$phpc_cal->can_write())
-		permission_error(_('You do not have permission to write to this calendar.'));
+		permission_error(__('You do not have permission to write to this calendar.'));
 
 	if(!isset($vars['oid'])) {
 		$modify = false;
 		if(!isset($vars["eid"]))
-			soft_error(_("EID not set."));
+			soft_error(__("EID not set."));
 		$oid = $phpcdb->create_occurrence($vars["eid"], $time_type, $start_ts,
 				$end_ts);
 	} else {
@@ -155,16 +155,16 @@ function process_form()
 		
 	if($oid != 0) {
 		if($modify)
-			$message = _("Modified occurence: ");
+			$message = __("Modified occurence: ");
 		else
-			$message = _("Created occurence: ");
+			$message = __("Created occurence: ");
 
 		return message_redirect(tag('', $message,
 					create_event_link($oid, 'display_event',
 						$oid)),
 				"$phpc_script?action=display_event&oid=$oid");
 	} else {
-		return message_redirect(_('Error submitting occurrence.'),
+		return message_redirect(__('Error submitting occurrence.'),
 				"$phpc_script?action=display_month");
 	}
 }
@@ -174,7 +174,7 @@ function get_timestamp($prefix)
 	global $vars;
 
 	if(!isset($vars["$prefix-date"]))
-		soft_error(sprintf(_("Required field \"%s\" year was not set."),
+		soft_error(sprintf(__("Required field \"%s\" year was not set."),
 					$prefix));
 
 	if(!isset($vars["$prefix-time"])) {
@@ -183,7 +183,7 @@ function get_timestamp($prefix)
 	} else {
 		if(!preg_match('/(\d+):(\d+)/', $vars["$prefix-time"],
 					$time_matches)) {
-			soft_error(sprintf(_("Malformed time in \"%s\" time."),
+			soft_error(sprintf(__("Malformed time in \"%s\" time."),
 						$prefix));
 		}
 		$hour = $time_matches[1];
@@ -192,7 +192,7 @@ function get_timestamp($prefix)
 
 	if(!preg_match('/(\d+)\/(\d+)\/(\d+)/', $vars["$prefix-date"],
 				$date_matches)) {
-		soft_error(sprintf(_("Malformed time in \"%s\" date."),
+		soft_error(sprintf(__("Malformed time in \"%s\" date."),
 					$prefix));
 	}
 	$month = $date_matches[1];

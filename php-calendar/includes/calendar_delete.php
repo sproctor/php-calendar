@@ -26,7 +26,7 @@ function calendar_delete()
 	$html = tag('div', attributes('class="phpc-container"'));
 
 	if(empty($vars["cid"])) {
-		$html->add(tag('p', _('No calendar selected.')));
+		$html->add(tag('p', __('No calendar selected.')));
 		return $html;
 	}
 
@@ -42,12 +42,12 @@ function calendar_delete()
 			$calendar = $phpcdb->get_calendar($id);
 			$list->add(tag('li', "$id: ".$calendar->get_title()));
 		}
-		$html->add(tag('p', _('Confirm you want to delete:')));
+		$html->add(tag('p', __('Confirm you want to delete:')));
 		$html->add($list);
-		$html->add(" [ ", create_action_link(_('Confirm'),
+		$html->add(" [ ", create_action_link(__('Confirm'),
 					"calendar_delete", array("cid" => $ids,
 						"confirm" => "1")), " ] ");
-		$html->add(" [ ", create_action_link(_('Deny'),
+		$html->add(" [ ", create_action_link(__('Deny'),
 					"display_month"), " ] ");
 		return $html;
 	}
@@ -55,14 +55,14 @@ function calendar_delete()
 	foreach($ids as $id) {
 		$calendar = $phpcdb->get_calendar($id);
 		if(!$calendar->can_admin()) {
-			$html->add(tag('p', _("You do not have permission to remove calendar") . ": $id"));
+			$html->add(tag('p', __("You do not have permission to remove calendar") . ": $id"));
 			continue;
 		}
 
 		if($phpcdb->delete_calendar($id)) {
-			$html->add(tag('p', _("Removed calendar") . ": $id"));
+			$html->add(tag('p', __("Removed calendar") . ": $id"));
 		} else {        
-			$html->add(tag('p', _("Could not remove calendar")
+			$html->add(tag('p', __("Could not remove calendar")
 						. ": $id"));
 		}
 	}

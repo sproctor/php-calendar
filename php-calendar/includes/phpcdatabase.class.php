@@ -89,7 +89,7 @@ class PhpcDatabase {
 			."	ORDER BY `start_ts`, `start_date`, `oid`";
 
 		$results = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_occurrences_by_date_range'),
+			or $this->db_error(__('Error in get_occurrences_by_date_range'),
 					$query);
 
 		return $results;
@@ -137,11 +137,11 @@ class PhpcDatabase {
 			."WHERE `eid` = '$eid'\n";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_event_by_eid'),
+			or $this->db_error(__('Error in get_event_by_eid'),
 					$query);
 
 		$result = $sth->fetch_assoc()
-			or soft_error(_("Event doesn't exist") . ": $eid");
+			or soft_error(__("Event doesn't exist") . ": $eid");
 
 		return $result;
 	}
@@ -163,11 +163,11 @@ class PhpcDatabase {
 			."WHERE `oid` = '$oid'\n";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_event_by_oid'),
+			or $this->db_error(__('Error in get_event_by_oid'),
 					$query);
 
 		$result = $sth->fetch_assoc()
-			or soft_error(_("Event doesn't exist with oid")
+			or soft_error(__("Event doesn't exist with oid")
 					. ": $oid");
 
 		return $result;
@@ -184,10 +184,10 @@ class PhpcDatabase {
 			."WHERE `catid` = $catid";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_category'), $query);
+			or $this->db_error(__('Error in get_category'), $query);
 			
 		$result = $sth->fetch_assoc()
-			or soft_error(_("Category doesn't exist with catid")
+			or soft_error(__("Category doesn't exist with catid")
 					. ": $catid");
 	
 		return $result;
@@ -201,10 +201,10 @@ class PhpcDatabase {
 			."WHERE `gid` = $gid";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_group'), $query);
+			or $this->db_error(__('Error in get_group'), $query);
 			
 		$result = $sth->fetch_assoc()
-			or soft_error(_("Group doesn't exist with gid")
+			or soft_error(__("Group doesn't exist with gid")
 					. ": $gid");
 	
 		return $result;
@@ -218,7 +218,7 @@ class PhpcDatabase {
 			."WHERE `cid` = $cid";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_groups'), $query);
+			or $this->db_error(__('Error in get_groups'), $query);
 					
 		$groups = array();
 		while($row = $sth->fetch_assoc()) {
@@ -237,7 +237,7 @@ class PhpcDatabase {
 			."WHERE `uid` = $uid";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_user_groups'),
+			or $this->db_error(__('Error in get_user_groups'),
 					$query);
 					
 		$groups = array();
@@ -263,7 +263,7 @@ class PhpcDatabase {
 			.$where;
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_categories'),
+			or $this->db_error(__('Error in get_categories'),
 					$query);
 
 		$arr = array();
@@ -292,7 +292,7 @@ class PhpcDatabase {
 			."WHERE (`uid` IS NULL OR `uid` = '$uid') AND $where_cid\n";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_visible_categories'),
+			or $this->db_error(__('Error in get_visible_categories'),
 					$query);
 
 		$arr = array();
@@ -320,11 +320,11 @@ class PhpcDatabase {
 			."WHERE `oid` = '$oid'\n";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_occurrence_by_oid'),
+			or $this->db_error(__('Error in get_occurrence_by_oid'),
 					$query);
 
 		$result = $sth->fetch_assoc()
-			or soft_error(_("Event doesn't exist with oid") . ": $oid");
+			or soft_error(__("Event doesn't exist with oid") . ": $oid");
 
 		return new PhpcOccurrence($result);
 	}
@@ -346,7 +346,7 @@ class PhpcDatabase {
 			."	ORDER BY `start_ts`, `start_date`, `oid`";
 
 		$result = $this->dbh->query($query)
-			or $this->db_error(_('Error in get_occurrences_by_eid'),
+			or $this->db_error(__('Error in get_occurrences_by_eid'),
 					$query);
 
 		$events = array();
@@ -363,7 +363,7 @@ class PhpcDatabase {
 			."WHERE `eid` = '$eid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error while removing an event.'),
+			or $this->db_error(__('Error while removing an event.'),
 					$query);
 
 		$rv = $this->dbh->affected_rows > 0;
@@ -379,7 +379,7 @@ class PhpcDatabase {
 			."WHERE `eid` = '$eid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error while removing an event.'),
+			or $this->db_error(__('Error while removing an event.'),
 					$query);
 
 		return $this->dbh->affected_rows;
@@ -391,7 +391,7 @@ class PhpcDatabase {
 			."WHERE `oid` = '$oid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error while removing an occurrence.'),
+			or $this->db_error(__('Error while removing an occurrence.'),
 					$query);
 
 		return $this->dbh->affected_rows;
@@ -404,7 +404,7 @@ class PhpcDatabase {
 			."WHERE cid='$id'";
 
 		$sth = $this->dbh->query($query1)
-			or $this->db_error(_('Error while removing a calendar'),
+			or $this->db_error(__('Error while removing a calendar'),
 					$query1);
 
 		return $this->dbh->affected_rows > 0;
@@ -417,7 +417,7 @@ class PhpcDatabase {
 			."WHERE `catid` = '$catid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error while removing category.'),
+			or $this->db_error(__('Error while removing category.'),
 					$query);
 
 		return $this->dbh->affected_rows > 0;
@@ -430,7 +430,7 @@ class PhpcDatabase {
 			."WHERE `gid` = '$gid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error while removing group.'),
+			or $this->db_error(__('Error while removing group.'),
 					$query);
 
 		return $this->dbh->affected_rows > 0;
@@ -445,12 +445,12 @@ class PhpcDatabase {
 			."WHERE uid='$id'";
 
 		$this->dbh->query($query1)
-			or $this->db_error(_('Error while removing a calendar'),
+			or $this->db_error(__('Error while removing a calendar'),
 					$query1);
 		$rv = $this->dbh->affected_rows > 0;
 
 		$this->dbh->query($query2)
-			or $this->db_error(_('Error while removing '),
+			or $this->db_error(__('Error while removing '),
 					$query2);
 
 		return $rv;
@@ -469,7 +469,7 @@ class PhpcDatabase {
 			"permissions WHERE `cid`='$cid' AND `uid`='$uid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Could not read permissions.'),
+			or $this->db_error(__('Could not read permissions.'),
 					$query);
 
 		$perms[$cid][$uid] = $sth->fetch_assoc();
@@ -482,7 +482,7 @@ class PhpcDatabase {
 			."FROM `" . SQL_PREFIX .  "calendars`\n";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Could not get calendars.'),
+			or $this->db_error(__('Could not get calendars.'),
 					$query);
 
 		while($result = $sth->fetch_assoc()) {
@@ -502,7 +502,7 @@ class PhpcDatabase {
 				."WHERE `cid`='$cid'";
 
 			$sth = $this->dbh->query($query)
-				or $this->db_error(_('Could not get calendar.'),
+				or $this->db_error(__('Could not get calendar.'),
 					$query);
 			$this->calendars[$cid] = new PhpcCalendar
 				($sth->fetch_assoc());
@@ -516,7 +516,7 @@ class PhpcDatabase {
 		$query = "SELECT * FROM `" . SQL_PREFIX .  "users`";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Could not get user.'), $query);
+			or $this->db_error(__('Could not get user.'), $query);
 
 		$users = array();
 		while($user = $sth->fetch_assoc()) {
@@ -538,7 +538,7 @@ class PhpcDatabase {
 			."USING (`uid`)\n";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Could not get user.'), $query);
+			or $this->db_error(__('Could not get user.'), $query);
 
 		$users = array();
 		while($user = $sth->fetch_assoc()) {
@@ -554,7 +554,7 @@ class PhpcDatabase {
 			."WHERE username='$username'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_("Error getting user."), $query);
+			or $this->db_error(__("Error getting user."), $query);
 
 		$result = $sth->fetch_assoc();
 		if($result)
@@ -570,7 +570,7 @@ class PhpcDatabase {
 			."WHERE `uid`='$uid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_("Error getting user."), $query);
+			or $this->db_error(__("Error getting user."), $query);
 
 		$result = $sth->fetch_assoc();
 		if($result)
@@ -586,7 +586,7 @@ class PhpcDatabase {
 			."('$username', '$password', '$make_admin')";
 
 		$this->dbh->query($query)
-			or $this->db_error(_('Error creating user.'), $query);
+			or $this->db_error(__('Error creating user.'), $query);
 
 		$this->dbh->insert_id;
 	}
@@ -597,7 +597,7 @@ class PhpcDatabase {
 			."(`cid`) VALUE (DEFAULT)";
 
 		$this->dbh->query($query)
-			or $this->db_error(_('Error reading options'), $query);
+			or $this->db_error(__('Error reading options'), $query);
 
 		return $this->dbh->insert_id;
 	}
@@ -609,7 +609,7 @@ class PhpcDatabase {
 		."WHERE `cid`='$cid'";
 
 		$this->dbh->query($query)
-			or $this->db_error(_('Error reading options'), $query);
+			or $this->db_error(__('Error reading options'), $query);
 	}
 
 	function create_config($cid, $name, $value)
@@ -620,7 +620,7 @@ class PhpcDatabase {
 			."WHERE `cid`='$cid'"; 
 
 		$this->dbh->query($query)
-			or $this->db_error(_('Error creating options'), $query);
+			or $this->db_error(__('Error creating options'), $query);
 	}
 	
 	function set_password($uid, $password)
@@ -630,7 +630,7 @@ class PhpcDatabase {
 			."WHERE `uid`='$uid'";
 
 		$this->dbh->query($query)
-			or $this->db_error(_('Error updating password.'),
+			or $this->db_error(__('Error updating password.'),
 					$query);
 	}
 
@@ -641,7 +641,7 @@ class PhpcDatabase {
 			."WHERE `uid`='$uid'";
 
 		$this->dbh->query($query)
-			or $this->db_error(_('Error updating timezone.'),
+			or $this->db_error(__('Error updating timezone.'),
 					$query);
 	}
 
@@ -652,7 +652,7 @@ class PhpcDatabase {
 			."WHERE `uid`='$uid'";
 
 		$this->dbh->query($query)
-			or $this->db_error(_('Error updating language.'),
+			or $this->db_error(__('Error updating language.'),
 					$query);
 	}
 
@@ -673,7 +673,7 @@ class PhpcDatabase {
 			."$fmt_readonly, $catid)";
 
 		$this->dbh->query($query)
-			or $this->db_error(_('Error creating event.'), $query);
+			or $this->db_error(__('Error creating event.'), $query);
 
 		$eid = $this->dbh->insert_id;
 
@@ -700,7 +700,7 @@ class PhpcDatabase {
 		}
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error creating occurrence.'),
+			or $this->db_error(__('Error creating occurrence.'),
 					$query);
 
 		return $this->dbh->insert_id;
@@ -725,7 +725,7 @@ class PhpcDatabase {
 		$query .= "\nWHERE `oid`='$oid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error modifying occurrence.'),
+			or $this->db_error(__('Error modifying occurrence.'),
 					$query);
 
 		return $this->dbh->affected_rows > 0;
@@ -747,7 +747,7 @@ class PhpcDatabase {
 			."WHERE eid='$eid'";
 
 		$this->dbh->query($query)
-			or $this->db_error(_('Error modifying event.'), $query);
+			or $this->db_error(__('Error modifying event.'), $query);
 
 		return $this->dbh->affected_rows > 0;
 	}
@@ -761,7 +761,7 @@ class PhpcDatabase {
 			."VALUES ('$cid', '$name', '$text_color', '$bg_color'$gid_value)";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error creating category.'),
+			or $this->db_error(__('Error creating category.'),
 					$query);
 		
 		return $this->dbh->insert_id;
@@ -774,7 +774,7 @@ class PhpcDatabase {
 			."VALUES ('$cid', '$name')";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error creating group.'), $query);
+			or $this->db_error(__('Error creating group.'), $query);
 		
 		return $this->dbh->insert_id;
 	}
@@ -790,7 +790,7 @@ class PhpcDatabase {
 			."WHERE `catid`='$catid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error modifying category.'),
+			or $this->db_error(__('Error modifying category.'),
 					$query);
 
 		return $this->dbh->affected_rows > 0;
@@ -804,7 +804,7 @@ class PhpcDatabase {
 			."WHERE `gid`='$gid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_('Error modifying group.'),
+			or $this->db_error(__('Error modifying group.'),
 					$query);
 
 		return $this->dbh->affected_rows > 0;
@@ -837,7 +837,7 @@ class PhpcDatabase {
 			."ORDER BY `$sort` $order";
 
 		if(!($result = $this->dbh->query($query)))
-			$this->db_error(_('Error during searching'), $query);
+			$this->db_error(__('Error during searching'), $query);
 
 		$events = array();
 		while($row = $result->fetch_assoc()) {
@@ -863,7 +863,7 @@ class PhpcDatabase {
 			."ON DUPLICATE KEY UPDATE ".implode(", ", $sets);
 
 		if(!($sth = $this->dbh->query($query)))
-			$this->db_error(_('Error updating user permissions.'),
+			$this->db_error(__('Error updating user permissions.'),
 					$query);
 	}
 
@@ -872,7 +872,7 @@ class PhpcDatabase {
 			."WHERE `uid`='$uid' AND `series`='$series'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(_("Error getting login token."),
+			or $this->db_error(__("Error getting login token."),
 					$query);
 
 		$result = $sth->fetch_assoc();
@@ -887,7 +887,7 @@ class PhpcDatabase {
 			."VALUES ('$uid', '$series', '$token')";
 
 		$this->dbh->query($query)
-			or $this->db_error(_("Error adding login token."),
+			or $this->db_error(__("Error adding login token."),
 					$query);
 	}
 
@@ -897,7 +897,7 @@ class PhpcDatabase {
 			."WHERE `uid`='$uid' AND `series`='$series'";
 
 		$this->dbh->query($query)
-			or $this->db_error(_("Error updating login token."),
+			or $this->db_error(__("Error updating login token."),
 					$query);
 	}
 
@@ -906,7 +906,7 @@ class PhpcDatabase {
 			."WHERE `uid`='$uid'";
 
 		$this->dbh->query($query)
-			or $this->db_error(_("Error removing login tokens."),
+			or $this->db_error(__("Error removing login tokens."),
 					$query);
 	}
 
@@ -915,7 +915,7 @@ class PhpcDatabase {
 			."WHERE `atime` < DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
 
 		$this->dbh->query($query)
-			or $this->db_error(_("Error cleaning login tokens."),
+			or $this->db_error(__("Error cleaning login tokens."),
 					$query);
 	}
 
@@ -925,7 +925,7 @@ class PhpcDatabase {
 		$string = $str . "<pre>" . htmlspecialchars($this->dbh->error,
 				ENT_COMPAT, "UTF-8") . "</pre>";
 		if($query != "") {
-			$string .= "<pre>" . _('SQL query') . ": "
+			$string .= "<pre>" . __('SQL query') . ": "
 				. htmlspecialchars($query, ENT_COMPAT, "UTF-8")
 				. "</pre>";
 		}

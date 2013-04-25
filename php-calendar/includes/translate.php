@@ -25,7 +25,7 @@ function translate() {
 	global $phpc_locale_path;
 
 	if(!is_admin()) {
-		permission_error(_('Need to be admin'));
+		permission_error(__('Need to be admin'));
 		exit;
 	}
 
@@ -35,7 +35,7 @@ function translate() {
 		return soft_error("Error reading locale directory.");
 	}
 
-	$output_tag = tag('div', tag('h2', _('Translate')));
+	$output_tag = tag('div', tag('h2', __('Translate')));
 	while(($filename = readdir($handle)) !== false) {
 		$pathname = "$phpc_locale_path/$filename";
 		if(strncmp($filename, ".", 1) == 0 || !is_dir($pathname))
@@ -49,7 +49,7 @@ function translate() {
 			$out="$msgs_path/messages.mo";
 			write_mo_file($hash, $out);
 		}
-		$output_tag->add(tag('div', sprintf(_('Translated "%s"'),
+		$output_tag->add(tag('div', sprintf(__('Translated "%s"'),
 					$filename)));
 	}
 

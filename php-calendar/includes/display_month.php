@@ -29,7 +29,7 @@ function display_month()
 	global $month, $year;
 
 	$heading_html = tag('tr');
-	$heading_html->add(tag('th', substr(_('Week'), 0, 1)));
+	$heading_html->add(tag('th', substr(__('Week'), 0, 1)));
 	for($i = 0; $i < 7; $i++) {
 		$d = ($i + day_of_week_start()) % 7;
 		$heading_html->add(tag('th', day_name($d)));
@@ -75,9 +75,9 @@ function month_navbar($month, $year) {
 		$prev_month += 12;
 		$prev_year--;
 	}
-	menu_item_append_with_date($nav_tag, _('last year'), 'display_month',
+	menu_item_append_with_date($nav_tag, __('last year'), 'display_month',
 			$year - 1, $month);
-	menu_item_append_with_date($nav_tag, _('last month'), 'display_month',
+	menu_item_append_with_date($nav_tag, __('last month'), 'display_month',
 			$prev_year, $prev_month);
 
 	$next_month = $month + 1;
@@ -87,9 +87,9 @@ function month_navbar($month, $year) {
 		$next_year++;
 	}
 
-	menu_item_append_with_date($nav_tag, _('next month'), 'display_month',
+	menu_item_append_with_date($nav_tag, __('next month'), 'display_month',
 			$next_year, $next_month);
-	menu_item_append_with_date($nav_tag, _('next year'), 'display_month',
+	menu_item_append_with_date($nav_tag, __('next year'), 'display_month',
 			$year + 1, $month);
 
 	for($i = 1; $i <= 12; $i++) {
@@ -251,7 +251,7 @@ function create_day($month, $day, $year, $days_events)
 	foreach($results as $event) {
 		if($event == false) {
 			$event_html = tag('li',
-					create_action_link_with_date(_("View Additional Events"),
+					create_action_link_with_date(__("View Additional Events"),
 						'display_day', $year, $month,
 						$day,
 						array('class="phpc-date"')));
@@ -265,7 +265,7 @@ function create_day($month, $day, $year, $days_events)
 		if($event->get_start_timestamp() >= $stamp)
 			$event_time = $event->get_time_string();
 		else
-			$event_time = '(' . _('continued') . ')';
+			$event_time = '(' . __('continued') . ')';
 		if(!empty($event_time))
 			$title = "$event_time - $subject";
 		else

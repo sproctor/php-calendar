@@ -36,10 +36,10 @@ function login()
 				$url .= '?' . urldecode($vars['lasturl']);
 			}
                         redirect($url);
-			return tag('h2', _('Logged in.'));
+			return tag('h2', __('Logged in.'));
 		}
 
-		$html->add(tag('h2', _('Sorry, Invalid Login')));
+		$html->add(tag('h2', __('Sorry, Invalid Login')));
 
 	}
 
@@ -54,7 +54,7 @@ function login_form()
 
         $submit_data = tag('td', attributes('colspan="2"'),
                                 create_hidden('action', 'login'),
-                                create_submit(_('Log in')));
+                                create_submit(__('Log in')));
 
         if(!empty($vars['lasturl'])) {
 		$lasturl = $vars['lasturl'];
@@ -65,19 +65,19 @@ function login_form()
 	return tag('form', attributes("action=\"$phpc_script\"",
 				'method="post"'),
 		tag('table',
-			tag('caption', _('Log in')),
+			tag('caption', __('Log in')),
                         tag('thead',
                                 tag('tr',
                                         tag('th', attributes('colspan="2"'),
-                                                _('You must have cookies enabled to login.')))),
+                                                __('You must have cookies enabled to login.')))),
 			tag('tfoot',
 				tag('tr', $submit_data)),
 			tag('tbody',
 				tag('tr',
-					tag('th', _('Username')),
+					tag('th', __('Username')),
 					tag('td', create_text('username'))),
 				tag('tr',
-					tag('th', _('Password')),
+					tag('th', __('Password')),
 					tag('td', create_password('password'))))));
 }
 

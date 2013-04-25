@@ -26,7 +26,7 @@ function group_delete()
 	$html = tag('div', attributes('class="phpc-container"'));
 
 	if(empty($vars["gid"])) {
-		return message_redirect(_('No group selected.'),
+		return message_redirect(__('No group selected.'),
 				"$phpc_script?action=cadmin");
 	}
 
@@ -46,12 +46,12 @@ function group_delete()
 		foreach ($groups as $group) {
 			$list->add(tag('li', "$id: ".$group['name']));
 		}
-		$html->add(tag('p', _('Confirm you want to delete:')));
+		$html->add(tag('p', __('Confirm you want to delete:')));
 		$html->add($list);
-		$html->add(" [ ", create_action_link(_('Confirm'),
+		$html->add(" [ ", create_action_link(__('Confirm'),
 					"group_delete", array("gid" => $ids,
 						"confirm" => "1")), " ] ");
-		$html->add(" [ ", create_action_link(_('Deny'),
+		$html->add(" [ ", create_action_link(__('Deny'),
 					"display_month"), " ] ");
 		return $html;
 	}
@@ -60,15 +60,15 @@ function group_delete()
 		if((empty($group['cid']) && !is_admin()) ||
 					!$phpcdb->get_calendar($group['cid'])
 					->can_admin()) {
-			$html->add(tag('p', _("You do not have permission to delete group: ") . $group['gid']));
+			$html->add(tag('p', __("You do not have permission to delete group: ") . $group['gid']));
 			continue;
 		}
 
 		if($phpcdb->delete_group($group['gid'])) {
-			$html->add(tag('p', _("Removed group: ")
+			$html->add(tag('p', __("Removed group: ")
 					. $group['gid']));
 		} else {        
-			$html->add(tag('p', _("Could not remove group: ")
+			$html->add(tag('p', __("Could not remove group: ")
 						. $group['gid']));
 		}
 	}

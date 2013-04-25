@@ -50,7 +50,7 @@ class PhpcOccurrence extends PhpcEvent{
 			if(preg_match('/^(\d{4})(\d{2})(\d{2})$/',
 						$event['start_date'],
 						$start_matches) < 1) {
-				soft_error(_('DB returned an invalid date.')
+				soft_error(__('DB returned an invalid date.')
 						. "({$event['start_date']})");
 			}
 			$this->start_year = $start_matches[1];
@@ -73,7 +73,7 @@ class PhpcOccurrence extends PhpcEvent{
 			if(preg_match('/^(\d{4})(\d{2})(\d{2})$/',
 						$event['end_date'],
 						$end_matches) < 1) {
-				soft_error(_('DB returned an invalid date.')
+				soft_error(__('DB returned an invalid date.')
 						. "({$event['start_date']})");
 			}
 			$this->end_year = $end_matches[1];
@@ -102,7 +102,7 @@ class PhpcOccurrence extends PhpcEvent{
 			case 3: // None
 				return '';
 			case 2:
-				return _('TBA');
+				return __('TBA');
 		}
 	}
 
@@ -113,12 +113,12 @@ class PhpcOccurrence extends PhpcEvent{
 				$hour24 = $this->cal->hours_24;
 				$start_time = $this->get_start_time();
 				$end_time = $this->get_end_time();
-				return $start_time.' '._('to').' '.$end_time;
+				return $start_time.' '.__('to').' '.$end_time;
 			case 1: // FULL DAY
 			case 3: // None
 				return '';
 			case 2:
-				return _('TBA');
+				return __('TBA');
 		}
 	}
 		
@@ -241,7 +241,7 @@ class PhpcOccurrence extends PhpcEvent{
 		
 		$event_time = $this->get_time_span_string();
 		if(!empty($event_time))
-			$event_time = ' ' . _('at') . " $event_time";
+			$event_time = ' ' . __('at') . " $event_time";
 	
 		$str= $this->get_date_string() . $event_time;	
 		}
@@ -249,7 +249,7 @@ class PhpcOccurrence extends PhpcEvent{
 		{
 		//format on multiple days
 	
-		$str= ' ' ._('From').' ' . $this->get_start_date() .' ' .	_('at') .' ' . 	$this->get_start_time() . ' ' ._('to'). ' ' .$this->get_end_date() .' ' . _('at') .' ' . $this->get_end_time();	
+		$str= ' ' .__('From').' ' . $this->get_start_date() .' ' .	_('at') .' ' . 	$this->get_start_time() . ' ' ._('to'). ' ' .$this->get_end_date() .' ' . _('at') .' ' . $this->get_end_time();	
 			
 		}
 		return $str;

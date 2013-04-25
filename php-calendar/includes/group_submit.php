@@ -29,12 +29,12 @@ function group_submit()
 		if(!isset($vars['cid'])) {
 			$cid = null;
 			if(!is_admin())
-				permission_error(_('You do not have permission to add a global group.'));
+				permission_error(__('You do not have permission to add a global group.'));
 		} else { 
 			$cid = $vars['cid'];
 			$calendar = $phpcdb->get_calendar($cid);
 			if(!$calendar->can_admin())
-				permission_error(_('You do not have permission to add a group to this calendar.'));
+				permission_error(__('You do not have permission to add a group to this calendar.'));
 		}
 		$gid = $phpcdb->create_group($cid, $vars["name"]);
 	} else {
@@ -46,7 +46,7 @@ function group_submit()
 		if(!(empty($group['cid']) && is_admin() ||
 					$phpcdb->get_calendar($group["cid"])
 					->can_admin()))
-			soft_error(_("You do not have permission to modify this group."));
+			soft_error(__("You do not have permission to modify this group."));
 			
 		$phpcdb->modify_group($gid, $vars['name']);
 	}
@@ -54,14 +54,14 @@ function group_submit()
 	$page = "$phpc_script?action=cadmin";
 
 	if($modify)
-		return message_redirect(_("Modified group: ") . $gid,
+		return message_redirect(__("Modified group: ") . $gid,
 				$page);
 
 	if($gid > 0)
-		return message_redirect(_("Created group: ") . $gid,
+		return message_redirect(__("Created group: ") . $gid,
 				$page);
 
 	return tag('div', attributes('class="phpc-error"'),
-			_('Error submitting group.'));
+			__('Error submitting group.'));
 }
 ?>

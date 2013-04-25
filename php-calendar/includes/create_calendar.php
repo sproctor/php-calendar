@@ -24,7 +24,7 @@ function create_calendar()
 	global $vars, $phpcdb, $phpc_script;
 
         if(!is_admin()) {
-                return tag('div', _('Permission denied'));
+                return tag('div', __('Permission denied'));
         }
 
 	verify_token();
@@ -44,14 +44,14 @@ function create_calendar()
 			if(isset($vars[$name])) {
 				$value = $vars[$name];
 			} else {
-				soft_error(_("$name was not set."));
+				soft_error(__("$name was not set."));
 			}
 		}
 
 		$phpcdb->create_config($cid, $name, $value);
 	}
 
-        return message_redirect(_('Calendar created.'),
+        return message_redirect(__('Calendar created.'),
 			"$phpc_script?action=admin");
 }
 

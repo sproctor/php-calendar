@@ -24,8 +24,8 @@ require_once("$phpc_includes_path/form.php");
 function category_form() {
 	global $phpc_script, $vars, $phpcdb, $phpcid;
 
-        $form = new Form($phpc_script, _('Category Form'));
-        $form->add_part(new FormFreeQuestion('name', _('Name'),
+        $form = new Form($phpc_script, __('Category Form'));
+        $form->add_part(new FormFreeQuestion('name', __('Name'),
 				false, 32, true));
 
 	if(isset($vars['cid'])) {
@@ -39,8 +39,8 @@ function category_form() {
 	$form->add_part(new FormColorPicker('text-color','Text Color'));
 	$form->add_part(new FormColorPicker('bg-color','Background Color'));
 	$group_question = new FormDropDownQuestion('gid',
-			_('Visible to groups'));
-	$group_question->add_option('', _('None'));
+			__('Visible to groups'));
+	$group_question->add_option('', __('None'));
 	foreach($phpcdb->get_groups($cid) as $group) {
 		$group_question->add_option($group['gid'], $group['name']);
 	}

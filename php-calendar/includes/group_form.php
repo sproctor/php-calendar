@@ -24,8 +24,8 @@ require_once("$phpc_includes_path/form.php");
 function group_form() {
 	global $phpc_script, $vars, $phpcdb, $phpcid;
 
-        $form = new Form($phpc_script, _('Group Form'));
-        $form->add_part(new FormFreeQuestion('name', _('Name'),
+        $form = new Form($phpc_script, __('Group Form'));
+        $form->add_part(new FormFreeQuestion('name', __('Name'),
 				false, 32, true));
 
 	$form->add_hidden('cid', $phpcid);

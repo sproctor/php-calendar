@@ -24,7 +24,7 @@ function user_create()
 	global $phpcid, $vars, $phpcdb, $phpc_script;
 
         if(!is_admin()) {
-                return tag('div', _('Permission denied'));
+                return tag('div', __('Permission denied'));
         }
 
 	verify_token();
@@ -32,18 +32,18 @@ function user_create()
 	$form_page = "$phpc_script?action=admin";
 
         if(empty($vars['user_name'])) {
-                return message_redirect(_('You must specify a user name'),
+                return message_redirect(__('You must specify a user name'),
 				$form_page);
         }
 
         if(empty($vars['password1'])) {
-                return message_redirect(_('You must specify a password'),
+                return message_redirect(__('You must specify a password'),
 				$form_page);
         }
 
         if(empty($vars['password2'])
                 || $vars['password1'] != $vars['password2']) {
-                return message_redirect(_('Your passwords did not match'),
+                return message_redirect(__('Your passwords did not match'),
 				$form_page);
         }
 
@@ -52,11 +52,11 @@ function user_create()
         $passwd = md5($vars['password1']);
 		
 	if($phpcdb->get_user_by_name($vars["user_name"]))
-		return message_redirect(_('User already exists.'), $form_page);
+		return message_redirect(__('User already exists.'), $form_page);
 	
 	$phpcdb->create_user($vars["user_name"], $passwd, $make_admin);
 
-        return message_redirect(_('Added user. Now set its permission inside the Calendar Admin'), $form_page);
+        return message_redirect(__('Added user. Now set its permission inside the Calendar Admin'), $form_page);
 }
 
 ?>

@@ -42,9 +42,9 @@ function display_day()
 			tag('caption', "$day $monthname $year"),
 			tag('thead',
 				tag('tr',
-					tag('th', _('Title')),
-					tag('th', _('Time')),
-					tag('th', _('Description'))
+					tag('th', __('Title')),
+					tag('th', __('Time')),
+					tag('th', __('Description'))
 				   )));
 	if($phpc_cal->can_modify()) {
 		$html_table->add(tag('tfoot',
@@ -55,7 +55,7 @@ function display_day()
 							create_hidden('day', $day),
 							create_hidden('month', $month),
 							create_hidden('year', $year),
-							create_submit(_('Delete Selected'))))));
+							create_submit(__('Delete Selected'))))));
 	}
 
 	$html_body = tag('tbody');
@@ -90,7 +90,7 @@ function display_day()
 		if($event->can_modify()) {
 			$html_subject->add(" (");
 			$html_subject->add(create_event_link(
-						_('Modify'), 'event_form',
+						__('Modify'), 'event_form',
 						$eid));
 			$html_subject->add(')');
 		}
@@ -112,7 +112,7 @@ function display_day()
 	}
 
 	if(!$have_events)
-		$output = tag('h2', _('No events on this day.'));
+		$output = tag('h2', __('No events on this day.'));
 
 	return tag('', create_day_menu(), $output);
 }

@@ -20,43 +20,43 @@ if ( !defined('IN_PHPC') ) {
 }
 
 $month_names = array(
-                1 => _('January'),
-                _('February'),
-                _('March'),
-                _('April'),
-                _('May'),
-                _('June'),
-                _('July'),
-                _('August'),
-                _('September'),
-                _('October'),
-                _('November'),
-                _('December'),
+                1 => __('January'),
+                __('February'),
+                __('March'),
+                __('April'),
+                __('May'),
+                __('June'),
+                __('July'),
+                __('August'),
+                __('September'),
+                __('October'),
+                __('November'),
+                __('December'),
                 );
 
 $day_names = array(
-                _('Sunday'),
-		_('Monday'),
-		_('Tuesday'),
-		_('Wednesday'),
-		_('Thursday'),
-		_('Friday'),
-		_('Saturday'),
+                __('Sunday'),
+		__('Monday'),
+		__('Tuesday'),
+		__('Wednesday'),
+		__('Thursday'),
+		__('Friday'),
+		__('Saturday'),
                 );
 
 $short_month_names = array(
-		1 => _('Jan'),
-		_('Feb'),
-		_('Mar'),
-		_('Apr'),
-		_('May'),
-		_('Jun'),
-		_('Jul'),
-		_('Aug'),
-		_('Sep'),
-		_('Oct'),
-		_('Nov'),
-		_('Dec'),
+		1 => __('Jan'),
+		__('Feb'),
+		__('Mar'),
+		__('Apr'),
+		__('May'),
+		__('Jun'),
+		__('Jul'),
+		__('Aug'),
+		__('Sep'),
+		__('Oct'),
+		__('Nov'),
+		__('Dec'),
                 );
 
 // config stuff
@@ -66,13 +66,13 @@ define('PHPC_DROPDOWN', 3);
 define('PHPC_MULTI_DROPDOWN', 4);
 
 $sort_options = array(
-                'start_date' => _('Start Date'),
-                'subject' => _('Subject')
+                'start_date' => __('Start Date'),
+                'subject' => __('Subject')
                 );
 
 $order_options = array(
-                'ASC' => _('Ascending'),
-                'DESC' => _('Descending')
+                'ASC' => __('Ascending'),
+                'DESC' => __('Descending')
                 );
 
 ?>

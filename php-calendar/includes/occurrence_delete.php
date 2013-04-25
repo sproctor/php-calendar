@@ -26,7 +26,7 @@ function occurrence_delete()
 	$html = tag('div', attributes('class="phpc-container"'));
 
 	if(empty($vars["oid"])) {
-		$message = _('No occurrence selected.');
+		$message = __('No occurrence selected.');
 		$html->add(tag('p', $message));
 		return $html;
 	}
@@ -42,15 +42,15 @@ function occurrence_delete()
 		foreach ($oids as $oid) {
 			$occur = $phpcdb->get_occurrence_by_oid($oid);
 			$list->add(tag('li', "$oid: \"" . $occur->get_subject()
-						. "\" " . _("at") . " " .
+						. "\" " . __("at") . " " .
 						$occur->get_date_string()));
 		}
-		$html->add(tag('p', _('Confirm you want to delete:')));
+		$html->add(tag('p', __('Confirm you want to delete:')));
 		$html->add($list);
-		$html->add(" [ ", create_action_link(_('Confirm'),
+		$html->add(" [ ", create_action_link(__('Confirm'),
 					"occurrence_delete", array("oid" => $oids,
 						"confirm" => "1")), " ] ");
-		$html->add(" [ ", create_action_link(_('Deny'),
+		$html->add(" [ ", create_action_link(__('Deny'),
 					"display_month"), " ] ");
 		return $html;
 	}
@@ -76,27 +76,27 @@ function occurrence_delete()
 
 	if(sizeof($removed_occurs) > 0) {
 		if(sizeof($removed_occurs) == 1)
-			$text = _("Removed occurrence");
+			$text = __("Removed occurrence");
 		else
-			$text = _("Removed occurrences");
+			$text = __("Removed occurrences");
 		$text .= ': ' . implode(', ', $removed_occurs);
 		$html->add(tag('p', $text));
 	}
 
 	if(sizeof($unremoved_occurs) > 0) {
 		if(sizeof($unremoved_occurs) == 1)
-			$text = _("Could not remove occurrence");
+			$text = __("Could not remove occurrence");
 		else
-			$text = _("Could not remove occurrences");
+			$text = __("Could not remove occurrences");
 		$text .= ': ' . implode(', ', $unremoved_occurs);
 		$html->add(tag('p', $text));
 	}
 
 	if(sizeof($permission_denied) > 0) {
 		if(sizeof($permission_denied) == 1)
-			$text = _("You do not have permission to remove the occurrence.");
+			$text = __("You do not have permission to remove the occurrence.");
 		else
-			$text = _("You do not have permission to remove occurrences.");
+			$text = __("You do not have permission to remove occurrences.");
 		$text .= ': ' . implode(', ', $permission_denied);
 		$html->add(tag('p', $text));
 	}

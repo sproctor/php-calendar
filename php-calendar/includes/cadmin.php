@@ -24,7 +24,7 @@ function cadmin()
 	global $phpc_cal;
 
         if(!$phpc_cal->can_admin()) {
-                permission_error(_('You must be logged in as an admin.'));
+                permission_error(__('You must be logged in as an admin.'));
         }
 
 	return array(config_form(), user_list(), category_list(), group_list());
@@ -56,11 +56,11 @@ function config_form()
                                 'method="post"'),
 			$hidden_div,
 			tag('table', attributes("class=\"phpc-container\""),
-				tag('caption', _('Options')),
+				tag('caption', __('Options')),
 				tag('tfoot',
                                         tag('tr',
                                                 tag('td', attributes('colspan="2"'),
-							create_submit(_('Submit'))))),
+							create_submit(__('Submit'))))),
 				$tbody));
 
 }
@@ -78,11 +78,11 @@ function user_list()
 					tag('th', $user['username'],
 						create_hidden('uid[]',
 							$user['uid'])),
-					tag('td', create_checkbox("read{$user['uid']}", "1", !empty($user['read']), _('Read'))),
-					tag('td', create_checkbox("write{$user['uid']}", "1", !empty($user['write']), _('Write'))),
-					tag('td', create_checkbox("readonly{$user['uid']}", "1", !empty($user['readonly']), _('Read-only'))),
-					tag('td', create_checkbox("modify{$user['uid']}", "1", !empty($user['modify']), _('Modify'))),
-					tag('td', create_checkbox("admin{$user['uid']}", "1", !empty($user['calendar_admin']), _('Admin')))
+					tag('td', create_checkbox("read{$user['uid']}", "1", !empty($user['read']), __('Read'))),
+					tag('td', create_checkbox("write{$user['uid']}", "1", !empty($user['write']), __('Write'))),
+					tag('td', create_checkbox("readonly{$user['uid']}", "1", !empty($user['readonly']), __('Read-only'))),
+					tag('td', create_checkbox("modify{$user['uid']}", "1", !empty($user['modify']), __('Modify'))),
+					tag('td', create_checkbox("admin{$user['uid']}", "1", !empty($user['calendar_admin']), __('Admin')))
 				   ));
 	}
 
@@ -95,19 +95,19 @@ function user_list()
                                 'method="post"'),
 			$hidden_div,
 			tag('table', attributes("class=\"phpc-container\""),
-				tag('caption', _('User Permissions')),
+				tag('caption', __('User Permissions')),
 				tag('tfoot',
 					tag('tr',
 						tag('td', attributes('colspan="6"'),
-							create_submit(_('Submit'))))),
+							create_submit(__('Submit'))))),
 				tag('thead',
 					tag('tr',
-						tag('th', _('User Name')),
-						tag('th', _('Read')),
-						tag('th', _('Write')),
-						tag('th', _('Can Create Read-Only')),
-						tag('th', _('Modify')),
-						tag('th', _('Admin')))),
+						tag('th', __('User Name')),
+						tag('th', __('Read')),
+						tag('th', __('Write')),
+						tag('th', __('Can Create Read-Only')),
+						tag('th', __('Modify')),
+						tag('th', __('Admin')))),
 				$tbody));
 }
 
@@ -120,7 +120,7 @@ function category_list()
 	$tbody = tag('tbody');
 
 	foreach ($categories as $category) {
-		$name = empty($category['name']) ? _('No Name')
+		$name = empty($category['name']) ? __('No Name')
 			: $category['name'];
 		$catid = $category['catid'];
 		$tbody->add(tag('tr',
@@ -128,29 +128,29 @@ function category_list()
 					tag('td', htmlspecialchars($category['text_color'])),
 					tag('td', htmlspecialchars($category['bg_color'])),
 					tag('td', htmlspecialchars($category['gid'])),
-					tag('td', create_action_link(_('Edit'),
+					tag('td', create_action_link(__('Edit'),
 							'category_form',
 							array('catid'
 								=> $catid)),
 						" ",
-						create_action_link(_('Delete'),
+						create_action_link(__('Delete'),
 							'category_delete',
 							array('catid'
 								=> $catid)))
 				   ));
 	}
 
-	$create_link = create_action_link(_('Create category'), 'category_form',
+	$create_link = create_action_link(__('Create category'), 'category_form',
 			array('cid' => $phpcid));
 	$table = tag('table', attributes("class=\"phpc-container\""),
-			tag('caption', _('Calendar Categories')),
+			tag('caption', __('Calendar Categories')),
 			tag('thead',
 				tag('tr',
-					tag('th', _('Name')),
-					tag('th', _('Text Color')),
-					tag('th', _('Background Color')),
-					tag('th', _('Visible to User Group')),
-					tag('th', _('Actions'))					
+					tag('th', __('Name')),
+					tag('th', __('Text Color')),
+					tag('th', __('Background Color')),
+					tag('th', __('Visible to User Group')),
+					tag('th', __('Actions'))					
 				   )),
 			$tbody,
 			tag('tfoot',
@@ -169,29 +169,29 @@ function group_list() {
 	$tbody = tag('tbody');
 
 	foreach ($groups as $group) {
-		$name = empty($group['name']) ? _('No Name')
+		$name = empty($group['name']) ? __('No Name')
 			: $group['name'];
 		$id = $group['gid'];
 		$tbody->add(tag('tr',
 					tag('th', $name),
-					tag('td', create_action_link(_('Edit'),
+					tag('td', create_action_link(__('Edit'),
 							'group_form',
 							array('gid' => $id)),
 						" ",
-						create_action_link(_('Delete'),
+						create_action_link(__('Delete'),
 							'group_delete',
 							array('gid' => $id)))
 				   ));
 	}
 
-	$create_link = create_action_link(_('Create group'), 'group_form',
+	$create_link = create_action_link(__('Create group'), 'group_form',
 			array('cid' => $phpcid));
 	$table = tag('table', attributes("class=\"phpc-container\""),
-			tag('caption', _('Calendar Groups')),
+			tag('caption', __('Calendar Groups')),
 			tag('thead',
 				tag('tr',
-					tag('th', _('Name')),
-					tag('th', _('Actions'))
+					tag('th', __('Name')),
+					tag('th', __('Actions'))
 				   )),
 			$tbody,
 			tag('tfoot',

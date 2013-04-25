@@ -42,21 +42,21 @@ function password_form()
 	return tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
 			tag('table', attributes("class=\"phpc-container\""),
-				tag('caption', _('Change Password')),
+				tag('caption', __('Change Password')),
 				tag('tfoot',
 					tag('tr',
 						tag('td', attributes('colspan="2"'),
 							create_hidden('action', 'password_submit'),
-							create_submit(_('Submit'))))),
+							create_submit(__('Submit'))))),
 				tag('tbody',
 					tag('tr',
-						tag('th', _('Old Password')),
+						tag('th', __('Old Password')),
 						tag('td', create_password('old_password'))),
 					tag('tr',
-						tag('th', _('New Password')),
+						tag('th', __('New Password')),
 						tag('td', create_password('password1'))),
 					tag('tr',
-						tag('th', _('Confirm New Password')),
+						tag('th', __('Confirm New Password')),
 						tag('td', create_password('password2')))
 				   )));
 }
@@ -68,7 +68,7 @@ function config_form()
 	$tz_input = create_multi_select('timezone', get_timezone_list(),
 			$phpc_user_tz);
 
-	$languages = array("" => _("Default"));
+	$languages = array("" => __("Default"));
 	foreach(get_languages() as $lang) {
 		$languages[$lang] = $lang;
 	}
@@ -78,19 +78,19 @@ function config_form()
 	return tag('form', attributes("action=\"$phpc_script\"",
 				'method="post"'),
 			tag('table', attributes("class=\"phpc-container\""),
-				tag('caption', _('Settings')),
+				tag('caption', __('Settings')),
 				tag('tfoot',
 					tag('tr',
 						tag('td', attributes('colspan="2"'),
 							create_hidden('action', 'settings'),
 							create_hidden('phpc_submit', 'settings'),
-							create_submit(_('Submit'))))),
+							create_submit(__('Submit'))))),
 				tag('tbody',
 					tag('tr',
-						tag('th', _('Timezone')),
+						tag('th', __('Timezone')),
 						tag('td', $tz_input)),
 					tag('tr',
-						tag('th', _('Language')),
+						tag('th', __('Language')),
 						tag('td', $lang_input))
 				   )));
 }
@@ -123,7 +123,7 @@ function settings_submit()
 		$phpc_user_lang = $vars["language"];
 	}
 
-        return message(_('Settings updated.'));
+        return message(__('Settings updated.'));
 }
 
 ?>

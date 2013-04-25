@@ -26,6 +26,6 @@ function logout()
 	phpc_do_logout();
         redirect($phpc_script);
 
-        return tag('h2', _('Loggin out...'));
+        return tag('h2', __('Loggin out...'));
 }
 ?>

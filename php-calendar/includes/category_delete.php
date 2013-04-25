@@ -26,7 +26,7 @@ function category_delete()
 	$html = tag('div', attributes('class="phpc-container"'));
 
 	if(empty($vars["catid"])) {
-		return message_redirect(_('No category selected.'),
+		return message_redirect(__('No category selected.'),
 				"$phpc_script?action=cadmin");
 	}
 
@@ -46,12 +46,12 @@ function category_delete()
 		foreach ($categories as $category) {
 			$list->add(tag('li', "$id: ".$category['name']));
 		}
-		$html->add(tag('p', _('Confirm you want to delete:')));
+		$html->add(tag('p', __('Confirm you want to delete:')));
 		$html->add($list);
-		$html->add(" [ ", create_action_link(_('Confirm'),
+		$html->add(" [ ", create_action_link(__('Confirm'),
 					"category_delete", array("catid" => $ids,
 						"confirm" => "1")), " ] ");
-		$html->add(" [ ", create_action_link(_('Deny'),
+		$html->add(" [ ", create_action_link(__('Deny'),
 					"display_month"), " ] ");
 		return $html;
 	}
@@ -60,15 +60,15 @@ function category_delete()
 		if((empty($category['cid']) && !is_admin()) ||
 					!$phpcdb->get_calendar($category['cid'])
 					->can_admin()) {
-			$html->add(tag('p', _("You do not have permission to delete category: ") . $category['catid']));
+			$html->add(tag('p', __("You do not have permission to delete category: ") . $category['catid']));
 			continue;
 		}
 
 		if($phpcdb->delete_category($category['catid'])) {
-			$html->add(tag('p', _("Removed category: ")
+			$html->add(tag('p', __("Removed category: ")
 					. $category['catid']));
 		} else {        
-			$html->add(tag('p', _("Could not remove category: ")
+			$html->add(tag('p', __("Could not remove category: ")
 						. $category['catid']));
 		}
 	}

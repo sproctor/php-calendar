@@ -23,7 +23,7 @@ function cadmin_submit() {
 	global $phpcid, $vars, $phpcdb, $phpc_script;
 
         if(!is_admin()) {
-                return tag('div', _('Permission denied'));
+                return tag('div', __('Permission denied'));
         }
 
 	foreach(get_config_options() as $item) {
@@ -36,14 +36,14 @@ function cadmin_submit() {
 			if(isset($vars[$item[0]])) {
 				$value = $vars[$item[0]];
 			} else {
-				soft_error($item[0] . _(" was not set."));
+				soft_error($item[0] . __(" was not set."));
 			}
 		}
 
 		$phpcdb->update_config($phpcid, $item[0], $value);
 	}
 
-        return message_redirect(_('Updated options'),
+        return message_redirect(__('Updated options'),
 			"$phpc_script?action=cadmin");
 }
 

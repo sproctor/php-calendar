@@ -25,7 +25,7 @@ function import_form() {
 	global $vars;
 
 	if(!is_admin()) {
-		permission_error(_('Need to be admin'));
+		permission_error(__('Need to be admin'));
 		exit;
 	}
 
@@ -39,18 +39,18 @@ function import_form() {
 function display_form() {
 	global $phpc_script, $vars;
 
-	$form = new Form($phpc_script, _('Import Form'));
-	$form->add_part(new FormFreeQuestion('host', _('MySQL Host Name')));
-	$form->add_part(new FormFreeQuestion('dbname', _('MySQL Database Name')));
-	$form->add_part(new FormFreeQuestion('port', _('MySQL Port Number'), _('Leave blank for default')));
-	$form->add_part(new FormFreeQuestion('username', _('MySQL User Name')));
-	$form->add_part(new FormFreeQuestion('passwd', _('MySQL User Password')));
-	$form->add_part(new FormFreeQuestion('prefix', _('PHP-Calendar Table Prefix')));
+	$form = new Form($phpc_script, __('Import Form'));
+	$form->add_part(new FormFreeQuestion('host', __('MySQL Host Name')));
+	$form->add_part(new FormFreeQuestion('dbname', __('MySQL Database Name')));
+	$form->add_part(new FormFreeQuestion('port', __('MySQL Port Number'), _('Leave blank for default')));
+	$form->add_part(new FormFreeQuestion('username', __('MySQL User Name')));
+	$form->add_part(new FormFreeQuestion('passwd', __('MySQL User Password')));
+	$form->add_part(new FormFreeQuestion('prefix', __('PHP-Calendar Table Prefix')));
 
 	$form->add_hidden('action', 'import_form');
 	$form->add_hidden('submit_form', 'submit_form');
 
-	$form->add_part(new FormSubmitButton(_("Submit Event")));
+	$form->add_part(new FormSubmitButton(__("Submit Event")));
 
 	$defaults = array(
 			'host' => 'localhost',
@@ -100,7 +100,7 @@ function process_form() {
 		."LEFT JOIN `$users_table` USING (`uid`)\n";
 
 	$sth = $old_dbh->query($query)
-		or $phpcdb->db_error(_('Error selecting events in import'),
+		or $phpcdb->db_error(__('Error selecting events in import'),
 				$query);
 
 	$events = 0;
@@ -181,7 +181,7 @@ function process_form() {
 	}
 
 
-	return message_redirect(sprintf(_("Created %s events with %s occurences"), $events, $occurrences),
+	return message_redirect(sprintf(__("Created %s events with %s occurences"), $events, $occurrences),
 			"$phpc_script?action=import_form");
 }
 

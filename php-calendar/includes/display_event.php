@@ -38,7 +38,7 @@ function display_event()
 		return display_event_by_eid($vars['eid']);
 
 	// If we get here, we did something wrong
-	soft_error(_("Invalid arguments."));
+	soft_error(__("Invalid arguments."));
 }
 
 function display_event_by_oid($oid)
@@ -50,36 +50,36 @@ function display_event_by_oid($oid)
 	$eid = $event->get_eid();
 
 	if(!$event->can_read()) {
-		return tag('p', _("You do not have permission to read this event."));
+		return tag('p', __("You do not have permission to read this event."));
 	}
 
 	$event_header = tag('div', attributes('class="phpc-event-header"'),
-			tag('div',attributes('class="phpc-event-creator"'), _('by').' ',
+			tag('div',attributes('class="phpc-event-creator"'), __('by').' ',
 				tag('cite', $event->get_author())));
 
 	$category = $event->get_category();
 	if(!empty($category))
-		$event_header->add(tag('div',attributes('class="phpc-event-cats"'), _('Category') . ': '
+		$event_header->add(tag('div',attributes('class="phpc-event-cats"'), __('Category') . ': '
 					. $category));
 
 	$event_header->add(tag('div',attributes('class="phpc-event-time"'),
-				_('When').": ".$event->get_datetime_string()));
+				__('When').": ".$event->get_datetime_string()));
 	
-	$event_header->add(tag('div', _('Created at: '), $event->ctime));
+	$event_header->add(tag('div', __('Created at: '), $event->ctime));
 	if(!empty($event->mtime))
-		$event_header->add(tag('div', _('Last modified at: '),
+		$event_header->add(tag('div', __('Last modified at: '),
 				$event->mtime));
 				
 	$menu_tag = tag('div', attrs('class="phpc-bar ui-widget-content"')); 
 	// Add modify/delete links if this user has access to this event.
         if($event->can_modify()) {
-		$menu_tag->add(array(create_event_link(_('Modify'),
+		$menu_tag->add(array(create_event_link(__('Modify'),
 						'event_form', $eid), "\n",
-					create_event_link(_('Delete'),
+					create_event_link(__('Delete'),
 						'event_delete', $eid), "\n",
-					create_occurrence_link(_('Modify Occurrence'),
+					create_occurrence_link(__('Modify Occurrence'),
 						'occur_form', $oid), "\n",
-					create_occurrence_link(_('Remove Occurrence'),
+					create_occurrence_link(__('Remove Occurrence'),
 						'occurrence_delete', $oid),
 					"\n"));
 	}
@@ -98,7 +98,7 @@ function display_event_by_oid($oid)
 	if($prev >= 0) {
 		$prev_occur = $occurrences[$prev];
 		$menu_tag->add(create_occurrence_link(
-					_('Previous occurrence on') . " " .
+					__('Previous occurrence on') . " " .
 					$prev_occur->get_date_string(),
 					'display_event',
 					$prev_occur->get_oid()), ' ');
@@ -108,13 +108,13 @@ function display_event_by_oid($oid)
 	if($next < sizeof($occurrences)) {
 		$next_occur = $occurrences[$next];
 		$menu_tag->add(create_occurrence_link(
-					_('Next occurrence on') . " " .
+					__('Next occurrence on') . " " .
 					$next_occur->get_date_string(),
 					'display_event',
 					$next_occur->get_oid()), ' ');
 	}
 
-	$menu_tag->add(create_event_link(_('View All Occurrences'),
+	$menu_tag->add(create_event_link(__('View All Occurrences'),
 				'display_event', $eid));
 
 	$event_header->add($menu_tag);
@@ -124,7 +124,7 @@ function display_event_by_oid($oid)
 	$day = $event->get_start_day();
 
 	$desc_tag = tag('div', attributes('class="phpc-desc"'),
-			tag('h3', _("Description")),
+			tag('h3', __("Description")),
 			tag('p', $event->get_desc()));
 
 	return tag('div', attributes('class="phpc-main phpc-event"'),
@@ -139,36 +139,36 @@ function display_event_by_eid($eid)
 	$event = new PhpcEvent($phpcdb->get_event_by_eid($eid));
 
 	if(!$event->can_read()) {
-		return tag('p', _("You do not have permission to read this event."));
+		return tag('p', __("You do not have permission to read this event."));
 	}
 
 	$event_header = tag('div', attributes('class="phpc-event-header"'),
-			tag('div', _('by').' ',
+			tag('div', __('by').' ',
 				tag('cite', $event->get_author())));
 
-	$event_header->add(tag('div', _('Created at: '), $event->ctime));
+	$event_header->add(tag('div', __('Created at: '), $event->ctime));
 	if(!empty($event->mtime))
 		$event_header->add(tag('div', ('Last modified at: '),
 				$event->mtime));
 
 	$category = $event->get_category();
 	if(!empty($category))
-		$event_header->add(tag('div', _('Category') . ': '
+		$event_header->add(tag('div', __('Category') . ': '
 					. $category));
 
 	// Add modify/delete links if this user has access to this event.
         if($event->can_modify()) {
 		$event_header->add(tag('div', attrs('class="phpc-bar ui-widget-content"'),
-					create_event_link(_('Modify'),
+					create_event_link(__('Modify'),
 						'event_form', $eid), "\n",
-					create_event_link(_('Add Occurrence'),
+					create_event_link(__('Add Occurrence'),
 						'occur_form', $eid), "\n",
-					create_event_link(_('Delete'),
+					create_event_link(__('Delete'),
 						'event_delete', $eid)));
 	}
 
 	$desc_tag = tag('div', attributes('class="phpc-desc"'),
-			tag('h3', _("Description")),
+			tag('h3', __("Description")),
 			tag('p', $event->get_desc()));
 
 	$occurrences_tag = tag('ul');
@@ -184,21 +184,21 @@ function display_event_by_eid($eid)
 		$occ_tag = tag('li', attrs('class="ui-widget-content"'),
 				create_occurrence_link(
 					$occurrence->get_date_string()
-					. ' ' . _('at') . ' '
+					. ' ' . __('at') . ' '
 					. $occurrence->get_time_span_string(),
 					'display_event',
 					$oid));
 		if($event->can_modify()) {
 			$occ_tag->add(" ",
-					create_occurrence_link(_('Edit'), 'occur_form', $oid), " ",
-					create_occurrence_link(_('Remove'), 'occurrence_delete', $oid));
+					create_occurrence_link(__('Edit'), 'occur_form', $oid), " ",
+					create_occurrence_link(__('Remove'), 'occurrence_delete', $oid));
 		}
 		$occurrences_tag->add($occ_tag);
 	}
 
 	return tag('div', attributes('class="phpc-main phpc-event"'),
 			tag('h2', $event->get_subject()), $event_header,
-			$desc_tag, tag ('div',attributes('class="phpc-occ"'),tag('h3', _('Occurrences')),
+			$desc_tag, tag ('div',attributes('class="phpc-occ"'),tag('h3', __('Occurrences')),
 			$occurrences_tag));
 }
 
@@ -215,7 +215,7 @@ function display_event_json()
 	if(!$event->can_read())
 		return "";
 
-	$author = _("by") . " " . $event->get_author();
+	$author = __("by") . " " . $event->get_author();
 	$time_str = $event->get_time_span_string();
 	$date_str = $event->get_date_string();
 
@@ -223,9 +223,9 @@ function display_event_json()
 	if(empty($category))
 		$category_text = '';
 	else
-		$category_text = _('Category') . ': ' . $event->get_category();
+		$category_text = __('Category') . ': ' . $event->get_category();
 
-		if ($time_str!="") $time="$date_str " . _("from") . " $time_str";
+		if ($time_str!="") $time="$date_str " . __("from") . " $time_str";
 		else $time="$date_str ";
 		
 	return json_encode(array("title" => $event->get_subject(),

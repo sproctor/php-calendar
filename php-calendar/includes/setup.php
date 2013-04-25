@@ -23,6 +23,7 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+// Displayed in admin
 $phpc_version = "2.0-rc3";
 
 // Run the installer if we have no config file
@@ -74,7 +75,7 @@ if(empty($_SESSION["{$phpc_prefix}uid"])) {
 				phpc_do_login($user, $phpc_login_series);
 			} else {
 				$phpcdb->remove_login_tokens($phpc_uid);
-				soft_error(_("Possible hacking attempt on your account."));
+				soft_error(__("Possible hacking attempt on your account."));
 			}
 		} else {
 			$phpc_uid = 0;
@@ -105,7 +106,7 @@ $phpc_cal = $phpcdb->get_calendar($phpcid);
 if(isset($vars['month']) && is_numeric($vars['month'])) {
 	$month = $vars['month'];
 	if($month < 1 || $month > 12)
-		display_error(_("Month is out of range."));
+		display_error(__("Month is out of range."));
 } else {
 	$month = date('n');
 }
@@ -113,7 +114,7 @@ if(isset($vars['month']) && is_numeric($vars['month'])) {
 if(isset($vars['year']) && is_numeric($vars['year'])) {
 	$time = mktime(0, 0, 0, $month, 1, $vars['year']);
         if(!$time || $time < 0) {
-                display_error(_('Invalid year') . ": {$vars['year']}");
+                display_error(__('Invalid year') . ": {$vars['year']}");
         }
 	$year = date('Y', $time);
 } else {
@@ -163,71 +164,24 @@ $phpc_user_lang = $phpc_user->get_language();
 $phpc_user_tz = $phpc_user->get_timezone();
 
 // setup translation stuff
-if($phpc_translate) {
-	if(!empty($vars['lang'])) {
-		$phpc_lang = $vars['lang'];
-	} elseif(!empty($phpc_user_lang)) {
-		$phpc_lang = $phpc_user_lang;
-	} elseif(!empty($phpc_cal->language)) {
-		$phpc_lang = $phpc_cal->language;
-	} elseif(!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-		$phpc_lang = substr(htmlentities(
-					$_SERVER['HTTP_ACCEPT_LANGUAGE']),
-				0, 2);
-	} else {
-		$phpc_lang = 'en';
-	}
-
-	switch($phpc_lang) {
-		case 'bg':
-			$locale = setlocale(LC_ALL, 'bg_BG.utf8', 'bg.utf8', 'bg');
-			break;
-		case 'ca':
-			$locale = setlocale(LC_ALL, 'ca_ES.utf8', 'ca.utf8', 'ca');
-			break;
-		case 'da':
-			$locale = setlocale(LC_ALL, 'da_DK.utf8', 'da.utf8', 'da');
-			break;
-		case 'de':
-			$locale = setlocale(LC_ALL, 'de_DE.utf8', 'de.utf8', 'de', 'ge');
-			break;
-		case 'en':
-			$locale = setlocale(LC_ALL, 'C');
-			break;
-                case 'es':
-                        $locale = setlocale(LC_ALL, 'es_ES.utf8', 'es.utf8', 'es');
-			break;
-		case 'fr':
-			$locale = setlocale(LC_ALL, 'fr_FR.utf8', 'fr.utf8', 'fr');
-			break;
-                case 'it':
-                        $locale = setlocale(LC_ALL, 'it_IT.utf8', 'it.utf8', 'it');
-			break;
-                case 'ja':
-                        $locale = setlocale(LC_ALL, 'ja_JP.utf8', 'ja.utf8', 'ja', 'jp');
-                        break;
-                case 'nl':
-                        $locale = setlocale(LC_ALL, 'nl_NL.utf8', 'nl.utf8', 'nl');
-                        break;
-		case 'zh':
-			$locale = setlocale(LC_ALL, 'zh_CN.utf8', 'zh.utf8', 'zh');
-			break;
-		default:
-			$phpc_lang = 'en';
-			$locale = 'C';
-	}
-
-	putenv("LANG=$locale");
-	putenv("LC_ALL=$locale");
-	putenv("LANGUAGE=$locale");
-	setlocale(LC_ALL, $locale);
-
-	$domain = "messages";
-	bindtextdomain($domain, $phpc_locale_path);
-	textdomain($domain);
+if(!empty($vars['lang'])) {
+	$phpc_lang = $vars['lang'];
+} elseif(!empty($phpc_user_lang)) {
+	$phpc_lang = $phpc_user_lang;
+} elseif(!empty($phpc_cal->language)) {
+	$phpc_lang = $phpc_cal->language;
+} elseif(!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+	$phpc_lang = substr(htmlentities($_SERVER['HTTP_ACCEPT_LANGUAGE']),
+			0, 2);
 } else {
 	$phpc_lang = 'en';
 }
+
+// Require a 2 letter language
+if(!preg_match('/^\w{2}$/', $phpc_lang, $matches))
+	$phpc_lang = 'en';
+
+$phpc_gettext = new Gettext_PHP($phpc_locale_path, 'messages', $phpc_lang);
 
 // Must be included after translation is setup
 require_once("$phpc_includes_path/globals.php");

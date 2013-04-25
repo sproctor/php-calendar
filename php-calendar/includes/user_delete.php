@@ -26,12 +26,12 @@ function user_delete()
 	$html = tag('div', attributes('class="phpc-container"'));
 
 	if(!is_admin()) {
-		$html->add(tag('p', _('You must be an admin to delete users.')));
+		$html->add(tag('p', __('You must be an admin to delete users.')));
 		return $html;
 	}
 
 	if(empty($vars["uid"])) {
-		$html->add(tag('p', _('No user selected.')));
+		$html->add(tag('p', __('No user selected.')));
 		return $html;
 	}
 
@@ -47,21 +47,21 @@ function user_delete()
 			$user = $phpcdb->get_user($id);
 			$list->add(tag('li', "$id: ".$user->get_username()));
 		}
-		$html->add(tag('p', _('Confirm you want to delete:')));
+		$html->add(tag('p', __('Confirm you want to delete:')));
 		$html->add($list);
-		$html->add(" [ ", create_action_link(_('Confirm'),
+		$html->add(" [ ", create_action_link(__('Confirm'),
 					"user_delete", array("uid" => $ids,
 						"confirm" => "1")), " ] ");
-		$html->add(" [ ", create_action_link(_('Deny'),
+		$html->add(" [ ", create_action_link(__('Deny'),
 					"display_month"), " ] ");
 		return $html;
 	}
 
 	foreach($ids as $id) {
 		if($phpcdb->delete_user($id)) {
-			$html->add(tag('p', _("Removed user: $id")));
+			$html->add(tag('p', __("Removed user: $id")));
 		} else {        
-			$html->add(tag('p', _("Could not remove user: $id")));
+			$html->add(tag('p', __("Could not remove user: $id")));
 		}
 	}
 

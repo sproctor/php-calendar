@@ -23,17 +23,17 @@ function admin() {
 	global $phpc_version;
 
         if(!is_admin()) {
-                permission_error(_('You must be logged in as an admin.'));
+                permission_error(__('You must be logged in as an admin.'));
         }
 
 	$menu = tag('div', attrs('class="phpc-bar ui-widget-content"'),
-			create_action_link(_('Import from PHP-Calendar 1.1'),
+			create_action_link(__('Import from PHP-Calendar 1.1'),
 				'import_form'),
-			create_action_link(_('Generate translations'),
+			create_action_link(__('Generate translations'),
 				'translate'));
 
 	$version = tag('div', attrs('class="phpc-bar ui-widget-content"'),
-			_('Version') . ": $phpc_version");
+			__('Version') . ": $phpc_version");
 
 	return tag('div', $menu, new_user_form(), create_calendar_form(),
 			calendar_list(), user_list(), $version);
@@ -46,27 +46,27 @@ function new_user_form()
 	return tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
 			tag('table', attributes("class=\"phpc-container\""),
-				tag('caption', _('Create User')),
+				tag('caption', __('Create User')),
 				tag('tfoot',
 					tag('tr',
 						tag('td', attributes('colspan="2"'),
 							create_hidden('action', 'user_create'),
-							create_submit(_('Submit'))))),
+							create_submit(__('Submit'))))),
 				tag('tbody',
 					tag('tr',
-						tag('th', _('User Name')),
+						tag('th', __('User Name')),
 						tag('td', create_text('user_name'))),
 					tag('tr',
-						tag('th', _('Password')),
+						tag('th', __('Password')),
 						tag('td', create_password('password1'))),
 					tag('tr',
-						tag('th', _('Confirm Password')),
+						tag('th', __('Confirm Password')),
 						tag('td', create_password('password2'))),
 					tag('tr',
-						tag('th', _('Make Admin')),
-						tag('td', create_checkbox('make_admin', '1', false, _('Admin')))),
+						tag('th', __('Make Admin')),
+						tag('td', create_checkbox('make_admin', '1', false, __('Admin')))),
 					tag('tr',
-						tag('th', _('Group')),
+						tag('th', __('Group')),
 						tag('td', create_text('group')))
 				   )));
 }
@@ -89,12 +89,12 @@ function create_calendar_form()
         return tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
 			tag('table', attributes("class=\"phpc-container\""),
-				tag('caption', _('Create Calendar')),
+				tag('caption', __('Create Calendar')),
 				tag('tfoot',
                                         tag('tr',
                                                 tag('td', attributes('colspan="2"'),
 							create_hidden('action', 'create_calendar'),
-							create_submit(_('Submit'))))),
+							create_submit(__('Submit'))))),
 				$tbody));
 
 }
@@ -105,8 +105,8 @@ function calendar_list()
 
         $tbody = tag('tbody');
 
-		$tbody->add(tag('tr', tag('th', _("Calendar")),
-					tag('th', _("Action"))));
+		$tbody->add(tag('tr', tag('th', __("Calendar")),
+					tag('th', __("Action"))));
         foreach($phpcdb->get_calendars() as $calendar) {
                 $title = $calendar->get_title();
                 $cid = $calendar->get_cid();
@@ -120,7 +120,7 @@ function calendar_list()
         }
 
         return tag('table', attributes("class=\"phpc-container\""),
-			tag('caption', _('Calendar List')), $tbody);
+			tag('caption', __('Calendar List')), $tbody);
 
 }
 
@@ -130,9 +130,9 @@ function user_list()
 
         $tbody = tag('tbody');
 
-		$tbody->add(tag('tr', tag('th', _("Username")),
-					tag('th', _("Group")),
-					tag('th', _("Action"))));
+		$tbody->add(tag('tr', tag('th', __("Username")),
+					tag('th', __("Group")),
+					tag('th', __("Action"))));
         foreach($phpcdb->get_users() as $user) {
 		$tbody->add(tag('tr', tag('th', $user->username),
 					tag('td', $user->groups),
@@ -142,7 +142,7 @@ function user_list()
 	}
 
         return tag('table', attributes("class=\"phpc-container\""),
-			tag('caption', _('User List')), $tbody);
+			tag('caption', __('User List')), $tbody);
 
 }
 

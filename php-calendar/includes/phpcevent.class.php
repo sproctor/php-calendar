@@ -39,9 +39,9 @@ class PhpcEvent {
 		$this->cid = $event['cid'];
 		$this->uid = $event['owner'];
 		if(empty($event['owner']))
-			$this->author = _('anonymous');
+			$this->author = __('anonymous');
 		elseif(empty($event['username']))
-			$this->author = _('unknown');
+			$this->author = __('unknown');
 		else
 			$this->author = $event['username'];
 		$this->subject = $event['subject'];
@@ -67,7 +67,7 @@ class PhpcEvent {
 	function get_subject()
 	{
 		if(empty($this->subject))
-			return _('(No subject)');
+			return __('(No subject)');
 
 		return htmlspecialchars(stripslashes($this->subject),
 				ENT_COMPAT, "UTF-8");

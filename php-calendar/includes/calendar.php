@@ -23,16 +23,15 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-// make sure that we have _ defined
-if(!function_exists('_')) {
-	function _($str) { return $str; }
-	$phpc_translate = false;
-} else {
-	$phpc_translate = true;
-}
-
+require_once("$phpc_includes_path/Gettext_PHP.php");
 require_once("$phpc_includes_path/html.php");
 require_once("$phpc_includes_path/util.php");
+
+function __($msg) {
+	global $phpc_gettext;
+
+	return $phpc_gettext->gettext($msg);
+}
 
 // checks global variables to see if the user is logged in.
 function is_user() {
@@ -110,8 +109,8 @@ function footer()
 	global $phpc_url, $phpc_tz, $phpc_lang;
 
 	$tag = tag('div', attributes('class="phpc-bar ui-widget-content"'),
-			"[" . _('Language') . ": $phpc_lang]" .
-			" [" . _('Timezone') . ": $phpc_tz]");
+			"[" . __('Language') . ": $phpc_lang]" .
+			" [" . __('Timezone') . ": $phpc_tz]");
 
 	if(defined('PHPC_DEBUG')) {
 		$tag->add(tag('a', attributes('href="http://validator.w3.org/check?url='
@@ -423,14 +422,14 @@ function userMenu()
 	$html=tag('span',attributes('style="font-weight: bold; margin-left:1em;"'));
 	
 	if($action != 'settings')
-		menu_item_append($html, _('Settings'), 'settings');
+		menu_item_append($html, __('Settings'), 'settings');
 		
 	if(is_user()) {
-		menu_item_append($html, _('Log out'), 'logout',
+		menu_item_append($html, __('Log out'), 'logout',
 				array('lasturl' =>
 					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
 	} else {
-		menu_item_append($html, _('Log in'), 'login',
+		menu_item_append($html, __('Log in'), 'login',
 				array('lasturl' =>
 					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
 	}
@@ -448,28 +447,28 @@ function navbar()
 	$args = array('year' => $year, 'month' => $month, 'day' => $day);
 
 	if($phpc_cal->can_write() && $action != 'add') { 
-		menu_item_append($html, _('Add Event'), 'event_form', $args);
+		menu_item_append($html, __('Add Event'), 'event_form', $args);
 	}
 
 	if($action != 'search') {
-		menu_item_append($html, _('Search'), 'search', $args);
+		menu_item_append($html, __('Search'), 'search', $args);
 	}
 
 	if($action != 'display_month') {
-		menu_item_append($html, _('View Month'), 'display_month',
+		menu_item_append($html, __('View Month'), 'display_month',
 			$args);
 	}
 
 	if($action == 'display_event') {
-		menu_item_append($html, _('View date'), 'display_day', $args);
+		menu_item_append($html, __('View date'), 'display_day', $args);
 	}
 
 	if($phpc_cal->can_admin() && $action != 'cadmin') {
-		menu_item_append($html, _('Calendar Admin'), 'cadmin');
+		menu_item_append($html, __('Calendar Admin'), 'cadmin');
 	}
 
 	if(is_admin() && $action != 'admin') {
-		menu_item_append($html, _('Admin'), 'admin');
+		menu_item_append($html, __('Admin'), 'admin');
 	}
 
 	return $html;
@@ -500,36 +499,36 @@ function get_config_options()
 }
 
 function init_config_options() {
-	$languages = array("" => _("Default"));
+	$languages = array("" => __("Default"));
 	foreach(get_languages() as $language) {
 		$languages[$language] = $language;
 	}
 	// name, text, type, value(s)
 	return array( 
-			array('week_start', _('Week Start'), PHPC_DROPDOWN,
+			array('week_start', __('Week Start'), PHPC_DROPDOWN,
 				array(
-					0 => _('Sunday'),
-					1 => _('Monday'),
-					6 => _('Saturday')
+					0 => __('Sunday'),
+					1 => __('Monday'),
+					6 => __('Saturday')
 				     )),
-			array('hours_24', _('24 Hour Time'), PHPC_CHECK),
-			array('title', _('Calendar Title'), PHPC_TEXT),
-			array('subject_max', _('Maximum Subject Length'), PHPC_TEXT),
-			array('events_max', _('Events Display Daily Maximum'), PHPC_TEXT),
-			array('anon_permission', _('Public Permissions'), PHPC_DROPDOWN,
+			array('hours_24', __('24 Hour Time'), PHPC_CHECK),
+			array('title', __('Calendar Title'), PHPC_TEXT),
+			array('subject_max', __('Maximum Subject Length'), PHPC_TEXT),
+			array('events_max', __('Events Display Daily Maximum'), PHPC_TEXT),
+			array('anon_permission', __('Public Permissions'), PHPC_DROPDOWN,
 				array(
-					_('Cannot read nor write events'),
-					_('Can read but not write events'),
-					_('Can create but not modify events'),
-					_('Can create and modify events')
+					__('Cannot read nor write events'),
+					__('Can read but not write events'),
+					__('Can create but not modify events'),
+					__('Can create and modify events')
 				     )
 			     ),
-			array('timezone', _('Default Timezone'), PHPC_MULTI_DROPDOWN, get_timezone_list()),
-			array('language', _('Default Language'), PHPC_DROPDOWN,
+			array('timezone', __('Default Timezone'), PHPC_MULTI_DROPDOWN, get_timezone_list()),
+			array('language', __('Default Language'), PHPC_DROPDOWN,
 				$languages),
-			array('date_format', _('Date Format'), PHPC_DROPDOWN,
+			array('date_format', __('Date Format'), PHPC_DROPDOWN,
 					get_date_format_list()),
-			array('theme', _('Theme'), PHPC_DROPDOWN,
+			array('theme', __('Theme'), PHPC_DROPDOWN,
 					get_theme_list()),
 	);
 }
@@ -561,7 +560,7 @@ function get_theme_list() {
 			'ui-lightness',
 			'vader');
 
-	$theme_list = array(NULL => _('Default'));
+	$theme_list = array(NULL => __('Default'));
 	foreach($themes as $theme) {
 		$theme_list[$theme] = $theme;
 	}
@@ -570,7 +569,7 @@ function get_theme_list() {
 
 function get_timezone_list() {
 	$timezones = array();
-	$timezones[_("Default")] = "";
+	$timezones[__("Default")] = "";
 	foreach(timezone_identifiers_list() as $timezone) {
 		$sp = explode("/", $timezone, 2);
 		$continent = $sp[0];
@@ -588,9 +587,9 @@ function get_timezone_list() {
 
 function get_date_format_list()
 {
-	return array(	_("Month Day Year"),
-			_("Year Month Day"),
-			_("Day Month Year"));
+	return array(	__("Month Day Year"),
+			__("Year Month Day"),
+			__("Day Month Year"));
 }
 
 function get_calendar_list() {
@@ -646,7 +645,7 @@ function display_phpc() {
 		// TODO: make navbar show if there is an error in do_action()
 		if($navbar !== false)
 			$results->add($navbar);
-		$msg = _('You do not have permission to do that: ')
+		$msg = __('You do not have permission to do that: ')
 					. $e->getMessage();
 		$results->add(tag('div', attrs('class="phpc-message ui-state-error"'), $msg));
 		if(is_user())
@@ -659,9 +658,9 @@ function display_phpc() {
 		if($navbar !== false)
 			$results->add($navbar);
 		$results->add(tag('div', attrs('class="phpc-main"'),
-					tag('h2', _('Error')),
+					tag('h2', __('Error')),
 					tag('p', $e->getMessage()),
-					tag('h3', _('Backtrace')),
+					tag('h3', __('Backtrace')),
 					tag('pre', htmlentities($e->getTraceAsString()))));
 		return $results;
 	}
@@ -673,7 +672,7 @@ function do_action()
 	global $action, $phpc_includes_path, $vars;
 
 	if(!preg_match('/^\w+$/', $action))
-		soft_error(_('Invalid action'));
+		soft_error(__('Invalid action'));
 
 	require_once("$phpc_includes_path/$action.php");
 
@@ -721,7 +720,7 @@ function verify_token() {
 	if(empty($_SESSION["{$phpc_prefix}login"])
 			|| empty($_COOKIE["{$phpc_prefix}login"])
 			|| $_COOKIE["{$phpc_prefix}login"] != $_SESSION["{$phpc_prefix}login"])
-		soft_error(_("Secret token mismatch. Possible request forgery attempt."));
+		soft_error(__("Secret token mismatch. Possible request forgery attempt."));
 }
 
 function get_header_tags($path)
@@ -794,7 +793,7 @@ function create_config_input($element, $default = false)
 			$input = create_multi_select($name, $choices, $default);
 			break;
 		default:
-			soft_error(_('Unsupported config type') . ": $type");
+			soft_error(__('Unsupported config type') . ": $type");
 	}
 	return $input;
 }

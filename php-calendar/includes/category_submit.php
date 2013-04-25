@@ -30,7 +30,7 @@ function category_submit()
 		if(!empty($vars["catid"]))
 			$page .= "&catid={$vars["catid"]}";
 
-		return message_redirect(_("Color not specified."), $page);
+		return message_redirect(__("Color not specified."), $page);
 	}
 
 	// The current widget produces hex values without the "#".
@@ -40,7 +40,7 @@ function category_submit()
 	$bg_color = '#'.$vars["bg-color"];
 
 	if(!check_color($text_color) || !check_color($bg_color))
-		soft_error(_("Invalid color."));
+		soft_error(__("Invalid color."));
 
 	if(!isset($vars['catid'])) {
 		$modify = false;
@@ -48,12 +48,12 @@ function category_submit()
 		if(!isset($vars['cid'])) {
 			$cid = null;
 			if(!is_admin())
-				permission_error(_('You do not have permission to add categories to all calendars.'));
+				permission_error(__('You do not have permission to add categories to all calendars.'));
 		} else { 
 			$cid = $vars['cid'];
 			$calendar = $phpcdb->get_calendar($cid);
 			if(!$calendar->can_admin())
-				permission_error(_('You do not have permission to add categories to this calendar.'));
+				permission_error(__('You do not have permission to add categories to this calendar.'));
 		}
 		$catid = $phpcdb->create_category($cid, $vars["name"],
 				$text_color, $bg_color, $vars['gid']);
@@ -66,7 +66,7 @@ function category_submit()
 		if(!(empty($category['cid']) && is_admin() ||
 					$phpcdb->get_calendar($category["cid"])
 					->can_admin()))
-			soft_error(_("You do not have permission to modify this category."));
+			soft_error(__("You do not have permission to modify this category."));
 			
 		$phpcdb->modify_category($catid, $vars['name'],
 				$text_color, $bg_color, $vars['gid']);
@@ -75,15 +75,15 @@ function category_submit()
 	$page = "$phpc_script?action=cadmin";
 
 	if($modify)
-		return message_redirect(_("Modified category: ") . $catid,
+		return message_redirect(__("Modified category: ") . $catid,
 				$page);
 
 	if($catid > 0)
-		return message_redirect(_("Created category: ") . $catid,
+		return message_redirect(__("Created category: ") . $catid,
 				$page);
 
 	return tag('div', attributes('class="phpc-error"'),
-			_('Error submitting category.'));
+			__('Error submitting category.'));
 }
 
 function check_color($color) {
