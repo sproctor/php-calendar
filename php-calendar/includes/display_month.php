@@ -29,7 +29,7 @@ function display_month()
 	global $month, $year;
 
 	$heading_html = tag('tr');
-	$heading_html->add(tag('th', _('W')));
+	$heading_html->add(tag('th', substr(_('Week'), 0, 1)));
 	for($i = 0; $i < 7; $i++) {
 		$d = ($i + day_of_week_start()) % 7;
 		$heading_html->add(tag('th', day_name($d)));
