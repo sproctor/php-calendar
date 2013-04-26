@@ -1,517 +1,1327 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# MKwiakaku <transifex@mudkips.nl>, 2013
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: php-calendar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-14 16:20-0400\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2013-04-04 17:45-0700\n"
+"PO-Revision-Date: 2013-04-24 18:55+0000\n"
+"Last-Translator: MKwiakaku <transifex@mudkips.nl>\n"
+"Language-Team: Dutch (http://www.transifex.com/projects/p/php-calendar/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: index.php:50
-msgid "Invalid action"
-msgstr "ongeldige actie"
-
-#: install.php:180
-msgid "error creating db"
-msgstr "databse fout: Creation error"
-
-#: install.php:190 install.php:193
-msgid "Could not grant:"
-msgstr "kon dit niet toestaan"
-
-#: install.php:237
-msgid "Error initializing default db stuff"
-msgstr "fout bij het initialiseren van de databank"
-
-#: includes/calendar.php:46
-msgid "January"
-msgstr "januari"
-
-#: includes/calendar.php:47
-msgid "February"
-msgstr "februari"
-
-#: includes/calendar.php:48
-msgid "March"
-msgstr "maart"
-
-#: includes/calendar.php:49
-msgid "April"
-msgstr "april"
-
-#: includes/calendar.php:50 includes/calendar.php:90
-msgid "May"
-msgstr "mei"
-
-#: includes/calendar.php:51
-msgid "June"
-msgstr "juni"
-
-#: includes/calendar.php:52
-msgid "July"
-msgstr "juli"
-
-#: includes/calendar.php:53
-msgid "August"
-msgstr "augustus"
-
-#: includes/calendar.php:54
-msgid "September"
-msgstr "september"
-
-#: includes/calendar.php:55
-msgid "October"
-msgstr "oktober"
-
-#: includes/calendar.php:56
-msgid "November"
-msgstr "november"
-
-#: includes/calendar.php:57
-msgid "December"
-msgstr "december"
-
-#: includes/calendar.php:72
-msgid "Sunday"
-msgstr "zondag"
-
-#: includes/calendar.php:73
-msgid "Monday"
-msgstr "maandag"
-
-#: includes/calendar.php:74
-msgid "Tuesday"
-msgstr "dinsdag"
-
-#: includes/calendar.php:75
-msgid "Wednesday"
-msgstr "woensdag"
-
-#: includes/calendar.php:76
-msgid "Thursday"
-msgstr "donderdag"
-
-#: includes/calendar.php:77
-msgid "Friday"
-msgstr "vrijdag"
-
-#: includes/calendar.php:78
-msgid "Saturday"
-msgstr "zaterdag"
-
-#: includes/calendar.php:86
-msgid "Jan"
-msgstr "jan"
-
-#: includes/calendar.php:87
-msgid "Feb"
-msgstr "feb"
-
-#: includes/calendar.php:88
-msgid "Mar"
-msgstr "mrt"
-
-#: includes/calendar.php:89
-msgid "Apr"
-msgstr "apr"
-
-#: includes/calendar.php:91
-msgid "Jun"
-msgstr "jun"
-
-#: includes/calendar.php:92
-msgid "Jul"
-msgstr "jul"
-
-#: includes/calendar.php:93
-msgid "Aug"
-msgstr "aug"
-
-#: includes/calendar.php:94
-msgid "Sep"
-msgstr "sep"
-
-#: includes/calendar.php:95
-msgid "Oct"
-msgstr "okt"
-
-#: includes/calendar.php:96
-msgid "Nov"
-msgstr "nov"
-
-#: includes/calendar.php:97
-msgid "Dec"
-msgstr "dec"
-
-#: includes/calendar.php:155 includes/display.php:151
-msgid "FULL DAY"
-msgstr "gehele dag"
-
-#: includes/calendar.php:165
-msgid "Normal"
-msgstr "normaal termijn"
-
-#: includes/calendar.php:167
-msgid "Full Day"
-msgstr "gehele dag"
-
-#: includes/calendar.php:169
-msgid "Unknown Time"
-msgstr "onbekend tijdstip"
-
-#: includes/calendar.php:174
-msgid "Weekly"
-msgstr "wekelijks"
-
-#: includes/calendar.php:176
-msgid "Monthly"
-msgstr "maandelijk"
-
-#: includes/calendar.php:277
-msgid "Error in get_events_by_date"
-msgstr "fout in get_events_by_date"
-
-#: includes/calendar.php:304
-msgid "Error in get_event_by_id"
-msgstr "fout in get_event_by_id"
-
-#: includes/calendar.php:433
-msgid "Add Event"
-msgstr "soort termijn"
-
-#: includes/calendar.php:438 includes/search.php:98
-msgid "Search"
-msgstr "zoeken"
-
-#: includes/calendar.php:443
-msgid "Back to Calendar"
-msgstr "terug naar de kalender"
-
-#: includes/calendar.php:448
-msgid "View date"
-msgstr "datum laten zien"
-
-#: includes/calendar.php:453
-msgid "Log out"
-msgstr "doei zeggen"
-
-#: includes/calendar.php:456 includes/login.php:66
-msgid "Log in"
-msgstr "inloggen"
-
-#: includes/calendar.php:461 includes/options.php:72
-msgid "Options"
-msgstr "opties"
-
-#: includes/calendar.php:545
-msgid "Event"
-msgstr "soort termijn"
-
-#: includes/calendar.php:553
-msgid "Cannot add events"
-msgstr "kan geen termijnen toevoegen"
-
-#: includes/calendar.php:554
-msgid "Can add but not modify events"
-msgstr "kan termijnen toevoegen maar niet wijzigen"
-
-#: includes/calendar.php:555
-msgid "Can add and modify events"
-msgstr "kan termijnen toevoegen en editeren"
-
-#: includes/db.php:32
-msgid "Could not connect to the database"
-msgstr "kon geen verbinding krijgen naar de databank"
-
-#: includes/display.php:36
-msgid "last year"
-msgstr "vorig jaar"
-
-#: includes/display.php:37
-msgid "last month"
-msgstr "vorige maand"
-
-#: includes/display.php:43
-msgid "next month"
-msgstr "volgende maand"
-
-#: includes/display.php:44
-msgid "next year"
-msgstr "volgend jaar"
-
-#: includes/display.php:156 includes/event_form.php:163
-msgid "hours"
-msgstr "uren"
-
-#: includes/display.php:160 includes/event_form.php:165
-msgid "minutes"
-msgstr "minuten"
-
-#: includes/display.php:164
-msgid "No duration"
-msgstr "lengte tijd"
-
-#: includes/display.php:189
-msgid "Title"
-msgstr "titel"
-
-#: includes/display.php:190 includes/event_form.php:157
-msgid "Time"
-msgstr "tijd"
-
-#: includes/display.php:191 includes/event_form.php:160
-msgid "Duration"
-msgstr "duur"
-
-#: includes/display.php:192 includes/event_form.php:172 includes/search.php:63
-msgid "Description"
-msgstr "omschrijving"
-
-#: includes/display.php:203
-msgid "Delete Selected"
-msgstr "gekozen termijn wissen"
-
-#: includes/display.php:232 includes/display.php:284
-msgid "Modify"
-msgstr "wijzigen"
-
-#: includes/display.php:254
-msgid "No events on this day."
-msgstr "vandaag geen termijn"
-
-#: includes/display.php:285
-msgid "Delete"
-msgstr "verwijderen"
-
-#: includes/event_delete.php:56
-msgid "Removed item"
-msgstr "verwijderd termijn"
-
-#: includes/event_delete.php:58
-msgid "Could not remove item"
-msgstr "kon niet worden verwijderd: "
-
-#: includes/event_delete.php:63
-msgid "No items selected."
-msgstr "maak een keuze"
-
-#: includes/event_form.php:30
-#, php-format
-msgid "Modifying id #%d"
-msgstr "wijzig id #%d"
-
-#: includes/event_form.php:73
-msgid "Adding event to calendar"
-msgstr "termijn wordt toegevoegd"
-
-#: includes/event_form.php:136
-msgid "Submit Event"
-msgstr "betref"
-
-#: includes/event_form.php:140
-msgid "Date of event"
-msgstr "normaal termijn"
-
-#: includes/event_form.php:146
-msgid "Date multiple day event ends"
-msgstr "datum met meerdere termijnen eidigd hier"
-
-#: includes/event_form.php:152
-msgid "Event type"
-msgstr "soort termijn"
-
-#: includes/event_form.php:167 includes/search.php:61 includes/search.php:130
-msgid "Subject"
-msgstr "betref"
-
-#: includes/event_form.php:167
-msgid "(255 chars max)"
-msgstr " (255)"
-
-#: includes/event_submit.php:54
-msgid "No day was given."
-msgstr "geen dag gegeven"
-
-#: includes/event_submit.php:56
-msgid "No month was given."
-msgstr "geen maand gekozen"
-
-#: includes/event_submit.php:58
-msgid "No year was given"
-msgstr "geen jaar gekozen"
-
-#: includes/event_submit.php:63
-msgid "No hour was given."
-msgstr "Geen uur gegeven"
-
-#: includes/event_submit.php:78
-msgid "No minute was given."
-msgstr "geen minuten gegeven"
-
-#: includes/event_submit.php:83
-msgid "No duration minute was given."
-msgstr "geen duur (minuten) gegeven"
-
-#: includes/event_submit.php:87
-msgid "No duration hour was given."
-msgstr "geen duur (uren) gegeven"
-
-#: includes/event_submit.php:91
-msgid "No type of event was given."
-msgstr "geen soort gegeven"
-
-#: includes/event_submit.php:95
-msgid "No end day was given"
-msgstr "geen slot dag gegeven"
-
-#: includes/event_submit.php:99
-msgid "No end month was given"
-msgstr "geen laatste maand gegeven"
-
-#: includes/event_submit.php:103
-msgid "No end year was given"
-msgstr "geen laatste jaar gegeven"
-
-#: includes/event_submit.php:106
-msgid "Your subject was too long"
-msgstr "geen betreff gegeven"
-
-#: includes/event_submit.php:151
-msgid "Error processing event"
-msgstr "fout bij het verwerken"
-
-#: includes/event_submit.php:155
-msgid "No changes made"
-msgstr "niets gewijzigd"
-
-#: includes/event_submit.php:158
-msgid "Date updated"
-msgstr "datum aangepast"
-
-#: includes/login.php:49
-msgid "Loggin in..."
-msgstr "aanmelden ..."
-
-#: includes/login.php:52
-msgid "Sorry, Invalid Login"
-msgstr "sorry, foutieve aanmelding"
-
-#: includes/login.php:72 includes/options.php:77 includes/search.php:102
+"Language: nl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: includes/admin.php:25 includes/cadmin.php:27
+msgid "You must be logged in as an admin."
+msgstr "Je dient ingelogd te zijn als administrator."
+
+#: includes/admin.php:39
+msgid "Create User"
+msgstr "Maak gebruiker aan"
+
+#: includes/admin.php:44 includes/admin.php:87 includes/cadmin.php:63
+#: includes/cadmin.php:102 includes/search.php:104 includes/settings.php:50
+#: includes/settings.php:87
 msgid "Submit"
-msgstr "betref"
+msgstr "Verstuur"
 
-#: includes/login.php:75
+#: includes/admin.php:47 includes/cadmin.php:105
+msgid "User Name"
+msgstr "Gebruikersnaam"
+
+#: includes/admin.php:50 includes/login.php:80
+msgid "Password"
+msgstr "Wachtwoord"
+
+#: includes/admin.php:53
+msgid "Confirm Password"
+msgstr "Bevestig wachtwoord"
+
+#: includes/admin.php:56
+msgid "Make Admin"
+msgstr "Maak administator"
+
+#: includes/admin.php:57 includes/cadmin.php:85 includes/cadmin.php:110
+#: includes/calendar.php:458
+msgid "Admin"
+msgstr "Administrator"
+
+#: includes/admin.php:59 includes/admin.php:124
+msgid "Group"
+msgstr "Groep"
+
+#: includes/admin.php:82
+msgid "Create Calendar"
+msgstr "Maak kalender"
+
+#: includes/admin.php:98
+msgid "Calendar"
+msgstr "Kalender"
+
+#: includes/admin.php:99 includes/admin.php:125
+msgid "Action"
+msgstr "Actie"
+
+#: includes/admin.php:113
+msgid "Calendar List"
+msgstr "Kalenderlijst"
+
+#: includes/admin.php:123 includes/login.php:77
 msgid "Username"
 msgstr "naam gebruiker"
 
-#: includes/login.php:78
-msgid "Password"
-msgstr ""
+#: includes/admin.php:135
+msgid "User List"
+msgstr "Gebruikerslijst"
 
-#: includes/options.php:57
-msgid "Updated options"
-msgstr "update opties"
+#: includes/cadmin.php:59
+msgid "Options"
+msgstr "opties"
 
-#: includes/options.php:59
+#: includes/cadmin.php:81 includes/cadmin.php:106
+msgid "Read"
+msgstr "Lezen"
+
+#: includes/cadmin.php:82 includes/cadmin.php:107
+msgid "Write"
+msgstr "Schrijven"
+
+#: includes/cadmin.php:83 includes/event_form.php:104
+msgid "Read-only"
+msgstr "Allen lezen"
+
+#: includes/cadmin.php:84 includes/cadmin.php:109 includes/display_day.php:90
+#: includes/display_event.php:75 includes/display_event.php:155
+msgid "Modify"
+msgstr "wijzigen"
+
+#: includes/cadmin.php:98
+msgid "User Permissions"
+msgstr "Gebruikersbevoegdheden"
+
+#: includes/cadmin.php:108
+msgid "Can Create Read-Only"
+msgstr "Kan alleen-lezen aanmaken"
+
+#: includes/cadmin.php:123 includes/cadmin.php:172
+msgid "No Name"
+msgstr "Geen naam"
+
+#: includes/cadmin.php:131 includes/cadmin.php:177
+#: includes/display_event.php:186
+msgid "Edit"
+msgstr "Wijzig"
+
+#: includes/cadmin.php:136 includes/cadmin.php:181
+#: includes/display_event.php:77 includes/display_event.php:159
+msgid "Delete"
+msgstr "Verwijder"
+
+#: includes/cadmin.php:143
+msgid "Create category"
+msgstr "Maak categorie"
+
+#: includes/cadmin.php:146
+msgid "Calendar Categories"
+msgstr "Kalendercategoriën"
+
+#: includes/cadmin.php:149 includes/cadmin.php:193
+#: includes/category_form.php:28 includes/group_form.php:28
+msgid "Name"
+msgstr "Naam"
+
+#: includes/cadmin.php:150
+msgid "Text Color"
+msgstr "Tekstkleur"
+
+#: includes/cadmin.php:151
+msgid "Background Color"
+msgstr "Achtergrondkleur"
+
+#: includes/cadmin.php:152
+msgid "Visible to User Group"
+msgstr "Zichtbaar voor gebruikersgroep"
+
+#: includes/cadmin.php:153 includes/cadmin.php:194
+msgid "Actions"
+msgstr "Acties"
+
+#: includes/cadmin.php:187
+msgid "Create group"
+msgstr "Maak groep"
+
+#: includes/cadmin.php:190
+msgid "Calendar Groups"
+msgstr "Kalendergroepen"
+
+#: includes/cadmin_submit.php:26 includes/create_calendar.php:27
+#: includes/user_create.php:27 includes/user_permissions_submit.php:27
 msgid "Permission denied"
 msgstr "geen toestimming gekregen"
 
-#: includes/options.php:80
-msgid "Start Monday"
-msgstr "staart op maandag"
+#: includes/cadmin_submit.php:39
+msgid " was not set."
+msgstr "is niet ingesteld."
 
-#: includes/options.php:84
-msgid "24 hour"
-msgstr "24 uur laten zien"
+#: includes/cadmin_submit.php:46
+msgid "Updated options"
+msgstr "update opties"
 
-#: includes/options.php:88
-msgid "Translate"
-msgstr "vertaal"
+#: includes/calendar.php:109 includes/settings.php:93
+msgid "Language"
+msgstr "Taal"
 
-#: includes/options.php:92
+#: includes/calendar.php:110 includes/settings.php:90
+msgid "Timezone"
+msgstr "Tijdzone"
+
+#: includes/calendar.php:424
+msgid "Add Event"
+msgstr "Voeg gebeurtenis toe"
+
+#: includes/calendar.php:428 includes/search.php:100
+msgid "Search"
+msgstr "Zoeken"
+
+#: includes/calendar.php:432
+msgid "View Month"
+msgstr "Laat de maand zien"
+
+#: includes/calendar.php:437
+msgid "View date"
+msgstr "datum laten zien"
+
+#: includes/calendar.php:441 includes/settings.php:81
+msgid "Settings"
+msgstr "Instellingen"
+
+#: includes/calendar.php:444
+msgid "Log out"
+msgstr "doei zeggen"
+
+#: includes/calendar.php:448 includes/login.php:57 includes/login.php:68
+msgid "Log in"
+msgstr "inloggen"
+
+#: includes/calendar.php:454
+msgid "Calendar Admin"
+msgstr "Kalenderbeheer"
+
+#: includes/calendar.php:517 includes/calendar.php:578
+#: includes/calendar.php:587 includes/settings.php:71
+msgid "Default"
+msgstr "Standaard"
+
+#: includes/calendar.php:523
+msgid "Week Start"
+msgstr "Begin van de week"
+
+#: includes/calendar.php:525 includes/globals.php:38
+msgid "Sunday"
+msgstr "zondag"
+
+#: includes/calendar.php:526 includes/globals.php:39
+msgid "Monday"
+msgstr "maandag"
+
+#: includes/calendar.php:527 includes/globals.php:44
+msgid "Saturday"
+msgstr "zaterdag"
+
+#: includes/calendar.php:529
+msgid "24 Hour Time"
+msgstr "Tijd in 24-uurs weergave"
+
+#: includes/calendar.php:530
 msgid "Calendar Title"
 msgstr "Kalender voor 55plus activiteiten"
 
-#: includes/options.php:96
-msgid "Anonymous Permission"
-msgstr ""
+#: includes/calendar.php:531
+msgid "Maximum Subject Length"
+msgstr "Maximale lengte van onderwerp"
 
-#: includes/search.php:58
-msgid "Search Results"
-msgstr "zoek resultaten"
+#: includes/calendar.php:532
+msgid "Events Display Daily Maximum"
+msgstr "Maximaal aantal gebeurtenissen weer te geven per dag"
 
-#: includes/search.php:62
-msgid "Date Time"
-msgstr "datum tijd"
+#: includes/calendar.php:533
+msgid "Public Permissions"
+msgstr "Publiekelijke bevoegdheden"
 
-#: includes/search.php:87
-msgid "No events."
-msgstr "geen termijn"
+#: includes/calendar.php:535
+msgid "Cannot read nor write events"
+msgstr "Kan geen gebeurtenissen lezen of schrijven"
 
-#: includes/search.php:104
-msgid "Phrase"
-msgstr "phrase"
+#: includes/calendar.php:536
+msgid "Can read but not write events"
+msgstr "Kan gebeurtenissen lezen maar niet schrijven"
 
-#: includes/search.php:110
+#: includes/calendar.php:537
+msgid "Can create but not modify events"
+msgstr "Kan gebeurtenissen aanmaken maar niet bewerken"
+
+#: includes/calendar.php:538
+msgid "Can create and modify events"
+msgstr "Kan gebeurtenissen aanmaken en bewerken"
+
+#: includes/calendar.php:541
+msgid "Default Timezone"
+msgstr "Standaard tijdzone"
+
+#: includes/calendar.php:542
+msgid "Default Language"
+msgstr "Standaardtaal"
+
+#: includes/calendar.php:544
+msgid "Date Format"
+msgstr "Datum lay-out"
+
+#: includes/calendar.php:546
+msgid "Theme"
+msgstr "Thema"
+
+#: includes/calendar.php:605
+msgid "Month Day Year"
+msgstr "Maand Dag Jaar"
+
+#: includes/calendar.php:606
+msgid "Year Month Day"
+msgstr "Jaar Maand Dag"
+
+#: includes/calendar.php:607
+msgid "Day Month Year"
+msgstr "Dag Maand Jaar"
+
+#: includes/calendar.php:663
+msgid "You do not have permission to do that: "
+msgstr "Je hebt geen bevoegdheden dit uit te voeren:"
+
+#: includes/calendar.php:671 includes/util.php:152
+msgid "Error"
+msgstr "Fout"
+
+#: includes/calendar.php:673 includes/util.php:156
+msgid "Backtrace"
+msgstr "Traceren"
+
+#: includes/calendar.php:685
+msgid "Invalid action"
+msgstr "ongeldige actie"
+
+#: includes/calendar.php:727
+msgid "Secret token mismatch. Possible request forgery attempt."
+msgstr "Geheime token klopt niet."
+
+#: includes/calendar.php:800
+msgid "Unsupported config type"
+msgstr "Niet-ondersteunde configuratietype"
+
+#: includes/calendar_delete.php:29
+msgid "No calendar selected."
+msgstr "Geen kalender geselecteerd"
+
+#: includes/calendar_delete.php:45 includes/category_delete.php:49
+#: includes/event_delete.php:46 includes/group_delete.php:49
+#: includes/occurrence_delete.php:48 includes/user_delete.php:50
+msgid "Confirm you want to delete:"
+msgstr "Bevestig dat je wilt verwijderen:"
+
+#: includes/calendar_delete.php:47 includes/category_delete.php:51
+#: includes/event_delete.php:48 includes/group_delete.php:51
+#: includes/occurrence_delete.php:50 includes/user_delete.php:52
+msgid "Confirm"
+msgstr "Bevestig"
+
+#: includes/calendar_delete.php:50 includes/category_delete.php:54
+#: includes/event_delete.php:51 includes/group_delete.php:54
+#: includes/occurrence_delete.php:53 includes/user_delete.php:55
+msgid "Deny"
+msgstr "Weiger"
+
+#: includes/calendar_delete.php:58
+msgid "You do not have permission to remove calendar"
+msgstr "Je hebt geen bevoegdheden om de kalender te verwijderen"
+
+#: includes/calendar_delete.php:63
+msgid "Removed calendar"
+msgstr "Verwijderde kalender"
+
+#: includes/calendar_delete.php:65
+msgid "Could not remove calendar"
+msgstr "Je kon de kalender niet verwijderen"
+
+#: includes/category_delete.php:29
+msgid "No category selected."
+msgstr "Geen categorie geselecteerd."
+
+#: includes/category_delete.php:63
+msgid "You do not have permission to delete category: "
+msgstr "Je hebt geen bevoegdheden om deze categorie te verwijderen:"
+
+#: includes/category_delete.php:68
+msgid "Removed category: "
+msgstr "Verwijderde categorie:"
+
+#: includes/category_delete.php:71
+msgid "Could not remove category: "
+msgstr "Kon deze categorie niet verwijderen:"
+
+#: includes/category_form.php:27
+msgid "Category Form"
+msgstr "Categorieformulier"
+
+#: includes/category_form.php:42
+msgid "Visible to groups"
+msgstr "Zichtbaar voor groepen"
+
+#: includes/category_form.php:43 includes/event_form.php:107
+msgid "None"
+msgstr "Geen"
+
+#: includes/category_submit.php:33
+msgid "Color not specified."
+msgstr "Kleur niet gespecificeerd."
+
+#: includes/category_submit.php:43
+msgid "Invalid color."
+msgstr "Ongeldige kleur"
+
+#: includes/category_submit.php:51
+msgid "You do not have permission to add categories to all calendars."
+msgstr "Je hebt geen toestemming om categorieën aan alle kalenders toe te voegen."
+
+#: includes/category_submit.php:56
+msgid "You do not have permission to add categories to this calendar."
+msgstr "Je hebt geen toestemming om categorieën aan deze kalender toe te voegen."
+
+#: includes/category_submit.php:69
+msgid "You do not have permission to modify this category."
+msgstr "Je hebt geen toestemming om deze categorie te wijzigen."
+
+#: includes/category_submit.php:78
+msgid "Modified category: "
+msgstr "Gewijzigde categorie:"
+
+#: includes/category_submit.php:82
+msgid "Created category: "
+msgstr "Categorie gecreëerd:"
+
+#: includes/category_submit.php:86
+msgid "Error submitting category."
+msgstr "Fout tijdens versturen van categorie."
+
+#: includes/create_calendar.php:54
+msgid "Calendar created."
+msgstr "Kalender aangemaakt."
+
+#: includes/display_day.php:44
+msgid "Title"
+msgstr "Titel"
+
+#: includes/display_day.php:45 includes/form.php:427
+msgid "Time"
+msgstr "tijd"
+
+#: includes/display_day.php:46 includes/display_event.php:125
+#: includes/display_event.php:164 includes/event_form.php:43
+#: includes/search.php:85
+msgid "Description"
+msgstr "omschrijving"
+
+#: includes/display_day.php:57
+msgid "Delete Selected"
+msgstr "gekozen termijn wissen"
+
+#: includes/display_day.php:112
+msgid "No events on this day."
+msgstr "vandaag geen termijn"
+
+#: includes/display_event.php:41
+msgid "Invalid arguments."
+msgstr "Ongeldige argumenten."
+
+#: includes/display_event.php:53 includes/display_event.php:140
+msgid "You do not have permission to read this event."
+msgstr "Je hebt geen bevoegdheid om deze gebeurtenis te lezen."
+
+#: includes/display_event.php:57 includes/display_event.php:144
+#: includes/display_event.php:211
+msgid "by"
+msgstr "door"
+
+#: includes/display_event.php:62 includes/display_event.php:149
+#: includes/display_event.php:219 includes/event_form.php:106
+msgid "Category"
+msgstr "Categorie"
+
+#: includes/display_event.php:67 includes/display_event.php:180
+#: includes/occurrence_delete.php:45
+msgid "at"
+msgstr "op"
+
+#: includes/display_event.php:69 includes/event_form.php:45
+#: includes/occur_form.php:41
+msgid "When"
+msgstr "Wanneer"
+
+#: includes/display_event.php:79
+msgid "Modify Occurrence"
+msgstr "Wijzig gebeurtenis"
+
+#: includes/display_event.php:81
+msgid "Remove Occurrence"
+msgstr "Verwijder gebeurtenis"
+
+#: includes/display_event.php:99
+msgid "Previous occurrence on"
+msgstr "Vorige gebeurtenis op"
+
+#: includes/display_event.php:109
+msgid "Next occurrence on"
+msgstr "Volgende gebeurtenis op"
+
+#: includes/display_event.php:115
+msgid "View All Occurrences"
+msgstr "Bekijk alle gebeurtenissen"
+
+#: includes/display_event.php:157
+msgid "Add Occurrence"
+msgstr "Voeg gebeurtenis toe"
+
+#: includes/display_event.php:187
+msgid "Remove"
+msgstr "Verwijderen"
+
+#: includes/display_event.php:194
+msgid "Occurrences"
+msgstr "Gebeurtenissen"
+
+#: includes/display_event.php:221
+msgid "from"
+msgstr "van"
+
+#: includes/display_month.php:32
+msgid "W"
+msgstr "W"
+
+#: includes/display_month.php:77
+msgid "last year"
+msgstr "vorig jaar"
+
+#: includes/display_month.php:79
+msgid "last month"
+msgstr "vorige maand"
+
+#: includes/display_month.php:100
+msgid "next month"
+msgstr "volgende maand"
+
+#: includes/display_month.php:102
+msgid "next year"
+msgstr "volgend jaar"
+
+#: includes/display_month.php:259
+msgid "View Additional Events"
+msgstr "Bekijk extra gebeurtenissen"
+
+#: includes/event_delete.php:29
+msgid "No event selected."
+msgstr "Geen gebeurtenis geselecteerd."
+
+#: includes/event_delete.php:75
+msgid "Removed event"
+msgstr "Gebeurtenis verwijderd"
+
+#: includes/event_delete.php:77
+msgid "Removed events"
+msgstr "Gebeurtenissen verwijderd"
+
+#: includes/event_delete.php:84
+msgid "Could not remove event"
+msgstr "Kon gebeurtenis niet verwijderen"
+
+#: includes/event_delete.php:86
+msgid "Could not remove events"
+msgstr "Kon gebeurtenissen niet verwijderen"
+
+#: includes/event_delete.php:93
+msgid "You do not have permission to remove event"
+msgstr "Je hebt geen bevoegdheden om de gebeurtenis te verwijderen"
+
+#: includes/event_delete.php:95
+msgid "You do not have permission to remove events"
+msgstr "Je hebt geen bevoegdheden om de gebeurtenissen te verwijderen"
+
+#: includes/event_form.php:39
+msgid "Event Form"
+msgstr "Gebeurtenisformulier"
+
+#: includes/event_form.php:40 includes/globals.php:70 includes/search.php:83
+msgid "Subject"
+msgstr "betref"
+
+#: includes/event_form.php:47 includes/occur_form.php:43
+#: includes/search.php:113
 msgid "From"
 msgstr "van"
 
-#: includes/search.php:116
+#: includes/event_form.php:48 includes/occur_form.php:44
+#: includes/search.php:122
 msgid "To"
 msgstr "aan"
 
-#: includes/search.php:122
-msgid "Sort By"
-msgstr "sorteren naar"
+#: includes/event_form.php:51 includes/occur_form.php:47
+msgid "Time Type"
+msgstr "Tijdstype"
 
-#: includes/search.php:127
+#: includes/event_form.php:52 includes/occur_form.php:48
+msgid "Normal"
+msgstr "normaal"
+
+#: includes/event_form.php:53 includes/occur_form.php:49
+msgid "Full Day"
+msgstr "Volledige dag"
+
+#: includes/event_form.php:54 includes/occur_form.php:50
+msgid "To Be Announced"
+msgstr "Wordt nog aangekondigd"
+
+#: includes/event_form.php:60
+msgid "Repeats"
+msgstr "Herhalingen"
+
+#: includes/event_form.php:62
+msgid "Never"
+msgstr "Nooit"
+
+#: includes/event_form.php:64
+msgid "Daily"
+msgstr "Dagelijks"
+
+#: includes/event_form.php:66
+msgid "Weekly"
+msgstr "wekelijks"
+
+#: includes/event_form.php:68
+msgid "Monthly"
+msgstr "Maandelijks"
+
+#: includes/event_form.php:70
+msgid "Yearly"
+msgstr "Jaarlijks"
+
+#: includes/event_form.php:72 includes/event_form.php:79
+#: includes/event_form.php:86 includes/event_form.php:93
+msgid "Every"
+msgstr "Iedere"
+
+#: includes/event_form.php:73
+msgid "Repeat every how many days?"
+msgstr "Herhaal om de hoeveel dagen?"
+
+#: includes/event_form.php:76 includes/event_form.php:84
+#: includes/event_form.php:91 includes/event_form.php:98
+msgid "Until"
+msgstr "Tot"
+
+#: includes/event_form.php:80
+msgid "Repeat every how many weeks?"
+msgstr "Herhaal om de hoeveel weken?"
+
+#: includes/event_form.php:87
+msgid "Repeat every how many months?"
+msgstr "Herhaal om de hoeveel maanden?"
+
+#: includes/event_form.php:94
+msgid "Repeat every how many years?"
+msgstr "Herhaal om de hoeveel jaar?"
+
+#: includes/event_form.php:122
+msgid "Submit Event"
+msgstr "Verstuur gebeurtenis"
+
+#: includes/event_form.php:300 includes/occur_form.php:131
+msgid "Unrecognized Time Type."
+msgstr "Tijdstype niet herkend."
+
+#: includes/event_form.php:305 includes/occur_form.php:136
+msgid "An event cannot have an end earlier than its start."
+msgstr "Een gebeurtenis kan niet eerder eindigen dan het begon."
+
+#: includes/event_form.php:312 includes/occur_form.php:141
+msgid "You do not have permission to write to this calendar."
+msgstr "Je hebt geen bevoegdheden om deze kalender te beschrijven."
+
+#: includes/event_form.php:343
+msgid "Required field \"every-day\" is not set."
+msgstr "Vereist veld 'iedere dag' is niet ingesteld."
+
+#: includes/event_form.php:346
+msgid "every-day must be greater than 1"
+msgstr "'iedere dag' moet groter zijn dan 1"
+
+#: includes/event_form.php:362
+msgid "Required field \"every-week\" is not set."
+msgstr "Vereist veld 'iedere week' is niet ingesteld."
+
+#: includes/event_form.php:364
+msgid "every-week must be greater than 1"
+msgstr "'iedere week' moet groter zijn dan 1"
+
+#: includes/event_form.php:381
+msgid "Required field \"every-month\" is not set."
+msgstr "Vereist veld 'iedere maand' is niet ingesteld."
+
+#: includes/event_form.php:383 includes/event_form.php:402
+msgid "every-month must be greater than 1"
+msgstr "'iedere maand' moet groter zijn dan 1"
+
+#: includes/event_form.php:400
+msgid "Required field \"every-year\" is not set."
+msgstr "Vereist veld 'ieder jaar' is niet ingesteld."
+
+#: includes/event_form.php:418
+msgid "Invalid event type."
+msgstr "Ongeldig gebeurtenistype."
+
+#: includes/event_form.php:423
+msgid "Modified event: "
+msgstr "Gewijzigde gebeurtenis:"
+
+#: includes/event_form.php:425
+msgid "Created event: "
+msgstr "Gebeurtenis gemaakt:"
+
+#: includes/event_form.php:432
+msgid "Error submitting event."
+msgstr "Fout tijdens versturen van gebeurtenis."
+
+#: includes/event_form.php:442 includes/occur_form.php:177
+#, php-format
+msgid "Required field \"%s\" year was not set."
+msgstr "Vereist veld \"%s\" is niet ingevuld."
+
+#: includes/event_form.php:451 includes/occur_form.php:186
+#, php-format
+msgid "Malformed time in \"%s\" time."
+msgstr "Ongeldige tijd in \"%s\" tijd."
+
+#: includes/event_form.php:465
+msgid "Unrecognized period: "
+msgstr "Niet herkende periode:"
+
+#: includes/event_form.php:472 includes/occur_form.php:195
+#, php-format
+msgid "Malformed time in \"%s\" date."
+msgstr "Ongeldige tijd in \"%s\" datum."
+
+#: includes/form.php:32
+msgid "required"
+msgstr "vereist"
+
+#: includes/form.php:100
+msgid "Cannot add a non-form element to a form."
+msgstr "Kan geen niet-formulier-element toevoegen aan formulier."
+
+#: includes/form.php:424
+msgid "Date"
+msgstr "Datum"
+
+#: includes/globals.php:23
+msgid "January"
+msgstr "januari"
+
+#: includes/globals.php:24
+msgid "February"
+msgstr "februari"
+
+#: includes/globals.php:25
+msgid "March"
+msgstr "maart"
+
+#: includes/globals.php:26
+msgid "April"
+msgstr "april"
+
+#: includes/globals.php:27 includes/globals.php:52
+msgid "May"
+msgstr "mei"
+
+#: includes/globals.php:28
+msgid "June"
+msgstr "juni"
+
+#: includes/globals.php:29
+msgid "July"
+msgstr "juli"
+
+#: includes/globals.php:30
+msgid "August"
+msgstr "augustus"
+
+#: includes/globals.php:31
+msgid "September"
+msgstr "september"
+
+#: includes/globals.php:32
+msgid "October"
+msgstr "oktober"
+
+#: includes/globals.php:33
+msgid "November"
+msgstr "november"
+
+#: includes/globals.php:34
+msgid "December"
+msgstr "december"
+
+#: includes/globals.php:40
+msgid "Tuesday"
+msgstr "dinsdag"
+
+#: includes/globals.php:41
+msgid "Wednesday"
+msgstr "woensdag"
+
+#: includes/globals.php:42
+msgid "Thursday"
+msgstr "donderdag"
+
+#: includes/globals.php:43
+msgid "Friday"
+msgstr "vrijdag"
+
+#: includes/globals.php:48
+msgid "Jan"
+msgstr "jan"
+
+#: includes/globals.php:49
+msgid "Feb"
+msgstr "feb"
+
+#: includes/globals.php:50
+msgid "Mar"
+msgstr "mrt"
+
+#: includes/globals.php:51
+msgid "Apr"
+msgstr "apr"
+
+#: includes/globals.php:53
+msgid "Jun"
+msgstr "jun"
+
+#: includes/globals.php:54
+msgid "Jul"
+msgstr "jul"
+
+#: includes/globals.php:55
+msgid "Aug"
+msgstr "aug"
+
+#: includes/globals.php:56
+msgid "Sep"
+msgstr "sep"
+
+#: includes/globals.php:57
+msgid "Oct"
+msgstr "okt"
+
+#: includes/globals.php:58
+msgid "Nov"
+msgstr "nov"
+
+#: includes/globals.php:59
+msgid "Dec"
+msgstr "dec"
+
+#: includes/globals.php:69
 msgid "Start Date"
-msgstr "start datum"
+msgstr "Begindatum"
 
-#: includes/search.php:132
-msgid "Order"
-msgstr "volgorde"
-
-#: includes/search.php:137
+#: includes/globals.php:74
 msgid "Ascending"
 msgstr "stijgend"
 
-#: includes/search.php:139
-msgid "Decending"
-msgstr "dalend"
+#: includes/globals.php:75
+msgid "Descending"
+msgstr "Aflopen"
 
-#: includes/setup.php:116
-msgid "Could not read configuration"
-msgstr "kan de configuratie niet lezen"
+#: includes/group_delete.php:29
+msgid "No group selected."
+msgstr "Geen groep geselecteerd."
 
-#: msgid "Daily"
-#: msgstr "dagelijks"
+#: includes/group_delete.php:63
+msgid "You do not have permission to delete group: "
+msgstr "Je hebt geen bevoegdheden om de groep te verwijderen:"
 
-#: msgid "Add Item"
-#: msgstr "voeg id toe"
+#: includes/group_delete.php:68
+msgid "Removed group: "
+msgstr "Verwijderde groep:"
 
-#: msgid "Nothing to modify."
-#: msgstr "niets te wijzigen."
+#: includes/group_delete.php:71
+msgid "Could not remove group: "
+msgstr "Kon deze groep niet verwijderen:"
 
-#: msgid "Event Date"
-#: msgstr "datum termijn"
+#: includes/group_form.php:27
+msgid "Group Form"
+msgstr "Groepformulier"
 
-#: msgid "nextval error"
-#: msgstr "nextval fout"
+#: includes/group_submit.php:32
+msgid "You do not have permission to add a global group."
+msgstr "Je hebt geen bevoegdheden om een globale groep toe te voegen."
 
-#: msgid "Name"
-#: msgstr "naam"
+#: includes/group_submit.php:37
+msgid "You do not have permission to add a group to this calendar."
+msgstr "Je hebt geen bevoegdheden om een groep aan deze kalender toe te voegen."
 
-#: msgid "days"
-#: msgstr "dagen"
+#: includes/group_submit.php:49
+msgid "You do not have permission to modify this group."
+msgstr "Je hebt geen bevoegdheden om deze groep te wijzigen."
 
-#: msgid "Username:"
-#: msgstr "naam gebruiker:"
+#: includes/group_submit.php:57
+msgid "Modified group: "
+msgstr "Gewijzigde groep:"
 
+#: includes/group_submit.php:61
+msgid "Created group: "
+msgstr "Groep gecreëerd:"
+
+#: includes/group_submit.php:65
+msgid "Error submitting group."
+msgstr "Fout tijdens versturen van groep."
+
+#: includes/login.php:39
+msgid "Logged in."
+msgstr "Ingelogd."
+
+#: includes/login.php:42
+msgid "Sorry, Invalid Login"
+msgstr "sorry, foutieve aanmelding"
+
+#: includes/login.php:72
+msgid "You must have cookies enabled to login."
+msgstr "Je moet cookies hebben geactiveerd om in te loggen."
+
+#: includes/logout.php:33
+msgid "Loggin out..."
+msgstr "Uitloggen."
+
+#: includes/occur_form.php:39
+msgid "Occurrence Form"
+msgstr "Gebeurtenissenformulier"
+
+#: includes/occur_form.php:102
+msgid "Submit Occurrence"
+msgstr "Voeg gebeurtenis toe"
+
+#: includes/occur_form.php:112
+msgid "Cannot create occurrence."
+msgstr "Kon gebeurtenis niet maken."
+
+#: includes/occur_form.php:146
+msgid "EID not set."
+msgstr "EID niet ingesteld."
+
+#: includes/occur_form.php:158
+msgid "Modified occurence: "
+msgstr "Gebeurtenis gewijzigd:"
+
+#: includes/occur_form.php:160
+msgid "Created occurence: "
+msgstr "Gebeurtenis aangemaakt:"
+
+#: includes/occur_form.php:167
+msgid "Error submitting occurrence."
+msgstr "Fout tijdens versturen van gebeurtenis."
+
+#: includes/occurrence_delete.php:29
+msgid "No occurrence selected."
+msgstr "Geen gebeurtenis geselecteerd."
+
+#: includes/occurrence_delete.php:79
+msgid "Removed occurrence"
+msgstr "Gebeurtenis verwijderd"
+
+#: includes/occurrence_delete.php:81
+msgid "Removed occurrences"
+msgstr "Gebeurtenissen verwijderd"
+
+#: includes/occurrence_delete.php:88
+msgid "Could not remove occurrence"
+msgstr "Kon gebeurtenis niet verwijderen"
+
+#: includes/occurrence_delete.php:90
+msgid "Could not remove occurrences"
+msgstr "Kon gebeurtenissen niet verwijderen"
+
+#: includes/occurrence_delete.php:97
+msgid "You do not have permission to remove the occurrence."
+msgstr "Je hebt geen bevoegdheden om de gebeurtenis te verwijderen."
+
+#: includes/occurrence_delete.php:99
+msgid "You do not have permission to remove occurrences."
+msgstr "Je hebt geen bevoegdheden om de gebeurtenissen te verwijderen."
+
+#: includes/password_submit.php:27
+msgid "You must be logged in."
+msgstr "Je moet ingelogd zijn."
+
+#: includes/password_submit.php:33
+msgid "You do not have permission to change your password."
+msgstr "Je hebt geen toestemming om je wachtwoord aan te passen."
+
+#: includes/password_submit.php:36
+msgid "You must specify your old password."
+msgstr "Je moet je oude wachtwoord invullen."
+
+#: includes/password_submit.php:42
+msgid "The password you entered did not match your old password."
+msgstr "Het wachtwoord dat je ingevuld hebt is niet gelijk aan je oude wachtwoord."
+
+#: includes/password_submit.php:46 includes/user_create.php:40
+msgid "You must specify a password"
+msgstr "Je moet een wachtwoord invullen"
+
+#: includes/password_submit.php:51 includes/user_create.php:46
+msgid "Your passwords did not match"
+msgstr "Je wachtwoorden zijn niet gelijk"
+
+#: includes/password_submit.php:58
+msgid "Password updated."
+msgstr "Wachtwoord geüpdatet."
+
+#: includes/phpccalendar.class.php:51
+msgid "(No title)"
+msgstr "(Geen titel)"
+
+#: includes/phpcdatabase.class.php:95
+msgid "Error in get_occurrences_by_date_range"
+msgstr "Fout in get_occurences_by_date_range"
+
+#: includes/phpcdatabase.class.php:141
+msgid "Error in get_event_by_eid"
+msgstr "Fout in get_event_by_eid"
+
+#: includes/phpcdatabase.class.php:145
+msgid "Event doesn't exist"
+msgstr "Gebeurtenis bestaat niet"
+
+#: includes/phpcdatabase.class.php:167
+msgid "Error in get_event_by_oid"
+msgstr "Fout in get_event_by_oid"
+
+#: includes/phpcdatabase.class.php:171 includes/phpcdatabase.class.php:327
+msgid "Event doesn't exist with oid"
+msgstr "Gebeurtenis met oid bestaat niet"
+
+#: includes/phpcdatabase.class.php:188
+msgid "Error in get_category"
+msgstr "Fout in get_category"
+
+#: includes/phpcdatabase.class.php:191
+msgid "Category doesn't exist with catid"
+msgstr "Categorie met catid bestaat niet"
+
+#: includes/phpcdatabase.class.php:205
+msgid "Error in get_group"
+msgstr "Fout in get_group"
+
+#: includes/phpcdatabase.class.php:208
+msgid "Group doesn't exist with gid"
+msgstr "Groep met gid bestaat niet"
+
+#: includes/phpcdatabase.class.php:222
+msgid "Error in get_groups"
+msgstr "Fout in get_groups"
+
+#: includes/phpcdatabase.class.php:241
+msgid "Error in get_user_groups"
+msgstr "Fout in get_user_groups"
+
+#: includes/phpcdatabase.class.php:267
+msgid "Error in get_categories"
+msgstr "Fout in get_categories"
+
+#: includes/phpcdatabase.class.php:295
+msgid "Error in get_visible_categories"
+msgstr "Fout in get_visible_categories"
+
+#: includes/phpcdatabase.class.php:323
+msgid "Error in get_occurrence_by_oid"
+msgstr "Fout in get_occurence_by_oid"
+
+#: includes/phpcdatabase.class.php:349
+msgid "Error in get_occurrences_by_eid"
+msgstr "Fout in get_occurences_by_eid"
+
+#: includes/phpcdatabase.class.php:366 includes/phpcdatabase.class.php:382
+msgid "Error while removing an event."
+msgstr "Fout tijdens het verwijderen van gebeurtenis."
+
+#: includes/phpcdatabase.class.php:394
+msgid "Error while removing an occurrence."
+msgstr "Fout tijdens het verwijderen van een gebeurtenis."
+
+#: includes/phpcdatabase.class.php:407 includes/phpcdatabase.class.php:448
+msgid "Error while removing a calendar"
+msgstr "Fout tijdens het verwijderen van een kalender"
+
+#: includes/phpcdatabase.class.php:420
+msgid "Error while removing category."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:433
+msgid "Error while removing group."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:453
+msgid "Error while removing "
+msgstr ""
+
+#: includes/phpcdatabase.class.php:472
+msgid "Could not read permissions."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:485
+msgid "Could not get calendars."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:505
+msgid "Could not get calendar."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:519 includes/phpcdatabase.class.php:541
+msgid "Could not get user."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:557 includes/phpcdatabase.class.php:573
+msgid "Error getting user."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:589
+msgid "Error creating user."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:598 includes/phpcdatabase.class.php:610
+msgid "Error reading options"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:621
+msgid "Error creating options"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:631
+msgid "Error updating password."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:642
+msgid "Error updating timezone."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:653
+msgid "Error updating language."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:674
+msgid "Error creating event."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:701
+msgid "Error creating occurrence."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:726
+msgid "Error modifying occurrence."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:747
+msgid "Error modifying event."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:761
+msgid "Error creating category."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:774
+msgid "Error creating group."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:790
+msgid "Error modifying category."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:804
+msgid "Error modifying group."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:837
+msgid "Error during searching"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:863
+msgid "Error updating user permissions."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:872
+msgid "Error getting login token."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:887
+msgid "Error adding login token."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:897
+msgid "Error updating login token."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:906
+msgid "Error removing login tokens."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:915
+msgid "Error cleaning login tokens."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:925
+msgid "SQL query"
+msgstr ""
+
+#: includes/phpcevent.class.php:40
+msgid "anonymous"
+msgstr ""
+
+#: includes/phpcevent.class.php:42
+msgid "unknown"
+msgstr ""
+
+#: includes/phpcevent.class.php:66
+msgid "(No subject)"
+msgstr ""
+
+#: includes/phpcoccurrence.class.php:52 includes/phpcoccurrence.class.php:75
+msgid "DB returned an invalid date."
+msgstr ""
+
+#: includes/phpcoccurrence.class.php:99 includes/phpcoccurrence.class.php:115
+msgid "TBA"
+msgstr ""
+
+#: includes/phpcoccurrence.class.php:110
+msgid "to"
+msgstr ""
+
+#: includes/search.php:36
+msgid "Invalid sort option"
+msgstr ""
+
+#: includes/search.php:42
+msgid "Invalid order option"
+msgstr ""
+
+#: includes/search.php:76
+msgid "No events matched your search criteria."
+msgstr ""
+
+#: includes/search.php:80
+msgid "Search Results"
+msgstr ""
+
+#: includes/search.php:84
+msgid "Date Time"
+msgstr ""
+
+#: includes/search.php:106
+msgid "Phrase"
+msgstr "phrase"
+
+#: includes/search.php:131
+msgid "Sort By"
+msgstr "sorteren naar"
+
+#: includes/search.php:136
+msgid "Order"
+msgstr "volgorde"
+
+#: includes/settings.php:45
+msgid "Change Password"
+msgstr ""
+
+#: includes/settings.php:53
+msgid "Old Password"
+msgstr ""
+
+#: includes/settings.php:56
+msgid "New Password"
+msgstr ""
+
+#: includes/settings.php:59
+msgid "Confirm New Password"
+msgstr ""
+
+#: includes/settings.php:125
+msgid "Settings updated."
+msgstr ""
+
+#: includes/setup.php:71
+msgid "Possible hacking attempt on your account."
+msgstr ""
+
+#: includes/setup.php:102
+msgid "Month is out of range."
+msgstr ""
+
+#: includes/setup.php:110
+msgid "Invalid year"
+msgstr ""
+
+#: includes/user_create.php:35
+msgid "You must specify a user name"
+msgstr ""
+
+#: includes/user_create.php:55
+msgid "User already exists."
+msgstr ""
+
+#: includes/user_create.php:59
+msgid "Added user. Now set its permission inside the Calendar Admin"
+msgstr ""
+
+#: includes/user_delete.php:29
+msgid "You must be an admin to delete users."
+msgstr ""
+
+#: includes/user_delete.php:34
+msgid "No user selected."
+msgstr ""
+
+#: includes/user_permissions_submit.php:31
+msgid "No users"
+msgstr ""
+
+#: includes/user_permissions_submit.php:59
+msgid "No changes to make."
+msgstr ""
+
+#: includes/user_permissions_submit.php:61
+msgid "Updated user(s):"
+msgstr ""
+
+#: includes/util.php:71
+msgid "continue"
+msgstr ""
+
+#: includes/util.php:153
+msgid "Software Error"
+msgstr ""
+
+#: includes/util.php:154
+msgid "Message:"
+msgstr "Bericht:"
