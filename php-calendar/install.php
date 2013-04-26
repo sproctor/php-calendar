@@ -53,8 +53,6 @@ if(file_exists($phpc_config_file)) {
 		$sth = $dbh->query($query);
 		$have_calendar = $sth && $sth->fetch_assoc();
 
-		echo "<pre>have calendar: $have_calendar</pre>";
-
 		$existing_version = 0;
 
 		$query = "SELECT version\n"
@@ -68,7 +66,6 @@ if(file_exists($phpc_config_file)) {
 				$existing_version = $result['version'];
 		}
 
-		echo "<pre>existing version: $existing_version</pre>";
 		if($have_calendar) {
 
 			$must_upgrade = true;
