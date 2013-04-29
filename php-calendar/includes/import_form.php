@@ -42,7 +42,7 @@ function display_form() {
 	$form = new Form($phpc_script, __('Import Form'));
 	$form->add_part(new FormFreeQuestion('host', __('MySQL Host Name')));
 	$form->add_part(new FormFreeQuestion('dbname', __('MySQL Database Name')));
-	$form->add_part(new FormFreeQuestion('port', __('MySQL Port Number'), _('Leave blank for default')));
+	$form->add_part(new FormFreeQuestion('port', __('MySQL Port Number'), __('Leave blank for default')));
 	$form->add_part(new FormFreeQuestion('username', __('MySQL User Name')));
 	$form->add_part(new FormFreeQuestion('passwd', __('MySQL User Password')));
 	$form->add_part(new FormFreeQuestion('prefix', __('PHP-Calendar Table Prefix')));
