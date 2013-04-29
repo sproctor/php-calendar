@@ -249,7 +249,10 @@ class PhpcOccurrence extends PhpcEvent{
 		{
 		//format on multiple days
 	
-		$str= ' ' .__('From').' ' . $this->get_start_date() .' ' .	_('at') .' ' . 	$this->get_start_time() . ' ' ._('to'). ' ' .$this->get_end_date() .' ' . _('at') .' ' . $this->get_end_time();	
+			$str = ' ' . __('From') . ' ' . $this->get_start_date()
+				. ' ' .	__('at') . ' ' . $this->get_start_time()
+				. ' ' . __('to') . ' ' . $this->get_end_date()
+				. ' ' . __('at') . ' ' . $this->get_end_time();	
 			
 		}
 		return $str;
