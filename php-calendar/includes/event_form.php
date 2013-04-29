@@ -272,7 +272,7 @@ function process_form()
 
 	// When modifying events, this is the value of the checkbox that
 	//   determines if the date should change
-	$modify_occur = isset($vars['eid']) && isset($vars['phpc-modify']) && !$vars['phpc-modify'];
+	$modify_occur = !isset($vars['eid']) || !empty($vars['phpc-modify']);
 
 	if($modify_occur) {
 	$start_ts = get_timestamp("start");
