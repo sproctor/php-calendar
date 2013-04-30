@@ -60,13 +60,14 @@ function display_form() {
 		$form->add_hidden('oid', $vars['oid']);
 
 		$occ = $phpcdb->get_occurrence_by_oid($vars['oid']);
+		$datefmt = $phpc_cal->date_format;
 
-		$start_date = $occ->get_start_month() . "/"
-			. $occ->get_start_day() . "/"
-			. $occ->get_start_year();
-		$end_date = $occ->get_end_month() . "/"
-			. $occ->get_end_day() . "/"
-			. $occ->get_end_year();
+		$start_date = format_short_date_string($occ->get_start_year(),
+				$occ->get_start_month(), $occ->get_start_day(),
+				$datefmt);
+		$end_date = format_short_date_string($occ->get_end_year(),
+				$occ->get_end_month(), $occ->get_end_day(),
+				$datefmt);
 		$defaults = array(
 				'start-date' => $start_date,
 				'end-date' => $end_date,
@@ -169,36 +170,4 @@ function process_form()
 	}
 }
 
-function get_timestamp($prefix)
-{
-	global $vars;
-
-	if(!isset($vars["$prefix-date"]))
-		soft_error(sprintf(__("Required field \"%s\" year was not set."),
-					$prefix));
-
-	if(!isset($vars["$prefix-time"])) {
-		$hour = 0;
-		$minute = 0;
-	} else {
-		if(!preg_match('/(\d+):(\d+)/', $vars["$prefix-time"],
-					$time_matches)) {
-			soft_error(sprintf(__("Malformed time in \"%s\" time."),
-						$prefix));
-		}
-		$hour = $time_matches[1];
-		$minute = $time_matches[2];
-	}
-
-	if(!preg_match('/(\d+)\/(\d+)\/(\d+)/', $vars["$prefix-date"],
-				$date_matches)) {
-		soft_error(sprintf(__("Malformed time in \"%s\" date."),
-					$prefix));
-	}
-	$month = $date_matches[1];
-	$day = $date_matches[2];
-	$year = $date_matches[3];
-
-	return mktime($hour, $minute, 0, $month, $day, $year);
-}
 ?>

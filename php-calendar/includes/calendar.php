@@ -797,4 +797,68 @@ function create_config_input($element, $default = false)
 	}
 	return $input;
 }
+
+function get_timestamp($prefix)
+{
+	global $vars, $phpc_cal;
+
+	if(!isset($vars["$prefix-date"]))
+		soft_error(sprintf(__("Required field \"%s\" was not set."),
+					"$prefix-date"));
+
+	if(!isset($vars["$prefix-time"])) {
+		$hour = 0;
+		$minute = 0;
+	} else {
+		if(!preg_match('/(\d+)[:\.](\d+)\s?(\w+)?/', $vars["$prefix-time"],
+					$time_matches)) {
+			soft_error(sprintf(__("Malformed \"%s\" time: \"%s\""),
+						$prefix,
+						$vars["$prefix-time"]));
+		}
+		$hour = $time_matches[1];
+		$minute = $time_matches[2];
+		if(isset($time_matches[3])) {
+			$period = $time_matches[3];
+			if($hour == 12)
+				$hour = 0;
+			if(strcasecmp("am", $period) == 0) {
+				// AM
+			} else if(strcasecmp("pm", $period) == 0) {
+				$hour += 12;
+			} else {
+				soft_error(__("Unrecognized period: ")
+						. $period);
+			}
+		}
+	}
+
+	if(!preg_match('/(\d+)[\.\/\-\ ](\d+)[\.\/\-\ ](\d+)/',
+				$vars["$prefix-date"], $date_matches)) {
+		soft_error(sprintf(__("Malformed \"%s\" date: \"%s\""),
+					$prefix, $vars["$prefix-date"]));
+	}
+	
+	switch($phpc_cal->date_format) {
+		case 0: // Month Day Year
+			$month = $date_matches[1];
+			$day = $date_matches[2];
+			$year = $date_matches[3];
+			break;
+		case 1: // Year Month Day
+			$year = $date_matches[1];
+			$month = $date_matches[2];
+			$day = $date_matches[3];
+			break;
+		case 2: // Day Month Year
+			$day = $date_matches[1];
+			$month = $date_matches[2];
+			$year = $date_matches[3];
+			break;
+		default:
+			soft_error(__("Invalid date_format."));
+	}
+
+	return mktime($hour, $minute, 0, $month, $day, $year);
+}
 ?>
