@@ -243,6 +243,7 @@ abstract class FormAtomicQuestion extends FormQuestion {
  */
 class FormFreeQuestion extends FormAtomicQuestion {
         var $maxlen;
+	var $type;
 
         function __construct($qid, $subject, $description = false,
                         $maxlen = false, $required = false) {
@@ -253,11 +254,12 @@ class FormFreeQuestion extends FormAtomicQuestion {
                 $this->maxlen = $maxlen;
                 $this->required = $required;
 		$this->class .= " form-free-question";
+		$this->type = "text";
         }
 
         protected function get_specific_html($parent, $defaults) {
                 $attrs = attrs("name=\"{$this->qid}\"", "id=\"{$this->qid}\"",
-				'type="text"');
+				"type=\"$this->type\"");
                 if(!empty($defaults[$this->qid])) {
                         $attrs->add("value=\"{$defaults[$this->qid]}\"");
                 }

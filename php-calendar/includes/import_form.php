@@ -44,7 +44,9 @@ function display_form() {
 	$form->add_part(new FormFreeQuestion('dbname', __('MySQL Database Name')));
 	$form->add_part(new FormFreeQuestion('port', __('MySQL Port Number'), __('Leave blank for default')));
 	$form->add_part(new FormFreeQuestion('username', __('MySQL User Name')));
-	$form->add_part(new FormFreeQuestion('passwd', __('MySQL User Password')));
+	$pwq = new FormFreeQuestion('passwd', __('MySQL User Password'));
+	$pwq->type = 'password';
+	$form->add_part($pwq);
 	$form->add_part(new FormFreeQuestion('prefix', __('PHP-Calendar Table Prefix')));
 
 	$form->add_hidden('action', 'import_form');
@@ -114,7 +116,6 @@ function process_form() {
 			if(!isset($users[$username])) {
 				$users[$username] = $phpcdb->create_user($username,
 						$result['password'], false);
-				echo "<pre>Created user '$username' uid '{$users[$username]}'</pre>";
 			}
 			$uid = $users[$username];
 		}
