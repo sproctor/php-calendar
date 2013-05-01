@@ -588,7 +588,7 @@ class PhpcDatabase {
 		$this->dbh->query($query)
 			or $this->db_error(__('Error creating user.'), $query);
 
-		$this->dbh->insert_id;
+		return $this->dbh->insert_id;
 	}
 
 	function create_calendar()

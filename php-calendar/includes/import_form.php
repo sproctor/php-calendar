@@ -114,6 +114,7 @@ function process_form() {
 			if(!isset($users[$username])) {
 				$users[$username] = $phpcdb->create_user($username,
 						$result['password'], false);
+				echo "<pre>Created user '$username' uid '{$users[$username]}'</pre>";
 			}
 			$uid = $users[$username];
 		}
