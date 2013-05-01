@@ -50,7 +50,7 @@ function display_form() {
 	$form->add_hidden('action', 'import_form');
 	$form->add_hidden('submit_form', 'submit_form');
 
-	$form->add_part(new FormSubmitButton(__("Submit Event")));
+	$form->add_part(new FormSubmitButton(__("Import Calendar")));
 
 	$defaults = array(
 			'host' => 'localhost',
@@ -108,11 +108,15 @@ function process_form() {
 
 	while($result = $sth->fetch_assoc()) {
 		$username = $result['username'];
-		if(!isset($users[$username])) {
-			$users[$username] = $phpcdb->create_user($username,
-					$result['password'], false);
+		if(empty($username) || strlen($username) == 0) {
+			$uid = 0;
+		} else {
+			if(!isset($users[$username])) {
+				$users[$username] = $phpcdb->create_user($username,
+						$result['password'], false);
+			}
+			$uid = $users[$username];
 		}
-		$uid = $users[$username];
 
 		$eid = $phpcdb->create_event($phpcid, $uid,
 				$phpcdb->dbh->escape_string($result["subject"]),

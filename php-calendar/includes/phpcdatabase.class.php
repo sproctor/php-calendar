@@ -579,11 +579,11 @@ class PhpcDatabase {
 			return false;
 	}
 
-	function create_user($username, $password, $make_admin)
-	{
+	function create_user($username, $password, $make_admin) {
+		$admin = $make_admin ? 1 : 0;
 		$query = "INSERT into `".SQL_PREFIX."users`\n"
 			."(`username`, `password`, `admin`) VALUES\n"
-			."('$username', '$password', '$make_admin')";
+			."('$username', '$password', $admin)";
 
 		$this->dbh->query($query)
 			or $this->db_error(__('Error creating user.'), $query);
