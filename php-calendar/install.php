@@ -553,8 +553,9 @@ function create_tables()
 		."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."`language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."`gid` int(11),\n"
-		."PRIMARY KEY  (`uid`)\n"
-		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+		."PRIMARY KEY (`uid`),\n"
+		."UNIQUE KEY `username` (`username`)\n"
+		.") ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 
 	$dbh->query($query)
 		or db_error($dbh, 'Error creating users table.', $query);
