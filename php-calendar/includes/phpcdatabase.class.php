@@ -105,7 +105,7 @@ class PhpcDatabase {
 			return true;
 		
 		$query = "SELECT * FROM `$users_table`\n"
-			."JOIN `$groups_table` ON (`$users_table`.gid = `$groups_table`.gid)\n"
+			."JOIN `$groups_table` USING (`gid`)\n"
 			."WHERE `catid`='$catid' AND `uid`='$uid'";	
 		
 		$results = $this->dbh->query($query);
@@ -177,13 +177,16 @@ class PhpcDatabase {
 	}
 
 	// returns the category that corresponds to $catid
-	function get_category($catid)
-	{
+	function get_category($catid) {
 		$cats_table = SQL_PREFIX . 'categories';
+		$groups_table = SQL_PREFIX . 'groups';
 
-		$query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
-			."`gid`, `catid`\n"
+		$query = "SELECT `$cats_table`.`name` AS `name`, `text_color`, "
+			."`bg_color`, `$cats_table`.`cid` AS `cid`, "
+			."`$cats_table`.`gid`, `catid`, "
+			."`$groups_table`.`name` AS `group_name`\n"
 			."FROM `$cats_table`\n"
+			."LEFT JOIN `$groups_table` USING (`gid`)\n"
 			."WHERE `catid` = $catid";
 
 		$sth = $this->dbh->query($query)
@@ -251,18 +254,21 @@ class PhpcDatabase {
 	}
 	
 	// returns the categories for calendar $cid
-	function get_categories($cid = false)
-	{
+	function get_categories($cid = false) {
 		$cats_table = SQL_PREFIX . 'categories';
+		$groups_table = SQL_PREFIX . 'groups';
 
 		if($cid)
-			$where = "WHERE `cid` = '$cid'\n";
+			$where = "WHERE `$cats_table`.`cid` = '$cid'\n";
 		else
-			$where = "WHERE `cid` IS NULL\n";
+			$where = "WHERE `$cats_table`.`cid` IS NULL\n";
 
-		$query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
-			."`gid`, `catid`\n"
+		$query = "SELECT `$cats_table`.`name` AS `name`, `text_color`, "
+			."`bg_color`, `$cats_table`.`cid` AS `cid`, "
+			."`$cats_table`.`gid`, `catid`, "
+			."`$groups_table`.`name` AS `group_name`\n"
 			."FROM `$cats_table`\n"
+			."LEFT JOIN `$groups_table` USING (`gid`)\n"
 			.$where;
 
 		$sth = $this->dbh->query($query)
@@ -831,7 +837,7 @@ class PhpcDatabase {
 			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table` \n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
-			."LEFT JOIN `$users_table` on `uid` = `owner`\n"
+			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
 			."WHERE ($where)\n"
 			."AND `$events_table`.`cid` = '$cid'\n"

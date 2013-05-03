@@ -123,11 +123,13 @@ function category_list()
 		$name = empty($category['name']) ? __('No Name')
 			: $category['name'];
 		$catid = $category['catid'];
+		$group = empty($category['group_name']) ? __('None')
+			: $category['group_name'];
 		$tbody->add(tag('tr',
-					tag('th',$name),
+					tag('th', $name),
 					tag('td', htmlspecialchars($category['text_color'])),
 					tag('td', htmlspecialchars($category['bg_color'])),
-					tag('td', htmlspecialchars($category['gid'])),
+					tag('td', htmlspecialchars($group)),
 					tag('td', create_action_link(__('Edit'),
 							'category_form',
 							array('catid'
