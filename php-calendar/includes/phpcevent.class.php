@@ -27,6 +27,7 @@ class PhpcEvent {
 	var $bg_color;
 	var $text_color;
 	var $catid;
+	var $gid;
 	var $ctime;
 	var $mtime;
 	var $cal;
@@ -51,6 +52,7 @@ class PhpcEvent {
 		$this->bg_color = $event['bg_color'];
 		$this->text_color = $event['text_color'];
 		$this->catid = $event['catid'];
+		$this->gid = $event['gid'];
 		$this->ctime = $event['ctime'];
 		$this->mtime = $event['mtime'];
 
@@ -142,7 +144,7 @@ class PhpcEvent {
 	function can_read() {
 		global $phpcdb, $phpc_user;
 
-		$visible_category = !isset($this->catid)
+		$visible_category = empty($this->gid) || !isset($this->catid)
 			|| $phpcdb->is_cat_visible($phpc_user->get_uid(),
 					$this->catid);
 		return $this->cal->can_read() && $visible_category;

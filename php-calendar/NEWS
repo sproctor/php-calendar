@@ -1,6 +1,11 @@
 NEWS
 -----
 
+2.0-rc6 (2 May 2013):
+	- Fixed bugs in importing from version 1.1
+	- Fixed editing occurrence with non-default date format
+	- Fixed events with categories with no group only visible to admins
+
 2.0-rc5 (29 April 2013):
 	- Fixed major bug that prevent events from showing up
 

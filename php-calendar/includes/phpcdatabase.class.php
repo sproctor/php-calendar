@@ -44,9 +44,10 @@ class PhpcDatabase {
 
 	private function get_event_fields() {
 		$events_table = SQL_PREFIX . "events";
+		$cats_table = SQL_PREFIX . "categories";
 		$fields = array('subject', 'description', 'owner', 'eid', 'cid',
 				'readonly', 'catid', 'ctime', 'mtime');
-		return "`$events_table`.`"
+		return "`$cats_table`.`gid`, `$events_table`.`"
 			. implode("`, `$events_table`.`", $fields) . "`\n";
 	}
 
@@ -96,14 +97,16 @@ class PhpcDatabase {
         }
 		
 	/* if category is visible to user id */
-	function is_cat_visible($uid,$catid)
-	{
-	    $users_table = SQL_PREFIX . 'users';
+	function is_cat_visible($uid, $catid) {
+		$users_table = SQL_PREFIX . 'users';
 	   	$groups_table = SQL_PREFIX . 'groups';
 		
-		if (is_admin()) return true;
+		if (is_admin())
+			return true;
 		
-		$query = "SELECT * FROM `" . $users_table. "` JOIN `" . $groups_table. "` ON (`" . $users_table. "`.gid = `" . $groups_table. "`.gid) WHERE `catid`=".$catid." AND `uid`=".$uid ;	
+		$query = "SELECT * FROM `$users_table`\n"
+			."JOIN `$groups_table` ON (`$users_table`.gid = `$groups_table`.gid)\n"
+			."WHERE `catid`='$catid' AND `uid`='$uid'";	
 		
 		$results = $this->dbh->query($query);
 
