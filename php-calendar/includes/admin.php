@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2013 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+require_once("$phpc_includes_path/form.php");
+
 function admin() {
 	global $phpc_version;
 
@@ -27,15 +29,13 @@ function admin() {
         }
 
 	$menu = tag('div', attrs('class="phpc-bar ui-widget-content"'),
-			create_action_link(__('Import from PHP-Calendar 1.1'),
-				'import_form'),
 			create_action_link(__('Generate translations'),
 				'translate'));
 
 	$version = tag('div', attrs('class="phpc-bar ui-widget-content"'),
 			__('Version') . ": $phpc_version");
 
-	return tag('div', $menu, calendar_list(), user_list(),
+	return tag('div', $menu, calendar_list(), user_list(), import(),
 			$version);
 }
 
@@ -97,6 +97,34 @@ function user_list()
 					tag('td', attributes('colspan="3"'),
 						$create_link))));
 
+}
+
+function import() {
+	global $phpc_script, $vars;
+
+	$form = new Form($phpc_script, __('Import Form'));
+	$form->add_part(new FormFreeQuestion('host', __('MySQL Host Name')));
+	$form->add_part(new FormFreeQuestion('dbname', __('MySQL Database Name')));
+	$form->add_part(new FormFreeQuestion('port', __('MySQL Port Number'), __('Leave blank for default')));
+	$form->add_part(new FormFreeQuestion('username', __('MySQL User Name')));
+	$pwq = new FormFreeQuestion('passwd', __('MySQL User Password'));
+	$pwq->type = 'password';
+	$form->add_part($pwq);
+	$form->add_part(new FormFreeQuestion('prefix', __('PHP-Calendar Table Prefix')));
+
+	$form->add_hidden('action', 'import');
+	$form->add_hidden('submit_form', 'submit_form');
+
+	$form->add_part(new FormSubmitButton(__("Import Calendar")));
+
+	$defaults = array(
+			'host' => 'localhost',
+			'dbname' => 'calendar',
+			'prefix' => 'phpc_',
+			);
+
+	return tag('div', attrs('id="phpc-import"'),
+			$form->get_form($defaults));
 }
 
 ?>

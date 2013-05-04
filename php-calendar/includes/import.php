@@ -19,52 +19,15 @@ if(!defined('IN_PHPC')) {
 	die("Hacking attempt");
 }
 
-require_once("$phpc_includes_path/form.php");
-
-function import_form() {
-	global $vars;
+function import() {
+	global $vars, $phpcdb, $phpc_cal, $phpcid, $phpc_script;
 
 	if(!is_admin()) {
 		permission_error(__('Need to be admin'));
 		exit;
 	}
 
-	if(empty($vars["submit_form"]))
-		return display_form();
-
-	// else
-	return process_form();
-}
-
-function display_form() {
-	global $phpc_script, $vars;
-
-	$form = new Form($phpc_script, __('Import Form'));
-	$form->add_part(new FormFreeQuestion('host', __('MySQL Host Name')));
-	$form->add_part(new FormFreeQuestion('dbname', __('MySQL Database Name')));
-	$form->add_part(new FormFreeQuestion('port', __('MySQL Port Number'), __('Leave blank for default')));
-	$form->add_part(new FormFreeQuestion('username', __('MySQL User Name')));
-	$pwq = new FormFreeQuestion('passwd', __('MySQL User Password'));
-	$pwq->type = 'password';
-	$form->add_part($pwq);
-	$form->add_part(new FormFreeQuestion('prefix', __('PHP-Calendar Table Prefix')));
-
-	$form->add_hidden('action', 'import_form');
-	$form->add_hidden('submit_form', 'submit_form');
-
-	$form->add_part(new FormSubmitButton(__("Import Calendar")));
-
-	$defaults = array(
-			'host' => 'localhost',
-			'dbname' => 'calendar',
-			'prefix' => 'phpc_',
-			);
-
-	return $form->get_form($defaults);
-}
-
-function process_form() {
-	global $vars, $phpcdb, $phpc_cal, $phpcid, $phpc_script;
+	$form_page = "$phpc_script?action=admin#phpc-import";
 
 	if(!empty($vars['port']) && strlen($vars['port']) > 0) {
 		$port = $vars['port'];
@@ -72,13 +35,14 @@ function process_form() {
 		$port = ini_get("mysqli.default_port");
 	}
 
-	$old_dbh = new mysqli($vars['host'], $vars['username'], $vars['passwd'],
+	$old_dbh = @new mysqli($vars['host'], $vars['username'], $vars['passwd'],
 			$vars['dbname'], $port);
 
 	if(!$old_dbh || mysqli_connect_errno()) {
-		soft_error("Database connect failed ("
+		return message_redirect("Database connect failed ("
 				. mysqli_connect_errno() . "): "
-				. mysqli_connect_error());
+				. mysqli_connect_error(),
+				$form_page);
 	}
 
 	$events_table = $vars['prefix'] . 'events';
@@ -187,8 +151,9 @@ function process_form() {
 	}
 
 
-	return message_redirect(sprintf(__("Created %s events with %s occurences"), $events, $occurrences),
-			"$phpc_script?action=import_form");
+	return message_redirect(sprintf(__("Created %s events with %s occurences"),
+				$events, $occurrences),
+			$form_page);
 }
 
 ?>
