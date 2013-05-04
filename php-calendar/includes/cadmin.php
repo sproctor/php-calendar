@@ -19,19 +19,28 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-function cadmin()
-{
+function cadmin() {
 	global $phpc_cal;
 
         if(!$phpc_cal->can_admin()) {
                 permission_error(__('You must be logged in as an admin.'));
         }
 
-	return array(config_form(), user_list(), category_list(), group_list());
+	$index = tag('ul',
+			tag('li', tag('a', attrs('href="#phpc-config"'),
+					__('Calendar Configuration'))),
+			tag('li', tag('a', attrs('href="#phpc-users"'),
+					__('Users'))),
+			tag('li', tag('a', attrs('href="#phpc-categories"'),
+					__('Categories'))),
+			tag('li', tag('a', attrs('href="#phpc-groups"'),
+					__('Groups'))));
+
+	return tag('div', attrs("class=\"phpc-tabs\""), $index, config_form(),
+			user_list(), category_list(), group_list());
 }
 
-function config_form()
-{
+function config_form() {
 	global $phpc_cal, $phpc_script, $vars;
 
         $tbody = tag('tbody');
@@ -52,8 +61,8 @@ function config_form()
 	if(isset($vars['phpcid']))
 		$hidden_div->add(create_hidden('phpcid', $vars['phpcid']));
 		
-        return tag('form', attributes("action=\"$phpc_script\"",
-                                'method="post"'),
+        $form = tag('form', attributes("action=\"$phpc_script\"",
+				'method="post"'),
 			$hidden_div,
 			tag('table', attributes("class=\"phpc-container\""),
 				tag('caption', __('Options')),
@@ -63,6 +72,7 @@ function config_form()
 							create_submit(__('Submit'))))),
 				$tbody));
 
+	return tag('div', attrs('id="phpc-config"'), $form);
 }
 
 function user_list()
@@ -91,7 +101,7 @@ function user_list()
 	if(isset($vars['phpcid']))
 		$hidden_div->add(create_hidden('phpcid', $vars['phpcid']));
 		
-	return tag('form', attributes("action=\"$phpc_script\"",
+	$form = tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
 			$hidden_div,
 			tag('table', attributes("class=\"phpc-container\""),
@@ -109,6 +119,8 @@ function user_list()
 						tag('th', __('Modify')),
 						tag('th', __('Admin')))),
 				$tbody));
+
+	return tag('div', attrs('id="phpc-users"'), $form);
 }
 
 function category_list()
@@ -160,7 +172,7 @@ function category_list()
 					tag('td', attributes('colspan="5"'),
 						$create_link))));
 
-	return tag('div', attributes('class="phpc-container"'), $table);
+	return tag('div', attributes('id="phpc-categories"'), $table);
 }
 
 function group_list() {
@@ -201,7 +213,7 @@ function group_list() {
 					tag('td', attributes('colspan="2"'),
 						$create_link))));
 
-	return tag('div', attributes('class="phpc-container"'), $table);
+	return tag('div', attrs('id="phpc-groups"'), $table);
 }
 
 ?>

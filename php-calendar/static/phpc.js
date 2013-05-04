@@ -28,6 +28,8 @@ $(document).ready(function(){
   $(".php-calendar th, .phpc-callist").addClass("ui-widget-header");
   $(".php-calendar td, #phpc-summary-view").addClass("ui-widget-content");
   $(".phpc-calendar li a, .phpc-message").addClass("ui-state-default");
+  // Tabs
+  $(".phpc-tabs").tabs();
 
   // Summary init
   $("#phpc-summary-view").hide();
