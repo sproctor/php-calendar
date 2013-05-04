@@ -35,40 +35,8 @@ function admin() {
 	$version = tag('div', attrs('class="phpc-bar ui-widget-content"'),
 			__('Version') . ": $phpc_version");
 
-	return tag('div', $menu, new_user_form(), calendar_list(), user_list(),
+	return tag('div', $menu, calendar_list(), user_list(),
 			$version);
-}
-
-function new_user_form()
-{
-	global $phpc_script;
-
-	return tag('form', attributes("action=\"$phpc_script\"",
-                                'method="post"'),
-			tag('table', attributes("class=\"phpc-container\""),
-				tag('caption', __('Create User')),
-				tag('tfoot',
-					tag('tr',
-						tag('td', attributes('colspan="2"'),
-							create_hidden('action', 'user_create'),
-							create_submit(__('Submit'))))),
-				tag('tbody',
-					tag('tr',
-						tag('th', __('User Name')),
-						tag('td', create_text('user_name'))),
-					tag('tr',
-						tag('th', __('Password')),
-						tag('td', create_password('password1'))),
-					tag('tr',
-						tag('th', __('Confirm Password')),
-						tag('td', create_password('password2'))),
-					tag('tr',
-						tag('th', __('Make Admin')),
-						tag('td', create_checkbox('make_admin', '1', false, __('Admin')))),
-					tag('tr',
-						tag('th', __('Group')),
-						tag('td', create_text('group')))
-				   )));
 }
 
 function calendar_list()
@@ -120,8 +88,14 @@ function user_list()
 							array("uid" => $user->uid)))));
 	}
 
+	$create_link = create_action_link(__('Create User'),
+			'user_create');
         return tag('table', attributes("class=\"phpc-container\""),
-			tag('caption', __('User List')), $tbody);
+			tag('caption', __('User List')), $tbody,
+			tag('tfoot',
+				tag('tr',
+					tag('td', attributes('colspan="3"'),
+						$create_link))));
 
 }
 
