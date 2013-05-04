@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2013 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,24 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
-function create_calendar()
-{
-	global $vars, $phpcdb, $phpc_script;
+function calendar_form() {
+	global $vars;
 
         if(!is_admin()) {
                 return tag('div', __('Permission denied'));
         }
+
+	if(!empty($vars['submit_form']))
+		process_form();
+
+	return display_form();
+
+}
+
+function process_form()
+{
+	global $vars, $phpcdb, $phpc_script;
+
 
 	verify_token();
 
@@ -51,8 +62,37 @@ function create_calendar()
 		$phpcdb->create_config($cid, $name, $value);
 	}
 
-        return message_redirect(__('Calendar created.'),
-			"$phpc_script?action=admin");
+        message(__('Calendar created.'));
 }
+
+function display_form()
+{
+	global $phpc_script;
+
+        $tbody = tag('tbody');
+
+        foreach(get_config_options() as $element) {
+                $text = $element[1];
+		$input = create_config_input($element);
+
+                $tbody->add(tag('tr',
+                                tag('th', $text),
+                                tag('td', $input)));
+        }
+
+        return tag('form', attributes("action=\"$phpc_script\"",
+                                'method="post"'),
+			tag('table', attributes("class=\"phpc-container\""),
+				tag('caption', __('Create Calendar')),
+				tag('tfoot',
+                                        tag('tr',
+                                                tag('td', attributes('colspan="2"'),
+							create_hidden('action', 'calendar_form'),
+							create_hidden('submit_form', 'submit_form'),
+							create_submit(__('Submit'))))),
+				$tbody));
+
+}
+
 
 ?>

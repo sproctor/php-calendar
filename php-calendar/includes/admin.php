@@ -35,8 +35,8 @@ function admin() {
 	$version = tag('div', attrs('class="phpc-bar ui-widget-content"'),
 			__('Version') . ": $phpc_version");
 
-	return tag('div', $menu, new_user_form(), create_calendar_form(),
-			calendar_list(), user_list(), $version);
+	return tag('div', $menu, new_user_form(), calendar_list(), user_list(),
+			$version);
 }
 
 function new_user_form()
@@ -71,34 +71,6 @@ function new_user_form()
 				   )));
 }
 
-function create_calendar_form()
-{
-	global $phpc_script;
-
-        $tbody = tag('tbody');
-
-        foreach(get_config_options() as $element) {
-                $text = $element[1];
-		$input = create_config_input($element);
-
-                $tbody->add(tag('tr',
-                                tag('th', $text),
-                                tag('td', $input)));
-        }
-
-        return tag('form', attributes("action=\"$phpc_script\"",
-                                'method="post"'),
-			tag('table', attributes("class=\"phpc-container\""),
-				tag('caption', __('Create Calendar')),
-				tag('tfoot',
-                                        tag('tr',
-                                                tag('td', attributes('colspan="2"'),
-							create_hidden('action', 'create_calendar'),
-							create_submit(__('Submit'))))),
-				$tbody));
-
-}
-
 function calendar_list()
 {
 	global $phpc_script, $phpcdb;
@@ -113,14 +85,21 @@ function calendar_list()
 
                 $tbody->add(tag('tr',
                                 tag('th', $title),
-                                tag('td',create_action_link("Edit", "cadmin",
-						array("phpcid" => $cid)),"   ", create_action_link("Delete",
+                                tag('td',create_action_link(__("Edit"),
+						"cadmin", array("phpcid" => $cid)),
+					" ", create_action_link(__("Delete"),
 						"calendar_delete",
 						array("cid" => $cid)))));
         }
 
+	$create_link = create_action_link(__('Create Calendar'),
+			'calendar_form');
         return tag('table', attributes("class=\"phpc-container\""),
-			tag('caption', __('Calendar List')), $tbody);
+			tag('caption', __('Calendar List')), $tbody,
+			tag('tfoot',
+				tag('tr',
+					tag('td', attributes('colspan="2"'),
+						$create_link))));
 
 }
 
