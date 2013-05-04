@@ -28,15 +28,22 @@ function admin() {
                 permission_error(__('You must be logged in as an admin.'));
         }
 
-	$menu = tag('div', attrs('class="phpc-bar ui-widget-content"'),
-			create_action_link(__('Generate translations'),
-				'translate'));
+	$menu = tag('ul',
+			tag('li', tag('a', attrs('href="#phpc-admin-calendars"'),
+					__('Calendars'))),
+			tag('li', tag('a', attrs('href="#phpc-admin-users"'),
+					__('Users'))),
+			tag('li', tag('a', attrs('href="#phpc-admin-import"'),
+					__('Import'))),
+			tag('li', tag('a', attrs('href="#phpc-admin-translate"'),
+					__('Translate'))));
 
 	$version = tag('div', attrs('class="phpc-bar ui-widget-content"'),
 			__('Version') . ": $phpc_version");
 
-	return tag('div', $menu, calendar_list(), user_list(), import(),
-			translation_link(), $version);
+	return tag('', tag('div', attrs('class="phpc-tabs"'), $menu,
+				calendar_list(), user_list(), import(),
+				translation_link()), $version);
 }
 
 function calendar_list()
@@ -62,7 +69,8 @@ function calendar_list()
 
 	$create_link = create_action_link(__('Create Calendar'),
 			'calendar_form');
-        return tag('table', attributes("class=\"phpc-container\""),
+        return tag('table', attributes('id="phpc-admin-calendars"',
+				'class="phpc-container"'),
 			tag('caption', __('Calendar List')), $tbody,
 			tag('tfoot',
 				tag('tr',
@@ -90,7 +98,8 @@ function user_list()
 
 	$create_link = create_action_link(__('Create User'),
 			'user_create');
-        return tag('table', attributes("class=\"phpc-container\""),
+        return tag('table', attributes('id="phpc-admin-users"',
+				'class="phpc-container"'),
 			tag('caption', __('User List')), $tbody,
 			tag('tfoot',
 				tag('tr',
@@ -123,14 +132,14 @@ function import() {
 			'prefix' => 'phpc_',
 			);
 
-	return tag('div', attrs('id="phpc-import"'),
+	return tag('div', attrs('id="phpc-admin-import"'),
 			$form->get_form($defaults));
 }
 
 function translation_link() {
 	global $phpc_script;
 
-	return tag('div', attrs('id="phpc-translate"'),
+	return tag('div', attrs('id="phpc-admin-translate"'),
 			tag('p', __('This script needs read access to your calendar directory in order to write the translation files. Alternatively, you could run translate.php from the command line or use msgfmt or any other gettext tool that can generate .mo files from .po files.')),
 			tag('a', attrs('class="phpc-button"',
 					"href=\"$phpc_script?action=translate\""),
