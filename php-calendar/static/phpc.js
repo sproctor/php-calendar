@@ -10,7 +10,7 @@ $(document).ready(function(){
       text: false,
       icons: { primary: "ui-icon-plus" }
     });
-  $(".php-calendar input[type=submit], .php-calendar tfoot a").button();
+  $(".php-calendar input[type=submit], .php-calendar tfoot a, .phpc-button").button();
   // The buttons are too hard to read waiting on:
   //    http://wiki.jqueryui.com/w/page/12137730/Checkbox
   // $(".php-calendar input[type=checkbox] + label").prev().button();

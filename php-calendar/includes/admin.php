@@ -36,7 +36,7 @@ function admin() {
 			__('Version') . ": $phpc_version");
 
 	return tag('div', $menu, calendar_list(), user_list(), import(),
-			$version);
+			translation_link(), $version);
 }
 
 function calendar_list()
@@ -127,4 +127,13 @@ function import() {
 			$form->get_form($defaults));
 }
 
+function translation_link() {
+	global $phpc_script;
+
+	return tag('div', attrs('id="phpc-translate"'),
+			tag('p', __('This script needs read access to your calendar directory in order to write the translation files. Alternatively, you could run translate.php from the command line or use msgfmt or any other gettext tool that can generate .mo files from .po files.')),
+			tag('a', attrs('class="phpc-button"',
+					"href=\"$phpc_script?action=translate\""),
+				__('Generate Translations')));
+}
 ?>
