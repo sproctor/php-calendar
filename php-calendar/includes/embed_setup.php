@@ -38,16 +38,11 @@ $phpc_config_file = "$phpc_root_path/config.php";
 $phpc_locale_path = "$phpc_root_path/locale";
 $phpc_script = htmlentities($_SERVER['PHP_SELF']);
 
-if(!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
-	$phpc_protocol = "https";
-else
-	$phpc_protocol = "http";
-
 $phpc_server = $_SERVER['SERVER_NAME'];
 if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
 	$phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
 
-$phpc_home_url="$phpc_protocol://$phpc_server$phpc_script";
+$phpc_home_url="//$phpc_server$phpc_script";
 $phpc_url = $phpc_home_url
 		. (empty($_SERVER['QUERY_STRING']) ? ''
 		   : '?' . $_SERVER['QUERY_STRING']);

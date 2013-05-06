@@ -725,7 +725,7 @@ function verify_token() {
 
 function get_header_tags($path)
 {
-	global $phpc_protocol, $phpc_cal;
+	global $phpc_cal;
 
 	if(defined('PHPC_DEBUG'))
 		$jq_min = '';
@@ -743,13 +743,13 @@ function get_header_tags($path)
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/phpc.css\"")),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/themes/$theme/jquery-ui$jq_min.css\"")),
+					"href=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/themes/$theme/jquery-ui$jq_min.css\"")),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/jquery-ui-timepicker.css\"")),
 			tag("script", attrs('type="text/javascript"',
-					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
+					"src=\"//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
 			tag("script", attrs('type="text/javascript"',
-					"src=\"$phpc_protocol://ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
+					"src=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
 			tag('script', attrs('type="text/javascript"'),
 					"var imagePath='$path/images/'"),
 			tag('script', attrs('type="text/javascript"',

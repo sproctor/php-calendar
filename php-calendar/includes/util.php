@@ -42,7 +42,7 @@ function minute_pad($minute)
 }
 
 function redirect($page) {
-	global $phpc_script, $phpc_server, $phpc_protocol, $phpc_redirect;
+	global $phpc_script, $phpc_server, $phpc_redirect;
 
 	session_write_close();
 
@@ -53,7 +53,7 @@ function redirect($page) {
 	} else {
 		$dir = dirname($phpc_script) . "/";
 	}
-	$url = "$phpc_protocol://$phpc_server$dir$page";
+	$url = "//$phpc_server$dir$page";
 
 	header("Location: $url");
 }
