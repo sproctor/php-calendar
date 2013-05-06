@@ -24,9 +24,9 @@ if ( !defined('IN_PHPC') ) {
 }
 
 // Full display for a month
-function display_month()
+function display_week()
 {
-	global $month, $year;
+	global $vars;
 
 	$heading_html = tag('tr');
 	$heading_html->add(tag('th', substr(__('Week'), 0, 1)));
@@ -35,7 +35,26 @@ function display_month()
 		$heading_html->add(tag('th', day_name($d)));
 	}
 
-	$month_navbar = month_navbar($month, $year);
+	if(!isset($vars['week']) || !isset($vars['year']))
+		soft_error(__('Invalid date.'));
+
+	$week_of_year = $vars['week'];
+	$year = $vars['year'];
+
+	$day_of_year = 1 + ($week_of_year - 1) * 7 - day_of_week(1, 1, $year);
+	$from_stamp = mktime(0, 0, 0, 1, $day_of_year, $year);
+	$start_month = date("n", $from_stamp);
+	$start_year = date("Y", $from_stamp);
+
+	$last_day = $day_of_year + 6;
+	$to_stamp = mktime(0, 0, 0, 1, $last_day, $year);
+	$end_month = date("n", $to_stamp);
+	$end_year = date("Y", $to_stamp);
+
+	$heading = month_name($start_month) .  " $start_year";
+	if($end_month != $start_month)
+		$heading .= " - " . month_name($end_month) . " $end_year";
+
 	return tag('',
 			tag("div", attributes('id="phpc-summary-view"'), 
 				tag("div", attributes('id="phpc-summary-head"'),
@@ -44,10 +63,9 @@ function display_month()
 					tag("div", attributes('id="phpc-summary-category"'), ''),
 					tag("div", attributes('id="phpc-summary-time"'), '')),
 				tag("div", attributes('id="phpc-summary-body"'), '')),
-                        $month_navbar,
                         tag('table',
 				attributes('class="phpc-main phpc-calendar"'),
-                                tag('caption', month_name($month)." $year"),
+                                tag('caption', $heading),
                                 tag('colgroup',
 					tag('col', attributes('class="phpc-week"')),
 					tag('col', attributes('class="phpc-day"')),
@@ -58,60 +76,19 @@ function display_month()
 					tag('col', attributes('class="phpc-day"')),
 					tag('col', attributes('class="phpc-day"'))
 				   ),
-                                tag('thead', $heading_html),
-                                create_month($month, $year)),
+				tag('thead', $heading_html),
+				create_week($week_of_year, $from_stamp,
+					$to_stamp, $year)),
 			$month_navbar);
 }
 
-// creates a menu to navigate the month/year
-// returns XHTML data for the menu
-function month_navbar($month, $year) {
-	$nav_tag = tag('div', attributes('class="phpc-bar ui-widget-content"'));
-	$months_tag = tag('div', attributes('class="phpc-bar ui-widget-content"'));
+// creates a display for a particular week to be embedded in a month table
+function create_week($week_of_year, $from_stamp, $to_stamp, $year) {
+	global $phpcdb, $phpcid, $phpc_cal;
 
-	$prev_month = $month - 1;
-	$prev_year = $year;
-	if($prev_month < 1) {
-		$prev_month += 12;
-		$prev_year--;
-	}
-	menu_item_append_with_date($nav_tag, __('last year'), 'display_month',
-			$year - 1, $month);
-	menu_item_append_with_date($nav_tag, __('last month'), 'display_month',
-			$prev_year, $prev_month);
-
-	$next_month = $month + 1;
-	$next_year = $year;
-	if($next_month > 12) {
-		$next_month -= 12;
-		$next_year++;
-	}
-
-	menu_item_append_with_date($nav_tag, __('next month'), 'display_month',
-			$next_year, $next_month);
-	menu_item_append_with_date($nav_tag, __('next year'), 'display_month',
-			$year + 1, $month);
-
-	for($i = 1; $i <= 12; $i++) {
-		menu_item_append_with_date($months_tag, short_month_name($i),
-				'display_month', $year, $i);
-	}
-
-	return array($nav_tag, $months_tag);
-}
-
-// creates a display for a particular month to be embedded in a full view
-function create_month($month, $year)
-{
-	global $phpcdb, $phpc_cal, $phpcid;
-
-	$wim = weeks_in_month($month, $year);
-
-	$first_day = 1 - day_of_week($month, 1, $year);
-	$from_stamp = mktime(0, 0, 0, $month, $first_day, $year);
-
-	$last_day = $wim * 7 - day_of_week($month, 1, $year);
-	$to_stamp = mktime(0, 0, 0, $month, $last_day, $year);
+	$start_day = date("j", $from_stamp);
+	$start_month = date("n", $from_stamp);
+	$start_year = date("Y", $from_stamp);
 
 	$max_events = $phpc_cal->events_max;
 
@@ -156,33 +133,17 @@ function create_month($month, $year)
 			$days_events[$key][] = $event;
 		}
 	}
-
-	$month_table = tag('tbody');
-	for($week_of_month = 1; $week_of_month <= $wim; $week_of_month++) {
-		$month_table->add(create_week($week_of_month, $month, $year,
-					$days_events));
-	}
-
-	return $month_table;
-}
-
-// creates a display for a particular week to be embedded in a month table
-function create_week($week_of_month, $month, $year, $days_events)
-{
-	$start_day = 1 + ($week_of_month - 1) * 7
-		- day_of_week($month, 1, $year);
-	$week_of_year = week_of_year($month, $start_day, $year);
-
-	$args = array('week' => $week_of_year, 'year' => $year);
-	$week_html = tag('tr', tag('th', create_action_link($week_of_year,
-					'display_week', $args)));
+	$week_table = tag('tbody');
+	$week_html = tag('tr', tag('th', $week_of_year));
+	$week_table->add($week_html);
 		
 	for($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
 		$day = $start_day + $day_of_week;
-		$week_html->add(create_day($month, $day, $year, $days_events));
+		$week_html->add(create_day($start_month, $day, $start_year,
+					$days_events));
 	}
 
-	return $week_html;
+	return $week_table;
 }
 
 // displays the day of the week and the following days of the week
@@ -206,7 +167,6 @@ function create_day($month, $day, $year, $days_events)
 			$month = 1;
 			$year++;
 		}
-		$date_class .= ' phpc-shadow';
 	} else {
 		$currentday = date('j');
 		$currentmonth = date('n');
