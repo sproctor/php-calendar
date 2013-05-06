@@ -69,13 +69,13 @@ function calendar_list()
 
 	$create_link = create_action_link(__('Create Calendar'),
 			'calendar_form');
-        return tag('table', attributes('id="phpc-admin-calendars"',
-				'class="phpc-container"'),
+        return tag('div', attributes('id="phpc-admin-calendars"'), tag('table',
+				attributes('class="phpc-container"'),
 			tag('caption', __('Calendar List')), $tbody,
 			tag('tfoot',
 				tag('tr',
 					tag('td', attributes('colspan="2"'),
-						$create_link))));
+						$create_link)))));
 
 }
 
@@ -98,13 +98,13 @@ function user_list()
 
 	$create_link = create_action_link(__('Create User'),
 			'user_create');
-        return tag('table', attributes('id="phpc-admin-users"',
-				'class="phpc-container"'),
+        return tag('div', attributes('id="phpc-admin-users"'),tag('table',
+				attributes('class="phpc-container"'),
 			tag('caption', __('User List')), $tbody,
 			tag('tfoot',
 				tag('tr',
 					tag('td', attributes('colspan="3"'),
-						$create_link))));
+						$create_link)))));
 
 }
 
