@@ -78,8 +78,7 @@ function display_week()
 				   ),
 				tag('thead', $heading_html),
 				create_week($week_of_year, $from_stamp,
-					$to_stamp, $year)),
-			$month_navbar);
+					$to_stamp, $year)));
 }
 
 // creates a display for a particular week to be embedded in a month table

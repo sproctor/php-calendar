@@ -264,10 +264,9 @@ function create_action_link_with_date($text, $action, $year = false,
 
 /*S*/
 function create_plain_link($text, $action, $year = false,
-		$month = false, $day = false, $attribs = false)
+		$month = false, $day = false, $attribs = false, $args = array())
 {
 	global $phpc_script, $vars;
-	$args = array();
 	if($year !== false) $args["year"] = $year;
 	if($month !== false) $args["month"] = $month;
 	if($day !== false) $args["day"] = $day;

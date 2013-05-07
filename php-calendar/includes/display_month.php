@@ -174,7 +174,11 @@ function create_week($week_of_month, $month, $year, $days_events)
 	$week_of_year = week_of_year($month, $start_day, $year);
 
 	$args = array('week' => $week_of_year, 'year' => $year);
-	$week_html = tag('tr', tag('th', create_action_link($week_of_year,
+	$click = create_plain_link($week_of_year, 'display_week', false, false,
+			false, false, $args);
+	$week_html = tag('tr', tag('th', attrs('class="ui-state-default"',
+					"onclick=\"window.location.href='$click'\""),
+				create_action_link($week_of_year,
 					'display_week', $args)));
 		
 	for($day_of_week = 0; $day_of_week < 7; $day_of_week++) {

@@ -184,6 +184,10 @@ a.phpc-add {
   cursor: pointer;
 }
 
+.phpc-calendar th.ui-state-default {
+  cursor: pointer;
+}
+
 .phpc-date > a {
   text-decoration: none;
 }

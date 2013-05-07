@@ -14,7 +14,7 @@ $(document).ready(function(){
   // The buttons are too hard to read waiting on:
   //    http://wiki.jqueryui.com/w/page/12137730/Checkbox
   // $(".php-calendar input[type=checkbox] + label").prev().button();
-  $(".phpc-date, .phpc-calendar li a").on('mouseover mouseout',
+  $(".phpc-date, .phpc-calendar li a, .phpc-calendar th.ui-state-default").on('mouseover mouseout',
       function (event) {
         $(this).toggleClass("ui-state-hover");
       });
