@@ -23,12 +23,9 @@ try {
 	require_once("$phpc_includes_path/calendar.php");
 	require_once("$phpc_includes_path/setup.php");
 
-	$welcome='Welcome anonymous user';
-	if (isset($phpc_user)) $welcome='Welcome '.$phpc_user->username;
-	
 	$calendar_title = $phpc_cal->get_title();
 	$content = tag('div', attributes('class="php-calendar ui-widget"'),
-			tag('div', attributes('class="phpc-logged ui-widget-content"'), $welcome, userMenu()),
+			userMenu(),
 			tag('br', attributes('style="clear:both;"')),
 			tag('h1', attrs('class="ui-widget-header"'),
 				tag('a', attributes("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'"),

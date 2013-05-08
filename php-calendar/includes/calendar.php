@@ -416,19 +416,23 @@ function create_checkbox($name, $value, $checked = false, $label = false)
 // returns tag data for the menu
 function userMenu()
 {
-	global $action;
+	global $action, $phpc_user;
 
-	$html=tag('span',attributes('style="font-weight: bold; margin-left:1em;"'));
+	$welcome = __('Welcome') . '&nbsp;' . $phpc_user->username;
+	$span = tag('span');
 	
+	$html = tag('div', attributes('class="phpc-logged ui-widget-content"'),
+			$welcome, $span);
+
 	if($action != 'settings')
-		menu_item_append($html, __('Settings'), 'settings');
+		menu_item_append($span, __('Settings'), 'settings');
 		
 	if(is_user()) {
-		menu_item_append($html, __('Log out'), 'logout',
+		menu_item_append($span, __('Log out'), 'logout',
 				array('lasturl' =>
 					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
 	} else {
-		menu_item_append($html, __('Log in'), 'login',
+		menu_item_append($span, __('Log in'), 'login',
 				array('lasturl' =>
 					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
 	}
