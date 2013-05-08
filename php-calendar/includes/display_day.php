@@ -62,10 +62,6 @@ function display_day()
 
 	while($row = $results->fetch_assoc()) {
 	
-		// TODO: this should go into $event->can_read()
-		if (isset($row['catid']) && !$phpcdb->is_cat_visible($phpc_user->get_uid(), $row['catid']))
-			continue; /* if not visible, jump the loop */
-			
 		$event = new PhpcOccurrence($row);
 
 		if(!$event->can_read())
