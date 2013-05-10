@@ -819,8 +819,7 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows > 0;
 	}
 
-	function search($cid, $keywords, $start, $end, $sort, $order)
-	{
+	function search($cid, $keywords, $start, $end, $sort, $order) {
 		$events_table = SQL_PREFIX . 'events';
 		$occurrences_table = SQL_PREFIX . 'occurrences';
 		$users_table = SQL_PREFIX . 'users';
@@ -833,16 +832,19 @@ class PhpcDatabase {
 		}
 		$where = implode(' AND ', $words);
 
+		if($start)
+			$where .= "AND IF(`start_ts`, DATE(`start_ts`), `start_date`) >= FROM_UNIXTIME('$start')\n";
+		if($end)
+			$where .= "AND IF(`end_ts`, DATE(`end_ts`), `end_date`) <= FROM_UNIXTIME('$end')\n";
+
                 $query = "SELECT " . $this->get_occurrence_fields()
 			.", `username`, `name`, `bg_color`, `text_color`\n"
-			."FROM `$events_table` \n"
+			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
 			."WHERE ($where)\n"
 			."AND `$events_table`.`cid` = '$cid'\n"
-			."AND IF(`start_ts`, DATE(`start_ts`), `start_date`) >= STR_TO_DATE('$start', '%Y%m%d')\n"
-			."AND IF(`end_ts`, DATE(`end_ts`), `end_date`) <= STR_TO_DATE('$end', '%Y%m%d')\n"
 			."ORDER BY `$sort` $order";
 
 		if(!($result = $this->dbh->query($query)))

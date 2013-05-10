@@ -26,8 +26,16 @@ function search_results()
 	global $vars, $phpcdb, $phpcid, $sort_options, $order_options;
 
 	$searchstring = $vars['searchstring'];
-	$start = $vars['search-from-date'];
-	$end =  $vars['search-to-date'];
+	if(!empty($vars['search-from-date'])
+			&& strlen($vars['search-from-date']) > 0)
+		$start = get_timestamp('search-from');
+	else
+		$start = false;
+	if(!empty($vars['search-to-date'])
+			&& strlen($vars['search-to-date']) > 0)
+		$end = get_timestamp('search-to');
+	else
+		$end = false;
 
         // make sure sort is valid
 	$sort = htmlentities($vars['sort']);
@@ -91,17 +99,19 @@ function search_results()
 function search_form()
 {
 	global $day, $month, $year, $phpc_script, $month_names, $sort_options,
-	       $order_options, $phpcid;
-		   
+	       $order_options, $phpcid, $phpc_cal;
+	
+	$date_format = $phpc_cal->date_format;
+ 
 	$form = new Form($phpc_script, __('Search'),'post');
     	$form->add_part(new FormFreeQuestion('searchstring', __('Phrase'),
 				false, 32, true));
 	$form->add_hidden('action', 'search');
 	$form->add_hidden('phpcid', $phpcid);
 	$form->add_part(new FormDateQuestion('search-from', __('From'),
-				3));
+				$date_format));
 	$form->add_part(new FormDateQuestion('search-to', __('To'),
-				3));
+				$date_format));
 	$sort = new FormDropdownQuestion('sort', __('Sort By'));
 	$sort->add_options($sort_options);
 	$form->add_part($sort);
