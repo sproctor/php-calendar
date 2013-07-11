@@ -102,7 +102,7 @@ function occurrence_delete()
 	}
 	
         return message_redirect($html,
-			"$phpc_script?action=display_event&eid=$eid");
+			"$phpc_script?action=display_event&phpcid=$phpcid&eid=$eid");
 }
 
 ?>
