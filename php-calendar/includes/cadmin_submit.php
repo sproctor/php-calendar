@@ -20,9 +20,9 @@ if ( !defined('IN_PHPC') ) {
 }
 
 function cadmin_submit() {
-	global $phpcid, $vars, $phpcdb, $phpc_script;
+	global $phpcid, $phpc_cal, $vars, $phpcdb, $phpc_script;
 
-        if(!is_admin()) {
+        if(!$phpc_cal->can_admin()) {
                 return tag('div', __('Permission denied'));
         }
 
@@ -44,7 +44,7 @@ function cadmin_submit() {
 	}
 
         return message_redirect(__('Updated options'),
-			"$phpc_script?action=cadmin");
+			"$phpc_script?action=cadmin&phpcid=$phpcid");
 }
 
 ?>
