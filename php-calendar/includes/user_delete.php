@@ -65,7 +65,7 @@ function user_delete()
 		}
 	}
 
-        return message_redirect($html, "$phpc_script?action=admin");
+        return message_redirect($html, "$phpc_script?action=admin&phpcid=$phpcid");
 }
 
 ?>
