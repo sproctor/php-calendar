@@ -21,7 +21,7 @@ if ( !defined('IN_PHPC') ) {
 
 function user_delete()
 {
-	global $vars, $phpcdb, $phpc_script;
+	global $vars, $phpcid, $phpcdb, $phpc_script;
 
 	$html = tag('div', attributes('class="phpc-container"'));
 
@@ -65,7 +65,7 @@ function user_delete()
 		}
 	}
 
-        return message_redirect($html, "$phpc_script?action=admin");
+        return message_redirect($html, "$phpc_script?action=admin&phpcid=$phpcid");
 }
 
 ?>

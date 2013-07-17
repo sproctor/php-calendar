@@ -148,7 +148,7 @@ function display_event_by_eid($eid)
 
 	$event_header->add(tag('div', __('Created at: '), $event->ctime));
 	if(!empty($event->mtime))
-		$event_header->add(tag('div', ('Last modified at: '),
+		$event_header->add(tag('div', __('Last modified at: '),
 				$event->mtime));
 
 	$category = $event->get_category();

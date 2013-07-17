@@ -426,10 +426,10 @@ function process_form()
 		return message_redirect(tag('', $message,
 					create_event_link($eid, 'display_event',
 						$eid)),
-				"$phpc_script?action=display_event&eid=$eid");
+				"$phpc_script?action=display_event&phpcid=$phpcid&eid=$eid");
 	} else {
 		return message_redirect(__('Error submitting event.'),
-				"$phpc_script?action=display_month");
+				"$phpc_script?action=display_month&phpcid=$phpcid");
 	}
 }
 

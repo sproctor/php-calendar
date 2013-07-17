@@ -21,13 +21,13 @@ if ( !defined('IN_PHPC') ) {
 
 function category_delete()
 {
-	global $vars, $phpcdb, $phpc_script;
+	global $vars, $phpcdb, $phpcid, $phpc_script;
 
 	$html = tag('div', attributes('class="phpc-container"'));
 
 	if(empty($vars["catid"])) {
 		return message_redirect(__('No category selected.'),
-				"$phpc_script?action=cadmin");
+				"$phpc_script?action=cadmin&phpcid=$phpcid");
 	}
 
 	if (is_array($vars["catid"])) {
@@ -73,7 +73,7 @@ function category_delete()
 		}
 	}
 
-        return message_redirect($html, "$phpc_script?action=cadmin");
+        return message_redirect($html, "$phpc_script?action=cadmin&phpcid=$phpcid");
 }
 
 ?>

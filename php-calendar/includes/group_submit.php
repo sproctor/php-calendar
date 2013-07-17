@@ -51,7 +51,7 @@ function group_submit()
 		$phpcdb->modify_group($gid, $vars['name']);
 	}
 
-	$page = "$phpc_script?action=cadmin";
+	$page = "$phpc_script?action=cadmin&phpcid=".$vars['cid'];
 
 	if($modify)
 		return message_redirect(__("Modified group: ") . $gid,

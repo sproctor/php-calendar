@@ -99,21 +99,23 @@ class PhpcDatabase {
 	/* if category is visible to user id */
 	function is_cat_visible($uid, $catid) {
 		$users_table = SQL_PREFIX . 'users';
-	   	$groups_table = SQL_PREFIX . 'groups';
-		
+		$user_groups_table = SQL_PREFIX . 'user_groups';
+		$cats_table = SQL_PREFIX . 'categories';
+
 		if (is_admin())
 			return true;
-		
-		$query = "SELECT * FROM `$users_table`\n"
-			."JOIN `$groups_table` USING (`gid`)\n"
-			."WHERE `catid`='$catid' AND `uid`='$uid'";	
-		
+
+		$query = "SELECT * FROM `$users_table` u\n"
+			."JOIN `$user_groups_table` ug USING (`uid`)\n"
+			."JOIN `$cats_table` c ON c.`gid`=ug.`gid`\n"
+			."WHERE c.`catid`='$catid' AND u.`uid`='$uid'";
+
 		$results = $this->dbh->query($query);
 
 		if(!$results)
-			return 0;
+			return false;
 
-		return $results->num_rows;
+		return $results->num_rows>0;
 	}
 
 	// returns all the events for a particular day
@@ -809,7 +811,7 @@ class PhpcDatabase {
 	{
 		$query = "UPDATE " . SQL_PREFIX . "groups\n"
 			."SET\n"
-			."`name`='$name',\n"
+			."`name`='$name'\n"
 			."WHERE `gid`='$gid'";
 
 		$sth = $this->dbh->query($query)

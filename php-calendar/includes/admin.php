@@ -91,7 +91,7 @@ function user_list()
         foreach($phpcdb->get_users() as $user) {
 		$tbody->add(tag('tr', tag('th', $user->username),
 					tag('td', $user->groups),
-					tag('td', create_action_link("Delete",
+					tag('td', create_action_link(__("Delete"),
 							"user_delete",
 							array("uid" => $user->uid)))));
 	}
