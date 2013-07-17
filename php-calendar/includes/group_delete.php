@@ -21,13 +21,13 @@ if ( !defined('IN_PHPC') ) {
 
 function group_delete()
 {
-	global $vars, $phpcdb, $phpc_script;
+	global $vars, $phpcdb, $phpcid, $phpc_script;
 
 	$html = tag('div', attributes('class="phpc-container"'));
 
 	if(empty($vars["gid"])) {
 		return message_redirect(__('No group selected.'),
-				"$phpc_script?action=cadmin");
+				"$phpc_script?action=cadmin&phpcid=$phpcid");
 	}
 
 	if (is_array($vars["gid"])) {
@@ -73,7 +73,7 @@ function group_delete()
 		}
 	}
 
-        return message_redirect($html, "$phpc_script?action=cadmin");
+        return message_redirect($html, "$phpc_script?action=cadmin&phpcid=$phpcid");
 }
 
 ?>
