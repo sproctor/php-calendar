@@ -21,7 +21,7 @@ if ( !defined('IN_PHPC') ) {
 
 function occurrence_delete()
 {
-	global $vars, $phpcdb, $phpc_script;
+	global $vars, $phpcdb, $phpcid, $phpc_script;
 
 	$html = tag('div', attributes('class="phpc-container"'));
 
@@ -102,7 +102,7 @@ function occurrence_delete()
 	}
 	
         return message_redirect($html,
-			"$phpc_script?action=display_event&eid=$eid");
+			"$phpc_script?action=display_event&phpcid=$phpcid&eid=$eid");
 }
 
 ?>

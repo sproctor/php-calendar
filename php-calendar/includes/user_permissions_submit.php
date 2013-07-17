@@ -60,7 +60,7 @@ function user_permissions_submit()
 	else
 		$message = __('Updated user(s):').' ' .implode(', ', $users);
 
-	return message_redirect($message, "$phpc_script?action=cadmin");
+	return message_redirect($message, "$phpc_script?action=cadmin&phpcid=$phpcid");
 }
 
 ?>

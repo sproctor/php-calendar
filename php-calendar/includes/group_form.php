@@ -31,7 +31,7 @@ function group_form() {
 	$form->add_hidden('cid', $phpcid);
 
 	$form->add_hidden('action', 'group_submit');
-	$form->add_part(new FormSubmitButton("Submit Group"));
+	$form->add_part(new FormSubmitButton(__("Submit Group")));
 
 	if(isset($vars['gid'])) {
 		$form->add_hidden('gid', $vars['gid']);

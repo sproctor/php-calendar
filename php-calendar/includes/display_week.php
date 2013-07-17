@@ -29,7 +29,7 @@ function display_week()
 	global $vars;
 
 	$heading_html = tag('tr');
-	$heading_html->add(tag('th', substr(__('Week'), 0, 1)));
+	$heading_html->add(tag('th', __('W')));
 	for($i = 0; $i < 7; $i++) {
 		$d = ($i + day_of_week_start()) % 7;
 		$heading_html->add(tag('th', day_name($d)));
