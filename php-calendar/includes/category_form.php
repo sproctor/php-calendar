@@ -36,8 +36,9 @@ function category_form() {
 	}
 
 	$form->add_hidden('action', 'category_submit');
-	$form->add_part(new FormColorPicker('text-color','Text Color'));
-	$form->add_part(new FormColorPicker('bg-color','Background Color'));
+	$form->add_hidden('phpcid', $phpcid);
+	$form->add_part(new FormColorPicker('text-color',__('Text Color')));
+	$form->add_part(new FormColorPicker('bg-color',__('Background Color')));
 	$group_question = new FormDropDownQuestion('gid',
 			__('Visible to groups'));
 	$group_question->add_option('', __('None'));
@@ -45,7 +46,7 @@ function category_form() {
 		$group_question->add_option($group['gid'], $group['name']);
 	}
 	$form->add_part($group_question);
-	$form->add_part(new FormSubmitButton("Submit Category"));
+	$form->add_part(new FormSubmitButton(__("Submit Category")));
 
 	if(isset($vars['catid'])) {
 		$form->add_hidden('catid', $vars['catid']);
