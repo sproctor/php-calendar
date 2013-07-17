@@ -76,7 +76,7 @@ function category_submit()
 				$text_color, $bg_color, $gid);
 	}
 
-	$page = "$phpc_script?action=cadmin";
+	$page = "$phpc_script?action=cadmin&phpcid=".$vars['phpcid'];
 
 	if($modify)
 		return message_redirect(__("Modified category: ") . $catid,
