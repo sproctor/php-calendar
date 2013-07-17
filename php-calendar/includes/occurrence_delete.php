@@ -21,7 +21,7 @@ if ( !defined('IN_PHPC') ) {
 
 function occurrence_delete()
 {
-	global $vars, $phpcdb, $phpc_script;
+	global $vars, $phpcdb, $phpcid, $phpc_script;
 
 	$html = tag('div', attributes('class="phpc-container"'));
 
