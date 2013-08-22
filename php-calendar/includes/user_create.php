@@ -44,7 +44,7 @@ function display_form() {
 					tag('tr',
 						tag('td', attributes('colspan="2"'),
 							create_hidden('action', 'user_create'),												
-							create_hidden('submit_form', 'submit_form');
+							create_hidden('submit_form', 'submit_form'),
 							create_submit(__('Submit'))))),
 				tag('tbody',
 					tag('tr',
