@@ -37,7 +37,7 @@ function settings()
 
 function password_form()
 {
-	global $phpc_script;
+	global $phpc_script, $phpc_token;
 
 	return tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
@@ -46,6 +46,7 @@ function password_form()
 				tag('tfoot',
 					tag('tr',
 						tag('td', attributes('colspan="2"'),
+							create_hidden('phpc_token', $phpc_token),
 							create_hidden('action', 'password_submit'),
 							create_submit(__('Submit'))))),
 				tag('tbody',
@@ -63,7 +64,7 @@ function password_form()
 
 function config_form()
 {
-	global $phpc_script, $phpc_user_tz, $phpc_user_lang;
+	global $phpc_script, $phpc_user_tz, $phpc_user_lang, $phpc_token;
 
 	$tz_input = create_multi_select('timezone', get_timezone_list(),
 			$phpc_user_tz);
@@ -82,6 +83,7 @@ function config_form()
 				tag('tfoot',
 					tag('tr',
 						tag('td', attributes('colspan="2"'),
+							create_hidden('phpc_token', $phpc_token),
 							create_hidden('action', 'settings'),
 							create_hidden('phpc_submit', 'settings'),
 							create_submit(__('Submit'))))),

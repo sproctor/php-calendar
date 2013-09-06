@@ -67,10 +67,10 @@ if(empty($_SESSION["{$phpc_prefix}uid"])) {
 
 		$phpc_uid = $_COOKIE["{$phpc_prefix}uid"];
 		$phpc_login_series = $_COOKIE["{$phpc_prefix}login_series"];
-		$token = $phpcdb->get_login_token($phpc_uid,
+		$phpc_token = $phpcdb->get_login_token($phpc_uid,
 					$phpc_login_series);
-		if($token) {
-			if($token == $_COOKIE["{$phpc_prefix}login"]) {
+		if($phpc_token) {
+			if($phpc_token == $_COOKIE["{$phpc_prefix}login"]) {
 				$user = $phpcdb->get_user($phpc_uid);
 				phpc_do_login($user, $phpc_login_series);
 			} else {
@@ -81,8 +81,12 @@ if(empty($_SESSION["{$phpc_prefix}uid"])) {
 			$phpc_uid = 0;
 		}
 	}
-			
+} else {
+	$phpc_token = $_SESSION["{$phpc_prefix}login"];
 }
+
+if(empty($phpc_token))
+	$phpc_token = '';
 
 // Create vars
 if(get_magic_quotes_gpc()) {

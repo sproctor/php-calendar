@@ -37,7 +37,6 @@ function process_form()
 {
 	global $vars, $phpcdb, $phpc_script;
 
-
 	verify_token();
 
 	$cid = $phpcdb->create_calendar();
@@ -67,7 +66,7 @@ function process_form()
 
 function display_form()
 {
-	global $phpc_script;
+	global $phpc_script, $phpc_token;
 
         $tbody = tag('tbody');
 
@@ -87,6 +86,7 @@ function display_form()
 				tag('tfoot',
                                         tag('tr',
                                                 tag('td', attributes('colspan="2"'),
+							create_hidden('token', $phpc_token),
 							create_hidden('action', 'calendar_form'),
 							create_hidden('submit_form', 'submit_form'),
 							create_submit(__('Submit'))))),

@@ -33,7 +33,7 @@ function event_form() {
 
 function display_form() {
 	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal,
-	       $phpc_user;
+	       $phpc_user, $phpc_token;
 
 	$hour24 = $phpc_cal->hours_24;
 	$date_format = $phpc_cal->date_format;
@@ -122,6 +122,7 @@ function display_form() {
 	if(isset($vars['phpcid']))
 		$form->add_hidden('phpcid', $vars['phpcid']);
 
+	$form->add_hidden('phpc_token', $phpc_token);
 	$form->add_hidden('action', 'event_form');
 	$form->add_hidden('submit_form', 'submit_form');
 

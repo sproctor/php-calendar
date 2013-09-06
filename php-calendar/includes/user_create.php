@@ -34,7 +34,7 @@ function user_create() {
 }
 
 function display_form() {
-	global $phpc_script;
+	global $phpc_script, $phpc_token;
 
 	return tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
@@ -43,6 +43,7 @@ function display_form() {
 				tag('tfoot',
 					tag('tr',
 						tag('td', attributes('colspan="2"'),
+							create_hidden('phpc_token', $phpc_token),												
 							create_hidden('action', 'user_create'),												
 							create_hidden('submit_form', 'submit_form'),
 							create_submit(__('Submit'))))),

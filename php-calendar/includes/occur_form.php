@@ -32,7 +32,8 @@ function occur_form() {
 }
 
 function display_form() {
-	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal;
+	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal,
+		$phpc_token;
 
 	$hour24 = $phpc_cal->hours_24;
 	$date_format = $phpc_cal->date_format;
@@ -97,6 +98,7 @@ function display_form() {
 				);
 	}
 
+	$form->add_hidden('phpc_token', $phpc_token);
 	$form->add_hidden('action', 'occur_form');
 	$form->add_hidden('submit_form', 'submit_form');
 

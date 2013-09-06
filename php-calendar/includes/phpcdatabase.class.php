@@ -810,8 +810,7 @@ class PhpcDatabase {
 	function modify_group($gid, $name)
 	{
 		$query = "UPDATE " . SQL_PREFIX . "groups\n"
-			."SET\n"
-			."`name`='$name'\n"
+			."SET `name`='$name'\n"
 			."WHERE `gid`='$gid'";
 
 		$sth = $this->dbh->query($query)
