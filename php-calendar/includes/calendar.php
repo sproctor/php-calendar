@@ -33,6 +33,12 @@ function __($msg) {
 	return $phpc_gettext->gettext($msg);
 }
 
+function __p($context, $msg) {
+	global $phpc_gettext;
+
+	return $phpc_gettext->pgettext($context, $msg);
+}
+
 // checks global variables to see if the user is logged in.
 function is_user() {
 	global $phpc_user;

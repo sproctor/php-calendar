@@ -217,6 +217,29 @@ class Gettext_PHP //extends Gettext
     }
 
     /**
+     * Return a translated string with the given context
+     *
+     * If the translation is not found, the original passed message
+     * will be returned.
+     *
+     * @param String $context The context of the message to search for
+     * @param String $msg The message to search for
+     *
+     * @return Translated message
+     */
+    public function pgettext($context, $msg)
+    {
+        if (!$this->parsed) {
+            $this->parse();
+        }
+
+        if (array_key_exists($msg, $this->translationTable)) {
+            return $this->translationTable["{$context}\04{$msg}"][0];
+        }
+        return $msg;
+    }
+
+    /**
      * Return a translated string in it's plural form
      *
      * Returns the given $count (e.g second, third,...) plural form of the
