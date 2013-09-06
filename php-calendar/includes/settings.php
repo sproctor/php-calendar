@@ -26,20 +26,27 @@ function settings()
 	if(!empty($vars["phpc_submit"]))
 		settings_submit();
 
+	$index = tag('ul',
+			tag('li', tag('a', attrs('href="#phpc-config"'),
+					__('Settings'))));
 	$forms = array();
 
-	if(is_user() && $phpc_user->is_password_editable())
-		$forms[] = password_form();
-
 	$forms[] = config_form();
-	return $forms;
+
+	if(is_user() && $phpc_user->is_password_editable()) {
+		$forms[] = password_form();
+		$index->add(tag('li', tag('a', attrs('href="#phpc-password"'),
+						__('Password'))));
+	}
+
+	return tag('div', attrs('class="phpc-tabs"'), $index, $forms);
 }
 
 function password_form()
 {
 	global $phpc_script, $phpc_token;
 
-	return tag('form', attributes("action=\"$phpc_script\"",
+	$form = tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
 			tag('table', attributes("class=\"phpc-container\""),
 				tag('caption', __('Change Password')),
@@ -60,6 +67,8 @@ function password_form()
 						tag('th', __('Confirm New Password')),
 						tag('td', create_password('password2')))
 				   )));
+
+	return tag('div', attrs('id="phpc-password"'), $form);
 }
 
 function config_form()
@@ -76,7 +85,7 @@ function config_form()
 	$lang_input = create_select('language', $languages,
 			$phpc_user_lang);
 
-	return tag('form', attributes("action=\"$phpc_script\"",
+	$form = tag('form', attributes("action=\"$phpc_script\"",
 				'method="post"'),
 			tag('table', attributes("class=\"phpc-container\""),
 				tag('caption', __('Settings')),
@@ -95,6 +104,8 @@ function config_form()
 						tag('th', __('Language')),
 						tag('td', $lang_input))
 				   )));
+
+	return tag('div', attrs('id="phpc-config"'), $form);
 }
 
 function settings_submit()
