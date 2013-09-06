@@ -345,10 +345,6 @@ class FormDateQuestion extends FormAtomicQuestion {
 				$dateFormat = "dd-mm-yy";
 				$date_string = "DD-MM-YYYY";
 				break;
-			/*case 3: // YearMonthDay
-				$dateFormat = "yymmdd";
-				$date_string = "YYYYMMDD";
-				break;*/
 			default:
 				soft_error("Unrecognized date format.");
 		}
