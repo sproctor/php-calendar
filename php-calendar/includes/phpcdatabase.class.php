@@ -218,12 +218,14 @@ class PhpcDatabase {
 		return $result;
 	}
 
-	function get_groups($cid) {
+	function get_groups($cid = false) {
 		$groups_table = SQL_PREFIX . 'groups';
 
 		$query = "SELECT `gid`, `name`, `cid`\n"
-			."FROM `$groups_table`\n"
-			."WHERE `cid` = $cid";
+			."FROM `$groups_table`\n";
+
+		if($cid !== false)
+			$query .= "WHERE `cid` = $cid";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(__('Error in get_groups'), $query);
@@ -664,6 +666,18 @@ class PhpcDatabase {
 
 		$this->dbh->query($query)
 			or $this->db_error(__('Error updating language.'),
+					$query);
+	}
+
+	function user_add_group($uid, $gid) {
+		$user_groups_table = SQL_PREFIX . 'user_groups';
+
+		$query = "INSERT INTO `$user_groups_table`\n"
+			."(`gid`, `uid`) VALUES\n"
+			."('$gid', '$uid')";
+
+		$this->dbh->query($query)
+			or $this->db_error(__('Error adding group to user.'),
 					$query);
 	}
 

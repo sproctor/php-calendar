@@ -34,7 +34,16 @@ function user_create() {
 }
 
 function display_form() {
-	global $phpc_script, $phpc_token;
+	global $phpc_script, $phpc_token, $phpcdb;
+
+	$groups = array();
+	foreach($phpcdb->get_groups() as $group) {
+		$groups[$group['gid']] = $group['name'];
+	}
+
+	$size = sizeof($groups);
+	if($size > 6)
+		$size = 6;
 
 	return tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
@@ -61,8 +70,9 @@ function display_form() {
 						tag('th', __('Make Admin')),
 						tag('td', create_checkbox('make_admin', '1', false, __('Admin')))),
 					tag('tr',
-						tag('th', __('Group')),
-						tag('td', create_text('group')))
+						tag('th', __('Groups')),
+						tag('td', create_select('groups[]',
+								$groups, false, attrs('multiple', "size=\"$size\""))))
 				   )));
 }
 
@@ -88,11 +98,15 @@ function process_form()
 	$make_admin = empty($vars['make_admin']) ? 0 : 1;
 
         $passwd = md5($vars['password1']);
-		
+
 	if($phpcdb->get_user_by_name($vars["user_name"]))
 		return message(__('User already exists.'));
 	
-	$phpcdb->create_user($vars["user_name"], $passwd, $make_admin);
+	$uid = $phpcdb->create_user($vars["user_name"], $passwd, $make_admin);
+
+	foreach($vars['groups'] as $gid) {
+		$phpcdb->user_add_group($uid, $gid);
+	}
 
         return message(__('Added user.'));
 }
