@@ -241,7 +241,7 @@ class PhpcDatabase {
 		$groups_table = SQL_PREFIX . 'groups';
 		$user_groups_table = SQL_PREFIX . 'user_groups';
 
-		$query = "SELECT `gid`, `name`\n"
+		$query = "SELECT `gid`, `cid`, `name`\n"
 			."FROM `$groups_table`\n"
 			."INNER JOIN `$user_groups_table` USING (`gid`)\n"
 			."WHERE `uid` = $uid";
