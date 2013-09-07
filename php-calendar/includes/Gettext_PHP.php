@@ -233,8 +233,9 @@ class Gettext_PHP //extends Gettext
             $this->parse();
         }
 
-        if (array_key_exists($msg, $this->translationTable)) {
-            return $this->translationTable["{$context}\04{$msg}"][0];
+	$key = "{$context}\04{$msg}";
+        if (array_key_exists($key, $this->translationTable)) {
+            return $this->translationTable[$key][0];
         }
         return $msg;
     }
