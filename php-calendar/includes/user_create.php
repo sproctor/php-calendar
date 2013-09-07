@@ -104,8 +104,10 @@ function process_form()
 	
 	$uid = $phpcdb->create_user($vars["user_name"], $passwd, $make_admin);
 
-	foreach($vars['groups'] as $gid) {
-		$phpcdb->user_add_group($uid, $gid);
+	if(!empty($vars['groups'])) {
+		foreach($vars['groups'] as $gid) {
+			$phpcdb->user_add_group($uid, $gid);
+		}
 	}
 
         return message(__('Added user.'));
