@@ -218,12 +218,14 @@ class PhpcDatabase {
 		return $result;
 	}
 
-	function get_groups($cid) {
+	function get_groups($cid = false) {
 		$groups_table = SQL_PREFIX . 'groups';
 
 		$query = "SELECT `gid`, `name`, `cid`\n"
-			."FROM `$groups_table`\n"
-			."WHERE `cid` = $cid";
+			."FROM `$groups_table`\n";
+
+		if($cid !== false)
+			$query .= "WHERE `cid` = $cid";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(__('Error in get_groups'), $query);
@@ -601,7 +603,27 @@ class PhpcDatabase {
 
 		return $this->dbh->insert_id;
 	}
-
+	function edit_user($uid, $password, $make_admin) {
+		// NEED TO FINISH THIS - by chrmina
+		// Groups not finished yet
+		$admin = $make_admin ? 1 : 0;
+		if (empty($password)) {
+			$query = "UPDATE  `".SQL_PREFIX."users`\n"
+				."SET `admin`='$admin'\n"
+				."WHERE `uid`='$uid'";
+			$this->dbh->query($query)
+				or $this->db_error(__('Error editing user.'), $query);
+			return $this->dbh->insert_id;
+		}
+		else {
+			$query = "UPDATE  `".SQL_PREFIX."users`\n"
+				."SET `password`='$password', `admin`='$admin'\n"
+				."WHERE `uid`='$uid'";
+			$this->dbh->query($query)
+				or $this->db_error(__('Error editing user.'), $query);
+			return $this->dbh->insert_id;
+		}
+	}
 	function create_calendar()
 	{
 		$query = "INSERT INTO ".SQL_PREFIX."calendars\n"
@@ -664,6 +686,18 @@ class PhpcDatabase {
 
 		$this->dbh->query($query)
 			or $this->db_error(__('Error updating language.'),
+					$query);
+	}
+
+	function user_add_group($uid, $gid) {
+		$user_groups_table = SQL_PREFIX . 'user_groups';
+
+		$query = "INSERT INTO `$user_groups_table`\n"
+			."(`gid`, `uid`) VALUES\n"
+			."('$gid', '$uid')";
+
+		$this->dbh->query($query)
+			or $this->db_error(__('Error adding group to user.'),
 					$query);
 	}
 
@@ -810,8 +844,7 @@ class PhpcDatabase {
 	function modify_group($gid, $name)
 	{
 		$query = "UPDATE " . SQL_PREFIX . "groups\n"
-			."SET\n"
-			."`name`='$name'\n"
+			."SET `name`='$name'\n"
 			."WHERE `gid`='$gid'";
 
 		$sth = $this->dbh->query($query)
