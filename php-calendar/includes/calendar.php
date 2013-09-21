@@ -33,6 +33,12 @@ function __($msg) {
 	return $phpc_gettext->gettext($msg);
 }
 
+function __p($context, $msg) {
+	global $phpc_gettext;
+
+	return $phpc_gettext->pgettext($context, $msg);
+}
+
 // checks global variables to see if the user is logged in.
 function is_user() {
 	global $phpc_user;
@@ -403,7 +409,8 @@ function create_checkbox($name, $value, $checked = false, $label = false)
 {
 	$attributes = attributes("id=\"$name\"", "name=\"$name\"",
 			'type="checkbox"', "value=\"$value\"");
-	if(!empty($checked)) $attributes->add('checked="checked"');
+	//if(!empty($checked)) $attributes->add('checked="checked"');
+	if($checked == true) $attributes->add('checked="checked"');
 	$input = tag('input', $attributes);
 	if($label !== false)
 		return array($input, tag('label', attributes("for=\"$name\""),
@@ -712,18 +719,16 @@ function short_month_name($month)
 }
 
 function verify_token() {
-	global $phpc_prefix;
+	global $phpc_prefix, $vars, $phpc_token;
 
 	if(!is_user())
 		return true;
 
-	//echo "<pre>cookie: " . $_COOKIE["{$phpc_prefix}login"] . "\n";
-	//echo "session: " . $_SESSION["{$phpc_prefix}login"] . "</pre>";
-
-	if(empty($_SESSION["{$phpc_prefix}login"])
-			|| empty($_COOKIE["{$phpc_prefix}login"])
-			|| $_COOKIE["{$phpc_prefix}login"] != $_SESSION["{$phpc_prefix}login"])
+	if(empty($vars["phpc_token"]) || $vars["phpc_token"] != $phpc_token) {
+		//echo "<pre>real token: $phpc_token\n";
+		//echo "form token: {$vars["phpc_token"]}</pre>";
 		soft_error(__("Secret token mismatch. Possible request forgery attempt."));
+	}
 }
 
 function get_header_tags($path)
