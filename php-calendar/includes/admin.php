@@ -86,12 +86,21 @@ function user_list()
         $tbody = tag('tbody');
 
 		$tbody->add(tag('tr', tag('th', __("Username")),
-					tag('th', __("Group")),
+					tag('th', __("Groups")),
 					tag('th', __("Action"))));
         foreach($phpcdb->get_users() as $user) {
+		$group_list = array();
+		foreach($user->get_groups() as $group) {
+			$group_list[] = $group['name'];
+		}
+		$groups = implode(', ', $group_list);
+		// Added Edit User info link - by chrmina
 		$tbody->add(tag('tr', tag('th', $user->username),
-					tag('td', $user->groups),
-					tag('td', create_action_link(__("Delete"),
+					tag('td', $groups),
+					tag('td', create_action_link(__("Edit"),
+							"user_edit",
+							array("uid" => $user->uid))," ",
+				        create_action_link(__("Delete"),
 							"user_delete",
 							array("uid" => $user->uid)))));
 	}
