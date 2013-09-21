@@ -40,6 +40,12 @@ class PhpcUser {
 	{
 		return $this->username;
 	}
+	
+	function get_admin()
+	// Check if a user has admin rights 
+	{
+		return $this->admin;
+	}
 
 	function get_uid()
 	{
