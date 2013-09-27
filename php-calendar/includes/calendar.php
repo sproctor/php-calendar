@@ -742,8 +742,8 @@ function get_header_tags($path)
 	$theme = $phpc_cal->theme;
 	if(empty($theme))
 		$theme = 'smoothness';
-	$jquery_version = "1.9.1";
-	$jqueryui_version = "1.10.2";
+	$jquery_version = "1.10.2";
+	$jqueryui_version = "1.10.3";
 	$jpicker_version = "1.1.6";
 
 	return array(
