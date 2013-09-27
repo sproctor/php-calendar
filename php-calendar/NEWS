@@ -1,6 +1,12 @@
 NEWS
 -----
 
+2.0-rc7:
+	- Groups settings and admin sections into tabs
+	- Group list selector for creating a user
+	- Added week view
+	- Bug fixes
+
 2.0-rc6 (2 May 2013):
 	- Fixed bugs in importing from version 1.1
 	- Fixed editing occurrence with non-default date format

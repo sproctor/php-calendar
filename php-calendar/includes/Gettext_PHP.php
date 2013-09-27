@@ -29,7 +29,8 @@
  * @author David Soria Parra <sn_@gmx.net>
  *
  * Changes:
- *   4/25/2013 sproctor - Changed unpack format in parseHeader to unsigned
+ *   04/25/2013 sproctor - Changed unpack format in parseHeader to unsigned
+ *   09/07/2013 sproctor - Added pgettext
  */
 class Gettext_PHP //extends Gettext
 {
