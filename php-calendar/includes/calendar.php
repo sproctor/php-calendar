@@ -616,30 +616,6 @@ function get_date_format_list()
 			__("Day Month Year"));
 }
 
-function get_calendar_list() {
-	global $phpc_script, $phpcdb;
-
-	$calendar_list = tag('div', attributes('class="phpc-bar phpc-callist"'));
-
-	$count = 0;
-	foreach($phpcdb->get_calendars() as $calendar) {
-		if(!$calendar->can_read())
-			continue;
-
-		$title = $calendar->get_title();
-		$cid = $calendar->get_cid();
-		$count++;
-
-		$attrs = attributes("href=\"$phpc_script?phpcid=$cid\"");
-		$calendar_list->add(tag('a', $attrs, $title));
-	}
-
-	if($count <= 1)
-		return '';
-
-	return $calendar_list;
-}
-
 function display_phpc() {
 	global $phpc_messages, $phpc_redirect, $phpc_script, $phpc_prefix;
 
@@ -662,7 +638,7 @@ function display_phpc() {
 			$messages = '';
 		}
 
-		return tag('', get_calendar_list(), $navbar, $messages,
+		return tag('', $navbar, $messages,
 				$content, footer());
 	} catch(PermissionException $e) {
 		$results = tag('');

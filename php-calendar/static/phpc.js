@@ -4,7 +4,7 @@ var cache = new Object;
 $(document).ready(function(){
   // Add theme to appropriate items
   // All widgets
-  $(".phpc-calendar li a, .phpc-message, .phpc-date, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged, .php-calendar td, .php-calendar th, .phpc-message, .phpc-callist, .phpc-dropdown-list ul").addClass("ui-widget");
+  $(".phpc-event-list a, .phpc-message, .phpc-date, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged, .php-calendar td, .php-calendar th, .phpc-message, .phpc-callist, .phpc-dropdown-list ul").addClass("ui-widget");
   // Buttons
   $(".phpc-add").button({
       text: false,
@@ -14,7 +14,7 @@ $(document).ready(function(){
   // The buttons are too hard to read waiting on:
   //    http://wiki.jqueryui.com/w/page/12137730/Checkbox
   // $(".php-calendar input[type=checkbox] + label").prev().button();
-  $(".phpc-date, .phpc-calendar li a, .phpc-calendar th.ui-state-default").on('mouseover mouseout',
+  $(".phpc-date, .phpc-event-list a, .phpc-calendar th.ui-state-default").on('mouseover mouseout',
       function (event) {
         $(this).toggleClass("ui-state-hover");
       });
@@ -23,17 +23,17 @@ $(document).ready(function(){
         $(this).parent(".phpc-date").toggleClass("ui-state-hover");
       });
   // fancy corners
-  $(".phpc-calendar li a, .phpc-message, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged, .phpc-dropdown-list ul").addClass("ui-corner-all");
+  $(".phpc-event-list a, .phpc-message, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged, .phpc-dropdown-list ul").addClass("ui-corner-all");
   // add jquery ui style classes
   $(".php-calendar th, .phpc-callist").addClass("ui-widget-header");
   $(".php-calendar td, #phpc-summary-view, .phpc-dropdown-list ul").addClass("ui-widget-content");
-  $(".phpc-calendar li a, .phpc-message").addClass("ui-state-default");
+  $(".phpc-event-list a, .phpc-message").addClass("ui-state-default");
   // Tabs
   $(".phpc-tabs").tabs();
 
   // Summary init
   $("#phpc-summary-view").hide();
-  $(".phpc-calendar li a").hoverIntent(
+  $(".phpc-event-list a").hoverIntent(
     function() { showSummary(this); },
     function() { hideSummary(this); });
 
@@ -117,15 +117,16 @@ $(document).ready(function(){
       .addClass("phpc-dropdown-list-button ui-icon ui-icon-circle-triangle-s")
       .click(function() {
         listElement.toggle();
-      })
-      .css("left", left + width + 10);
+      });
+    button.css("left", left + width + 5 - button.outerWidth());
     button.css("top", top + titleElement.outerHeight() / 2 -
 	    button.outerHeight() / 2);
 
-    listElement.css("left", left);
+    listElement.css("left", left - button.outerWidth());
     listElement.css("top", top + titleElement.outerHeight());
-    listElement.css("width", width);
+    listElement.css("min-width", width);
     listElement.hide();
+    titleElement.css("margin-right", button.outerWidth() + 5);
   });
 
   // Calendar specific/hacky stuff

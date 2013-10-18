@@ -26,7 +26,7 @@ if ( !defined('IN_PHPC') ) {
 // Full display for a month
 function display_month()
 {
-	global $month, $year;
+	global $month, $year, $phpc_home_url;
 
 	$heading_html = tag('tr');
 	$heading_html->add(tag('th', __p('Week', 'W')));
@@ -35,7 +35,15 @@ function display_month()
 		$heading_html->add(tag('th', day_name($d)));
 	}
 
-	$month_navbar = month_navbar($month, $year);
+	$months = array();
+	for($i = 1; $i <= 12; $i++) {
+		$m = month_name($i);
+		$months["$phpc_home_url?action=display_month&amp;month=$i&amp;year=$year"] = $m;
+	}
+	$years = array();
+	for($i = $year - 5; $i <= $year + 5; $i++) {
+		$years["$phpc_home_url?action=display_month&amp;month=$month&amp;year=$i"] = $i;
+	}
 	return tag('',
 			tag("div", attributes('id="phpc-summary-view"'), 
 				tag("div", attributes('id="phpc-summary-head"'),
@@ -44,10 +52,11 @@ function display_month()
 					tag("div", attributes('id="phpc-summary-category"'), ''),
 					tag("div", attributes('id="phpc-summary-time"'), '')),
 				tag("div", attributes('id="phpc-summary-body"'), '')),
-                        $month_navbar,
                         tag('table',
 				attributes('class="phpc-main phpc-calendar"'),
-                                tag('caption', month_name($month)." $year"),
+                                tag('caption',
+					create_dropdown_list(month_name($month), $months),
+					create_dropdown_list($year, $years)),
                                 tag('colgroup',
 					tag('col', attributes('class="phpc-week"')),
 					tag('col', attributes('class="phpc-day"')),
@@ -250,7 +259,7 @@ function create_day($month, $day, $year, $days_events)
 	if(empty($results))
 		return $html_day;
 
-	$html_events = tag('ul');
+	$html_events = tag('ul', attrs('class="phpc-event-list"'));
 	$html_day->add($html_events);
 
 	// Count the number of events
