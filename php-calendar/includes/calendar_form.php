@@ -86,7 +86,7 @@ function display_form()
 				tag('tfoot',
                                         tag('tr',
                                                 tag('td', attributes('colspan="2"'),
-							create_hidden('token', $phpc_token),
+							create_hidden('phpc_token', $phpc_token),
 							create_hidden('action', 'calendar_form'),
 							create_hidden('submit_form', 'submit_form'),
 							create_submit(__('Submit'))))),
