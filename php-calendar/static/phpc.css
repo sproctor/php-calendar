@@ -258,6 +258,10 @@ div.ui-datepicker, div.ui-timepicker {
   padding: 0.1em;
 }
 
+.phpc-dropdown-list {
+  margin-right: 30px;
+}
+
 .phpc-dropdown-list-button {
   position: absolute;
 }

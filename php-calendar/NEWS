@@ -1,6 +1,11 @@
 NEWS
 -----
 
+2.0-rc8:
+	- Calendar/month/year selectors are now dropdowns on the appropriate
+	  field
+	- Bug Fixes
+
 2.0-rc7 (10 October 2013):
 	- Groups settings and admin sections into tabs
 	- Group list selector for creating a user

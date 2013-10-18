@@ -107,7 +107,7 @@ $(document).ready(function(){
     var titleElement = $(elem).children(".phpc-dropdown-list-title");
     var left = titleElement.offset().left;
     var top = titleElement.offset().top;
-    var width = titleElement.outerWidth();
+    var width = titleElement.innerWidth();
     var listElement = $(elem).children("ul");
     var wasOpen = false;
     var button = $("<a>")
@@ -118,15 +118,14 @@ $(document).ready(function(){
       .click(function() {
         listElement.toggle();
       });
-    button.css("left", left + width + 5 - button.outerWidth());
+    button.css("left", left + width + 5);
     button.css("top", top + titleElement.outerHeight() / 2 -
 	    button.outerHeight() / 2);
 
-    listElement.css("left", left - button.outerWidth());
+    listElement.css("left", left);
     listElement.css("top", top + titleElement.outerHeight());
     listElement.css("min-width", width);
     listElement.hide();
-    titleElement.css("margin-right", button.outerWidth() + 5);
   });
 
   // Calendar specific/hacky stuff

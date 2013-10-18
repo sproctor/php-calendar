@@ -68,45 +68,7 @@ function display_month()
 					tag('col', attributes('class="phpc-day"'))
 				   ),
                                 tag('thead', $heading_html),
-                                create_month($month, $year)),
-			$month_navbar);
-}
-
-// creates a menu to navigate the month/year
-// returns XHTML data for the menu
-function month_navbar($month, $year) {
-	$nav_tag = tag('div', attributes('class="phpc-bar ui-widget-content"'));
-	$months_tag = tag('div', attributes('class="phpc-bar ui-widget-content"'));
-
-	$prev_month = $month - 1;
-	$prev_year = $year;
-	if($prev_month < 1) {
-		$prev_month += 12;
-		$prev_year--;
-	}
-	menu_item_append_with_date($nav_tag, __('last year'), 'display_month',
-			$year - 1, $month);
-	menu_item_append_with_date($nav_tag, __('last month'), 'display_month',
-			$prev_year, $prev_month);
-
-	$next_month = $month + 1;
-	$next_year = $year;
-	if($next_month > 12) {
-		$next_month -= 12;
-		$next_year++;
-	}
-
-	menu_item_append_with_date($nav_tag, __('next month'), 'display_month',
-			$next_year, $next_month);
-	menu_item_append_with_date($nav_tag, __('next year'), 'display_month',
-			$year + 1, $month);
-
-	for($i = 1; $i <= 12; $i++) {
-		menu_item_append_with_date($months_tag, short_month_name($i),
-				'display_month', $year, $i);
-	}
-
-	return array($nav_tag, $months_tag);
+                                create_month($month, $year)));
 }
 
 // creates a display for a particular month to be embedded in a full view
