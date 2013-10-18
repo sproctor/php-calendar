@@ -243,6 +243,10 @@ div.ui-datepicker, div.ui-timepicker {
   font-size: 1em;
 }
 
+.phpc-dropdown-list-title {
+  margin-right: 2px;
+}
+
 .phpc-dropdown-list ul {
   position: absolute;
   margin: 0;
@@ -259,9 +263,9 @@ div.ui-datepicker, div.ui-timepicker {
 }
 
 .phpc-dropdown-list {
-  margin-right: 30px;
+  margin-right: 1em;
 }
 
 .phpc-dropdown-list-button {
-  position: absolute;
+  display: inline-block !important;
 }

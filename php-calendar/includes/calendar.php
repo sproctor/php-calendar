@@ -428,8 +428,9 @@ function create_dropdown_list($title, $values, $attrs = false) {
 		$list->add(tag('li', tag('a', attrs("href=\"$key\""), $value)));
 	}
 	return tag('span', attrs('class="phpc-dropdown-list"'),
-			tag('span', attrs('class="phpc-dropdown-list-title"'),
-				$title),
+			tag('span', attrs('class="phpc-dropdown-list-header"'),
+				tag('span', attrs('class="phpc-dropdown-list-title"'),
+				$title)),
 			$list);
 }
 

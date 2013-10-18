@@ -104,27 +104,34 @@ $(document).ready(function(){
 
   // Dropdown list stuff
   $(".phpc-dropdown-list").each(function(index, elem) {
-    var titleElement = $(elem).children(".phpc-dropdown-list-title");
-    var left = titleElement.offset().left;
-    var top = titleElement.offset().top;
-    var width = titleElement.innerWidth();
+    var titleElement = $(elem).children(".phpc-dropdown-list-header");
     var listElement = $(elem).children("ul");
-    var wasOpen = false;
+    $(document).mouseup(function(e) {
+      var container = $(elem);
+
+      if (!container.is(e.target) // if the target of the click isn't the container...
+        && container.has(e.target).length === 0) // ... nor a descendant of the container
+      {
+        listElement.hide();
+      }
+    });
+    var positionList = function() {
+        listElement.css("left", titleElement.offset().left);
+        listElement.css("top", titleElement.offset().top +
+		titleElement.outerHeight());
+        listElement.css("min-width", titleElement.outerWidth());
+    }
     var button = $("<a>")
       .attr("title", "Show Items")
       .tooltip()
       .appendTo(titleElement)
       .addClass("phpc-dropdown-list-button ui-icon ui-icon-circle-triangle-s")
       .click(function() {
+        $(window).resize(positionList);
+        positionList();
         listElement.toggle();
       });
-    button.css("left", left + width + 5);
-    button.css("top", top + titleElement.outerHeight() / 2 -
-	    button.outerHeight() / 2);
 
-    listElement.css("left", left);
-    listElement.css("top", top + titleElement.outerHeight());
-    listElement.css("min-width", width);
     listElement.hide();
   });
 
