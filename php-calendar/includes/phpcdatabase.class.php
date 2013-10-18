@@ -489,8 +489,10 @@ class PhpcDatabase {
 		return $perms[$cid][$uid];
 	}
 
-	function get_calendars()
-	{
+	function get_calendars() {
+		if(!empty($this->calendars))
+			return $this->calendars;
+
 		$query = "SELECT *\n"
 			."FROM `" . SQL_PREFIX .  "calendars`\n";
 

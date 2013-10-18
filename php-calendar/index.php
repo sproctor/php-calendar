@@ -60,13 +60,19 @@ try {
 	require_once("$phpc_includes_path/calendar.php");
 	require_once("$phpc_includes_path/setup.php");
 
+	$calendars = $phpcdb->get_calendars();
+	$list = array();
+	foreach($calendars as $calendar) {
+		$list["$phpc_home_url?phpcid={$calendar->get_cid()}"] = 
+			$calendar->get_title();
+	}
 	$calendar_title = $phpc_cal->get_title();
 	$content = tag('div', attributes('class="php-calendar ui-widget"'),
 			userMenu(),
-			tag('br', attributes('style="clear:both;"')),
+			tag('br', attrs('style="clear:both;"')),
 			tag('h1', attrs('class="ui-widget-header"'),
-				tag('a', attributes("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'"),
-					$calendar_title)),
+				create_dropdown_list(tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'", 'class="phpc-dropdown-list-title"'),
+					$calendar_title), $list)),
 			display_phpc());
 } catch(Exception $e) {
 	$calendar_title = $e->getMessage();

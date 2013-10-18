@@ -26,7 +26,7 @@ body {
 
 .php-calendar h1 a {
   text-decoration: none;
-  display: block;
+  /*display: block;*/
 }
 
 .php-calendar h2 {
@@ -241,5 +241,19 @@ div.ui-datepicker, div.ui-timepicker {
 }
 
 .php-calendar.ui-widget {
-font-size: 1em;
+  font-size: 1em;
+}
+
+.phpc-dropdown-list ul {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.phpc-dropdown-list li {
+  text-align: left;
+  font-size: medium;
+  font-weight: normal;
+  padding: 0.1em;
 }

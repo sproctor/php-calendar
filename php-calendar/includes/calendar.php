@@ -418,6 +418,21 @@ function create_checkbox($name, $value, $checked = false, $label = false)
 		return $input;
 }
 
+// $title - string or html element displayed by default
+// $values - Array of URL => title
+// returns an html structure for a dropdown box that will change the page
+//		to the URL from $values when an element is selected
+function create_dropdown_list($title, $values, $attrs = false) {
+	$list = tag('ul');
+	foreach($values as $key => $value) {
+		$list->add(tag('li', tag('a', attrs("href=\"$key\""), $value)));
+	}
+	return tag('span', attrs('class="phpc-dropdown-list"'),
+			tag('span', attrs('class="phpc-dropdown-list-title"'),
+				$title),
+			$list);
+}
+
 // creates the user menu
 // returns tag data for the menu
 function userMenu()

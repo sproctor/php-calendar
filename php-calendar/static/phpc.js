@@ -4,7 +4,7 @@ var cache = new Object;
 $(document).ready(function(){
   // Add theme to appropriate items
   // All widgets
-  $(".phpc-calendar li a, .phpc-message, .phpc-date, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged, .php-calendar td, .php-calendar th, .phpc-message, .phpc-callist").addClass("ui-widget");
+  $(".phpc-calendar li a, .phpc-message, .phpc-date, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged, .php-calendar td, .php-calendar th, .phpc-message, .phpc-callist, .phpc-dropdown-list ul").addClass("ui-widget");
   // Buttons
   $(".phpc-add").button({
       text: false,
@@ -23,10 +23,10 @@ $(document).ready(function(){
         $(this).parent(".phpc-date").toggleClass("ui-state-hover");
       });
   // fancy corners
-  $(".phpc-calendar li a, .phpc-message, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged").addClass("ui-corner-all");
+  $(".phpc-calendar li a, .phpc-message, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged, .phpc-dropdown-list ul").addClass("ui-corner-all");
   // add jquery ui style classes
   $(".php-calendar th, .phpc-callist").addClass("ui-widget-header");
-  $(".php-calendar td, #phpc-summary-view").addClass("ui-widget-content");
+  $(".php-calendar td, #phpc-summary-view, .phpc-dropdown-list ul").addClass("ui-widget-content");
   $(".phpc-calendar li a, .phpc-message").addClass("ui-state-default");
   // Tabs
   $(".phpc-tabs").tabs();
@@ -101,6 +101,35 @@ $(document).ready(function(){
         clientPath: imagePath
       }
     });
+
+  // Dropdown list stuff
+  $(".phpc-dropdown-list").each(function(index, elem) {
+    var titleElement = $(elem).children(".phpc-dropdown-list-title");
+    var listElement = $(elem).children("ul");
+    var wasOpen = false;
+    $("<a>")
+      .attr("title", "Show Items")
+      .tooltip()
+      .appendTo(titleElement)
+      .button({
+        icons: {
+          primary: "ui-icon-triangle-1-s"
+        },
+        text: false
+       })
+       .addClass("ui-corner-right")
+       .click(function() {
+         listElement.toggle();
+       });
+
+    var left = titleElement.offset().left;
+    var top = titleElement.offset().top + titleElement.outerHeight();
+    var width = titleElement.outerWidth();
+    listElement.css("left", left);
+    listElement.css("top", top);
+    listElement.css("width", width);
+    listElement.hide();
+  });
 
   // Calendar specific/hacky stuff
   if($("#phpc-modify").length > 0 && !$("#phpc-modify").prop("checked"))
