@@ -506,21 +506,16 @@ class PhpcDatabase {
 				$this->calendars[$cid] = new PhpcCalendar
 					($result);
 		}
+
 		return $this->calendars;
 	}
 
 	function get_calendar($cid)
 	{
+		// Make sure we've cached the calendars
+		$this->get_calendars();
 		if(empty($this->calendars[$cid])) {
-			$query = "SELECT *\n"
-				."FROM `" . SQL_PREFIX .  "calendars`\n"
-				."WHERE `cid`='$cid'";
-
-			$sth = $this->dbh->query($query)
-				or $this->db_error(__('Could not get calendar.'),
-					$query);
-			$this->calendars[$cid] = new PhpcCalendar
-				($sth->fetch_assoc());
+			return NULL;
 		}
 
 		return $this->calendars[$cid];

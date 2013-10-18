@@ -105,28 +105,25 @@ $(document).ready(function(){
   // Dropdown list stuff
   $(".phpc-dropdown-list").each(function(index, elem) {
     var titleElement = $(elem).children(".phpc-dropdown-list-title");
+    var left = titleElement.offset().left;
+    var top = titleElement.offset().top;
+    var width = titleElement.outerWidth();
     var listElement = $(elem).children("ul");
     var wasOpen = false;
-    $("<a>")
+    var button = $("<a>")
       .attr("title", "Show Items")
       .tooltip()
       .appendTo(titleElement)
-      .button({
-        icons: {
-          primary: "ui-icon-triangle-1-s"
-        },
-        text: false
-       })
-       .addClass("ui-corner-right")
-       .click(function() {
-         listElement.toggle();
-       });
+      .addClass("phpc-dropdown-list-button ui-icon ui-icon-circle-triangle-s")
+      .click(function() {
+        listElement.toggle();
+      })
+      .css("left", left + width + 10);
+    button.css("top", top + titleElement.outerHeight() / 2 -
+	    button.outerHeight() / 2);
 
-    var left = titleElement.offset().left;
-    var top = titleElement.offset().top + titleElement.outerHeight();
-    var width = titleElement.outerWidth();
     listElement.css("left", left);
-    listElement.css("top", top);
+    listElement.css("top", top + titleElement.outerHeight());
     listElement.css("width", width);
     listElement.hide();
   });
