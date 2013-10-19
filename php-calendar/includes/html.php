@@ -238,8 +238,11 @@ function create_select($name, $options, $default = false, $attrs = false)
 
 	foreach($options as $value => $text) {
 		$attributes = attrs("value=\"$value\"");
-		if($default !== false && $value == $default)
+		if($default !== false && ($value == $default ||
+					is_array($default) &&
+					in_array($value, $default))) {
 			$attributes->add('selected');
+		}
 		$select->add(tag('option', $attributes, $text));
 	}
 

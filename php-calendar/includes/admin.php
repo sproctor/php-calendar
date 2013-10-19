@@ -87,6 +87,7 @@ function user_list()
 
 		$tbody->add(tag('tr', tag('th', __("Username")),
 					tag('th', __("Groups")),
+					tag('th', __("Edit Groups")),
 					tag('th', __("Action"))));
         foreach($phpcdb->get_users() as $user) {
 		$group_list = array();
@@ -96,6 +97,7 @@ function user_list()
 		$groups = implode(', ', $group_list);
 		$tbody->add(tag('tr', tag('th', $user->username),
 					tag('td', $groups),
+					tag('td', create_action_link(__("Edit Groups"), "user_groups", array("uid" => $user->uid))),
 					tag('td', create_action_link(__("Delete"),
 							"user_delete",
 							array("uid" => $user->uid)))));

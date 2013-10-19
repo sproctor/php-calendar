@@ -24,7 +24,7 @@ if ( !defined('IN_PHPC') ) {
 }
 
 // Displayed in admin
-$phpc_version = "2.0-rc7";
+$phpc_version = "2.0-rc8";
 
 // Run the installer if we have no config file
 // This doesn't work when embedded from outside
