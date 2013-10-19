@@ -34,10 +34,10 @@ function user_groups() {
 }
 
 function display_form() {
-	global $phpc_script, $phpc_token, $phpcdb, $vars;
+	global $phpc_script, $phpc_token, $phpcdb, $vars, $phpc_cal;
 
 	$groups = array();
-	foreach($phpcdb->get_groups() as $group) {
+	foreach($phpc_cal->get_groups() as $group) {
 		$groups[$group['gid']] = $group['name'];
 	}
 
@@ -62,7 +62,8 @@ function display_form() {
 				tag('div',
 					create_hidden('phpc_token',
 						$phpc_token),
-					create_hidden('action', 'user_create'),
+					create_hidden('uid', $vars['uid']),
+					create_hidden('action', 'user_groups'),
 					create_hidden('submit_form',
 						'submit_form'),
 					create_submit(__('Submit')))));
@@ -70,39 +71,31 @@ function display_form() {
 
 function process_form()
 {
-	global $phpcid, $vars, $phpcdb, $phpc_script;
+	global $phpcid, $vars, $phpcdb, $phpc_script, $phpc_cal;
 
 	verify_token();
 
-        if(empty($vars['user_name'])) {
-                return message(__('You must specify a user name'));
-        }
-
-        if(empty($vars['password1'])) {
-                return message(__('You must specify a password'));
-        }
-
-        if(empty($vars['password2'])
-                || $vars['password1'] != $vars['password2']) {
-                return message(__('Your passwords did not match'));
-        }
-
-	$make_admin = empty($vars['make_admin']) ? 0 : 1;
-
-        $passwd = md5($vars['password1']);
-
-	if($phpcdb->get_user_by_name($vars["user_name"]))
-		return message(__('User already exists.'));
+	$user = $phpcdb->get_user($vars["uid"]);
+	// Remove existing groups for this calendar
+	foreach($user->get_groups() as $group) {
+		if($group["cid"] == $phpcid)
+			$phpcdb->user_remove_group($vars["uid"], $group["gid"]);
+	}
 	
-	$uid = $phpcdb->create_user($vars["user_name"], $passwd, $make_admin);
+	$valid_groups = array();
+	foreach($phpc_cal->get_groups() as $group) {
+		$valid_groups[] = $group["gid"];
+	}
+	if(!empty($vars["groups"])) {
+		foreach($vars["groups"] as $gid) {
+			if(!in_array($gid, $valid_groups))
+				soft_error("Invalid gid");
 
-	if(!empty($vars['groups'])) {
-		foreach($vars['groups'] as $gid) {
-			$phpcdb->user_add_group($uid, $gid);
+			$phpcdb->user_add_group($vars["uid"], $gid);
 		}
 	}
 
-        return message(__('Added user.'));
+        return message(__('Groups updated.'));
 }
 
 ?>

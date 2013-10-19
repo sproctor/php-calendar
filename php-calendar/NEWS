@@ -2,6 +2,7 @@ NEWS
 -----
 
 2.0-rc8:
+	- Form to allow calendar admins to modify users' groups
 	- Calendar/month/year selectors are now dropdowns on the appropriate
 	  field
 	- Bug Fixes

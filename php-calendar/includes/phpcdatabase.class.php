@@ -678,6 +678,16 @@ class PhpcDatabase {
 					$query);
 	}
 
+	function user_remove_group($uid, $gid) {
+		$user_groups_table = SQL_PREFIX . 'user_groups';
+
+		$query = "DELETE FROM `$user_groups_table`\n"
+			."WHERE `uid` = '$uid' AND `gid` = '$gid'";
+
+		$this->dbh->query($query)
+			or $this->db_error(__('Error removing group from user.'), $query);
+	}
+
 	function create_event($cid, $uid, $subject, $description, $readonly,
 			$catid = false)
 	{
