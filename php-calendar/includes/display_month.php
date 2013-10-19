@@ -26,7 +26,7 @@ if ( !defined('IN_PHPC') ) {
 // Full display for a month
 function display_month()
 {
-	global $month, $year, $phpc_home_url;
+	global $month, $year, $phpc_home_url, $phpcid;
 
 	$heading_html = tag('tr');
 	$heading_html->add(tag('th', __p('Week', 'W')));
@@ -38,11 +38,11 @@ function display_month()
 	$months = array();
 	for($i = 1; $i <= 12; $i++) {
 		$m = month_name($i);
-		$months["$phpc_home_url?action=display_month&amp;month=$i&amp;year=$year"] = $m;
+		$months["$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$i&amp;year=$year"] = $m;
 	}
 	$years = array();
 	for($i = $year - 5; $i <= $year + 5; $i++) {
-		$years["$phpc_home_url?action=display_month&amp;month=$month&amp;year=$i"] = $i;
+		$years["$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$month&amp;year=$i"] = $i;
 	}
 	return tag('',
 			tag("div", attributes('id="phpc-summary-view"'), 
