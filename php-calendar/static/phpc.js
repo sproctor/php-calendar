@@ -122,8 +122,6 @@ $(document).ready(function(){
         listElement.css("min-width", titleElement.outerWidth());
     }
     var button = $("<a>")
-      .attr("title", "Show Items")
-      .tooltip()
       .appendTo(titleElement)
       .addClass("phpc-dropdown-list-button ui-icon ui-icon-circle-triangle-s")
       .click(function() {
