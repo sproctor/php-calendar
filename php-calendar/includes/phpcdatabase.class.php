@@ -539,9 +539,7 @@ class PhpcDatabase {
 	{
 		$permissions_table = SQL_PREFIX . "permissions";
 
-		$query = "SELECT `uid`, `username`, `password`, "
-			."`read`, `write`, `readonly`, `modify`, "
-			."`permissions`.`admin` AS `calendar_admin`\n"
+		$query = "SELECT *, `permissions`.`admin` AS `calendar_admin`\n"
 			."FROM `" . SQL_PREFIX . "users`\n"
 			."LEFT JOIN (SELECT * FROM `$permissions_table`\n"
 			."	WHERE `cid`='$cid') AS `permissions`\n"
