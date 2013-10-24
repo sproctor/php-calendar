@@ -122,7 +122,7 @@ if(empty($_POST['action'])) {
 		&& !isset($_POST['my_prefix'])
 		&& !isset($_POST['my_database'])) {
 	get_server_setup();
-} elseif((isset($_POST['create_user']) || isset($_POST['create_db'])|| isset($_POST['drop_tbl']))
+} elseif((isset($_POST['create_user']) || isset($_POST['create_db']))
 		&& !isset($_POST['done_user_db'])) {
 	add_sql_user_db();
 } elseif(!isset($_POST['base'])) {
@@ -361,12 +361,6 @@ function get_server_setup()
 		  Create the database (don\'t check this if it already exists)
 		</td>
 		</tr>
-		<tr>
-		<td colspan="2">
-		  <input type="checkbox" name="drop_tbl" value="yes"/>
-		  Drop existing tables (check this if there are in the database existing tables with the same name)
-		</td>
-		</tr>
 		<tr><td colspan="2">
 		<span style="font-weight:bold;">Optional: user creation on database</span>
 		</td></tr>
@@ -409,8 +403,6 @@ function add_sql_user_db()
 		&& $_POST['create_user'] == 'yes';
 	$create_db = isset($_POST['create_db']) && $_POST['create_db'] == 'yes';
 	
-	$drop_tbl = isset($_POST['drop_tbl']) && $_POST['drop_tbl'] == 'yes';
-
 	// Make the database connection.
 	if($create_user) {
 		$dbh = connect_db($my_hostname, $my_adminname, $my_adminpasswd);
@@ -429,20 +421,6 @@ function add_sql_user_db()
 		$string .= "<p>Successfully created database</p>";
 	}
 	
-	if($drop_tbl) {
-		$query = "DROP DATABASE $my_database";
-
-		$dbh->query($query)
-			or db_error($dbh, 'error dropping db', $query);
-			
-		$query = "CREATE DATABASE $my_database";
-
-		$dbh->query($query)
-			or db_error($dbh, 'error creating db', $query);
-
-		$string .= "<p>Successfully dropped and recreated tables</p>";
-	}
-
 	if($create_user) {
 		$query = "GRANT ALL ON accounts.* TO $my_username@$my_hostname identified by '$my_passwd'";
 		$dbh->query($query)
