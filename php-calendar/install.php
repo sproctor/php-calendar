@@ -90,6 +90,8 @@ foreach($_POST as $key => $value) {
 	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">\n";
 }
 
+$drop_tables = isset($_POST["drop_tables"]) && $_POST["drop_tables"] == "yes";
+
 if(empty($_POST['action'])) {
 	get_action();
 } elseif($_POST['action'] == 'upgrade') {
@@ -282,12 +284,8 @@ function add_calendar_config() {
 function create_version_table() {
 	global $phpc_db_version, $dbh;
 
-	$query = "CREATE TABLE `" . SQL_PREFIX . "version` (\n"
-		."`version` SMALLINT unsigned NOT NULL DEFAULT '$phpc_db_version'"
-		.") ENGINE=MyISAM ;";
-
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating version table.', $query);
+	create_table("version",
+			"`version` SMALLINT unsigned NOT NULL DEFAULT '$phpc_db_version'");
 
 	$query = "REPLACE INTO `" . SQL_PREFIX . "version`\n"
 		."SET `version`='$phpc_db_version'";
@@ -359,6 +357,12 @@ function get_server_setup()
 		<td colspan="2">
 		  <input type="checkbox" name="create_db" value="yes"/>
 		  Create the database (don\'t check this if it already exists)
+		</td>
+		</tr>
+		<tr>
+		<td colspan="2">
+		  <input type="checkbox" name="drop_tables" value="yes">
+		  Drop tables before creating them
 		</td>
 		</tr>
 		<tr><td colspan="2">
@@ -491,8 +495,8 @@ function create_tables()
 {
 	global $dbh;
 
-	$query = "CREATE TABLE `" . SQL_PREFIX . "events` (\n"
-		."`eid` int(11) unsigned NOT NULL auto_increment,\n"
+	create_table("events",
+		"`eid` int(11) unsigned NOT NULL auto_increment,\n"
 		."`cid` int(11) unsigned NOT NULL,\n"
 		."`owner` int(11) unsigned NOT NULL default 0,\n"
 		."`subject` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
@@ -501,14 +505,11 @@ function create_tables()
 		."`catid` int(11) unsigned default NULL,\n"
 		."`ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
 		."`mtime` timestamp NULL DEFAULT NULL,\n"
-		."PRIMARY KEY (`eid`)\n"
-		.") ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;\n";
+		."PRIMARY KEY (`eid`)\n",
+		"AUTO_INCREMENT=1");
 
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating events table.', $query);
-
-	$query = "CREATE TABLE `" . SQL_PREFIX . "occurrences` (\n"
-		."`oid` int(11) unsigned NOT NULL auto_increment,\n"
+	create_table("occurrences",
+		"`oid` int(11) unsigned NOT NULL auto_increment,\n"
 		."`eid` int(11) unsigned NOT NULL,\n"
 		."`start_date` date default NULL,\n"
 		."`end_date` date default NULL,\n"
@@ -516,14 +517,11 @@ function create_tables()
 		."`end_ts` timestamp NULL default NULL,\n"
 		."`time_type` tinyint(4) NOT NULL default '0',\n"
 		."PRIMARY KEY  (`oid`),\n"
-		."KEY `eid` (`eid`)\n"
-		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=750 ;\n";
+		."KEY `eid` (`eid`)\n",
+		"AUTO_INCREMENT=1");
 
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating occurrences table.', $query);
-
-	$query = "CREATE TABLE `" . SQL_PREFIX . "users` (\n"
-		."`uid` int(11) unsigned NOT NULL auto_increment,\n"
+	create_table("users",
+		"`uid` int(11) unsigned NOT NULL auto_increment,\n"
 		."`username` varchar(32) collate utf8_unicode_ci NOT NULL,\n"
 		."`password` varchar(32) collate utf8_unicode_ci NOT NULL default '',\n"
 		."`admin` tinyint(4) NOT NULL DEFAULT '0',\n"
@@ -532,48 +530,33 @@ function create_tables()
 		."`language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."`gid` int(11),\n"
 		."PRIMARY KEY (`uid`),\n"
-		."UNIQUE KEY `username` (`username`)\n"
-		.") ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+		."UNIQUE KEY `username` (`username`)\n",
+		"AUTO_INCREMENT=1");
 
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating users table.', $query);
-		
-	$query = "CREATE TABLE `" . SQL_PREFIX . "groups` (\n"
-		."`gid` int(11) NOT NULL AUTO_INCREMENT,\n"
+	create_table("groups",
+		"`gid` int(11) NOT NULL AUTO_INCREMENT,\n"
 		."`cid` int(11),\n"
 		."`name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."PRIMARY KEY (`gid`)\n"
-		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
+		."PRIMARY KEY (`gid`)\n");
 
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating groups table.', $query);
-
-	$query = "CREATE TABLE `" . SQL_PREFIX . "user_groups` (\n"
-		."`gid` int(11),\n"
-		."`uid` int(11)\n"
-		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
-
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating user groups table.', $query);
+	create_table("user_groups",
+		"`gid` int(11),\n"
+		."`uid` int(11)\n");
 
 	create_logins_table();
 
-	$query = "CREATE TABLE `" . SQL_PREFIX . "permissions` (\n"
-		."`cid` int(11) unsigned NOT NULL,\n"
+	create_table("permissions",
+		"`cid` int(11) unsigned NOT NULL,\n"
 		."`uid` int(11) unsigned NOT NULL,\n"
 		."`read` tinyint(1) NOT NULL,\n"
 		."`write` tinyint(1) NOT NULL,\n"
 		."`readonly` tinyint(1) NOT NULL,\n"
 		."`modify` tinyint(1) NOT NULL,\n"
 		."`admin` tinyint(1) NOT NULL,\n"
-		."UNIQUE KEY `cid` (`cid`,`uid`)\n"
-		.") ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+		."UNIQUE KEY `cid` (`cid`,`uid`)\n");
 
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating permissions table.', $query);
-
-	$query = "CREATE TABLE `" . SQL_PREFIX . "calendars` (\n"
-		."`cid` int(11) unsigned NOT NULL auto_increment,\n"
+	create_table("calendars",
+		"`cid` int(11) unsigned NOT NULL auto_increment,\n"
 		."`hours_24` tinyint(1) NOT NULL DEFAULT 0,\n"
 		."`date_format` tinyint(1) NOT NULL DEFAULT 0,\n"
 		."`week_start` tinyint(1) NOT NULL DEFAULT 0,\n"
@@ -584,25 +567,19 @@ function create_tables()
 		."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."`language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."`theme` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."PRIMARY KEY  (`cid`)\n"
-		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+		."PRIMARY KEY  (`cid`)\n",
+		"AUTO_INCREMENT=1");
 		
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating calendars table.', $query);
-
-	$query = "CREATE TABLE `" . SQL_PREFIX . "categories` (\n"
-		."`catid` int(11) unsigned NOT NULL auto_increment,\n"
+	create_table("categories",
+		"`catid` int(11) unsigned NOT NULL auto_increment,\n"
 		."`cid` int(11) unsigned NOT NULL,\n"
 		."`gid` int(11) unsigned DEFAULT NULL,\n"
 		."`name` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
 		."`text_color` varchar(255) collate utf8_unicode_ci default NULL,\n"
 		."`bg_color` varchar(255) collate utf8_unicode_ci default NULL,\n"
 		."PRIMARY KEY  (`catid`),\n"
-		."KEY `cid` (`cid`)\n"
-		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating categories table.', $query);
+		."KEY `cid` (`cid`)\n",
+		"AUTO_INCREMENT=1");
 
 	create_version_table();
 }
@@ -713,18 +690,35 @@ function create_logins_table() {
 	global $dbh;
 	
 	echo '<h3>Step 3: Database Created</h3>';
-	$query = "CREATE TABLE `" . SQL_PREFIX . "logins` (\n"
-		."`uid` int(11) unsigned NOT NULL,\n"
+	create_table("logins",
+		"`uid` int(11) unsigned NOT NULL,\n"
 		."`series` char(43) collate utf8_unicode_ci NOT NULL,\n"
 		."`token` char(43) collate utf8_unicode_ci NOT NULL,\n"
 		."`atime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
-		."PRIMARY KEY  (`uid`, `series`)\n"
-		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;";
-
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating logins table.', $query);
+		."PRIMARY KEY  (`uid`, `series`)\n");
 
 	echo "<p>Logins table updated.</p>";
 }
 
+function create_table($suffix, $columns, $table_args = "") {
+	global $drop_tables, $dbh;
+
+	$table_name = SQL_PREFIX . $suffix;
+
+	if($drop_tables) {
+		$query = "DROP TABLE IF EXISTS `$table_name`";
+
+		$dbh->query($query)
+			or db_error($dbh, "Error dropping table `$table_name`.",
+					$query);
+	}
+
+	$query = "CREATE TABLE `$table_name` (\n"
+		.$columns
+		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci $table_args;\n";
+
+	$dbh->query($query)
+		or db_error($dbh, "Error creating table `$table_name`.",
+				$query);
+}
 ?>
