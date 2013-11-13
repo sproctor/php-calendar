@@ -34,7 +34,7 @@ function user_groups() {
 }
 
 function display_form() {
-	global $phpc_script, $phpc_token, $phpcdb, $vars, $phpc_cal;
+	global $phpc_script, $phpc_token, $phpcdb, $vars, $phpc_cal, $phpcid;
 
 	$groups = array();
 	foreach($phpc_cal->get_groups() as $group) {
@@ -63,6 +63,7 @@ function display_form() {
 					create_hidden('phpc_token',
 						$phpc_token),
 					create_hidden('uid', $vars['uid']),
+					create_hidden('phpcid', $phpcid),
 					create_hidden('action', 'user_groups'),
 					create_hidden('submit_form',
 						'submit_form'),
