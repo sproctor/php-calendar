@@ -100,6 +100,12 @@ $vars = array_merge(real_escape_r($_GET), real_escape_r($_POST));
 
 if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
         $phpcid = $vars['phpcid'];
+} elseif(!empty($vars['eid'])) {
+	$event = $phpcdb->get_event_by_eid($vars['eid']);
+	$phpcid = $event['cid'];
+} elseif(!empty($vars['oid'])) {
+	$event = $phpcdb->get_event_by_oid($vars['oid']);
+	$phpcid = $event['cid'];
 } elseif(!empty($default_calendar_id)) {
 	$phpcid = $default_calendar_id;
 } else {
