@@ -133,6 +133,18 @@ $(document).ready(function(){
     listElement.hide();
   });
 
+  // Confirmation dialog stuff
+  $(".phpc-confirm").dialog({
+    modal: true,
+    buttons: {
+      "Ok": function() {
+        $(this).dialog("close");
+      },
+      Cancel: function() {
+        $(this).dialog("close");
+      }
+    }
+  });
   // Calendar specific/hacky stuff
   if($("#phpc-modify").length > 0 && !$("#phpc-modify").prop("checked"))
     toggle_when(false);

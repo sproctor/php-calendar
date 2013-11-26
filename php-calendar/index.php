@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2013 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,16 +36,21 @@ $phpc_root_path = dirname(__FILE__);
 $phpc_includes_path = "$phpc_root_path/includes";
 $phpc_config_file = "$phpc_root_path/config.php";
 $phpc_locale_path = "$phpc_root_path/locale";
+
+// path of index.php. ex. /php-calendar/index.php
 $phpc_script = htmlentities($_SERVER['PHP_SELF']);
 
-$phpc_server = $_SERVER['SERVER_NAME'];
+// Port
+$phpc_port = "";
 if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
-	$phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
+	$phpc_port = ":{$_SERVER["SERVER_PORT"]}";
+
+// ex. www.php-calendar.com
+$phpc_server = $_SERVER['SERVER_NAME'] . $phpc_port;
 
 $phpc_home_url="//$phpc_server$phpc_script";
-$phpc_url = $phpc_home_url
-		. (empty($_SERVER['QUERY_STRING']) ? ''
-		   : '?' . $_SERVER['QUERY_STRING']);
+$phpc_url = $phpc_home_url . (empty($_SERVER['QUERY_STRING']) ? ''
+		: '?' . $_SERVER['QUERY_STRING']);
 
 // Remove this line if you must
 ini_set('arg_separator.output', '&amp;');
@@ -53,42 +58,33 @@ ini_set('arg_separator.output', '&amp;');
 /*
  * Do not modify anything under this point
  */
-if (!defined('IN_PHPC'))
 define('IN_PHPC', true);
 
-try {
-	require_once("$phpc_includes_path/calendar.php");
-	require_once("$phpc_includes_path/setup.php");
+require_once("$phpc_includes_path/calendar.php");
+require_once("$phpc_includes_path/setup.php");
 
-	$calendars = $phpcdb->get_calendars();
-	$list = array();
-	foreach($calendars as $calendar) {
-		$list["$phpc_home_url?phpcid={$calendar->get_cid()}"] = 
-			$calendar->get_title();
-	}
-	$calendar_title = $phpc_cal->get_title();
-	$content = tag('div', attributes('class="php-calendar ui-widget"'),
-			userMenu(),
-			tag('br', attrs('style="clear:both;"')),
-			tag('h1', attrs('class="ui-widget-header"'),
-				create_dropdown_list(tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'", 'class="phpc-dropdown-list-title"'),
-					$calendar_title), $list)),
-			display_phpc());
-} catch(Exception $e) {
-	$calendar_title = $e->getMessage();
-	$content = tag('div', attributes('class="php-calendar"'),
-			$e->getMessage());
+if ($vars["contentType"] == "embed") {
+	$content = display_phpc();
+	echo tag('', get_static_links(), $content)->toString();
+} elseif ($vars["contentType"] == "json") {
+	header("Content-Type: application/json; charset=UTF-8");
+	echo do_action();
+} else {
+
+	header("Content-Type: text/html; charset=UTF-8");
+
+	// This sets global variables that determine the title in the header
+	$content = display_phpc();
+	$html = tag('html', attrs("lang=\"$phpc_lang\""),
+			tag('head',
+				tag('title', $phpc_title),
+				tag('link', attrs('rel="icon"',
+						"href=\"static/office-calendar.png\"")),
+				tag('meta', attrs('http-equiv="Content-Type"',
+						'content="text/html; charset=UTF-8"')),
+				get_static_links()),
+			tag('body', $content));
+
+	echo '<!DOCTYPE html>', "\n", $html->toString();
 }
-
-$html = tag('html', attrs("lang=\"$phpc_lang\""),
-		tag('head',
-			tag('title', $calendar_title),
-			tag('link', attrs('rel="icon"',
-					"href=\"static/office-calendar.png\"")),
-			get_header_tags("static"),
-			tag('meta', attrs('http-equiv="Content-Type"',
-					   'content="text/html; charset=UTF-8"'))),
-		tag('body', $content));
-
-echo '<!DOCTYPE html>', "\n", $html->toString();
 ?>

@@ -31,105 +31,11 @@ function display_event()
 	if(!empty($vars['contentType']) && $vars['contentType'] == 'json')
 		return display_event_json();
 	
-	if(isset($vars['oid']))
-		return display_event_by_oid($vars['oid']);
-	
 	if(isset($vars['eid']))
 		return display_event_by_eid($vars['eid']);
 
 	// If we get here, we did something wrong
 	soft_error(__("Invalid arguments."));
-}
-
-function display_event_by_oid($oid)
-{
-	global $phpcdb, $year, $month, $day;
-
-	$event = $phpcdb->get_occurrence_by_oid($oid);
-
-	$eid = $event->get_eid();
-
-	if(!$event->can_read()) {
-		return tag('p', __("You do not have permission to read this event."));
-	}
-
-	$event_header = tag('div', attributes('class="phpc-event-header"'),
-			tag('div',attributes('class="phpc-event-creator"'), __('by').' ',
-				tag('cite', $event->get_author())));
-
-	$category = $event->get_category();
-	if(!empty($category))
-		$event_header->add(tag('div',attributes('class="phpc-event-cats"'), __('Category') . ': '
-					. $category));
-
-	$event_header->add(tag('div',attributes('class="phpc-event-time"'),
-				__('When').": ".$event->get_datetime_string()));
-	
-	$event_header->add(tag('div', __('Created at: '), $event->ctime));
-	if(!empty($event->mtime))
-		$event_header->add(tag('div', __('Last modified at: '),
-				$event->mtime));
-				
-	$menu_tag = tag('div', attrs('class="phpc-bar ui-widget-content"')); 
-	// Add modify/delete links if this user has access to this event.
-        if($event->can_modify()) {
-		$menu_tag->add(array(create_event_link(__('Modify'),
-						'event_form', $eid), "\n",
-					create_event_link(__('Delete'),
-						'event_delete', $eid), "\n",
-					create_occurrence_link(__('Modify Occurrence'),
-						'occur_form', $oid), "\n",
-					create_occurrence_link(__('Remove Occurrence'),
-						'occurrence_delete', $oid),
-					"\n"));
-	}
-
-
-	$occurrences = $phpcdb->get_occurrences_by_eid($eid);
-		//$occurrence_div = tag('div', );
-	$i = 0;
-	while($i < sizeof($occurrences)) {
-		if($occurrences[$i]->get_oid() == $oid)
-			break;
-		$i++;
-	}
-	// if we have a previous event
-	$prev = $i - 1;
-	if($prev >= 0) {
-		$prev_occur = $occurrences[$prev];
-		$menu_tag->add(create_occurrence_link(
-					__('Previous occurrence on') . " " .
-					$prev_occur->get_date_string(),
-					'display_event',
-					$prev_occur->get_oid()), ' ');
-	}
-	// if we have a future event
-	$next = $i + 1;
-	if($next < sizeof($occurrences)) {
-		$next_occur = $occurrences[$next];
-		$menu_tag->add(create_occurrence_link(
-					__('Next occurrence on') . " " .
-					$next_occur->get_date_string(),
-					'display_event',
-					$next_occur->get_oid()), ' ');
-	}
-
-	$menu_tag->add(create_event_link(__('View All Occurrences'),
-				'display_event', $eid));
-
-	$event_header->add($menu_tag);
-
-	$year = $event->get_start_year();
-	$month = $event->get_start_month();
-	$day = $event->get_start_day();
-
-	$desc_tag = tag('div', attributes('class="phpc-desc"'),
-			tag('h3', __("Description")),
-			tag('p', $event->get_desc()));
-
-	return tag('div', attributes('class="phpc-main phpc-event"'),
-			tag('h2', $event->get_subject()), $event_header,
-			$desc_tag);
 }
 
 function display_event_by_eid($eid)
@@ -143,12 +49,12 @@ function display_event_by_eid($eid)
 	}
 
 	$event_header = tag('div', attributes('class="phpc-event-header"'),
-			tag('div', __('by').' ',
-				tag('cite', $event->get_author())));
+			tag('div', __('created by').' ',
+				tag('cite', $event->get_author()),
+				' ' . __('on') . ' ' . $event->ctime));
 
-	$event_header->add(tag('div', __('Created at: '), $event->ctime));
 	if(!empty($event->mtime))
-		$event_header->add(tag('div', __('Last modified at: '),
+		$event_header->add(tag('div', __('Last modified on '),
 				$event->mtime));
 
 	$category = $event->get_category();
@@ -157,14 +63,14 @@ function display_event_by_eid($eid)
 					. $category));
 
 	// Add modify/delete links if this user has access to this event.
+	$event_menu = '';
         if($event->can_modify()) {
-		$event_header->add(tag('div', attrs('class="phpc-bar ui-widget-content"'),
-					create_event_link(__('Modify'),
-						'event_form', $eid), "\n",
-					create_event_link(__('Add Occurrence'),
-						'occur_form', $eid), "\n",
-					create_event_link(__('Delete'),
-						'event_delete', $eid)));
+		$event_menu = tag('div',
+				attrs('class="phpc-bar ui-widget-content"'),
+				create_event_link(__('Modify'),
+					'event_form', $eid), "\n",
+				create_event_link(__('Delete'),
+					'event_delete', $eid));
 	}
 
 	$desc_tag = tag('div', attributes('class="phpc-desc"'),
@@ -182,12 +88,12 @@ function display_event_by_eid($eid)
 		}
 		$oid = $occurrence->get_oid();
 		$occ_tag = tag('li', attrs('class="ui-widget-content"'),
-				create_occurrence_link(
+				create_event_link(
 					$occurrence->get_date_string()
 					. ' ' . __('at') . ' '
 					. $occurrence->get_time_span_string(),
 					'display_event',
-					$oid));
+					$eid));
 		if($event->can_modify()) {
 			$occ_tag->add(" ",
 					create_occurrence_link(__('Edit'), 'occur_form', $oid), " ",
@@ -196,10 +102,22 @@ function display_event_by_eid($eid)
 		$occurrences_tag->add($occ_tag);
 	}
 
+	// Add occurrence link if this user has access to this event.
+	$occurrences_menu = '';
+        if($event->can_modify()) {
+		$occurrences_menu = tag('div',
+				attrs('class="phpc-bar ui-widget-content"'),
+				create_event_link(__('Add Occurrence'),
+					'occur_form', $eid));
+	}
+
 	return tag('div', attributes('class="phpc-main phpc-event"'),
-			tag('h2', $event->get_subject()), $event_header,
-			$desc_tag, tag ('div',attributes('class="phpc-occ"'),tag('h3', __('Occurrences')),
-			$occurrences_tag));
+			$event_menu, tag('h2', $event->get_subject()),
+			$event_header, $desc_tag,
+			tag('div', attrs('class="phpc-occ"'),
+				tag('h3', __('Occurrences')),
+				$occurrences_menu,
+				$occurrences_tag));
 }
 
 // generates a JSON data structure for a particular event

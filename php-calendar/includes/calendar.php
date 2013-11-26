@@ -471,6 +471,7 @@ function navbar()
 
 	$args = array('year' => $year, 'month' => $month, 'day' => $day);
 
+	// TODO There needs to be a better way to decide what to show
 	if($phpc_cal->can_write() && $action != 'add') { 
 		menu_item_append($html, __('Add Event'), 'event_form', $args);
 	}
@@ -618,14 +619,20 @@ function get_date_format_list()
 }
 
 function display_phpc() {
-	global $phpc_messages, $phpc_redirect, $phpc_script, $phpc_prefix;
+	global $phpc_messages, $phpc_redirect, $phpc_script, $phpc_prefix,
+	       $phpc_title, $phpcdb, $phpc_cal;
 
 	$navbar = false;
 
 	try {
+		$calendars = $phpcdb->get_calendars();
+		$list = array();
+		foreach($calendars as $calendar) {
+			$list["$phpc_home_url?phpcid={$calendar->get_cid()}"] = 
+				$calendar->get_title();
+		}
+		$phpc_title = $phpc_cal->get_title();
 		$content = do_action();
-		$navbar = navbar();
-
 		if(sizeof($phpc_messages) > 0) {
 			$messages = tag('div', attrs('class="phpc-message"'));
 			foreach($phpc_messages as $message) {
@@ -639,8 +646,14 @@ function display_phpc() {
 			$messages = '';
 		}
 
-		return tag('', $navbar, $messages,
-				$content, footer());
+		return tag('div', attrs('class="php-calendar ui-widget"'),
+				userMenu(),
+				tag('br', attrs('style="clear:both;"')),
+				tag('h1', attrs('class="ui-widget-header"'),
+					create_dropdown_list(tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'", 'class="phpc-dropdown-list-title"'),
+							$phpc_title), $list)),
+				navbar(), $messages, $content, footer());
+
 	} catch(PermissionException $e) {
 		$results = tag('');
 		// TODO: make navbar show if there is an error in do_action()
@@ -655,6 +668,7 @@ function display_phpc() {
 			return message_redirect($msg,
 					"$phpc_script?action=login");
 	} catch(Exception $e) {
+		$phpc_title = $e->getMessage();
 		$results = tag('');
 		if($navbar !== false)
 			$results->add($navbar);
@@ -665,7 +679,6 @@ function display_phpc() {
 					tag('pre', htmlentities($e->getTraceAsString()))));
 		return $results;
 	}
-
 }
 
 function do_action()
@@ -722,9 +735,11 @@ function verify_token() {
 	}
 }
 
-function get_header_tags($path)
+function get_static_links()
 {
 	global $phpc_cal;
+
+	$path = "static";
 
 	if(defined('PHPC_DEBUG'))
 		$jq_min = '';
@@ -762,11 +777,6 @@ function get_header_tags($path)
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/jPicker-$jpicker_version$jq_min.css\"")),
 		  );
-}
-
-function embed_header($path)
-{
-	echo tag('', get_header_tags())->toString();
 }
 
 // $element: { name, text, type, value(s) }

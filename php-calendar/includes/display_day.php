@@ -79,9 +79,9 @@ function display_day()
 						$eid));
 		}
 
-		$html_subject->add(create_occurrence_link(tag('strong',
+		$html_subject->add(create_event_link(tag('strong',
 						$event->get_subject()),
-					'display_event', $oid));
+					'display_event', $eid));
 
 		if($event->can_modify()) {
 			$html_subject->add(" (");
