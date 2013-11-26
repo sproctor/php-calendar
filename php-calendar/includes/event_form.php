@@ -33,11 +33,18 @@ function event_form() {
 
 function display_form() {
 	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal,
-	       $phpc_user, $phpc_token;
+	       $phpc_user, $phpc_token, $phpcid;
 
 	$hour24 = $phpc_cal->hours_24;
 	$date_format = $phpc_cal->date_format;
 	$form = new Form($phpc_script, __('Event Form'));
+	$cid_select = new FormDropdownQuestion('cid', __('Calendar'));
+	foreach($phpcdb->get_calendars() as $calendar) {
+		if($calendar->can_write())
+			$cid_select->add_option($calendar->cid,
+					$calendar->title);
+	}
+	$form->add_part($cid_select);
 	$form->add_part(new FormFreeQuestion('subject', __('Subject'),
 				false, $phpc_cal->subject_max, true));
 	$form->add_part(new FormLongFreeQuestion('description',
@@ -134,6 +141,7 @@ function display_form() {
 		$event = $occs[0];
 
 		$defaults = array(
+				'cid' => $event->get_cid(),
 				'subject' => $event->get_raw_subject(),
 				'description' => $event->get_raw_desc(),
 				'start-date' => $event->get_short_start_date(),
@@ -166,6 +174,7 @@ function display_form() {
 		$date_string = format_short_date_string($year, $month, $day,
 				$datefmt);
 		$defaults = array(
+				'cid' => $phpcid,
 				'start-date' => $date_string,
 				'end-date' => $date_string,
 				'start-time' => format_time_string(17, 0, $hour24),
@@ -269,7 +278,7 @@ function add_repeat_defaults($occs, &$defaults) {
 
 function process_form()
 {
-	global $vars, $phpcdb, $phpc_cal, $phpcid, $phpc_script, $phpc_user;
+	global $vars, $phpcdb, $phpc_script, $phpc_user;
 
 	// When modifying events, this is the value of the checkbox that
 	//   determines if the date should change
@@ -305,10 +314,18 @@ function process_form()
 
 	verify_token();
 
-	if(!$phpc_cal->can_write())
+	if(!isset($vars['cid'])) {
+		message(__("Calendar ID is not set."));
+		return display_form();
+	}
+
+	$cid = $vars['cid'];
+	$calendar = $phpcdb->get_calendar($cid);
+
+	if(!$calendar->can_write())
 		permission_error(__('You do not have permission to write to this calendar.'));
 
-	if($phpc_cal->can_create_readonly() && !empty($vars['readonly']))
+	if($calendar->can_create_readonly() && !empty($vars['readonly']))
 		$readonly = true;
 	else
 		$readonly = false;
@@ -317,7 +334,7 @@ function process_form()
 
 	if(!isset($vars['eid'])) {
 		$modify = false;
-		$eid = $phpcdb->create_event($phpcid, $phpc_user->get_uid(),
+		$eid = $phpcdb->create_event($cid, $phpc_user->get_uid(),
 				$vars["subject"], $vars["description"],
 				$readonly, $catid);
 	} else {
@@ -427,10 +444,10 @@ function process_form()
 		return message_redirect(tag('', $message,
 					create_event_link($eid, 'display_event',
 						$eid)),
-				"$phpc_script?action=display_event&phpcid=$phpcid&eid=$eid");
+				"$phpc_script?action=display_event&eid=$eid");
 	} else {
 		return message_redirect(__('Error submitting event.'),
-				"$phpc_script?action=display_month&phpcid=$phpcid");
+				"$phpc_script?action=display_month&phpcid=$cid");
 	}
 }
 

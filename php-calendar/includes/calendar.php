@@ -536,11 +536,11 @@ function init_config_options() {
 					0 => __('Sunday'),
 					1 => __('Monday'),
 					6 => __('Saturday')
-				     )),
+				     ), 0),
 			array('hours_24', __('24 Hour Time'), PHPC_CHECK),
 			array('title', __('Calendar Title'), PHPC_TEXT),
-			array('subject_max', __('Maximum Subject Length'), PHPC_TEXT),
-			array('events_max', __('Events Display Daily Maximum'), PHPC_TEXT),
+			array('subject_max', __('Maximum Subject Length'), PHPC_TEXT, 50),
+			array('events_max', __('Events Display Daily Maximum'), PHPC_TEXT, 8),
 			array('anon_permission', __('Public Permissions'), PHPC_DROPDOWN,
 				array(
 					__('Cannot read nor write events'),
@@ -785,21 +785,26 @@ function create_config_input($element, $default = false)
 	$name = $element[0];
 	$text = $element[1];
 	$type = $element[2];
+	$value = false;
+	if(isset($element[3]))
+		$value = $element[3];
 
 	switch($type) {
 		case PHPC_CHECK:
+			if($default == false)
+				$default = $value;
 			$input = create_checkbox($name, '1', $default, $text);
 			break;
 		case PHPC_TEXT:
+			if($default == false)
+				$default = $value;
 			$input = create_text($name, $default);
 			break;
 		case PHPC_DROPDOWN:
-			$choices = $element[3];
-			$input = create_select($name, $choices, $default);
+			$input = create_select($name, $value, $default);
 			break;
 		case PHPC_MULTI_DROPDOWN:
-			$choices = $element[3];
-			$input = create_multi_select($name, $choices, $default);
+			$input = create_multi_select($name, $value, $default);
 			break;
 		default:
 			soft_error(__('Unsupported config type') . ": $type");

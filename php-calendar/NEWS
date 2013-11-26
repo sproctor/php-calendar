@@ -1,6 +1,11 @@
 NEWS
 -----
 
+2.1:
+	- Removed embed files
+	- Removed occurrence view because it's confusing
+	- Bugfixes
+
 2.0 (24 October 2013):
 	- Form to allow calendar admins to modify users' groups
 	- Calendar/month/year selectors are now dropdowns on the appropriate
