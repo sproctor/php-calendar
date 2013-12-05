@@ -22,6 +22,9 @@ $(document).ready(function(){
       function (event) {
         $(this).parent(".phpc-date").toggleClass("ui-state-hover");
       });
+  $(".phpc-date").click(function () {
+        window.location.href = $(this).children('a').attr('href');
+      });
   // fancy corners
   $(".phpc-event-list a, .phpc-message, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .phpc-dropdown-list ul").addClass("ui-corner-all");
   // add jquery ui style classes

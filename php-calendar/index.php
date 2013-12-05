@@ -76,20 +76,8 @@ if ($vars["content"] == "json") {
 	if($vars["content"] == "embed") {
 		$underscore_version = "1.5.2";
 		$embed_script = array(tag("script", attrs("src=\"//cdnjs.cloudflare.com/ajax/libs/underscore.js/$underscore_version/underscore-min.js\""), ''),
-				tag('script',
-'
-function _resize() {
-    var height = $(document).outerHeight();
-    var width = $(document).outerWidth();
-
-    // Backwards . send message to parent
-    window.parent.postMessage([\'setHeight\', height], \'*\');
-}
-
-var resize = _.debounce(_resize, 50);
-
-$(document).ready(resize);
-'));
+				tag('script', attrs("src=\"static/embed.js\""),
+					''));
 	}
 
 	$html = tag('html', attrs("lang=\"$phpc_lang\""),

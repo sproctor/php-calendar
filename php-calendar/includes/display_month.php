@@ -145,10 +145,8 @@ function create_week($week_of_month, $month, $year, $days_events)
 	$week_of_year = week_of_year($month, $start_day, $year);
 
 	$args = array('week' => $week_of_year, 'year' => $year);
-	$click = create_plain_link($week_of_year, 'display_week', false, false,
-			false, false, $args);
-	$week_html = tag('tr', tag('th', attrs('class="ui-state-default"',
-					"onclick=\"window.location.href='$click'\""),
+	$week_html = tag('tr', tag('th',
+				attrs('class="phpc-date ui-state-default"'),
 				create_action_link($week_of_year,
 					'display_week', $args)));
 		
@@ -194,10 +192,7 @@ function create_day($month, $day, $year, $days_events)
 		}
 	}
 
-	$click = create_plain_link($day, 'display_day', $year, $month,
-			$day);
-	$date_tag = tag('div', attributes("class=\"phpc-date $date_class\"",
-				"onclick=\"window.location.href='$click'\""),
+	$date_tag = tag('div', attributes("class=\"phpc-date $date_class\""),
 			create_action_link_with_date($day,
 				'display_day', $year, $month, $day));
 
