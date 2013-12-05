@@ -17,5 +17,9 @@ $(document).ready(function() {
       this.href += "?content=embed";
     }
   });
+  $('form').each(function () {
+    var input = $("<input>").attr("type", "hidden").attr("name", "content").val("embed");
+    $(this).append($(input));
+  });
 });
 
