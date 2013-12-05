@@ -126,7 +126,7 @@ $(document).ready(function(){
     }
     var button = $("<a>")
       .appendTo(titleElement)
-      .addClass("phpc-dropdown-list-button ui-icon ui-icon-circle-triangle-s")
+      .addClass("phpc-icon-link ui-icon ui-icon-circle-triangle-s")
       .click(function() {
         $(window).resize(positionList);
         positionList();

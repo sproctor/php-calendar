@@ -44,6 +44,18 @@ function display_month()
 	for($i = $year - 5; $i <= $year + 5; $i++) {
 		$years["$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$month&amp;year=$i"] = $i;
 	}
+	$next_month = $month + 1;
+	$next_year = $year;
+	if($next_month > 12) {
+		$next_month -= 12;
+		$next_year++;
+	}
+	$prev_month = $month - 1;
+	$prev_year = $year;
+	if($prev_month < 1) {
+		$prev_month += 12;
+		$prev_year--;
+	}
 	return tag('',
 			tag("div", attributes('id="phpc-summary-view"'), 
 				tag("div", attributes('id="phpc-summary-head"'),
@@ -55,8 +67,11 @@ function display_month()
                         tag('table',
 				attributes('class="phpc-main phpc-calendar"'),
                                 tag('caption',
+					tag('a', attrs('class="phpc-icon-link ui-icon ui-icon-triangle-1-w"', "href=\"$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$prev_month&amp;year=$prev_year\""), ''),
 					create_dropdown_list(month_name($month), $months),
-					create_dropdown_list($year, $years)),
+					create_dropdown_list($year, $years),
+					tag('a', attrs('class="phpc-icon-link ui-icon ui-icon-triangle-1-e"', "href=\"$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$next_month&amp;year=$next_year\""), '')
+				   ),
                                 tag('colgroup',
 					tag('col', attributes('class="phpc-week"')),
 					tag('col', attributes('class="phpc-day"')),
