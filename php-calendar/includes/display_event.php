@@ -28,7 +28,7 @@ function display_event()
 {
 	global $vars;
 
-	if(!empty($vars['contentType']) && $vars['contentType'] == 'json')
+	if(!empty($vars['content']) && $vars['content'] == 'json')
 		return display_event_json();
 	
 	if(isset($vars['eid']))

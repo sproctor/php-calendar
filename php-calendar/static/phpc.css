@@ -19,12 +19,13 @@ body {
   padding: 0;
 }
 
-.php-calendar h1 {
+.phpc-title {
   text-align: center;
   font-size: 2em !important;
+  margin: .5em 0;
 }
 
-.php-calendar h1 a {
+.phpc-title a {
   text-decoration: none;
 }
 
@@ -241,6 +242,10 @@ div.ui-datepicker, div.ui-timepicker {
 
 .php-calendar.ui-widget {
   font-size: 1em;
+}
+
+.phpc-dropdown-list {
+  display: inline-block;
 }
 
 .phpc-dropdown-list-title {

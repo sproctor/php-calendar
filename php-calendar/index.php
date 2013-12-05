@@ -63,10 +63,7 @@ define('IN_PHPC', true);
 require_once("$phpc_includes_path/calendar.php");
 require_once("$phpc_includes_path/setup.php");
 
-if ($vars["contentType"] == "embed") {
-	$content = display_phpc();
-	echo tag('', get_static_links(), $content)->toString();
-} elseif ($vars["contentType"] == "json") {
+if ($vars["content"] == "json") {
 	header("Content-Type: application/json; charset=UTF-8");
 	echo do_action();
 } else {
@@ -75,6 +72,26 @@ if ($vars["contentType"] == "embed") {
 
 	// This sets global variables that determine the title in the header
 	$content = display_phpc();
+	$embed_script = '';
+	if($vars["content"] == "embed") {
+		$underscore_version = "1.5.2";
+		$embed_script = array(tag("script", attrs("src=\"//cdnjs.cloudflare.com/ajax/libs/underscore.js/$underscore_version/underscore-min.js\""), ''),
+				tag('script',
+'
+function _resize() {
+    var height = $(document).outerHeight();
+    var width = $(document).outerWidth();
+
+    // Backwards . send message to parent
+    window.parent.postMessage([\'setHeight\', height], \'*\');
+}
+
+var resize = _.debounce(_resize, 50);
+
+$(document).ready(resize);
+'));
+	}
+
 	$html = tag('html', attrs("lang=\"$phpc_lang\""),
 			tag('head',
 				tag('title', $phpc_title),
@@ -83,8 +100,8 @@ if ($vars["contentType"] == "embed") {
 				tag('meta', attrs('http-equiv="Content-Type"',
 						'content="text/html; charset=UTF-8"')),
 				get_static_links()),
-			tag('body', $content));
+			tag('body', $embed_script, $content));
 
-	echo '<!DOCTYPE html>', "\n", $html->toString();
+	echo "<!DOCTYPE html>\n", $html->toString();
 }
 ?>

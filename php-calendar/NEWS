@@ -4,6 +4,7 @@ NEWS
 2.1:
 	- Removed embed files
 	- Removed occurrence view because it's confusing
+	- Added sane embed parameter to display calendar in an iframe.
 	- Bugfixes
 
 2.0 (24 October 2013):

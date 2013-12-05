@@ -311,8 +311,7 @@ function form_date_input($qid, $defaults, $dateFormat) {
 	if(isset($defaults["$qid-date"]))
 		$date_attrs->add("value=\"{$defaults["$qid-date"]}\"");
 	return array(tag('input', $date_attrs),
-			tag('script', attrs('type="text/javascript"'),
-				"\$('#$qid-date').datepicker({dateFormat: \"$dateFormat\", firstDay: ".day_of_week_start()." });")); /**** */
+			tag('script', "\$('#$qid-date').datepicker({dateFormat: \"$dateFormat\", firstDay: ".day_of_week_start()." });")); /**** */
 }
 
 /* this class is for date input
@@ -363,8 +362,7 @@ function form_time_input($qid, $defaults, $hour24) {
 		$time_attrs->add("value=\"{$defaults["$qid-time"]}\"");
 
 	return array(tag('input', $time_attrs),
-			tag('script', attrs('type="text/javascript"'),
-				"\$('#$qid-time').timepicker({showPeriod: $showPeriod, showLeadingZero: false });"));
+			tag('script', "\$('#$qid-time').timepicker({showPeriod: $showPeriod, showLeadingZero: false });"));
 }
 
 /* this class is for time input

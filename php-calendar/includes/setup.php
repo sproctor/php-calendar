@@ -151,8 +151,8 @@ if(empty($vars['action'])) {
 	$action = $vars['action'];
 }
 
-if(empty($vars['contentType']))
-	$vars['contentType'] = "html";
+if(empty($vars['content']))
+	$vars['content'] = "html";
 
 if(!empty($_SESSION["{$phpc_prefix}uid"])) {
 	$phpc_user = $phpcdb->get_user($_SESSION["{$phpc_prefix}uid"]);
