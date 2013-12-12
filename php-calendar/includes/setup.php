@@ -67,6 +67,7 @@ if(empty($_SESSION["{$phpc_prefix}uid"])) {
 		//   an ancient token
 		$phpcdb->cleanup_login_tokens();
 
+	// FIXME should this be _SESSION below?
 		$phpc_uid = $_COOKIE["{$phpc_prefix}uid"];
 		$phpc_login_series = $_COOKIE["{$phpc_prefix}login_series"];
 		$phpc_token = $phpcdb->get_login_token($phpc_uid,
@@ -154,9 +155,13 @@ if(empty($vars['action'])) {
 if(empty($vars['content']))
 	$vars['content'] = "html";
 
+$phpc_user = false;
 if(!empty($_SESSION["{$phpc_prefix}uid"])) {
 	$phpc_user = $phpcdb->get_user($_SESSION["{$phpc_prefix}uid"]);
-} else {
+}
+
+if ($phpc_user === false) {
+	$phpc_uid = 0;
 	$anonymous = array('uid' => 0,
 			'username' => 'anonymous',
 			'password' => '',
