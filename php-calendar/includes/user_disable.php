@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2013 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-function user_delete()
+function user_disable()
 {
 	global $vars, $phpcid, $phpcdb, $phpc_script;
 
 	$html = tag('div', attributes('class="phpc-container"'));
 
 	if(!is_admin()) {
-		$html->add(tag('p', __('You must be an admin to delete users.')));
+		$html->add(tag('p', __('You must be an admin to disable users.')));
 		return $html;
 	}
 
@@ -47,10 +47,10 @@ function user_delete()
 			$user = $phpcdb->get_user($id);
 			$list->add(tag('li', "$id: ".$user->get_username()));
 		}
-		$html->add(tag('p', __('Confirm you want to delete:')));
+		$html->add(tag('p', __('Confirm you want to disable:')));
 		$html->add($list);
 		$html->add(" [ ", create_action_link(__('Confirm'),
-					"user_delete", array("uid" => $ids,
+					"user_disable", array("uid" => $ids,
 						"confirm" => "1")), " ] ");
 		$html->add(" [ ", create_action_link(__('Deny'),
 					"display_month"), " ] ");
@@ -58,10 +58,10 @@ function user_delete()
 	}
 
 	foreach($ids as $id) {
-		if($phpcdb->delete_user($id)) {
-			$html->add(tag('p', __("Removed user: $id")));
+		if($phpcdb->disable_user($id)) {
+			$html->add(tag('p', __("Disabled user: $id")));
 		} else {        
-			$html->add(tag('p', __("Could not remove user: $id")));
+			$html->add(tag('p', __("Could not disable user: $id")));
 		}
 	}
 

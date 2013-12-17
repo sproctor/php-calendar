@@ -61,18 +61,18 @@ function config_form() {
 	if(isset($vars['phpcid']))
 		$hidden_div->add(create_hidden('phpcid', $vars['phpcid']));
 		
-        $form = tag('form', attributes("action=\"$phpc_script\"",
-				'method="post"'),
-			$hidden_div,
-			tag('table', attributes("class=\"phpc-container\""),
-				tag('caption', __('Options')),
-				tag('tfoot',
-                                        tag('tr',
-                                                tag('td', attributes('colspan="2"'),
-							create_submit(__('Submit'))))),
-				$tbody));
-
-	return tag('div', attrs('id="phpc-config"'), $form);
+	return tag('div', attrs('id="phpc-config"'),
+			tag('form', attributes("action=\"$phpc_script\"",
+					'method="post"'),
+				$hidden_div,
+				tag('table',
+					attrs('class="phpc-container form ui-widget"'),
+					tag('tfoot',
+						tag('tr',
+							tag('td', ''),
+							tag('td',
+								create_submit(__('Submit'))),
+							$tbody)))));
 }
 
 function user_list()
@@ -92,7 +92,7 @@ function user_list()
 		}
 		$groups = implode(', ', $group_list);
 		$tbody->add(tag('tr',
-					tag('th', $user['username'],
+					tag('td', $user['username'],
 						create_hidden('uid[]',
 							$user['uid'])),
 					tag('td', create_checkbox("read{$user['uid']}", "1", !empty($user['read']), __('Read'))),
@@ -113,14 +113,11 @@ function user_list()
 	$form = tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
 			$hidden_div,
+			tag('div', attrs('class="phpc-sub-title"'),
+				__('User Permissions')),
 			tag('table', attributes("class=\"phpc-container\""),
-				tag('caption', __('User Permissions')),
-				tag('tfoot',
-					tag('tr',
-						tag('td', attributes('colspan="8"'),
-							create_submit(__('Submit'))))),
 				tag('thead',
-					tag('tr',
+					tag('tr', attrs('class="ui-widget-header"'),
 						tag('th', __('User Name')),
 						tag('th', __('Read')),
 						tag('th', __('Write')),
@@ -129,7 +126,8 @@ function user_list()
 						tag('th', __('Admin')),
 						tag('th', __('Groups')),
 						tag('th', __('Edit Groups'))
-					   )), $tbody));
+					   )), $tbody),
+			create_submit(__('Submit')));
 
 	return tag('div', attrs('id="phpc-users"'), $form);
 }
@@ -142,7 +140,9 @@ function category_list()
 
 	$tbody = tag('tbody');
 
+	$have_contents = false;
 	foreach ($categories as $category) {
+		$have_contents = true;
 		$name = empty($category['name']) ? __('No Name')
 			: $category['name'];
 		$catid = $category['catid'];
@@ -165,25 +165,29 @@ function category_list()
 				   ));
 	}
 
-	$create_link = create_action_link(__('Create category'), 'category_form',
-			array('cid' => $phpcid));
-	$table = tag('table', attributes("class=\"phpc-container\""),
-			tag('caption', __('Calendar Categories')),
+	if (!$have_contents) {
+		$tbody->add(tag('tr', tag('td', attrs('colspan=5'),
+						__('No Categories.'))));
+	}
+
+	$table = tag('table', attrs('class="phpc-container"'),
 			tag('thead',
-				tag('tr',
+				tag('tr', attrs('class="ui-widget-header"'),
 					tag('th', __('Name')),
 					tag('th', __('Text Color')),
 					tag('th', __('Background Color')),
 					tag('th', __('Visible to User Group')),
-					tag('th', __('Actions'))					
+					tag('th', __('Actions'))
 				   )),
-			$tbody,
-			tag('tfoot',
-				tag('tr',
-					tag('td', attributes('colspan="5"'),
-						$create_link))));
+			$tbody);
 
-	return tag('div', attributes('id="phpc-categories"'), $table);
+	return tag('div', attrs('id="phpc-categories"'),
+			tag('div', attrs('class="phpc-sub-title"'),
+				__('Calendar Categories')),
+			$table,
+			create_action_link(__('Create category'),
+				'category_form', array('cid' => $phpcid),
+				attrs('class="phpc-button"')));
 }
 
 function group_list() {
@@ -193,7 +197,9 @@ function group_list() {
 
 	$tbody = tag('tbody');
 
+	$have_contents = false;
 	foreach ($groups as $group) {
+		$have_contents = true;
 		$name = empty($group['name']) ? __('No Name')
 			: $group['name'];
 		$id = $group['gid'];
@@ -209,22 +215,26 @@ function group_list() {
 				   ));
 	}
 
-	$create_link = create_action_link(__('Create group'), 'group_form',
-			array('cid' => $phpcid));
-	$table = tag('table', attributes("class=\"phpc-container\""),
-			tag('caption', __('Calendar Groups')),
+	if (!$have_contents) {
+		$tbody->add(tag('tr', tag('td', attrs('colspan=2'),
+						__('No Groups'))));
+	}
+
+	$table = tag('table', attrs('class="phpc-container"'),
 			tag('thead',
-				tag('tr',
+				tag('tr', attrs('class="ui-widget-header"'),
 					tag('th', __('Name')),
 					tag('th', __('Actions'))
 				   )),
-			$tbody,
-			tag('tfoot',
-				tag('tr',
-					tag('td', attributes('colspan="2"'),
-						$create_link))));
+			$tbody);
 
-	return tag('div', attrs('id="phpc-groups"'), $table);
+	return tag('div', attrs('id="phpc-groups"'),
+			tag('div', attrs('class="phpc-sub-title"'),
+				__('Calendar Groups')),
+			$table,
+			create_action_link(__('Create group'), 'group_form',
+				array('cid' => $phpcid),
+				attrs('class="phpc-button"')));
 }
 
 ?>

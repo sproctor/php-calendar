@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2013 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -324,11 +324,11 @@ function create_action_link($text, $action, $args = false, $attribs = false)
 	$url .= '"';
 
 	if($attribs !== false) {
-		$as = attributes($url, $attribs);
+		$attribs->add($url);
 	} else {
-		$as = attributes($url);
+		$attribs = attrs($url);
 	}
-	return tag('a', $as, $text);
+	return tag('a', $attribs, $text);
 }
 
 // takes a menu $html and appends an entry
@@ -620,7 +620,7 @@ function get_date_format_list()
 
 function display_phpc() {
 	global $phpc_messages, $phpc_redirect, $phpc_script, $phpc_prefix,
-	       $phpc_title, $phpcdb, $phpc_cal;
+	       $phpc_title, $phpcdb, $phpc_cal, $phpc_home_url;
 
 	$navbar = false;
 
@@ -672,7 +672,7 @@ function display_phpc() {
 		$results = tag('');
 		if($navbar !== false)
 			$results->add($navbar);
-		$results->add(tag('div', attrs('class="phpc-main"'),
+		$results->add(tag('div', attrs('class="php-calendar"'),
 					tag('h2', __('Error')),
 					tag('p', $e->getMessage()),
 					tag('h3', __('Backtrace')),
@@ -685,10 +685,13 @@ function do_action()
 {
 	global $action, $phpc_includes_path, $vars;
 
-	if(!preg_match('/^\w+$/', $action))
-		soft_error(__('Invalid action'));
+	$action_file = "$phpc_includes_path/$action.php";
 
-	require_once("$phpc_includes_path/$action.php");
+	if(!preg_match('/^\w+$/', $action) || !file_exists($action_file)) {
+		soft_error(__('Invalid action') . " $action");
+	}
+
+	require_once($action_file);
 
 	eval("\$action_output = $action();");
 

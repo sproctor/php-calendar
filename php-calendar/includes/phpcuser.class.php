@@ -24,6 +24,7 @@ class PhpcUser {
 	var $timezone;	
 	var $language;
 	var $groups;
+	var $disabled;
 
 	function PhpcUser($result)
 	{
@@ -34,6 +35,7 @@ class PhpcUser {
 		$this->password_editable = $result['password_editable'];
 		$this->timezone = $result['timezone'];
 		$this->language = $result['language'];
+		$this->disabled = $result['disabled'];
 	}
 
 	function get_username()
@@ -69,6 +71,10 @@ class PhpcUser {
 			$this->groups = $phpcdb->get_user_groups($this->uid);
 
 		return $this->groups;
+	}
+
+	function is_disabled() {
+		return $this->disabled;
 	}
 }
 

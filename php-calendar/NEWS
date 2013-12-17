@@ -5,7 +5,9 @@ NEWS
 	- Removed embed files
 	- Removed occurrence view because it's confusing
 	- Added sane embed parameter to display calendar in an iframe.
+	- Don't allow users to be deleted
 	- Bugfixes
+	- UI improvements
 
 2.0 (24 October 2013):
 	- Form to allow calendar admins to modify users' groups

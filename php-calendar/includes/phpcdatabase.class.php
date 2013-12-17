@@ -61,7 +61,7 @@ class PhpcDatabase {
 
 	private function get_user_fields() {
 		$users_table = SQL_PREFIX . "users";
-		return "`$users_table`.`uid`, `username`, `password`, `$users_table`.`admin`, `password_editable`, `timezone`, `language`";
+		return "`$users_table`.`uid`, `username`, `password`, `$users_table`.`admin`, `password_editable`, `timezone`, `language`, `disabled`";
 	}
 
 	// returns all the events for a particular day
@@ -449,24 +449,17 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows > 0;
 	}
 
-	function delete_user($id)
+	function disable_user($id)
 	{
 
-		$query1 = 'DELETE FROM `'.SQL_PREFIX ."users`\n"
-			."WHERE uid='$id'";
-		$query2 = 'DELETE FROM `'.SQL_PREFIX ."permissions`\n"
+		$query1 = 'UPDATE `'.SQL_PREFIX ."users`\n"
+			."SET `disabled`=1\n"
 			."WHERE uid='$id'";
 
 		$this->dbh->query($query1)
-			or $this->db_error(__('Error while removing a calendar'),
+			or $this->db_error(__('Error disabling a user.'),
 					$query1);
-		$rv = $this->dbh->affected_rows > 0;
-
-		$this->dbh->query($query2)
-			or $this->db_error(__('Error while removing '),
-					$query2);
-
-		return $rv;
+		return $this->dbh->affected_rows > 0;
 	}
 
 	function get_permissions($cid, $uid)

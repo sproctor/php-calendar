@@ -28,7 +28,7 @@ function display_month()
 {
 	global $month, $year, $phpc_home_url, $phpcid;
 
-	$heading_html = tag('tr');
+	$heading_html = tag('tr', attrs('class="ui-widget-header"'));
 	$heading_html->add(tag('th', __p('Week', 'W')));
 	for($i = 0; $i < 7; $i++) {
 		$d = ($i + day_of_week_start()) % 7;
@@ -56,7 +56,7 @@ function display_month()
 		$prev_month += 12;
 		$prev_year--;
 	}
-	return tag('',
+	return tag('div',
 			tag("div", attributes('id="phpc-summary-view"'), 
 				tag("div", attributes('id="phpc-summary-head"'),
 					tag("div", attributes('id="phpc-summary-title"'), ''),
@@ -64,14 +64,13 @@ function display_month()
 					tag("div", attributes('id="phpc-summary-category"'), ''),
 					tag("div", attributes('id="phpc-summary-time"'), '')),
 				tag("div", attributes('id="phpc-summary-body"'), '')),
-                        tag('table',
-				attributes('class="phpc-main phpc-calendar"'),
-                                tag('caption',
-					tag('a', attrs('class="phpc-icon-link ui-icon ui-icon-triangle-1-w"', "href=\"$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$prev_month&amp;year=$prev_year\""), ''),
-					create_dropdown_list(month_name($month), $months),
-					create_dropdown_list($year, $years),
-					tag('a', attrs('class="phpc-icon-link ui-icon ui-icon-triangle-1-e"', "href=\"$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$next_month&amp;year=$next_year\""), '')
-				   ),
+			tag('div', attrs('class="phpc-sub-title phpc-month-title"'),
+				tag('a', attrs('class="phpc-icon-link ui-icon ui-icon-triangle-1-w"', "href=\"$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$prev_month&amp;year=$prev_year\""), ''),
+				create_dropdown_list(month_name($month), $months),
+				create_dropdown_list($year, $years),
+				tag('a', attrs('class="phpc-icon-link ui-icon ui-icon-triangle-1-e"', "href=\"$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$next_month&amp;year=$next_year\""), '')
+			   ),
+                        tag('table', attrs('class="phpc-month-view"'),
                                 tag('colgroup',
 					tag('col', attributes('class="phpc-week"')),
 					tag('col', attributes('class="phpc-day"')),
@@ -215,7 +214,7 @@ function create_day($month, $day, $year, $days_events)
 		$date_tag->add(create_action_link_with_date('+',
 					'event_form', $year, $month,
 					$day,
-					array('class="phpc-add"')));
+					attrs('class="phpc-add"')));
 	}
 
 	$html_day = tag('td', $date_tag);
@@ -241,7 +240,7 @@ function create_day($month, $day, $year, $days_events)
 					create_action_link_with_date(__("View Additional Events"),
 						'display_day', $year, $month,
 						$day,
-						array('class="phpc-date"')));
+						attrs('class="phpc-date"')));
 			$html_events->add($event_html);
 			break;
 		}

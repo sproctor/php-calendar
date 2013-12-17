@@ -51,31 +51,33 @@ function calendar_list()
 	global $phpc_script, $phpcdb;
 
         $tbody = tag('tbody');
-
-		$tbody->add(tag('tr', tag('th', __("Calendar")),
-					tag('th', __("Action"))));
         foreach($phpcdb->get_calendars() as $calendar) {
                 $title = $calendar->get_title();
                 $cid = $calendar->get_cid();
 
                 $tbody->add(tag('tr',
-                                tag('th', $title),
-                                tag('td',create_action_link(__("Edit"),
-						"cadmin", array("phpcid" => $cid)),
+                                tag('td', $title),
+                                tag('td', create_action_link(__("Admin"),
+						"cadmin",
+						array("phpcid" => $cid)),
 					" ", create_action_link(__("Delete"),
 						"calendar_delete",
-						array("cid" => $cid)))));
+						array("cid" => $cid),
+						attrs('class="phpc-button"')))));
         }
 
-	$create_link = create_action_link(__('Create Calendar'),
-			'calendar_form');
-        return tag('div', attributes('id="phpc-admin-calendars"'), tag('table',
-				attributes('class="phpc-container"'),
-			tag('caption', __('Calendar List')), $tbody,
-			tag('tfoot',
-				tag('tr',
-					tag('td', attributes('colspan="2"'),
-						$create_link)))));
+        return tag('div', attrs('id="phpc-admin-calendars"'),
+			tag('div', attrs('class="phpc-sub-title"'),
+				__('Calendar List')),
+			tag('table', attrs('class="phpc-container"'),
+				tag('thead',
+					tag('tr', attrs('class="ui-widget-header"'),
+						tag('th', __("Calendar")),
+						tag('th', __("Action")))),
+				$tbody),
+			create_action_link(__('Create Calendar'),
+				'calendar_form', false,
+				attrs('class="phpc-button"')));
 
 }
 
@@ -83,36 +85,37 @@ function user_list()
 {
 	global $phpc_script, $phpcdb;
 
-        $tbody = tag('tbody');
-
-		$tbody->add(tag('tr', tag('th', __("Username")),
-					tag('th', __("Groups")),
-					tag('th', __("Edit Groups")),
-					tag('th', __("Action"))));
+	$tbody = tag('tbody');
         foreach($phpcdb->get_users() as $user) {
 		$group_list = array();
 		foreach($user->get_groups() as $group) {
 			$group_list[] = $group['name'];
 		}
 		$groups = implode(', ', $group_list);
-		$tbody->add(tag('tr', tag('th', $user->username),
+		$tbody->add(tag('tr', tag('td', $user->username),
 					tag('td', $groups),
 					tag('td', create_action_link(__("Edit Groups"), "user_groups", array("uid" => $user->uid))),
-					tag('td', create_action_link(__("Delete"),
-							"user_delete",
+					tag('td', create_action_link(__("Disable"),
+							"user_disable",
 							array("uid" => $user->uid)))));
 	}
 
-	$create_link = create_action_link(__('Create User'),
-			'user_create');
-        return tag('div', attributes('id="phpc-admin-users"'),tag('table',
-				attributes('class="phpc-container"'),
-			tag('caption', __('User List')), $tbody,
-			tag('tfoot',
-				tag('tr',
-					tag('td', attributes('colspan="3"'),
-						$create_link)))));
-
+        return tag('div', attrs('id="phpc-admin-users"'),
+			tag('div', attrs('class="phpc-sub-title"'),
+				__('User List')),
+			tag('table',
+				attrs('class="phpc-container ui-widget ui-widget-content"'),
+				tag('thead',
+					tag('tr', attrs('class="ui-widget-header"'),
+						tag('th', __("Username")),
+						tag('th', __("Groups")),
+						tag('th', __("Edit Groups")),
+						tag('th', __("Action")))),
+				$tbody),
+			create_action_link(__('Create User'),
+				'user_create', false,
+				attrs('class="phpc-button"',
+					'id="phpc-create-user"')));
 }
 
 function import() {

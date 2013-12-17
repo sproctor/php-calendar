@@ -22,7 +22,8 @@ body {
 .phpc-title {
   text-align: center;
   font-size: 2em !important;
-  margin: .5em 0;
+  margin: .6em auto;
+  padding: .3em;
 }
 
 .phpc-title a {
@@ -34,9 +35,9 @@ body {
 }
 
 .phpc-bar {
-  margin: .5em 0;
+  margin: .6em auto;
   text-align: center;
-  padding: 4px;
+  padding: .3em;
 }
 
 .phpc-bar a {
@@ -57,8 +58,7 @@ body {
 
 .php-calendar table {
   border-collapse: collapse;
-  margin-left: auto;
-  margin-right: auto;
+  margin-bottom: 0.6em;
 }
 
 .phpc-container {
@@ -71,27 +71,14 @@ body {
   text-align: center;
 }
 
-table.phpc-main {
-  width: 100%;
-}
-
-div.phpc-main {
-  padding: 0;
-}
-
-.phpc-main h2 {
+.php-calendar h2 {
   text-align: left;
   margin: 0;
-  padding: 2px .5em; 
-}
-
-.phpc-main div {
-  padding-left: .5em;
-  padding-right: .5em;
+  padding: .3em; 
 }
 
 .phpc-event-header {
-  padding: .5em;
+  padding: .3em;
 }
 
 .phpc-event li a {
@@ -100,16 +87,12 @@ div.phpc-main {
 }
 
 .phpc-desc p {
-  padding: .5em;
+  padding: .3em;
   text-align: justify;
 }
 
 .php-calendar caption {
   font-weight: bolder;
-}
-
-.php-calendar tfoot {
-  text-align: center;
 }
 
 col.phpc-week {
@@ -120,35 +103,56 @@ col.phpc-day {
   width: 14%;
 }
 
-.phpc-calendar td, .phpc-calendar th {
+.php-calendar td, .php-calendar th {
   border-collapse: collapse;
   vertical-align: text-top;
+  border-width: 1px;
+  border-style: solid;
 }
 
-.phpc-calendar td {
-  padding: 0;
+.php-calendar thead td, .php-calendar thead th, table.phpc-container td,
+    table.phpc-container th {
+  padding: .3em;
+}
+
+.php-calendar td {
   text-align: left;
-  height: 100px;
 }
 
-.phpc-calendar li {
+table.phpc-month-view {
+  width: 100%;
+  margin: 1em 0;
+}
+
+table.phpc-month-view td {
+  padding: 0;
+  height: 100px;
+  vertical-align: top;
+}
+
+.phpc-month-view li {
   margin: 4px;
 }
 
-.phpc-main ul {
+.php-calendar ul {
   list-style-type: none;
   padding: 0;
 }
 
-.phpc-calendar li a {
+.phpc-month-view li a {
+  padding: .3em;
   font-weight: normal !important;
   display: block;
-  padding: 2px;
   text-decoration: none;
 }
 
-.phpc-button {
+.phpc-month-title {
   text-align: center;
+}
+
+.phpc-sub-title {
+  font-weight: bold;
+  margin: .6em;
 }
 
 a.phpc-add {
@@ -175,21 +179,34 @@ a.phpc-add {
   padding: 5px;
 }
 
+/* form sub-tables */
 .form table {
   width: 100%;
+  border-style: solid;
+  border-width: 1px;
+}
+
+/* this is not for thead. add another entry for that if we create a heading
+   for forms */
+.form th {
+  text-align: right;
+  vertical-align: top;
+  padding-right: .6em;
+}
+
+.form th, .form td {
+  border-style: none;
 }
 
 .phpc-date {
   padding: 5px 3px;
   cursor: pointer;
-}
-
-.phpc-calendar th.ui-state-default {
-  cursor: pointer;
+  margin: 0;
 }
 
 .phpc-date > a {
   text-decoration: none;
+  margin: 0;
 }
 
 .phpc-shadow {
@@ -232,10 +249,6 @@ td.form-color-selected {
   font-size: .9em !important;
 }
 
-.form-submit div {
-  text-align: center;
-}
-
 div.ui-datepicker, div.ui-timepicker {
   font-size: .9em;
 }
@@ -269,6 +282,7 @@ div.ui-datepicker, div.ui-timepicker {
 
 .phpc-dropdown-list {
   margin-right: 1em;
+  padding: 0;
 }
 
 .phpc-icon-link {

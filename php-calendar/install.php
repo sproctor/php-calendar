@@ -31,14 +31,16 @@ define('IN_PHPC', true);
 if(!function_exists("mysqli_connect"))
 	soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
 
-echo '<html>
-<head>
-<link rel="stylesheet" type="text/css" href="static/phpc.css"/>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<title>PHP Calendar Installation</title>
-</head>
+?><!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="static/phpc.css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <title>PHP Calendar Installation</title>
+  </head>
 <body>
-<h1>PHP Calendar</h1>';
+<h1>PHP Calendar</h1>
+<?php
 
 $must_upgrade = false;
 
@@ -529,6 +531,7 @@ function create_tables()
 		."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."`language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."`gid` int(11),\n"
+		."`disabled` tinyint(1) NOT NULL,\n"
 		."PRIMARY KEY (`uid`),\n"
 		."UNIQUE KEY `username` (`username`)\n",
 		"AUTO_INCREMENT=1");

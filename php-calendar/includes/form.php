@@ -117,7 +117,7 @@ class FormGroup extends FormPart {
                 if($this->title !== false)
 			$tag->add(tag('th', $this->title));
                 else
-			$cell->add(attrs("colspan=\"2\""));
+			$tag->add(tag('td', '')); // Align with second column
 
                 $cell->add(tag('table', $this->get_specific_html($parent,
 						$defaults)));
@@ -184,7 +184,7 @@ abstract class FormQuestion extends FormPart {
                 if($this->subject !== false)
 			$tag->add(tag('th', $this->subject));
                 else
-			$cell->add(attrs("colspan=\"2\""));
+			$tag->add(tag('td', '')); // Align with second column
 
                 if($this->description !== false)
                         $cell->add(tag('p', attrs('class="form-question-description"'),

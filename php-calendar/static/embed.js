@@ -13,7 +13,7 @@ $(document).ready(function() {
   $('a').each(function() {
     if (this.href.indexOf("?") !== -1) {
       this.href += "&content=embed";
-    } else {
+    } else if(this.href.length > 0) {
       this.href += "?content=embed";
     }
   });
