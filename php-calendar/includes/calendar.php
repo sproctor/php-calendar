@@ -303,22 +303,24 @@ function create_action_link($text, $action, $args = false, $attribs = false)
 {
 	global $phpc_script, $vars;
 
-	$url = "href=\"$phpc_script?";
-	if(isset($vars["phpcid"]))
-		$url .= "phpcid=" . htmlentities($vars["phpcid"]) . "&amp;";
-	$url .= "action=" . htmlentities($action);
+	$url = "href=\"$phpc_script?action=" . htmlentities($action);
 
-	if (!empty($args)) {
-		foreach ($args as $key => $value) {
-			if(empty($value))
-				continue;
-			if (is_array($value)) {
-				foreach ($value as $v) {
-					$url .= "&amp;"
-						. htmlentities("{$key}[]=$v");
-				}
-			} else
-				$url .= "&amp;" . htmlentities("$key=$value");
+	if (!$args) {
+		$args = array();
+	}
+	if (!array_key_exists("phpcid", $args)) {
+		$args["phpcid"] = htmlentities($vars["phpcid"]);
+	}
+
+	foreach ($args as $key => $value) {
+		if(empty($value))
+			continue;
+		if (is_array($value)) {
+			foreach ($value as $v) {
+				$url .= "&amp;" . htmlentities("{$key}[]=$v");
+			}
+		} else {
+			$url .= "&amp;" . htmlentities("$key=$value");
 		}
 	}
 	$url .= '"';

@@ -92,12 +92,19 @@ function user_list()
 			$group_list[] = $group['name'];
 		}
 		$groups = implode(', ', $group_list);
+		if (!$user->is_disabled()) {
+			$disable_link =  create_action_link(__("Disable"),
+					"user_disable",
+					array("uid" => $user->uid));
+		} else {
+			$disable_link =  create_action_link(__("Enable"),
+					"user_enable",
+					array("uid" => $user->uid));
+		}
 		$tbody->add(tag('tr', tag('td', $user->username),
 					tag('td', $groups),
 					tag('td', create_action_link(__("Edit Groups"), "user_groups", array("uid" => $user->uid))),
-					tag('td', create_action_link(__("Disable"),
-							"user_disable",
-							array("uid" => $user->uid)))));
+					tag('td', $disable_link)));
 	}
 
         return tag('div', attrs('id="phpc-admin-users"'),

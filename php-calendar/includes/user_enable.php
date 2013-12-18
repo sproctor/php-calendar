@@ -19,14 +19,14 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-function user_disable()
+function user_enable()
 {
 	global $vars, $phpcid, $phpcdb, $phpc_script;
 
 	$html = tag('div', attributes('class="phpc-container"'));
 
 	if(!is_admin()) {
-		$html->add(tag('p', __('You must be an admin to disable users.')));
+		$html->add(tag('p', __('You must be an admin to enable users.')));
 		return $html;
 	}
 
@@ -42,10 +42,10 @@ function user_disable()
 	}
 
 	foreach($ids as $id) {
-		if($phpcdb->disable_user($id)) {
-			$html->add(tag('p', __("Disabled user: $id")));
+		if($phpcdb->enable_user($id)) {
+			$html->add(tag('p', __("Enabled user: $id")));
 		} else {        
-			$html->add(tag('p', __("Could not disable user: $id")));
+			$html->add(tag('p', __("Could not enable user: $id")));
 		}
 	}
 

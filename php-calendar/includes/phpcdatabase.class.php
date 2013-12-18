@@ -452,13 +452,26 @@ class PhpcDatabase {
 	function disable_user($id)
 	{
 
-		$query1 = 'UPDATE `'.SQL_PREFIX ."users`\n"
+		$query = 'UPDATE `'.SQL_PREFIX ."users`\n"
 			."SET `disabled`=1\n"
 			."WHERE uid='$id'";
 
-		$this->dbh->query($query1)
+		$this->dbh->query($query)
 			or $this->db_error(__('Error disabling a user.'),
-					$query1);
+					$query);
+		return $this->dbh->affected_rows > 0;
+	}
+
+	function enable_user($id)
+	{
+
+		$query = 'UPDATE `'.SQL_PREFIX ."users`\n"
+			."SET `disabled`=0\n"
+			."WHERE uid='$id'";
+
+		$this->dbh->query($query)
+			or $this->db_error(__('Error enabling a user.'),
+					$query);
 		return $this->dbh->affected_rows > 0;
 	}
 
