@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2013 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,11 +64,15 @@ function display_month()
 					tag("div", attributes('id="phpc-summary-category"'), ''),
 					tag("div", attributes('id="phpc-summary-time"'), '')),
 				tag("div", attributes('id="phpc-summary-body"'), '')),
-			tag('div', attrs('class="phpc-sub-title phpc-month-title"'),
-				tag('a', attrs('class="phpc-icon-link ui-icon ui-icon-triangle-1-w"', "href=\"$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$prev_month&amp;year=$prev_year\""), ''),
+			tag('div', attrs('class="phpc-sub-title phpc-month-title ui-widget-content"'),
+				tag('a', attrs('class="phpc-icon-link"',
+						"href=\"$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$prev_month&amp;year=$prev_year\""),
+					tag('span', attrs('class="fa fa-chevron-left"'), '')),
 				create_dropdown_list(month_name($month), $months),
 				create_dropdown_list($year, $years),
-				tag('a', attrs('class="phpc-icon-link ui-icon ui-icon-triangle-1-e"', "href=\"$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$next_month&amp;year=$next_year\""), '')
+				tag('a', attrs('class="phpc-icon-link"',
+						"href=\"$phpc_home_url?action=display_month&amp;phpcid=$phpcid&amp;month=$next_month&amp;year=$next_year\""),
+					tag('span', attrs('class="fa fa-chevron-right"'), ''))
 			   ),
                         tag('table', attrs('class="phpc-month-view"'),
                                 tag('colgroup',

@@ -121,7 +121,7 @@ col.phpc-day {
 
 table.phpc-month-view {
   width: 100%;
-  margin: 1em 0;
+  margin: .6em 0;
 }
 
 table.phpc-month-view td {
@@ -153,6 +153,7 @@ table.phpc-month-view td {
 .phpc-sub-title {
   font-weight: bold;
   margin: .6em;
+  border-style: none !important;
 }
 
 a.phpc-add {
@@ -261,10 +262,6 @@ div.ui-datepicker, div.ui-timepicker {
   display: inline-block;
 }
 
-.phpc-dropdown-list-title {
-  margin-right: 2px;
-}
-
 .phpc-dropdown-list ul {
   position: absolute;
   margin: 0;
@@ -281,10 +278,14 @@ div.ui-datepicker, div.ui-timepicker {
 }
 
 .phpc-dropdown-list {
-  margin-right: 1em;
+  margin: 0 .6em;
   padding: 0;
 }
 
+.phpc-dropdown-list ul li a {
+  text-decoration: none;
+}
+
 .phpc-icon-link {
-  display: inline-block !important;
+  text-decoration: none;
 }

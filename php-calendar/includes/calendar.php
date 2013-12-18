@@ -301,7 +301,7 @@ function create_plain_link($text, $action, $year = false,
 
 function create_action_link($text, $action, $args = false, $attribs = false)
 {
-	global $phpc_script, $vars;
+	global $phpc_script, $vars, $phpcid;
 
 	$url = "href=\"$phpc_script?action=" . htmlentities($action);
 
@@ -309,7 +309,7 @@ function create_action_link($text, $action, $args = false, $attribs = false)
 		$args = array();
 	}
 	if (!array_key_exists("phpcid", $args)) {
-		$args["phpcid"] = htmlentities($vars["phpcid"]);
+		$args["phpcid"] = htmlentities($phpcid);
 	}
 
 	foreach ($args as $key => $value) {
@@ -757,14 +757,14 @@ function get_static_links()
 	$jquery_version = "1.10.2";
 	$jqueryui_version = "1.10.3";
 	$jpicker_version = "1.1.6";
+	$fa_version = "4.0.3";
 
 	return array(
-			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
+			tag('link', attrs('rel="stylesheet"',
 					"href=\"$path/phpc.css\"")),
-			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/themes/$theme/jquery-ui$jq_min.css\"")),
-			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"$path/jquery-ui-timepicker.css\"")),
+			tag('link', attrs('rel="stylesheet"', "href=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/themes/$theme/jquery-ui$jq_min.css\"")),
+			tag('link', attrs('rel="stylesheet"', "href=\"$path/jquery-ui-timepicker.css\"")),
+			tag('link', attrs('rel="stylesheet"', "href=\"//netdna.bootstrapcdn.com/font-awesome/$fa_version/css/font-awesome$jq_min.css\"")),
 			tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
 			tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
 			tag('script', "var imagePath='$path/images/'"),
@@ -772,8 +772,7 @@ function get_static_links()
 			tag("script", attrs("src=\"$path/jquery.ui.timepicker.js\""), ''),
 			tag("script", attrs("src=\"$path/jquery.hoverIntent.minified.js\""), ''),
 			tag("script", attrs("src=\"$path/jpicker-$jpicker_version$jq_min.js\""), ''),
-			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"$path/jPicker-$jpicker_version$jq_min.css\"")),
+			tag('link', attrs('rel="stylesheet"', "href=\"$path/jPicker-$jpicker_version$jq_min.css\"")),
 		  );
 }
 

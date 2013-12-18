@@ -169,6 +169,7 @@ if ($phpc_user === false) {
 			'password_editable' => false,
 			'timezone' => NULL,
 			'language' => NULL,
+			'disabled' => 0,
 			);
 	if(isset($_COOKIE["{$phpc_prefix}tz"]))
 		$anonymous['timezone'] = $_COOKIE["{$phpc_prefix}tz"];

@@ -148,7 +148,7 @@ $(document).ready(function(){
     }
     var button = $("<a>")
       .appendTo(titleElement)
-      .addClass("phpc-icon-link ui-icon ui-icon-circle-triangle-s")
+      .addClass("phpc-icon-link fa fa-caret-down")
       .click(function() {
         $(window).resize(positionList);
         positionList();
