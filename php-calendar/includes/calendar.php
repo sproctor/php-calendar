@@ -112,16 +112,14 @@ function phpc_do_logout() {
 // returns tag data for the links at the bottom of the calendar
 function footer()
 {
-	global $phpc_url, $phpc_tz, $phpc_lang;
+	global $phpc_tz, $phpc_lang;
 
 	$tag = tag('div', attributes('class="phpc-bar ui-widget-content"'),
 			"[" . __('Language') . ": $phpc_lang]" .
 			" [" . __('Timezone') . ": $phpc_tz]");
 
 	if(defined('PHPC_DEBUG')) {
-		$tag->add(tag('a', attributes('href="http://validator.w3.org/check?url='
-						. rawurlencode($phpc_url)
-						. '"'), 'Validate HTML'));
+		$tag->add(tag('a', attributes('href="http://validator.w3.org/check/referer"'), 'Validate HTML'));
 		$tag->add(tag('a', attributes('href="http://jigsaw.w3.org/css-validator/check/referer"'),
 					'Validate CSS'));
 	}

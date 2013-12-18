@@ -172,7 +172,7 @@ a.phpc-add {
 }
 
 #phpc-summary-head {
-  border-bottom: 1px solid inherit;
+  border-bottom: 1px solid;
   padding: 5px;
 }
 
