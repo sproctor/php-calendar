@@ -189,7 +189,7 @@ function create_day($month, $day, $year, $days_events)
 		$date_tag->add(create_action_link_with_date('+',
 					'event_form', $year, $month,
 					$day,
-					array('class="phpc-add"')));
+					attrs('class="phpc-add"')));
 	}
 
 	$html_day = tag('td', $date_tag);
@@ -215,7 +215,7 @@ function create_day($month, $day, $year, $days_events)
 					create_action_link_with_date(__("View Additional Events"),
 						'display_day', $year, $month,
 						$day,
-						array('class="phpc-date"')));
+						attrs('class="phpc-date"')));
 			$html_events->add($event_html);
 			break;
 		}
@@ -242,7 +242,7 @@ function create_day($month, $day, $year, $days_events)
 		$event_html = tag('li',
 				create_event_link($title, "display_event",
 					$event->get_eid(),
-					array("style=\"$style\"")));
+					attrs("style=\"$style\"")));
 
 		$html_events->add($event_html);
 	}

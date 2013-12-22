@@ -286,6 +286,10 @@ div.ui-datepicker, div.ui-timepicker {
   text-decoration: none;
 }
 
+.phpc-dropdown-list-title {
+  cursor: pointer;
+}
+
 .phpc-icon-link {
   text-decoration: none;
 }

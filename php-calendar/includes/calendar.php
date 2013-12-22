@@ -30,6 +30,9 @@ require_once("$phpc_includes_path/util.php");
 function __($msg) {
 	global $phpc_gettext;
 
+	if (empty($phpc_gettext))
+		return $msg;
+
 	return $phpc_gettext->gettext($msg);
 }
 
@@ -627,11 +630,18 @@ function display_phpc() {
 	try {
 		$calendars = $phpcdb->get_calendars();
 		$list = array();
+		$title_link = tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'",
+					'class="phpc-dropdown-list-title"'),
+				$phpc_cal->get_title());
 		foreach($calendars as $calendar) {
 			$list["$phpc_home_url?phpcid={$calendar->get_cid()}"] = 
 				$calendar->get_title();
 		}
-		$phpc_title = $phpc_cal->get_title();
+		if (sizeof($calendars) > 1) {
+			$phpc_title = create_dropdown_list($title_link, $list);
+		} else {
+			$phpc_title = $title_link;
+		}
 		$content = do_action();
 		if(sizeof($phpc_messages) > 0) {
 			$messages = tag('div', attrs('class="phpc-message"'));
@@ -650,8 +660,7 @@ function display_phpc() {
 				userMenu(),
 				tag('br', attrs('style="clear:both;"')),
 				tag('div', attrs('class="phpc-title ui-widget-header"'),
-					create_dropdown_list(tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'", 'class="phpc-dropdown-list-title"'),
-							$phpc_title), $list)),
+					$phpc_title),
 				navbar(), $messages, $content, footer());
 
 	} catch(PermissionException $e) {

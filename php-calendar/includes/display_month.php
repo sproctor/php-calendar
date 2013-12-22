@@ -162,11 +162,12 @@ function create_week($week_of_month, $month, $year, $days_events)
 		- day_of_week($month, 1, $year);
 	$week_of_year = week_of_year($month, $start_day, $year);
 
-	$args = array('week' => $week_of_year, 'year' => $year);
 	$week_html = tag('tr', tag('th',
 				attrs('class="phpc-date ui-state-default"'),
 				create_action_link($week_of_year,
-					'display_week', $args)));
+					'display_week',
+					array('week' => $week_of_year,
+						'year' => $year))));
 		
 	for($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
 		$day = $start_day + $day_of_week;
@@ -271,7 +272,7 @@ function create_day($month, $day, $year, $days_events)
 		$event_html = tag('li',
 				create_event_link($title, "display_event",
 					$event->get_eid(),
-					array("style=\"$style\"")));
+					attrs("style=\"$style\"")));
 
 		$html_events->add($event_html);
 	}
