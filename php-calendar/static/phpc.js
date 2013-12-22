@@ -154,6 +154,11 @@ $(document).ready(function(){
         positionList();
         listElement.toggle();
       });
+      $(this).find(".phpc-dropdown-list-title").click(function() {
+        $(window).resize(positionList);
+        positionList();
+        listElement.toggle();
+      });
 
     listElement.hide();
   });
