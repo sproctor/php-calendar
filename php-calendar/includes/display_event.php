@@ -26,23 +26,19 @@ if ( !defined('IN_PHPC') ) {
 // Full view for a single event
 function display_event()
 {
-	global $vars;
+	global $vars, $phpcdb, $year, $month, $day;
 
 	if(!empty($vars['content']) && $vars['content'] == 'json')
 		return display_event_json();
 	
+	if(isset($vars['oid'])) 
+		$event = new PhpcEvent($phpcdb->get_event_by_oid($vars['oid']));
+
 	if(isset($vars['eid']))
-		return display_event_by_eid($vars['eid']);
+		$event = new PhpcEvent($phpcdb->get_event_by_eid($vars['eid']));
 
-	// If we get here, we did something wrong
-	soft_error(__("Invalid arguments."));
-}
-
-function display_event_by_eid($eid)
-{
-	global $phpcdb, $year, $month, $day;
-
-	$event = new PhpcEvent($phpcdb->get_event_by_eid($eid));
+	if(!isset($event))
+		soft_error(__("Invalid arguments."));
 
 	if(!$event->can_read()) {
 		return tag('p', __("You do not have permission to read this event."));
@@ -68,9 +64,9 @@ function display_event_by_eid($eid)
 		$event_menu = tag('div',
 				attrs('class="phpc-bar ui-widget-content"'),
 				create_event_link(__('Modify'),
-					'event_form', $eid), "\n",
+					'event_form', $event->get_eid()), "\n",
 				create_event_link(__('Delete'),
-					'event_delete', $eid));
+					'event_delete', $event->get_eid()));
 	}
 
 	$desc_tag = tag('div', attributes('class="phpc-desc"'),
@@ -78,7 +74,7 @@ function display_event_by_eid($eid)
 			tag('p', $event->get_desc()));
 
 	$occurrences_tag = tag('ul');
-	$occurrences = $phpcdb->get_occurrences_by_eid($eid);
+	$occurrences = $phpcdb->get_occurrences_by_eid($event->get_eid());
 	$set_date = false;
 	foreach($occurrences as $occurrence) {
 		if(!$set_date) {
@@ -88,12 +84,8 @@ function display_event_by_eid($eid)
 		}
 		$oid = $occurrence->get_oid();
 		$occ_tag = tag('li', attrs('class="ui-widget-content"'),
-				create_event_link(
-					$occurrence->get_date_string()
-					. ' ' . __('at') . ' '
-					. $occurrence->get_time_span_string(),
-					'display_event',
-					$eid));
+				$occurrence->get_date_string() . ' ' . __('at')
+				. ' ' . $occurrence->get_time_span_string());
 		if($event->can_modify()) {
 			$occ_tag->add(" ",
 					create_occurrence_link(__('Edit'), 'occur_form', $oid), " ",
@@ -108,7 +100,7 @@ function display_event_by_eid($eid)
 		$occurrences_menu = tag('div',
 				attrs('class="phpc-bar ui-widget-content"'),
 				create_event_link(__('Add Occurrence'),
-					'occur_form', $eid));
+					'occur_form', $event->get_eid()));
 	}
 
 	return tag('div', attributes('class="phpc-main phpc-event"'),

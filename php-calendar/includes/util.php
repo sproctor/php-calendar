@@ -19,7 +19,9 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-require_once("$phpc_includes_path/lib_autolink.php");
+//require_once("$phpc_includes_path/lib_autolink.php");
+require_once("$phpc_includes_path/Michelf/Markdown.inc.php");
+use \Michelf\Markdown;
 
 // called when some error happens
 function soft_error($message)
@@ -170,6 +172,8 @@ function display_error($str)
 // parses a description and adds the appropriate mark-up
 function parse_desc($text)
 {
+	return Markdown::defaultTransform($text);
+
 	// Don't allow tags and make the description HTML-safe
         $text = htmlspecialchars($text, ENT_COMPAT, "UTF-8");
 

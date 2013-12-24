@@ -270,8 +270,8 @@ function create_day($month, $day, $year, $days_events)
 				." !important;";
 
 		$event_html = tag('li',
-				create_event_link($title, "display_event",
-					$event->get_eid(),
+				create_occurrence_link($title, "display_event",
+					$event->get_oid(),
 					attrs("style=\"$style\"")));
 
 		$html_events->add($event_html);

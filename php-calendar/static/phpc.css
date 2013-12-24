@@ -83,7 +83,6 @@ body {
 
 .phpc-event li a {
   text-decoration: none;
-  margin: 0 .25em;
 }
 
 .phpc-desc p {
@@ -130,16 +129,16 @@ table.phpc-month-view td {
   vertical-align: top;
 }
 
-.phpc-month-view li {
-  margin: 4px;
-}
-
 .php-calendar ul {
   list-style-type: none;
   padding: 0;
 }
 
-.phpc-month-view li a {
+.phpc-event-list li {
+  margin: 4px;
+}
+
+.phpc-event-list li a {
   padding: .3em;
   font-weight: normal !important;
   display: block;

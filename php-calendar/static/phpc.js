@@ -271,33 +271,6 @@ function copyDate(date1, date2) {
   $("#" + date2 + "-day").val($("#" + date1 + "-day").val());
 }
 
-//based on http://haacked.com/archive/2009/12/29/convert-rgb-to-hex.aspx
-function rgbToHex(color) {
-  if (color.substr(0, 1) == '#') {
-    return color.toUpperCase();
-  }
-  var digits = /(.*?)RGB\((\d+), (\d+), (\d+)\)/.exec(color.toUpperCase());
-  var red =  '0' + parseInt(digits[2]).toString(16);
-  var green = '0' + parseInt(digits[3]).toString(16);
-  var blue = '0' + parseInt(digits[4]).toString(16);
-  return ('#' + red.substring(red.length-2) + green.substring(green.length-2) + blue.substring(blue.length-2)).toUpperCase();
-}
-
-function textcolor(bgcolor) {
-  var red = parseInt(bgcolor.substr(1, 2),16);
-  var green = parseInt(bgcolor.substr(3, 2),16);
-  var blue = parseInt(bgcolor.substr(5, 2),16);
-  var luminance= (red*0.3 + green*0.59 + blue*0.11);
-  if (luminance <128) 
-  {
-    return "#FFFFFF"
-  }
-  else
-  {
-    return "#000000";
-  }
-}
-
 // sets he specified text in the floating div
 function setSummaryText(title,author,time,description,category) {
 	$("#phpc-summary-title").html(title);
@@ -342,7 +315,7 @@ function showSummary(link) {
 			activeRequest.abort();
 		
 		// get the calendar data
-		activeRequest = $.getJSON(link.href + "&contentType=json",
+		activeRequest = $.getJSON(link.href + "&content=json",
 			function(data) {
 				cache[link.href] = data;
 				setSummaryText(data.title,data.author,data.time,
