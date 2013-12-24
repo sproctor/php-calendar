@@ -111,7 +111,11 @@ if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
 	$calendars = $phpcdb->get_calendars();
 	if(empty($calendars))
 		soft_error(__("Unhandled condition: all calendars have been deleted."));
-	$phpcid = reset($calendars)->get_cid();
+	$default_cid = $phpcdb->get_default_cid();
+	if (!empty($calendars[$default_cid]))
+		$phpcid = $default_cid;
+	else
+		$phpcid = reset($calendars)->get_cid();
 }
 
 $phpc_cal = $phpcdb->get_calendar($phpcid);

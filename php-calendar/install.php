@@ -57,15 +57,25 @@ if(file_exists($phpc_config_file)) {
 
 		$existing_version = 0;
 
-		$query = "SELECT version\n"
+		$query = "SELECT `version`\n"
 			."FROM `" . SQL_PREFIX .  "version`\n";
-
 
 		$sth = $dbh->query($query);
 		if($sth) {
 			$result = $sth->fetch_assoc();
 			if(!empty($result['version']))
 				$existing_version = $result['version'];
+		}
+
+		$query = "SELECT `value`\n"
+			."FROM `" . SQL_PREFIX .  "config`\n"
+			."WHERE `name`='version' AND `cid` IS NULL";
+
+		$sth = $dbh->query($query);
+		if($sth) {
+			$result = $sth->fetch_assoc();
+			if(!empty($result['value']))
+				$existing_version = $result['value'];
 		}
 
 		if($have_calendar) {
@@ -289,11 +299,6 @@ function create_version_table() {
 	create_table("version",
 			"`version` SMALLINT unsigned NOT NULL DEFAULT '$phpc_db_version'");
 
-	$query = "REPLACE INTO `" . SQL_PREFIX . "version`\n"
-		."SET `version`='$phpc_db_version'";
-
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating version row.', $query);
 }
 
 function check_config()
@@ -487,6 +492,13 @@ function install_base()
 
 	create_tables();
 
+	$query = "REPLACE INTO `" . SQL_PREFIX . "config`\n"
+		."VALUES (`name`, `value`)\n"
+		."('version', '$phpc_db_version')";
+
+	$dbh->query($query)
+		or db_error($dbh, 'Error creating version row.', $query);
+
 	echo "<p>Config file created at \"". realpath($phpc_config_file) ."\"</p>"
 		."<p>Calendars database created</p>\n"
 		."<div><input type=\"submit\" name=\"base\" value=\"continue\">"
@@ -584,7 +596,11 @@ function create_tables()
 		."KEY `cid` (`cid`)\n",
 		"AUTO_INCREMENT=1");
 
-	create_version_table();
+	create_table("config",
+			."`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n"
+			."`value` varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n"
+			."PRIMARY KEY (`name`)");
+
 }
 
 function get_admin()

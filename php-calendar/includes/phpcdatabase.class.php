@@ -500,7 +500,8 @@ class PhpcDatabase {
 			return $this->calendars;
 
 		$query = "SELECT *\n"
-			."FROM `" . SQL_PREFIX .  "calendars`\n";
+			."FROM `" . SQL_PREFIX .  "calendars`\n"
+			."ORDER BY `cid`";
 
 		$sth = $this->dbh->query($query)
 			or $this->db_error(__('Could not get calendars.'),
@@ -525,6 +526,29 @@ class PhpcDatabase {
 		}
 
 		return $this->calendars[$cid];
+	}
+
+	function get_default_cid()
+	{
+		$query = "SELECT `value` FROM `" . SQL_PREFIX . "config`\n"
+			."WHERE `name`='default_cid'";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(__('Could not get config.'), $query);
+		$result = $sth->fetch_assoc();
+		if (empty($result))
+			return false;
+		return $result['value'];
+	}
+
+	function set_default_cid($cid) {
+		$query = "REPLACE INTO `".SQL_PREFIX."config`\n"
+			."(`name`, `value`) VALUES\n"
+			."('default_cid', '$cid')";
+
+		$this->dbh->query($query)
+			or $this->db_error(__('Error setting default cid.'),
+					$query);
 	}
 
 	function get_users()

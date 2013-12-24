@@ -36,22 +36,6 @@ function calendar_delete()
 		$ids = array($vars["cid"]);
 	}
 
-	if (empty($vars["confirm"])) {
-		$list = tag('ul');
-		foreach ($ids as $id) {
-			$calendar = $phpcdb->get_calendar($id);
-			$list->add(tag('li', "$id: ".$calendar->get_title()));
-		}
-		$html->add(tag('p', __('Confirm you want to delete:')));
-		$html->add($list);
-		$html->add(" [ ", create_action_link(__('Confirm'),
-					"calendar_delete", array("cid" => $ids,
-						"confirm" => "1")), " ] ");
-		$html->add(" [ ", create_action_link(__('Deny'),
-					"display_month"), " ] ");
-		return $html;
-	}
-
 	foreach($ids as $id) {
 		$calendar = $phpcdb->get_calendar($id);
 		if(!$calendar->can_admin()) {

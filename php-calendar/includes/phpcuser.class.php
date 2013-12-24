@@ -76,6 +76,10 @@ class PhpcUser {
 	function is_disabled() {
 		return $this->disabled;
 	}
+
+	function is_admin() {
+		return $this->admin;
+	}
 }
 
 ?>

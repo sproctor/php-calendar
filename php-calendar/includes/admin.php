@@ -51,10 +51,18 @@ function calendar_list()
 	global $phpc_script, $phpcdb;
 
         $tbody = tag('tbody');
+	$default_cid = $phpcdb->get_default_cid();
         foreach($phpcdb->get_calendars() as $calendar) {
                 $title = $calendar->get_title();
                 $cid = $calendar->get_cid();
 
+		if ($cid == $default_cid)
+			$default_tag = tag('span', __('Default Calendar'));
+		else
+			$default_tag = create_action_link(__('Make Default'),
+					"default_calendar",
+					array('cid' => $cid),
+					attrs('class="phpc-button"'));
                 $tbody->add(tag('tr',
                                 tag('td', $title),
                                 tag('td', create_action_link(__("Admin"),
@@ -63,7 +71,8 @@ function calendar_list()
 					" ", create_action_link(__("Delete"),
 						"calendar_delete",
 						array("cid" => $cid),
-						attrs('class="phpc-button"')))));
+						attrs('class="phpc-button"')),
+					$default_tag)));
         }
 
         return tag('div', attrs('id="phpc-admin-calendars"'),
