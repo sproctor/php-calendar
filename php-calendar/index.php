@@ -21,13 +21,6 @@
  */
 
 /*
- * If you want different scripts with different default calendars, you can
- * copy this script and modify $default_calendar_id to contain the CID of
- * the calendar you want to be the default
- */
-$default_calendar_id = 1;
-
-/*
  * $phpc_root_path gives the location of the base calendar install.
  * if you move this file to a new location, modify $phpc_root_path to point
  * to the location where the support files for the callendar are located.

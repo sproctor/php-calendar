@@ -509,8 +509,8 @@ class PhpcDatabase {
 		while($result = $sth->fetch_assoc()) {
 			$cid = $result["cid"];
 			if(empty($this->calendars[$cid]))
-				$this->calendars[$cid] = new PhpcCalendar
-					($result);
+				$this->calendars[$cid] =
+					new PhpcCalendar($result);
 		}
 
 		return $this->calendars;
