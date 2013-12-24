@@ -99,6 +99,30 @@ if(get_magic_quotes_gpc()) {
 
 $vars = array_merge(real_escape_r($_GET), real_escape_r($_POST));
 
+$phpc_user = false;
+if(!empty($_SESSION["{$phpc_prefix}uid"])) {
+	$phpc_user = $phpcdb->get_user($_SESSION["{$phpc_prefix}uid"]);
+}
+
+if ($phpc_user === false) {
+	$phpc_uid = 0;
+	$anonymous = array('uid' => 0,
+			'username' => 'anonymous',
+			'password' => '',
+			'admin' => false,
+			'password_editable' => false,
+			'default_cid' => NULL,
+			'timezone' => NULL,
+			'language' => NULL,
+			'disabled' => 0,
+			);
+	if(isset($_COOKIE["{$phpc_prefix}tz"]))
+		$anonymous['timezone'] = $_COOKIE["{$phpc_prefix}tz"];
+	if(isset($_COOKIE["{$phpc_prefix}lang"]))
+		$anonymous['language'] = $_COOKIE["{$phpc_prefix}lang"];
+	$phpc_user = new PhpcUser($anonymous);
+}
+
 if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
         $phpcid = $vars['phpcid'];
 } elseif(!empty($vars['eid'])) {
@@ -111,7 +135,10 @@ if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
 	$calendars = $phpcdb->get_calendars();
 	if(empty($calendars))
 		soft_error(__("Unhandled condition: all calendars have been deleted."));
-	$default_cid = $phpcdb->get_default_cid();
+	if ($phpc_user->get_default_cid() !== false)
+		$default_cid = $phpc_user->get_default_cid();
+	else
+		$default_cid = $phpcdb->get_default_cid();
 	if (!empty($calendars[$default_cid]))
 		$phpcid = $default_cid;
 	else
@@ -159,29 +186,6 @@ if(empty($vars['action'])) {
 
 if(empty($vars['content']))
 	$vars['content'] = "html";
-
-$phpc_user = false;
-if(!empty($_SESSION["{$phpc_prefix}uid"])) {
-	$phpc_user = $phpcdb->get_user($_SESSION["{$phpc_prefix}uid"]);
-}
-
-if ($phpc_user === false) {
-	$phpc_uid = 0;
-	$anonymous = array('uid' => 0,
-			'username' => 'anonymous',
-			'password' => '',
-			'admin' => false,
-			'password_editable' => false,
-			'timezone' => NULL,
-			'language' => NULL,
-			'disabled' => 0,
-			);
-	if(isset($_COOKIE["{$phpc_prefix}tz"]))
-		$anonymous['timezone'] = $_COOKIE["{$phpc_prefix}tz"];
-	if(isset($_COOKIE["{$phpc_prefix}lang"]))
-		$anonymous['language'] = $_COOKIE["{$phpc_prefix}lang"];
-	$phpc_user = new PhpcUser($anonymous);
-}
 
 $phpc_user_lang = $phpc_user->get_language();
 $phpc_user_tz = $phpc_user->get_timezone();

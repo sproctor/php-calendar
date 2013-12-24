@@ -449,8 +449,8 @@ function userMenu()
 	$html = tag('div', attributes('class="phpc-logged ui-widget-content"'),
 			$welcome, $span);
 
-	if($action != 'settings')
-		menu_item_append($span, __('Settings'), 'settings');
+	if($action != 'user_settings')
+		menu_item_append($span, __('Settings'), 'user_settings');
 		
 	if(is_user()) {
 		menu_item_append($span, __('Log out'), 'logout',

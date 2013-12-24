@@ -21,6 +21,7 @@ class PhpcUser {
 	var $password;
 	var $admin;
 	var $password_editable;
+	var $default_cid;
 	var $timezone;	
 	var $language;
 	var $groups;
@@ -33,6 +34,7 @@ class PhpcUser {
 		$this->password = $result['password'];
 		$this->admin = $result['admin'];
 		$this->password_editable = $result['password_editable'];
+		$this->default_cid = $result['default_cid'];
 		$this->timezone = $result['timezone'];
 		$this->language = $result['language'];
 		$this->disabled = $result['disabled'];
@@ -79,6 +81,10 @@ class PhpcUser {
 
 	function is_admin() {
 		return $this->admin;
+	}
+
+	function get_default_cid() {
+		return $this->default_cid;
 	}
 }
 

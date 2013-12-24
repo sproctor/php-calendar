@@ -61,7 +61,7 @@ class PhpcDatabase {
 
 	private function get_user_fields() {
 		$users_table = SQL_PREFIX . "users";
-		return "`$users_table`.`uid`, `username`, `password`, `$users_table`.`admin`, `password_editable`, `timezone`, `language`, `disabled`";
+		return "`$users_table`.`uid`, `username`, `password`, `$users_table`.`admin`, `password_editable`, `default_cid`, `timezone`, `language`, `disabled`";
 	}
 
 	// returns all the events for a particular day
@@ -545,6 +545,16 @@ class PhpcDatabase {
 		$query = "REPLACE INTO `".SQL_PREFIX."config`\n"
 			."(`name`, `value`) VALUES\n"
 			."('default_cid', '$cid')";
+
+		$this->dbh->query($query)
+			or $this->db_error(__('Error setting default cid.'),
+					$query);
+	}
+
+	function set_user_default_cid($uid, $cid) {
+		$query = "UPDATE `".SQL_PREFIX."users`\n"
+			."SET `default_cid`='$cid'\n"
+			."WHERE `uid`='$uid'";
 
 		$this->dbh->query($query)
 			or $this->db_error(__('Error setting default cid.'),

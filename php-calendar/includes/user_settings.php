@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2013 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,9 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-function settings()
+function user_settings()
 {
 	global $vars, $phpcdb, $phpc_user;
-
-	if(!empty($vars["phpc_submit"]))
-		settings_submit();
 
 	$index = tag('ul',
 			tag('li', tag('a', attrs('href="#phpc-config"'),
@@ -48,14 +45,9 @@ function password_form()
 
 	$form = tag('form', attributes("action=\"$phpc_script\"",
                                 'method="post"'),
-			tag('table', attributes("class=\"phpc-container\""),
-				tag('caption', __('Change Password')),
-				tag('tfoot',
-					tag('tr',
-						tag('td', attributes('colspan="2"'),
-							create_hidden('phpc_token', $phpc_token),
-							create_hidden('action', 'password_submit'),
-							create_submit(__('Submit'))))),
+			tag('div', attrs('class="phpc-sub-title"'),
+				__('Change Password')),
+			tag('table', attrs('class="phpc-form"'),
 				tag('tbody',
 					tag('tr',
 						tag('th', __('Old Password')),
@@ -66,14 +58,18 @@ function password_form()
 					tag('tr',
 						tag('th', __('Confirm New Password')),
 						tag('td', create_password('password2')))
-				   )));
+				   )),
+			create_hidden('phpc_token', $phpc_token),
+			create_hidden('action', 'password_submit'),
+			create_submit(__('Submit')));
 
 	return tag('div', attrs('id="phpc-password"'), $form);
 }
 
 function config_form()
 {
-	global $phpc_script, $phpc_user_tz, $phpc_user_lang, $phpc_token;
+	global $phpc_script, $phpc_user_tz, $phpc_user_lang, $phpc_token,
+	       $phpcdb, $phpc_user;
 
 	$tz_input = create_multi_select('timezone', get_timezone_list(),
 			$phpc_user_tz);
@@ -85,58 +81,37 @@ function config_form()
 	$lang_input = create_select('language', $languages,
 			$phpc_user_lang);
 
+	$calendars = array("" => __("None"));
+	foreach($phpcdb->get_calendars() as $calendar) {
+		$calendars[$calendar->get_cid()] = $calendar->get_title();
+	}
+	$default_input = create_select('default_cid', $calendars,
+		$phpc_user->get_default_cid());
+
+	$table = tag('table', attrs('class="phpc-form"'));
+
+	if (is_user()) {
+		$table->add(tag('tr',
+					tag('th', __('Default Calendar')),
+					tag('td', $default_input)));
+	}
+
+	$table->add(tag('tr',
+				tag('th', __('Timezone')),
+				tag('td', $tz_input)));
+	$table->add(tag('tr',
+				tag('th', __('Language')),
+				tag('td', $lang_input)));
+
 	$form = tag('form', attributes("action=\"$phpc_script\"",
 				'method="post"'),
-			tag('table', attributes("class=\"phpc-container\""),
-				tag('caption', __('Settings')),
-				tag('tfoot',
-					tag('tr',
-						tag('td', attributes('colspan="2"'),
-							create_hidden('phpc_token', $phpc_token),
-							create_hidden('action', 'settings'),
-							create_hidden('phpc_submit', 'settings'),
-							create_submit(__('Submit'))))),
-				tag('tbody',
-					tag('tr',
-						tag('th', __('Timezone')),
-						tag('td', $tz_input)),
-					tag('tr',
-						tag('th', __('Language')),
-						tag('td', $lang_input))
-				   )));
+			tag('div', attrs('class="phpc-sub-title"'),
+				__('Settings')),
+			$table,
+			create_hidden('phpc_token', $phpc_token),
+			create_hidden('action', 'user_settings_submit'),
+			create_submit(__('Submit')));
 
 	return tag('div', attrs('id="phpc-config"'), $form);
 }
-
-function settings_submit()
-{
-	global $phpcid, $vars, $phpcdb, $phpc_user_tz, $phpc_user_lang,
-	       $phpc_prefix, $phpc_user;
-
-	verify_token();
-
-	// Expire 20 years in the future, give or take.
-	$expiration_time = time() + 20 * 365 * 24 * 60 * 60;
-	// One hour in the past
-	$past_time = time() - 3600;
-	if(!empty($vars["timezone"]))
-		setcookie("{$phpc_prefix}tz", $vars['timezone'], $expiration_time);
-	else
-		setcookie("{$phpc_prefix}tz", '', $past_time);
-	if(!empty($vars["language"]))
-		setcookie("{$phpc_prefix}lang", $vars['language'], $expiration_time);
-	else
-		setcookie("{$phpc_prefix}lang", '', $past_time);
-
-	if(is_user()) {
-		$uid = $phpc_user->get_uid();
-		$phpcdb->set_timezone($uid, $vars['timezone']);
-		$phpcdb->set_language($uid, $vars['language']);
-		$phpc_user_tz = $vars["timezone"];
-		$phpc_user_lang = $vars["language"];
-	}
-
-        return message(__('Settings updated.'));
-}
-
 ?>

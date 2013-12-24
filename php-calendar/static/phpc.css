@@ -61,10 +61,6 @@ body {
   margin-bottom: 0.6em;
 }
 
-.phpc-container {
-  min-width: 50%;
-}
-
 .php-create-category {
   margin-left: auto;
   margin-right: auto;
@@ -114,6 +110,10 @@ col.phpc-day {
   padding: .3em;
 }
 
+.phpc-container {
+  min-width: 50%;
+}
+
 .php-calendar td {
   text-align: left;
 }
@@ -151,6 +151,7 @@ table.phpc-month-view td {
 
 .phpc-sub-title {
   font-weight: bold;
+  font-size: 1.2em;
   margin: .6em;
   border-style: none !important;
 }
@@ -188,13 +189,13 @@ a.phpc-add {
 
 /* this is not for thead. add another entry for that if we create a heading
    for forms */
-.form th {
+.form th, .phpc-form th {
   text-align: right;
   vertical-align: top;
   padding-right: .6em;
 }
 
-.form th, .form td {
+.form th, .form td, .phpc-form th, .phpc-form td {
   border-style: none;
 }
 
