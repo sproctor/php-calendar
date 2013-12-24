@@ -19,7 +19,6 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-//require_once("$phpc_includes_path/lib_autolink.php");
 require_once("$phpc_includes_path/Michelf/Markdown.inc.php");
 use \Michelf\Markdown;
 
