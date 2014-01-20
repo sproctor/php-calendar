@@ -31,7 +31,7 @@ function default_calendar()
 	}
 
 	if ($phpc_user->is_admin()) {
-		$phpcdb->set_default_cid($vars['cid']);
+		$phpcdb->set_config('default_cid', $vars['cid']);
 		$html->add(tag('p', __('Default calendar set to: ')
 					. $vars['cid']));
 	}

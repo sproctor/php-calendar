@@ -70,9 +70,7 @@ function message_redirect($message, $page) {
 
 	$continue_url = $page . '&amp;clearmsg=1';
 
-	if (get_class($message)=='Html') $message=$message->toString();
-	
-	return tag('div', attrs('class="phpc-box"'), "$message ",
+	return tag('div', attrs('class="phpc-box"'), $message, " ",
  		tag('a', attrs("href=\"$continue_url\""), __("continue")));
 }
 

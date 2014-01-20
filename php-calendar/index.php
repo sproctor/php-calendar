@@ -45,9 +45,6 @@ $phpc_home_url="//$phpc_server$phpc_script";
 $phpc_url = $phpc_home_url . (empty($_SERVER['QUERY_STRING']) ? ''
 		: '?' . $_SERVER['QUERY_STRING']);
 
-// Remove this line if you must
-ini_set('arg_separator.output', '&amp;');
-
 /*
  * Do not modify anything under this point
  */
@@ -77,7 +74,7 @@ if ($vars["content"] == "json") {
 			tag('head',
 				tag('title', $phpc_title),
 				tag('link', attrs('rel="icon"',
-						"href=\"static/office-calendar.png\"")),
+						'href="static/office-calendar.png"')),
 				tag('meta', attrs('http-equiv="Content-Type"',
 						'content="text/html; charset=UTF-8"')),
 				get_static_links()),

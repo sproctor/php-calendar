@@ -58,7 +58,7 @@ function process_form()
 			}
 		}
 
-		$phpcdb->create_config($cid, $name, $value);
+		$phpcdb->set_calendar_config($cid, $name, $value);
 	}
 
         message(__('Calendar created.'));

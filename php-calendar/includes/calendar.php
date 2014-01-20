@@ -122,9 +122,10 @@ function footer()
 			" [" . __('Timezone') . ": $phpc_tz]");
 
 	if(defined('PHPC_DEBUG')) {
-		$tag->add(tag('a', attributes('href="http://validator.w3.org/check/referer"'), 'Validate HTML'));
-		$tag->add(tag('a', attributes('href="http://jigsaw.w3.org/css-validator/check/referer"'),
+		$tag->add(tag('a', attrs('href="http://validator.w3.org/check/referer"'), 'Validate HTML'));
+		$tag->add(tag('a', attrs('href="http://jigsaw.w3.org/css-validator/check/referer"'),
 					'Validate CSS'));
+		$tag->add(tag('span', "Internal Encoding: " . mb_internal_encoding() . " Output Encoding: " . mb_http_output()));
 	}
 
 	return $tag;
@@ -878,5 +879,21 @@ function get_timestamp($prefix)
 	}
 
 	return mktime($hour, $minute, 0, $month, $day, $year);
+}
+
+function print_update_form() {
+	global $phpc_script;
+
+	echo "<!DOCTYPE html>
+<html>
+  <head>
+    <title>PHP-Calendar Update</title>
+  </head>
+  <body>
+    <h2>PHP-Calendar Updater</h2>
+    <p>Your PHP-Calendar database needs to be updated. You should make a backup of your existing database before running the updater.
+    <p><a href=\"$phpc_script?update=1\">Update now</a>
+  </body>
+</html>";
 }
 ?>

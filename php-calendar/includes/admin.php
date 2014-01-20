@@ -51,7 +51,7 @@ function calendar_list()
 	global $phpc_script, $phpcdb;
 
         $tbody = tag('tbody');
-	$default_cid = $phpcdb->get_default_cid();
+	$default_cid = $phpcdb->get_config('default_cid');
         foreach($phpcdb->get_calendars() as $calendar) {
                 $title = $calendar->get_title();
                 $cid = $calendar->get_cid();

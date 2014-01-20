@@ -24,7 +24,7 @@ if ( !defined('IN_PHPC') ) {
 }
 
 // Displayed in admin
-$phpc_version = "2.0";
+$phpc_version = "2.1";
 
 // Run the installer if we have no config file
 // This doesn't work when embedded from outside
@@ -38,6 +38,10 @@ if(!defined('SQL_TYPE')) {
         exit;
 }
 
+ini_set('arg_separator.output', '&amp;');
+mb_internal_encoding('UTF-8');
+mb_http_output('pass');
+
 if(defined('PHPC_DEBUG')) {
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
@@ -49,6 +53,7 @@ $phpc_prefix = "phpc_" . SQL_PREFIX . SQL_DATABASE;
 $phpc_title = "";
 
 require_once("$phpc_includes_path/calendar.php");
+require_once("$phpc_includes_path/dbversion.php");
 
 // Make the database connection.
 require_once("$phpc_includes_path/phpcdatabase.class.php");
@@ -58,6 +63,16 @@ $phpcdb = new PhpcDatabase(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE,
 		SQL_PORT);
 
 session_start();
+
+if ($phpcdb->get_config('version') < PHPC_DB_VERSION) {
+	if(isset($_GET['update'])) {
+		require_once("$phpc_includes_path/schema.php");
+		phpc_updatedb($phpcdb->dbh);
+	} else {
+		print_update_form();
+	}
+	exit;
+}
 
 if(empty($_SESSION["{$phpc_prefix}uid"])) {
 	if(!empty($_COOKIE["{$phpc_prefix}login"])
@@ -138,7 +153,7 @@ if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
 	if ($phpc_user->get_default_cid() !== false)
 		$default_cid = $phpc_user->get_default_cid();
 	else
-		$default_cid = $phpcdb->get_default_cid();
+		$default_cid = $phpcdb->get_config('default_cid');
 	if (!empty($calendars[$default_cid]))
 		$phpcid = $default_cid;
 	else

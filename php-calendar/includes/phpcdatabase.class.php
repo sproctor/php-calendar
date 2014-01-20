@@ -23,6 +23,7 @@ require_once("$phpc_includes_path/phpcuser.class.php");
 class PhpcDatabase {
 	var $dbh;
 	var $calendars;
+	var $config;
 
 	function __construct($host, $username, $passwd, $dbname, $port) {
 		// Make the database connection.
@@ -528,26 +529,32 @@ class PhpcDatabase {
 		return $this->calendars[$cid];
 	}
 
-	function get_default_cid()
-	{
-		$query = "SELECT `value` FROM `" . SQL_PREFIX . "config`\n"
-			."WHERE `name`='default_cid'";
-
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Could not get config.'), $query);
-		$result = $sth->fetch_assoc();
-		if (empty($result))
-			return false;
-		return $result['value'];
+	function get_config($name) {
+		if (!isset($this->config)) {
+			$query = "SELECT `name`, `value` FROM `" . SQL_PREFIX
+				. "config`";
+			$sth = $this->dbh->query($query)
+				or $this->db_error(__('Could not get config.'),
+						$query);
+			$this->config = array();
+			while($result = $sth->fetch_assoc()) {
+				$this->config[$result['name']] =
+					$result['value'];
+			}
+		}
+		if (isset($this->config[$name]))
+			return $this->config[$name];
+		// otherwise
+		return false;
 	}
 
-	function set_default_cid($cid) {
+	function set_config($name, $value) {
 		$query = "REPLACE INTO `".SQL_PREFIX."config`\n"
 			."(`name`, `value`) VALUES\n"
-			."('default_cid', '$cid')";
+			."('$name', '$value')";
 
 		$this->dbh->query($query)
-			or $this->db_error(__('Error setting default cid.'),
+			or $this->db_error(__('Error setting option.'),
 					$query);
 	}
 
@@ -650,27 +657,17 @@ class PhpcDatabase {
 		return $this->dbh->insert_id;
 	}
 
-	function update_config($cid, $name, $value)
+	function set_calendar_config($cid, $name, $value)
 	{
-		$query = "UPDATE ".SQL_PREFIX."calendars \n"
-		."SET `".$name."`='$value'\n"
-		."WHERE `cid`='$cid'";
+		$query = "UPDATE `".SQL_PREFIX."calendars`\n"
+			."SET `$name`='$value'\n"
+			."WHERE `cid`='$cid'";
 
 		$this->dbh->query($query)
-			or $this->db_error(__('Error reading options'), $query);
+			or $this->db_error(__('Error setting calendar option.'),
+					$query);
 	}
 
-	function create_config($cid, $name, $value)
-	{
-	
-		$query = "UPDATE ".SQL_PREFIX."calendars \n"
-			."SET `".$name."`='$value'\n"
-			."WHERE `cid`='$cid'"; 
-
-		$this->dbh->query($query)
-			or $this->db_error(__('Error creating options'), $query);
-	}
-	
 	function set_password($uid, $password)
 	{
 		$query = "UPDATE `" . SQL_PREFIX . "users`\n"

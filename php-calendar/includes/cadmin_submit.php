@@ -40,7 +40,7 @@ function cadmin_submit() {
 			}
 		}
 
-		$phpcdb->update_config($phpcid, $item[0], $value);
+		$phpcdb->set_calendar_config($phpcid, $item[0], $value);
 	}
 
         return message_redirect(__('Updated options'),

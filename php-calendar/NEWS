@@ -6,6 +6,7 @@ NEWS
 	- Removed occurrence view because it's confusing
 	- Added sane embed parameter to display calendar in an iframe.
 	- Don't allow users to be deleted
+	- Use markdown in descriptions
 	- Bugfixes
 	- UI improvements
 
