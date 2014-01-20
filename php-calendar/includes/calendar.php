@@ -631,17 +631,18 @@ function display_phpc() {
 	try {
 		$calendars = $phpcdb->get_calendars();
 		$list = array();
+		$phpc_title = $phpc_cal->get_title();
 		$title_link = tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'",
 					'class="phpc-dropdown-list-title"'),
-				$phpc_cal->get_title());
+				$phpc_title);
 		foreach($calendars as $calendar) {
 			$list["$phpc_home_url?phpcid={$calendar->get_cid()}"] = 
 				$calendar->get_title();
 		}
 		if (sizeof($calendars) > 1) {
-			$phpc_title = create_dropdown_list($title_link, $list);
+			$title_tag = create_dropdown_list($title_link, $list);
 		} else {
-			$phpc_title = $title_link;
+			$title_tag = $title_link;
 		}
 		$content = do_action();
 		if(sizeof($phpc_messages) > 0) {
@@ -661,7 +662,7 @@ function display_phpc() {
 				userMenu(),
 				tag('br', attrs('style="clear:both;"')),
 				tag('div', attrs('class="phpc-title ui-widget-header"'),
-					$phpc_title),
+					$title_tag),
 				navbar(), $messages, $content, footer());
 
 	} catch(PermissionException $e) {
