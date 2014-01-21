@@ -32,8 +32,8 @@ function occur_form() {
 }
 
 function display_form() {
-	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal,
-		$phpc_token;
+	global $phpc_script, $phpc_year, $phpc_month, $phpc_day, $vars, $phpcdb,
+	       $phpc_cal, $phpc_token;
 
 	$hour24 = $phpc_cal->hours_24;
 	$date_format = $phpc_cal->date_format;
@@ -91,8 +91,10 @@ function display_form() {
 	} else {
 		$form->add_hidden('eid', $vars['eid']);
 		$defaults = array(
-				'start-date' => "$month/$day/$year",
-				'end-date' => "$month/$day/$year",
+				'start-date' =>
+				"$phpc_month/$phpc_day/$phpc_year",
+				'end-date' =>
+				"$phpc_month/$phpc_day/$phpc_year",
 				'start-time' => format_time_string(17, 0, $hour24),
 				'end-time' => format_time_string(18, 0, $hour24),
 				);

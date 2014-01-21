@@ -78,7 +78,7 @@ class PhpcDatabase {
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-        $query = "SELECT " . $this->get_occurrence_fields()
+		$query = "SELECT " . $this->get_occurrence_fields()
 			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2013 Sean Proctor
+ * Copyright 2014 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@
    it needs very much work
 */
 
-$phpc_db_version = 1;
-
 $phpc_root_path = dirname(__FILE__);
 $phpc_includes_path = "$phpc_root_path/includes";
 $phpc_config_file = "$phpc_root_path/config.php";
@@ -30,6 +28,8 @@ define('IN_PHPC', true);
 
 if(!function_exists("mysqli_connect"))
 	soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
+
+require_once("$phpc_includes_path/dbversion.php");
 
 ?><!DOCTYPE html>
 <html>

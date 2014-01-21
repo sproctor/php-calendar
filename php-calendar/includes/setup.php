@@ -164,31 +164,31 @@ $phpc_cal = $phpcdb->get_calendar($phpcid);
 
 // set day/month/year
 if(isset($vars['month']) && is_numeric($vars['month'])) {
-	$month = $vars['month'];
-	if($month < 1 || $month > 12)
+	$phpc_month = $vars['month'];
+	if($phpc_month < 1 || $phpc_month > 12)
 		display_error(__("Month is out of range."));
 } else {
-	$month = date('n');
+	$phpc_month = date('n');
 }
 
 if(isset($vars['year']) && is_numeric($vars['year'])) {
-	$time = mktime(0, 0, 0, $month, 1, $vars['year']);
+	$time = mktime(0, 0, 0, $phpc_month, 1, $vars['year']);
         if(!$time || $time < 0) {
                 display_error(__('Invalid year') . ": {$vars['year']}");
         }
-	$year = date('Y', $time);
+	$phpc_year = date('Y', $time);
 } else {
-	$year = date('Y');
+	$phpc_year = date('Y');
 }
 
 if(isset($vars['day']) && is_numeric($vars['day'])) {
-	$day = ($vars['day'] - 1) % date('t', mktime(0, 0, 0, $month, 1, $year))
-                + 1;
+	$phpc_day = ($vars['day'] - 1) % date('t',
+			mktime(0, 0, 0, $phpc_month, 1, $phpc_year)) + 1;
 } else {
-	if($month == date('n') && $year == date('Y')) {
-                $day = date('j');
+	if($phpc_month == date('n') && $phpc_year == date('Y')) {
+                $phpc_day = date('j');
 	} else {
-                $day = 1;
+                $phpc_day = 1;
         }
 }
 

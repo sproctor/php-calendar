@@ -26,20 +26,20 @@ if ( !defined('IN_PHPC') ) {
 // View for a single day
 function display_day()
 {
-	global $phpcid, $phpc_cal, $phpc_user, $phpc_script, $phpcdb, $day,
-	       $month, $year;
+	global $phpcid, $phpc_cal, $phpc_user, $phpc_script, $phpcdb, $phpc_day,
+	       $phpc_month, $phpc_year;
 
 	$monthname = month_name($month);
 
-	$results = $phpcdb->get_occurrences_by_date($phpcid, $year, $month,
-			$day);
+	$results = $phpcdb->get_occurrences_by_date($phpcid, $phpc_year,
+			$phpc_month, $phpc_day);
 
-	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
+	$today_epoch = mktime(0, 0, 0, $phpc_month, $phpc_day, $phpc_year);
 
 	$have_events = false;
 
 	$html_table = tag('table', attributes('class="phpc-main"'),
-			tag('caption', "$day $monthname $year"),
+			tag('caption', "$phpc_day $monthname $phpc_year"),
 			tag('thead',
 				tag('tr',
 					tag('th', __('Title')),
@@ -114,13 +114,13 @@ function display_day()
 }
 
 function create_day_menu() {
-	global $month, $day, $year;
+	global $phpc_month, $phpc_day, $phpc_year;
 
 	$html = tag('div', attrs('class="phpc-bar ui-widget-content"'));
 
-	$monthname = month_name($month);
+	$monthname = month_name($phpc_month);
 
-	$lasttime = mktime(0, 0, 0, $month, $day - 1, $year);
+	$lasttime = mktime(0, 0, 0, $phpc_month, $phpc_day - 1, $phpc_year);
 	$lastday = date('j', $lasttime);
 	$lastmonth = date('n', $lasttime);
 	$lastyear = date('Y', $lasttime);
@@ -132,7 +132,7 @@ function create_day_menu() {
 	menu_item_prepend($html, "$lastmonthname $lastday", 'display_day',
 			$last_args);
 
-	$nexttime = mktime(0, 0, 0, $month, $day + 1, $year);
+	$nexttime = mktime(0, 0, 0, $phpc_month, $phpc_day + 1, $phpc_year);
 	$nextday = date('j', $nexttime);
 	$nextmonth = date('n', $nexttime);
 	$nextyear = date('Y', $nexttime);

@@ -202,6 +202,10 @@ function weeks_in_month($month, $year)
 	return ($days_before_month + $days + $days_after_month) / 7;
 }
 
+function weeks_in_year($year) {
+	return date("W", mktime(0, 0, 0, 12, 28, $year));
+}
+
 // return the week number corresponding to the $day.
 function week_of_year($month, $day, $year)
 {
@@ -469,11 +473,12 @@ function userMenu()
 // returns tag data for the navbar
 function navbar()
 {
-	global $vars, $action, $year, $month, $day, $phpc_cal;
+	global $vars, $action, $phpc_year, $phpc_month, $phpc_day, $phpc_cal;
 
 	$html = tag('div', attributes('class="phpc-bar ui-widget-header"'));
 
-	$args = array('year' => $year, 'month' => $month, 'day' => $day);
+	$args = array('year' => $phpc_year, 'month' => $phpc_month,
+			'day' => $phpc_day);
 
 	// TODO There needs to be a better way to decide what to show
 	if($phpc_cal->can_write() && $action != 'add') { 

@@ -98,8 +98,7 @@ function search_results()
 
 function search_form()
 {
-	global $day, $month, $year, $phpc_script, $month_names, $sort_options,
-	       $order_options, $phpcid, $phpc_cal;
+	global $phpc_script, $sort_options, $order_options, $phpcid, $phpc_cal;
 	
 	$date_format = $phpc_cal->date_format;
  

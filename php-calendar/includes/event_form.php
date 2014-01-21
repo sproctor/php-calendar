@@ -32,8 +32,8 @@ function event_form() {
 }
 
 function display_form() {
-	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal,
-	       $phpc_user, $phpc_token, $phpcid;
+	global $phpc_script, $phpc_year, $phpc_month, $phpc_day, $vars, $phpcdb,
+	       $phpc_cal, $phpc_user, $phpc_token, $phpcid;
 
 	$hour24 = $phpc_cal->hours_24;
 	$date_format = $phpc_cal->date_format;
@@ -171,8 +171,8 @@ function display_form() {
 	} else {
 		$hour24 = $phpc_cal->hours_24;
 		$datefmt = $phpc_cal->date_format;
-		$date_string = format_short_date_string($year, $month, $day,
-				$datefmt);
+		$date_string = format_short_date_string($phpc_year, $phpc_month,
+				$phpc_day, $datefmt);
 		$defaults = array(
 				'cid' => $phpcid,
 				'start-date' => $date_string,

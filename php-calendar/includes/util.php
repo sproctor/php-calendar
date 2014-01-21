@@ -170,19 +170,6 @@ function display_error($str)
 function parse_desc($text)
 {
 	return Markdown::defaultTransform($text);
-
-	// Don't allow tags and make the description HTML-safe
-        $text = htmlspecialchars($text, ENT_COMPAT, "UTF-8");
-
-        $text = nl2br($text);
-
-	// linkify urls
-	$text = autolink($text, 0);
-
-	// linkify emails
-	$text = autolink_email($text);
-
-	return $text;
 }
 
 function days_in_year($timestamp) {

@@ -26,7 +26,7 @@ if ( !defined('IN_PHPC') ) {
 // Full view for a single event
 function display_event()
 {
-	global $vars, $phpcdb, $year, $month, $day;
+	global $vars, $phpcdb, $phpc_year, $phpc_month, $phpc_day;
 
 	if(!empty($vars['content']) && $vars['content'] == 'json')
 		return display_event_json();
@@ -78,9 +78,9 @@ function display_event()
 	$set_date = false;
 	foreach($occurrences as $occurrence) {
 		if(!$set_date) {
-			$year = $occurrence->get_start_year();
-			$month = $occurrence->get_start_month();
-			$day = $occurrence->get_start_day();
+			$phpc_year = $occurrence->get_start_year();
+			$phpc_month = $occurrence->get_start_month();
+			$phpc_day = $occurrence->get_start_day();
 		}
 		$oid = $occurrence->get_oid();
 		$occ_tag = tag('li', attrs('class="ui-widget-content"'),
