@@ -74,23 +74,29 @@ function get_events($from_stamp, $to_stamp) {
 }
 
 // creates a display for a particular week to be embedded in a month table
-function create_week($from_stamp, $days_events) {
-
-	//echo "<pre>";
-	//print_r($days_events);
-	//echo "</pre>";
-	//$from_stamp = mktime(0, 0, 0, 1, $day_of_year, $year);
+function create_week($from_stamp, $year, $days_events) {
 	$start_day = date("j", $from_stamp);
 	$start_month = date("n", $from_stamp);
 	$start_year = date("Y", $from_stamp);
 	$week_of_year = week_of_year($start_month, $start_day, $start_year);
+
+	// Non ISO, the week should be of this year.
+	if(day_of_week_start() != 1) {
+		if($start_year < $year) {
+			$week_of_year = 1;
+		}
+	} else {
+		// Use week's year as year for ISO
+		$year = $start_year;
+	}
+	
 
 	$week_html = tag('tr', tag('th',
 				attrs('class="phpc-date ui-state-default"'),
 				create_action_link($week_of_year,
 					'display_week',
 					array('week' => $week_of_year,
-						'year' => $start_year))));
+						'year' => $year))));
 		
 	for($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
 		$day = $start_day + $day_of_week;

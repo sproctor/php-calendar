@@ -84,7 +84,7 @@ function create_month($month, $year)
 		// We could be showing a week from the previous or next year
 		$days = ($week_of_month - 1) * 7;
 		$start_stamp = strtotime("+$days day", $from_stamp);
-		$week_list[] = create_week($start_stamp, $days_events);
+		$week_list[] = create_week($start_stamp, $year, $days_events);
 	}
 
 	return $week_list;

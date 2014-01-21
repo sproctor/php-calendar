@@ -203,7 +203,11 @@ function weeks_in_month($month, $year)
 }
 
 function weeks_in_year($year) {
-	return date("W", mktime(0, 0, 0, 12, 28, $year));
+	// This is true for ISO, not US
+	if(day_of_week_start() == 1)
+		return date("W", mktime(0, 0, 0, 12, 28, $year));
+	// else
+	return ceil((day_of_week(1, 1, $year) + days_in_year($year)) / 7.0);
 }
 
 // return the week number corresponding to the $day.

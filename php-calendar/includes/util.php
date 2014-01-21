@@ -172,8 +172,12 @@ function parse_desc($text)
 	return Markdown::defaultTransform($text);
 }
 
-function days_in_year($timestamp) {
+function days_in_year_ts($timestamp) {
 	return 365 + date('L', $timestamp);
+}
+
+function days_in_year($year) {
+	return days_in_year_ts(mktime(0, 0, 0, 1, 1, $year));
 }
 
 function add_days($stamp, $days)
@@ -214,7 +218,7 @@ function days_between($ts1, $ts2) {
 	// If we're in different years, keep adding years until we're in
 	//   the same year
 	if(date('Y', $ts2) > date('Y', $ts1))
-		return days_in_year($ts1)
+		return days_in_year_ts($ts1)
 			+ days_between(add_years($ts1, 1), $ts2);
 
 	// The years are equal, subtract day of the year of each
