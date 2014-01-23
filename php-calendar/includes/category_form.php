@@ -53,14 +53,14 @@ function category_form() {
 		$category = $phpcdb->get_category($vars['catid']);
 		$defaults = array(
 				'name' => htmlspecialchars($category['name']),
-				'text-color' => htmlspecialchars(str_replace('#', '', $category['text_color'])),
-				'bg-color' => htmlspecialchars(str_replace('#', '', $category['bg_color'])),
+				'text-color' => htmlspecialchars($category['text_color']),
+				'bg-color' => htmlspecialchars($category['bg_color']),
 				'gid' => htmlspecialchars($category['gid']),
 				);
 	} else {
 		$defaults = array(
-				'text-color' => '000000',
-				'bg-color' => 'FFFFFF',
+				'text-color' => '#000000',
+				'bg-color' => '#FFFFFF',
 				);
 	}
         return $form->get_form($defaults);

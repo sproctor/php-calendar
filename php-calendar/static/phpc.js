@@ -115,17 +115,19 @@ $(document).ready(function(){
   $(".form-select").change(function(){
     formSelectUpdate($(this));
   });
-  $(".form-color-input").jPicker({
-      window: {
-        position: {
-          x: 'screenCenter',
-          y: 0 
-        }
-      },
-      images: {
-        clientPath: imagePath
-      }
-    });
+  $(".form-color-input").after(function() {
+    var picker = $("<div>").farbtastic($(this));
+    var container = $(this).parent();
+    var block = $("<div class=\"phpc-color-wheel ui-widget-content\">").append(picker).hide();
+    $(this).click(function() {
+        block.show();
+        $(document).click(function(e) {
+          if (!container.is(e.target) && container.has(e.target).length == 0)
+            block.hide();
+        });
+      });
+    return block;
+  });
 
   // Dropdown list stuff
   $(".phpc-dropdown-list").each(function(index, elem) {

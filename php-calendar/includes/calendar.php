@@ -774,7 +774,6 @@ function get_static_links()
 		$theme = 'smoothness';
 	$jquery_version = "1.10.2";
 	$jqueryui_version = "1.10.3";
-	$jpicker_version = "1.1.6";
 	$fa_version = "4.0.3";
 
 	return array(
@@ -789,8 +788,8 @@ function get_static_links()
 			tag('script', attrs("src=\"$path/phpc.js\""), ''),
 			tag("script", attrs("src=\"$path/jquery.ui.timepicker.js\""), ''),
 			tag("script", attrs("src=\"$path/jquery.hoverIntent.minified.js\""), ''),
-			tag("script", attrs("src=\"$path/jpicker-$jpicker_version$jq_min.js\""), ''),
-			tag('link', attrs('rel="stylesheet"', "href=\"$path/jPicker-$jpicker_version$jq_min.css\"")),
+			tag("script", attrs("src=\"$path/farbtastic.min.js\""), ''),
+			tag('link', attrs('rel="stylesheet"', "href=\"$path/farbtastic.css\"")),
 		  );
 }
 
