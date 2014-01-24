@@ -60,7 +60,7 @@ function category_form() {
 	} else {
 		$defaults = array(
 				'text-color' => '#000000',
-				'bg-color' => '#FFFFFF',
+				'bg-color' => '#ffffff',
 				);
 	}
         return $form->get_form($defaults);

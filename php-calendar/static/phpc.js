@@ -117,16 +117,17 @@ $(document).ready(function(){
   });
   $(".form-color-input").after(function() {
     var picker = $("<div>").farbtastic($(this));
-    var container = $(this).parent();
-    var block = $("<div class=\"phpc-color-wheel ui-widget-content\">").append(picker).hide();
+    var container = $("<div class=\"phpc-color-wheel ui-widget-content\">").append(picker).hide();
     $(this).click(function() {
-        block.show();
         $(document).click(function(e) {
-          if (!container.is(e.target) && container.has(e.target).length == 0)
-            block.hide();
+          var p = container.parent();
+          if (!p.is(e.target) && p.has(e.target).length == 0) {
+            container.hide();
+          }
         });
+        container.show();
       });
-    return block;
+    return container;
   });
 
   // Dropdown list stuff
