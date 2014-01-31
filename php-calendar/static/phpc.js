@@ -57,10 +57,20 @@ $(document).ready(function(){
   }
 
   // Summary init
-  $("#phpc-summary-view").hide();
-  $(".phpc-event-list a").hoverIntent(
-    function() { showSummary(this); },
-    function() { hideSummary(this); });
+  var overSummary = false;
+  $("#phpc-summary-view").hide()
+  .mouseenter(function() {
+    overSummary = true;
+  }).mouseleave(function() {
+    hideSummary();
+    overSummary = false;
+  });
+  $(".phpc-event-list a").mouseenter(function() {
+    showSummary(this);
+  }).mouseleave(function() {
+    if(!overSummary)
+      hideSummary();
+  });
 
   // Multi select stuff
   var select_id = 1;
@@ -330,7 +340,7 @@ function showSummary(link) {
 }
  
 // hides the event summary information
-function hideSummary(link) {
+function hideSummary() {
 	// abort any pending requests
 	if( activeRequest != null )
 		activeRequest.abort();

@@ -28,6 +28,7 @@ require_once("$phpc_includes_path/phpcsql.php");
 function phpc_table_schemas() {
 	$tables = array();
 	$tables[] = phpc_calendars_table();
+	$tables[] = phpc_calendar_fields_table();
 	$tables[] = phpc_categories_table();
 	$tables[] = phpc_config_table();
 	$tables[] = phpc_events_table();
@@ -60,6 +61,15 @@ function phpc_calendars_table() {
 	return $table;
 }
 
+function phpc_calendar_fields_table() {
+	$table = new PhpcSqlTable(SQL_PREFIX . 'calendar_fields');
+
+	$table->addColumn('cid', "int(11) unsigned");
+	$table->addColumn('name', "varchar(255) COLLATE utf8_unicode_ci NOT NULL");
+
+	return $table;
+}
+
 function phpc_categories_table() {
 	$table = new PhpcSqlTable(SQL_PREFIX . 'categories');
 
@@ -69,6 +79,7 @@ function phpc_categories_table() {
 	$table->addColumn('name', "varchar(255) COLLATE utf8_unicode_ci NOT NULL");
 	$table->addColumn('text_color', "varchar(255) COLLATE utf8_unicode_ci");
 	$table->addColumn('bg_color', "varchar(255) COLLATE utf8_unicode_ci");
+	$table->addColumn('public', "tinyint(1) unsigned NOT NULL DEFAULT '1'");
 
 	$table->addKey('PRIMARY', 0, '`catid`');
 	$table->addKey('cid', 1, '`cid`');

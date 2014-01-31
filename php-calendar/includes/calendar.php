@@ -452,7 +452,11 @@ function userMenu()
 {
 	global $action, $phpc_user;
 
-	$welcome = __('Welcome') . '&nbsp;' . $phpc_user->username;
+	$welcome = __('Welcome');
+	if(is_user()) {
+		$welcome .= '&nbsp;' . $phpc_user->username;
+	}
+
 	$span = tag('span');
 	
 	$html = tag('div', attributes('class="phpc-logged ui-widget-content"'),
@@ -655,7 +659,7 @@ function display_phpc() {
 		}
 		$content = do_action();
 		if(sizeof($phpc_messages) > 0) {
-			$messages = tag('div', attrs('class="phpc-message"'));
+			$messages = tag('div');
 			foreach($phpc_messages as $message) {
 				$messages->add($message);
 			}
@@ -675,18 +679,15 @@ function display_phpc() {
 				navbar(), $messages, $content, footer());
 
 	} catch(PermissionException $e) {
-		$results = tag('');
-		// TODO: make navbar show if there is an error in do_action()
-		if($navbar !== false)
-			$results->add($navbar);
 		$msg = __('You do not have permission to do that: ')
 					. $e->getMessage();
-		$results->add(tag('div', attrs('class="phpc-message ui-state-error"'), $msg));
 		if(is_user())
-			return $results;
+			return error_message_redirect($msg, $phpc_script);
 		else
-			return message_redirect($msg,
+			return error_message_redirect($msg,
 					"$phpc_script?action=login");
+	} catch(InvalidInputException $e) {
+		return error_message_redirect($e->getMessage(), $e->target);
 	} catch(Exception $e) {
 		$phpc_title = $e->getMessage();
 		$results = tag('');

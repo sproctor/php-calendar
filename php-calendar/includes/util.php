@@ -37,6 +37,19 @@ function permission_error($message)
 				"UTF-8"));
 }
 
+class InvalidInputException extends Exception {
+	var $target;
+	function __construct($msg, $target) {
+		parent::__construct($msg);
+		$this->target = $target;
+	}
+}
+
+function input_error($message, $target) {
+	throw new InvalidInputException(htmlspecialchars($message, ENT_COMPAT,
+				"UTF-8"), $target);
+}
+
 function minute_pad($minute)
 {
 	return sprintf('%02d', $minute);
@@ -62,15 +75,33 @@ function redirect($page) {
 function message_redirect($message, $page) {
 	global $phpc_prefix;
 
+	$tag = tag('div', attrs('class="phpc-message"'), $message);
 	if(empty($_SESSION["{$phpc_prefix}messages"]))
 		$_SESSION["{$phpc_prefix}messages"] = array();
 
-	$_SESSION["{$phpc_prefix}messages"][] = $message;
+	$_SESSION["{$phpc_prefix}messages"][] = $tag;
 	redirect($page);
 
 	$continue_url = $page . '&amp;clearmsg=1';
 
-	return tag('div', attrs('class="phpc-box"'), $message, " ",
+	return tag('div', attrs('class="phpc-box"'), $tag,
+ 		tag('a', attrs("href=\"$continue_url\""), __("continue")));
+}
+
+function error_message_redirect($message, $page) {
+	global $phpc_prefix;
+
+	$tag = tag('div', attrs('class="phpc-message ui-state-error"'),
+			$message);
+	if(empty($_SESSION["{$phpc_prefix}messages"]))
+		$_SESSION["{$phpc_prefix}messages"] = array();
+
+	$_SESSION["{$phpc_prefix}messages"][] = $tag;
+	redirect($page);
+
+	$continue_url = $page . '&amp;clearmsg=1';
+
+	return tag('div', attrs('class="phpc-box"'), $tag,
  		tag('a', attrs("href=\"$continue_url\""), __("continue")));
 }
 

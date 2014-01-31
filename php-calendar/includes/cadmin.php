@@ -146,10 +146,10 @@ function category_list()
 		$name = empty($category['name']) ? __('No Name')
 			: $category['name'];
 		$catid = $category['catid'];
-		$group = empty($category['group_name']) ? __('None')
+		$group = empty($category['group_name']) ? __('Any')
 			: $category['group_name'];
 		$tbody->add(tag('tr',
-					tag('th', $name),
+					tag('td', $name),
 					tag('td', htmlspecialchars($category['text_color'])),
 					tag('td', htmlspecialchars($category['bg_color'])),
 					tag('td', htmlspecialchars($group)),
@@ -176,7 +176,7 @@ function category_list()
 					tag('th', __('Name')),
 					tag('th', __('Text Color')),
 					tag('th', __('Background Color')),
-					tag('th', __('Visible to User Group')),
+					tag('th', __('Accessible to Group')),
 					tag('th', __('Actions'))
 				   )),
 			$tbody);
@@ -204,7 +204,7 @@ function group_list() {
 			: $group['name'];
 		$id = $group['gid'];
 		$tbody->add(tag('tr',
-					tag('th', $name),
+					tag('td', $name),
 					tag('td', create_action_link(__('Edit'),
 							'group_form',
 							array('gid' => $id)),

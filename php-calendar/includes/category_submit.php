@@ -23,28 +23,31 @@ function category_submit()
 {
 	global $vars, $phpcdb, $phpc_script, $phpc_cal;
 
-	if(empty($vars["text-color"]) || empty($vars["bg-color"])) {
-		$page = "$phpc_script?action=category_form";
-		if(!empty($vars["cid"]))
-			$page .= "&cid={$vars["cid"]}";
-		if(!empty($vars["catid"]))
-			$page .= "&catid={$vars["catid"]}";
+	$form_page = "$phpc_script?action=category_form";
+	if(!empty($vars["cid"]))
+		$form_page .= "&cid={$vars["cid"]}";
+	if(!empty($vars["catid"]))
+		$form_page .= "&catid={$vars["catid"]}";
 
-		return message_redirect(__("Color not specified."), $page);
+	if(empty($vars["text-color"]) || empty($vars["bg-color"])) {
+		return input_error(__("Color not specified."), $form_page);
 	}
 
 	// The current widget produces hex values without the "#".
 	//   We may in the future want to allow different input, so store the
 	//   values with the "#"
-	$text_color = '#'.$vars["text-color"];
-	$bg_color = '#'.$vars["bg-color"];
+	$text_color = $vars["text-color"];
+	$bg_color = $vars["bg-color"];
 	if(empty($vars['gid']) || strlen($vars['gid']) == 0)
 		$gid = 0;
 	else
 		$gid = $vars['gid'];
 
+	if(empty($vars['name']))
+		input_error(__("Category name not specified."), $form_page);
+
 	if(!check_color($text_color) || !check_color($bg_color))
-		soft_error(__("Invalid color."));
+		input_error(__("Invalid color."), $form_page);
 
 	if(!isset($vars['catid'])) {
 		$modify = false;
@@ -70,13 +73,13 @@ function category_submit()
 		if(!(empty($category['cid']) && is_admin() ||
 					$phpcdb->get_calendar($category["cid"])
 					->can_admin()))
-			soft_error(__("You do not have permission to modify this category."));
+			permission_error(__("You do not have permission to modify this category."));
 			
 		$phpcdb->modify_category($catid, $vars['name'],
 				$text_color, $bg_color, $gid);
 	}
 
-	$page = "$phpc_script?action=cadmin&phpcid=".$vars['phpcid'];
+	$page = "$phpc_script?action=cadmin&phpcid={$vars['phpcid']}#phpc-categories";
 
 	if($modify)
 		return message_redirect(__("Modified category: ") . $catid,

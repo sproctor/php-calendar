@@ -48,7 +48,8 @@ function display_form() {
 	$form->add_part(new FormFreeQuestion('subject', __('Subject'),
 				false, $phpc_cal->subject_max, true));
 	$form->add_part(new FormLongFreeQuestion('description',
-				__('Description')));
+				tag('', __('Description'), tag('br'),
+					tag('a', attrs('href="http://daringfireball.net/projects/markdown/syntax"', 'target="_new"'), __('syntax')))));
 
 	$when_group = new FormGroup(__('When'), 'phpc-when');
 	if(isset($vars['eid'])) {

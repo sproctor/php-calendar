@@ -43,11 +43,39 @@ class PhpcSqlTable {
 	}
 
 	function create($dbh) {
+		//echo "creating table\n";
+		$query = "CREATE TABLE `{$this->name}` (";
+		$first_column = true;
+		foreach($this->columns as $column) {
+			if(!$first_column) {
+				$query .= ', ';
+			}
+			$first_column = false;
+			$query .= $column->get_create_query();
+		}
+		$first_key = true;
+		foreach($this->keys as $key) {
+			if(!$first_key) {
+				$query .= ', ';
+			}
+			$first_key = false;
+			$query .= $key->get_create_query();
+		}
+		$query .= ')';
+		$dbh->query($query)
+			or db_error($dbh, __("Error creating table"), $query);
 	}
 
 	function update($dbh) {
-		$this->updateColumns($dbh);
-		$this->updateKeys($dbh);
+		// Check if the table exists
+		$result = $dbh->query("SHOW TABLES LIKE '{$this->name}'");
+		if($result->num_rows == 0) {
+			return $this->create($dbh);
+		} else {
+			$column_messages = $this->updateColumns($dbh);
+			$key_messages = $this->updateKeys($dbh);
+			return array_merge($column_messages, $key_messages);
+		}
 	}
 
 	function updateColumns($dbh) {
@@ -58,7 +86,7 @@ class PhpcSqlTable {
 		$sth = $dbh->query($query);
 		//echo "<pre>";
 		$current_columns = array();
-		while($result = $sth->fetch_assoc()) {
+		while($sth && $result = $sth->fetch_assoc()) {
 			$current_columns[$result['Field']] = $result;
 			//print_r($result);
 		}
@@ -85,7 +113,7 @@ class PhpcSqlTable {
 					$query = "ALTER TABLE `{$this->name}`\n"
 						.$column->get_update_query();
 					$tags[] = tag('div', __('Updating column: ') . $column->name);
-					print_r($existing_column);
+					//print_r($existing_column);
 				//echo "existing type: $type\nnew type: {$column->type}\n";
 					//echo $query, "\n";
 					$dbh->query($query)
@@ -97,6 +125,9 @@ class PhpcSqlTable {
 				//echo $query, "\n";
 				$dbh->query($query)
 					or db_error($dbh, "error in query", $query);
+				$tags[] = tag('div', __('Added column: ')
+						. $this->name . '.'
+						. $column->name);
 			}
 		}
 		//echo "</pre>";
@@ -160,6 +191,14 @@ class PhpcSqlColumn {
 	function __construct($name, $type) {
 		$this->name = $name;
 		$this->type = $type;
+	}
+
+	function get_create_query() {
+		return "`{$this->name}` {$this->type}";
+	}
+
+	function get_add_query() {
+		return "ADD `{$this->name}` {$this->type}";
 	}
 
 	function get_update_query() {

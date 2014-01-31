@@ -7,6 +7,8 @@ NEWS
 	- Added sane embed parameter to display calendar in an iframe.
 	- Don't allow users to be deleted
 	- Use markdown in descriptions
+	- Events in categories with groups are visible by default but can be
+	  made visible to only group members.
 	- Bugfixes
 	- UI improvements
 

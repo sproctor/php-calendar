@@ -40,8 +40,8 @@ function category_form() {
 	$form->add_part(new FormColorPicker('text-color',__('Text Color')));
 	$form->add_part(new FormColorPicker('bg-color',__('Background Color')));
 	$group_question = new FormDropDownQuestion('gid',
-			__('Visible to groups'));
-	$group_question->add_option('', __('All'));
+			__('Accessible to group'));
+	$group_question->add_option('', __('Any'));
 	foreach($phpcdb->get_groups($cid) as $group) {
 		$group_question->add_option($group['gid'], $group['name']);
 	}
