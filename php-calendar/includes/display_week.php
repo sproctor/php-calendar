@@ -205,7 +205,7 @@ function create_day($month, $day, $year, $days_events)
 	if(empty($results))
 		return $html_day;
 
-	$html_events = tag('ul');
+	$html_events = tag('ul', attrs('class="phpc-event-list"'));
 	$html_day->add($html_events);
 
 	// Count the number of events
