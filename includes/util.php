@@ -19,8 +19,7 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-require_once("$phpc_includes_path/Michelf/Markdown.inc.php");
-use \Michelf\Markdown;
+require_once("$phpc_includes_path/Parsedown.php");
 
 // called when some error happens
 function soft_error($message)
@@ -200,7 +199,7 @@ function display_error($str)
 // parses a description and adds the appropriate mark-up
 function parse_desc($text)
 {
-	return Markdown::defaultTransform($text);
+	return Parsedown::instance()->parse($text);
 }
 
 function days_in_year_ts($timestamp) {
