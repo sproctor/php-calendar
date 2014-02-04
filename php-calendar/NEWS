@@ -1,6 +1,9 @@
 NEWS
 -----
 
+2.0.1:
+	- Bug fixes
+
 2.0 (24 October 2013):
 	- Form to allow calendar admins to modify users' groups
 	- Calendar/month/year selectors are now dropdowns on the appropriate

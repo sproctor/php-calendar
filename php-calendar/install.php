@@ -240,6 +240,7 @@ function upgrade_20_action() {
 
 function upgrade_20beta10() {
 	create_logins_table();
+	add_categories_gid();
 	upgrade_20beta11();
 }
 
@@ -247,6 +248,19 @@ function upgrade_20beta11() {
 	add_event_time();
 	add_calendar_config();
 	create_version_table();
+}
+
+function add_categories_gid() {
+	global $dbh;
+
+	echo "<p>Adding gid to categories</p>";
+
+	$query = "ALTER TABLE `" . SQL_PREFIX . "categories`\n"
+		."ADD `gid` int(11) unsigned DEFAULT NULL";
+
+	$dbh->query($query)
+		or db_warning($dbh, 'Error adding gid to categories table.',
+				$query);
 }
 
 function add_event_time() {
@@ -257,7 +271,7 @@ function add_event_time() {
 		."ADD `mtime` timestamp NULL default NULL";
 
 	$dbh->query($query)
-		or db_error($dbh, 'Error adding time elements to events table.',
+		or db_warning($dbh, 'Error adding time elements to events table.',
 				$query);
 }
 
@@ -277,7 +291,7 @@ function add_calendar_config() {
 		."ADD `theme` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL";
 
 	$dbh->query($query)
-		or db_error($dbh, 'Error adding time elements to events table.',
+		or db_warning($dbh, 'Error adding time elements to events table.',
 				$query);
 }
 
@@ -653,6 +667,18 @@ function db_error($dbh, $str, $query = "")
 		$string .= "<br />SQL query: $query";
 
 	soft_error($string);
+}
+
+// called when there is an error involving the DB that we should keep trying
+//   to procede after
+function db_warning($dbh, $str, $query = "")
+{
+	$string = "$str<br />" . $dbh->error;
+
+	if($query != "")
+		$string .= "<br />SQL query: $query";
+
+	echo $string;
 }
 
 function connect_db($hostname, $username, $passwd, $database = false)
