@@ -162,36 +162,6 @@ if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
 
 $phpc_cal = $phpcdb->get_calendar($phpcid);
 
-// set day/month/year
-if(isset($vars['month']) && is_numeric($vars['month'])) {
-	$phpc_month = $vars['month'];
-	if($phpc_month < 1 || $phpc_month > 12)
-		display_error(__("Month is out of range."));
-} else {
-	$phpc_month = date('n');
-}
-
-if(isset($vars['year']) && is_numeric($vars['year'])) {
-	$time = mktime(0, 0, 0, $phpc_month, 1, $vars['year']);
-        if(!$time || $time < 0) {
-                display_error(__('Invalid year') . ": {$vars['year']}");
-        }
-	$phpc_year = date('Y', $time);
-} else {
-	$phpc_year = date('Y');
-}
-
-if(isset($vars['day']) && is_numeric($vars['day'])) {
-	$phpc_day = ($vars['day'] - 1) % date('t',
-			mktime(0, 0, 0, $phpc_month, 1, $phpc_year)) + 1;
-} else {
-	if($phpc_month == date('n') && $phpc_year == date('Y')) {
-                $phpc_day = date('j');
-	} else {
-                $phpc_day = 1;
-        }
-}
-
 //set action
 if(empty($vars['action'])) {
 	$action = 'display_month';
@@ -247,5 +217,35 @@ else
 if(!empty($phpc_tz))
 	date_default_timezone_set($phpc_tz); 
 $phpc_tz = date_default_timezone_get();
+
+// set day/month/year - This needs to be done after the timezone is set.
+if(isset($vars['month']) && is_numeric($vars['month'])) {
+	$phpc_month = $vars['month'];
+	if($phpc_month < 1 || $phpc_month > 12)
+		display_error(__("Month is out of range."));
+} else {
+	$phpc_month = date('n');
+}
+
+if(isset($vars['year']) && is_numeric($vars['year'])) {
+	$time = mktime(0, 0, 0, $phpc_month, 1, $vars['year']);
+        if(!$time || $time < 0) {
+                display_error(__('Invalid year') . ": {$vars['year']}");
+        }
+	$phpc_year = date('Y', $time);
+} else {
+	$phpc_year = date('Y');
+}
+
+if(isset($vars['day']) && is_numeric($vars['day'])) {
+	$phpc_day = ($vars['day'] - 1) % date('t',
+			mktime(0, 0, 0, $phpc_month, 1, $phpc_year)) + 1;
+} else {
+	if($phpc_month == date('n') && $phpc_year == date('Y')) {
+                $phpc_day = date('j');
+	} else {
+                $phpc_day = 1;
+        }
+}
 
 ?>
