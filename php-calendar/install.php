@@ -240,13 +240,13 @@ function upgrade_20_action() {
 
 function upgrade_20beta10() {
 	create_logins_table();
-	add_categories_gid();
 	upgrade_20beta11();
 }
 
 function upgrade_20beta11() {
 	add_event_time();
 	add_calendar_config();
+	add_categories_gid();
 	create_version_table();
 }
 
