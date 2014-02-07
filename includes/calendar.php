@@ -84,11 +84,9 @@ function phpc_do_login($user, $series_token = false) {
 
 	if(!$series_token) {
 		$series_token = phpc_get_token();
-		$phpcdb->add_login_token($uid, $series_token,
-				$login_token);
+		$phpcdb->add_login_token($uid, $series_token, $login_token);
 	} else {
-		$phpcdb->update_login_token($uid, $series_token,
-				$login_token);
+		$phpcdb->update_login_token($uid, $series_token, $login_token);
 	}
 
 	// TODO: Add a remember me checkbox to the login form, and have the
@@ -98,8 +96,7 @@ function phpc_do_login($user, $series_token = false) {
 	$expiration_time = time() + 30 * 24 * 60 * 60;
 	setcookie("{$phpc_prefix}uid", $uid, $expiration_time);
 	setcookie("{$phpc_prefix}login", $login_token, $expiration_time);
-	setcookie("{$phpc_prefix}login_series", $series_token,
-			$expiration_time);
+	setcookie("{$phpc_prefix}login_series", $series_token, $expiration_time);
 
 	return true;
 }
@@ -257,56 +254,26 @@ function week_of_year($month, $day, $year)
 
 function create_event_link($text, $action, $eid, $attribs = false)
 {
-	return create_action_link($text, $action, array('eid' => $eid),
-			$attribs);
+	return create_action_link($text, $action, array('eid' => $eid), $attribs);
 }
 
 function create_occurrence_link($text, $action, $oid, $attribs = false)
 {
-	return create_action_link($text, $action, array('oid' => $oid),
-			$attribs);
+	return create_action_link($text, $action, array('oid' => $oid), $attribs);
 }
 
 function create_action_link_with_date($text, $action, $year = false,
 		$month = false, $day = false, $attribs = false)
 {
 	$args = array();
-	if($year !== false) $args["year"] = $year;
-	if($month !== false) $args["month"] = $month;
-	if($day !== false) $args["day"] = $day;
+	if($year !== false)
+		$args["year"] = $year;
+	if($month !== false)
+		$args["month"] = $month;
+	if($day !== false)
+		$args["day"] = $day;
 
 	return create_action_link($text, $action, $args, $attribs);
-}
-
-/*S*/
-function create_plain_link($text, $action, $year = false,
-		$month = false, $day = false, $attribs = false, $args = array())
-{
-	global $phpc_script, $vars;
-	if($year !== false) $args["year"] = $year;
-	if($month !== false) $args["month"] = $month;
-	if($day !== false) $args["day"] = $day;
-
-	$url ="".$phpc_script."?";
-	if(isset($vars["phpcid"]))
-		$url .= "phpcid=" . htmlentities($vars["phpcid"]) . "&amp;";
-	$url .= "action=" . htmlentities($action);
-	
-	if (!empty($args)) {
-		foreach ($args as $key => $value) {
-			if(empty($value))
-				continue;
-			if (is_array($value)) {
-				foreach ($value as $v) {
-					$url .= "&amp;"
-						. htmlentities("{$key}[]=$v");
-				}
-			} else
-				$url .= "&amp;" . htmlentities("$key=$value");
-		}
-	}
-	$url .= '';
-	return $url;
 }
 
 function create_action_link($text, $action, $args = false, $attribs = false)
@@ -385,16 +352,14 @@ function menu_item_prepend(&$html, $name, $action, $args = false,
 // returns tag data for the input
 function create_hidden($name, $value)
 {
-	return tag('input', attributes("name=\"$name\"", "value=\"$value\"",
-				'type="hidden"'));
+	return tag('input', attrs("name=\"$name\"", "value=\"$value\"", 'type="hidden"'));
 }
 
 // creates a submit button for a form
 // return tag data for the button
 function create_submit($value)
 {
-	return tag('input', attributes('name="submit"', "value=\"$value\"",
-				'type="submit"'));
+	return tag('input', attrs('name="submit"', "value=\"$value\"", 'type="submit"'));
 }
 
 // creates a text entry for a form
@@ -419,13 +384,12 @@ function create_password($name)
 // returns tag data for the checkbox
 function create_checkbox($name, $value, $checked = false, $label = false)
 {
-	$attributes = attributes("id=\"$name\"", "name=\"$name\"",
-			'type="checkbox"', "value=\"$value\"");
-	if(!empty($checked)) $attributes->add('checked="checked"');
-	$input = tag('input', $attributes);
+	$attrs = attrs("id=\"$name\"", "name=\"$name\"", 'type="checkbox"', "value=\"$value\"");
+	if(!empty($checked))
+		$attrs->add('checked="checked"');
+	$input = tag('input', $attrs);
 	if($label !== false)
-		return array($input, tag('label', attributes("for=\"$name\""),
-					$label));
+		return array($input, tag('label', attrs("for=\"$name\""), $label));
 	else
 		return $input;
 }
@@ -442,7 +406,7 @@ function create_dropdown_list($title, $values, $attrs = false) {
 	return tag('div', attrs('class="phpc-dropdown-list"'),
 			tag('span', attrs('class="phpc-dropdown-list-header"'),
 				tag('span', attrs('class="phpc-dropdown-list-title"'),
-				$title)),
+					$title)),
 			$list);
 }
 
@@ -459,20 +423,17 @@ function userMenu()
 
 	$span = tag('span');
 	
-	$html = tag('div', attributes('class="phpc-logged ui-widget-content"'),
-			$welcome, $span);
+	$html = tag('div', attrs('class="phpc-logged ui-widget-content"'), $welcome, $span);
 
 	if($action != 'user_settings')
 		menu_item_append($span, __('Settings'), 'user_settings');
 		
 	if(is_user()) {
 		menu_item_append($span, __('Log out'), 'logout',
-				array('lasturl' =>
-					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
+				array('lasturl' => escape_entities(urlencode($_SERVER['QUERY_STRING']))));
 	} else {
 		menu_item_append($span, __('Log in'), 'login',
-				array('lasturl' =>
-					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
+				array('lasturl' => escape_entities(urlencode($_SERVER['QUERY_STRING']))));
 	}
 	return $html;
 }
@@ -483,9 +444,10 @@ function navbar()
 {
 	global $vars, $action, $phpc_year, $phpc_month, $phpc_day, $phpc_cal;
 
-	$html = tag('div', attributes('class="phpc-bar ui-widget-header"'));
+	$html = tag('div', attrs('class="phpc-bar ui-widget-header"'));
 
-	$args = array('year' => $phpc_year, 'month' => $phpc_month,
+	$args = array('year' => $phpc_year,
+			'month' => $phpc_month,
 			'day' => $phpc_day);
 
 	// TODO There needs to be a better way to decide what to show
@@ -646,8 +608,7 @@ function display_phpc() {
 		$list = array();
 		$phpc_title = $phpc_cal->get_title();
 		$title_link = tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'",
-					'class="phpc-dropdown-list-title"'),
-				$phpc_title);
+					'class="phpc-dropdown-list-title"'), $phpc_title);
 		foreach($calendars as $calendar) {
 			$list["$phpc_home_url?phpcid={$calendar->get_cid()}"] = 
 				$calendar->get_title();
@@ -674,13 +635,11 @@ function display_phpc() {
 		return tag('div', attrs('class="php-calendar ui-widget"'),
 				userMenu(),
 				tag('br', attrs('style="clear:both;"')),
-				tag('div', attrs('class="phpc-title ui-widget-header"'),
-					$title_tag),
+				tag('div', attrs('class="phpc-title ui-widget-header"'), $title_tag),
 				navbar(), $messages, $content, footer());
 
 	} catch(PermissionException $e) {
-		$msg = __('You do not have permission to do that: ')
-					. $e->getMessage();
+		$msg = __('You do not have permission to do that: ') . $e->getMessage();
 		if(is_user())
 			return error_message_redirect($msg, $phpc_script);
 		else
@@ -780,11 +739,14 @@ function get_static_links()
 	return array(
 			tag('link', attrs('rel="stylesheet"',
 					"href=\"$path/phpc.css\"")),
-			tag('link', attrs('rel="stylesheet"', "href=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/themes/$theme/jquery-ui$jq_min.css\"")),
+			tag('link', attrs('rel="stylesheet"', 'href="//ajax.googleapis.com/ajax/libs/jqueryui/'
+					. "$jqueryui_version/themes/$theme/jquery-ui$jq_min.css\"")),
 			tag('link', attrs('rel="stylesheet"', "href=\"$path/jquery-ui-timepicker.css\"")),
-			tag('link', attrs('rel="stylesheet"', "href=\"//netdna.bootstrapcdn.com/font-awesome/$fa_version/css/font-awesome$jq_min.css\"")),
+			tag('link', attrs('rel="stylesheet"', 'href="//netdna.bootstrapcdn.com/font-awesome/'
+					. "$fa_version/css/font-awesome$jq_min.css\"")),
 			tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
-			tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
+			tag("script", attrs('src="//ajax.googleapis.com/ajax/libs/jqueryui/'
+					. "$jqueryui_version/jquery-ui$jq_min.js\""), ''),
 			tag('script', "var imagePath='$path/images/'"),
 			tag('script', attrs("src=\"$path/phpc.js\""), ''),
 			tag("script", attrs("src=\"$path/jquery.ui.timepicker.js\""), ''),
@@ -841,9 +803,7 @@ function get_timestamp($prefix)
 	} else {
 		if(!preg_match('/(\d+)[:\.](\d+)\s?(\w+)?/', $vars["$prefix-time"],
 					$time_matches)) {
-			soft_error(sprintf(__("Malformed \"%s\" time: \"%s\""),
-						$prefix,
-						$vars["$prefix-time"]));
+			soft_error(sprintf(__("Malformed \"%s\" time: \"%s\""), $prefix, $vars["$prefix-time"]));
 		}
 		$hour = $time_matches[1];
 		$minute = $time_matches[2];
@@ -862,10 +822,8 @@ function get_timestamp($prefix)
 		}
 	}
 
-	if(!preg_match('/(\d+)[\.\/\-\ ](\d+)[\.\/\-\ ](\d+)/',
-				$vars["$prefix-date"], $date_matches)) {
-		soft_error(sprintf(__("Malformed \"%s\" date: \"%s\""),
-					$prefix, $vars["$prefix-date"]));
+	if(!preg_match('/(\d+)[\.\/\-\ ](\d+)[\.\/\-\ ](\d+)/', $vars["$prefix-date"], $date_matches)) {
+		soft_error(sprintf(__("Malformed \"%s\" date: \"%s\""), $prefix, $vars["$prefix-date"]));
 	}
 	
 	switch($phpc_cal->date_format) {

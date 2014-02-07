@@ -126,6 +126,10 @@ function real_escape_r($var) {
 		return mysqli_real_escape_string($phpcdb->dbh, $var);
 }
 
+function escape_entities($string) {
+	return htmlspecialchars($string, ENT_NOQUOTES, "UTF-8");
+}
+
 function asbool($val)
 {
 	return $val ? "1" : "0";

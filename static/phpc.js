@@ -37,7 +37,6 @@ $(document).ready(function(){
   $tab = $(".phpc-tabs").tabs({
       activate: function (e, ui) {
           currentTabId = ui.newPanel.attr("id");
-          console.log("saving: " + currentTabId);
           sessionStorage.setItem("phpc-tab-index", currentTabId);
       }
   });
@@ -46,7 +45,6 @@ $(document).ready(function(){
     haveTabs = true;
     if (sessionStorage.getItem("phpc-tab-index") != null) {
       currentTabId = sessionStorage.getItem("phpc-tab-index");
-      console.log("loaded: " + currentTabId);
       var index = $(this).find('a[href="#' + currentTabId + '"]').parent().index();
       if (index > 0)
         $tab.tabs('option', 'active', index);
