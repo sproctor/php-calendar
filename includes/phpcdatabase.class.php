@@ -411,17 +411,26 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows;
 	}
 
-	function delete_calendar($id)
-	{
+	function delete_calendar($cid) {
+		$events = SQL_PREFIX . 'events';
+		$occurrences = SQL_PREFIX . 'occurrences';
 
-		$query1 = 'DELETE FROM `'.SQL_PREFIX ."calendars`\n"
-			."WHERE cid='$id'";
+		$query = 'DELETE FROM `'.SQL_PREFIX ."calendars`\n"
+			."WHERE cid='$cid'";
 
-		$sth = $this->dbh->query($query1)
-			or $this->db_error(__('Error while removing a calendar'),
-					$query1);
+		$sth = $this->dbh->query($query)
+			or $this->db_error(__('Error while removing a calendar'), $query);
 
-		return $this->dbh->affected_rows > 0;
+		$rv = $this->dbh->affected_rows > 0;
+
+		$query = "DELETE FROM `$occurrences`, `$events`\n"
+			."USING `$occurrences` INNER JOIN `$events`\n"
+			."WHERE `$occurrences`.`eid`=`$events`.`eid` AND `$events`.`cid`='$cid'";
+			
+		$this->dbh->query($query)
+			or $this->db_error(__('Error while removing events from calendar'), $query);
+
+		return $rv;
 	}
 
 	function delete_category($catid)
