@@ -26,6 +26,11 @@ function user_settings_submit()
 
 	verify_token();
 
+	// If we have a timezone, make sure it's valid
+	if(!empty($vars["timezone"]) && !in_array($vars['timezone'], timezone_identifiers_list())) {
+		soft_error(__("Invalid timezone."));
+	}
+
 	// Expire 20 years in the future, give or take.
 	$expiration_time = time() + 20 * 365 * 24 * 60 * 60;
 	// One hour in the past
