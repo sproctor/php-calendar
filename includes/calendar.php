@@ -359,7 +359,7 @@ function create_hidden($name, $value)
 // return tag data for the button
 function create_submit($value)
 {
-	return tag('input', attrs('name="submit"', "value=\"$value\"", 'type="submit"'));
+	return tag('input', attrs("value=\"$value\"", 'type="submit"'));
 }
 
 // creates a text entry for a form
@@ -648,17 +648,23 @@ function display_phpc() {
 	} catch(InvalidInputException $e) {
 		return error_message_redirect($e->getMessage(), $e->target);
 	} catch(Exception $e) {
-		$phpc_title = $e->getMessage();
-		$results = tag('');
-		if($navbar !== false)
-			$results->add($navbar);
-		$results->add(tag('div', attrs('class="php-calendar"'),
-					tag('h2', __('Error')),
-					tag('p', $e->getMessage()),
-					tag('h3', __('Backtrace')),
-					tag('pre', htmlentities($e->getTraceAsString()))));
-		return $results;
+		return display_exception($e, $navbar);
 	}
+}
+
+function display_exception($e, $navbar = false) {
+	global $phpc_title;
+
+	$phpc_title = $e->getMessage();
+	$results = tag('');
+	if($navbar !== false)
+		$results->add($navbar);
+	$results->add(tag('div', attrs('class="php-calendar"'),
+				tag('h2', __('Error')),
+				tag('p', $e->getMessage()),
+				tag('h3', __('Backtrace')),
+				tag('pre', htmlentities($e->getTraceAsString()))));
+	return $results;
 }
 
 function do_action()

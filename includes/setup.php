@@ -138,15 +138,29 @@ if ($phpc_user === false) {
 	$phpc_user = new PhpcUser($anonymous);
 }
 
+// Find an appropriate calendar id
 if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
         $phpcid = $vars['phpcid'];
-} elseif(!empty($vars['eid'])) {
-	$event = $phpcdb->get_event_by_eid($vars['eid']);
-	$phpcid = $event['cid'];
-} elseif(!empty($vars['oid'])) {
+}
+
+if(!isset($phpcid) && !empty($vars['eid'])) {
+	if(is_array($vars['eid'])) {
+		$eid = $vars['eid'][0];
+	} else {
+		$eid = $vars['eid'];
+	}
+	$event = $phpcdb->get_event_by_eid($eid);
+	if($event)
+		$phpcid = $event['cid'];
+}
+
+if(!isset($phpcid) && !empty($vars['oid'])) {
 	$event = $phpcdb->get_event_by_oid($vars['oid']);
-	$phpcid = $event['cid'];
-} else {
+	if($event)
+		$phpcid = $event['cid'];
+}
+
+if(!isset($phpcid)) {
 	$calendars = $phpcdb->get_calendars();
 	if(empty($calendars))
 		soft_error(__("Unhandled condition: all calendars have been deleted."));

@@ -31,11 +31,19 @@ function display_event()
 	if(!empty($vars['content']) && $vars['content'] == 'json')
 		return display_event_json();
 	
-	if(isset($vars['oid'])) 
-		$event = new PhpcEvent($phpcdb->get_event_by_oid($vars['oid']));
-
-	if(isset($vars['eid']))
-		$event = new PhpcEvent($phpcdb->get_event_by_eid($vars['eid']));
+	if(isset($vars['oid'])) {
+		$entry = $phpcdb->get_event_by_oid($vars['oid']);
+		if(!$entry) {
+			return tag('p', __('There is no event for that OID.'));
+		}
+		$event = new PhpcEvent($entry);
+	} elseif(isset($vars['eid'])) {
+		$entry = $phpcdb->get_event_by_eid($vars['eid']);
+		if(!$entry) {
+			return tag('p', __('There is no event with that EID.'));
+		}
+		$event = new PhpcEvent($entry);
+	}
 
 	if(!isset($event))
 		soft_error(__("Invalid arguments."));
@@ -66,7 +74,7 @@ function display_event()
 				create_event_link(__('Modify'),
 					'event_form', $event->get_eid()), "\n",
 				create_event_link(__('Delete'),
-					'event_delete', $event->get_eid()));
+					'event_delete', $event->get_eid(), attrs('class="phpc-confirm"')));
 	}
 
 	$desc_tag = tag('div', attributes('class="phpc-desc"'),
@@ -103,7 +111,10 @@ function display_event()
 					'occur_form', $event->get_eid()));
 	}
 
-	return tag('div', attributes('class="phpc-main phpc-event"'),
+	$dialog = tag('div', attrs('id="phpc-dialog"', 'title="' . __("Confirmation required") . '"'),
+			__("Permanently delete this event?"));
+
+	return tag('div', attributes('class="phpc-main phpc-event"'), $dialog,
 			$event_menu, tag('h2', $event->get_subject()),
 			$event_header, $desc_tag,
 			tag('div', attrs('class="phpc-occ"'),

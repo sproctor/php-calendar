@@ -29,7 +29,7 @@ function display_day()
 	global $phpcid, $phpc_cal, $phpc_user, $phpc_script, $phpcdb, $phpc_day,
 	       $phpc_month, $phpc_year;
 
-	$monthname = month_name($month);
+	$monthname = month_name($phpc_month);
 
 	$results = $phpcdb->get_occurrences_by_date($phpcid, $phpc_year,
 			$phpc_month, $phpc_day);
@@ -52,9 +52,9 @@ function display_day()
 						tag('td',
 							attributes('colspan="4"'),
 							create_hidden('action', 'event_delete'),
-							create_hidden('day', $day),
-							create_hidden('month', $month),
-							create_hidden('year', $year),
+							create_hidden('day', $phpc_day),
+							create_hidden('month', $phpc_month),
+							create_hidden('year', $phpc_year),
 							create_submit(__('Delete Selected'))))));
 	}
 
@@ -84,11 +84,7 @@ function display_day()
 					'display_event', $eid));
 
 		if($event->can_modify()) {
-			$html_subject->add(" (");
-			$html_subject->add(create_event_link(
-						__('Modify'), 'event_form',
-						$eid));
-			$html_subject->add(')');
+			$html_subject->add(create_event_link(__(' (Modify)'), 'event_form', $eid));
 		}
 
 		$html_body->add(tag('tr',
@@ -100,8 +96,7 @@ function display_day()
 	$html_table->add($html_body);
 
 	if($phpc_cal->can_modify()) {
-		$output = tag('form',
-				attributes("action=\"$phpc_script\""),
+		$output = tag('form', attrs("action=\"$phpc_script\"", 'class="phpc-form-confirm"', 'method="post"'),
 				$html_table);
 	} else {
 		$output = $html_table;
@@ -110,7 +105,10 @@ function display_day()
 	if(!$have_events)
 		$output = tag('h2', __('No events on this day.'));
 
-	return tag('', create_day_menu(), $output);
+	$dialog = tag('div', attrs('id="phpc-dialog"', 'title="' . __("Confirmation required") . '"'),
+			__("Permanently delete the selected events?"));
+
+	return tag('', create_day_menu(), $dialog, $output);
 }
 
 function create_day_menu() {

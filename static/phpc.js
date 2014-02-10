@@ -167,17 +167,40 @@ $(document).ready(function(){
   });
 
   // Confirmation dialog stuff
-  $(".phpc-confirm").dialog({
-    modal: true,
-    buttons: {
-      "Ok": function() {
-        $(this).dialog("close");
+  $("#phpc-dialog").dialog({
+    autoOpen: false,
+    modal: true
+  });
+  // Add this class to links that should open the dialog to confirm
+  $(".phpc-confirm").click(function(e) {
+    e.preventDefault();
+    var href = $(this).attr("href");
+    $("#phpc-dialog").dialog('option', 'buttons', {
+      "OK": function() {
+        window.location.href = href;
       },
       Cancel: function() {
         $(this).dialog("close");
       }
-    }
+    })
+    .dialog("open");
   });
+  // Add this class to forms that should be confirmed
+  $(".phpc-form-confirm").submit(function(e) {
+    e.preventDefault();
+    var form = this;
+    $("#phpc-dialog").dialog('option', 'buttons', {
+      "OK": function() {
+        $(form).off("submit");
+        $(form).submit();
+      },
+      Cancel: function() {
+        $(this).dialog("close");
+      }
+    })
+    .dialog("open");
+  });
+
   // Calendar specific/hacky stuff
   if($("#phpc-modify").length > 0 && !$("#phpc-modify").prop("checked"))
     toggle_when(false);

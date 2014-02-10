@@ -146,10 +146,7 @@ class PhpcDatabase {
 			or $this->db_error(__('Error in get_event_by_eid'),
 					$query);
 
-		$result = $sth->fetch_assoc()
-			or soft_error(__("Event doesn't exist") . ": $eid");
-
-		return $result;
+		return $sth->fetch_assoc();
 	}
 
 	// returns the event that corresponds to oid
@@ -172,11 +169,7 @@ class PhpcDatabase {
 			or $this->db_error(__('Error in get_event_by_oid'),
 					$query);
 
-		$result = $sth->fetch_assoc()
-			or soft_error(__("Event doesn't exist with oid")
-					. ": $oid");
-
-		return $result;
+		return $sth->fetch_assoc();
 	}
 
 	// returns the category that corresponds to $catid

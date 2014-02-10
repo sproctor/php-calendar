@@ -24,7 +24,7 @@ require_once("$phpc_includes_path/Parsedown.php");
 // called when some error happens
 function soft_error($message)
 {
-	throw new Exception(htmlspecialchars($message, ENT_COMPAT, "UTF-8"));
+	throw new Exception(escape_entities($message));
 }
 
 class PermissionException extends Exception {

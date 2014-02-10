@@ -51,13 +51,19 @@ $phpc_url = $phpc_home_url . (empty($_SERVER['QUERY_STRING']) ? ''
 define('IN_PHPC', true);
 
 require_once("$phpc_includes_path/calendar.php");
-require_once("$phpc_includes_path/setup.php");
+try {
+	require_once("$phpc_includes_path/setup.php");
+} catch(Exception $e) {
+	header("Content-Type: text/html; charset=UTF-8");
+	echo "<!DOCTYPE html>\n";
+	echo display_exception($e)->toString();
+	exit;
+}
 
 if ($vars["content"] == "json") {
 	header("Content-Type: application/json; charset=UTF-8");
 	echo do_action();
 } else {
-
 	header("Content-Type: text/html; charset=UTF-8");
 
 	// This sets global variables that determine the title in the header
@@ -65,9 +71,10 @@ if ($vars["content"] == "json") {
 	$embed_script = '';
 	if($vars["content"] == "embed") {
 		$underscore_version = "1.5.2";
-		$embed_script = array(tag("script", attrs("src=\"//cdnjs.cloudflare.com/ajax/libs/underscore.js/$underscore_version/underscore-min.js\""), ''),
-				tag('script', attrs("src=\"static/embed.js\""),
-					''));
+		$embed_script = array(tag("script",
+					attrs('src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/'
+						."$underscore_version/underscore-min.js\""), ''),
+				tag('script', attrs('src="static/embed.js"'), ''));
 	}
 
 	$html = tag('html', attrs("lang=\"$phpc_lang\""),
