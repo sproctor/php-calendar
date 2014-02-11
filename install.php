@@ -247,6 +247,16 @@ function upgrade_20beta11() {
 	add_event_time();
 	add_calendar_config();
 	add_categories_gid();
+	echo "<p>Adding groups table.</p>";
+	create_table("groups",
+			"`gid` int(11) NOT NULL AUTO_INCREMENT,\n"
+			."`cid` int(11),\n"
+			."`name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+			."PRIMARY KEY (`gid`)\n");
+	echo "<p>Adding user_groups table.</p>";
+	create_table("user_groups",
+			"`gid` int(11),\n"
+			."`uid` int(11)\n");
 	create_version_table();
 }
 
@@ -547,12 +557,14 @@ function create_tables()
 		."UNIQUE KEY `username` (`username`)\n",
 		"AUTO_INCREMENT=1");
 
+	// added in 2.0-rc3
 	create_table("groups",
 		"`gid` int(11) NOT NULL AUTO_INCREMENT,\n"
 		."`cid` int(11),\n"
 		."`name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."PRIMARY KEY (`gid`)\n");
 
+	// added in 2.0-rc3
 	create_table("user_groups",
 		"`gid` int(11),\n"
 		."`uid` int(11)\n");
