@@ -756,7 +756,6 @@ function get_static_links()
 			tag('script', "var imagePath='$path/images/'"),
 			tag('script', attrs("src=\"$path/phpc.js\""), ''),
 			tag("script", attrs("src=\"$path/jquery.ui.timepicker.js\""), ''),
-			tag("script", attrs("src=\"$path/jquery.hoverIntent.minified.js\""), ''),
 			tag("script", attrs("src=\"$path/farbtastic.min.js\""), ''),
 			tag('link', attrs('rel="stylesheet"', "href=\"$path/farbtastic.css\"")),
 		  );
