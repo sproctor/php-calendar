@@ -48,6 +48,10 @@ if(defined('PHPC_DEBUG')) {
 	ini_set('html_errors', 1);
 }
 
+if(isset($_SERVER['PATH_INFO']) && strstr($_SERVER['PATH_INFO'], "/")) {
+	soft_error("Cannot have a path after the script.");
+}
+
 $phpc_prefix = "phpc_" . SQL_PREFIX . SQL_DATABASE;
 
 $phpc_title = "";
