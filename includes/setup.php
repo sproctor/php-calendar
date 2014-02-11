@@ -135,8 +135,15 @@ if ($phpc_user === false) {
 			'language' => NULL,
 			'disabled' => 0,
 			);
-	if(isset($_COOKIE["{$phpc_prefix}tz"]))
-		$anonymous['timezone'] = $_COOKIE["{$phpc_prefix}tz"];
+	if(isset($_COOKIE["{$phpc_prefix}tz"])) {
+		$_tz = $_COOKIE["{$phpc_prefix}tz"];
+		// If we have a timezone, make sure it's valid
+		if(in_array($_tz, timezone_identifiers_list())) {
+			$anonymous['timezone'] = $_tz;
+		} else {
+			$anonymous['timezone'] = '';
+		}
+	}
 	if(isset($_COOKIE["{$phpc_prefix}lang"]))
 		$anonymous['language'] = $_COOKIE["{$phpc_prefix}lang"];
 	$phpc_user = new PhpcUser($anonymous);
