@@ -28,19 +28,22 @@ function login()
 	//Check password and username
 	if(isset($vars['username'])){
 		$user = $vars['username'];
-		$password = $vars['password'];
+		if(!isset($vars['password'])) {
+			message(__("No password specified."));
+		} else {
+			$password = $vars['password'];
 
-		if(login_user($user, $password)){
-			$url = $phpc_script;
-                        if(!empty($vars['lasturl'])) {
-				$url .= '?' . urldecode($vars['lasturl']);
+			if(login_user($user, $password)){
+				$url = $phpc_script;
+				if(!empty($vars['lasturl'])) {
+					$url .= '?' . urldecode($vars['lasturl']);
+				}
+				redirect($url);
+				return tag('h2', __('Logged in.'));
 			}
-                        redirect($url);
-			return tag('h2', __('Logged in.'));
+
+			$html->add(tag('h2', __('Sorry, Invalid Login')));
 		}
-
-		$html->add(tag('h2', __('Sorry, Invalid Login')));
-
 	}
 
 	$html->add(login_form());
