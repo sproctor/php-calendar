@@ -41,7 +41,17 @@ if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
 // ex. www.php-calendar.com
 $phpc_server = $_SERVER['SERVER_NAME'] . $phpc_port;
 
-$phpc_home_url="//$phpc_server$phpc_script";
+// Protcol ex. http or https
+if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'
+		|| $_SERVER['SERVER_PORT'] == 443
+		|| isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
+		|| isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+    $phpc_proto = "https";
+} else {
+    $phpc_proto = "http";
+}
+
+$phpc_home_url="$phpc_proto://$phpc_server$phpc_script";
 $phpc_url = $phpc_home_url . (empty($_SERVER['QUERY_STRING']) ? ''
 		: '?' . $_SERVER['QUERY_STRING']);
 
