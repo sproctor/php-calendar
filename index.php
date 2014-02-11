@@ -42,10 +42,19 @@ $phpc_server = $_SERVER['SERVER_NAME'];
 if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
 	$phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
 
-$phpc_home_url="//$phpc_server$phpc_script";
-$phpc_url = $phpc_home_url
-		. (empty($_SERVER['QUERY_STRING']) ? ''
-		   : '?' . $_SERVER['QUERY_STRING']);
+// Protcol ex. http or https
+if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'
+		|| $_SERVER['SERVER_PORT'] == 443
+		|| isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
+		|| isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+    $phpc_proto = "https";
+} else {
+    $phpc_proto = "http";
+}
+
+$phpc_home_url="$phpc_proto://$phpc_server$phpc_script";
+$phpc_url = $phpc_home_url . (empty($_SERVER['QUERY_STRING']) ? ''
+		: '?' . $_SERVER['QUERY_STRING']);
 
 // Remove this line if you must
 ini_set('arg_separator.output', '&amp;');
