@@ -60,9 +60,7 @@ function login_form()
                                 create_submit(__('Log in')));
 
         if(!empty($vars['lasturl'])) {
-		$lasturl = $vars['lasturl'];
-                $submit_data->prepend(create_hidden('lasturl',
-                                        $lasturl));
+                $submit_data->prepend(create_hidden('lasturl', escape_entities($vars['lasturl'])));
 	}
 
 	return tag('form', attributes("action=\"$phpc_script\"",
