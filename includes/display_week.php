@@ -28,22 +28,24 @@ require_once("$phpc_includes_path/display_functions.php");
 // Full display for a month
 function display_week()
 {
-	global $vars, $phpc_home_url, $phpcid;
+	global $vars, $phpc_home_url, $phpcid, $phpc_year, $phpc_month, $phpc_day;
 
-	if(!isset($vars['week']) || !isset($vars['year']))
-		soft_error(__('Invalid date.'));
+	if(!isset($vars['week'])) {
+		$week_of_year = week_of_year($phpc_month, $phpc_day, $phpc_year);
+	} else {
+		if(!is_numeric($vars['week']))
+			soft_error(__('Invalid date.'));
+		$week_of_year = $vars['week'];
+	}
 
-	$week_of_year = $vars['week'];
-	$year = $vars['year'];
-
-	$day_of_year = 1 + ($week_of_year - 1) * 7 - day_of_week(1, 1, $year);
-	$from_stamp = mktime(0, 0, 0, 1, $day_of_year, $year);
+	$day_of_year = 1 + ($week_of_year - 1) * 7 - day_of_week(1, 1, $phpc_year);
+	$from_stamp = mktime(0, 0, 0, 1, $day_of_year, $phpc_year);
 	$start_day = date("j", $from_stamp);
 	$start_month = date("n", $from_stamp);
 	$start_year = date("Y", $from_stamp);
 
 	$last_day = $day_of_year + 6;
-	$to_stamp = mktime(0, 0, 0, 1, $last_day, $year);
+	$to_stamp = mktime(0, 0, 0, 1, $last_day, $phpc_year);
 	$end_day = date("j", $to_stamp);
 	$end_month = date("n", $to_stamp);
 	$end_year = date("Y", $to_stamp);
@@ -53,7 +55,7 @@ function display_week()
 		$title .= " - " . month_name($end_month) . " $end_year";
 
 	$prev_week = $week_of_year - 1;
-	$prev_year = $year;
+	$prev_year = $phpc_year;
 	if($prev_week < 1) {
 		$prev_year--;
 		$prev_week = week_of_year($start_month, $start_day - 7,
@@ -61,8 +63,8 @@ function display_week()
 	}
 
 	$next_week = $week_of_year + 1;
-	$next_year = $year;
-	if($next_week > weeks_in_year($year)) {
+	$next_year = $phpc_year;
+	if($next_week > weeks_in_year($phpc_year)) {
 		$next_week = week_of_year($end_month, $end_day + 1, $end_year);
 		$next_year++;
 	}
@@ -76,7 +78,7 @@ function display_week()
 					"href=\"$phpc_home_url?action=display_week&amp;phpcid=$phpcid&amp;week=$next_week&amp;year=$next_year\""),
 				tag('span', attrs('class="fa fa-chevron-right"'), '')));
 
-	return create_display_table($heading, create_week($from_stamp, $year,
+	return create_display_table($heading, create_week($from_stamp, $phpc_year,
 				get_events($from_stamp, $to_stamp)));
 }
 
