@@ -191,7 +191,7 @@ a.phpc-add {
    for forms */
 .form th, .phpc-form th {
   text-align: right;
-  vertical-align: top;
+  vertical-align: middle;
   padding-right: .6em;
 }
 
