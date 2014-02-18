@@ -151,8 +151,7 @@ if(!empty($vars['lang'])) {
 	$phpc_lang = 'en';
 }
 
-// Require a 2 letter language
-if(!preg_match('/^\w{2}$/', $phpc_lang, $matches))
+if(!preg_match('/^\w+$/', $phpc_lang, $matches))
 	$phpc_lang = 'en';
 
 $phpc_gettext = new Gettext_PHP($phpc_locale_path, 'messages', $phpc_lang);
