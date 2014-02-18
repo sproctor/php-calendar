@@ -357,10 +357,10 @@ function process_form()
 
 		case 'daily':
 			if(!isset($vars["every-day"]))
-				soft_error(__("Required field \"every-day\" is not set."));
+				soft_error(__('Required field every-day is not set.'));
 			$ndays = $vars["every-day"];
 			if($ndays < 1)
-				soft_error(__("every-day must be greater than 1"));
+				soft_error(__('every-day must be greater than 1'));
 
 			$daily_until = get_timestamp("daily-until");
 			while($occurrences <= 730) {
@@ -376,7 +376,7 @@ function process_form()
 
 		case 'weekly':
 			if(!isset($vars["every-week"]))
-				soft_error(__("Required field \"every-week\" is not set."));
+				soft_error(__('Required field every-week is not set.'));
 			if($vars["every-week"] < 1)
 				soft_error(__("every-week must be greater than 1"));
 			$ndays = $vars["every-week"] * 7;
@@ -395,7 +395,7 @@ function process_form()
 
 		case 'monthly':
 			if(!isset($vars["every-month"]))
-				soft_error(__("Required field \"every-month\" is not set."));
+				soft_error(__('Required field every-month is not set.'));
 			if($vars["every-month"] < 1)
 				soft_error(__("every-month must be greater than 1"));
 			$nmonths = $vars["every-month"];
@@ -414,7 +414,7 @@ function process_form()
 
 		case 'yearly':
 			if(!isset($vars["every-year"]))
-				soft_error(__("Required field \"every-year\" is not set."));
+				soft_error(__('Required field every-year is not set.'));
 			if($vars["every-year"] < 1)
 				soft_error(__("every-month must be greater than 1"));
 			$nyears = $vars["every-year"];
