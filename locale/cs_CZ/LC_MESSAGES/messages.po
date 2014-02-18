@@ -3,8 +3,7 @@
 # This file is distributed under the same license as the PHP-Calendar package.
 # 
 # Translators:
-# MKwiakaku <transifex@mudkips.nl>, 2013-2014
-# MKwiakaku <transifex@mudkips.nl>, 2013
+# myflower <tomas@manena.cz>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: php-calendar\n"
@@ -12,16 +11,16 @@ msgstr ""
 "POT-Creation-Date: 2014-02-18 09:54-0500\n"
 "PO-Revision-Date: 2014-02-18 14:58+0000\n"
 "Last-Translator: sproctor <sproctor@gmail.com>\n"
-"Language-Team: Dutch (http://www.transifex.com/projects/p/php-calendar/language/nl/)\n"
+"Language-Team: Czech (Czech Republic) (http://www.transifex.com/projects/p/php-calendar/language/cs_CZ/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: nl\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: cs_CZ\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 #: includes/admin.php:28 includes/cadmin.php:26
 msgid "You must be logged in as an admin."
-msgstr "Je dient ingelogd te zijn als administrator."
+msgstr "Musíte být přihlášen jako admin."
 
 #: includes/admin.php:33
 msgid "Calendars"
@@ -37,42 +36,42 @@ msgstr ""
 
 #: includes/admin.php:39 includes/translate.php:38
 msgid "Translate"
-msgstr ""
+msgstr "Přeložit"
 
 #: includes/admin.php:42
 msgid "Version"
-msgstr "Versie"
+msgstr "Verze"
 
 #: includes/admin.php:55
 msgid "Calendar"
-msgstr "Kalender"
+msgstr "Kalendář"
 
 #: includes/admin.php:56 includes/admin.php:91
 msgid "Action"
-msgstr "Actie"
+msgstr "Akce"
 
 #: includes/admin.php:63 includes/cadmin.php:156 includes/cadmin.php:202
 #: includes/display_event.php:193
 msgid "Edit"
-msgstr "Wijzig"
+msgstr "Upravit"
 
 #: includes/admin.php:65 includes/admin.php:101 includes/cadmin.php:161
 #: includes/cadmin.php:206 includes/display_event.php:78
 #: includes/display_event.php:166
 msgid "Delete"
-msgstr "Verwijder"
+msgstr "Smazat"
 
 #: includes/admin.php:70 includes/calendar_form.php:85
 msgid "Create Calendar"
-msgstr "Maak kalender"
+msgstr "Vytvořit kalendář"
 
 #: includes/admin.php:74
 msgid "Calendar List"
-msgstr "Kalenderlijst"
+msgstr "Seznam kalendářů"
 
 #: includes/admin.php:88 includes/login.php:77
 msgid "Username"
-msgstr "naam gebruiker"
+msgstr "Uživatelské jméno"
 
 #: includes/admin.php:89 includes/cadmin.php:37 includes/cadmin.php:130
 #: includes/user_create.php:73
@@ -86,43 +85,43 @@ msgstr ""
 
 #: includes/admin.php:106 includes/user_create.php:51
 msgid "Create User"
-msgstr "Maak gebruiker aan"
+msgstr "Vytvořit uživatele"
 
 #: includes/admin.php:110
 msgid "User List"
-msgstr "Gebruikerslijst"
+msgstr "Seznam uživatelů"
 
 #: includes/admin.php:121
 msgid "Import Form"
-msgstr "Importeer formulier"
+msgstr "Importovat z"
 
 #: includes/admin.php:122
 msgid "MySQL Host Name"
-msgstr "MYSQL Host naam"
+msgstr "MySQL jméno hosta"
 
 #: includes/admin.php:123
 msgid "MySQL Database Name"
-msgstr "MYSQL Database naam"
+msgstr "MySQL název databáze"
 
 #: includes/admin.php:124
 msgid "MySQL Port Number"
-msgstr "MYSQL Poort nummer"
+msgstr "MySQL číslo portu"
 
 #: includes/admin.php:124
 msgid "Leave blank for default"
-msgstr "Laat leeg voor standaard"
+msgstr "Nechte prázdné pro přednastavené"
 
 #: includes/admin.php:125
 msgid "MySQL User Name"
-msgstr "MYSQL Gebruikersnaam"
+msgstr "MySQL uživatelské jméno"
 
 #: includes/admin.php:126
 msgid "MySQL User Password"
-msgstr "MYSQL Gebruikerswachtwoord"
+msgstr "MySQL heslo"
 
 #: includes/admin.php:129
 msgid "PHP-Calendar Table Prefix"
-msgstr "PHP-Calendar Tabel voorzetsel"
+msgstr "PHP-Calendar prefix tabulek"
 
 #: includes/admin.php:134
 msgid "Import Calendar"
@@ -150,261 +149,261 @@ msgstr ""
 
 #: includes/cadmin.php:68
 msgid "Options"
-msgstr "opties"
+msgstr "Volby"
 
 #: includes/cadmin.php:72 includes/cadmin.php:121
 #: includes/calendar_form.php:92 includes/settings.php:58
 #: includes/settings.php:98 includes/user_create.php:58
 #: includes/user_groups.php:70
 msgid "Submit"
-msgstr "Verstuur"
+msgstr "Odeslat"
 
 #: includes/cadmin.php:98 includes/cadmin.php:125
 msgid "Read"
-msgstr "Lezen"
+msgstr "Čtení"
 
 #: includes/cadmin.php:99 includes/cadmin.php:126
 msgid "Write"
-msgstr "Schrijven"
+msgstr "Zápis"
 
 #: includes/cadmin.php:100 includes/event_form.php:110
 msgid "Read-only"
-msgstr "Allen lezen"
+msgstr "Jen pro čtení"
 
 #: includes/cadmin.php:101 includes/cadmin.php:128 includes/display_day.php:89
 #: includes/display_event.php:76 includes/display_event.php:162
 msgid "Modify"
-msgstr "wijzigen"
+msgstr "Upravit"
 
 #: includes/cadmin.php:102 includes/cadmin.php:129 includes/calendar.php:496
 #: includes/user_create.php:71
 msgid "Admin"
-msgstr "Administrator"
+msgstr "Admin"
 
 #: includes/cadmin.php:117
 msgid "User Permissions"
-msgstr "Gebruikersbevoegdheden"
+msgstr "Uživatelská práva"
 
 #: includes/cadmin.php:124 includes/user_create.php:61
 msgid "User Name"
-msgstr "Gebruikersnaam"
+msgstr "Uživatelské jméno"
 
 #: includes/cadmin.php:127
 msgid "Can Create Read-Only"
-msgstr "Kan alleen-lezen aanmaken"
+msgstr "Může vytvořit jen pro čtení"
 
 #: includes/cadmin.php:146 includes/cadmin.php:197
 msgid "No Name"
-msgstr "Geen naam"
+msgstr "Bez jména"
 
 #: includes/cadmin.php:149 includes/category_form.php:44
 #: includes/event_form.php:113
 msgid "None"
-msgstr "Geen"
+msgstr "Žádný"
 
 #: includes/cadmin.php:168
 msgid "Create category"
-msgstr "Maak categorie"
+msgstr "Vytvořit kategorii"
 
 #: includes/cadmin.php:171
 msgid "Calendar Categories"
-msgstr "Kalendercategoriën"
+msgstr "Kategorie kalendáře"
 
 #: includes/cadmin.php:174 includes/cadmin.php:218
 #: includes/category_form.php:28 includes/group_form.php:28
 msgid "Name"
-msgstr "Naam"
+msgstr "Jméno"
 
 #: includes/cadmin.php:175 includes/category_form.php:40
 msgid "Text Color"
-msgstr "Tekstkleur"
+msgstr "Barva písma"
 
 #: includes/cadmin.php:176 includes/category_form.php:41
 msgid "Background Color"
-msgstr "Achtergrondkleur"
+msgstr "Barva pozadí"
 
 #: includes/cadmin.php:177
 msgid "Visible to User Group"
-msgstr "Zichtbaar voor gebruikersgroep"
+msgstr "Viditelné pro skupinu uživatele"
 
 #: includes/cadmin.php:178 includes/cadmin.php:219
 msgid "Actions"
-msgstr "Acties"
+msgstr "Akce"
 
 #: includes/cadmin.php:212
 msgid "Create group"
-msgstr "Maak groep"
+msgstr "Vytvořit skupinu"
 
 #: includes/cadmin.php:215
 msgid "Calendar Groups"
-msgstr "Kalendergroepen"
+msgstr "Skupiny kalendáře"
 
 #: includes/cadmin_submit.php:26 includes/calendar_form.php:26
 #: includes/user_create.php:26 includes/user_groups.php:26
 #: includes/user_permissions_submit.php:27
 msgid "Permission denied"
-msgstr "geen toestimming gekregen"
+msgstr "Přístup odepřen"
 
 #: includes/cadmin_submit.php:39
 msgid " was not set."
-msgstr "is niet ingesteld."
+msgstr "nebyl nastaven."
 
 #: includes/cadmin_submit.php:46
 msgid "Updated options"
-msgstr "update opties"
+msgstr "Aktualizované nastavení"
 
 #: includes/calendar.php:118 includes/settings.php:104
 msgid "Language"
-msgstr "Taal"
+msgstr "Jazyk"
 
 #: includes/calendar.php:119 includes/settings.php:101
 msgid "Timezone"
-msgstr "Tijdzone"
+msgstr "Časové pásmo"
 
 #: includes/calendar.php:443
 msgid "Welcome"
-msgstr "Welkom"
+msgstr "Vítejte"
 
 #: includes/calendar.php:450 includes/settings.php:31 includes/settings.php:91
 msgid "Settings"
-msgstr "Instellingen"
+msgstr "Nastavení"
 
 #: includes/calendar.php:453
 msgid "Log out"
-msgstr "doei zeggen"
+msgstr "Odhlásit se"
 
 #: includes/calendar.php:457 includes/login.php:57 includes/login.php:68
 msgid "Log in"
-msgstr "inloggen"
+msgstr "Přihlásit se"
 
 #: includes/calendar.php:475
 msgid "Add Event"
-msgstr "Voeg gebeurtenis toe"
+msgstr "Přidat událost"
 
 #: includes/calendar.php:479 includes/search.php:106 includes/search.php:121
 msgid "Search"
-msgstr "Zoeken"
+msgstr "Hledat"
 
 #: includes/calendar.php:483
 msgid "View Month"
-msgstr "Laat de maand zien"
+msgstr "Ukázat měsíc"
 
 #: includes/calendar.php:488
 msgid "View date"
-msgstr "datum laten zien"
+msgstr "Ukázat datum"
 
 #: includes/calendar.php:492
 msgid "Calendar Admin"
-msgstr "Kalenderbeheer"
+msgstr "Admin kalendáře"
 
 #: includes/calendar.php:527 includes/calendar.php:588
 #: includes/calendar.php:597 includes/settings.php:81
 msgid "Default"
-msgstr "Standaard"
+msgstr "Přednastavené"
 
 #: includes/calendar.php:533
 msgid "Week Start"
-msgstr "Begin van de week"
+msgstr "Začátek týdne"
 
 #: includes/calendar.php:535 includes/globals.php:38
 msgid "Sunday"
-msgstr "zondag"
+msgstr "Neděle"
 
 #: includes/calendar.php:536 includes/globals.php:39
 msgid "Monday"
-msgstr "maandag"
+msgstr "Pondělí"
 
 #: includes/calendar.php:537 includes/globals.php:44
 msgid "Saturday"
-msgstr "zaterdag"
+msgstr "Sobota"
 
 #: includes/calendar.php:539
 msgid "24 Hour Time"
-msgstr "Tijd in 24-uurs weergave"
+msgstr "24 hodinový čas"
 
 #: includes/calendar.php:540
 msgid "Calendar Title"
-msgstr "Kalender voor 55plus activiteiten"
+msgstr "Nadpis kalendáře"
 
 #: includes/calendar.php:541
 msgid "Maximum Subject Length"
-msgstr "Maximale lengte van onderwerp"
+msgstr "Maximální délka předmětu"
 
 #: includes/calendar.php:542
 msgid "Events Display Daily Maximum"
-msgstr "Maximaal aantal gebeurtenissen weer te geven per dag"
+msgstr "Zobrazit maximálně událostí denně"
 
 #: includes/calendar.php:543
 msgid "Public Permissions"
-msgstr "Publiekelijke bevoegdheden"
+msgstr "Veřejná práva"
 
 #: includes/calendar.php:545
 msgid "Cannot read nor write events"
-msgstr "Kan geen gebeurtenissen lezen of schrijven"
+msgstr "Nelze zobrazit ani zapsat události"
 
 #: includes/calendar.php:546
 msgid "Can read but not write events"
-msgstr "Kan gebeurtenissen lezen maar niet schrijven"
+msgstr "Může zobrazit, nemůže vytvořit události"
 
 #: includes/calendar.php:547
 msgid "Can create but not modify events"
-msgstr "Kan gebeurtenissen aanmaken maar niet bewerken"
+msgstr "Může vytvořit, nemůže upravit události"
 
 #: includes/calendar.php:548
 msgid "Can create and modify events"
-msgstr "Kan gebeurtenissen aanmaken en bewerken"
+msgstr "Může vytvářet a upravovat události"
 
 #: includes/calendar.php:551
 msgid "Default Timezone"
-msgstr "Standaard tijdzone"
+msgstr "Přednastavené časové pásmo"
 
 #: includes/calendar.php:552
 msgid "Default Language"
-msgstr "Standaardtaal"
+msgstr "Přednastavení jazyk"
 
 #: includes/calendar.php:554
 msgid "Date Format"
-msgstr "Datum lay-out"
+msgstr "Formát data"
 
 #: includes/calendar.php:556
 msgid "Theme"
-msgstr "Thema"
+msgstr "Téma"
 
 #: includes/calendar.php:615
 msgid "Month Day Year"
-msgstr "Maand Dag Jaar"
+msgstr "Měsíc Den Rok"
 
 #: includes/calendar.php:616
 msgid "Year Month Day"
-msgstr "Jaar Maand Dag"
+msgstr "Rok Měsíc Den"
 
 #: includes/calendar.php:617
 msgid "Day Month Year"
-msgstr "Dag Maand Jaar"
+msgstr "Den Měsíc Rok"
 
 #: includes/calendar.php:649
 msgid "You do not have permission to do that: "
-msgstr "Je hebt geen bevoegdheden dit uit te voeren:"
+msgstr "Nemáte oprávnění k této akci:"
 
 #: includes/calendar.php:662 includes/util.php:156
 msgid "Error"
-msgstr "Fout"
+msgstr "Chyba"
 
 #: includes/calendar.php:664 includes/util.php:160
 msgid "Backtrace"
-msgstr "Traceren"
+msgstr "Sledovat zpět"
 
 #: includes/calendar.php:676
 msgid "Invalid action"
-msgstr "ongeldige actie"
+msgstr "Neplatná akce"
 
 #: includes/calendar.php:721
 msgid "Secret token mismatch. Possible request forgery attempt."
-msgstr "Geheime token klopt niet."
+msgstr "Bezpečnostní tokeny se neshodují. Možný pokus o falzyfikát."
 
 #: includes/calendar.php:800
 msgid "Unsupported config type"
-msgstr "Niet-ondersteunde configuratietype"
+msgstr "Nepodporovaný formát konfigurace"
 
 #: includes/calendar.php:810
 #, php-format
@@ -418,7 +417,7 @@ msgstr ""
 
 #: includes/calendar.php:834
 msgid "Unrecognized period: "
-msgstr "Niet herkende periode:"
+msgstr "Nerozpoznaná perioda:"
 
 #: includes/calendar.php:842
 #, php-format
@@ -431,65 +430,65 @@ msgstr ""
 
 #: includes/calendar_delete.php:29
 msgid "No calendar selected."
-msgstr "Geen kalender geselecteerd"
+msgstr "Nebyl vybrán kalendář."
 
 #: includes/calendar_delete.php:45 includes/category_delete.php:49
 #: includes/event_delete.php:46 includes/group_delete.php:49
 #: includes/occurrence_delete.php:48 includes/user_delete.php:50
 msgid "Confirm you want to delete:"
-msgstr "Bevestig dat je wilt verwijderen:"
+msgstr "Potvrďte smazání:"
 
 #: includes/calendar_delete.php:47 includes/category_delete.php:51
 #: includes/event_delete.php:48 includes/group_delete.php:51
 #: includes/occurrence_delete.php:50 includes/user_delete.php:52
 msgid "Confirm"
-msgstr "Bevestig"
+msgstr "Potvrdit"
 
 #: includes/calendar_delete.php:50 includes/category_delete.php:54
 #: includes/event_delete.php:51 includes/group_delete.php:54
 #: includes/occurrence_delete.php:53 includes/user_delete.php:55
 msgid "Deny"
-msgstr "Weiger"
+msgstr "Zamítnout"
 
 #: includes/calendar_delete.php:58
 msgid "You do not have permission to remove calendar"
-msgstr "Je hebt geen bevoegdheden om de kalender te verwijderen"
+msgstr "Nemáte oprávnění k odstranění kalendáře"
 
 #: includes/calendar_delete.php:63
 msgid "Removed calendar"
-msgstr "Verwijderde kalender"
+msgstr "Odstranit kalendář"
 
 #: includes/calendar_delete.php:65
 msgid "Could not remove calendar"
-msgstr "Je kon de kalender niet verwijderen"
+msgstr "Nepodařilo se odstranit kalendář"
 
 #: includes/calendar_form.php:64
 msgid "Calendar created."
-msgstr "Kalender aangemaakt."
+msgstr "Kalendář vytvořen."
 
 #: includes/category_delete.php:29
 msgid "No category selected."
-msgstr "Geen categorie geselecteerd."
+msgstr "Nebyla vybrána kategorie"
 
 #: includes/category_delete.php:63
 msgid "You do not have permission to delete category: "
-msgstr "Je hebt geen bevoegdheden om deze categorie te verwijderen:"
+msgstr "Nemáte práva k smazání kategorie:"
 
 #: includes/category_delete.php:68
 msgid "Removed category: "
-msgstr "Verwijderde categorie:"
+msgstr "Odstranit kategorii:"
 
 #: includes/category_delete.php:71
 msgid "Could not remove category: "
-msgstr "Kon deze categorie niet verwijderen:"
+msgstr "Nepodařilo se odstranit kategorii:"
 
 #: includes/category_form.php:27
 msgid "Category Form"
-msgstr "Categorieformulier"
+msgstr "Formulář kategorie"
 
 #: includes/category_form.php:43
 msgid "Visible to groups"
-msgstr "Zichtbaar voor groepen"
+msgstr "Viditelné skupinám"
 
 #: includes/category_form.php:49
 msgid "Submit Category"
@@ -497,130 +496,130 @@ msgstr ""
 
 #: includes/category_submit.php:33
 msgid "Color not specified."
-msgstr "Kleur niet gespecificeerd."
+msgstr "Nebyla určena barva."
 
 #: includes/category_submit.php:47
 msgid "Invalid color."
-msgstr "Ongeldige kleur"
+msgstr "Neplatná barva."
 
 #: includes/category_submit.php:55
 msgid "You do not have permission to add categories to all calendars."
-msgstr "Je hebt geen toestemming om categorieën aan alle kalenders toe te voegen."
+msgstr "Nemáte právo přidat kategorii do všech kalendářů."
 
 #: includes/category_submit.php:60
 msgid "You do not have permission to add categories to this calendar."
-msgstr "Je hebt geen toestemming om categorieën aan deze kalender toe te voegen."
+msgstr "Nemáte práva k přidání kategorií do tohoto kalendáře."
 
 #: includes/category_submit.php:73
 msgid "You do not have permission to modify this category."
-msgstr "Je hebt geen toestemming om deze categorie te wijzigen."
+msgstr "Nemáte oprávnění ke změně této kategorie."
 
 #: includes/category_submit.php:82
 msgid "Modified category: "
-msgstr "Gewijzigde categorie:"
+msgstr "Upravené kategorie:"
 
 #: includes/category_submit.php:86
 msgid "Created category: "
-msgstr "Categorie gecreëerd:"
+msgstr "Vytvořené kategorie:"
 
 #: includes/category_submit.php:90
 msgid "Error submitting category."
-msgstr "Fout tijdens versturen van categorie."
+msgstr "Chyba při vytváření kategorie."
 
 #: includes/display_day.php:45
 msgid "Title"
-msgstr "Titel"
+msgstr "Nadpis"
 
 #: includes/display_day.php:46 includes/form.php:431
 msgid "Time"
-msgstr "tijd"
+msgstr "Čas"
 
 #: includes/display_day.php:47 includes/display_event.php:127
 #: includes/display_event.php:171 includes/event_form.php:44
 #: includes/search.php:92
 msgid "Description"
-msgstr "omschrijving"
+msgstr "Popis"
 
 #: includes/display_day.php:58
 msgid "Delete Selected"
-msgstr "gekozen termijn wissen"
+msgstr "Vymazat vybrané"
 
 #: includes/display_day.php:111
 msgid "No events on this day."
-msgstr "vandaag geen termijn"
+msgstr "Žádné události pro tento den."
 
 #: includes/display_event.php:41
 msgid "Invalid arguments."
-msgstr "Ongeldige argumenten."
+msgstr "Neplatné parametry."
 
 #: includes/display_event.php:53 includes/display_event.php:142
 msgid "You do not have permission to read this event."
-msgstr "Je hebt geen bevoegdheid om deze gebeurtenis te lezen."
+msgstr "Nemáte práva pro čtení této události."
 
 #: includes/display_event.php:57 includes/display_event.php:146
 #: includes/display_event.php:218
 msgid "by"
-msgstr "door"
+msgstr "od"
 
 #: includes/display_event.php:62 includes/display_event.php:156
 #: includes/display_event.php:226 includes/event_form.php:112
 msgid "Category"
-msgstr "Categorie"
+msgstr "Kategorie"
 
 #: includes/display_event.php:66 includes/event_form.php:46
 #: includes/occur_form.php:42
 msgid "When"
-msgstr "Wanneer"
+msgstr "Kdy"
 
 #: includes/display_event.php:68 includes/display_event.php:149
 msgid "Created at: "
-msgstr "Gemaakt op:"
+msgstr "Vytvořeno:"
 
 #: includes/display_event.php:70 includes/display_event.php:151
 msgid "Last modified at: "
-msgstr "Laatst gewijzigd op:"
+msgstr "Naposledy upraveno:"
 
 #: includes/display_event.php:80
 msgid "Modify Occurrence"
-msgstr "Wijzig gebeurtenis"
+msgstr "Výskyt úpravy"
 
 #: includes/display_event.php:82
 msgid "Remove Occurrence"
-msgstr "Verwijder gebeurtenis"
+msgstr "Výskyt odstranění"
 
 #: includes/display_event.php:101
 msgid "Previous occurrence on"
-msgstr "Vorige gebeurtenis op"
+msgstr "Předchozí výskyt na"
 
 #: includes/display_event.php:111
 msgid "Next occurrence on"
-msgstr "Volgende gebeurtenis op"
+msgstr "Další výskyt"
 
 #: includes/display_event.php:117
 msgid "View All Occurrences"
-msgstr "Bekijk alle gebeurtenissen"
+msgstr "Ukázat všechny výskyty"
 
 #: includes/display_event.php:164
 msgid "Add Occurrence"
-msgstr "Voeg gebeurtenis toe"
+msgstr "Přidat výskyt"
 
 #: includes/display_event.php:187 includes/occurrence_delete.php:45
 #: includes/phpcoccurrence.class.php:244 includes/phpcoccurrence.class.php:253
 #: includes/phpcoccurrence.class.php:255
 msgid "at"
-msgstr "op"
+msgstr "v"
 
 #: includes/display_event.php:194
 msgid "Remove"
-msgstr "Verwijderen"
+msgstr "Odstranit"
 
 #: includes/display_event.php:201
 msgid "Occurrences"
-msgstr "Gebeurtenissen"
+msgstr "Výskyty"
 
 #: includes/display_event.php:228
 msgid "from"
-msgstr "van"
+msgstr "od"
 
 #: includes/display_month.php:32 includes/display_week.php:32
 msgctxt "Week"
@@ -629,11 +628,11 @@ msgstr ""
 
 #: includes/display_month.php:231 includes/display_week.php:215
 msgid "View Additional Events"
-msgstr "Bekijk extra gebeurtenissen"
+msgstr "Zobrazit doplňující události"
 
 #: includes/display_month.php:245 includes/display_week.php:229
 msgid "continued"
-msgstr "vervolgd"
+msgstr "pokračující"
 
 #: includes/display_week.php:39
 msgid "Invalid date."
@@ -641,187 +640,187 @@ msgstr ""
 
 #: includes/event_delete.php:29
 msgid "No event selected."
-msgstr "Geen gebeurtenis geselecteerd."
+msgstr "Nevybrána žádná událost."
 
 #: includes/event_delete.php:75
 msgid "Removed event"
-msgstr "Gebeurtenis verwijderd"
+msgstr "Odstranit událost"
 
 #: includes/event_delete.php:77
 msgid "Removed events"
-msgstr "Gebeurtenissen verwijderd"
+msgstr "Odstraněné události"
 
 #: includes/event_delete.php:84
 msgid "Could not remove event"
-msgstr "Kon gebeurtenis niet verwijderen"
+msgstr "Nelze odstranit událost"
 
 #: includes/event_delete.php:86
 msgid "Could not remove events"
-msgstr "Kon gebeurtenissen niet verwijderen"
+msgstr "Nelze odstranit události"
 
 #: includes/event_delete.php:93
 msgid "You do not have permission to remove event"
-msgstr "Je hebt geen bevoegdheden om de gebeurtenis te verwijderen"
+msgstr "Nemáte oprávnění k odstranění události"
 
 #: includes/event_delete.php:95
 msgid "You do not have permission to remove events"
-msgstr "Je hebt geen bevoegdheden om de gebeurtenissen te verwijderen"
+msgstr "Nemáte oprávnění k odstranění událostí"
 
 #: includes/event_form.php:40
 msgid "Event Form"
-msgstr "Gebeurtenisformulier"
+msgstr "Událost od"
 
 #: includes/event_form.php:41 includes/globals.php:70 includes/search.php:90
 msgid "Subject"
-msgstr "betref"
+msgstr "Předmět"
 
 #: includes/event_form.php:50
 msgid "Change the event date and time"
-msgstr "Verander de datum en tijd van evenement"
+msgstr "Změnit datum a čas události"
 
 #: includes/event_form.php:53 includes/occur_form.php:44
 #: includes/phpcoccurrence.class.php:252 includes/search.php:111
 msgid "From"
-msgstr "van"
+msgstr "Od"
 
 #: includes/event_form.php:54 includes/occur_form.php:45
 #: includes/search.php:113
 msgid "To"
-msgstr "aan"
+msgstr "Do"
 
 #: includes/event_form.php:57 includes/occur_form.php:48
 msgid "Time Type"
-msgstr "Tijdstype"
+msgstr "Typ času"
 
 #: includes/event_form.php:58 includes/occur_form.php:49
 msgid "Normal"
-msgstr "normaal"
+msgstr "Normální"
 
 #: includes/event_form.php:59 includes/occur_form.php:50
 msgid "Full Day"
-msgstr "Volledige dag"
+msgstr "Celý den"
 
 #: includes/event_form.php:60 includes/occur_form.php:51
 msgid "To Be Announced"
-msgstr "Wordt nog aangekondigd"
+msgstr "K oznámení"
 
 #: includes/event_form.php:66
 msgid "Repeats"
-msgstr "Herhalingen"
+msgstr "Opakování"
 
 #: includes/event_form.php:68
 msgid "Never"
-msgstr "Nooit"
+msgstr "Nikdy"
 
 #: includes/event_form.php:70
 msgid "Daily"
-msgstr "Dagelijks"
+msgstr "Denně"
 
 #: includes/event_form.php:72
 msgid "Weekly"
-msgstr "wekelijks"
+msgstr "Týdně"
 
 #: includes/event_form.php:74
 msgid "Monthly"
-msgstr "Maandelijks"
+msgstr "Měsíčně"
 
 #: includes/event_form.php:76
 msgid "Yearly"
-msgstr "Jaarlijks"
+msgstr "Ročně"
 
 #: includes/event_form.php:78 includes/event_form.php:85
 #: includes/event_form.php:92 includes/event_form.php:99
 msgid "Every"
-msgstr "Iedere"
+msgstr "Každý"
 
 #: includes/event_form.php:79
 msgid "Repeat every how many days?"
-msgstr "Herhaal om de hoeveel dagen?"
+msgstr "Opakovat kolik dní?"
 
 #: includes/event_form.php:82 includes/event_form.php:90
 #: includes/event_form.php:97 includes/event_form.php:104
 msgid "Until"
-msgstr "Tot"
+msgstr "Až do"
 
 #: includes/event_form.php:86
 msgid "Repeat every how many weeks?"
-msgstr "Herhaal om de hoeveel weken?"
+msgstr "Opakovat kolik týdnů?"
 
 #: includes/event_form.php:93
 msgid "Repeat every how many months?"
-msgstr "Herhaal om de hoeveel maanden?"
+msgstr "Opakovat kolik měsíců?"
 
 #: includes/event_form.php:100
 msgid "Repeat every how many years?"
-msgstr "Herhaal om de hoeveel jaar?"
+msgstr "Opakovat kolik let?"
 
 #: includes/event_form.php:129
 msgid "Submit Event"
-msgstr "Verstuur gebeurtenis"
+msgstr "Založit událost"
 
 #: includes/event_form.php:296 includes/occur_form.php:134
 msgid "Unrecognized Time Type."
-msgstr "Tijdstype niet herkend."
+msgstr "Nerozpoznaná formát času."
 
 #: includes/event_form.php:301 includes/occur_form.php:139
 msgid "An event cannot have an end earlier than its start."
-msgstr "Een gebeurtenis kan niet eerder eindigen dan het begon."
+msgstr "Událost nemůže mít konec před svým začátkem."
 
 #: includes/event_form.php:309 includes/occur_form.php:144
 msgid "You do not have permission to write to this calendar."
-msgstr "Je hebt geen bevoegdheden om deze kalender te beschrijven."
+msgstr "Nemáte oprávnění k zápisu do tohoto kalendáře."
 
 #: includes/event_form.php:342
 msgid "Required field \"every-day\" is not set."
-msgstr "Vereist veld 'iedere dag' is niet ingesteld."
+msgstr "Požadované pole \"každý den\" není nastaveno."
 
 #: includes/event_form.php:345
 msgid "every-day must be greater than 1"
-msgstr "'iedere dag' moet groter zijn dan 1"
+msgstr "každý den musí být větší než 1"
 
 #: includes/event_form.php:361
 msgid "Required field \"every-week\" is not set."
-msgstr "Vereist veld 'iedere week' is niet ingesteld."
+msgstr "Požadované pole \"každý týden\" není vyplněno."
 
 #: includes/event_form.php:363
 msgid "every-week must be greater than 1"
-msgstr "'iedere week' moet groter zijn dan 1"
+msgstr "každý týden musí být větší než 1"
 
 #: includes/event_form.php:380
 msgid "Required field \"every-month\" is not set."
-msgstr "Vereist veld 'iedere maand' is niet ingesteld."
+msgstr "Požadované pole \"každý měsíc\" není vyplněno."
 
 #: includes/event_form.php:382 includes/event_form.php:401
 msgid "every-month must be greater than 1"
-msgstr "'iedere maand' moet groter zijn dan 1"
+msgstr "každý měsíc musí být větší než 1"
 
 #: includes/event_form.php:399
 msgid "Required field \"every-year\" is not set."
-msgstr "Vereist veld 'ieder jaar' is niet ingesteld."
+msgstr "Požadované pole \"každý rok\" není vyplněno."
 
 #: includes/event_form.php:417
 msgid "Invalid event type."
-msgstr "Ongeldig gebeurtenistype."
+msgstr "Neplatný typ události."
 
 #: includes/event_form.php:423
 msgid "Modified event: "
-msgstr "Gewijzigde gebeurtenis:"
+msgstr "Upravená událost:"
 
 #: includes/event_form.php:425
 msgid "Created event: "
-msgstr "Gebeurtenis gemaakt:"
+msgstr "Vytvořená událost:"
 
 #: includes/event_form.php:432
 msgid "Error submitting event."
-msgstr "Fout tijdens versturen van gebeurtenis."
+msgstr "Chyba při ukládání události."
 
 #: includes/form.php:32
 msgid "required"
-msgstr "vereist"
+msgstr "požadované"
 
 #: includes/form.php:102
 msgid "Cannot add a non-form element to a form."
-msgstr "Kan geen niet-formulier-element toevoegen aan formulier."
+msgstr "Nelze přidat neformulářový element do formuláře."
 
 #: includes/form.php:428
 msgid "Date"
@@ -829,143 +828,143 @@ msgstr "Datum"
 
 #: includes/globals.php:23
 msgid "January"
-msgstr "januari"
+msgstr "Leden"
 
 #: includes/globals.php:24
 msgid "February"
-msgstr "februari"
+msgstr "Únor"
 
 #: includes/globals.php:25
 msgid "March"
-msgstr "maart"
+msgstr "Březen"
 
 #: includes/globals.php:26
 msgid "April"
-msgstr "april"
+msgstr "Duben"
 
 #: includes/globals.php:27 includes/globals.php:52
 msgid "May"
-msgstr "mei"
+msgstr "Květen"
 
 #: includes/globals.php:28
 msgid "June"
-msgstr "juni"
+msgstr "Červen"
 
 #: includes/globals.php:29
 msgid "July"
-msgstr "juli"
+msgstr "Červenec"
 
 #: includes/globals.php:30
 msgid "August"
-msgstr "augustus"
+msgstr "Srpen"
 
 #: includes/globals.php:31
 msgid "September"
-msgstr "september"
+msgstr "Září"
 
 #: includes/globals.php:32
 msgid "October"
-msgstr "oktober"
+msgstr "Říjen"
 
 #: includes/globals.php:33
 msgid "November"
-msgstr "november"
+msgstr "Listopad"
 
 #: includes/globals.php:34
 msgid "December"
-msgstr "december"
+msgstr "Prosinec"
 
 #: includes/globals.php:40
 msgid "Tuesday"
-msgstr "dinsdag"
+msgstr "Úterý"
 
 #: includes/globals.php:41
 msgid "Wednesday"
-msgstr "woensdag"
+msgstr "Středa"
 
 #: includes/globals.php:42
 msgid "Thursday"
-msgstr "donderdag"
+msgstr "Čtvrtek"
 
 #: includes/globals.php:43
 msgid "Friday"
-msgstr "vrijdag"
+msgstr "Pátek"
 
 #: includes/globals.php:48
 msgid "Jan"
-msgstr "jan"
+msgstr "Leden"
 
 #: includes/globals.php:49
 msgid "Feb"
-msgstr "feb"
+msgstr "Únor"
 
 #: includes/globals.php:50
 msgid "Mar"
-msgstr "mrt"
+msgstr "Březen"
 
 #: includes/globals.php:51
 msgid "Apr"
-msgstr "apr"
+msgstr "Duben"
 
 #: includes/globals.php:53
 msgid "Jun"
-msgstr "jun"
+msgstr "Červen"
 
 #: includes/globals.php:54
 msgid "Jul"
-msgstr "jul"
+msgstr "Červenec"
 
 #: includes/globals.php:55
 msgid "Aug"
-msgstr "aug"
+msgstr "Srpen"
 
 #: includes/globals.php:56
 msgid "Sep"
-msgstr "sep"
+msgstr "Září"
 
 #: includes/globals.php:57
 msgid "Oct"
-msgstr "okt"
+msgstr "Říjen"
 
 #: includes/globals.php:58
 msgid "Nov"
-msgstr "nov"
+msgstr "Listopad"
 
 #: includes/globals.php:59
 msgid "Dec"
-msgstr "dec"
+msgstr "Prosinec"
 
 #: includes/globals.php:69
 msgid "Start Date"
-msgstr "Begindatum"
+msgstr "Počáteční datum"
 
 #: includes/globals.php:74
 msgid "Ascending"
-msgstr "stijgend"
+msgstr "Vzestupně"
 
 #: includes/globals.php:75
 msgid "Descending"
-msgstr "Aflopen"
+msgstr "Sestupně"
 
 #: includes/group_delete.php:29
 msgid "No group selected."
-msgstr "Geen groep geselecteerd."
+msgstr "Nevybrána žádná skupina."
 
 #: includes/group_delete.php:63
 msgid "You do not have permission to delete group: "
-msgstr "Je hebt geen bevoegdheden om de groep te verwijderen:"
+msgstr "Nemáte práva k smazání skupiny:"
 
 #: includes/group_delete.php:68
 msgid "Removed group: "
-msgstr "Verwijderde groep:"
+msgstr "Odstraněná skupiny:"
 
 #: includes/group_delete.php:71
 msgid "Could not remove group: "
-msgstr "Kon deze groep niet verwijderen:"
+msgstr "Nepodařilo se odstranit skupinu:"
 
 #: includes/group_form.php:27
 msgid "Group Form"
-msgstr "Groepformulier"
+msgstr "Formulář skupiny"
 
 #: includes/group_form.php:34
 msgid "Submit Group"
@@ -973,272 +972,272 @@ msgstr ""
 
 #: includes/group_submit.php:32
 msgid "You do not have permission to add a global group."
-msgstr "Je hebt geen bevoegdheden om een globale groep toe te voegen."
+msgstr "Nemáte oprávnění k odstranění globální skupiny."
 
 #: includes/group_submit.php:37
 msgid "You do not have permission to add a group to this calendar."
-msgstr "Je hebt geen bevoegdheden om een groep aan deze kalender toe te voegen."
+msgstr "Nemáte oprávnění pro přidání skupiny do tohoto kalendáře."
 
 #: includes/group_submit.php:49
 msgid "You do not have permission to modify this group."
-msgstr "Je hebt geen bevoegdheden om deze groep te wijzigen."
+msgstr "Nemáte oprávnění ke změně této skupiny."
 
 #: includes/group_submit.php:57
 msgid "Modified group: "
-msgstr "Gewijzigde groep:"
+msgstr "Upravená skupina:"
 
 #: includes/group_submit.php:61
 msgid "Created group: "
-msgstr "Groep gecreëerd:"
+msgstr "Vytvořená skupina:"
 
 #: includes/group_submit.php:65
 msgid "Error submitting group."
-msgstr "Fout tijdens versturen van groep."
+msgstr "Chyba při vytváření skupiny."
 
 #: includes/import.php:26 includes/translate.php:28
 msgid "Need to be admin"
-msgstr "Moet administrator zijn"
+msgstr "Musí být admin"
 
 #: includes/import.php:69
 msgid "Error selecting events in import"
-msgstr "Fout tijdens het selecteren van evenementen om te importeren"
+msgstr "Chyba při výběru událostí pro import"
 
 #: includes/import.php:154
 #, php-format
 msgid "Created %s events with %s occurences"
-msgstr "%s evenementen met %s gebeurtenissen gemaakt"
+msgstr "Vytvořeno %s událostí s %s výskyty"
 
 #: includes/login.php:39
 msgid "Logged in."
-msgstr "Ingelogd."
+msgstr "Přihlášený."
 
 #: includes/login.php:42
 msgid "Sorry, Invalid Login"
-msgstr "sorry, foutieve aanmelding"
+msgstr "Neplatné přihlášení"
 
 #: includes/login.php:72
 msgid "You must have cookies enabled to login."
-msgstr "Je moet cookies hebben geactiveerd om in te loggen."
+msgstr "Musíte mít povolené cookies pro přihlášení."
 
 #: includes/login.php:80 includes/settings.php:39 includes/user_create.php:64
 msgid "Password"
-msgstr "Wachtwoord"
+msgstr "Heslo"
 
 #: includes/logout.php:29
 msgid "Loggin out..."
-msgstr "Uitloggen."
+msgstr "Odhlašuji..."
 
 #: includes/occur_form.php:40
 msgid "Occurrence Form"
-msgstr "Gebeurtenissenformulier"
+msgstr "Výskyt od"
 
 #: includes/occur_form.php:105
 msgid "Submit Occurrence"
-msgstr "Voeg gebeurtenis toe"
+msgstr "Odeslat výskyt"
 
 #: includes/occur_form.php:115
 msgid "Cannot create occurrence."
-msgstr "Kon gebeurtenis niet maken."
+msgstr "Nelze vytvořit výskyt."
 
 #: includes/occur_form.php:149
 msgid "EID not set."
-msgstr "EID niet ingesteld."
+msgstr "EID není nastaveno."
 
 #: includes/occur_form.php:161
 msgid "Modified occurence: "
-msgstr "Gebeurtenis gewijzigd:"
+msgstr "Upravené výskyty:"
 
 #: includes/occur_form.php:163
 msgid "Created occurence: "
-msgstr "Gebeurtenis aangemaakt:"
+msgstr "Vytvořené výskyty:"
 
 #: includes/occur_form.php:170
 msgid "Error submitting occurrence."
-msgstr "Fout tijdens versturen van gebeurtenis."
+msgstr "Chyba při ukládání výskytu."
 
 #: includes/occurrence_delete.php:29
 msgid "No occurrence selected."
-msgstr "Geen gebeurtenis geselecteerd."
+msgstr "Nevybrány žádné výskyty."
 
 #: includes/occurrence_delete.php:79
 msgid "Removed occurrence"
-msgstr "Gebeurtenis verwijderd"
+msgstr "Odstraněný výskyt"
 
 #: includes/occurrence_delete.php:81
 msgid "Removed occurrences"
-msgstr "Gebeurtenissen verwijderd"
+msgstr "Odstraněné výskyty"
 
 #: includes/occurrence_delete.php:88
 msgid "Could not remove occurrence"
-msgstr "Kon gebeurtenis niet verwijderen"
+msgstr "Nepodařilo se odstranit výskyt"
 
 #: includes/occurrence_delete.php:90
 msgid "Could not remove occurrences"
-msgstr "Kon gebeurtenissen niet verwijderen"
+msgstr "Nepodařilo se odstranit výskyty"
 
 #: includes/occurrence_delete.php:97
 msgid "You do not have permission to remove the occurrence."
-msgstr "Je hebt geen bevoegdheden om de gebeurtenis te verwijderen."
+msgstr "Nemáte oprávnění ke smazání výskytu."
 
 #: includes/occurrence_delete.php:99
 msgid "You do not have permission to remove occurrences."
-msgstr "Je hebt geen bevoegdheden om de gebeurtenissen te verwijderen."
+msgstr "Nemáte oprávnění ke smazání výskytů."
 
 #: includes/password_submit.php:27
 msgid "You must be logged in."
-msgstr "Je moet ingelogd zijn."
+msgstr "Musíte být přihlášený."
 
 #: includes/password_submit.php:33
 msgid "You do not have permission to change your password."
-msgstr "Je hebt geen toestemming om je wachtwoord aan te passen."
+msgstr "Nemáte oprávnění ke změně hesla vaší skupiny."
 
 #: includes/password_submit.php:36
 msgid "You must specify your old password."
-msgstr "Je moet je oude wachtwoord invullen."
+msgstr "Musíte zadat staré heslo."
 
 #: includes/password_submit.php:42
 msgid "The password you entered did not match your old password."
-msgstr "Het wachtwoord dat je ingevuld hebt is niet gelijk aan je oude wachtwoord."
+msgstr "Zadané heslo neodpovídá starému heslu."
 
 #: includes/password_submit.php:46 includes/user_create.php:90
 msgid "You must specify a password"
-msgstr "Je moet een wachtwoord invullen"
+msgstr "Musíte zadat heslo"
 
 #: includes/password_submit.php:51 includes/user_create.php:95
 msgid "Your passwords did not match"
-msgstr "Je wachtwoorden zijn niet gelijk"
+msgstr "Zadaná hesla se neshodují"
 
 #: includes/password_submit.php:58
 msgid "Password updated."
-msgstr "Wachtwoord geüpdatet."
+msgstr "Heslo aktualizováno."
 
 #: includes/phpccalendar.class.php:51
 msgid "(No title)"
-msgstr "(Geen titel)"
+msgstr "(Bez nadpisu)"
 
 #: includes/phpcdatabase.class.php:93
 msgid "Error in get_occurrences_by_date_range"
-msgstr "Fout in get_occurences_by_date_range"
+msgstr "Chyba v "
 
 #: includes/phpcdatabase.class.php:145
 msgid "Error in get_event_by_eid"
-msgstr "Fout in get_event_by_eid"
+msgstr "Chyba v "
 
 #: includes/phpcdatabase.class.php:149
 msgid "Event doesn't exist"
-msgstr "Gebeurtenis bestaat niet"
+msgstr "Událost neexistuje"
 
 #: includes/phpcdatabase.class.php:171
 msgid "Error in get_event_by_oid"
-msgstr "Fout in get_event_by_oid"
+msgstr "Chyba v "
 
 #: includes/phpcdatabase.class.php:175 includes/phpcdatabase.class.php:340
 msgid "Event doesn't exist with oid"
-msgstr "Gebeurtenis met oid bestaat niet"
+msgstr "Událost neexistuje s oid"
 
 #: includes/phpcdatabase.class.php:195
 msgid "Error in get_category"
-msgstr "Fout in get_category"
+msgstr "Chyba v "
 
 #: includes/phpcdatabase.class.php:198
 msgid "Category doesn't exist with catid"
-msgstr "Categorie met catid bestaat niet"
+msgstr "Kategorie neexistuje s catid"
 
 #: includes/phpcdatabase.class.php:212
 msgid "Error in get_group"
-msgstr "Fout in get_group"
+msgstr "Chyba v "
 
 #: includes/phpcdatabase.class.php:215
 msgid "Group doesn't exist with gid"
-msgstr "Groep met gid bestaat niet"
+msgstr "Skupina neexistuje s gid"
 
 #: includes/phpcdatabase.class.php:231
 msgid "Error in get_groups"
-msgstr "Fout in get_groups"
+msgstr "Chyba v "
 
 #: includes/phpcdatabase.class.php:250
 msgid "Error in get_user_groups"
-msgstr "Fout in get_user_groups"
+msgstr "Chyba v "
 
 #: includes/phpcdatabase.class.php:279
 msgid "Error in get_categories"
-msgstr "Fout in get_categories"
+msgstr "Chyba v "
 
 #: includes/phpcdatabase.class.php:308
 msgid "Error in get_visible_categories"
-msgstr "Fout in get_visible_categories"
+msgstr "Chyba v "
 
 #: includes/phpcdatabase.class.php:336
 msgid "Error in get_occurrence_by_oid"
-msgstr "Fout in get_occurence_by_oid"
+msgstr "Chyba v "
 
 #: includes/phpcdatabase.class.php:362
 msgid "Error in get_occurrences_by_eid"
-msgstr "Fout in get_occurences_by_eid"
+msgstr "Chyba v "
 
 #: includes/phpcdatabase.class.php:379 includes/phpcdatabase.class.php:395
 msgid "Error while removing an event."
-msgstr "Fout tijdens het verwijderen van gebeurtenis."
+msgstr "Chyba při odstraňování události."
 
 #: includes/phpcdatabase.class.php:407
 msgid "Error while removing an occurrence."
-msgstr "Fout tijdens het verwijderen van een gebeurtenis."
+msgstr "Chyba při odstraňování výskytu."
 
 #: includes/phpcdatabase.class.php:420 includes/phpcdatabase.class.php:461
 msgid "Error while removing a calendar"
-msgstr "Fout tijdens het verwijderen van een kalender"
+msgstr "Chyba při odstraňování kalendáře"
 
 #: includes/phpcdatabase.class.php:433
 msgid "Error while removing category."
-msgstr "Fout tijdens het verwijderen van categorie."
+msgstr "Chyba při odstraňování kategorie."
 
 #: includes/phpcdatabase.class.php:446
 msgid "Error while removing group."
-msgstr "Fout tijdens het verwijderen van groep."
+msgstr "Chyba při odstraňování skupiny."
 
 #: includes/phpcdatabase.class.php:466
 msgid "Error while removing "
-msgstr "Fout tijdens het verwijderen"
+msgstr "Chyba při odstraňování"
 
 #: includes/phpcdatabase.class.php:485
 msgid "Could not read permissions."
-msgstr "Kon bevoegdheden niet lezen."
+msgstr "Nelze přečíst práva."
 
 #: includes/phpcdatabase.class.php:500
 msgid "Could not get calendars."
-msgstr "Kon kalenders niet bemachtigen"
+msgstr "Nelze získat kalendáře."
 
 #: includes/phpcdatabase.class.php:529 includes/phpcdatabase.class.php:549
 msgid "Could not get user."
-msgstr "Kon gebruiker niet bemachtigen."
+msgstr "Nelze získat uživatele."
 
 #: includes/phpcdatabase.class.php:565 includes/phpcdatabase.class.php:581
 msgid "Error getting user."
-msgstr "Fout tijdens het verkrijgen van gebruiker."
+msgstr "Chyba při získávání uživatele."
 
 #: includes/phpcdatabase.class.php:597
 msgid "Error creating user."
-msgstr "Fout tijdens het maken van gebruiker."
+msgstr "Chyba při vytváření uživatele."
 
 #: includes/phpcdatabase.class.php:608 includes/phpcdatabase.class.php:620
 msgid "Error reading options"
-msgstr "Fout tijdens het uitlezen van opties"
+msgstr "Chyba při čtení voleb"
 
 #: includes/phpcdatabase.class.php:631
 msgid "Error creating options"
-msgstr "Fout tijdens het aanmaken van opties"
+msgstr "Chyba při vytváření voleb"
 
 #: includes/phpcdatabase.class.php:641
 msgid "Error updating password."
-msgstr "Fout tijdens het updaten van wachtwoord."
+msgstr "Chyba při aktualizaci hesla."
 
 #: includes/phpcdatabase.class.php:652
 msgid "Error updating timezone."
-msgstr "Fout tijdens updaten van tijdzone."
+msgstr "Chyba při aktualizaci časové zóny."
 
 #: includes/phpcdatabase.class.php:663
 msgid "Error updating language."
-msgstr "Fout tijdens het updaten van de taal."
+msgstr "Chyba při aktualizaci jazyku."
 
 #: includes/phpcdatabase.class.php:675
 msgid "Error adding group to user."
@@ -1250,176 +1249,176 @@ msgstr ""
 
 #: includes/phpcdatabase.class.php:706
 msgid "Error creating event."
-msgstr "Fout tijdens het maken van evenement."
+msgstr "Chyba při vytváření události."
 
 #: includes/phpcdatabase.class.php:733
 msgid "Error creating occurrence."
-msgstr "Fout tijdens het maken van gebeurtenis."
+msgstr "Chyba při vytváření výskytu."
 
 #: includes/phpcdatabase.class.php:758
 msgid "Error modifying occurrence."
-msgstr "Fout tijdens het bewerken van gebeurtenis."
+msgstr "Chyba při úpravě výskytu."
 
 #: includes/phpcdatabase.class.php:780
 msgid "Error modifying event."
-msgstr "Fout tijdens het bewerken van evenement."
+msgstr "Chyba při úpravě události."
 
 #: includes/phpcdatabase.class.php:794
 msgid "Error creating category."
-msgstr "Fout tijdens het maken van categorie."
+msgstr "Chyba při vytváření kategorie."
 
 #: includes/phpcdatabase.class.php:807
 msgid "Error creating group."
-msgstr "Fout tijdens het maken van groep."
+msgstr "Chyba při vytváření skupiny."
 
 #: includes/phpcdatabase.class.php:823
 msgid "Error modifying category."
-msgstr "Fout tijdens het bewerken van categorie."
+msgstr "Chyba při úpravě kategorie."
 
 #: includes/phpcdatabase.class.php:836
 msgid "Error modifying group."
-msgstr "Fout tijdens het bewerken van groep."
+msgstr "Chyba při úpravě skupiny."
 
 #: includes/phpcdatabase.class.php:871
 msgid "Error during searching"
-msgstr "Fout tijdens het zoeken"
+msgstr "Chyba během vyhledávání"
 
 #: includes/phpcdatabase.class.php:897
 msgid "Error updating user permissions."
-msgstr "Fout tijdens het updaten van gebruikersbevoegdheden."
+msgstr "Chyba při aktualizaci práv uživatele."
 
 #: includes/phpcdatabase.class.php:906
 msgid "Error getting login token."
-msgstr "Fout tijdens het verkrijgen van het logintoken."
+msgstr "Chyba při získávání tokenu přihlášení."
 
 #: includes/phpcdatabase.class.php:921
 msgid "Error adding login token."
-msgstr ""
+msgstr "Chyba pri přidávání tokenu pro přihlášení."
 
 #: includes/phpcdatabase.class.php:931
 msgid "Error updating login token."
-msgstr ""
+msgstr "Chyba při aktualizaci přihlašovacího tokenu."
 
 #: includes/phpcdatabase.class.php:940
 msgid "Error removing login tokens."
-msgstr ""
+msgstr "Chyba při odstraňování přihlašovacího tokenu."
 
 #: includes/phpcdatabase.class.php:949
 msgid "Error cleaning login tokens."
-msgstr ""
+msgstr "Chyba při čistění přihlašovacích tokenů."
 
 #: includes/phpcdatabase.class.php:959
 msgid "SQL query"
-msgstr ""
+msgstr "SQL dotaz"
 
 #: includes/phpcevent.class.php:43
 msgid "anonymous"
-msgstr ""
+msgstr "anonym"
 
 #: includes/phpcevent.class.php:45
 msgid "unknown"
-msgstr ""
+msgstr "neznámý"
 
 #: includes/phpcevent.class.php:72
 msgid "(No subject)"
-msgstr ""
+msgstr "(Bez předmětu)"
 
 #: includes/phpcoccurrence.class.php:53 includes/phpcoccurrence.class.php:76
 msgid "DB returned an invalid date."
-msgstr ""
+msgstr "DB vrátila neplatné datum."
 
 #: includes/phpcoccurrence.class.php:105 includes/phpcoccurrence.class.php:121
 msgid "TBA"
-msgstr ""
+msgstr "K oznámení"
 
 #: includes/phpcoccurrence.class.php:116 includes/phpcoccurrence.class.php:254
 msgid "to"
-msgstr "tot"
+msgstr "do"
 
 #: includes/search.php:43
 msgid "Invalid sort option"
-msgstr ""
+msgstr "Neplatné parametr pro řazení"
 
 #: includes/search.php:49
 msgid "Invalid order option"
-msgstr ""
+msgstr "Neplatný parametr pro pořadí"
 
 #: includes/search.php:83
 msgid "No events matched your search criteria."
-msgstr ""
+msgstr "Žádné události neodpovídají kritériím vyhledávání."
 
 #: includes/search.php:87
 msgid "Search Results"
-msgstr ""
+msgstr "Výsledky vyhledávání"
 
 #: includes/search.php:91
 msgid "Date Time"
-msgstr ""
+msgstr "Datum Čas"
 
 #: includes/search.php:107
 msgid "Phrase"
-msgstr "phrase"
+msgstr "Fráze"
 
 #: includes/search.php:115
 msgid "Sort By"
-msgstr "sorteren naar"
+msgstr "Řadit podle"
 
 #: includes/search.php:118
 msgid "Order"
-msgstr "volgorde"
+msgstr "Pořadí"
 
 #: includes/settings.php:52
 msgid "Change Password"
-msgstr ""
+msgstr "Změnit heslo"
 
 #: includes/settings.php:61
 msgid "Old Password"
-msgstr ""
+msgstr "Staré heslo"
 
 #: includes/settings.php:64
 msgid "New Password"
-msgstr ""
+msgstr "Nové heslo"
 
 #: includes/settings.php:67
 msgid "Confirm New Password"
-msgstr ""
+msgstr "Potvrdit nové heslo"
 
 #: includes/settings.php:139
 msgid "Settings updated."
-msgstr ""
+msgstr "Nastavení byla aktualizována."
 
 #: includes/setup.php:78
 msgid "Possible hacking attempt on your account."
-msgstr ""
+msgstr "Možný pokus o nabourání se do vašeho účtu."
 
 #: includes/setup.php:187
 msgid "Month is out of range."
-msgstr ""
+msgstr "Měsíc je mimo limit."
 
 #: includes/setup.php:195
 msgid "Invalid year"
-msgstr ""
+msgstr "Neplatný rok"
 
 #: includes/translate.php:52
 #, php-format
 msgid "Translated \"%s\""
-msgstr ""
+msgstr "Přeloženo \"%s\""
 
 #: includes/user_create.php:67
 msgid "Confirm Password"
-msgstr "Bevestig wachtwoord"
+msgstr "Potvrdit heslo"
 
 #: includes/user_create.php:70
 msgid "Make Admin"
-msgstr "Maak administator"
+msgstr "Udělat adminem"
 
 #: includes/user_create.php:86
 msgid "You must specify a user name"
-msgstr ""
+msgstr "Musíte zadat přihlašovací jméno"
 
 #: includes/user_create.php:103
 msgid "User already exists."
-msgstr ""
+msgstr "Uživatel již existuje."
 
 #: includes/user_create.php:113
 msgid "Added user."
@@ -1427,11 +1426,11 @@ msgstr ""
 
 #: includes/user_delete.php:29
 msgid "You must be an admin to delete users."
-msgstr ""
+msgstr "Musíte být admin pro mazání uživatelů."
 
 #: includes/user_delete.php:34
 msgid "No user selected."
-msgstr ""
+msgstr "Nevybrán žádný uživatel."
 
 #: includes/user_groups.php:58
 msgid "Edit User Groups"
@@ -1443,24 +1442,24 @@ msgstr ""
 
 #: includes/user_permissions_submit.php:31
 msgid "No users"
-msgstr ""
+msgstr "Žádní uživatelé"
 
 #: includes/user_permissions_submit.php:59
 msgid "No changes to make."
-msgstr ""
+msgstr "Nedojde k žádným změnám."
 
 #: includes/user_permissions_submit.php:61
 msgid "Updated user(s):"
-msgstr ""
+msgstr "Aktualizovaný/í uživatel(é):"
 
 #: includes/util.php:75
 msgid "continue"
-msgstr ""
+msgstr "pokračovat"
 
 #: includes/util.php:157
 msgid "Software Error"
-msgstr ""
+msgstr "Softwarová chyba"
 
 #: includes/util.php:158
 msgid "Message:"
-msgstr "Bericht:"
+msgstr "Zpráva:"
