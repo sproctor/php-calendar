@@ -1,0 +1,1413 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# leosoft <yuparat_ouy@hotmail.com>, 2013
+msgid ""
+msgstr ""
+"Project-Id-Version: php-calendar\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-04-29 09:20-0400\n"
+"PO-Revision-Date: 2013-11-20 11:37+0000\n"
+"Last-Translator: leosoft <yuparat_ouy@hotmail.com>\n"
+"Language-Team: Thai (http://www.transifex.com/projects/p/php-calendar/language/th/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: th\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: index.php:68
+msgid "Welcome"
+msgstr "ยินดีต้อนรับ"
+
+#: includes/admin.php:26 includes/cadmin.php:27
+msgid "You must be logged in as an admin."
+msgstr "คุณต้องเข้าสู่ระบบในฐานะผู้ดูแลระบบ"
+
+#: includes/admin.php:30
+msgid "Import from PHP-Calendar 1.1"
+msgstr "นำเข้าจาก php-calendar 1.1"
+
+#: includes/admin.php:32
+msgid "Generate translations"
+msgstr "สร้างการแปล"
+
+#: includes/admin.php:36
+msgid "Version"
+msgstr "เวอร์ชั่น"
+
+#: includes/admin.php:49
+msgid "Create User"
+msgstr "สร้างผู้ใช้"
+
+#: includes/admin.php:54 includes/admin.php:97 includes/cadmin.php:63
+#: includes/cadmin.php:102 includes/settings.php:50 includes/settings.php:87
+msgid "Submit"
+msgstr "ตกลง"
+
+#: includes/admin.php:57 includes/cadmin.php:105
+msgid "User Name"
+msgstr "ชื่อผู้ใช้"
+
+#: includes/admin.php:60 includes/login.php:80
+msgid "Password"
+msgstr "รหัสผ่าน"
+
+#: includes/admin.php:63
+msgid "Confirm Password"
+msgstr "ยืนยันรหัสผ่าน"
+
+#: includes/admin.php:66
+msgid "Make Admin"
+msgstr ""
+
+#: includes/admin.php:67 includes/cadmin.php:85 includes/cadmin.php:110
+#: includes/calendar.php:471
+msgid "Admin"
+msgstr "ผู้ดูแลระบบ"
+
+#: includes/admin.php:69 includes/admin.php:134
+msgid "Group"
+msgstr "กลุ่ม"
+
+#: includes/admin.php:92
+msgid "Create Calendar"
+msgstr "สร้างปฏิทิน"
+
+#: includes/admin.php:108
+msgid "Calendar"
+msgstr "ปฏิทิน"
+
+#: includes/admin.php:109 includes/admin.php:135
+msgid "Action"
+msgstr "ดำเนินการ"
+
+#: includes/admin.php:123
+msgid "Calendar List"
+msgstr "รายการปฏิทิน"
+
+#: includes/admin.php:133 includes/login.php:77
+msgid "Username"
+msgstr "ชื่อผู้ใช้"
+
+#: includes/admin.php:145
+msgid "User List"
+msgstr ""
+
+#: includes/cadmin.php:59
+msgid "Options"
+msgstr ""
+
+#: includes/cadmin.php:81 includes/cadmin.php:106
+msgid "Read"
+msgstr "อ่าน"
+
+#: includes/cadmin.php:82 includes/cadmin.php:107
+msgid "Write"
+msgstr "เขียน"
+
+#: includes/cadmin.php:83 includes/event_form.php:110
+msgid "Read-only"
+msgstr "อ่านอย่างเดียว"
+
+#: includes/cadmin.php:84 includes/cadmin.php:109 includes/display_day.php:93
+#: includes/display_event.php:76 includes/display_event.php:162
+msgid "Modify"
+msgstr "แก้ไข"
+
+#: includes/cadmin.php:98
+msgid "User Permissions"
+msgstr "สิทธิ์ของผู้ใช้"
+
+#: includes/cadmin.php:108
+msgid "Can Create Read-Only"
+msgstr ""
+
+#: includes/cadmin.php:123 includes/cadmin.php:172
+msgid "No Name"
+msgstr "ไม่ระบุชื่อ"
+
+#: includes/cadmin.php:131 includes/cadmin.php:177
+#: includes/display_event.php:193
+msgid "Edit"
+msgstr "แก้ไข"
+
+#: includes/cadmin.php:136 includes/cadmin.php:181
+#: includes/display_event.php:78 includes/display_event.php:166
+msgid "Delete"
+msgstr "ลบ"
+
+#: includes/cadmin.php:143
+msgid "Create category"
+msgstr "สร้างหมวดหมู่"
+
+#: includes/cadmin.php:146
+msgid "Calendar Categories"
+msgstr "หมวดหมู่ปฏิทิน"
+
+#: includes/cadmin.php:149 includes/cadmin.php:193
+#: includes/category_form.php:28 includes/group_form.php:28
+msgid "Name"
+msgstr "ชื่อ"
+
+#: includes/cadmin.php:150
+msgid "Text Color"
+msgstr "สีตัวอักษร"
+
+#: includes/cadmin.php:151
+msgid "Background Color"
+msgstr "สีพื้นหลัง"
+
+#: includes/cadmin.php:152
+msgid "Visible to User Group"
+msgstr ""
+
+#: includes/cadmin.php:153 includes/cadmin.php:194
+msgid "Actions"
+msgstr "การดำเนินการ"
+
+#: includes/cadmin.php:187
+msgid "Create group"
+msgstr "สร้างกลุ่ม"
+
+#: includes/cadmin.php:190
+msgid "Calendar Groups"
+msgstr "กลุ่มปฏิทิน"
+
+#: includes/cadmin_submit.php:26 includes/create_calendar.php:27
+#: includes/user_create.php:27 includes/user_permissions_submit.php:27
+msgid "Permission denied"
+msgstr "ไม่อนุญาตให้ใช้"
+
+#: includes/cadmin_submit.php:39
+msgid " was not set."
+msgstr "ไม่ได้ตั้งค่า"
+
+#: includes/cadmin_submit.php:46
+msgid "Updated options"
+msgstr ""
+
+#: includes/calendar_delete.php:29
+msgid "No calendar selected."
+msgstr ""
+
+#: includes/calendar_delete.php:45 includes/category_delete.php:49
+#: includes/event_delete.php:46 includes/group_delete.php:49
+#: includes/occurrence_delete.php:48 includes/user_delete.php:50
+msgid "Confirm you want to delete:"
+msgstr "ยืนยัน คุณต้องการลบ"
+
+#: includes/calendar_delete.php:47 includes/category_delete.php:51
+#: includes/event_delete.php:48 includes/group_delete.php:51
+#: includes/occurrence_delete.php:50 includes/user_delete.php:52
+msgid "Confirm"
+msgstr "ยืนยัน"
+
+#: includes/calendar_delete.php:50 includes/category_delete.php:54
+#: includes/event_delete.php:51 includes/group_delete.php:54
+#: includes/occurrence_delete.php:53 includes/user_delete.php:55
+msgid "Deny"
+msgstr "ปฎิเสธ"
+
+#: includes/calendar_delete.php:58
+msgid "You do not have permission to remove calendar"
+msgstr "คุณไม่ได้รับสิทธิ์ในการลบปฏิทิน"
+
+#: includes/calendar_delete.php:63
+msgid "Removed calendar"
+msgstr "ลบปฏิทิน"
+
+#: includes/calendar_delete.php:65
+msgid "Could not remove calendar"
+msgstr "ไม่สามารถลบปฏิทิน"
+
+#: includes/calendar.php:112 includes/settings.php:93
+msgid "Language"
+msgstr "ภาษา"
+
+#: includes/calendar.php:113 includes/settings.php:90
+msgid "Timezone"
+msgstr "เขตเวลา"
+
+#: includes/calendar.php:425 includes/settings.php:81
+msgid "Settings"
+msgstr "ตั้งค่า"
+
+#: includes/calendar.php:428
+msgid "Log out"
+msgstr "ออกจากระบบ"
+
+#: includes/calendar.php:432 includes/login.php:57 includes/login.php:68
+msgid "Log in"
+msgstr ""
+
+#: includes/calendar.php:450
+msgid "Add Event"
+msgstr "เพิ่มเหตุการณ์"
+
+#: includes/calendar.php:454 includes/search.php:96 includes/search.php:111
+msgid "Search"
+msgstr "ค้นหา"
+
+#: includes/calendar.php:458
+msgid "View Month"
+msgstr "ดูรายเดือน"
+
+#: includes/calendar.php:463
+msgid "View date"
+msgstr "ดูรายวัน"
+
+#: includes/calendar.php:467
+msgid "Calendar Admin"
+msgstr ""
+
+#: includes/calendar.php:502 includes/calendar.php:563
+#: includes/calendar.php:572 includes/settings.php:71
+msgid "Default"
+msgstr "ค่าตั้งต้น"
+
+#: includes/calendar.php:508
+msgid "Week Start"
+msgstr "เริ่มสัปดาห์"
+
+#: includes/calendar.php:510 includes/globals.php:38
+msgid "Sunday"
+msgstr "อาทิตย์"
+
+#: includes/calendar.php:511 includes/globals.php:39
+msgid "Monday"
+msgstr "จันทร์"
+
+#: includes/calendar.php:512 includes/globals.php:44
+msgid "Saturday"
+msgstr "เสาร์"
+
+#: includes/calendar.php:514
+msgid "24 Hour Time"
+msgstr "24 ชั่วโมง"
+
+#: includes/calendar.php:515
+msgid "Calendar Title"
+msgstr "หัวข้อปฏิทิน"
+
+#: includes/calendar.php:516
+msgid "Maximum Subject Length"
+msgstr "ความยาวสูงสุดหัวเรื่อง"
+
+#: includes/calendar.php:517
+msgid "Events Display Daily Maximum"
+msgstr "เหตุการณ์ที่เกิดขึ้นแสดงสูงสุดประจำวัน"
+
+#: includes/calendar.php:518
+msgid "Public Permissions"
+msgstr "การอนุญาตสาธารณะ"
+
+#: includes/calendar.php:520
+msgid "Cannot read nor write events"
+msgstr "ไม่สามารถอ่านหรือเขียนเหตุการณ์"
+
+#: includes/calendar.php:521
+msgid "Can read but not write events"
+msgstr "สามารถอ่าน แต่ไม่สามารถเขียนเหตุการณ์"
+
+#: includes/calendar.php:522
+msgid "Can create but not modify events"
+msgstr "สามารถสร้าง แต่ไม่สามาถแก้ไขเหตุการณ์"
+
+#: includes/calendar.php:523
+msgid "Can create and modify events"
+msgstr "สามารถสร้างและแก้ไขเหตุการณ์"
+
+#: includes/calendar.php:526
+msgid "Default Timezone"
+msgstr "โซนเริ่มต้น"
+
+#: includes/calendar.php:527
+msgid "Default Language"
+msgstr "ภาษาเริ่มต้น"
+
+#: includes/calendar.php:529
+msgid "Date Format"
+msgstr "รูปแบบวันที่"
+
+#: includes/calendar.php:531
+msgid "Theme"
+msgstr "รูปแบบ"
+
+#: includes/calendar.php:590
+msgid "Month Day Year"
+msgstr "เดือน วัน ปี"
+
+#: includes/calendar.php:591
+msgid "Year Month Day"
+msgstr "ปี เดือน วัน"
+
+#: includes/calendar.php:592
+msgid "Day Month Year"
+msgstr "วัน เดือน ปี"
+
+#: includes/calendar.php:648
+msgid "You do not have permission to do that: "
+msgstr "คุณไม่ได้รับสิทธิ์ที่จะกระทำ"
+
+#: includes/calendar.php:661 includes/util.php:154
+msgid "Error"
+msgstr "ผิดพลาด"
+
+#: includes/calendar.php:663 includes/util.php:158
+msgid "Backtrace"
+msgstr ""
+
+#: includes/calendar.php:675
+msgid "Invalid action"
+msgstr "การกระทำที่ไม่ถูกต้อง"
+
+#: includes/calendar.php:723
+msgid "Secret token mismatch. Possible request forgery attempt."
+msgstr ""
+
+#: includes/calendar.php:796
+msgid "Unsupported config type"
+msgstr ""
+
+#: includes/category_delete.php:29
+msgid "No category selected."
+msgstr ""
+
+#: includes/category_delete.php:63
+msgid "You do not have permission to delete category: "
+msgstr ""
+
+#: includes/category_delete.php:68
+msgid "Removed category: "
+msgstr ""
+
+#: includes/category_delete.php:71
+msgid "Could not remove category: "
+msgstr ""
+
+#: includes/category_form.php:27
+msgid "Category Form"
+msgstr ""
+
+#: includes/category_form.php:42
+msgid "Visible to groups"
+msgstr ""
+
+#: includes/category_form.php:43 includes/event_form.php:113
+msgid "None"
+msgstr ""
+
+#: includes/category_submit.php:33
+msgid "Color not specified."
+msgstr ""
+
+#: includes/category_submit.php:43
+msgid "Invalid color."
+msgstr "สีไม่ถูกต้อง"
+
+#: includes/category_submit.php:51
+msgid "You do not have permission to add categories to all calendars."
+msgstr ""
+
+#: includes/category_submit.php:56
+msgid "You do not have permission to add categories to this calendar."
+msgstr ""
+
+#: includes/category_submit.php:69
+msgid "You do not have permission to modify this category."
+msgstr ""
+
+#: includes/category_submit.php:78
+msgid "Modified category: "
+msgstr "แก้ไขหมวดหมู่"
+
+#: includes/category_submit.php:82
+msgid "Created category: "
+msgstr ""
+
+#: includes/category_submit.php:86
+msgid "Error submitting category."
+msgstr ""
+
+#: includes/create_calendar.php:54
+msgid "Calendar created."
+msgstr "สร้างปฏิทิน"
+
+#: includes/display_day.php:45
+msgid "Title"
+msgstr "หัวข้อ"
+
+#: includes/display_day.php:46 includes/form.php:433
+msgid "Time"
+msgstr "เวลา"
+
+#: includes/display_day.php:47 includes/display_event.php:127
+#: includes/display_event.php:171 includes/event_form.php:44
+#: includes/search.php:84
+msgid "Description"
+msgstr "รายละเอียด"
+
+#: includes/display_day.php:58
+msgid "Delete Selected"
+msgstr "ลบรายการที่เลือก"
+
+#: includes/display_day.php:115
+msgid "No events on this day."
+msgstr "ไม่มีกิจกรรมในวันนี้"
+
+#: includes/display_event.php:41
+msgid "Invalid arguments."
+msgstr ""
+
+#: includes/display_event.php:53 includes/display_event.php:142
+msgid "You do not have permission to read this event."
+msgstr ""
+
+#: includes/display_event.php:57 includes/display_event.php:146
+#: includes/display_event.php:218
+msgid "by"
+msgstr "โดย"
+
+#: includes/display_event.php:62 includes/display_event.php:156
+#: includes/display_event.php:226 includes/event_form.php:112
+msgid "Category"
+msgstr "หมวดหมุ่"
+
+#: includes/display_event.php:66 includes/event_form.php:46
+#: includes/occur_form.php:41
+msgid "When"
+msgstr "เมื่อ"
+
+#: includes/display_event.php:68 includes/display_event.php:149
+msgid "Created at: "
+msgstr "สร้างเมื่อ"
+
+#: includes/display_event.php:70
+msgid "Last modified at: "
+msgstr "ปรับปรุงครั้งล่าสุด"
+
+#: includes/display_event.php:80
+msgid "Modify Occurrence"
+msgstr "การปรับปรุงที่เกิดขึ้น"
+
+#: includes/display_event.php:82
+msgid "Remove Occurrence"
+msgstr "การลบที่เกิดขึ้น"
+
+#: includes/display_event.php:101
+msgid "Previous occurrence on"
+msgstr "ปรากฏการณ์ที่เกิดขึ้นก่อนหน้านี้"
+
+#: includes/display_event.php:111
+msgid "Next occurrence on"
+msgstr "การเปลี่ยนแปลที่จะเกิดขึ้น"
+
+#: includes/display_event.php:117
+msgid "View All Occurrences"
+msgstr "ดูที่เกิดขึ้นทั้งหมด"
+
+#: includes/display_event.php:164
+msgid "Add Occurrence"
+msgstr ""
+
+#: includes/display_event.php:187 includes/occurrence_delete.php:45
+#: includes/phpcoccurrence.class.php:244 includes/phpcoccurrence.class.php:253
+#: includes/phpcoccurrence.class.php:255
+msgid "at"
+msgstr "ที่"
+
+#: includes/display_event.php:194
+msgid "Remove"
+msgstr "เอาออก"
+
+#: includes/display_event.php:201
+msgid "Occurrences"
+msgstr ""
+
+#: includes/display_event.php:228
+msgid "from"
+msgstr "จาก"
+
+#: includes/display_month.php:32
+msgid "Week"
+msgstr "สัปดาห์"
+
+#: includes/display_month.php:78
+msgid "last year"
+msgstr "ปีก่อนหน้า"
+
+#: includes/display_month.php:80
+msgid "last month"
+msgstr "เดือนก่อนหน้า"
+
+#: includes/display_month.php:90
+msgid "next month"
+msgstr "เดือนถัดไป"
+
+#: includes/display_month.php:92
+msgid "next year"
+msgstr "ปีถัดไป"
+
+#: includes/display_month.php:254
+msgid "View Additional Events"
+msgstr "ดูเหตุการณ์เพิ่มเติม"
+
+#: includes/display_month.php:268
+msgid "continued"
+msgstr "ต่อเนื่อง"
+
+#: includes/event_delete.php:29
+msgid "No event selected."
+msgstr "ไม่ได้เลือกเหตุการณ์"
+
+#: includes/event_delete.php:75
+msgid "Removed event"
+msgstr "เอาเหตุการณ์ออก"
+
+#: includes/event_delete.php:77
+msgid "Removed events"
+msgstr "ยกเลิกเหตุการณ์ทั้งหมด"
+
+#: includes/event_delete.php:84
+msgid "Could not remove event"
+msgstr "ไม่สามารถยกเลิกเหตุการณ์ได้"
+
+#: includes/event_delete.php:86
+msgid "Could not remove events"
+msgstr "ไม่สามารถลบเหตุการณ์"
+
+#: includes/event_delete.php:93
+msgid "You do not have permission to remove event"
+msgstr "คุณไม่มีสิทธิ์ยกเลิกเหตุการณ์"
+
+#: includes/event_delete.php:95
+msgid "You do not have permission to remove events"
+msgstr "คุณไม่มีสิทธิ์ยกเลิกเหตุการณ์ทั้งหมด"
+
+#: includes/event_form.php:40
+msgid "Event Form"
+msgstr "ฟอร์มเหตุการณ์"
+
+#: includes/event_form.php:41 includes/globals.php:70 includes/search.php:82
+msgid "Subject"
+msgstr "เรื่อง"
+
+#: includes/event_form.php:50
+msgid "Change the event date and time"
+msgstr "เปลี่ยนวันที่และเวลาเหตุการณ์"
+
+#: includes/event_form.php:53 includes/occur_form.php:43
+#: includes/phpcoccurrence.class.php:252 includes/search.php:101
+msgid "From"
+msgstr "จาก"
+
+#: includes/event_form.php:54 includes/occur_form.php:44
+#: includes/search.php:103
+msgid "To"
+msgstr "ถึง"
+
+#: includes/event_form.php:57 includes/occur_form.php:47
+msgid "Time Type"
+msgstr "ประเภทเวลา"
+
+#: includes/event_form.php:58 includes/occur_form.php:48
+msgid "Normal"
+msgstr "ปกติ"
+
+#: includes/event_form.php:59 includes/occur_form.php:49
+msgid "Full Day"
+msgstr "เต็มวัน"
+
+#: includes/event_form.php:60 includes/occur_form.php:50
+msgid "To Be Announced"
+msgstr ""
+
+#: includes/event_form.php:66
+msgid "Repeats"
+msgstr "ทำซ้ำ"
+
+#: includes/event_form.php:68
+msgid "Never"
+msgstr ""
+
+#: includes/event_form.php:70
+msgid "Daily"
+msgstr "ทุกวัน"
+
+#: includes/event_form.php:72
+msgid "Weekly"
+msgstr "ทุกสัปดาห์"
+
+#: includes/event_form.php:74
+msgid "Monthly"
+msgstr "ทุกเดือน"
+
+#: includes/event_form.php:76
+msgid "Yearly"
+msgstr "ทุกปี"
+
+#: includes/event_form.php:78 includes/event_form.php:85
+#: includes/event_form.php:92 includes/event_form.php:99
+msgid "Every"
+msgstr ""
+
+#: includes/event_form.php:79
+msgid "Repeat every how many days?"
+msgstr ""
+
+#: includes/event_form.php:82 includes/event_form.php:90
+#: includes/event_form.php:97 includes/event_form.php:104
+msgid "Until"
+msgstr "จนถึง"
+
+#: includes/event_form.php:86
+msgid "Repeat every how many weeks?"
+msgstr "ทำซ้ำทุกกี่สัปดาห์?"
+
+#: includes/event_form.php:93
+msgid "Repeat every how many months?"
+msgstr "ทำซ้ำทุกกี่เดือน?"
+
+#: includes/event_form.php:100
+msgid "Repeat every how many years?"
+msgstr "ทำซ้ำทุกกี่ปี?"
+
+#: includes/event_form.php:128 includes/import_form.php:53
+msgid "Submit Event"
+msgstr "ส่งกิจกรรม"
+
+#: includes/event_form.php:295 includes/occur_form.php:131
+msgid "Unrecognized Time Type."
+msgstr "ไม่รู้จักประเภทเวลา"
+
+#: includes/event_form.php:300 includes/occur_form.php:136
+msgid "An event cannot have an end earlier than its start."
+msgstr "ไม่สามารถเพิ่มเหตุกาณ์ที่สิ้นสุดก่อนเริ่มต้น"
+
+#: includes/event_form.php:308 includes/occur_form.php:141
+msgid "You do not have permission to write to this calendar."
+msgstr "คุณไม่มีสิทธิ์ที่จะเขียนปฏิทินนี้"
+
+#: includes/event_form.php:341
+msgid "Required field \"every-day\" is not set."
+msgstr "ฟิลด์ที่จำเป็น \"ทุกวัน\" ไม่ได้ตั้งค่า"
+
+#: includes/event_form.php:344
+msgid "every-day must be greater than 1"
+msgstr ""
+
+#: includes/event_form.php:360
+msgid "Required field \"every-week\" is not set."
+msgstr ""
+
+#: includes/event_form.php:362
+msgid "every-week must be greater than 1"
+msgstr ""
+
+#: includes/event_form.php:379
+msgid "Required field \"every-month\" is not set."
+msgstr ""
+
+#: includes/event_form.php:381 includes/event_form.php:400
+msgid "every-month must be greater than 1"
+msgstr ""
+
+#: includes/event_form.php:398
+msgid "Required field \"every-year\" is not set."
+msgstr ""
+
+#: includes/event_form.php:416
+msgid "Invalid event type."
+msgstr ""
+
+#: includes/event_form.php:422
+msgid "Modified event: "
+msgstr "แก้ไขเหตุการณ์"
+
+#: includes/event_form.php:424
+msgid "Created event: "
+msgstr "สร้างเหตุการณ์:"
+
+#: includes/event_form.php:431
+msgid "Error submitting event."
+msgstr "ส่งเหตุการณ์ผิดพลาด"
+
+#: includes/event_form.php:441 includes/occur_form.php:177
+#, php-format
+msgid "Required field \"%s\" year was not set."
+msgstr ""
+
+#: includes/event_form.php:450 includes/occur_form.php:186
+#, php-format
+msgid "Malformed time in \"%s\" time."
+msgstr ""
+
+#: includes/event_form.php:464
+msgid "Unrecognized period: "
+msgstr ""
+
+#: includes/event_form.php:471 includes/occur_form.php:195
+#, php-format
+msgid "Malformed time in \"%s\" date."
+msgstr ""
+
+#: includes/form.php:32
+msgid "required"
+msgstr "จำเป็นต้องมี"
+
+#: includes/form.php:102
+msgid "Cannot add a non-form element to a form."
+msgstr ""
+
+#: includes/form.php:430
+msgid "Date"
+msgstr "วันที่"
+
+#: includes/globals.php:23
+msgid "January"
+msgstr "มกราคม"
+
+#: includes/globals.php:24
+msgid "February"
+msgstr "กุมภาพันธ์"
+
+#: includes/globals.php:25
+msgid "March"
+msgstr "มีนาคม"
+
+#: includes/globals.php:26
+msgid "April"
+msgstr "เมษายน"
+
+#: includes/globals.php:27 includes/globals.php:52
+msgid "May"
+msgstr "พฤษภาคม"
+
+#: includes/globals.php:28
+msgid "June"
+msgstr "มิถุนายน"
+
+#: includes/globals.php:29
+msgid "July"
+msgstr "กรกฎาคม"
+
+#: includes/globals.php:30
+msgid "August"
+msgstr "สิงหาคม"
+
+#: includes/globals.php:31
+msgid "September"
+msgstr "กันยายน"
+
+#: includes/globals.php:32
+msgid "October"
+msgstr "ตุลาคม"
+
+#: includes/globals.php:33
+msgid "November"
+msgstr "พศจิกายน"
+
+#: includes/globals.php:34
+msgid "December"
+msgstr "ธันวาคม"
+
+#: includes/globals.php:40
+msgid "Tuesday"
+msgstr "อังคาร"
+
+#: includes/globals.php:41
+msgid "Wednesday"
+msgstr "พุธ"
+
+#: includes/globals.php:42
+msgid "Thursday"
+msgstr "พฤหัสบดี"
+
+#: includes/globals.php:43
+msgid "Friday"
+msgstr "ศูกร์"
+
+#: includes/globals.php:48
+msgid "Jan"
+msgstr "ม.ค."
+
+#: includes/globals.php:49
+msgid "Feb"
+msgstr "ก.พ."
+
+#: includes/globals.php:50
+msgid "Mar"
+msgstr "มี.ค."
+
+#: includes/globals.php:51
+msgid "Apr"
+msgstr "เม.ย."
+
+#: includes/globals.php:53
+msgid "Jun"
+msgstr "พ.ค."
+
+#: includes/globals.php:54
+msgid "Jul"
+msgstr "ก.ค."
+
+#: includes/globals.php:55
+msgid "Aug"
+msgstr "ส.ค."
+
+#: includes/globals.php:56
+msgid "Sep"
+msgstr "ก.ย."
+
+#: includes/globals.php:57
+msgid "Oct"
+msgstr "ต.ค."
+
+#: includes/globals.php:58
+msgid "Nov"
+msgstr "พ.ย."
+
+#: includes/globals.php:59
+msgid "Dec"
+msgstr "ธ.ค."
+
+#: includes/globals.php:69
+msgid "Start Date"
+msgstr "เริ่มวันที่"
+
+#: includes/globals.php:74
+msgid "Ascending"
+msgstr "น้อยไปมาก"
+
+#: includes/globals.php:75
+msgid "Descending"
+msgstr "มากไปน้อย"
+
+#: includes/group_delete.php:29
+msgid "No group selected."
+msgstr "ไม่ได้เลือกกลุ่ม"
+
+#: includes/group_delete.php:63
+msgid "You do not have permission to delete group: "
+msgstr "คุณไม่มีสิทธิ์ลบกลุ่ม"
+
+#: includes/group_delete.php:68
+msgid "Removed group: "
+msgstr "ลบกลุ่ม"
+
+#: includes/group_delete.php:71
+msgid "Could not remove group: "
+msgstr "ไม่สามารถลบกลุ่ม"
+
+#: includes/group_form.php:27
+msgid "Group Form"
+msgstr "รูปแบบกลุ่ม"
+
+#: includes/group_submit.php:32
+msgid "You do not have permission to add a global group."
+msgstr ""
+
+#: includes/group_submit.php:37
+msgid "You do not have permission to add a group to this calendar."
+msgstr ""
+
+#: includes/group_submit.php:49
+msgid "You do not have permission to modify this group."
+msgstr ""
+
+#: includes/group_submit.php:57
+msgid "Modified group: "
+msgstr "แก้ไขกลุ่ม"
+
+#: includes/group_submit.php:61
+msgid "Created group: "
+msgstr ""
+
+#: includes/group_submit.php:65
+msgid "Error submitting group."
+msgstr ""
+
+#: includes/import_form.php:28 includes/translate.php:28
+msgid "Need to be admin"
+msgstr ""
+
+#: includes/import_form.php:42
+msgid "Import Form"
+msgstr "นำเข้าจาก"
+
+#: includes/import_form.php:43
+msgid "MySQL Host Name"
+msgstr "mysql เซอร์เวอร์"
+
+#: includes/import_form.php:44
+msgid "MySQL Database Name"
+msgstr "ชื่อฐานข้อมูล"
+
+#: includes/import_form.php:45
+msgid "MySQL Port Number"
+msgstr "หมายเลข port"
+
+#: includes/import_form.php:45
+msgid "Leave blank for default"
+msgstr "ปล่อยว่างไว้สำหรับค่าตั้งต้น"
+
+#: includes/import_form.php:46
+msgid "MySQL User Name"
+msgstr "ชื่อผุ้ใช้ฐานข้อมูล"
+
+#: includes/import_form.php:47
+msgid "MySQL User Password"
+msgstr "รหัสผ่านฐานข้อมูล"
+
+#: includes/import_form.php:48
+msgid "PHP-Calendar Table Prefix"
+msgstr ""
+
+#: includes/import_form.php:103
+msgid "Error selecting events in import"
+msgstr ""
+
+#: includes/import_form.php:184
+#, php-format
+msgid "Created %s events with %s occurences"
+msgstr ""
+
+#: includes/login.php:39
+msgid "Logged in."
+msgstr "เข้าใช้งานอยู่"
+
+#: includes/login.php:42
+msgid "Sorry, Invalid Login"
+msgstr "ขออภัย, ไม่ถูกต้อง"
+
+#: includes/login.php:72
+msgid "You must have cookies enabled to login."
+msgstr ""
+
+#: includes/logout.php:29
+msgid "Loggin out..."
+msgstr "ออกจากระบบ..."
+
+#: includes/occur_form.php:39
+msgid "Occurrence Form"
+msgstr ""
+
+#: includes/occur_form.php:102
+msgid "Submit Occurrence"
+msgstr ""
+
+#: includes/occur_form.php:112
+msgid "Cannot create occurrence."
+msgstr ""
+
+#: includes/occur_form.php:146
+msgid "EID not set."
+msgstr ""
+
+#: includes/occur_form.php:158
+msgid "Modified occurence: "
+msgstr ""
+
+#: includes/occur_form.php:160
+msgid "Created occurence: "
+msgstr ""
+
+#: includes/occur_form.php:167
+msgid "Error submitting occurrence."
+msgstr ""
+
+#: includes/occurrence_delete.php:29
+msgid "No occurrence selected."
+msgstr ""
+
+#: includes/occurrence_delete.php:79
+msgid "Removed occurrence"
+msgstr ""
+
+#: includes/occurrence_delete.php:81
+msgid "Removed occurrences"
+msgstr ""
+
+#: includes/occurrence_delete.php:88
+msgid "Could not remove occurrence"
+msgstr ""
+
+#: includes/occurrence_delete.php:90
+msgid "Could not remove occurrences"
+msgstr ""
+
+#: includes/occurrence_delete.php:97
+msgid "You do not have permission to remove the occurrence."
+msgstr ""
+
+#: includes/occurrence_delete.php:99
+msgid "You do not have permission to remove occurrences."
+msgstr ""
+
+#: includes/password_submit.php:27
+msgid "You must be logged in."
+msgstr ""
+
+#: includes/password_submit.php:33
+msgid "You do not have permission to change your password."
+msgstr ""
+
+#: includes/password_submit.php:36
+msgid "You must specify your old password."
+msgstr ""
+
+#: includes/password_submit.php:42
+msgid "The password you entered did not match your old password."
+msgstr ""
+
+#: includes/password_submit.php:46 includes/user_create.php:40
+msgid "You must specify a password"
+msgstr ""
+
+#: includes/password_submit.php:51 includes/user_create.php:46
+msgid "Your passwords did not match"
+msgstr ""
+
+#: includes/password_submit.php:58
+msgid "Password updated."
+msgstr ""
+
+#: includes/phpccalendar.class.php:51
+msgid "(No title)"
+msgstr "(ไม่มีหัวข้อ)"
+
+#: includes/phpcdatabase.class.php:92
+msgid "Error in get_occurrences_by_date_range"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:140
+msgid "Error in get_event_by_eid"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:144
+msgid "Event doesn't exist"
+msgstr "ไม่มีเหตุการณ์"
+
+#: includes/phpcdatabase.class.php:166
+msgid "Error in get_event_by_oid"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:170 includes/phpcdatabase.class.php:327
+msgid "Event doesn't exist with oid"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:187
+msgid "Error in get_category"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:190
+msgid "Category doesn't exist with catid"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:204
+msgid "Error in get_group"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:207
+msgid "Group doesn't exist with gid"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:221
+msgid "Error in get_groups"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:240
+msgid "Error in get_user_groups"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:266
+msgid "Error in get_categories"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:295
+msgid "Error in get_visible_categories"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:323
+msgid "Error in get_occurrence_by_oid"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:349
+msgid "Error in get_occurrences_by_eid"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:366 includes/phpcdatabase.class.php:382
+msgid "Error while removing an event."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:394
+msgid "Error while removing an occurrence."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:407 includes/phpcdatabase.class.php:448
+msgid "Error while removing a calendar"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:420
+msgid "Error while removing category."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:433
+msgid "Error while removing group."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:453
+msgid "Error while removing "
+msgstr ""
+
+#: includes/phpcdatabase.class.php:472
+msgid "Could not read permissions."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:485
+msgid "Could not get calendars."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:505
+msgid "Could not get calendar."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:519 includes/phpcdatabase.class.php:541
+msgid "Could not get user."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:557 includes/phpcdatabase.class.php:573
+msgid "Error getting user."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:589
+msgid "Error creating user."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:600 includes/phpcdatabase.class.php:612
+msgid "Error reading options"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:623
+msgid "Error creating options"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:633
+msgid "Error updating password."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:644
+msgid "Error updating timezone."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:655
+msgid "Error updating language."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:676
+msgid "Error creating event."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:703
+msgid "Error creating occurrence."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:728
+msgid "Error modifying occurrence."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:750
+msgid "Error modifying event."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:764
+msgid "Error creating category."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:777
+msgid "Error creating group."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:793
+msgid "Error modifying category."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:807
+msgid "Error modifying group."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:840
+msgid "Error during searching"
+msgstr ""
+
+#: includes/phpcdatabase.class.php:866
+msgid "Error updating user permissions."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:875
+msgid "Error getting login token."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:890
+msgid "Error adding login token."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:900
+msgid "Error updating login token."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:909
+msgid "Error removing login tokens."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:918
+msgid "Error cleaning login tokens."
+msgstr ""
+
+#: includes/phpcdatabase.class.php:928
+msgid "SQL query"
+msgstr ""
+
+#: includes/phpcevent.class.php:42
+msgid "anonymous"
+msgstr "บุคคลทั่วไป"
+
+#: includes/phpcevent.class.php:44
+msgid "unknown"
+msgstr "ไม่ทราบ"
+
+#: includes/phpcevent.class.php:70
+msgid "(No subject)"
+msgstr "(ไม่มีหัวเรื่อง)"
+
+#: includes/phpcoccurrence.class.php:53 includes/phpcoccurrence.class.php:76
+msgid "DB returned an invalid date."
+msgstr ""
+
+#: includes/phpcoccurrence.class.php:105 includes/phpcoccurrence.class.php:121
+msgid "TBA"
+msgstr ""
+
+#: includes/phpcoccurrence.class.php:116 includes/phpcoccurrence.class.php:254
+msgid "to"
+msgstr "ถึง"
+
+#: includes/search.php:35
+msgid "Invalid sort option"
+msgstr ""
+
+#: includes/search.php:41
+msgid "Invalid order option"
+msgstr ""
+
+#: includes/search.php:75
+msgid "No events matched your search criteria."
+msgstr ""
+
+#: includes/search.php:79
+msgid "Search Results"
+msgstr "ผลการค้นหา"
+
+#: includes/search.php:83
+msgid "Date Time"
+msgstr "วัน เวลา"
+
+#: includes/search.php:97
+msgid "Phrase"
+msgstr ""
+
+#: includes/search.php:105
+msgid "Sort By"
+msgstr "เรียงโดย"
+
+#: includes/search.php:108
+msgid "Order"
+msgstr ""
+
+#: includes/settings.php:45
+msgid "Change Password"
+msgstr "เปลี่ยนรหัสผ่าน"
+
+#: includes/settings.php:53
+msgid "Old Password"
+msgstr "รหัสผ่านเดิม"
+
+#: includes/settings.php:56
+msgid "New Password"
+msgstr "รหัสผ่านใหม่"
+
+#: includes/settings.php:59
+msgid "Confirm New Password"
+msgstr "ยืนยันรหัสผ่านใหม่"
+
+#: includes/settings.php:126
+msgid "Settings updated."
+msgstr "ปรับปรุงการตั้งค่า"
+
+#: includes/setup.php:78
+msgid "Possible hacking attempt on your account."
+msgstr ""
+
+#: includes/setup.php:109
+msgid "Month is out of range."
+msgstr ""
+
+#: includes/setup.php:117
+msgid "Invalid year"
+msgstr ""
+
+#: includes/translate.php:38
+msgid "Translate"
+msgstr "แปลความ"
+
+#: includes/translate.php:52
+#, php-format
+msgid "Translated \"%s\""
+msgstr ""
+
+#: includes/user_create.php:35
+msgid "You must specify a user name"
+msgstr "คุณต้องระบบผู้ใช้งาน"
+
+#: includes/user_create.php:55
+msgid "User already exists."
+msgstr "ผู้ใช้งานมีอยู่แล้ว"
+
+#: includes/user_create.php:59
+msgid "Added user. Now set its permission inside the Calendar Admin"
+msgstr ""
+
+#: includes/user_delete.php:29
+msgid "You must be an admin to delete users."
+msgstr ""
+
+#: includes/user_delete.php:34
+msgid "No user selected."
+msgstr "ไม่ได้เลือกผู้ใช้งาน"
+
+#: includes/user_permissions_submit.php:31
+msgid "No users"
+msgstr "ไม่มีผู้ใช้"
+
+#: includes/user_permissions_submit.php:59
+msgid "No changes to make."
+msgstr "ไม่สามารถทำการเปลี่ยนแปลง"
+
+#: includes/user_permissions_submit.php:61
+msgid "Updated user(s):"
+msgstr ""
+
+#: includes/util.php:73
+msgid "continue"
+msgstr "ต่อเนื่อง"
+
+#: includes/util.php:155
+msgid "Software Error"
+msgstr "โปรแกรมผิดพลาด"
+
+#: includes/util.php:156
+msgid "Message:"
+msgstr "ข้อความ:"

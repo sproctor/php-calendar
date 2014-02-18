@@ -1,0 +1,1414 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# xinmate <DISLONGJIALU@126.com>, 2013
+# xinmate <DISLONGJIALU@126.com>, 2013
+msgid ""
+msgstr ""
+"Project-Id-Version: php-calendar\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-04-29 09:20-0400\n"
+"PO-Revision-Date: 2013-11-20 11:37+0000\n"
+"Last-Translator: xinmate <DISLONGJIALU@126.com>\n"
+"Language-Team: Chinese (http://www.transifex.com/projects/p/php-calendar/language/zh/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: index.php:68
+msgid "Welcome"
+msgstr "欢迎"
+
+#: includes/admin.php:26 includes/cadmin.php:27
+msgid "You must be logged in as an admin."
+msgstr "您必须登录为管理员"
+
+#: includes/admin.php:30
+msgid "Import from PHP-Calendar 1.1"
+msgstr "从PHP-Canlendar 1.1 导入"
+
+#: includes/admin.php:32
+msgid "Generate translations"
+msgstr "生成翻译"
+
+#: includes/admin.php:36
+msgid "Version"
+msgstr "版本"
+
+#: includes/admin.php:49
+msgid "Create User"
+msgstr "新用户"
+
+#: includes/admin.php:54 includes/admin.php:97 includes/cadmin.php:63
+#: includes/cadmin.php:102 includes/settings.php:50 includes/settings.php:87
+msgid "Submit"
+msgstr "提交"
+
+#: includes/admin.php:57 includes/cadmin.php:105
+msgid "User Name"
+msgstr "用户名"
+
+#: includes/admin.php:60 includes/login.php:80
+msgid "Password"
+msgstr "密码"
+
+#: includes/admin.php:63
+msgid "Confirm Password"
+msgstr "确认密码"
+
+#: includes/admin.php:66
+msgid "Make Admin"
+msgstr "创建管理员"
+
+#: includes/admin.php:67 includes/cadmin.php:85 includes/cadmin.php:110
+#: includes/calendar.php:471
+msgid "Admin"
+msgstr "管理员"
+
+#: includes/admin.php:69 includes/admin.php:134
+msgid "Group"
+msgstr "组"
+
+#: includes/admin.php:92
+msgid "Create Calendar"
+msgstr "创建日程表"
+
+#: includes/admin.php:108
+msgid "Calendar"
+msgstr "日程表"
+
+#: includes/admin.php:109 includes/admin.php:135
+msgid "Action"
+msgstr "状态"
+
+#: includes/admin.php:123
+msgid "Calendar List"
+msgstr "日程表"
+
+#: includes/admin.php:133 includes/login.php:77
+msgid "Username"
+msgstr "用户名"
+
+#: includes/admin.php:145
+msgid "User List"
+msgstr "用户"
+
+#: includes/cadmin.php:59
+msgid "Options"
+msgstr "选项"
+
+#: includes/cadmin.php:81 includes/cadmin.php:106
+msgid "Read"
+msgstr "读取"
+
+#: includes/cadmin.php:82 includes/cadmin.php:107
+msgid "Write"
+msgstr "写入"
+
+#: includes/cadmin.php:83 includes/event_form.php:110
+msgid "Read-only"
+msgstr "只读"
+
+#: includes/cadmin.php:84 includes/cadmin.php:109 includes/display_day.php:93
+#: includes/display_event.php:76 includes/display_event.php:162
+msgid "Modify"
+msgstr "修改"
+
+#: includes/cadmin.php:98
+msgid "User Permissions"
+msgstr "用户权限"
+
+#: includes/cadmin.php:108
+msgid "Can Create Read-Only"
+msgstr "建立只读"
+
+#: includes/cadmin.php:123 includes/cadmin.php:172
+msgid "No Name"
+msgstr "没有名称"
+
+#: includes/cadmin.php:131 includes/cadmin.php:177
+#: includes/display_event.php:193
+msgid "Edit"
+msgstr "修改"
+
+#: includes/cadmin.php:136 includes/cadmin.php:181
+#: includes/display_event.php:78 includes/display_event.php:166
+msgid "Delete"
+msgstr "删除"
+
+#: includes/cadmin.php:143
+msgid "Create category"
+msgstr "创建分类"
+
+#: includes/cadmin.php:146
+msgid "Calendar Categories"
+msgstr "日历分类"
+
+#: includes/cadmin.php:149 includes/cadmin.php:193
+#: includes/category_form.php:28 includes/group_form.php:28
+msgid "Name"
+msgstr "名称"
+
+#: includes/cadmin.php:150
+msgid "Text Color"
+msgstr "文字颜色"
+
+#: includes/cadmin.php:151
+msgid "Background Color"
+msgstr "背景颜色"
+
+#: includes/cadmin.php:152
+msgid "Visible to User Group"
+msgstr "当前用户组"
+
+#: includes/cadmin.php:153 includes/cadmin.php:194
+msgid "Actions"
+msgstr "状态"
+
+#: includes/cadmin.php:187
+msgid "Create group"
+msgstr "创建用户组"
+
+#: includes/cadmin.php:190
+msgid "Calendar Groups"
+msgstr "日程表群组"
+
+#: includes/cadmin_submit.php:26 includes/create_calendar.php:27
+#: includes/user_create.php:27 includes/user_permissions_submit.php:27
+msgid "Permission denied"
+msgstr "没有权限"
+
+#: includes/cadmin_submit.php:39
+msgid " was not set."
+msgstr "没有设置"
+
+#: includes/cadmin_submit.php:46
+msgid "Updated options"
+msgstr "更新选项"
+
+#: includes/calendar_delete.php:29
+msgid "No calendar selected."
+msgstr "没有日程表选择"
+
+#: includes/calendar_delete.php:45 includes/category_delete.php:49
+#: includes/event_delete.php:46 includes/group_delete.php:49
+#: includes/occurrence_delete.php:48 includes/user_delete.php:50
+msgid "Confirm you want to delete:"
+msgstr "确认删除"
+
+#: includes/calendar_delete.php:47 includes/category_delete.php:51
+#: includes/event_delete.php:48 includes/group_delete.php:51
+#: includes/occurrence_delete.php:50 includes/user_delete.php:52
+msgid "Confirm"
+msgstr "确认"
+
+#: includes/calendar_delete.php:50 includes/category_delete.php:54
+#: includes/event_delete.php:51 includes/group_delete.php:54
+#: includes/occurrence_delete.php:53 includes/user_delete.php:55
+msgid "Deny"
+msgstr "拒绝"
+
+#: includes/calendar_delete.php:58
+msgid "You do not have permission to remove calendar"
+msgstr "你没有权限删除日程表"
+
+#: includes/calendar_delete.php:63
+msgid "Removed calendar"
+msgstr "删除日程表"
+
+#: includes/calendar_delete.php:65
+msgid "Could not remove calendar"
+msgstr "无法删除日程表"
+
+#: includes/calendar.php:112 includes/settings.php:93
+msgid "Language"
+msgstr "语言"
+
+#: includes/calendar.php:113 includes/settings.php:90
+msgid "Timezone"
+msgstr "时区"
+
+#: includes/calendar.php:425 includes/settings.php:81
+msgid "Settings"
+msgstr "设置"
+
+#: includes/calendar.php:428
+msgid "Log out"
+msgstr "登出"
+
+#: includes/calendar.php:432 includes/login.php:57 includes/login.php:68
+msgid "Log in"
+msgstr "登录"
+
+#: includes/calendar.php:450
+msgid "Add Event"
+msgstr "新增日程"
+
+#: includes/calendar.php:454 includes/search.php:96 includes/search.php:111
+msgid "Search"
+msgstr "搜索"
+
+#: includes/calendar.php:458
+msgid "View Month"
+msgstr "月视图"
+
+#: includes/calendar.php:463
+msgid "View date"
+msgstr "日视图"
+
+#: includes/calendar.php:467
+msgid "Calendar Admin"
+msgstr "日程表管理"
+
+#: includes/calendar.php:502 includes/calendar.php:563
+#: includes/calendar.php:572 includes/settings.php:71
+msgid "Default"
+msgstr "默认"
+
+#: includes/calendar.php:508
+msgid "Week Start"
+msgstr "每周从星期几开始"
+
+#: includes/calendar.php:510 includes/globals.php:38
+msgid "Sunday"
+msgstr "星期日"
+
+#: includes/calendar.php:511 includes/globals.php:39
+msgid "Monday"
+msgstr "星期一"
+
+#: includes/calendar.php:512 includes/globals.php:44
+msgid "Saturday"
+msgstr "星期六"
+
+#: includes/calendar.php:514
+msgid "24 Hour Time"
+msgstr "24小时制"
+
+#: includes/calendar.php:515
+msgid "Calendar Title"
+msgstr "日程表标题"
+
+#: includes/calendar.php:516
+msgid "Maximum Subject Length"
+msgstr "限制标题字数"
+
+#: includes/calendar.php:517
+msgid "Events Display Daily Maximum"
+msgstr "显示几列日程"
+
+#: includes/calendar.php:518
+msgid "Public Permissions"
+msgstr "公共权限"
+
+#: includes/calendar.php:520
+msgid "Cannot read nor write events"
+msgstr "不能读取或写入日程"
+
+#: includes/calendar.php:521
+msgid "Can read but not write events"
+msgstr "可以读取但不能写入日程"
+
+#: includes/calendar.php:522
+msgid "Can create but not modify events"
+msgstr "可以创建但不能修改日程"
+
+#: includes/calendar.php:523
+msgid "Can create and modify events"
+msgstr "可以创建和修改事务"
+
+#: includes/calendar.php:526
+msgid "Default Timezone"
+msgstr "默认时区"
+
+#: includes/calendar.php:527
+msgid "Default Language"
+msgstr "默认语言"
+
+#: includes/calendar.php:529
+msgid "Date Format"
+msgstr "日期格式"
+
+#: includes/calendar.php:531
+msgid "Theme"
+msgstr "主题"
+
+#: includes/calendar.php:590
+msgid "Month Day Year"
+msgstr "月日年"
+
+#: includes/calendar.php:591
+msgid "Year Month Day"
+msgstr "年月日"
+
+#: includes/calendar.php:592
+msgid "Day Month Year"
+msgstr "日月年"
+
+#: includes/calendar.php:648
+msgid "You do not have permission to do that: "
+msgstr "你没有权限执行"
+
+#: includes/calendar.php:661 includes/util.php:154
+msgid "Error"
+msgstr "出错"
+
+#: includes/calendar.php:663 includes/util.php:158
+msgid "Backtrace"
+msgstr "返回"
+
+#: includes/calendar.php:675
+msgid "Invalid action"
+msgstr "命令无效"
+
+#: includes/calendar.php:723
+msgid "Secret token mismatch. Possible request forgery attempt."
+msgstr "秘钥不匹配，可能有伪造企图"
+
+#: includes/calendar.php:796
+msgid "Unsupported config type"
+msgstr "不支持的配置类型"
+
+#: includes/category_delete.php:29
+msgid "No category selected."
+msgstr "没有选择类别"
+
+#: includes/category_delete.php:63
+msgid "You do not have permission to delete category: "
+msgstr "你没有权限删除类别"
+
+#: includes/category_delete.php:68
+msgid "Removed category: "
+msgstr "删除类别"
+
+#: includes/category_delete.php:71
+msgid "Could not remove category: "
+msgstr "无法删除类别"
+
+#: includes/category_form.php:27
+msgid "Category Form"
+msgstr "类别形式"
+
+#: includes/category_form.php:42
+msgid "Visible to groups"
+msgstr "当前组"
+
+#: includes/category_form.php:43 includes/event_form.php:113
+msgid "None"
+msgstr "分类"
+
+#: includes/category_submit.php:33
+msgid "Color not specified."
+msgstr "没有指定颜色"
+
+#: includes/category_submit.php:43
+msgid "Invalid color."
+msgstr "颜色无效"
+
+#: includes/category_submit.php:51
+msgid "You do not have permission to add categories to all calendars."
+msgstr "你没有权限在所有的日程表中添加类别"
+
+#: includes/category_submit.php:56
+msgid "You do not have permission to add categories to this calendar."
+msgstr "你没有权限在这个日程表中添加类别"
+
+#: includes/category_submit.php:69
+msgid "You do not have permission to modify this category."
+msgstr "您没有权限修改此类别"
+
+#: includes/category_submit.php:78
+msgid "Modified category: "
+msgstr "更改类别"
+
+#: includes/category_submit.php:82
+msgid "Created category: "
+msgstr "建立分类"
+
+#: includes/category_submit.php:86
+msgid "Error submitting category."
+msgstr "提交分类出错"
+
+#: includes/create_calendar.php:54
+msgid "Calendar created."
+msgstr "已创建分类"
+
+#: includes/display_day.php:45
+msgid "Title"
+msgstr "标题"
+
+#: includes/display_day.php:46 includes/form.php:433
+msgid "Time"
+msgstr "时间"
+
+#: includes/display_day.php:47 includes/display_event.php:127
+#: includes/display_event.php:171 includes/event_form.php:44
+#: includes/search.php:84
+msgid "Description"
+msgstr "描述"
+
+#: includes/display_day.php:58
+msgid "Delete Selected"
+msgstr "删除已选定"
+
+#: includes/display_day.php:115
+msgid "No events on this day."
+msgstr "今日无日程"
+
+#: includes/display_event.php:41
+msgid "Invalid arguments."
+msgstr "无效参数"
+
+#: includes/display_event.php:53 includes/display_event.php:142
+msgid "You do not have permission to read this event."
+msgstr "您没有权限读取此事务"
+
+#: includes/display_event.php:57 includes/display_event.php:146
+#: includes/display_event.php:218
+msgid "by"
+msgstr "申请人"
+
+#: includes/display_event.php:62 includes/display_event.php:156
+#: includes/display_event.php:226 includes/event_form.php:112
+msgid "Category"
+msgstr "类别"
+
+#: includes/display_event.php:66 includes/event_form.php:46
+#: includes/occur_form.php:41
+msgid "When"
+msgstr "时限"
+
+#: includes/display_event.php:68 includes/display_event.php:149
+msgid "Created at: "
+msgstr "创建："
+
+#: includes/display_event.php:70
+msgid "Last modified at: "
+msgstr "最后修改："
+
+#: includes/display_event.php:80
+msgid "Modify Occurrence"
+msgstr "修改记录"
+
+#: includes/display_event.php:82
+msgid "Remove Occurrence"
+msgstr "删除记录"
+
+#: includes/display_event.php:101
+msgid "Previous occurrence on"
+msgstr "上次记录"
+
+#: includes/display_event.php:111
+msgid "Next occurrence on"
+msgstr "下次记录"
+
+#: includes/display_event.php:117
+msgid "View All Occurrences"
+msgstr "查看所有记录"
+
+#: includes/display_event.php:164
+msgid "Add Occurrence"
+msgstr "添加记录"
+
+#: includes/display_event.php:187 includes/occurrence_delete.php:45
+#: includes/phpcoccurrence.class.php:244 includes/phpcoccurrence.class.php:253
+#: includes/phpcoccurrence.class.php:255
+msgid "at"
+msgstr "在"
+
+#: includes/display_event.php:194
+msgid "Remove"
+msgstr "删除"
+
+#: includes/display_event.php:201
+msgid "Occurrences"
+msgstr "记录"
+
+#: includes/display_event.php:228
+msgid "from"
+msgstr "从"
+
+#: includes/display_month.php:32
+msgid "Week"
+msgstr "星期"
+
+#: includes/display_month.php:78
+msgid "last year"
+msgstr "去年"
+
+#: includes/display_month.php:80
+msgid "last month"
+msgstr "下一个月"
+
+#: includes/display_month.php:90
+msgid "next month"
+msgstr "上一个月"
+
+#: includes/display_month.php:92
+msgid "next year"
+msgstr "明年"
+
+#: includes/display_month.php:254
+msgid "View Additional Events"
+msgstr "日程显示"
+
+#: includes/display_month.php:268
+msgid "continued"
+msgstr "继续"
+
+#: includes/event_delete.php:29
+msgid "No event selected."
+msgstr "没有选取日程"
+
+#: includes/event_delete.php:75
+msgid "Removed event"
+msgstr "删除日程"
+
+#: includes/event_delete.php:77
+msgid "Removed events"
+msgstr "批量删除日程"
+
+#: includes/event_delete.php:84
+msgid "Could not remove event"
+msgstr "不能删除日程"
+
+#: includes/event_delete.php:86
+msgid "Could not remove events"
+msgstr "不能批量删除日程"
+
+#: includes/event_delete.php:93
+msgid "You do not have permission to remove event"
+msgstr "你没有权限删除日程"
+
+#: includes/event_delete.php:95
+msgid "You do not have permission to remove events"
+msgstr "你没有权限批量删除日程"
+
+#: includes/event_form.php:40
+msgid "Event Form"
+msgstr "日程表单"
+
+#: includes/event_form.php:41 includes/globals.php:70 includes/search.php:82
+msgid "Subject"
+msgstr "主题"
+
+#: includes/event_form.php:50
+msgid "Change the event date and time"
+msgstr "改变日程的日期和时间"
+
+#: includes/event_form.php:53 includes/occur_form.php:43
+#: includes/phpcoccurrence.class.php:252 includes/search.php:101
+msgid "From"
+msgstr "从"
+
+#: includes/event_form.php:54 includes/occur_form.php:44
+#: includes/search.php:103
+msgid "To"
+msgstr "到"
+
+#: includes/event_form.php:57 includes/occur_form.php:47
+msgid "Time Type"
+msgstr "时间类型"
+
+#: includes/event_form.php:58 includes/occur_form.php:48
+msgid "Normal"
+msgstr "普通"
+
+#: includes/event_form.php:59 includes/occur_form.php:49
+msgid "Full Day"
+msgstr "全天"
+
+#: includes/event_form.php:60 includes/occur_form.php:50
+msgid "To Be Announced"
+msgstr "公告"
+
+#: includes/event_form.php:66
+msgid "Repeats"
+msgstr "重复"
+
+#: includes/event_form.php:68
+msgid "Never"
+msgstr "永不"
+
+#: includes/event_form.php:70
+msgid "Daily"
+msgstr "每日"
+
+#: includes/event_form.php:72
+msgid "Weekly"
+msgstr "每周"
+
+#: includes/event_form.php:74
+msgid "Monthly"
+msgstr "每月"
+
+#: includes/event_form.php:76
+msgid "Yearly"
+msgstr "每年"
+
+#: includes/event_form.php:78 includes/event_form.php:85
+#: includes/event_form.php:92 includes/event_form.php:99
+msgid "Every"
+msgstr "每"
+
+#: includes/event_form.php:79
+msgid "Repeat every how many days?"
+msgstr "重复间隔多少天？"
+
+#: includes/event_form.php:82 includes/event_form.php:90
+#: includes/event_form.php:97 includes/event_form.php:104
+msgid "Until"
+msgstr "直到"
+
+#: includes/event_form.php:86
+msgid "Repeat every how many weeks?"
+msgstr "重复间隔多少周？"
+
+#: includes/event_form.php:93
+msgid "Repeat every how many months?"
+msgstr "重复间隔多少月？"
+
+#: includes/event_form.php:100
+msgid "Repeat every how many years?"
+msgstr "重复间隔多少年？"
+
+#: includes/event_form.php:128 includes/import_form.php:53
+msgid "Submit Event"
+msgstr "确认日程"
+
+#: includes/event_form.php:295 includes/occur_form.php:131
+msgid "Unrecognized Time Type."
+msgstr "无法识别的时间类型"
+
+#: includes/event_form.php:300 includes/occur_form.php:136
+msgid "An event cannot have an end earlier than its start."
+msgstr "一个日程的结束不能早于它的开始"
+
+#: includes/event_form.php:308 includes/occur_form.php:141
+msgid "You do not have permission to write to this calendar."
+msgstr "您没有权限写入该日程"
+
+#: includes/event_form.php:341
+msgid "Required field \"every-day\" is not set."
+msgstr "必填字段 \"every-day\"未设置"
+
+#: includes/event_form.php:344
+msgid "every-day must be greater than 1"
+msgstr "每天必须大于1"
+
+#: includes/event_form.php:360
+msgid "Required field \"every-week\" is not set."
+msgstr "必填字段 \"every-week\"未设置"
+
+#: includes/event_form.php:362
+msgid "every-week must be greater than 1"
+msgstr "星期必须大于1"
+
+#: includes/event_form.php:379
+msgid "Required field \"every-month\" is not set."
+msgstr "必填字段 \"every-month\"未设置"
+
+#: includes/event_form.php:381 includes/event_form.php:400
+msgid "every-month must be greater than 1"
+msgstr "每月必须大于1"
+
+#: includes/event_form.php:398
+msgid "Required field \"every-year\" is not set."
+msgstr "必填字段 \"every-year\"未设置"
+
+#: includes/event_form.php:416
+msgid "Invalid event type."
+msgstr "无效日程类型"
+
+#: includes/event_form.php:422
+msgid "Modified event: "
+msgstr "修改日程"
+
+#: includes/event_form.php:424
+msgid "Created event: "
+msgstr "建立日程"
+
+#: includes/event_form.php:431
+msgid "Error submitting event."
+msgstr "提交事务出错"
+
+#: includes/event_form.php:441 includes/occur_form.php:177
+#, php-format
+msgid "Required field \"%s\" year was not set."
+msgstr "必需字段 \"%s\"年未设定"
+
+#: includes/event_form.php:450 includes/occur_form.php:186
+#, php-format
+msgid "Malformed time in \"%s\" time."
+msgstr "错误的时间在 \"%s\" 时间"
+
+#: includes/event_form.php:464
+msgid "Unrecognized period: "
+msgstr "未期"
+
+#: includes/event_form.php:471 includes/occur_form.php:195
+#, php-format
+msgid "Malformed time in \"%s\" date."
+msgstr "错误的日期在 \"%s\" 日期"
+
+#: includes/form.php:32
+msgid "required"
+msgstr "请求"
+
+#: includes/form.php:102
+msgid "Cannot add a non-form element to a form."
+msgstr "不能给一个表单添加非表单元素"
+
+#: includes/form.php:430
+msgid "Date"
+msgstr "日期"
+
+#: includes/globals.php:23
+msgid "January"
+msgstr "一月"
+
+#: includes/globals.php:24
+msgid "February"
+msgstr "二月"
+
+#: includes/globals.php:25
+msgid "March"
+msgstr "三月"
+
+#: includes/globals.php:26
+msgid "April"
+msgstr "四月"
+
+#: includes/globals.php:27 includes/globals.php:52
+msgid "May"
+msgstr "五月"
+
+#: includes/globals.php:28
+msgid "June"
+msgstr "六月"
+
+#: includes/globals.php:29
+msgid "July"
+msgstr "七月"
+
+#: includes/globals.php:30
+msgid "August"
+msgstr "八月"
+
+#: includes/globals.php:31
+msgid "September"
+msgstr "九月"
+
+#: includes/globals.php:32
+msgid "October"
+msgstr "十月"
+
+#: includes/globals.php:33
+msgid "November"
+msgstr "十一月"
+
+#: includes/globals.php:34
+msgid "December"
+msgstr "十二月"
+
+#: includes/globals.php:40
+msgid "Tuesday"
+msgstr "星期二"
+
+#: includes/globals.php:41
+msgid "Wednesday"
+msgstr "星期三"
+
+#: includes/globals.php:42
+msgid "Thursday"
+msgstr "星期四"
+
+#: includes/globals.php:43
+msgid "Friday"
+msgstr "星期五"
+
+#: includes/globals.php:48
+msgid "Jan"
+msgstr "一月"
+
+#: includes/globals.php:49
+msgid "Feb"
+msgstr "二月"
+
+#: includes/globals.php:50
+msgid "Mar"
+msgstr "三月"
+
+#: includes/globals.php:51
+msgid "Apr"
+msgstr "四月"
+
+#: includes/globals.php:53
+msgid "Jun"
+msgstr "六月"
+
+#: includes/globals.php:54
+msgid "Jul"
+msgstr "七月"
+
+#: includes/globals.php:55
+msgid "Aug"
+msgstr "八月"
+
+#: includes/globals.php:56
+msgid "Sep"
+msgstr "九月"
+
+#: includes/globals.php:57
+msgid "Oct"
+msgstr "十月"
+
+#: includes/globals.php:58
+msgid "Nov"
+msgstr "十一月"
+
+#: includes/globals.php:59
+msgid "Dec"
+msgstr "十二月"
+
+#: includes/globals.php:69
+msgid "Start Date"
+msgstr "开始日期"
+
+#: includes/globals.php:74
+msgid "Ascending"
+msgstr "升序"
+
+#: includes/globals.php:75
+msgid "Descending"
+msgstr "降序"
+
+#: includes/group_delete.php:29
+msgid "No group selected."
+msgstr "没有选择群组"
+
+#: includes/group_delete.php:63
+msgid "You do not have permission to delete group: "
+msgstr "你没有权限删除群组"
+
+#: includes/group_delete.php:68
+msgid "Removed group: "
+msgstr "删除群组"
+
+#: includes/group_delete.php:71
+msgid "Could not remove group: "
+msgstr "无法删除群组"
+
+#: includes/group_form.php:27
+msgid "Group Form"
+msgstr "从群组"
+
+#: includes/group_submit.php:32
+msgid "You do not have permission to add a global group."
+msgstr "你没有权限添加全局群组"
+
+#: includes/group_submit.php:37
+msgid "You do not have permission to add a group to this calendar."
+msgstr "你没有权限在日程表中添加群组"
+
+#: includes/group_submit.php:49
+msgid "You do not have permission to modify this group."
+msgstr "你没有权限修改此群组"
+
+#: includes/group_submit.php:57
+msgid "Modified group: "
+msgstr "更改群组"
+
+#: includes/group_submit.php:61
+msgid "Created group: "
+msgstr "新增群组"
+
+#: includes/group_submit.php:65
+msgid "Error submitting group."
+msgstr "提交群组出错"
+
+#: includes/import_form.php:28 includes/translate.php:28
+msgid "Need to be admin"
+msgstr "需要管理员"
+
+#: includes/import_form.php:42
+msgid "Import Form"
+msgstr "输入形式"
+
+#: includes/import_form.php:43
+msgid "MySQL Host Name"
+msgstr "MySQL主机名"
+
+#: includes/import_form.php:44
+msgid "MySQL Database Name"
+msgstr "MySQL 数据库名"
+
+#: includes/import_form.php:45
+msgid "MySQL Port Number"
+msgstr "MySQL 端口"
+
+#: includes/import_form.php:45
+msgid "Leave blank for default"
+msgstr "默认为空"
+
+#: includes/import_form.php:46
+msgid "MySQL User Name"
+msgstr "MySQL用户名"
+
+#: includes/import_form.php:47
+msgid "MySQL User Password"
+msgstr "MySQL用户密码"
+
+#: includes/import_form.php:48
+msgid "PHP-Calendar Table Prefix"
+msgstr "PHP-Calendar表前缀"
+
+#: includes/import_form.php:103
+msgid "Error selecting events in import"
+msgstr "选择日程输入错误"
+
+#: includes/import_form.php:184
+#, php-format
+msgid "Created %s events with %s occurences"
+msgstr "创建 %s 日程 %s 记录"
+
+#: includes/login.php:39
+msgid "Logged in."
+msgstr "登录"
+
+#: includes/login.php:42
+msgid "Sorry, Invalid Login"
+msgstr "对不起，无效的登录"
+
+#: includes/login.php:72
+msgid "You must have cookies enabled to login."
+msgstr "您必须启用Cookies才能登录"
+
+#: includes/logout.php:29
+msgid "Loggin out..."
+msgstr "退出登录"
+
+#: includes/occur_form.php:39
+msgid "Occurrence Form"
+msgstr "记录表单"
+
+#: includes/occur_form.php:102
+msgid "Submit Occurrence"
+msgstr "确认记录"
+
+#: includes/occur_form.php:112
+msgid "Cannot create occurrence."
+msgstr "不能创建记录"
+
+#: includes/occur_form.php:146
+msgid "EID not set."
+msgstr "未设置EID"
+
+#: includes/occur_form.php:158
+msgid "Modified occurence: "
+msgstr "修改记录"
+
+#: includes/occur_form.php:160
+msgid "Created occurence: "
+msgstr "创建记录"
+
+#: includes/occur_form.php:167
+msgid "Error submitting occurrence."
+msgstr "确认记录错误"
+
+#: includes/occurrence_delete.php:29
+msgid "No occurrence selected."
+msgstr "没有记录选择"
+
+#: includes/occurrence_delete.php:79
+msgid "Removed occurrence"
+msgstr "删除记录"
+
+#: includes/occurrence_delete.php:81
+msgid "Removed occurrences"
+msgstr "批量删除记录"
+
+#: includes/occurrence_delete.php:88
+msgid "Could not remove occurrence"
+msgstr "无法删除记录"
+
+#: includes/occurrence_delete.php:90
+msgid "Could not remove occurrences"
+msgstr "无法批量删除记录"
+
+#: includes/occurrence_delete.php:97
+msgid "You do not have permission to remove the occurrence."
+msgstr "你没有权限删除记录"
+
+#: includes/occurrence_delete.php:99
+msgid "You do not have permission to remove occurrences."
+msgstr "你没有权限批量删除记录"
+
+#: includes/password_submit.php:27
+msgid "You must be logged in."
+msgstr "你必须登录"
+
+#: includes/password_submit.php:33
+msgid "You do not have permission to change your password."
+msgstr "你没有权限修改你的密码"
+
+#: includes/password_submit.php:36
+msgid "You must specify your old password."
+msgstr "你必须指定您的旧密码"
+
+#: includes/password_submit.php:42
+msgid "The password you entered did not match your old password."
+msgstr "您输入的密码不匹配你的旧密码"
+
+#: includes/password_submit.php:46 includes/user_create.php:40
+msgid "You must specify a password"
+msgstr "您必须指定一个密码"
+
+#: includes/password_submit.php:51 includes/user_create.php:46
+msgid "Your passwords did not match"
+msgstr "你的密码不匹配"
+
+#: includes/password_submit.php:58
+msgid "Password updated."
+msgstr "修改密码成功"
+
+#: includes/phpccalendar.class.php:51
+msgid "(No title)"
+msgstr "(无标题)"
+
+#: includes/phpcdatabase.class.php:92
+msgid "Error in get_occurrences_by_date_range"
+msgstr "在get_occurrences_by_date_range发生错误"
+
+#: includes/phpcdatabase.class.php:140
+msgid "Error in get_event_by_eid"
+msgstr "在get_event_by_eid发生错误"
+
+#: includes/phpcdatabase.class.php:144
+msgid "Event doesn't exist"
+msgstr "日程不存在"
+
+#: includes/phpcdatabase.class.php:166
+msgid "Error in get_event_by_oid"
+msgstr "在get_event_by_oid发生错误"
+
+#: includes/phpcdatabase.class.php:170 includes/phpcdatabase.class.php:327
+msgid "Event doesn't exist with oid"
+msgstr "日程不存在在oid"
+
+#: includes/phpcdatabase.class.php:187
+msgid "Error in get_category"
+msgstr "在get_category发生错误"
+
+#: includes/phpcdatabase.class.php:190
+msgid "Category doesn't exist with catid"
+msgstr "在catid中不存在类别"
+
+#: includes/phpcdatabase.class.php:204
+msgid "Error in get_group"
+msgstr "在get_group发生错误"
+
+#: includes/phpcdatabase.class.php:207
+msgid "Group doesn't exist with gid"
+msgstr "在gid中不存在群组"
+
+#: includes/phpcdatabase.class.php:221
+msgid "Error in get_groups"
+msgstr "在get_groups发生错误"
+
+#: includes/phpcdatabase.class.php:240
+msgid "Error in get_user_groups"
+msgstr "在get_user_groups发生错误"
+
+#: includes/phpcdatabase.class.php:266
+msgid "Error in get_categories"
+msgstr "在get_categories发生错误"
+
+#: includes/phpcdatabase.class.php:295
+msgid "Error in get_visible_categories"
+msgstr "在get_visible_categories发生错误"
+
+#: includes/phpcdatabase.class.php:323
+msgid "Error in get_occurrence_by_oid"
+msgstr "在get_occurrence_by_oid发生错误"
+
+#: includes/phpcdatabase.class.php:349
+msgid "Error in get_occurrences_by_eid"
+msgstr "在get_occurrences_by_eid发生错误"
+
+#: includes/phpcdatabase.class.php:366 includes/phpcdatabase.class.php:382
+msgid "Error while removing an event."
+msgstr "移除日程时发送错误"
+
+#: includes/phpcdatabase.class.php:394
+msgid "Error while removing an occurrence."
+msgstr "移除记录时发生错误"
+
+#: includes/phpcdatabase.class.php:407 includes/phpcdatabase.class.php:448
+msgid "Error while removing a calendar"
+msgstr "移除日程表时发生错误"
+
+#: includes/phpcdatabase.class.php:420
+msgid "Error while removing category."
+msgstr "移除分类时发生错误"
+
+#: includes/phpcdatabase.class.php:433
+msgid "Error while removing group."
+msgstr "删除群组时发生错误"
+
+#: includes/phpcdatabase.class.php:453
+msgid "Error while removing "
+msgstr "删除时发生错误"
+
+#: includes/phpcdatabase.class.php:472
+msgid "Could not read permissions."
+msgstr "无法读取权限"
+
+#: includes/phpcdatabase.class.php:485
+msgid "Could not get calendars."
+msgstr "无法批量取得日程表"
+
+#: includes/phpcdatabase.class.php:505
+msgid "Could not get calendar."
+msgstr "无法取得日程表"
+
+#: includes/phpcdatabase.class.php:519 includes/phpcdatabase.class.php:541
+msgid "Could not get user."
+msgstr "无法取得用户信息"
+
+#: includes/phpcdatabase.class.php:557 includes/phpcdatabase.class.php:573
+msgid "Error getting user."
+msgstr "读取用户时出错"
+
+#: includes/phpcdatabase.class.php:589
+msgid "Error creating user."
+msgstr "添加用户是出错"
+
+#: includes/phpcdatabase.class.php:600 includes/phpcdatabase.class.php:612
+msgid "Error reading options"
+msgstr "读取选项出错"
+
+#: includes/phpcdatabase.class.php:623
+msgid "Error creating options"
+msgstr "创建选项出错"
+
+#: includes/phpcdatabase.class.php:633
+msgid "Error updating password."
+msgstr "更新密码出错"
+
+#: includes/phpcdatabase.class.php:644
+msgid "Error updating timezone."
+msgstr "更新时区出错"
+
+#: includes/phpcdatabase.class.php:655
+msgid "Error updating language."
+msgstr "更新语言出错"
+
+#: includes/phpcdatabase.class.php:676
+msgid "Error creating event."
+msgstr "创建日程出错"
+
+#: includes/phpcdatabase.class.php:703
+msgid "Error creating occurrence."
+msgstr "创建记录出错"
+
+#: includes/phpcdatabase.class.php:728
+msgid "Error modifying occurrence."
+msgstr "修改记录出错"
+
+#: includes/phpcdatabase.class.php:750
+msgid "Error modifying event."
+msgstr "修改日程出错"
+
+#: includes/phpcdatabase.class.php:764
+msgid "Error creating category."
+msgstr "创建分类出错"
+
+#: includes/phpcdatabase.class.php:777
+msgid "Error creating group."
+msgstr "添加群组时发生错误"
+
+#: includes/phpcdatabase.class.php:793
+msgid "Error modifying category."
+msgstr "修改分类出错"
+
+#: includes/phpcdatabase.class.php:807
+msgid "Error modifying group."
+msgstr "修改群组时发生错误"
+
+#: includes/phpcdatabase.class.php:840
+msgid "Error during searching"
+msgstr "搜索时出错"
+
+#: includes/phpcdatabase.class.php:866
+msgid "Error updating user permissions."
+msgstr "更新用户权限出错"
+
+#: includes/phpcdatabase.class.php:875
+msgid "Error getting login token."
+msgstr "获取登录秘钥出错"
+
+#: includes/phpcdatabase.class.php:890
+msgid "Error adding login token."
+msgstr "添加登录秘钥出错"
+
+#: includes/phpcdatabase.class.php:900
+msgid "Error updating login token."
+msgstr "更新登录秘钥出错"
+
+#: includes/phpcdatabase.class.php:909
+msgid "Error removing login tokens."
+msgstr "修改登录秘钥出错"
+
+#: includes/phpcdatabase.class.php:918
+msgid "Error cleaning login tokens."
+msgstr "清除登录秘钥出错"
+
+#: includes/phpcdatabase.class.php:928
+msgid "SQL query"
+msgstr "SQL查询"
+
+#: includes/phpcevent.class.php:42
+msgid "anonymous"
+msgstr "匿名"
+
+#: includes/phpcevent.class.php:44
+msgid "unknown"
+msgstr "不明"
+
+#: includes/phpcevent.class.php:70
+msgid "(No subject)"
+msgstr "(没有主题)"
+
+#: includes/phpcoccurrence.class.php:53 includes/phpcoccurrence.class.php:76
+msgid "DB returned an invalid date."
+msgstr "DB返回一个无效的日期"
+
+#: includes/phpcoccurrence.class.php:105 includes/phpcoccurrence.class.php:121
+msgid "TBA"
+msgstr "公告"
+
+#: includes/phpcoccurrence.class.php:116 includes/phpcoccurrence.class.php:254
+msgid "to"
+msgstr "到："
+
+#: includes/search.php:35
+msgid "Invalid sort option"
+msgstr "无效的排序选项"
+
+#: includes/search.php:41
+msgid "Invalid order option"
+msgstr "无效的命令选项"
+
+#: includes/search.php:75
+msgid "No events matched your search criteria."
+msgstr "没有日程符合搜索条件"
+
+#: includes/search.php:79
+msgid "Search Results"
+msgstr "搜寻结果"
+
+#: includes/search.php:83
+msgid "Date Time"
+msgstr "日期时间"
+
+#: includes/search.php:97
+msgid "Phrase"
+msgstr "关键词"
+
+#: includes/search.php:105
+msgid "Sort By"
+msgstr "排序依"
+
+#: includes/search.php:108
+msgid "Order"
+msgstr "次序"
+
+#: includes/settings.php:45
+msgid "Change Password"
+msgstr "更改密码"
+
+#: includes/settings.php:53
+msgid "Old Password"
+msgstr "旧密码"
+
+#: includes/settings.php:56
+msgid "New Password"
+msgstr "新密码"
+
+#: includes/settings.php:59
+msgid "Confirm New Password"
+msgstr "确认新密码"
+
+#: includes/settings.php:126
+msgid "Settings updated."
+msgstr "设置更新"
+
+#: includes/setup.php:78
+msgid "Possible hacking attempt on your account."
+msgstr "可能黑客攻击盗用你的账号"
+
+#: includes/setup.php:109
+msgid "Month is out of range."
+msgstr "月的范围"
+
+#: includes/setup.php:117
+msgid "Invalid year"
+msgstr "无效年"
+
+#: includes/translate.php:38
+msgid "Translate"
+msgstr "翻译"
+
+#: includes/translate.php:52
+#, php-format
+msgid "Translated \"%s\""
+msgstr "翻译 \"%s\""
+
+#: includes/user_create.php:35
+msgid "You must specify a user name"
+msgstr "您必须指定一个用户名"
+
+#: includes/user_create.php:55
+msgid "User already exists."
+msgstr "用户已经存在"
+
+#: includes/user_create.php:59
+msgid "Added user. Now set its permission inside the Calendar Admin"
+msgstr "添加用户，并加入日程表管理权限"
+
+#: includes/user_delete.php:29
+msgid "You must be an admin to delete users."
+msgstr "你必须是管理员才能删除用户"
+
+#: includes/user_delete.php:34
+msgid "No user selected."
+msgstr "无用户删除"
+
+#: includes/user_permissions_submit.php:31
+msgid "No users"
+msgstr "没有用户"
+
+#: includes/user_permissions_submit.php:59
+msgid "No changes to make."
+msgstr "没有改变"
+
+#: includes/user_permissions_submit.php:61
+msgid "Updated user(s):"
+msgstr "更新用户(s)"
+
+#: includes/util.php:73
+msgid "continue"
+msgstr "继续"
+
+#: includes/util.php:155
+msgid "Software Error"
+msgstr "软件错误"
+
+#: includes/util.php:156
+msgid "Message:"
+msgstr "信息："
