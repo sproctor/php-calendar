@@ -5,13 +5,14 @@
 # Translators:
 # MKwiakaku <transifex@mudkips.nl>, 2013-2014
 # MKwiakaku <transifex@mudkips.nl>, 2013
+# Vivianneb <vjm.daniels@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: php-calendar\n"
 "Report-Msgid-Bugs-To: sproctor@gmail.com\n"
 "POT-Creation-Date: 2014-02-18 09:54-0500\n"
-"PO-Revision-Date: 2014-02-18 14:58+0000\n"
-"Last-Translator: sproctor <sproctor@gmail.com>\n"
+"PO-Revision-Date: 2014-02-19 21:04+0000\n"
+"Last-Translator: Vivianneb <vjm.daniels@gmail.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/php-calendar/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -25,19 +26,19 @@ msgstr "Je dient ingelogd te zijn als administrator."
 
 #: includes/admin.php:33
 msgid "Calendars"
-msgstr ""
+msgstr "Kalenders"
 
 #: includes/admin.php:35 includes/cadmin.php:33
 msgid "Users"
-msgstr ""
+msgstr "Gebruikers"
 
 #: includes/admin.php:37
 msgid "Import"
-msgstr ""
+msgstr "Importeer"
 
 #: includes/admin.php:39 includes/translate.php:38
 msgid "Translate"
-msgstr ""
+msgstr "Vertaal"
 
 #: includes/admin.php:42
 msgid "Version"
@@ -77,12 +78,12 @@ msgstr "naam gebruiker"
 #: includes/admin.php:89 includes/cadmin.php:37 includes/cadmin.php:130
 #: includes/user_create.php:73
 msgid "Groups"
-msgstr ""
+msgstr "Groepen"
 
 #: includes/admin.php:90 includes/admin.php:100 includes/cadmin.php:104
 #: includes/cadmin.php:131
 msgid "Edit Groups"
-msgstr ""
+msgstr "Edit Groepen"
 
 #: includes/admin.php:106 includes/user_create.php:51
 msgid "Create User"
@@ -126,7 +127,7 @@ msgstr "PHP-Calendar Tabel voorzetsel"
 
 #: includes/admin.php:134
 msgid "Import Calendar"
-msgstr ""
+msgstr "Importeer Kalender"
 
 #: includes/admin.php:150
 msgid ""
@@ -134,19 +135,19 @@ msgid ""
 "the translation files. Alternatively, you could run translate.php from the "
 "command line or use msgfmt or any other gettext tool that can generate .mo "
 "files from .po files."
-msgstr ""
+msgstr "Dit script heeft lees rechten van de kalender directory nodig  om de vertaling files te overschrijven, je kan de translate.php vanuit de command line starten of msgfmt of elke andere gettext tool gebruiken die .mo files van .po files kan genereren."
 
 #: includes/admin.php:153
 msgid "Generate Translations"
-msgstr ""
+msgstr "Maak de Vertalingen aan"
 
 #: includes/cadmin.php:31
 msgid "Calendar Configuration"
-msgstr ""
+msgstr "Kalender Configuratie"
 
 #: includes/cadmin.php:35
 msgid "Categories"
-msgstr ""
+msgstr "Categorieen"
 
 #: includes/cadmin.php:68
 msgid "Options"
@@ -409,12 +410,12 @@ msgstr "Niet-ondersteunde configuratietype"
 #: includes/calendar.php:810
 #, php-format
 msgid "Required field \"%s\" was not set."
-msgstr ""
+msgstr "Vereiste veld \"%s\" is niet ingesteld."
 
 #: includes/calendar.php:819
 #, php-format
 msgid "Malformed \"%s\" time: \"%s\""
-msgstr ""
+msgstr "Ongeldige \"%s\" tijd: \"%s\""
 
 #: includes/calendar.php:834
 msgid "Unrecognized period: "
@@ -423,11 +424,11 @@ msgstr "Niet herkende periode:"
 #: includes/calendar.php:842
 #, php-format
 msgid "Malformed \"%s\" date: \"%s\""
-msgstr ""
+msgstr "Ongeldige \"%s\" datum: \"%s\""
 
 #: includes/calendar.php:863
 msgid "Invalid date_format."
-msgstr ""
+msgstr "Invalide date_format."
 
 #: includes/calendar_delete.php:29
 msgid "No calendar selected."
@@ -493,7 +494,7 @@ msgstr "Zichtbaar voor groepen"
 
 #: includes/category_form.php:49
 msgid "Submit Category"
-msgstr ""
+msgstr "Voeg Categorie toe"
 
 #: includes/category_submit.php:33
 msgid "Color not specified."
@@ -625,7 +626,7 @@ msgstr "van"
 #: includes/display_month.php:32 includes/display_week.php:32
 msgctxt "Week"
 msgid "W"
-msgstr ""
+msgstr "W"
 
 #: includes/display_month.php:231 includes/display_week.php:215
 msgid "View Additional Events"
@@ -637,7 +638,7 @@ msgstr "vervolgd"
 
 #: includes/display_week.php:39
 msgid "Invalid date."
-msgstr ""
+msgstr "Invalide datum."
 
 #: includes/event_delete.php:29
 msgid "No event selected."
@@ -969,7 +970,7 @@ msgstr "Groepformulier"
 
 #: includes/group_form.php:34
 msgid "Submit Group"
-msgstr ""
+msgstr "Voeg Groep toe"
 
 #: includes/group_submit.php:32
 msgid "You do not have permission to add a global group."
@@ -1242,11 +1243,11 @@ msgstr "Fout tijdens het updaten van de taal."
 
 #: includes/phpcdatabase.class.php:675
 msgid "Error adding group to user."
-msgstr ""
+msgstr "Error groep toevoegen aan gebruiker."
 
 #: includes/phpcdatabase.class.php:686
 msgid "Error removing group from user."
-msgstr ""
+msgstr "Error weghalen groep van gebruiker."
 
 #: includes/phpcdatabase.class.php:706
 msgid "Error creating event."
@@ -1294,43 +1295,43 @@ msgstr "Fout tijdens het verkrijgen van het logintoken."
 
 #: includes/phpcdatabase.class.php:921
 msgid "Error adding login token."
-msgstr ""
+msgstr "Error toevoegen login token."
 
 #: includes/phpcdatabase.class.php:931
 msgid "Error updating login token."
-msgstr ""
+msgstr "Error updaten login token."
 
 #: includes/phpcdatabase.class.php:940
 msgid "Error removing login tokens."
-msgstr ""
+msgstr "Error weghalen login token."
 
 #: includes/phpcdatabase.class.php:949
 msgid "Error cleaning login tokens."
-msgstr ""
+msgstr "Error leeghalen login token."
 
 #: includes/phpcdatabase.class.php:959
 msgid "SQL query"
-msgstr ""
+msgstr "SQL query"
 
 #: includes/phpcevent.class.php:43
 msgid "anonymous"
-msgstr ""
+msgstr "anoniem"
 
 #: includes/phpcevent.class.php:45
 msgid "unknown"
-msgstr ""
+msgstr "onbekend"
 
 #: includes/phpcevent.class.php:72
 msgid "(No subject)"
-msgstr ""
+msgstr "(Geen onderwerp)"
 
 #: includes/phpcoccurrence.class.php:53 includes/phpcoccurrence.class.php:76
 msgid "DB returned an invalid date."
-msgstr ""
+msgstr "DB geeft een invalide datum terug."
 
 #: includes/phpcoccurrence.class.php:105 includes/phpcoccurrence.class.php:121
 msgid "TBA"
-msgstr ""
+msgstr "TBA"
 
 #: includes/phpcoccurrence.class.php:116 includes/phpcoccurrence.class.php:254
 msgid "to"
@@ -1338,23 +1339,23 @@ msgstr "tot"
 
 #: includes/search.php:43
 msgid "Invalid sort option"
-msgstr ""
+msgstr "Invalide sorteer optie"
 
 #: includes/search.php:49
 msgid "Invalid order option"
-msgstr ""
+msgstr "Invalide volgorde optie"
 
 #: includes/search.php:83
 msgid "No events matched your search criteria."
-msgstr ""
+msgstr "Geen evenementen gevonden overeenkomstig met de zoek criteria."
 
 #: includes/search.php:87
 msgid "Search Results"
-msgstr ""
+msgstr "Zoek Resultaten"
 
 #: includes/search.php:91
 msgid "Date Time"
-msgstr ""
+msgstr "Datum Tijd"
 
 #: includes/search.php:107
 msgid "Phrase"
@@ -1370,40 +1371,40 @@ msgstr "volgorde"
 
 #: includes/settings.php:52
 msgid "Change Password"
-msgstr ""
+msgstr "Verander Wachtwoord"
 
 #: includes/settings.php:61
 msgid "Old Password"
-msgstr ""
+msgstr "Oud Wachtwoord"
 
 #: includes/settings.php:64
 msgid "New Password"
-msgstr ""
+msgstr "Nieuw Wachtwoord"
 
 #: includes/settings.php:67
 msgid "Confirm New Password"
-msgstr ""
+msgstr "Bevestig Nieuw Wachtwoord"
 
 #: includes/settings.php:139
 msgid "Settings updated."
-msgstr ""
+msgstr "Settings geupdate."
 
 #: includes/setup.php:78
 msgid "Possible hacking attempt on your account."
-msgstr ""
+msgstr "Mogelijke hack poging op uw account."
 
 #: includes/setup.php:187
 msgid "Month is out of range."
-msgstr ""
+msgstr "Maand is buiten het bereik."
 
 #: includes/setup.php:195
 msgid "Invalid year"
-msgstr ""
+msgstr "Verkeerd jaar"
 
 #: includes/translate.php:52
 #, php-format
 msgid "Translated \"%s\""
-msgstr ""
+msgstr "Vertaald \"%s\""
 
 #: includes/user_create.php:67
 msgid "Confirm Password"
@@ -1415,51 +1416,51 @@ msgstr "Maak administator"
 
 #: includes/user_create.php:86
 msgid "You must specify a user name"
-msgstr ""
+msgstr "Je moet een gebruikersnaam invullen"
 
 #: includes/user_create.php:103
 msgid "User already exists."
-msgstr ""
+msgstr "Gebruiker bestaat al."
 
 #: includes/user_create.php:113
 msgid "Added user."
-msgstr ""
+msgstr "gebruiker aangemaakt"
 
 #: includes/user_delete.php:29
 msgid "You must be an admin to delete users."
-msgstr ""
+msgstr "Je moet een admin zijn om gebruikers te verwijderen."
 
 #: includes/user_delete.php:34
 msgid "No user selected."
-msgstr ""
+msgstr "Geen gebruiker geselecteerd."
 
 #: includes/user_groups.php:58
 msgid "Edit User Groups"
-msgstr ""
+msgstr "Edit Gebruikers Groepen"
 
 #: includes/user_groups.php:99
 msgid "Groups updated."
-msgstr ""
+msgstr "Groepen geüpdatet."
 
 #: includes/user_permissions_submit.php:31
 msgid "No users"
-msgstr ""
+msgstr "Geen gebruikers"
 
 #: includes/user_permissions_submit.php:59
 msgid "No changes to make."
-msgstr ""
+msgstr "Geen veranderingen om door te voeren."
 
 #: includes/user_permissions_submit.php:61
 msgid "Updated user(s):"
-msgstr ""
+msgstr "Geüpdatete gebruiker(s):"
 
 #: includes/util.php:75
 msgid "continue"
-msgstr ""
+msgstr "doorgaan"
 
 #: includes/util.php:157
 msgid "Software Error"
-msgstr ""
+msgstr "Software Error"
 
 #: includes/util.php:158
 msgid "Message:"
