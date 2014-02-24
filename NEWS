@@ -1,13 +1,16 @@
 NEWS
 -----
 
+2.0.4 (24 February 2014):
+	- Fix embed bug caused by 2.0.2
+
 2.0.3 (18 February 2014):
 	- Updated translations
 
 2.0.2 (11 February 2014):
 	- Updated fixes
 
-2.0.1i (4 February 2014):
+2.0.1 (4 February 2014):
 	- Bug fixes
 
 2.0 (24 October 2013):
