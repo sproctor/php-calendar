@@ -184,14 +184,18 @@ function create_day($month, $day, $year, $days_events) {
 		// TODO - make sure we have permission to read the event
 
 		$subject = $event->get_subject();
-		if($event->get_start_timestamp() >= $stamp)
+		if($event->get_start_timestamp() >= $stamp) {
 			$event_time = $event->get_time_string();
-		else
-			$event_time = '(' . __('continued') . ')';
+			if(!empty($event_time))
+				$event_time = tag('span', attrs('class="phpc-event-time ui-corner-all"'), $event_time);
+		} else {
+			$event_time = tag('span', attrs('class="fa fa-share"'), '');
+		}
+
 		if(!empty($event_time))
-			$title = "$event_time - $subject";
+			$title = tag('span', $event_time, $subject);
 		else
-			$title = $subject;
+			$title = tag('span', $subject);
 
 		$style = "";
 		if(!empty($event->text_color))

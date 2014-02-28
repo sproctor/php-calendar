@@ -145,6 +145,11 @@ table.phpc-month-view td {
   text-decoration: none;
 }
 
+.phpc-event-time {
+  border: 1px dotted;
+  padding: 0 0.25em;
+}
+
 .phpc-month-title {
   text-align: center;
 }
