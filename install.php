@@ -540,6 +540,7 @@ function create_tables()
 		."`password` varchar(32) collate utf8_unicode_ci NOT NULL default '',\n"
 		."`admin` tinyint(4) NOT NULL DEFAULT '0',\n"
 		."`password_editable` tinyint(1) NOT NULL DEFAULT '1',\n"
+		."`default_cid` int(11),\n"
 		."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."`language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."`gid` int(11),\n"
