@@ -597,7 +597,7 @@ function create_tables()
 		"AUTO_INCREMENT=1");
 
 	create_table("config",
-			."`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n"
+			"`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n"
 			."`value` varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n"
 			."PRIMARY KEY (`name`)");
 
