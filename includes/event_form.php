@@ -276,31 +276,31 @@ function process_form()
 	$modify_occur = !isset($vars['eid']) || !empty($vars['phpc-modify']);
 
 	if($modify_occur) {
-	$start_ts = get_timestamp("start");
-	$end_ts = get_timestamp("end");
+		$start_ts = get_timestamp("start");
+		$end_ts = get_timestamp("end");
 
-	switch($vars["time-type"]) {
-		case 'normal':
-			$time_type = 0;
-			break;
+		switch($vars["time-type"]) {
+			case 'normal':
+				$time_type = 0;
+				break;
 
-		case 'full':
-			$time_type = 1;
-			break;
+			case 'full':
+				$time_type = 1;
+				break;
 
-		case 'tba':
-			$time_type = 2;
-			break;
+			case 'tba':
+				$time_type = 2;
+				break;
 
-		default:
-			soft_error(__("Unrecognized Time Type."));
-	}
+			default:
+				soft_error(__("Unrecognized Time Type."));
+		}
 
-	$duration = $end_ts - $start_ts;
-	if($duration < 0) {
-		message(__("An event cannot have an end earlier than its start."));
-		return display_form();
-	}
+		$duration = $end_ts - $start_ts;
+		if($duration < 0) {
+			message(__("An event cannot have an end earlier than its start."));
+			return display_form();
+		}
 	}
 
 	verify_token();
@@ -328,16 +328,16 @@ function process_form()
 		if($modify_occur)
 			$phpcdb->delete_occurrences($eid);
 	}
-	
+
 	if($modify_occur) {
-	$oid = $phpcdb->create_occurrence($eid, $time_type, $start_ts, $end_ts);
+		$oid = $phpcdb->create_occurrence($eid, $time_type, $start_ts, $end_ts);
 
-	$occurrences = 1;
-	switch($vars["repeats"]) {
-		case "never":
-			break;
+		$occurrences = 1;
+		switch($vars["repeats"]) {
+			case "never":
+				break;
 
-		case 'daily':
+			case 'daily':
 			if(!isset($vars["every-day"]))
 				soft_error(__("Required field \"every-day\" is not set."));
 			$ndays = $vars["every-day"];
@@ -348,7 +348,7 @@ function process_form()
 			while($occurrences <= 730) {
 				$start_ts = add_days($start_ts, $ndays);
 				$end_ts = add_days($end_ts, $ndays);
-				if($start_ts > $daily_until)
+				if(days_between($start_ts, $daily_until) < 0)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
 						$start_ts, $end_ts);
@@ -356,7 +356,7 @@ function process_form()
 			}
 			break;
 
-		case 'weekly':
+			case 'weekly':
 			if(!isset($vars["every-week"]))
 				soft_error(__("Required field \"every-week\" is not set."));
 			if($vars["every-week"] < 1)
@@ -367,7 +367,7 @@ function process_form()
 			while($occurrences <= 730) {
 				$start_ts = add_days($start_ts, $ndays);
 				$end_ts = add_days($end_ts, $ndays);
-				if($start_ts > $weekly_until)
+				if(days_between($start_ts, $weekly_until) < 0)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
 						$start_ts, $end_ts);
@@ -375,7 +375,7 @@ function process_form()
 			}
 			break;
 
-		case 'monthly':
+			case 'monthly':
 			if(!isset($vars["every-month"]))
 				soft_error(__("Required field \"every-month\" is not set."));
 			if($vars["every-month"] < 1)
@@ -386,7 +386,7 @@ function process_form()
 			while($occurrences <= 730) {
 				$start_ts = add_months($start_ts, $nmonths);
 				$end_ts = add_months($end_ts, $nmonths);
-				if($start_ts > $monthly_until)
+				if(days_between($start_ts, $monthly_until) < 0)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
 						$start_ts, $end_ts);
@@ -394,7 +394,7 @@ function process_form()
 			}
 			break;
 
-		case 'yearly':
+			case 'yearly':
 			if(!isset($vars["every-year"]))
 				soft_error(__("Required field \"every-year\" is not set."));
 			if($vars["every-year"] < 1)
@@ -405,7 +405,7 @@ function process_form()
 			while($occurrences <= 730) {
 				$start_ts = add_years($start_ts, $nyears);
 				$end_ts = add_years($end_ts, $nyears);
-				if($start_ts > $yearly_until)
+				if(days_between($start_ts, $yearly_until) < 0)
 					break;
 				$phpcdb->create_occurrence($eid, $time_type,
 						$start_ts, $end_ts);
@@ -413,9 +413,9 @@ function process_form()
 			}
 			break;
 
-		default:
+			default:
 			soft_error(__("Invalid event type."));
-	}
+		}
 	}
 
 	if($eid != 0) {
