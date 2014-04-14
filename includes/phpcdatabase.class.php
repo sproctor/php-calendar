@@ -744,12 +744,16 @@ class PhpcDatabase {
 
 		if($time_type == 0) {
 			$query .= ", `start_ts` = FROM_UNIXTIME('$start_ts')"
-				. ", `end_ts` = FROM_UNIXTIME('$end_ts')";
+				. ", `end_ts` = FROM_UNIXTIME('$end_ts')"
+				. ", `start_date` = NULL"
+				. ", `end_date` = NULL";
 		} else {
 			$start_date = date("Y-m-d", $start_ts);
 			$end_date = date("Y-m-d", $end_ts);
 			$query .= ", `start_date` = '$start_date'"
-				. ", `end_date` = '$end_date'";
+				. ", `end_date` = '$end_date'"
+				. ", `start_ts` = NULL"
+				. ", `end_ts` = NULL";
 		}
 
 		$query .= "\nWHERE `oid`='$oid'";
