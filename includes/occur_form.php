@@ -69,11 +69,18 @@ function display_form() {
 		$end_date = format_short_date_string($occ->get_end_year(),
 				$occ->get_end_month(), $occ->get_end_day(),
 				$datefmt);
+		$start_time = $occ->get_start_time();
+		if($start_time == NULL)
+			$start_time = format_time_string(17, 0, $hour24);
+		$end_time = $occ->get_end_time();
+		if($end_time == NULL)
+			$end_time = format_time_string(18, 0, $hour24);
+		echo "<pre>time: $start_time - $end_time</pre>";
 		$defaults = array(
 				'start-date' => $start_date,
 				'end-date' => $end_date,
-				'start-time' => $occ->get_start_time(),
-				'end-time' => $occ->get_end_time(),
+				'start-time' => $start_time,
+				'end-time' => $end_time,
 				);
 
 		switch($occ->get_time_type()) {
