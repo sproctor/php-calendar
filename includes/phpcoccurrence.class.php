@@ -26,10 +26,10 @@ class PhpcOccurrence extends PhpcEvent{
 	var $end_month;
 	var $end_day;
 	var $time_type;
-	var $start_hour;
-	var $start_minute;
-	var $end_hour;
-	var $end_minute;
+	var $start_hour = NULL;
+	var $start_minute = NULL;
+	var $end_hour = NULL;
+	var $end_minute = NULL;
 	var $duration;
 
 	function __construct($event) {
@@ -56,8 +56,6 @@ class PhpcOccurrence extends PhpcEvent{
 			$this->start_year = $start_matches[1];
 			$this->start_month = $start_matches[2];
 			$this->start_day = $start_matches[3];
-			$this->start_hour = 0;
-			$this->start_minute = 0;
 		}
 
 		if(!empty($event['end_ts'])) {
@@ -79,8 +77,6 @@ class PhpcOccurrence extends PhpcEvent{
 			$this->end_year = $end_matches[1];
 			$this->end_month = $end_matches[2];
 			$this->end_day = $end_matches[3];
-			$this->end_hour = 0;
-			$this->end_minute = 0;
 		}
 		
 		$this->time_type = $event['time_type'];
@@ -185,12 +181,18 @@ class PhpcOccurrence extends PhpcEvent{
 	}
 
 	function get_start_time() {
+		if($this->start_hour == NULL || $this->start_minute == NULL)
+			return NULL;
+
 		return format_time_string($this->start_hour,
 				$this->start_minute,
 				$this->cal->hours_24);
 	}
 
 	function get_end_date() {
+		if($this->end_hour == NULL || $this->end_minute == NULL)
+			return NULL;
+
 		return format_date_string($this->end_year, $this->end_month,
 				$this->end_day,
 				$this->cal->date_format);
@@ -203,6 +205,9 @@ class PhpcOccurrence extends PhpcEvent{
 	}
 
 	function get_end_time() {
+		if($this->end_hour == NULL || $this->end_minute == NULL)
+			return NULL;
+
 		return format_time_string($this->end_hour,
 				$this->end_minute,
 				$this->cal->hours_24);
@@ -268,15 +273,15 @@ class PhpcOccurrence extends PhpcEvent{
 	}
 
 	function get_start_ts() {
-		return mktime($this->start_hour, $this->start_minute, 0,
+		$start_hour = $this->start_hour;
+		if($start_hour == NULL)
+			$start_hour = 0;
+		$start_minute = $this->start_minute;
+		if($start_minute == NULL);
+			$start_minute = 0;
+		return mktime($start_hour, $start_minute, 0,
 				$this->start_month, $this->start_day,
 				$this->start_year);
-	}
-
-	function get_end_ts() {
-		return mktime($this->end_hour, $this->end_minute, 0,
-				$this->end_month, $this->end_day,
-				$this->end_year);
 	}
 }
 
