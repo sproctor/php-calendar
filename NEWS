@@ -1,6 +1,13 @@
 NEWS
 -----
 
+2.0.6 (5 May 2014):
+	- Fixed modify occurrence form
+	- Fixed rare event submit bug
+
+2.0.5 (24 February 2014):
+	- Updated translations
+
 2.0.4 (24 February 2014):
 	- Fix embed bug caused by 2.0.2
 
