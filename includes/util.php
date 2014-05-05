@@ -64,13 +64,14 @@ function message_redirect($message, $page) {
 	if(empty($_SESSION["{$phpc_prefix}messages"]))
 		$_SESSION["{$phpc_prefix}messages"] = array();
 
+	if (is_a($message, 'Html'))
+		$message = $message->toString();
+	
 	$_SESSION["{$phpc_prefix}messages"][] = $message;
 	redirect($page);
 
 	$continue_url = $page . '&amp;clearmsg=1';
 
-	if (get_class($message)=='Html') $message=$message->toString();
-	
 	return tag('div', attrs('class="phpc-box"'), "$message ",
  		tag('a', attrs("href=\"$continue_url\""), __("continue")));
 }
