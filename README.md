@@ -1,6 +1,8 @@
 php-calendar
 ============
-by Sean Proctor
+by Sean Proctor asd fasd fasd fasdf asd faf
+a sdfa sdf asd
+a sdf asdf 
 
 Development version of PHP Calendar
 See the demo live at http://www.php-calendar.com/php-calendar-dev/
