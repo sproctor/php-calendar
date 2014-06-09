@@ -716,7 +716,8 @@ function connect_db($hostname, $username, $passwd, $database = false)
 
 	if($database) {
 		phpc_debug("Selecting database $database");
-		$dbh->select_db($database);
+		$dbh->select_db($database)
+			or soft_error("Could not select database \"$database\".");
 	}
 	$dbh->query("SET NAMES 'utf8'");
 
