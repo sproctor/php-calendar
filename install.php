@@ -276,6 +276,8 @@ function add_categories_gid() {
 function add_event_time() {
 	global $dbh;
 
+	phpc_debug("Adding \"ctime\" and \"mtime\" columns.");
+
 	$query = "ALTER TABLE `" . SQL_PREFIX . "events`\n"
 		."ADD `ctime` timestamp NOT NULL default CURRENT_TIMESTAMP,\n"
 		."ADD `mtime` timestamp NULL default NULL";
@@ -441,6 +443,8 @@ function add_sql_user_db()
 	$string = "<h3>Step 2: Database Setup</h3>";
 
 	if($create_db) {
+		phpc_debug("Creating database \"$my_database\".");
+
 		$query = "CREATE DATABASE $my_database";
 
 		$dbh->query($query)
@@ -450,6 +454,8 @@ function add_sql_user_db()
 	}
 	
 	if($create_user) {
+		phpc_debug("Creating user \"$my_username\".");
+
 		$query = "GRANT ALL ON accounts.* TO $my_username@$my_hostname identified by '$my_passwd'";
 		$dbh->query($query)
 			or db_error($dbh, 'Could not grant:', $query);
@@ -498,14 +504,17 @@ function install_base()
 	$fp = fopen($phpc_config_file, 'w')
 		or soft_error('Couldn\'t open config file.');
 
+	// Make the database connection.
+	$dbh = connect_db($my_hostname, $my_username, $my_passwd, $my_database);
+
+	phpc_debug("Writing config file \"$phpc_config_file\".");
+
 	fwrite($fp, create_config($my_hostname, $my_username, $my_passwd,
                                 $my_database, $my_prefix, $sql_type))
 		or soft_error("Could not write to file");
 	fclose($fp);
 
-	// Make the database connection.
 	include($phpc_config_file);
-	$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
 
 	create_tables();
 
@@ -695,6 +704,9 @@ function db_warning($dbh, $str, $query = "")
 
 function connect_db($hostname, $username, $passwd, $database = false)
 {
+
+	phpc_debug("Connecting to SQL server $hostname with user $username.");
+
 	$dbh = new mysqli($hostname, $username, $passwd);
 
 	if(mysqli_connect_errno()) {
@@ -702,8 +714,10 @@ function connect_db($hostname, $username, $passwd, $database = false)
 				. "): " . mysqli_connect_error());
 	}
 
-	if($database)
+	if($database) {
+		phpc_debug("Selecting database $database");
 		$dbh->select_db($database);
+	}
 	$dbh->query("SET NAMES 'utf8'");
 
 	return $dbh;
@@ -743,6 +757,8 @@ function create_table($suffix, $columns, $table_args = "") {
 
 	$table_name = SQL_PREFIX . $suffix;
 
+	phpc_debug("Creating table \"$table_name\".");
+
 	if($drop_tables) {
 		$query = "DROP TABLE IF EXISTS `$table_name`";
 
@@ -758,5 +774,9 @@ function create_table($suffix, $columns, $table_args = "") {
 	$dbh->query($query)
 		or db_error($dbh, "Error creating table `$table_name`.",
 				$query);
+}
+
+function phpc_debug($msg) {
+	echo "<p>$msg</p>";
 }
 ?>
