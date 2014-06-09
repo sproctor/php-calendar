@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the PHP-Calendar package.
 # 
 # Translators:
+# Jack_Miller <fabian.capta@gmail.com>, 2014
 # JAIME GÓMEZ OBREGÓN <jaime@iteisa.com>, 2006
 # StefanSTS <stefan@duckflight.de>, 2013
 # Wasilis <inactive+Wasilis@transifex.com>, 2013
@@ -12,8 +13,8 @@ msgstr ""
 "Project-Id-Version: php-calendar\n"
 "Report-Msgid-Bugs-To: sproctor@gmail.com\n"
 "POT-Creation-Date: 2014-02-18 09:54-0500\n"
-"PO-Revision-Date: 2014-02-18 14:58+0000\n"
-"Last-Translator: sproctor <sproctor@gmail.com>\n"
+"PO-Revision-Date: 2014-03-18 07:50+0000\n"
+"Last-Translator: Jack_Miller <fabian.capta@gmail.com>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/php-calendar/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -27,15 +28,15 @@ msgstr "Sie müssen als Administrator angemeldet sein. "
 
 #: includes/admin.php:33
 msgid "Calendars"
-msgstr ""
+msgstr "Kalender"
 
 #: includes/admin.php:35 includes/cadmin.php:33
 msgid "Users"
-msgstr ""
+msgstr "Benutzer"
 
 #: includes/admin.php:37
 msgid "Import"
-msgstr ""
+msgstr "Import"
 
 #: includes/admin.php:39 includes/translate.php:38
 msgid "Translate"
@@ -79,12 +80,12 @@ msgstr "Benutzername"
 #: includes/admin.php:89 includes/cadmin.php:37 includes/cadmin.php:130
 #: includes/user_create.php:73
 msgid "Groups"
-msgstr ""
+msgstr "Gruppen"
 
 #: includes/admin.php:90 includes/admin.php:100 includes/cadmin.php:104
 #: includes/cadmin.php:131
 msgid "Edit Groups"
-msgstr ""
+msgstr "Gruppen editieren"
 
 #: includes/admin.php:106 includes/user_create.php:51
 msgid "Create User"
@@ -128,7 +129,7 @@ msgstr "Tabellenpräfix für PHP-Calendar"
 
 #: includes/admin.php:134
 msgid "Import Calendar"
-msgstr ""
+msgstr "Importiere Kalender"
 
 #: includes/admin.php:150
 msgid ""
@@ -136,19 +137,19 @@ msgid ""
 "the translation files. Alternatively, you could run translate.php from the "
 "command line or use msgfmt or any other gettext tool that can generate .mo "
 "files from .po files."
-msgstr ""
+msgstr "Das Script benötigt Lese-Rechte um auf dein Kalender Verzeichnis und die Übersetzungsdatein zugreifen zu können. Alternativ kannst du auch translate.php aus der Kommandozeile heraus ausführen, msgfmt nutzen oder irgend ein anderes gettext tool welches .mo Datein aus .po Datein erstellen kann."
 
 #: includes/admin.php:153
 msgid "Generate Translations"
-msgstr ""
+msgstr "Erstelle Übersetzung"
 
 #: includes/cadmin.php:31
 msgid "Calendar Configuration"
-msgstr ""
+msgstr "Kalender Konfiguration"
 
 #: includes/cadmin.php:35
 msgid "Categories"
-msgstr ""
+msgstr "Kategorien"
 
 #: includes/cadmin.php:68
 msgid "Options"
@@ -411,7 +412,7 @@ msgstr "Nicht unterstützter Konfigurationstyp"
 #: includes/calendar.php:810
 #, php-format
 msgid "Required field \"%s\" was not set."
-msgstr ""
+msgstr "Das benötigte Feld \"%s\" wurde nicht gesetzt."
 
 #: includes/calendar.php:819
 #, php-format
@@ -429,7 +430,7 @@ msgstr ""
 
 #: includes/calendar.php:863
 msgid "Invalid date_format."
-msgstr ""
+msgstr "Ungültiges date_format"
 
 #: includes/calendar_delete.php:29
 msgid "No calendar selected."
@@ -495,7 +496,7 @@ msgstr "Sichtbar für Gruppen "
 
 #: includes/category_form.php:49
 msgid "Submit Category"
-msgstr ""
+msgstr "Kategorie Speichern"
 
 #: includes/category_submit.php:33
 msgid "Color not specified."
@@ -507,15 +508,15 @@ msgstr "Ungültige Farbe."
 
 #: includes/category_submit.php:55
 msgid "You do not have permission to add categories to all calendars."
-msgstr "Sie haben keine Berechtigung, um Kategorien zu allen Kalendern hinzufügen. "
+msgstr "Sie haben keine Berechtigung um Kategorien zu allen Kalendern hinzufügen. "
 
 #: includes/category_submit.php:60
 msgid "You do not have permission to add categories to this calendar."
-msgstr "Sie haben keine Berechtigung , um Kategorien zu diesem Kalender hinzuzufügen. "
+msgstr "Sie haben keine Berechtigung um Kategorien zu diesem Kalender hinzuzufügen. "
 
 #: includes/category_submit.php:73
 msgid "You do not have permission to modify this category."
-msgstr "Sie haben keine Berechtigung, diese Kategorie zu ändern. "
+msgstr "Sie haben keine Berechtigung diese Kategorie zu ändern. "
 
 #: includes/category_submit.php:82
 msgid "Modified category: "
@@ -562,7 +563,7 @@ msgstr "Sie haben keine Berechtigung, dieses Ereignis zu lesen."
 #: includes/display_event.php:57 includes/display_event.php:146
 #: includes/display_event.php:218
 msgid "by"
-msgstr "bei"
+msgstr "von"
 
 #: includes/display_event.php:62 includes/display_event.php:156
 #: includes/display_event.php:226 includes/event_form.php:112
@@ -639,7 +640,7 @@ msgstr "fortgesetzt"
 
 #: includes/display_week.php:39
 msgid "Invalid date."
-msgstr ""
+msgstr "Fehlerhaftes Datum."
 
 #: includes/event_delete.php:29
 msgid "No event selected."
@@ -971,7 +972,7 @@ msgstr "Gruppenformular"
 
 #: includes/group_form.php:34
 msgid "Submit Group"
-msgstr ""
+msgstr "Gruppe Speichern"
 
 #: includes/group_submit.php:32
 msgid "You do not have permission to add a global group."
@@ -1244,11 +1245,11 @@ msgstr "Fehler bei der Aktualisierung der Sprache."
 
 #: includes/phpcdatabase.class.php:675
 msgid "Error adding group to user."
-msgstr ""
+msgstr "Fehler beim hinzufügen der Gruppe des Users"
 
 #: includes/phpcdatabase.class.php:686
 msgid "Error removing group from user."
-msgstr ""
+msgstr "Fehler beim entfernen des Users aus der Gruppe."
 
 #: includes/phpcdatabase.class.php:706
 msgid "Error creating event."
@@ -1425,7 +1426,7 @@ msgstr "Der Benutzer existiert bereits."
 
 #: includes/user_create.php:113
 msgid "Added user."
-msgstr ""
+msgstr "Nutzer hinzugefügt."
 
 #: includes/user_delete.php:29
 msgid "You must be an admin to delete users."
@@ -1437,11 +1438,11 @@ msgstr "Kein Benutzer ausgewählt."
 
 #: includes/user_groups.php:58
 msgid "Edit User Groups"
-msgstr ""
+msgstr "Bearbeite Nutzer Gruppen"
 
 #: includes/user_groups.php:99
 msgid "Groups updated."
-msgstr ""
+msgstr "Gruppen aktualisiert."
 
 #: includes/user_permissions_submit.php:31
 msgid "No users"
