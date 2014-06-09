@@ -75,7 +75,6 @@ function display_form() {
 		$end_time = $occ->get_end_time();
 		if($end_time == NULL)
 			$end_time = format_time_string(18, 0, $hour24);
-		echo "<pre>time: $start_time - $end_time</pre>";
 		$defaults = array(
 				'start-date' => $start_date,
 				'end-date' => $end_date,
