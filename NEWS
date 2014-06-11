@@ -1,6 +1,9 @@
 NEWS
 -----
 
+2.0.7 (10 June 2014):
+	- Minor bug fixes and translation updates
+
 2.0.6 (5 May 2014):
 	- Fixed modify occurrence form
 	- Fixed rare event submit bug
