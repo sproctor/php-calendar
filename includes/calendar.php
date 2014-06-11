@@ -806,11 +806,11 @@ function get_timestamp($prefix)
 {
 	global $vars, $phpc_cal;
 
-	if(!isset($vars["$prefix-date"]))
+	if(empty($vars["$prefix-date"]))
 		soft_error(sprintf(__("Required field \"%s\" was not set."),
 					"$prefix-date"));
 
-	if(!isset($vars["$prefix-time"])) {
+	if(empty($vars["$prefix-time"])) {
 		$hour = 0;
 		$minute = 0;
 	} else {
