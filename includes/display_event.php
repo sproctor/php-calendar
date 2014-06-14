@@ -55,11 +55,11 @@ function display_event()
 	$event_header = tag('div', attributes('class="phpc-event-header"'),
 			tag('div', __('created by').' ',
 				tag('cite', $event->get_author()),
-				' ' . __('on') . ' ' . $event->ctime));
+				' ' . __('on') . ' ' . $event->get_ctime_string()));
 
 	if(!empty($event->mtime))
 		$event_header->add(tag('div', __('Last modified on '),
-				$event->mtime));
+				$event->get_mtime_string()));
 
 	$category = $event->get_category();
 	if(!empty($category))

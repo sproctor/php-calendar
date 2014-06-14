@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2014 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,6 +135,17 @@ function asbool($val)
 	return $val ? "1" : "0";
 }
 
+function format_timestamp_string($timestamp, $date_format, $hours24) {
+	$year = date('Y', $timestamp);
+	$month = date('n', $timestamp);
+	$day = date('j', $timestamp);
+	$hour = date('H', $timestamp);
+	$minute = date('i', $timestamp);
+
+	return format_date_string($year, $month, $day, $date_format) . ' '
+		. __('at') . ' ' . format_time_string($hour, $minute, $hours24);
+}
+	
 function format_date_string($year, $month, $day, $date_format)
 {
 	$month_name = short_month_name($month);

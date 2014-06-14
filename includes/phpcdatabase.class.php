@@ -47,9 +47,11 @@ class PhpcDatabase {
 		$events_table = SQL_PREFIX . "events";
 		$cats_table = SQL_PREFIX . "categories";
 		$fields = array('subject', 'description', 'owner', 'eid', 'cid',
-				'readonly', 'catid', 'ctime', 'mtime');
+				'readonly', 'catid');
 		return "`$cats_table`.`gid`, `$events_table`.`"
-			. implode("`, `$events_table`.`", $fields) . "`\n";
+			. implode("`, `$events_table`.`", $fields) . "`, "
+			. "UNIX_TIMESTAMP(`ctime`) AS `ctime`, "
+			. "UNIX_TIMESTAMP(`mtime`) AS `mtime`";
 	}
 
 	private function get_occurrence_fields() {
