@@ -150,5 +150,16 @@ class PhpcEvent {
 		return $this->cal->can_read() && $visible_category;
 	}
 
+	function get_ctime_string() {
+		return format_timestamp_string($this->ctime,
+				$this->cal->date_format,
+				$this->cal->hours_24);
+	}
+
+	function get_mtime_string() {
+		return format_timestamp_string($this->mtime,
+				$this->cal->date_format,
+				$this->cal->hours_24);
+	}
 }
 ?>

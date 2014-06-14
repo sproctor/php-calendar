@@ -65,10 +65,10 @@ function display_event_by_oid($oid)
 	$event_header->add(tag('div',attributes('class="phpc-event-time"'),
 				__('When').": ".$event->get_datetime_string()));
 	
-	$event_header->add(tag('div', __('Created at: '), $event->ctime));
+	$event_header->add(tag('div', __('Created at: '), $event->get_ctime_string()));
 	if(!empty($event->mtime))
 		$event_header->add(tag('div', __('Last modified at: '),
-				$event->mtime));
+				$event->get_mtime_string()));
 				
 	$menu_tag = tag('div', attrs('class="phpc-bar ui-widget-content"')); 
 	// Add modify/delete links if this user has access to this event.
@@ -146,10 +146,10 @@ function display_event_by_eid($eid)
 			tag('div', __('by').' ',
 				tag('cite', $event->get_author())));
 
-	$event_header->add(tag('div', __('Created at: '), $event->ctime));
+	$event_header->add(tag('div', __('Created at: '), $event->get_ctime_string()));
 	if(!empty($event->mtime))
 		$event_header->add(tag('div', __('Last modified at: '),
-				$event->mtime));
+				$event->get_mtime_string()));
 
 	$category = $event->get_category();
 	if(!empty($category))
