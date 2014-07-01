@@ -493,8 +493,8 @@ function install_base()
 	create_tables();
 
 	$query = "REPLACE INTO `" . SQL_PREFIX . "config`\n"
-		."VALUES (`name`, `value`)\n"
-		."('version', '$phpc_db_version')";
+		."(`name`, `value`)\n"
+		."VALUES ('version', '$phpc_db_version')";
 
 	$dbh->query($query)
 		or db_error($dbh, 'Error creating version row.', $query);
