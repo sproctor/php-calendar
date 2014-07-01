@@ -150,7 +150,9 @@ if ($phpc_user === false) {
 }
 
 // Find an appropriate calendar id
-if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
+if(!empty($vars['phpcid'])) {
+	if(!is_numeric($vars['phpcid']))
+		soft_error(__("Invalid calendar ID."));
         $phpcid = $vars['phpcid'];
 }
 
@@ -186,6 +188,13 @@ if(!isset($phpcid)) {
 }
 
 $phpc_cal = $phpcdb->get_calendar($phpcid);
+
+if(empty($phpc_cal)) {
+	$phpcid = $phpcdb->get_config('default_cid');
+	$phpc_cal = $phpcdb->get_calendar($phpcid);
+	if(empty($phpc_cal))
+		soft_error(__("Bad default calendar ID."));
+}
 
 //set action
 if(empty($vars['action'])) {
