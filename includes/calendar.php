@@ -738,9 +738,9 @@ function get_static_links()
 	$theme = $phpc_cal->theme;
 	if(empty($theme))
 		$theme = 'smoothness';
-	$jquery_version = "1.11.0";
+	$jquery_version = "1.11.1";
 	$jqueryui_version = "1.10.3";
-	$fa_version = "4.0.3";
+	$fa_version = "4.1";
 
 	return array(
 			tag('link', attrs('rel="stylesheet"',
