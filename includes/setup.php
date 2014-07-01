@@ -23,9 +23,6 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-// Displayed in admin
-$phpc_version = "2.0.1";
-
 // Run the installer if we have no config file
 // This doesn't work when embedded from outside
 if(!file_exists($phpc_config_file)) {
@@ -96,7 +93,10 @@ if(get_magic_quotes_gpc()) {
 
 $vars = array_merge(real_escape_r($_GET), real_escape_r($_POST));
 
-if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
+// Find an appropriate calendar id
+if(!empty($vars['phpcid'])) {
+	if(!is_numeric($vars['phpcid']))
+		soft_error(__("Invalid calendar ID."));
         $phpcid = $vars['phpcid'];
 } elseif(!empty($default_calendar_id)) {
 	$phpcid = $default_calendar_id;
@@ -105,6 +105,13 @@ if(!empty($vars['phpcid']) && is_numeric($vars['phpcid'])) {
 }
 
 $phpc_cal = $phpcdb->get_calendar($phpcid);
+
+if(empty($phpc_cal)) {
+	$phpcid = 1;
+	$phpc_cal = $phpcdb->get_calendar($phpcid);
+	if(empty($phpc_cal))
+		soft_error(__("Could not find a calendar."));
+}
 
 //set action
 if(empty($vars['action'])) {

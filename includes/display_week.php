@@ -38,8 +38,8 @@ function display_week()
 	if(!isset($vars['week']) || !isset($vars['year']))
 		soft_error(__('Invalid date.'));
 
-	$week_of_year = $vars['week'];
-	$year = $vars['year'];
+	$week_of_year = intval($vars['week']);
+	$year = intval($vars['year']);
 
 	$day_of_year = 1 + ($week_of_year - 1) * 7 - day_of_week(1, 1, $year);
 	$from_stamp = mktime(0, 0, 0, 1, $day_of_year, $year);

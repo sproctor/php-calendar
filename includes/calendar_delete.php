@@ -30,41 +30,32 @@ function calendar_delete()
 		return $html;
 	}
 
-	if (is_array($vars["cid"])) {
-		$ids = $vars["cid"];
-	} else {
-		$ids = array($vars["cid"]);
-	}
+	$id = $vars["cid"];
+	$calendar = $phpcdb->get_calendar($id);
+
+	if(empty($calendar))
+		soft_error(__("Invalid calendar ID."));
 
 	if (empty($vars["confirm"])) {
-		$list = tag('ul');
-		foreach ($ids as $id) {
-			$calendar = $phpcdb->get_calendar($id);
-			$list->add(tag('li', "$id: ".$calendar->get_title()));
-		}
-		$html->add(tag('p', __('Confirm you want to delete:')));
-		$html->add($list);
+		$html->add(tag('p', __('Confirm you want to delete calendar:'). $calendar->get_title()));
 		$html->add(" [ ", create_action_link(__('Confirm'),
-					"calendar_delete", array("cid" => $ids,
+					"calendar_delete", array("cid" => $id,
 						"confirm" => "1")), " ] ");
 		$html->add(" [ ", create_action_link(__('Deny'),
 					"display_month"), " ] ");
 		return $html;
 	}
 
-	foreach($ids as $id) {
-		$calendar = $phpcdb->get_calendar($id);
-		if(!$calendar->can_admin()) {
-			$html->add(tag('p', __("You do not have permission to remove calendar") . ": $id"));
-			continue;
-		}
+	if(!$calendar->can_admin()) {
+		$html->add(tag('p', __("You do not have permission to remove calendar") . ": $id"));
+		return $html;
+	}
 
-		if($phpcdb->delete_calendar($id)) {
-			$html->add(tag('p', __("Removed calendar") . ": $id"));
-		} else {        
-			$html->add(tag('p', __("Could not remove calendar")
-						. ": $id"));
-		}
+	if($phpcdb->delete_calendar($id)) {
+		$html->add(tag('p', __("Removed calendar") . ": $id"));
+	} else {        
+		$html->add(tag('p', __("Could not remove calendar")
+					. ": $id"));
 	}
 
         return message_redirect($html, "$phpc_script?action=admin");

@@ -57,7 +57,7 @@ function login_form()
                                 create_submit(__('Log in')));
 
         if(!empty($vars['lasturl'])) {
-		$lasturl = $vars['lasturl'];
+		$lasturl = urlencode($vars['lasturl']);
                 $submit_data->prepend(create_hidden('lasturl',
                                         $lasturl));
 	}

@@ -27,8 +27,14 @@ require_once("$phpc_includes_path/Gettext_PHP.php");
 require_once("$phpc_includes_path/html.php");
 require_once("$phpc_includes_path/util.php");
 
+// Displayed in admin
+$phpc_version = "2.0.8";
+
 function __($msg) {
 	global $phpc_gettext;
+
+	if (empty($phpc_gettext))
+		return $msg;
 
 	return $phpc_gettext->gettext($msg);
 }
