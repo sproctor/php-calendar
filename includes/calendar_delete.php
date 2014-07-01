@@ -30,25 +30,22 @@ function calendar_delete()
 		return $html;
 	}
 
-	if (is_array($vars["cid"])) {
-		$ids = $vars["cid"];
-	} else {
-		$ids = array($vars["cid"]);
+	$id = $vars["cid"];
+
+	$calendar = $phpcdb->get_calendar($id);
+
+	if(empty($calendar))
+		soft_error(__("Calendar does not exist") . ": $id");
+
+	if(!$calendar->can_admin()) {
+		soft_error(__("You do not have permission to remove calendar") . ": $id");
 	}
 
-	foreach($ids as $id) {
-		$calendar = $phpcdb->get_calendar($id);
-		if(!$calendar->can_admin()) {
-			$html->add(tag('p', __("You do not have permission to remove calendar") . ": $id"));
-			continue;
-		}
-
-		if($phpcdb->delete_calendar($id)) {
-			$html->add(tag('p', __("Removed calendar") . ": $id"));
-		} else {        
-			$html->add(tag('p', __("Could not remove calendar")
-						. ": $id"));
-		}
+	if($phpcdb->delete_calendar($id)) {
+		$html->add(tag('p', __("Removed calendar") . ": $id"));
+	} else {        
+		$html->add(tag('p', __("Could not remove calendar")
+					. ": $id"));
 	}
 
         return message_redirect($html, "$phpc_script?action=admin");
