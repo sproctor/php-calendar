@@ -753,7 +753,7 @@ function get_static_links()
 	if(empty($theme))
 		$theme = 'smoothness';
 	$jquery_version = "1.11.1";
-	$jqueryui_version = "1.10.3";
+	$jqueryui_version = "1.11.0";
 	$fa_version = "4.1";
 
 	return array(
