@@ -31,7 +31,8 @@ $phpc_config_file = "$phpc_root_path/config.php";
 $phpc_locale_path = "$phpc_root_path/locale";
 
 // path of index.php. ex. /php-calendar/index.php
-$phpc_script = htmlentities($_SERVER['PHP_SELF']);
+$phpc_script = htmlentities($_SERVER['SCRIPT_NAME']);
+$phpc_url_path = dirname($_SERVER['SCRIPT_NAME']);
 
 // Port
 $phpc_port = "";
@@ -91,7 +92,7 @@ if ($vars["content"] == "json") {
 			tag('head',
 				tag('title', $phpc_title),
 				tag('link', attrs('rel="icon"',
-						'href="static/office-calendar.png"')),
+						"href=\"$phpc_url_path/static/office-calendar.png\"")),
 				tag('meta', attrs('http-equiv="Content-Type"',
 						'content="text/html; charset=UTF-8"')),
 				get_static_links()),

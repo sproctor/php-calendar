@@ -659,11 +659,25 @@ function display_exception($e, $navbar = false) {
 	$results = tag('');
 	if($navbar !== false)
 		$results->add($navbar);
+	$backtrace = tag("ol");
+	foreach($e->getTrace() as $bt) {
+		$filename = basename($bt["file"]);
+		$args = array();
+		foreach($bt["args"] as $arg) {
+			if(is_string($arg)) {
+				$args[] = "'$arg'";
+			} else {
+				$args[] = $arg;
+			}
+		}
+		$args_string = implode(", ", $args);
+		$backtrace->add(tag("li", "$filename({$bt["line"]}): {$bt["function"]}($args_string)"));
+	}
 	$results->add(tag('div', attrs('class="php-calendar"'),
 				tag('h2', __('Error')),
 				tag('p', $e->getMessage()),
 				tag('h3', __('Backtrace')),
-				tag('pre', htmlentities($e->getTraceAsString()))));
+				$backtrace));
 	return $results;
 }
 
@@ -726,9 +740,9 @@ function verify_token() {
 
 function get_static_links()
 {
-	global $phpc_cal;
+	global $phpc_cal, $phpc_url_path;
 
-	$path = "static";
+	$path = "$phpc_url_path/static";
 
 	if(defined('PHPC_DEBUG'))
 		$jq_min = '';

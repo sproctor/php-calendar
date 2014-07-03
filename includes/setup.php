@@ -48,10 +48,6 @@ if(defined('PHPC_DEBUG')) {
 	ini_set('html_errors', 1);
 }
 
-if(isset($_SERVER['PATH_INFO']) && strstr($_SERVER['PATH_INFO'], "/")) {
-	soft_error("Cannot have a path after the script.");
-}
-
 $phpc_prefix = "phpc_" . SQL_PREFIX . SQL_DATABASE;
 
 $phpc_title = "";
@@ -256,7 +252,7 @@ $phpc_tz = date_default_timezone_get();
 if(isset($vars['month']) && is_numeric($vars['month'])) {
 	$phpc_month = $vars['month'];
 	if($phpc_month < 1 || $phpc_month > 12)
-		display_error(__("Month is out of range."));
+		soft_error(__("Month is out of range."));
 } else {
 	$phpc_month = date('n');
 }
@@ -264,7 +260,7 @@ if(isset($vars['month']) && is_numeric($vars['month'])) {
 if(isset($vars['year']) && is_numeric($vars['year'])) {
 	$time = mktime(0, 0, 0, $phpc_month, 1, $vars['year']);
         if(!$time || $time < 0) {
-                display_error(__('Invalid year') . ": {$vars['year']}");
+                soft_error(__('Invalid year') . ": {$vars['year']}");
         }
 	$phpc_year = date('Y', $time);
 } else {
