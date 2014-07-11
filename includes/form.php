@@ -244,6 +244,7 @@ abstract class FormAtomicQuestion extends FormQuestion {
 class FormFreeQuestion extends FormAtomicQuestion {
         var $maxlen;
 	var $type;
+	var $autocomplete;
 
         function __construct($qid, $subject, $description = false,
                         $maxlen = false, $required = false) {
@@ -252,6 +253,7 @@ class FormFreeQuestion extends FormAtomicQuestion {
                 $this->subject = $subject;
                 $this->description = $description;
                 $this->maxlen = $maxlen;
+		$this->autocomplete = NULL;
                 $this->required = $required;
 		$this->class .= " form-free-question";
 		$this->type = "text";
@@ -269,9 +271,16 @@ class FormFreeQuestion extends FormAtomicQuestion {
                         $attrs->add("size=\"$size\"");
                 }
 
+		if($this->autocomplete !== NULL) {
+			$attrs->add("autocomplete=\"{$this->autocomplete}\"");
+		}
+
                 return tag('input', $attrs);
         }
 
+	function setAutocomplete($autocomplete) {
+		$this->autocomplete = $autocomplete;
+	}
 }
 
 /* this class is for longer free reponse questions
@@ -310,6 +319,7 @@ function form_date_input($qid, $defaults, $dateFormat) {
 			"name=\"$qid-date\"", "id=\"$qid-date\"");
 	if(isset($defaults["$qid-date"]))
 		$date_attrs->add("value=\"{$defaults["$qid-date"]}\"");
+	$date_attrs->add('autocomplete="off"');
 	return array(tag('input', $date_attrs),
 			tag('script', "\$('#$qid-date').datepicker({dateFormat: \"$dateFormat\", firstDay: ".day_of_week_start()." });")); /**** */
 }
@@ -360,6 +370,7 @@ function form_time_input($qid, $defaults, $hour24) {
 			"name=\"$qid-time\"", "id=\"$qid-time\"");
 	if(isset($defaults["$qid-time"]))
 		$time_attrs->add("value=\"{$defaults["$qid-time"]}\"");
+	$time_attrs->add('autocomplete="off"');
 
 	return array(tag('input', $time_attrs),
 			tag('script', "\$('#$qid-time').timepicker({showPeriod: $showPeriod, showLeadingZero: false });"));
@@ -698,7 +709,8 @@ class FormColorPicker extends FormAtomicQuestion {
 					'class="form-color-input"',
 					"name=\"{$this->qid}\"",
 					"value=\"$value\"",
-					"id=\"{$this->qid}\""));
+					"id=\"{$this->qid}\"",
+					'autocomplete="off"'));
         }
 }
 

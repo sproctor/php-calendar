@@ -45,8 +45,10 @@ function display_form() {
 					$calendar->title);
 	}
 	$form->add_part($cid_select);
-	$form->add_part(new FormFreeQuestion('subject', __('Subject'),
-				false, $phpc_cal->subject_max, true));
+	$subject_part = new FormFreeQuestion('subject', __('Subject'),
+			false, $phpc_cal->subject_max, true);
+	$subject_part->setAutocomplete("off");
+	$form->add_part($subject_part);
 	$form->add_part(new FormLongFreeQuestion('description',
 				tag('', __('Description'), tag('br'),
 					tag('a', attrs('href="http://daringfireball.net/projects/markdown/syntax"', 'target="_new"'), __('syntax')))));
