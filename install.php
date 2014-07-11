@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2013 Sean Proctor
+ * Copyright 2014 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,10 @@ define('IN_PHPC', true);
 if(!function_exists("mysqli_connect"))
 	soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
 
-echo '<html>
+echo '<!DOCTYPE html>
+<html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <link rel="stylesheet" type="text/css" href="static/phpc.css"/>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <title>PHP Calendar Installation</title>
@@ -360,35 +362,35 @@ function get_server_setup()
 		<h3>Step 1: Database</h3>
 		<table class="display">
 		<tr>
-		<td>SQL Server Hostname:</td>
-		<td><input type="text" name="my_hostname" value="localhost"></td>
+		<td><label for="my_hostname">SQL Server Hostname:</label></td>
+		<td><input type="text" name="my_hostname" id="my_hostname" value="localhost"></td>
 		</tr>
 		<tr>
-		<td>SQL Database name:</td>
-		<td><input type="text" name="my_database" value="calendar"></td>
+		<td><label for="my_database">SQL Database name:</label></td>
+		<td><input type="text" name="my_database" id="my_database" value="calendar"></td>
 		</tr>
 		<tr>
-		<td>SQL Table prefix:</td>
-		<td><input type="text" name="my_prefix" value="phpc_"></td>
+		<td><label for="my_prefix">SQL Table prefix:</label></td>
+		<td><input type="text" name="my_prefix" id="my_prefix" value="phpc_"></td>
 		</tr>
 		<tr>
-		<td>SQL Username:</td>
-		<td><input type="text" name="my_username" value="calendar"></td>
+		<td><label for="my_username">SQL Username:</label></td>
+		<td><input type="text" name="my_username" id="my_username" value="calendar"></td>
 		</tr>
 		<tr>
-		<td>SQL Password:</td>
-		<td><input type="password" name="my_passwd"></td>
+		<td><label for="my_passwd">SQL Password:</label></td>
+		<td><input type="password" name="my_passwd" id="my_passwd"></td>
 		</tr>
 		<tr>
 		<td colspan="2">
-		  <input type="checkbox" name="create_db" value="yes"/>
-		  Create the database (don\'t check this if it already exists)
+		  <input type="checkbox" name="create_db" id="create_db" value="yes"/>
+		  <label for="create_db">Create the database (don\'t check this if it already exists)</label>
 		</td>
 		</tr>
 		<tr>
 		<td colspan="2">
-		  <input type="checkbox" name="drop_tables" value="yes">
-		  Drop tables before creating them
+		  <input type="checkbox" name="drop_tables" id="drop_tables" value="yes">
+		  <label for="drop_tables">Drop tables before creating them</label>
 		</td>
 		</tr>
 		<tr><td colspan="2">
@@ -398,16 +400,16 @@ function get_server_setup()
 		If the credentials supplied above are new, you have to be the database administrator.
 		</td></tr>
 		<tr><td colspan="2">
-		 <input type="checkbox" name="create_user" value="yes">
-			Check this if you want to do it and provide admin user and password.
+		 <input type="checkbox" name="create_user" id="create_user" value="yes">
+		 <label for="create_user">Check this if you want to do it and provide admin user and password.</label>
 		</td></tr>
 		<tr>
-		<td>SQL Admin name:</td>
-		<td><input type="text" name="my_adminname"></td>
+		<td><label for="my_adminname">SQL Admin name:</label></td>
+		<td><input type="text" name="my_adminname" id="my_adminname"></td>
 		</tr>
 		<tr>
-		<td>SQL Admin Password:</td>
-		<td><input type="password" name="my_adminpasswd"></td>
+		<td><label for="my_adminpasswd">SQL Admin Password:</label></td>
+		<td><input type="password" name="my_adminpasswd" id="my_adminpasswd"></td>
 		</tr>
 		<tr>
 		<td colspan="2">
