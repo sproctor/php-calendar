@@ -362,14 +362,14 @@ function get_server_setup()
 		</tr>
 		<tr>
 		<td colspan="2">
-		  <input type="checkbox" name="create_db" value="yes"/>
-		  Create the database (don\'t check this if it already exists)
+		  <input type="checkbox" name="create_db" id="create_db" value="yes"/>
+		  <label for=""create_db>Create the database (don\'t check this if it lready exists)</label>
 		</td>
 		</tr>
 		<tr>
 		<td colspan="2">
-		  <input type="checkbox" name="drop_tables" value="yes">
-		  Drop tables before creating them
+		  <input type="checkbox" name="drop_tables" id="drop_tables" value="yes">
+		  <label for="drop_tables">Drop tables before creating them</label>
 		</td>
 		</tr>
 		<tr><td colspan="2">
@@ -379,8 +379,8 @@ function get_server_setup()
 		If the credentials supplied above are new, you have to be the database administrator.
 		</td></tr>
 		<tr><td colspan="2">
-		 <input type="checkbox" name="create_user" value="yes">
-			Check this if you want to do it and provide admin user and password.
+		 <input type="checkbox" name="create_user" id="create_user" value="yes">
+			<label for="create_user">Check this if you want to do it and provide admin user and password.</label>
 		</td></tr>
 		<tr>
 		<td>SQL Admin name:</td>
