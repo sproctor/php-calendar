@@ -754,7 +754,7 @@ function get_static_links()
 		$theme = 'smoothness';
 	$jquery_version = "1.11.1";
 	$jqueryui_version = "1.11.0";
-	$fa_version = "4.1";
+	$fa_version = "4.1.0";
 
 	return array(
 			tag('link', attrs('rel="stylesheet"',
@@ -762,8 +762,7 @@ function get_static_links()
 			tag('link', attrs('rel="stylesheet"', 'href="//ajax.googleapis.com/ajax/libs/jqueryui/'
 					. "$jqueryui_version/themes/$theme/jquery-ui$jq_min.css\"")),
 			tag('link', attrs('rel="stylesheet"', "href=\"$path/jquery-ui-timepicker.css\"")),
-			tag('link', attrs('rel="stylesheet"', 'href="//netdna.bootstrapcdn.com/font-awesome/'
-					. "$fa_version/css/font-awesome$jq_min.css\"")),
+			tag('link', attrs('rel="stylesheet"', "href=\"//maxcdn.bootstrapcdn.com/font-awesome/$fa_version/css/font-awesome$jq_min.css\"")),
 			tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
 			tag("script", attrs('src="//ajax.googleapis.com/ajax/libs/jqueryui/'
 					. "$jqueryui_version/jquery-ui$jq_min.js\""), ''),
