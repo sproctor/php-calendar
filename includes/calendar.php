@@ -686,10 +686,8 @@ function do_action()
 	global $action, $phpc_includes_path, $vars;
 
 	$action_file = "$phpc_includes_path/$action.php";
-
-	if(!preg_match('/^\w+$/', $action) || !file_exists($action_file)) {
-		soft_error(__('Invalid action') . " $action");
-	}
+	if(!preg_match('/^\w+$/', $action) || !file_exists($action_file))
+		soft_error(__('Invalid action'));
 
 	require_once($action_file);
 
