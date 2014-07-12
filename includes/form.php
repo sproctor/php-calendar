@@ -182,7 +182,7 @@ abstract class FormQuestion extends FormPart {
 		$cell = tag('td');
 
                 if($this->subject !== false)
-			$tag->add(tag('th', $this->subject));
+			$tag->add(tag('th', tag('label', attrs("for=\"{$this->qid}\""), $this->subject)));
                 else
 			$tag->add(tag('td', '')); // Align with second column
 
@@ -309,6 +309,7 @@ class FormLongFreeQuestion extends FormAtomicQuestion {
 
 		$tag = tag('textarea', attrs("rows=\"{$this->rows}\"",
 					"name=\"{$this->qid}\"",
+					"id=\"{$this->qid}\"",
 					"cols=\"{$this->cols}\""), $text);
 		return tag('div', attrs("class=\"form-textarea\""), $tag);
         }
@@ -434,10 +435,10 @@ class FormDateTimeQuestion extends FormAtomicQuestion {
 				soft_error("Unrecognized date format.");
 		}
 
-                return array(__("Date") . " ($date_string): ",
+                return array(tag('label', attrs("for=\"{$this->qid}-date\""), __("Date") . " ($date_string): "),
 				form_date_input($this->qid, $defaults,
 					$dateFormat),
-				" " . __('Time') . ": ",
+				tag('label', attrs("for=\"{$this->qid}-time\""), " " . __('Time') . ": "),
 				form_time_input($this->qid, $defaults,
 					$this->hour24));
 	}
