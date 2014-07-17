@@ -152,7 +152,7 @@ if(!empty($vars['lang'])) {
 } elseif(!empty($phpc_cal->language)) {
 	$phpc_lang = $phpc_cal->language;
 } elseif(!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-	$phpc_lang = substr(htmlentities($_SERVER['HTTP_ACCEPT_LANGUAGE']),
+	$phpc_lang = substr(phpc_html_escape($_SERVER['HTTP_ACCEPT_LANGUAGE']),
 			0, 2);
 } else {
 	$phpc_lang = 'en';

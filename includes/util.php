@@ -24,7 +24,7 @@ require_once("$phpc_includes_path/lib_autolink.php");
 // called when some error happens
 function soft_error($message)
 {
-	throw new Exception(htmlspecialchars($message, ENT_COMPAT, "UTF-8"));
+	throw new Exception(phpc_html_escape($message));
 }
 
 class PermissionException extends Exception {
@@ -32,8 +32,7 @@ class PermissionException extends Exception {
 
 function permission_error($message)
 {
-	throw new PermissionException(htmlspecialchars($message, ENT_COMPAT,
-				"UTF-8"));
+	throw new PermissionException(phpc_html_escape($message));
 }
 
 function minute_pad($minute)
@@ -183,7 +182,7 @@ function display_error($str)
 function parse_desc($text)
 {
 	// Don't allow tags and make the description HTML-safe
-        $text = htmlspecialchars($text, ENT_COMPAT, "UTF-8");
+        $text = phpc_html_escape($text);
 
         $text = nl2br($text);
 
@@ -334,5 +333,9 @@ function phpc_hash_base64($data) {
 // Adapted from Drupal
 function phpc_get_hash_salt() {
 	return hash('sha256', SQL_HOST . SQL_USER . SQL_PASSWD . SQL_DATABASE . SQL_PREFIX);
+}
+
+function phpc_html_escape($str) {
+	return htmlspecialchars($str, ENT_COMPAT, "UTF-8");
 }
 ?>

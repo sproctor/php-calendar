@@ -50,7 +50,7 @@ class PhpcCalendar {
 		if(empty($this->title))
 			return __('(No title)');
 
-		return htmlspecialchars($this->title);
+		return phpc_html_escape($this->title);
 	}
 
 	function get_cid()

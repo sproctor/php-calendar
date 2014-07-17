@@ -36,7 +36,7 @@ function group_form() {
 	if(isset($vars['gid'])) {
 		$form->add_hidden('gid', $vars['gid']);
 		$group = $phpcdb->get_group($vars['gid']);
-		$defaults = array('name' => htmlspecialchars($group['name']));
+		$defaults = array('name' => phpc_html_escape($group['name']));
 	} else {
 		$defaults = array();
 	}

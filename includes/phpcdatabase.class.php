@@ -959,11 +959,11 @@ class PhpcDatabase {
 	// called when there is an error involving the DB
 	function db_error($str, $query = "")
 	{
-		$string = $str . "<pre>" . htmlspecialchars($this->dbh->error,
-				ENT_COMPAT, "UTF-8") . "</pre>";
+		$string = $str . "<pre>" . phpc_html_escape($this->dbh->error)
+			. "</pre>";
 		if($query != "") {
 			$string .= "<pre>" . __('SQL query') . ": "
-				. htmlspecialchars($query, ENT_COMPAT, "UTF-8")
+				. phpc_html_escape($query)
 				. "</pre>";
 		}
 		throw new Exception($string);

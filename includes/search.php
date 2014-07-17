@@ -38,13 +38,13 @@ function search_results()
 		$end = false;
 
         // make sure sort is valid
-	$sort = htmlentities($vars['sort']);
+	$sort = phpc_html_escape($vars['sort']);
         if(array_search($sort, array_keys($sort_options)) === false) {
                 soft_error(__('Invalid sort option') . ": $sort");
         }
 
         // make sure order is valid
-	$order = htmlentities($vars['order']);
+	$order = phpc_html_escape($vars['order']);
         if(array_search($order, array_keys($order_options)) === false) {
                 soft_error(__('Invalid order option') . ": $order");
         }

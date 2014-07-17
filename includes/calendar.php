@@ -126,7 +126,7 @@ function footer()
 
 	if(defined('PHPC_DEBUG')) {
 		$tag->add(tag('a', attributes('href="http://validator.w3.org/check?url='
-						. rawurlencode($phpc_url)
+						. phpc_html_escape(rawurlencode($phpc_url))
 						. '"'), 'Validate HTML'));
 		$tag->add(tag('a', attributes('href="http://jigsaw.w3.org/css-validator/check/referer"'),
 					'Validate CSS'));
@@ -285,8 +285,8 @@ function create_plain_link($text, $action, $year = false,
 
 	$url ="".$phpc_script."?";
 	if(isset($vars["phpcid"]))
-		$url .= "phpcid=" . htmlentities($vars["phpcid"]) . "&amp;";
-	$url .= "action=" . htmlentities($action);
+		$url .= "phpcid=" . phpc_html_escape($vars["phpcid"]) . "&amp;";
+	$url .= "action=" . phpc_html_escape($action);
 	
 	if (!empty($args)) {
 		foreach ($args as $key => $value) {
@@ -295,10 +295,10 @@ function create_plain_link($text, $action, $year = false,
 			if (is_array($value)) {
 				foreach ($value as $v) {
 					$url .= "&amp;"
-						. htmlentities("{$key}[]=$v");
+						. phpc_html_escape("{$key}[]=$v");
 				}
 			} else
-				$url .= "&amp;" . htmlentities("$key=$value");
+				$url .= "&amp;" . phpc_html_escape("$key=$value");
 		}
 	}
 	$url .= '';
@@ -311,8 +311,8 @@ function create_action_link($text, $action, $args = false, $attribs = false)
 
 	$url = "href=\"$phpc_script?";
 	if(isset($vars["phpcid"]))
-		$url .= "phpcid=" . htmlentities($vars["phpcid"]) . "&amp;";
-	$url .= "action=" . htmlentities($action);
+		$url .= "phpcid=" . phpc_html_escape($vars["phpcid"]) . "&amp;";
+	$url .= "action=" . phpc_html_escape($action);
 
 	if (!empty($args)) {
 		foreach ($args as $key => $value) {
@@ -321,10 +321,10 @@ function create_action_link($text, $action, $args = false, $attribs = false)
 			if (is_array($value)) {
 				foreach ($value as $v) {
 					$url .= "&amp;"
-						. htmlentities("{$key}[]=$v");
+						. phpc_html_escape("{$key}[]=$v");
 				}
 			} else
-				$url .= "&amp;" . htmlentities("$key=$value");
+				$url .= "&amp;" . phpc_html_escape("$key=$value");
 		}
 	}
 	$url .= '"';
@@ -458,11 +458,11 @@ function userMenu()
 	if(is_user()) {
 		menu_item_append($span, __('Log out'), 'logout',
 				array('lasturl' =>
-					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
+					phpc_html_escape(rawurlencode($_SERVER['QUERY_STRING']))));
 	} else {
 		menu_item_append($span, __('Log in'), 'login',
 				array('lasturl' =>
-					htmlspecialchars(urlencode($_SERVER['QUERY_STRING']))));
+					phpc_html_escape(rawurlencode($_SERVER['QUERY_STRING']))));
 	}
 	return $html;
 }
@@ -668,7 +668,7 @@ function display_phpc() {
 					tag('h2', __('Error')),
 					tag('p', $e->getMessage()),
 					tag('h3', __('Backtrace')),
-					tag('pre', htmlentities($e->getTraceAsString()))));
+					tag('pre', phpc_html_escape($e->getTraceAsString()))));
 		return $results;
 	}
 

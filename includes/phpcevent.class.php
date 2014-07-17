@@ -63,7 +63,7 @@ class PhpcEvent {
 	}
 
 	function get_raw_subject() {
-		return htmlspecialchars($this->subject, ENT_COMPAT, "UTF-8");
+		return phpc_html_escape($this->subject);
 	}
 
 	function get_subject()
@@ -71,8 +71,7 @@ class PhpcEvent {
 		if(empty($this->subject))
 			return __('(No subject)');
 
-		return htmlspecialchars(stripslashes($this->subject),
-				ENT_COMPAT, "UTF-8");
+		return phpc_html_escape(stripslashes($this->subject));
 	}
 
 	function get_author()
@@ -87,7 +86,7 @@ class PhpcEvent {
 
 	function get_raw_desc() {
 		// Don't allow tags and make the description HTML-safe
-		return htmlspecialchars($this->desc, ENT_COMPAT, "UTF-8");
+		return phpc_html_escape($this->desc);
 	}
 
 	function get_desc()
@@ -112,19 +111,19 @@ class PhpcEvent {
 
 	function get_text_color()
 	{
-		return htmlspecialchars($this->text_color, ENT_COMPAT, "UTF-8");
+		return phpc_html_escape($this->text_color);
 	}
 
 	function get_bg_color()
 	{
-		return htmlspecialchars($this->bg_color, ENT_COMPAT, "UTF-8");
+		return phpc_html_escape($this->bg_color);
 	}
 
 	function get_category()
 	{
 		if(empty($this->category))
 			return $this->category;
-		return htmlspecialchars($this->category, ENT_COMPAT, "UTF-8");
+		return phpc_html_escape($this->category);
 	}
 
 	function is_owner() {

@@ -150,9 +150,9 @@ function category_list()
 			: $category['group_name'];
 		$tbody->add(tag('tr',
 					tag('th', $name),
-					tag('td', htmlspecialchars($category['text_color'])),
-					tag('td', htmlspecialchars($category['bg_color'])),
-					tag('td', htmlspecialchars($group)),
+					tag('td', phpc_html_escape($category['text_color'])),
+					tag('td', phpc_html_escape($category['bg_color'])),
+					tag('td', phpc_html_escape($group)),
 					tag('td', create_action_link(__('Edit'),
 							'category_form',
 							array('catid'

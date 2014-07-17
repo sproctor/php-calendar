@@ -52,10 +52,10 @@ function category_form() {
 		$form->add_hidden('catid', $vars['catid']);
 		$category = $phpcdb->get_category($vars['catid']);
 		$defaults = array(
-				'name' => htmlspecialchars($category['name']),
-				'text-color' => htmlspecialchars(str_replace('#', '', $category['text_color'])),
-				'bg-color' => htmlspecialchars(str_replace('#', '', $category['bg_color'])),
-				'gid' => htmlspecialchars($category['gid']),
+				'name' => phpc_html_escape($category['name']),
+				'text-color' => phpc_html_escape(str_replace('#', '', $category['text_color'])),
+				'bg-color' => phpc_html_escape(str_replace('#', '', $category['bg_color'])),
+				'gid' => phpc_html_escape($category['gid']),
 				);
 	} else {
 		$defaults = array(

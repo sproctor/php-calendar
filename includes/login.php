@@ -57,7 +57,7 @@ function login_form()
                                 create_submit(__('Log in')));
 
         if(!empty($vars['lasturl'])) {
-		$lasturl = urlencode($vars['lasturl']);
+		$lasturl = phpc_html_escape(rawurlencode($vars['lasturl']));
                 $submit_data->prepend(create_hidden('lasturl',
                                         $lasturl));
 	}

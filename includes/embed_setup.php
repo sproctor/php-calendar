@@ -36,7 +36,7 @@ $phpc_includes_path = dirname(__FILE__);
 $phpc_root_path = dirname($phpc_includes_path);
 $phpc_config_file = "$phpc_root_path/config.php";
 $phpc_locale_path = "$phpc_root_path/locale";
-$phpc_script = htmlentities($_SERVER['PHP_SELF']);
+$phpc_script = phpc_html_escape($_SERVER['PHP_SELF']);
 
 $phpc_server = $_SERVER['SERVER_NAME'];
 if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
