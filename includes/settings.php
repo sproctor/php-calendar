@@ -120,13 +120,13 @@ function settings_submit()
 	// One hour in the past
 	$past_time = time() - 3600;
 	if(!empty($vars["timezone"]))
-		setcookie("{$phpc_prefix}tz", $vars['timezone'], $expiration_time);
+		phpc_set_cookie("{$phpc_prefix}tz", $vars['timezone'], $expiration_time);
 	else
-		setcookie("{$phpc_prefix}tz", '', $past_time);
+		phpc_set_cookie("{$phpc_prefix}tz", '', $past_time);
 	if(!empty($vars["language"]))
-		setcookie("{$phpc_prefix}lang", $vars['language'], $expiration_time);
+		phpc_set_cookie("{$phpc_prefix}lang", $vars['language'], $expiration_time);
 	else
-		setcookie("{$phpc_prefix}lang", '', $past_time);
+		phpc_set_cookie("{$phpc_prefix}lang", '', $past_time);
 
 	if(is_user()) {
 		$uid = $phpc_user->get_uid();

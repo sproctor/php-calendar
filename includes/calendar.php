@@ -99,9 +99,9 @@ function phpc_do_login($user, $series_token = false) {
 
 	// expire credentials in 30 days.
 	$expiration_time = time() + 30 * 24 * 60 * 60;
-	setcookie("{$phpc_prefix}uid", $uid, $expiration_time);
-	setcookie("{$phpc_prefix}login", $login_token, $expiration_time);
-	setcookie("{$phpc_prefix}login_series", $series_token,
+	phpc_set_cookie("{$phpc_prefix}uid", $uid, $expiration_time);
+	phpc_set_cookie("{$phpc_prefix}login", $login_token, $expiration_time);
+	phpc_set_cookie("{$phpc_prefix}login_series", $series_token,
 			$expiration_time);
 
 	return true;
@@ -110,9 +110,10 @@ function phpc_do_login($user, $series_token = false) {
 function phpc_do_logout() {
 	global $phpc_prefix;
    	session_destroy();
-	setcookie("{$phpc_prefix}uid", "", time() - 3600);
-	setcookie("{$phpc_prefix}login", "", time() - 3600);
-	setcookie("{$phpc_prefix}login_series", "", time() - 3600);
+	$past_time = time() - 3600;
+	phpc_set_cookie("{$phpc_prefix}uid", "", $past_time);
+	phpc_set_cookie("{$phpc_prefix}login", "", $past_time);
+	phpc_set_cookie("{$phpc_prefix}login_series", "", $past_time);
 }
 
 // returns tag data for the links at the bottom of the calendar
@@ -871,5 +872,9 @@ function get_timestamp($prefix)
 	}
 
 	return mktime($hour, $minute, 0, $month, $day, $year);
+}
+
+function phpc_set_cookie($name, $value, $expire = 0) {
+	return setcookie($name, $value, $expire, "", "", false, true);
 }
 ?>

@@ -52,6 +52,7 @@ if(!defined("SQL_PORT"))
 $phpcdb = new PhpcDatabase(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE,
 		SQL_PORT);
 
+session_set_cookie_params(0, "", "", false, true);
 session_start();
 
 if(empty($_SESSION["{$phpc_prefix}uid"])) {
@@ -223,5 +224,7 @@ if ($vars["contentType"] == "json") {
 }
 
 header("Content-Type: text/html; charset=UTF-8");
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: DENY");
 
 ?>
