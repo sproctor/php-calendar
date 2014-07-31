@@ -19,65 +19,65 @@ msgstr ""
 
 #: index.php:68
 msgid "Welcome"
-msgstr ""
+msgstr "환영합니다"
 
 #: includes/admin.php:26 includes/cadmin.php:27
 msgid "You must be logged in as an admin."
-msgstr ""
+msgstr "관리자 계정으로 로그인하셔야 합니다"
 
 #: includes/admin.php:30
 msgid "Import from PHP-Calendar 1.1"
-msgstr ""
+msgstr "PHP-Calendar 1.1 에서 가져오기"
 
 #: includes/admin.php:32
 msgid "Generate translations"
-msgstr ""
+msgstr "번역본 생성"
 
 #: includes/admin.php:36
 msgid "Version"
-msgstr ""
+msgstr "버전"
 
 #: includes/admin.php:49
 msgid "Create User"
-msgstr ""
+msgstr "사용자 생성"
 
 #: includes/admin.php:54 includes/admin.php:97 includes/cadmin.php:63
 #: includes/cadmin.php:102 includes/settings.php:50 includes/settings.php:87
 msgid "Submit"
-msgstr ""
+msgstr "확인"
 
 #: includes/admin.php:57 includes/cadmin.php:105
 msgid "User Name"
-msgstr ""
+msgstr "사용자 이름"
 
 #: includes/admin.php:60 includes/login.php:80
 msgid "Password"
-msgstr ""
+msgstr "패스워드"
 
 #: includes/admin.php:63
 msgid "Confirm Password"
-msgstr ""
+msgstr "패스워드 확인"
 
 #: includes/admin.php:66
 msgid "Make Admin"
-msgstr ""
+msgstr "관리자 권한 부여"
 
 #: includes/admin.php:67 includes/cadmin.php:85 includes/cadmin.php:110
 #: includes/calendar.php:471
 msgid "Admin"
-msgstr ""
+msgstr "관리자"
 
 #: includes/admin.php:69 includes/admin.php:134
 msgid "Group"
-msgstr ""
+msgstr "그룹"
 
 #: includes/admin.php:92
 msgid "Create Calendar"
-msgstr ""
+msgstr "캘린더 생성"
 
 #: includes/admin.php:108
 msgid "Calendar"
-msgstr ""
+msgstr "캘린더"
 
 #: includes/admin.php:109 includes/admin.php:135
 msgid "Action"
@@ -85,44 +85,44 @@ msgstr ""
 
 #: includes/admin.php:123
 msgid "Calendar List"
-msgstr ""
+msgstr "캘린더 리스트"
 
 #: includes/admin.php:133 includes/login.php:77
 msgid "Username"
-msgstr ""
+msgstr "사용자 이름"
 
 #: includes/admin.php:145
 msgid "User List"
-msgstr ""
+msgstr "사용자 목록"
 
 #: includes/cadmin.php:59
 msgid "Options"
-msgstr ""
+msgstr "옵션"
 
 #: includes/cadmin.php:81 includes/cadmin.php:106
 msgid "Read"
-msgstr ""
+msgstr "읽기"
 
 #: includes/cadmin.php:82 includes/cadmin.php:107
 msgid "Write"
-msgstr ""
+msgstr "쓰기"
 
 #: includes/cadmin.php:83 includes/event_form.php:110
 msgid "Read-only"
-msgstr ""
+msgstr "읽기만 가능"
 
 #: includes/cadmin.php:84 includes/cadmin.php:109 includes/display_day.php:93
 #: includes/display_event.php:76 includes/display_event.php:162
 msgid "Modify"
-msgstr ""
+msgstr "수정"
 
 #: includes/cadmin.php:98
 msgid "User Permissions"
-msgstr ""
+msgstr "사용자 권한"
 
 #: includes/cadmin.php:108
 msgid "Can Create Read-Only"
-msgstr ""
+msgstr "읽기전용 생성 권한"
 
 #: includes/cadmin.php:123 includes/cadmin.php:172
 msgid "No Name"
@@ -131,37 +131,37 @@ msgstr ""
 #: includes/cadmin.php:131 includes/cadmin.php:177
 #: includes/display_event.php:193
 msgid "Edit"
-msgstr ""
+msgstr "편집"
 
 #: includes/cadmin.php:136 includes/cadmin.php:181
 #: includes/display_event.php:78 includes/display_event.php:166
 msgid "Delete"
-msgstr ""
+msgstr "삭제"
 
 #: includes/cadmin.php:143
 msgid "Create category"
-msgstr ""
+msgstr "카테고리 생성"
 
 #: includes/cadmin.php:146
 msgid "Calendar Categories"
-msgstr ""
+msgstr "캘린더 카테고리"
 
 #: includes/cadmin.php:149 includes/cadmin.php:193
 #: includes/category_form.php:28 includes/group_form.php:28
 msgid "Name"
-msgstr ""
+msgstr "이름"
 
 #: includes/cadmin.php:150
 msgid "Text Color"
-msgstr ""
+msgstr "텍스트 색상"
 
 #: includes/cadmin.php:151
 msgid "Background Color"
-msgstr ""
+msgstr "배경 색상"
 
 #: includes/cadmin.php:152
 msgid "Visible to User Group"
-msgstr ""
+msgstr "사용자 그룹에 노출"
 
 #: includes/cadmin.php:153 includes/cadmin.php:194
 msgid "Actions"
@@ -169,191 +169,191 @@ msgstr ""
 
 #: includes/cadmin.php:187
 msgid "Create group"
-msgstr ""
+msgstr "그룹 생성"
 
 #: includes/cadmin.php:190
 msgid "Calendar Groups"
-msgstr ""
+msgstr "캘린더 그룹"
 
 #: includes/cadmin_submit.php:26 includes/create_calendar.php:27
 #: includes/user_create.php:27 includes/user_permissions_submit.php:27
 msgid "Permission denied"
-msgstr ""
+msgstr "권한 거부됨"
 
 #: includes/cadmin_submit.php:39
 msgid " was not set."
-msgstr ""
+msgstr "세팅되었습니다"
 
 #: includes/cadmin_submit.php:46
 msgid "Updated options"
-msgstr ""
+msgstr "옵션이 업데이트되었습니다"
 
 #: includes/calendar_delete.php:29
 msgid "No calendar selected."
-msgstr ""
+msgstr "캘린더를 선택하지 않았습니다"
 
 #: includes/calendar_delete.php:45 includes/category_delete.php:49
 #: includes/event_delete.php:46 includes/group_delete.php:49
 #: includes/occurrence_delete.php:48 includes/user_delete.php:50
 msgid "Confirm you want to delete:"
-msgstr ""
+msgstr "삭제하려면 확인을 클릭하세요"
 
 #: includes/calendar_delete.php:47 includes/category_delete.php:51
 #: includes/event_delete.php:48 includes/group_delete.php:51
 #: includes/occurrence_delete.php:50 includes/user_delete.php:52
 msgid "Confirm"
-msgstr ""
+msgstr "확인"
 
 #: includes/calendar_delete.php:50 includes/category_delete.php:54
 #: includes/event_delete.php:51 includes/group_delete.php:54
 #: includes/occurrence_delete.php:53 includes/user_delete.php:55
 msgid "Deny"
-msgstr ""
+msgstr "취소"
 
 #: includes/calendar_delete.php:58
 msgid "You do not have permission to remove calendar"
-msgstr ""
+msgstr "캘린더를 삭제할 권한이 없습니다"
 
 #: includes/calendar_delete.php:63
 msgid "Removed calendar"
-msgstr ""
+msgstr "캘린더 삭제"
 
 #: includes/calendar_delete.php:65
 msgid "Could not remove calendar"
-msgstr ""
+msgstr "캘린더를 삭제할 수 없습니다"
 
 #: includes/calendar.php:112 includes/settings.php:93
 msgid "Language"
-msgstr ""
+msgstr "언어"
 
 #: includes/calendar.php:113 includes/settings.php:90
 msgid "Timezone"
-msgstr ""
+msgstr "시간대"
 
 #: includes/calendar.php:425 includes/settings.php:81
 msgid "Settings"
-msgstr ""
+msgstr "세팅"
 
 #: includes/calendar.php:428
 msgid "Log out"
-msgstr ""
+msgstr "로그아웃"
 
 #: includes/calendar.php:432 includes/login.php:57 includes/login.php:68
 msgid "Log in"
-msgstr ""
+msgstr "로그인"
 
 #: includes/calendar.php:450
 msgid "Add Event"
-msgstr ""
+msgstr "이벤트 추가"
 
 #: includes/calendar.php:454 includes/search.php:96 includes/search.php:111
 msgid "Search"
-msgstr ""
+msgstr "검색"
 
 #: includes/calendar.php:458
 msgid "View Month"
-msgstr ""
+msgstr "월별 보기"
 
 #: includes/calendar.php:463
 msgid "View date"
-msgstr ""
+msgstr "일별 보기"
 
 #: includes/calendar.php:467
 msgid "Calendar Admin"
-msgstr ""
+msgstr "캘린더 관리자"
 
 #: includes/calendar.php:502 includes/calendar.php:563
 #: includes/calendar.php:572 includes/settings.php:71
 msgid "Default"
-msgstr ""
+msgstr "기본 설정"
 
 #: includes/calendar.php:508
 msgid "Week Start"
-msgstr ""
+msgstr "주 시작일"
 
 #: includes/calendar.php:510 includes/globals.php:38
 msgid "Sunday"
-msgstr ""
+msgstr "일요일"
 
 #: includes/calendar.php:511 includes/globals.php:39
 msgid "Monday"
-msgstr ""
+msgstr "월요일"
 
 #: includes/calendar.php:512 includes/globals.php:44
 msgid "Saturday"
-msgstr ""
+msgstr "토요일"
 
 #: includes/calendar.php:514
 msgid "24 Hour Time"
-msgstr ""
+msgstr "24시간표기"
 
 #: includes/calendar.php:515
 msgid "Calendar Title"
-msgstr ""
+msgstr "캘린더 타이틀"
 
 #: includes/calendar.php:516
 msgid "Maximum Subject Length"
-msgstr ""
+msgstr "제목 글자수 제한"
 
 #: includes/calendar.php:517
 msgid "Events Display Daily Maximum"
-msgstr ""
+msgstr "일별 표시 이벤트수 제한"
 
 #: includes/calendar.php:518
 msgid "Public Permissions"
-msgstr ""
+msgstr "공공 권한"
 
 #: includes/calendar.php:520
 msgid "Cannot read nor write events"
-msgstr ""
+msgstr "이벤트를 읽거나 쓸 수 없습니다"
 
 #: includes/calendar.php:521
 msgid "Can read but not write events"
-msgstr ""
+msgstr "이벤트를 읽을 수 있으나 쓸 수 없습니다"
 
 #: includes/calendar.php:522
 msgid "Can create but not modify events"
-msgstr ""
+msgstr "이벤트를 생성할 수 있으나 수정할 수 없습니다"
 
 #: includes/calendar.php:523
 msgid "Can create and modify events"
-msgstr ""
+msgstr "이벤트를 생성하고 수정할 수 있습니다"
 
 #: includes/calendar.php:526
 msgid "Default Timezone"
-msgstr ""
+msgstr "기본 시간대"
 
 #: includes/calendar.php:527
 msgid "Default Language"
-msgstr ""
+msgstr "기본 언어"
 
 #: includes/calendar.php:529
 msgid "Date Format"
-msgstr ""
+msgstr "데이터 포맷"
 
 #: includes/calendar.php:531
 msgid "Theme"
-msgstr ""
+msgstr "테마"
 
 #: includes/calendar.php:590
 msgid "Month Day Year"
-msgstr ""
+msgstr "월-일-년도"
 
 #: includes/calendar.php:591
 msgid "Year Month Day"
-msgstr ""
+msgstr "년도-월-일"
 
 #: includes/calendar.php:592
 msgid "Day Month Year"
-msgstr ""
+msgstr "일-월-년도"
 
 #: includes/calendar.php:648
 msgid "You do not have permission to do that: "
-msgstr ""
+msgstr "권한이 없습니다"
 
 #: includes/calendar.php:661 includes/util.php:154
 msgid "Error"
-msgstr ""
+msgstr "에러"
 
 #: includes/calendar.php:663 includes/util.php:158
 msgid "Backtrace"
@@ -361,7 +361,7 @@ msgstr ""
 
 #: includes/calendar.php:675
 msgid "Invalid action"
-msgstr ""
+msgstr "잘못된 액션입니다"
 
 #: includes/calendar.php:723
 msgid "Secret token mismatch. Possible request forgery attempt."
