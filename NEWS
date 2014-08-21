@@ -1,6 +1,10 @@
 NEWS
 -----
 
+2.0.9:
+	- A few minor attempts at improving security.
+	- Fixed search and day displays for timezones other than the server.
+
 2.0.8 (1 July 2014):
 	- Fixed problems published by siph0n. shoutz: smitz
 	- The 2.0.7 release was botched and drawn from the wrong tree.
