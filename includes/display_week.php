@@ -47,7 +47,7 @@ function display_week()
 	$start_year = date("Y", $from_stamp);
 
 	$last_day = $day_of_year + 6;
-	$to_stamp = mktime(0, 0, 0, 1, $last_day, $year);
+	$to_stamp = mktime(23, 59, 59, 1, $last_day, $year);
 	$end_month = date("n", $to_stamp);
 	$end_year = date("Y", $to_stamp);
 
@@ -91,9 +91,9 @@ function create_week($week_of_year, $from_stamp, $to_stamp, $year) {
 
 	$max_events = $phpc_cal->events_max;
 
-	$results = $phpcdb->get_occurrences_by_date_range($phpcid, $from_stamp,
-			$to_stamp);
+	$results = $phpcdb->get_occurrences_by_date_range($phpcid, $from_stamp, $to_stamp);
 	$days_events = array();
+
 	while($row = $results->fetch_assoc()) {
 		$event = new PhpcOccurrence($row);
 

@@ -190,9 +190,6 @@ class PhpcOccurrence extends PhpcEvent{
 	}
 
 	function get_end_date() {
-		if($this->end_hour == NULL || $this->end_minute == NULL)
-			return NULL;
-
 		return format_date_string($this->end_year, $this->end_month,
 				$this->end_day,
 				$this->cal->date_format);
@@ -220,7 +217,9 @@ class PhpcOccurrence extends PhpcEvent{
 	}
 
 	function get_end_timestamp() {
-		return mktime(0, 0, 0, $this->get_end_month(),
+		$hour = $this->end_hour ? $this->end_hour : 23;
+		$minute = $this->end_minute ? $this->end_minute : 59;
+		return mktime($hour, $minute, 59, $this->get_end_month(),
 				$this->get_end_day(), $this->get_end_year());
 	}
 

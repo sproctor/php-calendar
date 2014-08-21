@@ -71,15 +71,15 @@ class PhpcDatabase {
 	// an event that happens later in the day of $to is included
 	function get_occurrences_by_date_range($cid, $from, $to)
 	{
-		$from_date = date('Y-m-d', $from);
-		$to_date = date('Y-m-d', $to);
+		$from_str = "FROM_UNIXTIME('$from')";
+		$to_str = "FROM_UNIXTIME('$to')";
 
 		$events_table = SQL_PREFIX . "events";
 		$occurrences_table = SQL_PREFIX . "occurrences";
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-        $query = "SELECT " . $this->get_occurrence_fields()
+		$query = "SELECT " . $this->get_occurrence_fields()
 			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
@@ -87,8 +87,8 @@ class PhpcDatabase {
 			."LEFT JOIN `$cats_table` ON `$events_table`.`catid` "
 			."= `$cats_table`.`catid`\n"
 			."WHERE `$events_table`.`cid` = '$cid'\n"
-			."	AND IF(`start_ts`, DATE(`start_ts`), `start_date`) <= DATE('$to_date')\n"
-			."	AND IF(`end_ts`, DATE(`end_ts`), `end_date`) >= DATE('$from_date')\n"
+			."	AND IF(`start_ts`, `start_ts` <= $to_str, `start_date` <= DATE($to_str))\n"
+			."	AND IF(`end_ts`, `end_ts` >= $from_str, `end_date` >= DATE($from_str))\n"
 			."	ORDER BY `start_ts`, `start_date`, `oid`";
 
 		$results = $this->dbh->query($query)
@@ -123,10 +123,10 @@ class PhpcDatabase {
 	// returns all the events for a particular day
 	function get_occurrences_by_date($cid, $year, $month, $day)
 	{
-		$stamp = mktime(0, 0, 0, $month, $day, $year);
+		$from_stamp = mktime(0, 0, 0, $month, $day, $year);
+		$to_stamp = mktime(23, 59, 59, $month, $day, $year);
 
-		return $this->get_occurrences_by_date_range($cid, $stamp,
-				$stamp);
+		return $this->get_occurrences_by_date_range($cid, $from_stamp, $to_stamp);
         }
 
 	// returns the event that corresponds to eid
@@ -850,6 +850,8 @@ class PhpcDatabase {
 		$occurrences_table = SQL_PREFIX . 'occurrences';
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
+		$start_str = "FROM_UNIXTIME('$start')";
+		$end_str = "FROM_UNIXTIME('$end')";
 
 		$words = array();
 		foreach($keywords as $keyword) {
@@ -859,9 +861,9 @@ class PhpcDatabase {
 		$where = implode(' AND ', $words);
 
 		if($start)
-			$where .= "AND IF(`start_ts`, DATE(`start_ts`), `start_date`) >= FROM_UNIXTIME('$start')\n";
+			$where .= "AND IF(`start_ts`, `start_ts` <= $end_str, `start_date` <= DATE($start_str))\n";
 		if($end)
-			$where .= "AND IF(`end_ts`, DATE(`end_ts`), `end_date`) <= FROM_UNIXTIME('$end')\n";
+			$where .= "AND IF(`end_ts`, `end_ts` >= $start_str, `end_date` >= DATE($end_str))\n";
 
                 $query = "SELECT " . $this->get_occurrence_fields()
 			.", `username`, `name`, `bg_color`, `text_color`\n"

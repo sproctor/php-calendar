@@ -33,7 +33,7 @@ function search_results()
 		$start = false;
 	if(!empty($vars['search-to-date'])
 			&& strlen($vars['search-to-date']) > 0)
-		$end = get_timestamp('search-to');
+		$end = get_timestamp('search-to', 23, 59, 59);
 	else
 		$end = false;
 

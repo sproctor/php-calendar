@@ -82,7 +82,7 @@ function create_month($month, $year)
 	$from_stamp = mktime(0, 0, 0, $month, $first_day, $year);
 
 	$last_day = $wim * 7 - day_of_week($month, 1, $year);
-	$to_stamp = mktime(0, 0, 0, $month, $last_day, $year);
+	$to_stamp = mktime(23, 59, 59, $month, $last_day, $year);
 
 	$max_events = $phpc_cal->events_max;
 
