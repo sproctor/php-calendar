@@ -45,7 +45,7 @@ function display_week()
 	$start_year = date("Y", $from_stamp);
 
 	$last_day = $day_of_year + 6;
-	$to_stamp = mktime(0, 0, 0, 1, $last_day, $phpc_year);
+	$to_stamp = mktime(23, 59, 59, 1, $last_day, $phpc_year);
 	$end_day = date("j", $to_stamp);
 	$end_month = date("n", $to_stamp);
 	$end_year = date("Y", $to_stamp);

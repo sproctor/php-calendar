@@ -805,7 +805,11 @@ function create_config_input($element, $default = false)
 	return $input;
 }
 
-function get_timestamp($prefix)
+/* Make a timestamp from the input fields $prefix-time and $prefix-date
+   uses $phpc_cal->date_format to determine the format of the date
+   if there's no $prefix-time, uses values passed as parameters
+*/
+function get_timestamp($prefix, $hour = 0, $minute = 0, $second = 0)
 {
 	global $vars, $phpc_cal;
 
@@ -813,10 +817,7 @@ function get_timestamp($prefix)
 		soft_error(sprintf(__("Required field \"%s\" was not set."),
 					"$prefix-date"));
 
-	if(!isset($vars["$prefix-time"])) {
-		$hour = 0;
-		$minute = 0;
-	} else {
+	if(!empty($vars["$prefix-time"])) {
 		if(!preg_match('/(\d+)[:\.](\d+)\s?(\w+)?/', $vars["$prefix-time"],
 					$time_matches)) {
 			soft_error(sprintf(__("Malformed \"%s\" time: \"%s\""), $prefix, $vars["$prefix-time"]));
@@ -862,7 +863,7 @@ function get_timestamp($prefix)
 			soft_error(__("Invalid date_format."));
 	}
 
-	return mktime($hour, $minute, 0, $month, $day, $year);
+	return mktime($hour, $minute, $second, $month, $day, $year);
 }
 
 function print_update_form() {
