@@ -4,7 +4,7 @@ var cache = new Object;
 $(document).ready(function(){
   // Add theme to appropriate items
   // All widgets
-  $(".phpc-event-list a, .phpc-message, .phpc-date, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .php-calendar td, .phpc-message, .phpc-callist, .phpc-dropdown-list ul").addClass("ui-widget");
+  $(".phpc-event-list a, .phpc-message, .phpc-date, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .php-calendar td, .phpc-message, .phpc-dropdown-list ul").addClass("ui-widget");
   // Buttons
   $(".phpc-add").button({
       text: false,
@@ -28,9 +28,14 @@ $(document).ready(function(){
   // fancy corners
   $(".phpc-event-list a, .phpc-message, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .phpc-dropdown-list ul").addClass("ui-corner-all");
   // add jquery ui style classes
-  $(".phpc-callist").addClass("ui-widget-header");
   $(".php-calendar td, #phpc-summary-view, .phpc-dropdown-list ul").addClass("ui-widget-content");
   $(".phpc-event-list a, .phpc-message").addClass("ui-state-default");
+
+  // Find the color of ui-widget-content
+  var $tempElem = $("<p class=ui-widget-content></p>").hide().appendTo("body");
+  var color = $tempElem.css("color");
+  $(".phpc-dropdown-list ul a").css("color", color);
+  $tempElem.remove();
 
   // Tabs - Persistence reference: http://stackoverflow.com/questions/19539547/maintaining-jquery-ui-previous-active-tab-before-reload-on-page-reload
   var currentTabId = "0";
