@@ -56,6 +56,27 @@ $phpc_home_url="$phpc_proto://$phpc_server$phpc_script";
 $phpc_url = $phpc_home_url . (empty($_SERVER['QUERY_STRING']) ? ''
 		: '?' . $_SERVER['QUERY_STRING']);
 
+$phpc_static_path = "$phpc_url_path/static";
+
+if(defined('PHPC_DEBUG'))
+	$phpc_min = '';
+else
+	$phpc_min = '.min';
+		
+$phpc_theme = $phpc_cal->theme;
+if(empty($phpc_theme))
+	$phpc_theme = 'smoothness';
+$jquery_version = "1.11.1";
+$jqueryui_version = "1.11.1";
+$fa_version = "4.2.0";
+
+if(!isset($phpc_jqui_path))
+	$phpc_jqui_path = "//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version";
+if(!isset($phpc_fa_path))
+	$phpc_fa_path = "//maxcdn.bootstrapcdn.com/font-awesome/$fa_version";
+if(!isset($phpc_jq_file))
+	$phpc_jq_file = "//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$phpc_min.js";
+
 /*
  * Do not modify anything under this point
  */
@@ -95,7 +116,17 @@ if ($vars["content"] == "json") {
 						"href=\"$phpc_url_path/static/office-calendar.png\"")),
 				tag('meta', attrs('http-equiv="Content-Type"',
 						'content="text/html; charset=UTF-8"')),
-				get_static_links()),
+				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_static_path/phpc.css\"")),
+				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_jqui_path/themes/$phpc_theme/jquery-ui$phpc_min.css\"")),
+				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_static_path/jquery-ui-timepicker.css\"")),
+				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_fa_path/css/font-awesome$phpc_min.css\"")),
+				tag("script", attrs("src=\"$phpc_jq_file\""), ''),
+				tag("script", attrs("src=\"$phpc_jqui_path/jquery-ui$jq_min.js\""), ''),
+				tag('script', attrs("src=\"$phpc_static_path/phpc.js\""), ''),
+				tag("script", attrs("src=\"$phpc_static_path/jquery.ui.timepicker.js\""), ''),
+				tag("script", attrs("src=\"$phpc_static_path/farbtastic.min.js\""), ''),
+				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_static_path/farbtastic.css\""))
+			),
 			tag('body', $embed_script, $content));
 
 	echo "<!DOCTYPE html>\n", $html->toString();
