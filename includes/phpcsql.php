@@ -42,8 +42,15 @@ class PhpcSqlTable {
 		$this->keys[] = new PhpcSqlKey($name, $non_unique, $columns);
 	}
 
-	function create($dbh) {
+	function create($dbh, $drop = false) {
 		//echo "creating table\n";
+		if ($drop) {
+			$query = "DROP TABLE IF EXISTS `{$this->name}`";
+
+			$dbh->query($query)
+				or db_error($dbh, "Error dropping table `{$this->name}`.", $query);
+		}
+
 		$query = "CREATE TABLE `{$this->name}` (";
 		$first_column = true;
 		foreach($this->columns as $column) {
@@ -51,15 +58,10 @@ class PhpcSqlTable {
 				$query .= ', ';
 			}
 			$first_column = false;
-			$query .= $column->get_create_query();
+			$query .= "\n" . $column->get_create_query();
 		}
-		$first_key = true;
 		foreach($this->keys as $key) {
-			if(!$first_key) {
-				$query .= ', ';
-			}
-			$first_key = false;
-			$query .= $key->get_create_query();
+			$query .= ",\n" . $key->get_create_query();
 		}
 		$query .= ')';
 		$dbh->query($query)
@@ -215,6 +217,13 @@ class PhpcSqlKey {
 		$this->name = $name;
 		$this->non_unique = $non_unique;
 		$this->columns = $columns;
+	}
+
+	function get_create_query () {
+		if($this->name == "PRIMARY")
+			return "PRIMARY KEY ({$this->columns})";
+
+		return ($this->non_unique ? "" : "UNIQUE ") . "KEY `{$this->name}` ({$this->columns})";
 	}
 
 	function get_update_query () {

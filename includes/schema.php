@@ -187,6 +187,9 @@ function phpc_users_table() {
 	$table->addColumn('language', "varchar(255) COLLATE utf8_unicode_ci");
 	$table->addColumn('gid', "int(11)");
 	$table->addColumn('disabled', "tinyint(1) NOT NULL DEFAULT '0'");
+	
+	$table->addKey('PRIMARY', 0, '`uid`');
+	$table->addKey('username', 1, '`username`');
 
 	return $table;
 }
