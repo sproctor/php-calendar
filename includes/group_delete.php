@@ -41,21 +41,6 @@ function group_delete()
 		$groups[] = $phpcdb->get_group($id);
 	}
 
-	if (empty($vars["confirm"])) {
-		$list = tag('ul');
-		foreach ($groups as $group) {
-			$list->add(tag('li', "$id: ".$group['name']));
-		}
-		$html->add(tag('p', __('Confirm you want to delete:')));
-		$html->add($list);
-		$html->add(" [ ", create_action_link(__('Confirm'),
-					"group_delete", array("gid" => $ids,
-						"confirm" => "1")), " ] ");
-		$html->add(" [ ", create_action_link(__('Deny'),
-					"display_month"), " ] ");
-		return $html;
-	}
-
 	foreach($groups as $group) {
 		if((empty($group['cid']) && !is_admin()) ||
 					!$phpcdb->get_calendar($group['cid'])

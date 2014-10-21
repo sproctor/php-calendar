@@ -151,7 +151,7 @@ function category_list()
 					tag('td', escape_entities($group)),
 					tag('td', create_action_link(__('Edit'), 'category_form', array('catid' => $catid)),
 						" ",
-						create_action_link(__('Delete'), 'category_delete', array('catid' => $catid)))
+						create_action_link(__('Delete'), 'category_delete', array('catid' => $catid), attrs('class="phpc-confirm-cat"')))
 				   ));
 	}
 
@@ -171,8 +171,12 @@ function category_list()
 				   )),
 			$tbody);
 
+	$dialog = tag('div', attrs('id="phpc-dialog-cat"', 'title="' . __("Confirmation required") . '"'),
+			__("Permanently delete this category?"));
+
 	return tag('div', attrs('id="phpc-categories"'),
 			tag('div', attrs('class="phpc-sub-title"'), __('Calendar Categories')),
+			$dialog,
 			$table,
 			create_action_link(__('Create category'), 'category_form', array('cid' => $phpcid),
 				attrs('class="phpc-button"')));
@@ -194,7 +198,7 @@ function group_list() {
 					tag('td', $name),
 					tag('td', create_action_link(__('Edit'), 'group_form', array('gid' => $id)),
 						" ",
-						create_action_link(__('Delete'), 'group_delete', array('gid' => $id)))
+						create_action_link(__('Delete'), 'group_delete', array('gid' => $id), attrs('class="phpc-confirm-group"')))
 				   ));
 	}
 
@@ -210,8 +214,12 @@ function group_list() {
 				   )),
 			$tbody);
 
+	$dialog = tag('div', attrs('id="phpc-dialog-group"', 'title="' . __("Confirmation required") . '"'),
+			__("Permanently delete this group?"));
+
 	return tag('div', attrs('id="phpc-groups"'),
 			tag('div', attrs('class="phpc-sub-title"'), __('Calendar Groups')),
+			$dialog,
 			$table,
 			create_action_link(__('Create group'), 'group_form', array('cid' => $phpcid),
 				attrs('class="phpc-button"')));

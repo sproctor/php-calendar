@@ -172,15 +172,18 @@ $(document).ready(function(){
   });
 
   // Confirmation dialog stuff
-  $("#phpc-dialog").dialog({
+  $("[id^='phpc-dialog']").dialog({
     autoOpen: false,
     modal: true
   });
   // Add this class to links that should open the dialog to confirm
-  $(".phpc-confirm").click(function(e) {
+  $("[class^='phpc-confirm']").click(function(e) {
     e.preventDefault();
     var href = $(this).attr("href");
-    $("#phpc-dialog").dialog('option', 'buttons', {
+    var re = /phpc-confirm(\S*)/;
+    var myArray = re.exec($(this).attr('class'));
+    var dialog = "#phpc-dialog" + myArray[1];
+    $(dialog).dialog('option', 'buttons', {
       "OK": function() {
         window.location.href = href;
       },

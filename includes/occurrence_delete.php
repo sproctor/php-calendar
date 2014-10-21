@@ -37,24 +37,6 @@ function occurrence_delete()
 		$oids = array($vars["oid"]);
 	}
 
-	if (empty($vars["confirm"])) {
-		$list = tag('ul');
-		foreach ($oids as $oid) {
-			$occur = $phpcdb->get_occurrence_by_oid($oid);
-			$list->add(tag('li', "$oid: \"" . $occur->get_subject()
-						. "\" " . __("at") . " " .
-						$occur->get_date_string()));
-		}
-		$html->add(tag('p', __('Confirm you want to delete:')));
-		$html->add($list);
-		$html->add(" [ ", create_action_link(__('Confirm'),
-					"occurrence_delete", array("oid" => $oids,
-						"confirm" => "1")), " ] ");
-		$html->add(" [ ", create_action_link(__('Deny'),
-					"display_month"), " ] ");
-		return $html;
-	}
-
 	$removed_occurs = array();
 	$unremoved_occurs = array();
 	$permission_denied = array();

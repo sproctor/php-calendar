@@ -41,21 +41,6 @@ function category_delete()
 		$categories[] = $phpcdb->get_category($id);
 	}
 
-	if (empty($vars["confirm"])) {
-		$list = tag('ul');
-		foreach ($categories as $category) {
-			$list->add(tag('li', "$id: ".$category['name']));
-		}
-		$html->add(tag('p', __('Confirm you want to delete:')));
-		$html->add($list);
-		$html->add(" [ ", create_action_link(__('Confirm'),
-					"category_delete", array("catid" => $ids,
-						"confirm" => "1")), " ] ");
-		$html->add(" [ ", create_action_link(__('Deny'),
-					"display_month"), " ] ");
-		return $html;
-	}
-
 	foreach($categories as $category) {
 		if((empty($category['cid']) && !is_admin()) ||
 					!$phpcdb->get_calendar($category['cid'])

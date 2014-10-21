@@ -97,7 +97,8 @@ function display_event()
 		if($event->can_modify()) {
 			$occ_tag->add(" ",
 					create_occurrence_link(__('Edit'), 'occur_form', $oid), " ",
-					create_occurrence_link(__('Remove'), 'occurrence_delete', $oid));
+					create_occurrence_link(__('Remove'), 'occurrence_delete', $oid,
+						attrs('class="phpc-confirm-occ"')));
 		}
 		$occurrences_tag->add($occ_tag);
 	}
@@ -113,8 +114,10 @@ function display_event()
 
 	$dialog = tag('div', attrs('id="phpc-dialog"', 'title="' . __("Confirmation required") . '"'),
 			__("Permanently delete this event?"));
+	$dialog2 = tag('div', attrs('id="phpc-dialog-occ"', 'title="' . __("Confirmation required") . '"'),
+			__("Permanently delete this occurrence?"));
 
-	return tag('div', attributes('class="phpc-main phpc-event"'), $dialog,
+	return tag('div', attributes('class="phpc-main phpc-event"'), $dialog, $dialog2,
 			$event_menu, tag('h2', $event->get_subject()),
 			$event_header, $desc_tag,
 			tag('div', attrs('class="phpc-occ"'),
