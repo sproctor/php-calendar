@@ -416,9 +416,10 @@ function userMenu()
 {
 	global $action, $phpc_user;
 
-	$welcome = __('Welcome');
 	if(is_user()) {
-		$welcome .= '&nbsp;' . $phpc_user->username;
+		$welcome = __('Welcome') . '&nbsp;' . $phpc_user->username;
+	} else {
+		$welcome = "";
 	}
 
 	$span = tag('span');
@@ -451,7 +452,7 @@ function navbar()
 			'day' => $phpc_day);
 
 	// TODO There needs to be a better way to decide what to show
-	if($phpc_cal->can_write() && $action != 'add') { 
+	if(isset($phpc_cal) && $phpc_cal->can_write() && $action != 'add') { 
 		menu_item_append($html, __('Add Event'), 'event_form', $args);
 	}
 
@@ -468,7 +469,7 @@ function navbar()
 		menu_item_append($html, __('View date'), 'display_day', $args);
 	}
 
-	if($phpc_cal->can_admin() && $action != 'cadmin') {
+	if(isset($phpc_cal) && $phpc_cal->can_admin() && $action != 'cadmin') {
 		menu_item_append($html, __('Calendar Admin'), 'cadmin');
 	}
 
@@ -606,9 +607,14 @@ function display_phpc() {
 	try {
 		$calendars = $phpcdb->get_calendars();
 		$list = array();
-		$phpc_title = $phpc_cal->get_title();
-		$title_link = tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'",
-					'class="phpc-dropdown-list-title"'), $phpc_title);
+		if(isset($phpc_cal)) {
+			$phpc_title = $phpc_cal->get_title();
+			$title_link = tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'",
+						'class="phpc-dropdown-list-title"'), $phpc_title);
+		} else {
+			$phpc_title = __("(No calendars)");
+			$title_link = $phpc_title;
+		}
 		foreach($calendars as $calendar) {
 			$list["$phpc_home_url?phpcid={$calendar->get_cid()}"] = 
 				$calendar->get_title();

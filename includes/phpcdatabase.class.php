@@ -512,6 +512,7 @@ class PhpcDatabase {
 			or $this->db_error(__('Could not get calendars.'),
 					$query);
 
+		$this->calendars = array();
 		while($result = $sth->fetch_assoc()) {
 			$cid = $result["cid"];
 			if(empty($this->calendars[$cid]))

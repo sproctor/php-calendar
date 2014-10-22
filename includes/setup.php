@@ -171,25 +171,30 @@ if(!isset($phpcid) && !empty($vars['oid'])) {
 
 if(!isset($phpcid)) {
 	$calendars = $phpcdb->get_calendars();
-	if(empty($calendars))
-		soft_error(__("Unhandled condition: all calendars have been deleted."));
-	if ($phpc_user->get_default_cid() !== false)
-		$default_cid = $phpc_user->get_default_cid();
-	else
-		$default_cid = $phpcdb->get_config('default_cid');
-	if (!empty($calendars[$default_cid]))
-		$phpcid = $default_cid;
-	else
-		$phpcid = reset($calendars)->get_cid();
+	if(empty($calendars)) {
+		if(empty($vars['action'])) {
+			if(is_admin())
+				$vars['action'] = 'admin';
+			else
+				$vars['action'] = 'settings';
+		}
+	} else {
+		if ($phpc_user->get_default_cid() !== false)
+			$default_cid = $phpc_user->get_default_cid();
+		else
+			$default_cid = $phpcdb->get_config('default_cid');
+		if (!empty($calendars[$default_cid]))
+			$phpcid = $default_cid;
+		else
+			$phpcid = reset($calendars)->get_cid();
+	}
 }
 
-$phpc_cal = $phpcdb->get_calendar($phpcid);
-
-if(empty($phpc_cal)) {
-	$phpcid = $phpcdb->get_config('default_cid');
+if(isset($phpcid)) {
 	$phpc_cal = $phpcdb->get_calendar($phpcid);
+
 	if(empty($phpc_cal))
-		soft_error(__("Bad default calendar ID."));
+		soft_error(__("Bad calendar ID."));
 }
 
 //set action
