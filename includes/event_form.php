@@ -28,7 +28,12 @@ function event_form() {
 		return display_form();
 
 	// else
-	return process_form();
+	try {
+		return process_form();
+	} catch(Exception $e) {
+		message($e->getMessage());
+		return display_form();
+	}
 }
 
 function display_form() {
@@ -310,16 +315,14 @@ function process_form()
 
 		$duration = $end_ts - $start_ts;
 		if($duration < 0) {
-			message(__("An event cannot have an end earlier than its start."));
-			return display_form();
+			throw new Exception(__("An event cannot have an end earlier than its start."));
 		}
 	}
 
 	verify_token();
 
 	if(!isset($vars['cid'])) {
-		message(__("Calendar ID is not set."));
-		return display_form();
+		throw new Exception(__("Calendar ID is not set."));
 	}
 
 	$cid = $vars['cid'];

@@ -663,14 +663,18 @@ function display_exception($e, $navbar = false) {
 	foreach($e->getTrace() as $bt) {
 		$filename = basename($bt["file"]);
 		$args = array();
-		foreach($bt["args"] as $arg) {
-			if(is_string($arg)) {
-				$args[] = "'$arg'";
-			} else {
-				$args[] = $arg;
+		if(isset($bt["args"])) { 
+			foreach($bt["args"] as $arg) {
+				if(is_string($arg)) {
+					$args[] = "'$arg'";
+				} else {
+					$args[] = $arg;
+				}
 			}
+			$args_string = implode(", ", $args);
+		} else {
+			$args_string = "...";
 		}
-		$args_string = implode(", ", $args);
 		$backtrace->add(tag("li", "$filename({$bt["line"]}): {$bt["function"]}($args_string)"));
 	}
 	$results->add(tag('div', attrs('class="php-calendar"'),
@@ -778,13 +782,12 @@ function get_timestamp($prefix, $hour = 0, $minute = 0, $second = 0)
 	global $vars, $phpc_cal;
 
 	if(!isset($vars["$prefix-date"]))
-		soft_error(sprintf(__("Required field \"%s\" was not set."),
-					"$prefix-date"));
+		throw new Exception(sprintf(__("Required field \"%s\" was not set."), "$prefix-date"));
 
 	if(!empty($vars["$prefix-time"])) {
 		if(!preg_match('/(\d+)[:\.](\d+)\s?(\w+)?/', $vars["$prefix-time"],
 					$time_matches)) {
-			soft_error(sprintf(__("Malformed \"%s\" time: \"%s\""), $prefix, $vars["$prefix-time"]));
+			throw new Exception(sprintf(__("Malformed \"%s\" time: \"%s\""), $prefix, $vars["$prefix-time"]));
 		}
 		$hour = $time_matches[1];
 		$minute = $time_matches[2];
@@ -797,14 +800,13 @@ function get_timestamp($prefix, $hour = 0, $minute = 0, $second = 0)
 			} else if(strcasecmp("pm", $period) == 0) {
 				$hour += 12;
 			} else {
-				soft_error(__("Unrecognized period: ")
-						. $period);
+				throw new Exception(__("Unrecognized period: ") . $period);
 			}
 		}
 	}
 
 	if(!preg_match('/(\d+)[\.\/\-\ ](\d+)[\.\/\-\ ](\d+)/', $vars["$prefix-date"], $date_matches)) {
-		soft_error(sprintf(__("Malformed \"%s\" date: \"%s\""), $prefix, $vars["$prefix-date"]));
+		throw new Exception(sprintf(__("Malformed \"%s\" date: \"%s\""), $prefix, $vars["$prefix-date"]));
 	}
 	
 	switch($phpc_cal->date_format) {
@@ -824,7 +826,7 @@ function get_timestamp($prefix, $hour = 0, $minute = 0, $second = 0)
 			$year = $date_matches[3];
 			break;
 		default:
-			soft_error(__("Invalid date_format."));
+			throw new Exception(__("Invalid date_format."));
 	}
 
 	return mktime($hour, $minute, $second, $month, $day, $year);

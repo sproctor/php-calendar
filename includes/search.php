@@ -125,7 +125,13 @@ function search()
 {
 	global $vars;
 
-	if(isset($vars['searchstring'])) return search_results();
+	try {
+		if(isset($vars['searchstring']))
+			return search_results();
+	} catch(Exception $e) {
+		message($e->getMessage());
+	}
+
 	return search_form();
 }
 
