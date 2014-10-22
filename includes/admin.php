@@ -71,11 +71,15 @@ function calendar_list()
 					" ", create_action_link(__("Delete"),
 						"calendar_delete",
 						array("cid" => $cid),
-						attrs('class="phpc-button"')),
+						attrs('class="phpc-button phpc-confirm-cal-del"')),
 					$default_tag)));
         }
 
+	$dialog = tag('div', attrs('id="phpc-dialog-cal-del"', 'title="' . __("Confirmation required") . '"'),
+			__("Permanently delete this calendar?"));
+
         return tag('div', attrs('id="phpc-admin-calendars"'),
+			$dialog,
 			tag('div', attrs('class="phpc-sub-title"'),
 				__('Calendar List')),
 			tag('table', attrs('class="phpc-container"'),

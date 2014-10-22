@@ -177,7 +177,7 @@ $(document).ready(function(){
     modal: true
   });
   // Add this class to links that should open the dialog to confirm
-  $("[class^='phpc-confirm']").click(function(e) {
+  $("[class*='phpc-confirm']").click(function(e) {
     e.preventDefault();
     var href = $(this).attr("href");
     var re = /phpc-confirm(\S*)/;
