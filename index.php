@@ -62,7 +62,7 @@ if(defined('PHPC_DEBUG'))
 	$phpc_min = '';
 else
 	$phpc_min = '.min';
-		
+
 $phpc_theme = $phpc_cal->theme;
 if(empty($phpc_theme))
 	$phpc_theme = 'smoothness';
