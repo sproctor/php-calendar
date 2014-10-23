@@ -972,7 +972,7 @@ msgstr "선택한 이벤트 가져오는 중 오류발생"
 #: includes/import_form.php:184
 #, php-format
 msgid "Created %s events with %s occurences"
-msgstr "%s 개의 일정과 함께 $s 개 이벤트 생성"
+msgstr "%s 개의 일정과 함께 %s 개 이벤트 생성"
 
 #: includes/login.php:39
 msgid "Logged in."
