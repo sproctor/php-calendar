@@ -2,7 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
-# Translators:
+# Translators: joonki min
 msgid ""
 msgstr ""
 "Project-Id-Version: php-calendar\n"
@@ -161,7 +161,7 @@ msgstr "배경 색상"
 
 #: includes/cadmin.php:152
 msgid "Visible to User Group"
-msgstr "사용자 그룹에 노출"
+msgstr "사용자 그룹에 공개"
 
 #: includes/cadmin.php:153 includes/cadmin.php:194
 msgid "Actions"
@@ -369,31 +369,31 @@ msgstr ""
 
 #: includes/calendar.php:796
 msgid "Unsupported config type"
-msgstr ""
+msgstr "지원하지 않는 config type 입니다"
 
 #: includes/category_delete.php:29
 msgid "No category selected."
-msgstr ""
+msgstr "카테고리가 선택되지 않았습니다"
 
 #: includes/category_delete.php:63
 msgid "You do not have permission to delete category: "
-msgstr ""
+msgstr "카테고리를 삭제할 권한이 없습니다"
 
 #: includes/category_delete.php:68
 msgid "Removed category: "
-msgstr ""
+msgstr "삭제된 카테고리입니다"
 
 #: includes/category_delete.php:71
 msgid "Could not remove category: "
-msgstr ""
+msgstr "카테고리를 삭제할 수 없습니다"
 
 #: includes/category_form.php:27
 msgid "Category Form"
-msgstr ""
+msgstr "카테고리 폼"
 
 #: includes/category_form.php:42
 msgid "Visible to groups"
-msgstr ""
+msgstr "그룹에 공개"
 
 #: includes/category_form.php:43 includes/event_form.php:113
 msgid "None"
@@ -401,678 +401,678 @@ msgstr ""
 
 #: includes/category_submit.php:33
 msgid "Color not specified."
-msgstr ""
+msgstr "색상을 지정하지 않았습니다"
 
 #: includes/category_submit.php:43
 msgid "Invalid color."
-msgstr ""
+msgstr "잘못된 색상입니다"
 
 #: includes/category_submit.php:51
 msgid "You do not have permission to add categories to all calendars."
-msgstr ""
+msgstr "카테고리를 모든 캘린더에 추가할 권한이 없습니다"
 
 #: includes/category_submit.php:56
 msgid "You do not have permission to add categories to this calendar."
-msgstr ""
+msgstr "카테고리를 이 캘린더에 추가할 권한이 없습니다"
 
 #: includes/category_submit.php:69
 msgid "You do not have permission to modify this category."
-msgstr ""
+msgstr "이 카테고리를 수정할 권한이 없습니다"
 
 #: includes/category_submit.php:78
 msgid "Modified category: "
-msgstr ""
+msgstr "수정된 카테고리"
 
 #: includes/category_submit.php:82
 msgid "Created category: "
-msgstr ""
+msgstr "생성된 카테고리"
 
 #: includes/category_submit.php:86
 msgid "Error submitting category."
-msgstr ""
+msgstr "오류 제출된 카테고리 "
 
 #: includes/create_calendar.php:54
 msgid "Calendar created."
-msgstr ""
+msgstr "생성된 캘린더"
 
 #: includes/display_day.php:45
 msgid "Title"
-msgstr ""
+msgstr "타이틀"
 
 #: includes/display_day.php:46 includes/form.php:433
 msgid "Time"
-msgstr ""
+msgstr "시간"
 
 #: includes/display_day.php:47 includes/display_event.php:127
 #: includes/display_event.php:171 includes/event_form.php:44
 #: includes/search.php:84
 msgid "Description"
-msgstr ""
+msgstr "설명"
 
 #: includes/display_day.php:58
 msgid "Delete Selected"
-msgstr ""
+msgstr "선택된 항목 삭제"
 
 #: includes/display_day.php:115
 msgid "No events on this day."
-msgstr ""
+msgstr "해당 일에 이벤트가 없습니다"
 
 #: includes/display_event.php:41
 msgid "Invalid arguments."
-msgstr ""
+msgstr "잘못된 변수"
 
 #: includes/display_event.php:53 includes/display_event.php:142
 msgid "You do not have permission to read this event."
-msgstr ""
+msgstr "이 이벤트를 읽을 권한이 없습니다"
 
 #: includes/display_event.php:57 includes/display_event.php:146
 #: includes/display_event.php:218
 msgid "by"
-msgstr ""
+msgstr "에 의해"
 
 #: includes/display_event.php:62 includes/display_event.php:156
 #: includes/display_event.php:226 includes/event_form.php:112
 msgid "Category"
-msgstr ""
+msgstr "카테고리"
 
 #: includes/display_event.php:66 includes/event_form.php:46
 #: includes/occur_form.php:41
 msgid "When"
-msgstr ""
+msgstr "시간"
 
 #: includes/display_event.php:68 includes/display_event.php:149
 msgid "Created at: "
-msgstr ""
+msgstr "에 생성"
 
 #: includes/display_event.php:70
 msgid "Last modified at: "
-msgstr ""
+msgstr "에 마지막으로 수정됨"
 
 #: includes/display_event.php:80
 msgid "Modify Occurrence"
-msgstr ""
+msgstr "일정 수정"
 
 #: includes/display_event.php:82
 msgid "Remove Occurrence"
-msgstr ""
+msgstr "일정 삭제"
 
 #: includes/display_event.php:101
 msgid "Previous occurrence on"
-msgstr ""
+msgstr "이전 일정"
 
 #: includes/display_event.php:111
 msgid "Next occurrence on"
-msgstr ""
+msgstr "다음 일정"
 
 #: includes/display_event.php:117
 msgid "View All Occurrences"
-msgstr ""
+msgstr "모든 일정 보기"
 
 #: includes/display_event.php:164
 msgid "Add Occurrence"
-msgstr ""
+msgstr "일정 추가"
 
 #: includes/display_event.php:187 includes/occurrence_delete.php:45
 #: includes/phpcoccurrence.class.php:244 includes/phpcoccurrence.class.php:253
 #: includes/phpcoccurrence.class.php:255
 msgid "at"
-msgstr ""
+msgstr "에"
 
 #: includes/display_event.php:194
 msgid "Remove"
-msgstr ""
+msgstr "삭제"
 
 #: includes/display_event.php:201
 msgid "Occurrences"
-msgstr ""
+msgstr "일정"
 
 #: includes/display_event.php:228
 msgid "from"
-msgstr ""
+msgstr "부터"
 
 #: includes/display_month.php:32
 msgid "Week"
-msgstr ""
+msgstr "주"
 
 #: includes/display_month.php:78
 msgid "last year"
-msgstr ""
+msgstr "지난 년도"
 
 #: includes/display_month.php:80
 msgid "last month"
-msgstr ""
+msgstr "지난 달"
 
 #: includes/display_month.php:90
 msgid "next month"
-msgstr ""
+msgstr "다음 달"
 
 #: includes/display_month.php:92
 msgid "next year"
-msgstr ""
+msgstr "다음 년도"
 
 #: includes/display_month.php:254
 msgid "View Additional Events"
-msgstr ""
+msgstr "추가 이벤트 보기"
 
 #: includes/display_month.php:268
 msgid "continued"
-msgstr ""
+msgstr "계속됨"
 
 #: includes/event_delete.php:29
 msgid "No event selected."
-msgstr ""
+msgstr "이벤트가 선택되지 않았습니다"
 
 #: includes/event_delete.php:75
 msgid "Removed event"
-msgstr ""
+msgstr "제거된 이벤트"
 
 #: includes/event_delete.php:77
 msgid "Removed events"
-msgstr ""
+msgstr "제거된 이벤트"
 
 #: includes/event_delete.php:84
 msgid "Could not remove event"
-msgstr ""
+msgstr "이벤트를 제거할 수 없습니다"
 
 #: includes/event_delete.php:86
 msgid "Could not remove events"
-msgstr ""
+msgstr "이벤트를 제거할 수 없습니다"
 
 #: includes/event_delete.php:93
 msgid "You do not have permission to remove event"
-msgstr ""
+msgstr "이벤트를 제거할 권한이 없습니다"
 
 #: includes/event_delete.php:95
 msgid "You do not have permission to remove events"
-msgstr ""
+msgstr "이벤트를 제거할 권한이 없습니다"
 
 #: includes/event_form.php:40
 msgid "Event Form"
-msgstr ""
+msgstr "의 이벤트"
 
 #: includes/event_form.php:41 includes/globals.php:70 includes/search.php:82
 msgid "Subject"
-msgstr ""
+msgstr "제목"
 
 #: includes/event_form.php:50
 msgid "Change the event date and time"
-msgstr ""
+msgstr "이벤트 시간 변경"
 
 #: includes/event_form.php:53 includes/occur_form.php:43
 #: includes/phpcoccurrence.class.php:252 includes/search.php:101
 msgid "From"
-msgstr ""
+msgstr "부터"
 
 #: includes/event_form.php:54 includes/occur_form.php:44
 #: includes/search.php:103
 msgid "To"
-msgstr ""
+msgstr "까지"
 
 #: includes/event_form.php:57 includes/occur_form.php:47
 msgid "Time Type"
-msgstr ""
+msgstr "시간제"
 
 #: includes/event_form.php:58 includes/occur_form.php:48
 msgid "Normal"
-msgstr ""
+msgstr "일반"
 
 #: includes/event_form.php:59 includes/occur_form.php:49
 msgid "Full Day"
-msgstr ""
+msgstr "종일"
 
 #: includes/event_form.php:60 includes/occur_form.php:50
 msgid "To Be Announced"
-msgstr ""
+msgstr "추후 공지"
 
 #: includes/event_form.php:66
 msgid "Repeats"
-msgstr ""
+msgstr "반복"
 
 #: includes/event_form.php:68
 msgid "Never"
-msgstr ""
+msgstr "반복하지 않음"
 
 #: includes/event_form.php:70
 msgid "Daily"
-msgstr ""
+msgstr "일간"
 
 #: includes/event_form.php:72
 msgid "Weekly"
-msgstr ""
+msgstr "주간"
 
 #: includes/event_form.php:74
 msgid "Monthly"
-msgstr ""
+msgstr "월간"
 
 #: includes/event_form.php:76
 msgid "Yearly"
-msgstr ""
+msgstr "연간"
 
 #: includes/event_form.php:78 includes/event_form.php:85
 #: includes/event_form.php:92 includes/event_form.php:99
 msgid "Every"
-msgstr ""
+msgstr "모든"
 
 #: includes/event_form.php:79
 msgid "Repeat every how many days?"
-msgstr ""
+msgstr "며칠간 반복하시겠습니까?"
 
 #: includes/event_form.php:82 includes/event_form.php:90
 #: includes/event_form.php:97 includes/event_form.php:104
 msgid "Until"
-msgstr ""
+msgstr "까지"
 
 #: includes/event_form.php:86
 msgid "Repeat every how many weeks?"
-msgstr ""
+msgstr "몇주간 반복하시겠습니까?"
 
 #: includes/event_form.php:93
 msgid "Repeat every how many months?"
-msgstr ""
+msgstr "몇달간 반복하시겠습니까?"
 
 #: includes/event_form.php:100
 msgid "Repeat every how many years?"
-msgstr ""
+msgstr "몇년간 반복하시겠습니까?"
 
 #: includes/event_form.php:128 includes/import_form.php:53
 msgid "Submit Event"
-msgstr ""
+msgstr "이벤트 승인"
 
 #: includes/event_form.php:295 includes/occur_form.php:131
 msgid "Unrecognized Time Type."
-msgstr ""
+msgstr "인식할 수 없는 시간제입니다"
 
 #: includes/event_form.php:300 includes/occur_form.php:136
 msgid "An event cannot have an end earlier than its start."
-msgstr ""
+msgstr "이벤트의 종료시는 시작시보다 빠를 수 없습니다"
 
 #: includes/event_form.php:308 includes/occur_form.php:141
 msgid "You do not have permission to write to this calendar."
-msgstr ""
+msgstr "이 캘린더에 일정을 추가할 권한이 없습니다"
 
 #: includes/event_form.php:341
 msgid "Required field \"every-day\" is not set."
-msgstr ""
+msgstr "필수 항목 \"every-day\" 가 설정되지 않았습니다"
 
 #: includes/event_form.php:344
 msgid "every-day must be greater than 1"
-msgstr ""
+msgstr "every-day 는 1보다 큰 값으로 설정되어야 합니다"
 
 #: includes/event_form.php:360
 msgid "Required field \"every-week\" is not set."
-msgstr ""
+msgstr "필수 항목 \"every-week\" 가 설정되지 않았습니다"
 
 #: includes/event_form.php:362
 msgid "every-week must be greater than 1"
-msgstr ""
+msgstr "every-week 는 1보다 큰 값으로 설정되어야 합니다"
 
 #: includes/event_form.php:379
 msgid "Required field \"every-month\" is not set."
-msgstr ""
+msgstr "필수 항목 \"every-month\" 가 설정되지 않았습니다"
 
 #: includes/event_form.php:381 includes/event_form.php:400
 msgid "every-month must be greater than 1"
-msgstr ""
+msgstr "every-month 는 1보다 큰 값으로 설정되어야 합니다"
 
 #: includes/event_form.php:398
 msgid "Required field \"every-year\" is not set."
-msgstr ""
+msgstr "필수 항목 \"every-year\" 가 설정되지 않았습니다"
 
 #: includes/event_form.php:416
 msgid "Invalid event type."
-msgstr ""
+msgstr "잘못된 이벤트 타입"
 
 #: includes/event_form.php:422
 msgid "Modified event: "
-msgstr ""
+msgstr "수정된 이벤트: "
 
 #: includes/event_form.php:424
 msgid "Created event: "
-msgstr ""
+msgstr "생성된 이벤트: "
 
 #: includes/event_form.php:431
 msgid "Error submitting event."
-msgstr ""
+msgstr "오류 제출된 이벤트"
 
 #: includes/event_form.php:441 includes/occur_form.php:177
 #, php-format
 msgid "Required field \"%s\" year was not set."
-msgstr ""
+msgstr "필수 항목 \"%s\" 년이 설정되지 않았습니다"
 
 #: includes/event_form.php:450 includes/occur_form.php:186
 #, php-format
 msgid "Malformed time in \"%s\" time."
-msgstr ""
+msgstr "해당 시간에 잘못된 \"%s\" 시간이 있습니다"
 
 #: includes/event_form.php:464
 msgid "Unrecognized period: "
-msgstr ""
+msgstr "인식할 수 없는 기간"
 
 #: includes/event_form.php:471 includes/occur_form.php:195
 #, php-format
 msgid "Malformed time in \"%s\" date."
-msgstr ""
+msgstr "해당 날짜에 잘못된 \"%s\" 시간이 있습니다"
 
 #: includes/form.php:32
 msgid "required"
-msgstr ""
+msgstr "필수"
 
 #: includes/form.php:102
 msgid "Cannot add a non-form element to a form."
-msgstr ""
+msgstr "폼이 아닌 요소를 폼에 추가할 수 없습니다"
 
 #: includes/form.php:430
 msgid "Date"
-msgstr ""
+msgstr "날짜"
 
 #: includes/globals.php:23
 msgid "January"
-msgstr ""
+msgstr "1월"
 
 #: includes/globals.php:24
 msgid "February"
-msgstr ""
+msgstr "2월"
 
 #: includes/globals.php:25
 msgid "March"
-msgstr ""
+msgstr "3월"
 
 #: includes/globals.php:26
 msgid "April"
-msgstr ""
+msgstr "4월"
 
 #: includes/globals.php:27 includes/globals.php:52
 msgid "May"
-msgstr ""
+msgstr "5월"
 
 #: includes/globals.php:28
 msgid "June"
-msgstr ""
+msgstr "6월"
 
 #: includes/globals.php:29
 msgid "July"
-msgstr ""
+msgstr "7월"
 
 #: includes/globals.php:30
 msgid "August"
-msgstr ""
+msgstr "8월"
 
 #: includes/globals.php:31
 msgid "September"
-msgstr ""
+msgstr "9월"
 
 #: includes/globals.php:32
 msgid "October"
-msgstr ""
+msgstr "10월"
 
 #: includes/globals.php:33
 msgid "November"
-msgstr ""
+msgstr "11월"
 
 #: includes/globals.php:34
 msgid "December"
-msgstr ""
+msgstr "12월"
 
 #: includes/globals.php:40
 msgid "Tuesday"
-msgstr ""
+msgstr "화요일"
 
 #: includes/globals.php:41
 msgid "Wednesday"
-msgstr ""
+msgstr "수요일"
 
 #: includes/globals.php:42
 msgid "Thursday"
-msgstr ""
+msgstr "목요일"
 
 #: includes/globals.php:43
 msgid "Friday"
-msgstr ""
+msgstr "금요일"
 
 #: includes/globals.php:48
 msgid "Jan"
-msgstr ""
+msgstr "1월"
 
 #: includes/globals.php:49
 msgid "Feb"
-msgstr ""
+msgstr "2월"
 
 #: includes/globals.php:50
 msgid "Mar"
-msgstr ""
+msgstr "3월"
 
 #: includes/globals.php:51
 msgid "Apr"
-msgstr ""
+msgstr "4월"
 
 #: includes/globals.php:53
 msgid "Jun"
-msgstr ""
+msgstr "6월"
 
 #: includes/globals.php:54
 msgid "Jul"
-msgstr ""
+msgstr "7월"
 
 #: includes/globals.php:55
 msgid "Aug"
-msgstr ""
+msgstr "8월"
 
 #: includes/globals.php:56
 msgid "Sep"
-msgstr ""
+msgstr "9월"
 
 #: includes/globals.php:57
 msgid "Oct"
-msgstr ""
+msgstr "10월"
 
 #: includes/globals.php:58
 msgid "Nov"
-msgstr ""
+msgstr "11월"
 
 #: includes/globals.php:59
 msgid "Dec"
-msgstr ""
+msgstr "12월"
 
 #: includes/globals.php:69
 msgid "Start Date"
-msgstr ""
+msgstr "시작일"
 
 #: includes/globals.php:74
 msgid "Ascending"
-msgstr ""
+msgstr "오름차순"
 
 #: includes/globals.php:75
 msgid "Descending"
-msgstr ""
+msgstr "내림차순"
 
 #: includes/group_delete.php:29
 msgid "No group selected."
-msgstr ""
+msgstr "그룹이 선택되지 않았습니다"
 
 #: includes/group_delete.php:63
 msgid "You do not have permission to delete group: "
-msgstr ""
+msgstr "그룹을 삭제할 권한이 없습니다"
 
 #: includes/group_delete.php:68
 msgid "Removed group: "
-msgstr ""
+msgstr "그룹 삭제"
 
 #: includes/group_delete.php:71
 msgid "Could not remove group: "
-msgstr ""
+msgstr "그룹을 삭제할 수 없습니다"
 
 #: includes/group_form.php:27
 msgid "Group Form"
-msgstr ""
+msgstr "그룹 폼"
 
 #: includes/group_submit.php:32
 msgid "You do not have permission to add a global group."
-msgstr ""
+msgstr "전역 그룹을 추가할 권한이 없습니다"
 
 #: includes/group_submit.php:37
 msgid "You do not have permission to add a group to this calendar."
-msgstr ""
+msgstr "이 캘린더에 그룹을 추가할 권한이 없습니다"
 
 #: includes/group_submit.php:49
 msgid "You do not have permission to modify this group."
-msgstr ""
+msgstr "이 그룹을 수정할 권한이 없습니다"
 
 #: includes/group_submit.php:57
 msgid "Modified group: "
-msgstr ""
+msgstr "수정된 그룹: "
 
 #: includes/group_submit.php:61
 msgid "Created group: "
-msgstr ""
+msgstr "생성된 그룹: "
 
 #: includes/group_submit.php:65
 msgid "Error submitting group."
-msgstr ""
+msgstr "오류 제출된 그룹"
 
 #: includes/import_form.php:28 includes/translate.php:28
 msgid "Need to be admin"
-msgstr ""
+msgstr "관리자 권한 필요"
 
 #: includes/import_form.php:42
 msgid "Import Form"
-msgstr ""
+msgstr "폼 가져오기"
 
 #: includes/import_form.php:43
 msgid "MySQL Host Name"
-msgstr ""
+msgstr "MySQL 호스트 네임"
 
 #: includes/import_form.php:44
 msgid "MySQL Database Name"
-msgstr ""
+msgstr "MySQL 데이터베이스 네임"
 
 #: includes/import_form.php:45
 msgid "MySQL Port Number"
-msgstr ""
+msgstr "MySQL 포트 넘버"
 
 #: includes/import_form.php:45
 msgid "Leave blank for default"
-msgstr ""
+msgstr "기본으로 비워둠"
 
 #: includes/import_form.php:46
 msgid "MySQL User Name"
-msgstr ""
+msgstr "MySQL 유저 네임"
 
 #: includes/import_form.php:47
 msgid "MySQL User Password"
-msgstr ""
+msgstr "MySQL 유저 패스워드"
 
 #: includes/import_form.php:48
 msgid "PHP-Calendar Table Prefix"
-msgstr ""
+msgstr "PHP-Calendar 테이블 접두어"
 
 #: includes/import_form.php:103
 msgid "Error selecting events in import"
-msgstr ""
+msgstr "선택한 이벤트 가져오는 중 오류발생"
 
 #: includes/import_form.php:184
 #, php-format
 msgid "Created %s events with %s occurences"
-msgstr ""
+msgstr "%s 개의 일정과 함께 $s 개 이벤트 생성"
 
 #: includes/login.php:39
 msgid "Logged in."
-msgstr ""
+msgstr "로그인됨"
 
 #: includes/login.php:42
 msgid "Sorry, Invalid Login"
-msgstr ""
+msgstr "죄송합니다, 잘못된 로그인입니다"
 
 #: includes/login.php:72
 msgid "You must have cookies enabled to login."
-msgstr ""
+msgstr "로그인하기 위해 인터넷 브라우저의 쿠키 설정을 허용해야 합니다"
 
 #: includes/logout.php:29
 msgid "Loggin out..."
-msgstr ""
+msgstr "로그아웃합니다"
 
 #: includes/occur_form.php:39
 msgid "Occurrence Form"
-msgstr ""
+msgstr "일정 폼"
 
 #: includes/occur_form.php:102
 msgid "Submit Occurrence"
-msgstr ""
+msgstr "일정 승인"
 
 #: includes/occur_form.php:112
 msgid "Cannot create occurrence."
-msgstr ""
+msgstr "일정을 생성할 수 없습니다"
 
 #: includes/occur_form.php:146
 msgid "EID not set."
-msgstr ""
+msgstr "EID가 설정되지 않았습니다"
 
 #: includes/occur_form.php:158
 msgid "Modified occurence: "
-msgstr ""
+msgstr "수정된 일정: "
 
 #: includes/occur_form.php:160
 msgid "Created occurence: "
-msgstr ""
+msgstr "생성된 일정: "
 
 #: includes/occur_form.php:167
 msgid "Error submitting occurrence."
-msgstr ""
+msgstr "오류 제출된 일정"
 
 #: includes/occurrence_delete.php:29
 msgid "No occurrence selected."
-msgstr ""
+msgstr "일정이 선택되지 않았습니다"
 
 #: includes/occurrence_delete.php:79
 msgid "Removed occurrence"
-msgstr ""
+msgstr "제거된 일정"
 
 #: includes/occurrence_delete.php:81
 msgid "Removed occurrences"
-msgstr ""
+msgstr "제거된 일정"
 
 #: includes/occurrence_delete.php:88
 msgid "Could not remove occurrence"
-msgstr ""
+msgstr "일정을 제거할 수 없습니다"
 
 #: includes/occurrence_delete.php:90
 msgid "Could not remove occurrences"
-msgstr ""
+msgstr "일정을 제거할 수 없습니다"
 
 #: includes/occurrence_delete.php:97
 msgid "You do not have permission to remove the occurrence."
-msgstr ""
+msgstr "일정을 제거할 권한이 없습니다"
 
 #: includes/occurrence_delete.php:99
 msgid "You do not have permission to remove occurrences."
-msgstr ""
+msgstr "일정을 제거할 권한이 없습니다"
 
 #: includes/password_submit.php:27
 msgid "You must be logged in."
-msgstr ""
+msgstr "로그인해야 합니다"
 
 #: includes/password_submit.php:33
 msgid "You do not have permission to change your password."
-msgstr ""
+msgstr "패스워드를 수정할 권한이 없습니다"
 
 #: includes/password_submit.php:36
 msgid "You must specify your old password."
-msgstr ""
+msgstr "이전 패스워드를 제출해야 합니다"
 
 #: includes/password_submit.php:42
 msgid "The password you entered did not match your old password."
-msgstr ""
+msgstr "입력한 패스워드가 이전 패스워드와 일치하지 않습니다"
 
 #: includes/password_submit.php:46 includes/user_create.php:40
 msgid "You must specify a password"
-msgstr ""
+msgstr "패스워드를 지정해야 합니다"
 
 #: includes/password_submit.php:51 includes/user_create.php:46
 msgid "Your passwords did not match"
-msgstr ""
+msgstr "패스워드가 일치하지 않습니다"
 
 #: includes/password_submit.php:58
 msgid "Password updated."
-msgstr ""
+msgstr "패스워드가 변경되었습니다"
 
 #: includes/phpccalendar.class.php:51
 msgid "(No title)"
@@ -1088,7 +1088,7 @@ msgstr ""
 
 #: includes/phpcdatabase.class.php:144
 msgid "Event doesn't exist"
-msgstr ""
+msgstr "이벤트가 존재하지 않습니다"
 
 #: includes/phpcdatabase.class.php:166
 msgid "Error in get_event_by_oid"
@@ -1140,131 +1140,131 @@ msgstr ""
 
 #: includes/phpcdatabase.class.php:366 includes/phpcdatabase.class.php:382
 msgid "Error while removing an event."
-msgstr ""
+msgstr "이벤트를 제거하는 중 오류가 발생했습니다"
 
 #: includes/phpcdatabase.class.php:394
 msgid "Error while removing an occurrence."
-msgstr ""
+msgstr "일정을 제거하는 중 오류가 발생했습니다"
 
 #: includes/phpcdatabase.class.php:407 includes/phpcdatabase.class.php:448
 msgid "Error while removing a calendar"
-msgstr ""
+msgstr "캘린더를 제거하는 중 오류가 발생했습니다"
 
 #: includes/phpcdatabase.class.php:420
 msgid "Error while removing category."
-msgstr ""
+msgstr "카테고리를 제거하는 중 오류가 발생했습니다"
 
 #: includes/phpcdatabase.class.php:433
 msgid "Error while removing group."
-msgstr ""
+msgstr "그룹을 제거하는 중 오류가 발생했습니다"
 
 #: includes/phpcdatabase.class.php:453
 msgid "Error while removing "
-msgstr ""
+msgstr "제거 중 오류가 발생했습니다"
 
 #: includes/phpcdatabase.class.php:472
 msgid "Could not read permissions."
-msgstr ""
+msgstr "권한을 읽을 수 없습니다"
 
 #: includes/phpcdatabase.class.php:485
 msgid "Could not get calendars."
-msgstr ""
+msgstr "캘린더를 가져올 수 없습니다"
 
 #: includes/phpcdatabase.class.php:505
 msgid "Could not get calendar."
-msgstr ""
+msgstr "캘린더를 가져올 수 없습니다"
 
 #: includes/phpcdatabase.class.php:519 includes/phpcdatabase.class.php:541
 msgid "Could not get user."
-msgstr ""
+msgstr "사용자를 가져올 수 없습니다"
 
 #: includes/phpcdatabase.class.php:557 includes/phpcdatabase.class.php:573
 msgid "Error getting user."
-msgstr ""
+msgstr "사용자 가져오기 오류"
 
 #: includes/phpcdatabase.class.php:589
 msgid "Error creating user."
-msgstr ""
+msgstr "사용자 생성 오류"
 
 #: includes/phpcdatabase.class.php:600 includes/phpcdatabase.class.php:612
 msgid "Error reading options"
-msgstr ""
+msgstr "읽기 옵션 오류"
 
 #: includes/phpcdatabase.class.php:623
 msgid "Error creating options"
-msgstr ""
+msgstr "옵션 생성 오류"
 
 #: includes/phpcdatabase.class.php:633
 msgid "Error updating password."
-msgstr ""
+msgstr "패스워드 업데이트 오류"
 
 #: includes/phpcdatabase.class.php:644
 msgid "Error updating timezone."
-msgstr ""
+msgstr "시간대 업데이트 오류"
 
 #: includes/phpcdatabase.class.php:655
 msgid "Error updating language."
-msgstr ""
+msgstr "언어 업데이트 오류"
 
 #: includes/phpcdatabase.class.php:676
 msgid "Error creating event."
-msgstr ""
+msgstr "이벤트 생성 오류"
 
 #: includes/phpcdatabase.class.php:703
 msgid "Error creating occurrence."
-msgstr ""
+msgstr "일정 생성 오류"
 
 #: includes/phpcdatabase.class.php:728
 msgid "Error modifying occurrence."
-msgstr ""
+msgstr "일정 수정 오류"
 
 #: includes/phpcdatabase.class.php:750
 msgid "Error modifying event."
-msgstr ""
+msgstr "이벤트 수정 오류"
 
 #: includes/phpcdatabase.class.php:764
 msgid "Error creating category."
-msgstr ""
+msgstr "카테고리 생성 오류"
 
 #: includes/phpcdatabase.class.php:777
 msgid "Error creating group."
-msgstr ""
+msgstr "그룹 생성 오류"
 
 #: includes/phpcdatabase.class.php:793
 msgid "Error modifying category."
-msgstr ""
+msgstr "카테고리 수정 오류"
 
 #: includes/phpcdatabase.class.php:807
 msgid "Error modifying group."
-msgstr ""
+msgstr "그룹 수정 오류"
 
 #: includes/phpcdatabase.class.php:840
 msgid "Error during searching"
-msgstr ""
+msgstr "검색중 오류"
 
 #: includes/phpcdatabase.class.php:866
 msgid "Error updating user permissions."
-msgstr ""
+msgstr "사용자 권한 업데이트 오류"
 
 #: includes/phpcdatabase.class.php:875
 msgid "Error getting login token."
-msgstr ""
+msgstr "로그인 토큰 가져오기 오류"
 
 #: includes/phpcdatabase.class.php:890
 msgid "Error adding login token."
-msgstr ""
+msgstr "로그인 토큰 추가 오류"
 
 #: includes/phpcdatabase.class.php:900
 msgid "Error updating login token."
-msgstr ""
+msgstr "로그인 토큰 업데이트 오류"
 
 #: includes/phpcdatabase.class.php:909
 msgid "Error removing login tokens."
-msgstr ""
+msgstr "로그인 토큰 제거 오류"
 
 #: includes/phpcdatabase.class.php:918
 msgid "Error cleaning login tokens."
-msgstr ""
+msgstr "로그인 토큰 클리닝 오류"
 
 #: includes/phpcdatabase.class.php:928
 msgid "SQL query"
@@ -1276,7 +1276,7 @@ msgstr ""
 
 #: includes/phpcevent.class.php:44
 msgid "unknown"
-msgstr ""
+msgstr "알 수 없음"
 
 #: includes/phpcevent.class.php:70
 msgid "(No subject)"
@@ -1284,7 +1284,7 @@ msgstr ""
 
 #: includes/phpcoccurrence.class.php:53 includes/phpcoccurrence.class.php:76
 msgid "DB returned an invalid date."
-msgstr ""
+msgstr "DB가 잘못된 데이터를 반환했습니다"
 
 #: includes/phpcoccurrence.class.php:105 includes/phpcoccurrence.class.php:121
 msgid "TBA"
@@ -1292,75 +1292,75 @@ msgstr ""
 
 #: includes/phpcoccurrence.class.php:116 includes/phpcoccurrence.class.php:254
 msgid "to"
-msgstr ""
+msgstr "까지"
 
 #: includes/search.php:35
 msgid "Invalid sort option"
-msgstr ""
+msgstr "잘못된 정렬 옵션"
 
 #: includes/search.php:41
 msgid "Invalid order option"
-msgstr ""
+msgstr "잘못된 순서 옵션"
 
 #: includes/search.php:75
 msgid "No events matched your search criteria."
-msgstr ""
+msgstr "검색 기준에 맞는 이벤트가 없습니다"
 
 #: includes/search.php:79
 msgid "Search Results"
-msgstr ""
+msgstr "검색 결과"
 
 #: includes/search.php:83
 msgid "Date Time"
-msgstr ""
+msgstr "날짜 시간"
 
 #: includes/search.php:97
 msgid "Phrase"
-msgstr ""
+msgstr "문단"
 
 #: includes/search.php:105
 msgid "Sort By"
-msgstr ""
+msgstr "정렬"
 
 #: includes/search.php:108
 msgid "Order"
-msgstr ""
+msgstr "순서"
 
 #: includes/settings.php:45
 msgid "Change Password"
-msgstr ""
+msgstr "패스워드 재설정"
 
 #: includes/settings.php:53
 msgid "Old Password"
-msgstr ""
+msgstr "이전 패스워드"
 
 #: includes/settings.php:56
 msgid "New Password"
-msgstr ""
+msgstr "새로운 패스워드"
 
 #: includes/settings.php:59
 msgid "Confirm New Password"
-msgstr ""
+msgstr "새로운 패스워드 확인"
 
 #: includes/settings.php:126
 msgid "Settings updated."
-msgstr ""
+msgstr "설정이 업데이트되었습니다"
 
 #: includes/setup.php:78
 msgid "Possible hacking attempt on your account."
-msgstr ""
+msgstr "당신의 계정에 해킹 시도가 가능합니다"
 
 #: includes/setup.php:109
 msgid "Month is out of range."
-msgstr ""
+msgstr "기간을 벗어났습니다"
 
 #: includes/setup.php:117
 msgid "Invalid year"
-msgstr ""
+msgstr "잘못된 년도"
 
 #: includes/translate.php:38
 msgid "Translate"
-msgstr ""
+msgstr "번역"
 
 #: includes/translate.php:52
 #, php-format
@@ -1369,44 +1369,44 @@ msgstr ""
 
 #: includes/user_create.php:35
 msgid "You must specify a user name"
-msgstr ""
+msgstr "사용자 이름을 지정해야 합니다"
 
 #: includes/user_create.php:55
 msgid "User already exists."
-msgstr ""
+msgstr "사용자가 이미 존재합니다"
 
 #: includes/user_create.php:59
 msgid "Added user. Now set its permission inside the Calendar Admin"
-msgstr ""
+msgstr "사용자를 추가했습니다. 이제 일정관리 내부 권한을 설정합니다"
 
 #: includes/user_delete.php:29
 msgid "You must be an admin to delete users."
-msgstr ""
+msgstr "사용자를 삭제하려면 관리자 권한이 필요합니다"
 
 #: includes/user_delete.php:34
 msgid "No user selected."
-msgstr ""
+msgstr "사용자가 선택되지 않았습니다"
 
 #: includes/user_permissions_submit.php:31
 msgid "No users"
-msgstr ""
+msgstr "사용자 없음"
 
 #: includes/user_permissions_submit.php:59
 msgid "No changes to make."
-msgstr ""
+msgstr "변경 사항이 없습니다"
 
 #: includes/user_permissions_submit.php:61
 msgid "Updated user(s):"
-msgstr ""
+msgstr "업데이트 된 사용자"
 
 #: includes/util.php:73
 msgid "continue"
-msgstr ""
+msgstr "계속"
 
 #: includes/util.php:155
 msgid "Software Error"
-msgstr ""
+msgstr "소프트웨어 에러"
 
 #: includes/util.php:156
 msgid "Message:"
-msgstr ""
+msgstr "메시지:"
