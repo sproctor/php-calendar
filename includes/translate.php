@@ -41,16 +41,18 @@ function translate() {
 		if(strncmp($filename, ".", 1) == 0 || !is_dir($pathname))
 			continue;
 		$msgs_path = "$pathname/LC_MESSAGES";
+		$po_filename = "$msgs_path/messages.po";
 
-		$hash=	parse_po_file("$msgs_path/messages.po");
-		if ($hash === FALSE) {
-			print(nl2br("Error reading '$msgs_path/messages.po', aborted.\n"));
-		} else {
-			$out="$msgs_path/messages.mo";
-			write_mo_file($hash, $out);
+		if(file_exists($po_filename)) {
+			$hash = parse_po_file("$msgs_path/messages.po");
+			if ($hash === FALSE) {
+				$output_tag->add(tag('div', __("Error reading '$po_filename'.")));
+			} else {
+				$mo_filename = "$msgs_path/messages.mo";
+				write_mo_file($hash, $mo_filename);
+				$output_tag->add(tag('div', sprintf(__('Translated "%s"'), $filename)));
+			}
 		}
-		$output_tag->add(tag('div', sprintf(__('Translated "%s"'),
-					$filename)));
 	}
 
 	closedir($handle);
