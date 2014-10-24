@@ -67,7 +67,7 @@ $phpc_theme = $phpc_cal->theme;
 if(empty($phpc_theme))
 	$phpc_theme = 'smoothness';
 $jquery_version = "1.11.1";
-$jqueryui_version = "1.11.1";
+$jqueryui_version = "1.11.2";
 $fa_version = "4.2.0";
 
 if(!isset($phpc_jqui_path))
