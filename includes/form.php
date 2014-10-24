@@ -576,13 +576,12 @@ class FormCheckBoxQuestion extends FormAtomicQuestion {
 	var $value;
 	var $desc;
 
-        function __construct($qid, $subject = false, $desc = false,
-			$required = false) {
+        function __construct($qid, $subject = false, $desc = false) {
 		parent::__construct();
 		$this->qid = $qid;
                 $this->subject = $subject;
 		$this->desc = $desc;
-                $this->required = $required;
+                $this->required = false; // checkboxes are always set one way or the other
 		$this->class .= " form-checkbox-question";
         }
 

@@ -787,8 +787,7 @@ function get_timestamp($prefix, $hour = 0, $minute = 0, $second = 0)
 {
 	global $vars, $phpc_cal;
 
-	if(!isset($vars["$prefix-date"]))
-		throw new Exception(sprintf(__("Required field \"%s\" was not set."), "$prefix-date"));
+	check_input("$prefix-date");
 
 	if(!empty($vars["$prefix-time"])) {
 		if(!preg_match('/(\d+)[:\.](\d+)\s?(\w+)?/', $vars["$prefix-time"],

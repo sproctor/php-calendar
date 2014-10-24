@@ -31,6 +31,7 @@ class PhpcEvent {
 	var $ctime;
 	var $mtime;
 	var $cal;
+	var $fields;
 
 	function __construct($event)
 	{
@@ -160,6 +161,15 @@ class PhpcEvent {
 		return format_timestamp_string($this->mtime,
 				$this->cal->date_format,
 				$this->cal->hours_24);
+	}
+
+	function get_fields() {
+		global $phpcdb;
+
+		if(!isset($this->fields))
+			$this->fields = $phpcdb->get_event_fields($this->eid);
+
+		return $this->fields;
 	}
 }
 ?>

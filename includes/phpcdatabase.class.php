@@ -43,7 +43,7 @@ class PhpcDatabase {
 		$this->dbh->close();
 	}
 
-	private function get_event_fields() {
+	private function get_event_columns() {
 		$events_table = SQL_PREFIX . "events";
 		$cats_table = SQL_PREFIX . "categories";
 		$fields = array('subject', 'description', 'owner', 'eid', 'cid',
@@ -54,8 +54,8 @@ class PhpcDatabase {
 			. "UNIX_TIMESTAMP(`mtime`) AS `mtime`";
 	}
 
-	private function get_occurrence_fields() {
-		return $this->get_event_fields() . ", `time_type`, `oid`, "
+	private function get_occurrence_columns() {
+		return $this->get_event_columns() . ", `time_type`, `oid`, "
 			. "UNIX_TIMESTAMP(`start_ts`) AS `start_ts`, "
 			. "DATE_FORMAT(`start_date`, '%Y%m%d') AS `start_date`, "
 			. "UNIX_TIMESTAMP(`end_ts`) AS `end_ts`, "
@@ -80,7 +80,7 @@ class PhpcDatabase {
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-		$query = "SELECT " . $this->get_occurrence_fields()
+		$query = "SELECT " . $this->get_occurrence_columns()
 			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
@@ -137,7 +137,7 @@ class PhpcDatabase {
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-		$query = "SELECT " . $this->get_event_fields()
+		$query = "SELECT " . $this->get_event_columns()
 			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
 			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
@@ -159,7 +159,7 @@ class PhpcDatabase {
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-		$query = "SELECT " . $this->get_event_fields()
+		$query = "SELECT " . $this->get_event_columns()
 			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
 			."LEFT JOIN `$occurrences_table` USING (`eid`)\n"
@@ -312,6 +312,23 @@ class PhpcDatabase {
 		return $arr;
 	}
 
+	function get_field($fid) {
+		$fields_table = SQL_PREFIX . 'fields';
+
+		$query = "SELECT `$fields_table`.`name` AS `name`, `required`, "
+			."`format`, `$fields_table`.`cid` AS `cid`, `fid`\n"
+			."FROM `$fields_table`\n"
+			."WHERE `fid` = $fid";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(__('Error in get_field'), $query);
+			
+		$result = $sth->fetch_assoc()
+			or soft_error(__("Field doesn't exist with 'fid'") . ": $fid");
+	
+		return $result;
+	}
+
 	// returns the event that corresponds to $oid
 	function get_occurrence_by_oid($oid)
 	{
@@ -320,7 +337,7 @@ class PhpcDatabase {
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-                $query = "SELECT " . $this->get_occurrence_fields()
+                $query = "SELECT " . $this->get_occurrence_columns()
 			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
@@ -338,6 +355,47 @@ class PhpcDatabase {
 		return new PhpcOccurrence($result);
 	}
 
+	// returns the categories for calendar $cid
+	function get_fields($cid = false) {
+		$fields_table = SQL_PREFIX . 'fields';
+
+		if($cid)
+			$where = "WHERE `$fields_table`.`cid` = '$cid'\n";
+		else
+			$where = "WHERE `$fields_table`.`cid` IS NULL\n";
+
+		$query = "SELECT `name`, `required`, `format`, `cid`, `fid`\n"
+			."FROM `$fields_table`\n"
+			.$where;
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(__('Error in get_fields'), $query);
+
+		$arr = array();
+		while($result = $sth->fetch_assoc()) {
+			$arr[$result['fid']] = $result;
+		}
+
+		return $arr;
+	}
+
+	function get_event_fields($eid) {
+		$event_fields_table = SQL_PREFIX . 'event_fields';
+		$query = "SELECT `fid`, `value`\n"
+			."FROM `$event_fields_table`\n"
+			."WHERE `eid`='$eid'";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(__('Error in get_event_fields'), $query);
+
+		$arr = array();
+		while($result = $sth->fetch_assoc()) {
+			$arr[] = $result;
+		}
+
+		return $arr;
+	}
+
         function get_occurrences_by_eid($eid)
 	{
 		$events_table = SQL_PREFIX . "events";
@@ -345,7 +403,7 @@ class PhpcDatabase {
 		$users_table = SQL_PREFIX . 'users';
 		$cats_table = SQL_PREFIX . 'categories';
 
-                $query = "SELECT " . $this->get_occurrence_fields()
+                $query = "SELECT " . $this->get_occurrence_columns()
 			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
@@ -435,8 +493,7 @@ class PhpcDatabase {
 			."WHERE `catid` = '$catid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error while removing category.'),
-					$query);
+			or $this->db_error(__('Error removing category.'), $query);
 
 		return $this->dbh->affected_rows > 0;
 	}
@@ -448,8 +505,19 @@ class PhpcDatabase {
 			."WHERE `gid` = '$gid'";
 
 		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error while removing group.'),
-					$query);
+			or $this->db_error(__('Error removing group.'), $query);
+
+		return $this->dbh->affected_rows > 0;
+	}
+
+	function delete_field($fid)
+	{
+
+		$query = 'DELETE FROM `'.SQL_PREFIX ."fields`\n"
+			."WHERE `fid` = '$fid'";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(__('Error removing field.'), $query);
 
 		return $this->dbh->affected_rows > 0;
 	}
@@ -778,6 +846,15 @@ class PhpcDatabase {
 		return $this->dbh->insert_id;
 	}
 
+	function add_event_field($eid, $fid, $value)
+	{
+		$query = "INSERT INTO `" . SQL_PREFIX . "event_fields`\n"
+			."SET `eid` = '$eid', `fid` = '$fid', `value` = '$value'";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(__('Error adding field to event.'), $query);
+	}
+
 	function modify_occurrence($oid, $time_type, $start_ts, $end_ts)
 	{
 
@@ -855,6 +932,22 @@ class PhpcDatabase {
 		return $this->dbh->insert_id;
 	}
 
+	function create_field($cid, $name, $required, $format) {
+		if($format === false)
+			$format_val = 'NULL';
+		else
+			$format_val = "'$format'";
+
+		$query = "INSERT INTO `" . SQL_PREFIX . "fields`\n"
+			."(`cid`, `name`, `required`, `format`)\n"
+			."VALUES ('$cid', '$name', '$required', $format_val)";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(__('Error creating field.'), $query);
+		
+		return $this->dbh->insert_id;
+	}
+
 	function modify_category($catid, $name, $text_color, $bg_color, $gid)
 	{
 		$query = "UPDATE " . SQL_PREFIX . "categories\n"
@@ -885,6 +978,26 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows > 0;
 	}
 
+	function modify_field($fid, $name, $required, $format)
+	{
+		if($format === false)
+			$format_val = 'NULL';
+		else
+			$format_val = "'$format'";
+
+		$query = "UPDATE " . SQL_PREFIX . "categories\n"
+			."SET\n"
+			."`name`='$name',\n"
+			."`required`='$required',\n"
+			."`format`=$format_val\n"
+			."WHERE `fid`='$fid'";
+
+		$sth = $this->dbh->query($query)
+			or $this->db_error(__('Error modifying field.'), $query);
+
+		return $this->dbh->affected_rows > 0;
+	}
+
 	function search($cid, $keywords, $start, $end, $sort, $order) {
 		$events_table = SQL_PREFIX . 'events';
 		$occurrences_table = SQL_PREFIX . 'occurrences';
@@ -905,7 +1018,7 @@ class PhpcDatabase {
 		if($end)
 			$where .= "AND IF(`end_ts`, `end_ts` >= $start_str, `end_date` >= DATE($end_str))\n";
 
-                $query = "SELECT " . $this->get_occurrence_fields()
+                $query = "SELECT " . $this->get_occurrence_columns()
 			.", `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"

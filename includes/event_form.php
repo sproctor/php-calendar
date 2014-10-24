@@ -137,6 +137,10 @@ function display_form() {
 	if(isset($vars['phpcid']))
 		$form->add_hidden('phpcid', $vars['phpcid']);
 
+	foreach($phpc_cal->get_fields() as $field) {
+		$form->add_part(new FormFreeQuestion('phpc-field-'.$field['fid'], $field['name']));
+	}
+
 	$form->add_hidden('phpc_token', $phpc_token);
 	$form->add_hidden('action', 'event_form');
 	$form->add_hidden('submit_form', 'submit_form');
@@ -158,6 +162,10 @@ function display_form() {
 				'end-time' => $event->get_end_time(),
 				'readonly' => $event->is_readonly(),
 				);
+
+		foreach($event->get_fields() as $field) {
+			$defaults["phpc-field-{$field['fid']}"] = $field['value'];
+		}
 
 		if(!empty($event->catid))
 			$defaults['catid'] = $event->catid;
@@ -286,7 +294,7 @@ function add_repeat_defaults($occs, &$defaults) {
 
 function process_form()
 {
-	global $vars, $phpcdb, $phpc_script, $phpc_user;
+	global $vars, $phpcdb, $phpc_script, $phpc_user, $phpc_cal;
 
 	// When modifying events, this is the value of the checkbox that
 	//   determines if the date should change
@@ -352,92 +360,76 @@ function process_form()
 			$phpcdb->delete_occurrences($eid);
 	}
 
-	if($modify_occur) {
-		$oid = $phpcdb->create_occurrence($eid, $time_type, $start_ts, $end_ts);
+	foreach($phpc_cal->get_fields() as $field) {
+		$fid = $field['fid'];
+		if(empty($vars["phpc-field-$fid"])) {
+			if($field['required'])
+				throw new Exception(sprintf(__('Field "%s" is required but was not set.'), $field['name']));
+			continue;
+		}
+		$phpcdb->add_event_field($eid, $fid, $vars["phpc-field-$fid"]);
+	}
 
-		$occurrences = 1;
-		switch($vars["repeats"]) {
-			case "never":
+	if($modify_occur) {
+		$occurrences = 0;
+		$n = 1;
+		$until = $start_ts;
+		switch($vars['repeats']) {
+		case 'daily':
+			check_input("every-day");
+			$n = $vars["every-day"];
+			$until = get_timestamp("daily-until");
+			break;
+
+		case 'weekly':
+			check_input("every-week");
+			$n = $vars["every-week"] * 7;
+			$until = get_timestamp("weekly-until");
+			break;
+
+		case 'monthly':
+			check_input("every-month");
+			$n = $vars["every-month"];
+			$until = get_timestamp("monthly-until");
+			break;
+
+		case 'yearly':
+			check_input("every-year");
+			$n = $vars["every-year"];
+			$until = get_timestamp("yearly-until");
+			break;
+		}
+		if($n < 1)
+			soft_error(__('Increment must be 1 or greater.'));
+
+		while($occurrences <= 730 && days_between($start_ts, $until) >= 0) {
+			$oid = $phpcdb->create_occurrence($eid, $time_type, $start_ts, $end_ts);
+			$occurrences++;
+
+			switch($vars["repeats"]) {
+			case 'daily':
+				$start_ts = add_days($start_ts, $ndays);
+				$end_ts = add_days($end_ts, $ndays);
 				break;
 
-			case 'daily':
-			if(!isset($vars["every-day"]))
-				soft_error(__('Required field every-day is not set.'));
-			$ndays = $vars["every-day"];
-			if($ndays < 1)
-				soft_error(__('every-day must be greater than 1'));
-
-			$daily_until = get_timestamp("daily-until");
-			while($occurrences <= 730) {
-				$start_ts = add_days($start_ts, $ndays);
-				$end_ts = add_days($end_ts, $ndays);
-				if(days_between($start_ts, $daily_until) < 0)
-					break;
-				$phpcdb->create_occurrence($eid, $time_type,
-						$start_ts, $end_ts);
-				$occurrences++;
-			}
-			break;
-
 			case 'weekly':
-			if(!isset($vars["every-week"]))
-				soft_error(__('Required field every-week is not set.'));
-			if($vars["every-week"] < 1)
-				soft_error(__("every-week must be greater than 1"));
-			$ndays = $vars["every-week"] * 7;
-
-			$weekly_until = get_timestamp("weekly-until");
-			while($occurrences <= 730) {
 				$start_ts = add_days($start_ts, $ndays);
 				$end_ts = add_days($end_ts, $ndays);
-				if(days_between($start_ts, $weekly_until) < 0)
-					break;
-				$phpcdb->create_occurrence($eid, $time_type,
-						$start_ts, $end_ts);
-				$occurrences++;
-			}
-			break;
+				break;
 
 			case 'monthly':
-			if(!isset($vars["every-month"]))
-				soft_error(__('Required field every-month is not set.'));
-			if($vars["every-month"] < 1)
-				soft_error(__("every-month must be greater than 1"));
-			$nmonths = $vars["every-month"];
-
-			$monthly_until = get_timestamp("monthly-until");
-			while($occurrences <= 730) {
 				$start_ts = add_months($start_ts, $nmonths);
 				$end_ts = add_months($end_ts, $nmonths);
-				if(days_between($start_ts, $monthly_until) < 0)
-					break;
-				$phpcdb->create_occurrence($eid, $time_type,
-						$start_ts, $end_ts);
-				$occurrences++;
-			}
-			break;
+				break;
 
 			case 'yearly':
-			if(!isset($vars["every-year"]))
-				soft_error(__('Required field every-year is not set.'));
-			if($vars["every-year"] < 1)
-				soft_error(__("every-month must be greater than 1"));
-			$nyears = $vars["every-year"];
-
-			$yearly_until = get_timestamp("yearly-until");
-			while($occurrences <= 730) {
 				$start_ts = add_years($start_ts, $nyears);
 				$end_ts = add_years($end_ts, $nyears);
-				if(days_between($start_ts, $yearly_until) < 0)
-					break;
-				$phpcdb->create_occurrence($eid, $time_type,
-						$start_ts, $end_ts);
-				$occurrences++;
-			}
-			break;
+				break;
 
 			default:
-			soft_error(__("Invalid event type."));
+				break 2;
+			}
 		}
 	}
 

@@ -33,9 +33,6 @@ function category_submit()
 		return input_error(__("Color not specified."), $form_page);
 	}
 
-	// The current widget produces hex values without the "#".
-	//   We may in the future want to allow different input, so store the
-	//   values with the "#"
 	$text_color = $vars["text-color"];
 	$bg_color = $vars["bg-color"];
 	if(empty($vars['gid']) || strlen($vars['gid']) == 0)

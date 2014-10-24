@@ -30,6 +30,7 @@ class PhpcCalendar {
 	var $language;
 	var $theme;
 	var $groups;
+	var $fields;
 
 	function PhpcCalendar($result) {
 		$this->cid = $result['cid'];
@@ -150,6 +151,20 @@ class PhpcCalendar {
 			$this->groups = $phpcdb->get_groups($this->cid);
 		}
 		return $this->groups;
+	}
+
+	function get_fields() {
+		global $phpcdb;
+
+		if(!isset($this->fields)) {
+			$this->fields = $phpcdb->get_fields($this->cid);
+		}
+		return $this->fields;
+	}
+
+	function get_field($fid) {
+		$fields = $this->get_fields();
+		return $fields[$fid];
 	}
 }
 

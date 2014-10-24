@@ -30,9 +30,12 @@ function cadmin() {
 			tag('li', tag('a', attrs('href="#phpc-config"'), __('Calendar Configuration'))),
 			tag('li', tag('a', attrs('href="#phpc-users"'), __('Users'))),
 			tag('li', tag('a', attrs('href="#phpc-categories"'), __('Categories'))),
-			tag('li', tag('a', attrs('href="#phpc-groups"'), __('Groups'))));
+			tag('li', tag('a', attrs('href="#phpc-groups"'), __('Groups'))),
+			tag('li', tag('a', attrs('href="#phpc-fields"'), __('Fields')))
+		    );
 
-	return tag('div', attrs('class="phpc-tabs"'), $index, config_form(), user_list(), category_list(), group_list());
+	return tag('div', attrs('class="phpc-tabs"'), $index, config_form(), user_list(), category_list(), group_list(),
+			field_list());
 }
 
 function config_form() {
@@ -134,12 +137,10 @@ function category_list()
 {
 	global $phpc_script, $phpcid, $phpc_cal, $vars;
 
-	$categories = $phpc_cal->get_categories();
-
 	$tbody = tag('tbody');
 
 	$have_contents = false;
-	foreach ($categories as $category) {
+	foreach ($phpc_cal->get_categories() as $category) {
 		$have_contents = true;
 		$name = empty($category['name']) ? __('No Name') : $category['name'];
 		$catid = $category['catid'];
@@ -157,7 +158,7 @@ function category_list()
 
 	if (!$have_contents) {
 		$tbody->add(tag('tr', tag('td', attrs('colspan=5'),
-						__('No Categories.'))));
+						__('No categories.'))));
 	}
 
 	$table = tag('table', attrs('class="phpc-container"'),
@@ -225,4 +226,50 @@ function group_list() {
 				attrs('class="phpc-button"')));
 }
 
+function field_list()
+{
+	global $phpc_script, $phpcid, $phpc_cal, $vars;
+
+	$tbody = tag('tbody');
+
+	$have_contents = false;
+	foreach ($phpc_cal->get_fields() as $field) {
+		$have_contents = true;
+		$name = empty($field['name']) ? __('No Name') : $field['name'];
+		$fid = $field['fid'];
+		$tbody->add(tag('tr',
+					tag('td', $name),
+					tag('td', escape_entities($field['required'])),
+					tag('td', escape_entities($field['format'])),
+					tag('td', create_action_link(__('Edit'), 'field_form', array('fid' => $fid)),
+						" ",
+						create_action_link(__('Delete'), 'field_delete', array('fid' => $fid),
+							attrs('class="phpc-confirm-field"')))
+				   ));
+	}
+
+	if (!$have_contents) {
+		$tbody->add(tag('tr', tag('td', attrs('colspan=4'), __('No fields.'))));
+	}
+
+	$table = tag('table', attrs('class="phpc-container"'),
+			tag('thead',
+				tag('tr', attrs('class="ui-widget-header"'),
+					tag('th', __('Name')),
+					tag('th', __('Required?')),
+					tag('th', __('Format')),
+					tag('th', __('Actions'))
+				   )),
+			$tbody);
+
+	$dialog = tag('div', attrs('id="phpc-dialog-field"', 'title="' . __("Confirmation required") . '"'),
+			__("Permanently delete this field?"));
+
+	return tag('div', attrs('id="phpc-fields"'),
+			tag('div', attrs('class="phpc-sub-title"'), __('Calendar Fields')),
+			$dialog,
+			$table,
+			create_action_link(__('Create Field'), 'field_form', array('cid' => $phpcid),
+				attrs('class="phpc-button"')));
+}
 ?>

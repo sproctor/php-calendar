@@ -49,6 +49,13 @@ function input_error($message, $target) {
 				"UTF-8"), $target);
 }
 
+function check_input($arg) {
+	global $vars;
+
+	if(!isset($vars[$arg]))
+		throw new Exception(sprintf(__('Required field "%s" is not set.'), $arg));
+}
+
 function minute_pad($minute)
 {
 	return sprintf('%02d', $minute);
