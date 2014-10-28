@@ -479,44 +479,38 @@ function add_sql_user_db()
 
 }
 
-function create_config($sql_hostname, $sql_username, $sql_passwd, $sql_database,
-                $sql_prefix, $sql_type)
-{
-	return "<?php\n"
-		."define('SQL_HOST',     '$sql_hostname');\n"
-		."define('SQL_USER',     '$sql_username');\n"
-		."define('SQL_PASSWD',   '$sql_passwd');\n"
-		."define('SQL_DATABASE', '$sql_database');\n"
-		."define('SQL_PREFIX',   '$sql_prefix');\n"
-		."define('SQL_TYPE',     '$sql_type');\n"
-		."?".">\n"; // Break this up to fix syntax HL in vim
-}
 
 function install_base()
 {
 	global $phpc_config_file, $dbh;
 
 	$sql_type = "mysqli";
-	$my_hostname = $_POST['my_hostname'];
-	$my_username = $_POST['my_username'];
-	$my_passwd = $_POST['my_passwd'];
-	$my_prefix = $_POST['my_prefix'];
-	$my_database = $_POST['my_database'];
+	$sql_hostname = $_POST['my_hostname'];
+	$sql_username = $_POST['my_username'];
+	$sql_passwd = $_POST['my_passwd'];
+	$sql_prefix = $_POST['my_prefix'];
+	$sql_database = $_POST['my_database'];
 
 	$fp = fopen($phpc_config_file, 'w')
 		or soft_error('Couldn\'t open config file.');
 
 	// Make the database connection.
-	$dbh = connect_db($my_hostname, $my_username, $my_passwd, $my_database);
+	$dbh = connect_db($sql_hostname, $sql_username, $sql_passwd, $sql_database);
 
 	phpc_debug("Writing config file \"$phpc_config_file\".");
 
-	fwrite($fp, create_config($my_hostname, $my_username, $my_passwd,
-                                $my_database, $my_prefix, $sql_type))
+	$defines = "define('SQL_HOST',     '$sql_hostname');\n"
+        ."define('SQL_USER',     '$sql_username');\n"
+		."define('SQL_PASSWD',   '$sql_passwd');\n"
+		."define('SQL_DATABASE', '$sql_database');\n"
+		."define('SQL_PREFIX',   '$sql_prefix');\n"
+        ."define('SQL_TYPE',     '$sql_type');\n";
+
+    fwrite($fp, "<"."?php\n$defines?".">\n") // Break this up to fix syntax HL in vim
 		or soft_error("Could not write to file");
 	fclose($fp);
 
-	require_once $phpc_config_file;
+	eval($defines);
 
 	create_tables();
 
@@ -644,8 +638,6 @@ function get_admin()
 function add_calendar()
 {
 	global $dbh, $phpc_config_file;
-
-	require_once $phpc_config_file;
 
 	$calendar_title = 'PHP-Calendar';
 
