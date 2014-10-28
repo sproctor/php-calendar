@@ -45,7 +45,7 @@ echo '<!DOCTYPE html>
 $must_upgrade = false;
 
 if(file_exists($phpc_config_file)) {
-	include_once($phpc_config_file);
+	require_once $phpc_config_file;
 	if(defined("SQL_HOST")) {
 		$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
 
@@ -328,7 +328,7 @@ function check_config()
 
 	if(is_writable($phpc_config_file))
 		return true;
-	
+
 	// Check if we can create the file
 	if($file = @fopen($phpc_config_file, 'a')) {
 		fclose($file);
@@ -434,7 +434,7 @@ function add_sql_user_db()
 	$create_user = isset($_POST['create_user'])
 		&& $_POST['create_user'] == 'yes';
 	$create_db = isset($_POST['create_db']) && $_POST['create_db'] == 'yes';
-	
+
 	// Make the database connection.
 	if($create_user) {
 		$dbh = connect_db($my_hostname, $my_adminname, $my_adminpasswd);
@@ -454,7 +454,7 @@ function add_sql_user_db()
 
 		$string .= "<p>Successfully created database</p>";
 	}
-	
+
 	if($create_user) {
 		phpc_debug("Creating user \"$my_username\".");
 
@@ -516,7 +516,7 @@ function install_base()
 		or soft_error("Could not write to file");
 	fclose($fp);
 
-	include($phpc_config_file);
+	require_once $phpc_config_file;
 
 	create_tables();
 
@@ -606,7 +606,7 @@ function create_tables()
 		."`theme` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
 		."PRIMARY KEY  (`cid`)\n",
 		"AUTO_INCREMENT=1");
-		
+
 	create_table("categories",
 		"`catid` int(11) unsigned NOT NULL auto_increment,\n"
 		."`cid` int(11) unsigned NOT NULL,\n"
@@ -645,7 +645,7 @@ function add_calendar()
 {
 	global $dbh, $phpc_config_file;
 
-	require_once($phpc_config_file);
+	require_once $phpc_config_file;
 
 	$calendar_title = 'PHP-Calendar';
 
@@ -661,7 +661,7 @@ function add_calendar()
 	$cid = $dbh->insert_id;
 
 	echo "<h3>Final Step</h3>\n";
-	
+
 	echo "<p>Saved default configuration</p>\n";
 
 	$passwd = md5($_POST['admin_pass']);
@@ -672,7 +672,7 @@ function add_calendar()
 
 	$dbh->query($query)
 		or db_error($dbh, 'Error adding admin.', $query);
-	
+
 	echo "<p>Admin account created.</p>";
 	echo "<p>Now you should delete install.php file from root directory (for security reasons).</p>";
 	echo "<p>You should also change the permissions on config.php so only your webserver can read it.</p>";
@@ -743,7 +743,7 @@ function soft_error($str)
 
 function create_logins_table() {
 	global $dbh;
-	
+
 	echo '<h3>Step 3: Database Created</h3>';
 	create_table("logins",
 		"`uid` int(11) unsigned NOT NULL,\n"
