@@ -20,6 +20,9 @@
  * setup.
  */
 
+if (!defined('IN_PHPC'))
+	define('IN_PHPC', true);
+
 /*
  * If you want different scripts with different default calendars, you can
  * copy this script and modify $default_calendar_id to contain the CID of
@@ -36,6 +39,7 @@ $phpc_includes_path = dirname(__FILE__);
 $phpc_root_path = dirname($phpc_includes_path);
 $phpc_config_file = "$phpc_root_path/config.php";
 $phpc_locale_path = "$phpc_root_path/locale";
+require_once "$phpc_includes_path/util.php";
 $phpc_script = phpc_html_escape($_SERVER['PHP_SELF']);
 
 $phpc_server = $_SERVER['SERVER_NAME'];
@@ -64,11 +68,6 @@ ini_set('arg_separator.output', '&amp;');
 //   break things in unexpected ways.
 ob_start();
 
-/*
- * Do not modify anything under this point
- */
-if (!defined('IN_PHPC'))
-define('IN_PHPC', true);
 
 require_once("$phpc_includes_path/setup.php");
 
