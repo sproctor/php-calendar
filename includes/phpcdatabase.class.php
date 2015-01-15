@@ -985,7 +985,7 @@ class PhpcDatabase {
 		else
 			$format_val = "'$format'";
 
-		$query = "UPDATE " . SQL_PREFIX . "categories\n"
+		$query = "UPDATE " . SQL_PREFIX . "fields\n"
 			."SET\n"
 			."`name`='$name',\n"
 			."`required`='$required',\n"

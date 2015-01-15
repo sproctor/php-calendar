@@ -23,22 +23,26 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+define('PHPC_DB_VERSION', 2);
+
 require_once("$phpc_includes_path/phpcsql.php");
 
 function phpc_table_schemas() {
-	$tables = array();
-	$tables[] = phpc_calendars_table();
-	$tables[] = phpc_calendar_fields_table();
-	$tables[] = phpc_categories_table();
-	$tables[] = phpc_config_table();
-	$tables[] = phpc_events_table();
-	$tables[] = phpc_groups_table();
-	$tables[] = phpc_logins_table();
-	$tables[] = phpc_occurrences_table();
-	$tables[] = phpc_permissions_table();
-	$tables[] = phpc_users_table();
-	$tables[] = phpc_user_groups_table();
-	return $tables;
+	return array
+		( phpc_calendars_table()
+		, phpc_calendar_fields_table()
+		, phpc_categories_table()
+		, phpc_config_table()
+		, phpc_events_table()
+		, phpc_groups_table()
+		, phpc_logins_table()
+		, phpc_occurrences_table()
+		, phpc_permissions_table()
+		, phpc_users_table()
+		, phpc_user_groups_table()
+		, phpc_fields_table()
+		, phpc_event_fields_table()
+		);
 }
 
 function phpc_calendars_table() {
@@ -200,6 +204,28 @@ function phpc_user_groups_table() {
 	$table->addColumn('gid', "int(11) unsigned");
 	$table->addColumn('uid', "int(11) unsigned");
 	
+	return $table;
+}
+
+function phpc_fields_table() {
+	$table = new PhpcSqlTable(SQL_PREFIX . 'fields');
+
+	$table->addColumn('fid', 'int(11) unsigned NOT NULL');
+	$table->addColumn('cid', 'int(11) unsigned DEFAULT NULL');
+	$table->addColumn('name', 'varchar(255) COLLATE utf8_unicode_ci');
+	$table->addColumn('required', 'tinyint(1) NOT NULL');
+	$table->addColumn('format', 'varchar(1000) COLLATE utf8_unicode_ci DEFAULT NULL');
+
+	return $table;
+}
+
+function phpc_event_fields_table() {
+	$table = new PhpcSqlTable(SQL_PREFIX . 'event_fields');
+
+	$table->addColumn('eid', 'int(11) unsigned NOT NULL');
+	$table->addColumn('fid', 'int(11) unsigned NOT NULL');
+	$table->addColumn('value', 'text COLLATE utf8_unicode_ci NOT NULL');
+
 	return $table;
 }
 

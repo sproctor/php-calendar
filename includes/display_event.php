@@ -112,10 +112,9 @@ function display_event()
 					'occur_form', $event->get_eid()));
 	}
 
-	$fields_tag = tag('div', '');
 	foreach($event->get_fields() as $field) {
 		$def = $phpc_cal->get_field($field['fid']);
-		$fields_tag->add(tag('div', $def['name'] . ": " . $field['value']));
+		$event_header->add(tag('div', $def['name'] . ": " . $field['value']));
 	}
 
 	$dialog = tag('div', attrs('id="phpc-dialog"', 'title="' . __("Confirmation required") . '"'),
@@ -125,7 +124,7 @@ function display_event()
 
 	return tag('div', attributes('class="phpc-main phpc-event"'), $dialog, $dialog2,
 			$event_menu, tag('h2', $event->get_subject()),
-			$event_header, $desc_tag, $fields_tag,
+			$event_header, $desc_tag,
 			tag('div', attrs('class="phpc-occ"'),
 				tag('h3', __('Occurrences')),
 				$occurrences_menu,
