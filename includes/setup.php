@@ -53,7 +53,6 @@ $phpc_prefix = "phpc_" . SQL_PREFIX . SQL_DATABASE;
 $phpc_title = "";
 
 require_once("$phpc_includes_path/calendar.php");
-require_once("$phpc_includes_path/dbversion.php");
 
 // Make the database connection.
 require_once("$phpc_includes_path/phpcdatabase.class.php");
@@ -64,9 +63,9 @@ $phpcdb = new PhpcDatabase(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE,
 
 session_start();
 
+require_once("$phpc_includes_path/schema.php");
 if ($phpcdb->get_config('version') < PHPC_DB_VERSION) {
 	if(isset($_GET['update'])) {
-		require_once("$phpc_includes_path/schema.php");
 		phpc_updatedb($phpcdb->dbh);
 	} else {
 		print_update_form();
