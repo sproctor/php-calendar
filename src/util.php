@@ -15,11 +15,9 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
+namespace PhpCalendar;
 
-require_once("$phpc_includes_path/Parsedown.php");
+require_once("$base_path/src/Parsedown.php");
 
 // called when some error happens
 function soft_error($message)
@@ -27,7 +25,7 @@ function soft_error($message)
 	throw new Exception(escape_entities($message));
 }
 
-class PermissionException extends Exception {
+class PermissionException extends \Exception {
 }
 
 function permission_error($message)
@@ -36,7 +34,7 @@ function permission_error($message)
 				"UTF-8"));
 }
 
-class InvalidInputException extends Exception {
+class InvalidInputException extends \Exception {
 	var $target;
 	function __construct($msg, $target) {
 		parent::__construct($msg);
@@ -61,31 +59,31 @@ function minute_pad($minute)
 	return sprintf('%02d', $minute);
 }
 
-function redirect($page) {
-	global $phpc_script, $phpc_server, $phpc_redirect, $phpc_proto;
+function redirect($page, $args=array()) {
+	global $framework, $redirect;
 
-	session_write_close();
+	//session_write_close();
 
-	$phpc_redirect = true;
+	$redirect = true;
 
 	if($page{0} == "/") {
 		$dir = '';
 	} else {
-		$dir = dirname($phpc_script) . "/";
+		$dir = dirname($script) . "/";
 	}
-	$url = "$phpc_proto://$phpc_server$dir$page";
+	$url = $framework->generator->generate ($page, $args);
 
-	header("Location: $url");
+	return new Response ("", 303, array("Location", $url));
 }
 
 function message_redirect($message, $page) {
-	global $phpc_prefix;
+	global $prefix;
 
 	$tag = tag('div', attrs('class="phpc-message"'), $message);
-	if(empty($_SESSION["{$phpc_prefix}messages"]))
-		$_SESSION["{$phpc_prefix}messages"] = array();
+	if(empty($_SESSION["{$prefix}messages"]))
+		$_SESSION["{$prefix}messages"] = array();
 
-	$_SESSION["{$phpc_prefix}messages"][] = $tag;
+	$_SESSION["{$prefix}messages"][] = $tag;
 	redirect($page);
 
 	$continue_url = $page . '&amp;clearmsg=1';
@@ -95,14 +93,14 @@ function message_redirect($message, $page) {
 }
 
 function error_message_redirect($message, $page) {
-	global $phpc_prefix;
+	global $prefix;
 
 	$tag = tag('div', attrs('class="phpc-message ui-state-error"'),
 			$message);
-	if(empty($_SESSION["{$phpc_prefix}messages"]))
-		$_SESSION["{$phpc_prefix}messages"] = array();
+	if(empty($_SESSION["{$prefix}messages"]))
+		$_SESSION["{$prefix}messages"] = array();
 
-	$_SESSION["{$phpc_prefix}messages"][] = $tag;
+	$_SESSION["{$prefix}messages"][] = $tag;
 	redirect($page);
 
 	$continue_url = $page . '&amp;clearmsg=1';
@@ -112,9 +110,9 @@ function error_message_redirect($message, $page) {
 }
 
 function message($message) {
-	global $phpc_messages;
+	global $messages;
 
-	$phpc_messages[] = $message;
+	$messages[] = $message;
 }
 
 function stripslashes_r($var) {
@@ -128,7 +126,7 @@ function real_escape_r($var) {
 	global $phpcdb;
 
 	if(is_array($var))
-		return array_map("real_escape_r", $var);
+		return array_map("PhpCalendar\\real_escape_r", $var);
 	else
 		return mysqli_real_escape_string($phpcdb->dbh, $var);
 }
@@ -261,7 +259,7 @@ function days_between($ts1, $ts2) {
 }
 
 // Stolen from Drupal
-function phpc_random_bytes($count) {
+function random_bytes($count) {
 	// $random_state does not use drupal_static as it stores random bytes.
 	static $random_state, $bytes, $php_compatible;
 	// Initialize on the first call. The contents of $_SERVER includes a
@@ -318,36 +316,36 @@ function phpc_random_bytes($count) {
 }
 
 // Adapted from Drupal
-function phpc_get_private_key() {
+function get_private_key() {
 	static $key;
 
 	if(!isset($key))
-		$key = phpc_hash_base64(phpc_random_bytes(55));
+		$key = hash_base64(random_bytes(55));
 
 	return $key;
 }
 
-function phpc_get_token($value='') {
-	return phpc_hmac_base64($value, session_id() . phpc_get_private_key()
-			. phpc_get_hash_salt());
+function get_token($value='') {
+	return hmac_base64($value, session_id() . get_private_key()
+			. get_hash_salt());
 }
 
 // Stolen from Drupal
-function phpc_hmac_base64($data, $key) {
+function hmac_base64($data, $key) {
 	$hmac = base64_encode(hash_hmac('sha256', $data, $key, TRUE));
 	// Modify the hmac so it's safe to use in URLs.
 	return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
 }
 
 // Stolen from Drupal
-function phpc_hash_base64($data) {
+function hash_base64($data) {
 	$hash = base64_encode(hash('sha256', $data, TRUE));
 	// Modify the hash so it's safe to use in URLs.
 	return strtr($hash, array('+' => '-', '/' => '_', '=' => ''));
 }
 
 // Adapted from Drupal
-function phpc_get_hash_salt() {
+function get_hash_salt() {
 	return hash('sha256', SQL_HOST . SQL_USER . SQL_PASSWD . SQL_DATABASE . SQL_PREFIX);
 }
 ?>

@@ -19,13 +19,9 @@
    this file contains the db schema and functions to use it.
 */
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
-
 define('PHPC_DB_VERSION', 2);
 
-require_once("$phpc_includes_path/phpcsql.php");
+require_once("$includes_path/phpcsql.php");
 
 function phpc_table_schemas() {
 	return array

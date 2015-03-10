@@ -15,11 +15,23 @@
  * limitations under the License.
  */
 
+namespace PhpCalendar;
+
 if(!defined('IN_PHPC')) {
         die("Hacking attempt");
 }
 
-require_once("$phpc_includes_path/form.php");
+require_once("$includes_path/form.php");
+
+$sort_options = array(
+                'start_date' => __('Start Date'),
+                'subject' => __('Subject')
+                );
+
+$order_options = array(
+                'ASC' => __('Ascending'),
+                'DESC' => __('Descending')
+                );
 
 function search_results()
 {

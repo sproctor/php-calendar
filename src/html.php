@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 
-if(!defined('IN_PHPC')) {
-       die("Hacking attempt");
-}
-
 /*
  * data structure to display XHTML
  * see function tag() below for usage

@@ -15,120 +15,231 @@
  * limitations under the License.
  */
 
-/*
- * The following variables are intended to be modified to fit your
- * setup.
- */
+namespace PhpCalendar;
 
-/*
- * $phpc_root_path gives the location of the base calendar install.
- * if you move this file to a new location, modify $phpc_root_path to point
- * to the location where the support files for the callendar are located.
- */
-$phpc_root_path = dirname(__FILE__);
-$phpc_includes_path = "$phpc_root_path/includes";
-$phpc_config_file = "$phpc_root_path/config.php";
-$phpc_locale_path = "$phpc_root_path/locale";
+$base_path = __DIR__;
 
-// path of index.php. ex. /php-calendar/index.php
-$phpc_script = htmlentities($_SERVER['SCRIPT_NAME']);
-$phpc_url_path = dirname($_SERVER['SCRIPT_NAME']);
+// Displayed in admin
+$version = "2.1";
 
-// Port
-$phpc_port = "";
-if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
-	$phpc_port = ":{$_SERVER["SERVER_PORT"]}";
+require_once 'vendor/autoload.php';
 
-// ex. www.php-calendar.com
-$phpc_server = $_SERVER['SERVER_NAME'] . $phpc_port;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestContext;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\ClassLoader\Psr4ClassLoader;
 
-// Protcol ex. http or https
-if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'
-		|| $_SERVER['SERVER_PORT'] == 443
-		|| isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
-		|| isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
-    $phpc_proto = "https";
+if(defined('PHPC_DEBUG')) {
+	$min = '';
 } else {
-    $phpc_proto = "http";
+	$min = '.min';
 }
 
-$phpc_home_url="$phpc_proto://$phpc_server$phpc_script";
-$phpc_url = $phpc_home_url . (empty($_SERVER['QUERY_STRING']) ? ''
-		: '?' . $_SERVER['QUERY_STRING']);
+// Set this to the correct location if you've moved your config
+require_once ("$base_path/src/helpers.php");
 
-$phpc_static_path = "$phpc_url_path/static";
+$loader = new Psr4ClassLoader();
+$loader->addPrefix("PhpCalendar\\", "$base_path/src");
+$loader->register();
 
-if(defined('PHPC_DEBUG'))
-	$phpc_min = '';
-else
-	$phpc_min = '.min';
+mb_internal_encoding('UTF-8');
+mb_http_output('pass');
 
-$phpc_theme = $phpc_cal->theme;
-if(empty($phpc_theme))
-	$phpc_theme = 'smoothness';
-$jquery_version = "1.11.1";
-$jqueryui_version = "1.11.2";
-$fa_version = "4.2.0";
 
-if(!isset($phpc_jqui_path))
-	$phpc_jqui_path = "//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version";
-if(!isset($phpc_fa_path))
-	$phpc_fa_path = "//maxcdn.bootstrapcdn.com/font-awesome/$fa_version";
-if(!isset($phpc_jq_file))
-	$phpc_jq_file = "//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$phpc_min.js";
+if($debug) {
+	error_reporting(E_ALL);
+	ini_set('display_errors', 1);
+	ini_set('html_errors', 1);
+}
 
-/*
- * Do not modify anything under this point
- */
-define('IN_PHPC', true);
+$cookie_prefix = "phpc_" . SQL_PREFIX . SQL_DATABASE;
 
-require_once("$phpc_includes_path/calendar.php");
-try {
-	require_once("$phpc_includes_path/setup.php");
-} catch(Exception $e) {
-	header("Content-Type: text/html; charset=UTF-8");
-	echo "<!DOCTYPE html>\n";
-	echo display_exception($e)->toString();
+if(empty($sql_porti)) {
+	$sql_port = ini_get("mysqli.default_port");
+}
+
+$db = new Database(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE, SQL_PORT);
+
+session_start();
+
+require_once("$base_path/src/schema.php");
+if ($db->get_config('version') < PHPC_DB_VERSION) {
+	if(isset($_GET['update'])) {
+		phpc_updatedb($db->dbh);
+	} else {
+		print_update_form();
+	}
 	exit;
 }
 
-if ($vars["content"] == "json") {
-	header("Content-Type: application/json; charset=UTF-8");
-	echo do_action();
-} else {
-	header("Content-Type: text/html; charset=UTF-8");
+$request = Request::createFromGlobals();
 
-	// This sets global variables that determine the title in the header
-	$content = display_phpc();
-	$embed_script = '';
-	if($vars["content"] == "embed") {
-		$underscore_version = "1.5.2";
-		$embed_script = array(tag("script",
-					attrs('src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/'
-						."$underscore_version/underscore-min.js\""), ''),
-				tag('script', attrs('src="static/embed.js"'), ''));
+if(empty($_SESSION["{$prefix}uid"])) {
+	if(!empty($_COOKIE["{$prefix}login"]) && !empty($_COOKIE["{$prefix}uid"])
+			&& !empty($_COOKIE["{$prefix}login_series"])) {
+		// Cleanup before we check their token so they can't login with
+		//   an ancient token
+		$db->cleanup_login_tokens();
+
+		// FIXME should this be _SESSION below?
+		$uid = $_COOKIE["{$prefix}uid"];
+		$login_series = $_COOKIE["{$prefix}login_series"];
+		$token = $db->get_login_token($uid,
+				$login_series);
+		if($token) {
+			if($token == $_COOKIE["{$prefix}login"]) {
+				$user = $db->get_user($uid);
+				do_login($user, $login_series);
+			} else {
+				$db->remove_login_tokens($uid);
+				soft_error(__("Possible hacking attempt on your account."));
+			}
+		} else {
+			$uid = 0;
+		}
 	}
-
-	$html = tag('html', attrs("lang=\"$phpc_lang\""),
-			tag('head',
-				tag('title', $phpc_title),
-				tag('link', attrs('rel="icon"',
-						"href=\"$phpc_url_path/static/office-calendar.png\"")),
-				tag('meta', attrs('http-equiv="Content-Type"',
-						'content="text/html; charset=UTF-8"')),
-				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_static_path/phpc.css\"")),
-				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_jqui_path/themes/$phpc_theme/jquery-ui$phpc_min.css\"")),
-				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_static_path/jquery-ui-timepicker.css\"")),
-				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_fa_path/css/font-awesome$phpc_min.css\"")),
-				tag("script", attrs("src=\"$phpc_jq_file\""), ''),
-				tag("script", attrs("src=\"$phpc_jqui_path/jquery-ui$jq_min.js\""), ''),
-				tag('script', attrs("src=\"$phpc_static_path/phpc.js\""), ''),
-				tag("script", attrs("src=\"$phpc_static_path/jquery.ui.timepicker.js\""), ''),
-				tag("script", attrs("src=\"$phpc_static_path/farbtastic.min.js\""), ''),
-				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_static_path/farbtastic.css\""))
-			),
-			tag('body', $embed_script, $content));
-
-	echo "<!DOCTYPE html>\n", $html->toString();
+} else {
+	$token = $_SESSION["{$prefix}login"];
 }
+
+if(empty($token)) {
+	$token = '';
+}
+
+$user = false;
+if(!empty($_SESSION["{$prefix}uid"])) {
+	$user = $db->get_user($_SESSION["{$prefix}uid"]);
+}
+
+if ($user === false) {
+	$uid = 0;
+	$anonymous = array('uid' => 0,
+			'username' => 'anonymous',
+			'password' => '',
+			'admin' => false,
+			'password_editable' => false,
+			'default_cid' => NULL,
+			'timezone' => NULL,
+			'language' => NULL,
+			'disabled' => 0,
+			);
+	if(isset($_COOKIE["{$prefix}tz"])) {
+		$_tz = $_COOKIE["{$prefix}tz"];
+		// If we have a timezone, make sure it's valid
+		if(in_array($_tz, timezone_identifiers_list())) {
+			$anonymous['timezone'] = $_tz;
+		} else {
+			$anonymous['timezone'] = '';
+		}
+	}
+	if(isset($_COOKIE["{$prefix}lang"]))
+		$anonymous['language'] = $_COOKIE["{$prefix}lang"];
+	$user = new User($anonymous);
+}
+
+$user_tz = $user->get_timezone();
+
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\MessageSelector;
+use Symfony\Component\Translation\Loader\MoFileLoader;
+
+$translator = new Translator($lang, new MessageSelector());
+$translator->addLoader('mo', new MoFileLoader());
+if($lang != 'en') {
+	$translator->addResource('mo', "$locale_path/$lang/LC_MESSAGES/messages.mo", $lang);
+}
+
+if(!empty($vars['clearmsg'])) {
+	$_SESSION["{$prefix}messages"] = NULL;
+}
+
+$messages = array();
+
+if(!empty($_SESSION["{$prefix}messages"])) {
+	foreach($_SESSION["{$prefix}messages"] as $message) {
+		$messages[] = $message;
+	}
+}
+
+if(!empty($user_tz)) {
+	$tz = $user_tz;
+} else {
+	$tz = $cal->timezone;
+}
+
+if(!empty($tz)) {
+	date_default_timezone_set($tz); 
+}
+$tz = date_default_timezone_get();
+
+$theme = $cal->theme;
+if(empty($theme))
+	$theme = 'smoothness';
+	$jquery_version = "1.11.1";
+	$jqueryui_version = "1.11.2";
+	$fa_version = "4.2.0";
+
+if(!isset($jqui_path))
+	$jqui_path = "//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version";
+if(!isset($fa_path))
+	$fa_path = "//maxcdn.bootstrapcdn.com/font-awesome/$fa_version";
+if(!isset($jq_file))
+	$jq_file = "//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$min.js";
+
+$loader = new \Twig_Loader_Filesystem($templates_path);
+$twig = new \Twig_Environment($loader, array(
+			//'cache' => $comp_cache
+			));
+$twig->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($translator));
+//$twig->addExtension(new \Symfony\Bridge\Twig\Extension\RoutingExtension());
+
+if(isset($cal)) {
+	$title = $cal->get_title();
+} else {
+	$title = _("(No calendars)");
+}
+
+$context = array(
+		'lang' => $lang,
+		'page_title' => $title,
+		'static_path' => $static_path,
+		'jq_file' => $jq_file,
+		'jqui_path' => $jqui_path,
+		'fa_path' => $fa_path,
+		'users' => _p('Week', 'W'),
+		'calendars' => $db->get_calendars(),
+		);
+$routes = new RouteCollection();
+$routes->add('month_view', new Route('/{cid}/month/{year}/{month}',
+			array('_controller' => function(Request $request) {
+				global $context, $twig;
+				$year = $request->get('year');
+				$month = $request->get('month');
+				$cid = $request->get('cid');
+				return MonthController::showAction($twig, $context, $cid, $year, $month);
+				}),
+			array('year' => '\d+', 'month' => '\d+')));
+$routes->add('index', new Route('/',
+			array('_controller' => function (Request $request) {
+				global $context, $twig, $user;
+				if ($user->get_default_cid() !== false) {
+					$cid = $user->get_default_cid();
+				} else {
+					$cid = $db->get_config('default_cid');
+				}
+				$year = date('Y');
+				$month = date('n');
+				return MonthController::showAction($twig, $context, $cid, $year, $month);
+				})));
+
+$framework = new Framework($routes);
+
+check_config("$base_path/config.php");
+require_once ("$base_path/config.php");
+
+$framework->handle($request)->send();
+
 ?>
