@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div id="phpc-summary-view">
+		<div id="phpc-summary-head">
+			<div id="phpc-summary-title"></div>
+			<div id="phpc-summary-author"></div>
+			<div id="phpc-summary-category"></div>
+			<div id="phpc-summary-time"></div>
+		</div>
+		<div id="phpc-summary-body"></div>
+	</div>
+	<div>{% trans %}View Month{% endtrans %}</div>
+	<div>{% trans %}Month{% endtrans %}: {{ month }}</div>
+	<div>{% trans %}Year{% endtrans %}: {{ year }}</div>
+	<div>Users: {{ users }}</div>
+{% endblock %}

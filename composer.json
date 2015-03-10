@@ -1,0 +1,14 @@
+{
+    "require": {
+        "symfony/routing": "~2.6",
+        "symfony/http-foundation": "~2.6",
+        "symfony/class-loader": "~2.6",
+        "symfony/http-kernel": "~2.6",
+        "symfony/templating": "~2.6",
+        "twig/twig": "~1.18",
+        "symfony/translation": "~2.6",
+        "symfony/config": "~2.6",
+        "symfony/twig-bridge": "~2.6",
+        "twig/extensions": "~1.2"
+    }
+}

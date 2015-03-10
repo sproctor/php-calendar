@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+	<head>
+		<title>{{ page_title }}</title>
+		<link rel="icon" href="{{ static_path }}/office-calendar.png">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" href="{{ static_path }}/phpc.css">
+		<link rel="stylesheet" href="{{ jqui_path }}/themes/{{phpc_theme}}/jquery-ui{{ min }}.css">
+		<link rel="stylesheet" href="{{ static_path }}/jquery-ui-timepicker.css">
+		<link rel="stylesheet" href="{{ fa_path }}/css/font-awesome{{ min }}.css">
+		<script src="{{ jq_file }}"></script>
+		<script src="{{ jqui_path }}/jquery-ui{{ min }}.js"></script>
+		<script src="{{ static_path }}/phpc.js"></script>
+		<script src="{{ static_path }}/jquery.ui.timepicker.js"></script>
+		<script src="{{ static_path }}/farbtastic.min.js"></script>
+		<link rel="stylesheet" href="{{ static_path }}/farbtastic.css">
+	<body>
+		<div class="php-calendar ui-widget">
+			<div class="phpc-logged ui-widget-content">
+				<a href="settings">{% trans %}Settings{% endtrans %}</a>
+				<a href="login">{% trans %}Log&nbsp;In{% endtrans %}</a>
+			</div>
+			<br style="clear:both">
+			<div class="phpc-title ui-widget-header">
+				<a href="calendar">{{ page_title }}</a>
+			</div>
+		</div>
+		{{ embed_script }}
+		{% block body %}{% endblock %}
+	</body>
+</html>
