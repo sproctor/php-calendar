@@ -54,7 +54,11 @@ $prefix = "phpc_" . SQL_PREFIX . SQL_DATABASE;
 
 $title = "";
 
+<<<<<<< HEAD:src/setup.php
 require_once("$includes_path/helpers.php");
+=======
+require_once("$phpc_includes_path/calendar.php");
+>>>>>>> 40e298632ef39e166d9bd118a0801f6be06f3e2c:includes/setup.php
 
 if(!defined("SQL_PORT"))
 	define("SQL_PORT", ini_get("mysqli.default_port"));
@@ -62,7 +66,11 @@ $phpcdb = new Database(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE, SQL_PORT);
 
 session_start();
 
+<<<<<<< HEAD:src/setup.php
 require_once("$includes_path/schema.php");
+=======
+require_once("$phpc_includes_path/schema.php");
+>>>>>>> 40e298632ef39e166d9bd118a0801f6be06f3e2c:includes/setup.php
 if ($phpcdb->get_config('version') < PHPC_DB_VERSION) {
 	if(isset($_GET['update'])) {
 		phpc_updatedb($phpcdb->dbh);
