@@ -408,23 +408,19 @@ function process_form()
 
 			switch($vars["repeats"]) {
 			case 'daily':
-				$start_ts = add_days($start_ts, $ndays);
-				$end_ts = add_days($end_ts, $ndays);
-				break;
-
 			case 'weekly':
-				$start_ts = add_days($start_ts, $ndays);
-				$end_ts = add_days($end_ts, $ndays);
+				$start_ts = add_days($start_ts, $n);
+				$end_ts = add_days($end_ts, $n);
 				break;
 
 			case 'monthly':
-				$start_ts = add_months($start_ts, $nmonths);
-				$end_ts = add_months($end_ts, $nmonths);
+				$start_ts = add_months($start_ts, $n);
+				$end_ts = add_months($end_ts, $n);
 				break;
 
 			case 'yearly':
-				$start_ts = add_years($start_ts, $nyears);
-				$end_ts = add_years($end_ts, $nyears);
+				$start_ts = add_years($start_ts, $n);
+				$end_ts = add_years($end_ts, $n);
 				break;
 
 			default:

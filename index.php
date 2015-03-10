@@ -121,7 +121,7 @@ if ($vars["content"] == "json") {
 				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_static_path/jquery-ui-timepicker.css\"")),
 				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_fa_path/css/font-awesome$phpc_min.css\"")),
 				tag("script", attrs("src=\"$phpc_jq_file\""), ''),
-				tag("script", attrs("src=\"$phpc_jqui_path/jquery-ui$jq_min.js\""), ''),
+				tag("script", attrs("src=\"$phpc_jqui_path/jquery-ui$phpc_min.js\""), ''),
 				tag('script', attrs("src=\"$phpc_static_path/phpc.js\""), ''),
 				tag("script", attrs("src=\"$phpc_static_path/jquery.ui.timepicker.js\""), ''),
 				tag("script", attrs("src=\"$phpc_static_path/farbtastic.min.js\""), ''),
