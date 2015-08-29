@@ -29,7 +29,6 @@ define('IN_PHPC', true);
 if(!function_exists("mysqli_connect"))
 	soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
 
-require_once("$phpc_includes_path/dbversion.php");
 require_once("$phpc_includes_path/calendar.php");
 
 ?><!DOCTYPE html>
