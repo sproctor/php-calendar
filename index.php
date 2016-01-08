@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2013 Sean Proctor
+ * Copyright 2016 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+require_once 'vendor/autoload.php';
+
 /*
  * The following variables are intended to be modified to fit your
  * setup.
@@ -26,7 +28,7 @@
  * to the location where the support files for the callendar are located.
  */
 $phpc_root_path = dirname(__FILE__);
-$phpc_includes_path = "$phpc_root_path/includes";
+$phpc_includes_path = "$phpc_root_path/src";
 $phpc_config_file = "$phpc_root_path/config.php";
 $phpc_locale_path = "$phpc_root_path/locale";
 
