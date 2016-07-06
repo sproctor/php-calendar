@@ -15,15 +15,9 @@
  * limitations under the License.
  */
 
-/*
-   this file contains the db schema and functions to use it.
-*/
+namespace PhpCalendar;
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
-
-class PhpcSqlTable {
+class SqlTable {
 	var $columns;
 	var $keys;
 	var $name;
@@ -35,11 +29,11 @@ class PhpcSqlTable {
 	}
 
 	function addColumn($name, $type) {
-		$this->columns[] = new PhpcSqlColumn($name, $type);
+		$this->columns[] = new SqlColumn($name, $type);
 	}
 
 	function addKey($name, $non_unique, $columns) {
-		$this->keys[] = new PhpcSqlKey($name, $non_unique, $columns);
+		$this->keys[] = new SqlKey($name, $non_unique, $columns);
 	}
 
 	function create($dbh, $drop = false) {
@@ -184,65 +178,18 @@ class PhpcSqlTable {
 		//echo "</pre>";
 		return $tags;
 	}
-}
 
-class PhpcSqlColumn {
-	var $name;
-	var $type;
-
-	function __construct($name, $type) {
-		$this->name = $name;
-		$this->type = $type;
-	}
-
-	function get_create_query() {
-		return "`{$this->name}` {$this->type}";
-	}
-
-	function get_add_query() {
-		return "ADD `{$this->name}` {$this->type}";
-	}
-
-	function get_update_query() {
-		return "MODIFY `{$this->name}` {$this->type}";
+	static function db_error($dbh, $str, $query = "") {
+		$string = $str . "<pre>" . htmlspecialchars($dbh->error,
+				ENT_COMPAT, "UTF-8") . "</pre>";
+		if($query != "") {
+			$string .= "<pre>" . __('SQL query') . ": "
+				. htmlspecialchars($query, ENT_COMPAT, "UTF-8")
+				. "</pre>";
+		}
+		die($string);
 	}
 }
 
-class PhpcSqlKey {
-	var $name;
-	var $non_unique;
-	var $columns;
 
-	function __construct($name, $non_unique, $columns) {
-		$this->name = $name;
-		$this->non_unique = $non_unique;
-		$this->columns = $columns;
-	}
-
-	function get_create_query () {
-		if($this->name == "PRIMARY")
-			return "PRIMARY KEY ({$this->columns})";
-
-		return ($this->non_unique ? "" : "UNIQUE ") . "KEY `{$this->name}` ({$this->columns})";
-	}
-
-	function get_update_query () {
-		if($this->name == "PRIMARY")
-			return "DROP PRIMARY KEY, ADD PRIMARY KEY ({$this->columns})";
-		return "DROP KEY `{$this->name}`, ADD "
-			. ($this->non_unique ? "" : "UNIQUE ") . 
-			"KEY `{$this->name}` ({$this->columns});";
-	}
-}
-
-function db_error($dbh, $str, $query = "") {
-	$string = $str . "<pre>" . htmlspecialchars($dbh->error,
-			ENT_COMPAT, "UTF-8") . "</pre>";
-	if($query != "") {
-		$string .= "<pre>" . __('SQL query') . ": "
-			. htmlspecialchars($query, ENT_COMPAT, "UTF-8")
-			. "</pre>";
-	}
-	die($string);
-}
 ?>

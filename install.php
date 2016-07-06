@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2014 Sean Proctor
+ * Copyright 2016 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,23 @@
  * limitations under the License.
  */
 
+namespace PhpCalendar;
+
+require_once __DIR__ . '/vendor/autoload.php';
+
 /*
    Run this file to install the calendar
    it needs very much work
 */
 
-$phpc_root_path = dirname(__FILE__);
-$phpc_includes_path = "$phpc_root_path/includes";
-$phpc_config_file = "$phpc_root_path/config.php";
-
-define('IN_PHPC', true);
-
+define('PHPC_ROOT_PATH', __DIR__);
+define('PHPC_CONFIG_FILE', PHPC_ROOT_PATH . "/config.yml");
+	
 if(!function_exists("mysqli_connect"))
 	soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
 
-require_once("$phpc_includes_path/calendar.php");
+require_once(PHPC_ROOT_PATH . "/src/helpers.php");
+require_once(PHPC_ROOT_PATH . "/src/schema.php");
 
 ?><!DOCTYPE html>
 <html>
@@ -44,13 +46,13 @@ require_once("$phpc_includes_path/calendar.php");
 
 $must_upgrade = false;
 
-if(file_exists($phpc_config_file)) {
-	include_once($phpc_config_file);
-	if(defined("SQL_HOST")) {
-		$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
+if(file_exists(PHPC_CONFIG_FILE)) {
+	$config = read_config(PHPC_CONFIG_FILE);
+	if(isset($config["sql_host"])) {
+		$dbh = connect_db($config["sql_host"], $config["sql_user"], $config["sql_passwd"], $config["sql_database"]);
 
 		$query = "SELECT *\n"
-			."FROM `" . SQL_PREFIX .  "calendars`\n";
+			."FROM `" . $config["sql_prefix"] .  "calendars`\n";
 
 		$sth = $dbh->query($query);
 		$have_calendar = $sth && $sth->fetch_assoc();
@@ -58,7 +60,7 @@ if(file_exists($phpc_config_file)) {
 		$existing_version = 0;
 
 		$query = "SELECT `value`\n"
-			."FROM `" . SQL_PREFIX .  "config`\n"
+			."FROM `" . $config["sql_prefix"] .  "config`\n"
 			."WHERE `name`='version'";
 
 		$sth = $dbh->query($query);
@@ -77,7 +79,7 @@ if(file_exists($phpc_config_file)) {
 				exit;
 			} elseif($existing_version == PHPC_DB_VERSION) {
 				echo '<p>The calendar has already been installed. <a href="index.php">Installed calendar</a></p>';
-				echo '<p>If you want to install again, manually delete config.php</p>';
+				echo '<p>If you want to install again, manually delete config.yml</p>';
 				exit;
 			}
 		}
@@ -91,8 +93,6 @@ echo '<p>Welcome to the PHP Calendar installation process.</p>
 foreach($_POST as $key => $value) {
 	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">\n";
 }
-
-$drop_tables = isset($_POST["drop_tables"]) && $_POST["drop_tables"] == "yes";
 
 if(!isset($_POST['my_hostname'])
 		&& !isset($_POST['my_username'])
@@ -114,13 +114,12 @@ if(!isset($_POST['my_hostname'])
 
 function check_config()
 {
-	global $phpc_config_file;
 
-	if(is_writable($phpc_config_file))
+	if(is_writable(PHPC_CONFIG_FILE))
 		return true;
 	
 	// Check if we can create the file
-	if($file = @fopen($phpc_config_file, 'a')) {
+	if($file = @fopen(PHPC_CONFIG_FILE, 'a')) {
 		fclose($file);
 		return true;
 	}
@@ -134,19 +133,21 @@ function report_config()
 		.'create it. You need to make sure this script can write to '
 		.'it. We suggest logging in with a shell and typing:</p>
 		<p><pre>
-		touch config.php
-		chmod 666 config.php
+		touch config.yml
+		chmod 666 config.yml
 		</pre></p>
 		<p>or if you only have ftp access, upload a blank file named '
-		.'config.php to your php-calendar directory then use the chmod '
-		.'command to change the permissions of config.php to 666.</p>
+		.'config.yml to your php-calendar directory then use the chmod '
+		.'command to change the permissions of config.yml to 666.</p>
 		<input type="submit" value="Retry"/>';
 }
 
 function get_server_setup()
 {
-	if(!check_config())
-		return report_config();
+	if(!check_config()) {
+		report_config();
+		return;
+	}
 
 	echo '
 		<h3>Step 1: Database</h3>
@@ -214,7 +215,7 @@ function add_sql_user_db()
 	$my_hostname = $_POST['my_hostname'];
 	$my_username = $_POST['my_username'];
 	$my_passwd = $_POST['my_passwd'];
-	$my_prefix = $_POST['my_prefix'];
+	//$my_prefix = $_POST['my_prefix'];
 	$my_database = $_POST['my_database'];
 	$my_adminname = $_POST['my_adminname'];
 	$my_adminpasswd = $_POST['my_adminpasswd'];
@@ -242,11 +243,11 @@ function add_sql_user_db()
 	}
 	
 	if($create_user) {
-		$query = "GRANT ALL ON accounts.* TO $my_username@$my_hostname identified by '$my_passwd'";
+		$query = "GRANT ALL ON accounts.* TO '$my_username'@'$my_hostname' identified by '$my_passwd'";
 		$dbh->query($query)
 			or install_db_error($dbh, 'Could not grant:', $query);
-		$query = "GRANT ALL ON $my_database.*\n"
-			."TO $my_username IDENTIFIED BY '$my_passwd'";
+		$query = "GRANT ALL ON `$my_database`.*\n"
+			."TO '$my_username'@'$my_hostname'";
 		$dbh->query($query)
 			or install_db_error($dbh, 'Could not grant:', $query);
 
@@ -266,19 +267,18 @@ function add_sql_user_db()
 function create_config($sql_hostname, $sql_username, $sql_passwd, $sql_database,
                 $sql_prefix, $sql_type)
 {
-	return "<?php\n"
-		."define('SQL_HOST',     '$sql_hostname');\n"
-		."define('SQL_USER',     '$sql_username');\n"
-		."define('SQL_PASSWD',   '$sql_passwd');\n"
-		."define('SQL_DATABASE', '$sql_database');\n"
-		."define('SQL_PREFIX',   '$sql_prefix');\n"
-		."define('SQL_TYPE',     '$sql_type');\n"
-		."?".">\n"; // Break this up to fix syntax HL in vim
+	return array(
+		"sql_host" => $sql_hostname,
+		"sql_user" => $sql_username,
+		"sql_passwd" => $sql_passwd,
+		"sql_database" => $sql_database,
+		"sql_prefix" => $sql_prefix,
+		"sql_type" => $sql_type);
 }
 
 function install_base()
 {
-	global $phpc_config_file;
+	global $config;
 
 	$sql_type = "mysqli";
 	$my_hostname = $_POST['my_hostname'];
@@ -287,28 +287,25 @@ function install_base()
 	$my_prefix = $_POST['my_prefix'];
 	$my_database = $_POST['my_database'];
 
-	$fp = fopen($phpc_config_file, 'w')
-		or soft_error('Couldn\'t open config file.');
+	$config = create_config($my_hostname, $my_username, $my_passwd, $my_database, $my_prefix, $sql_type);
+	$yaml = \Symfony\Component\Yaml\Yaml::dump($config);
 
-	fwrite($fp, create_config($my_hostname, $my_username, $my_passwd,
-                                $my_database, $my_prefix, $sql_type))
-		or soft_error("Could not write to file");
-	fclose($fp);
+	file_put_contents(PHPC_CONFIG_FILE, $yaml);
+
 
 	// Make the database connection.
-	include($phpc_config_file);
-	$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
+	$dbh = connect_db($my_hostname, $my_username, $my_passwd, $my_database);
 
 	create_tables($dbh);
 
-	$query = "REPLACE INTO `" . SQL_PREFIX . "config`\n"
+	$query = "REPLACE INTO `" . $my_prefix . "config`\n"
 		."(`name`, `value`)\n"
 		."VALUES ('version', '".PHPC_DB_VERSION."')";
 
 	$dbh->query($query)
 		or install_db_error($dbh, 'Error creating version row.', $query);
 
-	echo "<p>Config file created at \"". realpath($phpc_config_file) ."\"</p>"
+	echo "<p>Config file created at \"". realpath(PHPC_CONFIG_FILE) ."\"</p>"
 		."<p>Calendars database created</p>\n"
 		."<div><input type=\"submit\" name=\"base\" value=\"continue\">"
 		."</div>\n";
@@ -316,11 +313,11 @@ function install_base()
 
 function create_tables($dbh)
 {
-	global $drop_tables, $phpc_includes_path;
+	global $config;
 
-	require_once("$phpc_includes_path/schema.php");
+	$drop_tables = isset($_POST["drop_tables"]) && $_POST["drop_tables"] == "yes";
 
-	foreach(phpc_table_schemas() as $table) {
+	foreach(phpc_table_schemas($config["sql_prefix"]) as $table) {
 		$table->create($dbh, $drop_tables);
 	}
 }
@@ -347,16 +344,15 @@ function get_admin()
 
 function add_calendar()
 {
-	global $phpc_config_file;
-
-	require_once($phpc_config_file);
+	global $config;
 
 	$calendar_title = 'PHP-Calendar';
 
 	// Make the database connection.
-	$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
+	$dbh = connect_db($config["sql_host"], $config["sql_user"], $config["sql_passwd"], $config["sql_database"]);
+	$prefix = $config["sql_prefix"];
 
-	$query = "INSERT INTO ".SQL_PREFIX."calendars\n"
+	$query = "INSERT INTO `{$prefix}calendars`\n"
 		."(`cid`) VALUE (1)";
 
 	$dbh->query($query)
@@ -370,16 +366,16 @@ function add_calendar()
 
 	$passwd = md5($_POST['admin_pass']);
 
-	$query = "INSERT INTO `" . SQL_PREFIX . "users`\n"
+	$query = "INSERT INTO `{$prefix}users`\n"
 		."(`username`, `password`, `admin`) VALUES\n"
-		."('$_POST[admin_user]', '$passwd', 1)";
+		."('{$_POST["admin_user"]}', '$passwd', 1)";
 
 	$dbh->query($query)
 		or install_db_error($dbh, 'Error adding admin.', $query);
 	
 	echo "<p>Admin account created.</p>";
 	echo "<p>Now you should delete install.php file from root directory (for security reasons).</p>";
-	echo "<p>You should also change the permissions on config.php so only your webserver can read it.</p>";
+	echo "<p>You should also change the permissions on config.yml so only your webserver can read it.</p>";
 	echo "<p><a href=\"index.php\">View calendar</a></p>";
 }
 
@@ -398,7 +394,7 @@ function install_db_error($dbh, $str, $query = "")
 
 function connect_db($hostname, $username, $passwd, $database = false)
 {
-	$dbh = new mysqli($hostname, $username, $passwd);
+	$dbh = new \mysqli($hostname, $username, $passwd);
 
 	if(mysqli_connect_errno()) {
 		soft_error("Database connect failed (" . mysqli_connect_errno()

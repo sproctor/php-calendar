@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
-
 function field_submit()
 {
 	global $vars, $phpcdb, $phpc_script, $phpc_cal;

@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
-
 function field_delete()
 {
 	global $vars, $phpcdb, $phpcid, $phpc_script;

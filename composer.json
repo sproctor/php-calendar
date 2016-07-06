@@ -1,5 +1,23 @@
 {
+    "name": "php-calendar/php-calendar",
+    "description": "PHP Calendar",
+    "license": "Apache 2.0",
+    "authors": [
+        {
+            "name": "Sean Proctor",
+            "email": "sproctor@gmail.com"
+        }
+    ],
     "require": {
-        "erusev/parsedown": "^1.6"
+        "php": ">=5.3.0",
+        "erusev/parsedown": "^1.6",
+        "symfony/translation": "^2.8",
+        "paragonie/random_compat": "^2.0",
+        "symfony/yaml": "^3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhpCalendar\\": "src/"
+        }
     }
 }

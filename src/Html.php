@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2016 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-if(!defined('IN_PHPC')) {
-       die("Hacking attempt");
-}
+namespace PhpCalendar;
 
 /*
  * data structure to display XHTML
@@ -27,9 +25,9 @@ if(!defined('IN_PHPC')) {
  *	won't be closed. ex tag('div') to get a closed tag use tag('div', '')
  */
 class Html {
-        var $tagName;
-        var $attributeList;
-        var $childElements;
+	var $tagName;
+	var $attributeList;
+	var $childElements;
 	var $error_func;
 
         function __construct() {
@@ -37,7 +35,7 @@ class Html {
                 $args = func_get_args();
                 $this->tagName = array_shift($args);
                 if($this->tagName === NULL) $this->tagName = '';
-                $this->attributeList = array();
+                $this->attributeList = NULL;
                 $this->childElements = array();
 
                 $arg = array_shift($args);
@@ -52,16 +50,14 @@ class Html {
         function add() {
                 $htmlElements = func_get_args();
                 foreach($htmlElements as $htmlElement) {
-			if(is_a($htmlElement, 'AttributeList')) {
+			if($htmlElement instanceof AttributeList) {
 				$this->attributeList = $htmlElement;
 			} elseif(is_array($htmlElement)) {
                                 foreach($htmlElement as $element) {
                                         $this->add($element);
                                 }
-                        } elseif(is_object($htmlElement)
-                                        && !is_a($htmlElement, 'Html')) {
-                                $this->html_error('Invalid class: '
-                                                . get_class($htmlElement));
+                        } elseif(is_object($htmlElement) && !$htmlElement instanceof Html) {
+                                $this->html_error('Invalid class: ' . get_class($htmlElement));
                         } else {
                                 $this->childElements[] = $htmlElement;
                         }
@@ -76,13 +72,10 @@ class Html {
                                                 as $element) {
                                         $this->prepend($element);
                                 }
-                        } elseif(is_object($htmlElement)
-                                        && !is_a($htmlElement, 'Html')) {
-                                $this->html_error('Invalid class: '
-                                                . get_class($htmlElement));
+                        } elseif(is_object($htmlElement) && !$htmlElement instanceof Html) {
+                                $this->html_error('Invalid class: ' . get_class($htmlElement));
                         } else {
-                                array_unshift($this->childElements,
-                                                $htmlElement);
+                                array_unshift($this->childElements, $htmlElement);
                         }
                 }
         }
@@ -93,7 +86,7 @@ class Html {
 		if($this->tagName != '') {
 			$output .= "<{$this->tagName}";
 
-			if($this->attributeList != NULL) {
+			if($this->attributeList instanceof AttributeList) {
 				$output .= ' '
 					. $this->attributeList->toString();
 			}
@@ -108,11 +101,10 @@ class Html {
 
                 foreach($this->childElements as $child) {
                         if(is_object($child)) {
-                                if(is_a($child, 'Html')) {
+                                if($child instanceof Html) {
                                         $output .= $child->toString();
                                 } else {
-                                        $this->html_error('Invalid class: '
-                                                        . get_class($child));
+                                        $this->html_error('Invalid class: ' . get_class($child));
                                 }
                         } else {
                                 $output .= $child;
@@ -134,11 +126,13 @@ class Html {
 		echo "<h2>Backtrace</h2>\n";
 		echo "<ol>\n";
 		foreach(debug_backtrace() as $bt) {
-			echo "<li>{$bt['file']}:{$bt['line']} - ";
+			echo "<li>";
+			if (isset($bt['file']) && isset($bt['line']))
+				echo "{$bt['file']}:{$bt['line']} - ";
 			if(!empty($bt['class']))
 				echo "{$bt['class']}{$bt['type']}";
-			echo "{$bt['function']}(" . implode(', ',
-						$bt['args'])
+			//print_r($bt['args']);
+			echo "{$bt['function']}(" . implode(', ', $bt['args'])
 				. ")</li>\n";
 		}
 		echo "</ol>\n";
@@ -157,87 +151,26 @@ class Html {
 	}
 }
 
-/*
- * Data structure to display XML style attributes
- * see function attributes() below for usage
- */
-class AttributeList {
-        var $list;
-
-        function __construct() {
-                $this->list = array();
-                $args = func_get_args();
-                $this->add($args);
-        }
-
-        function add() {
-                $args = func_get_args();
-                foreach($args as $arg) {
-                        if(is_array($arg)) {
-                                foreach($arg as $attr) {
-                                        $this->add($attr);
-                                }
-                        } else {
-                                $this->list[] = $arg;
-                        }
-                }
-        }
-
-        function toString() {
-                return implode(' ', $this->list);
-        }
-}
-
-/*
- * creates an Html data structure
- * arguments are tagName [AttributeList] [Html | array | string] ...
- * where array contains an array, Html, or a string, same requirements for that
- * array
- */
-function tag()
-{
-        $args = func_get_args();
-        $html = new Html();
-        call_user_func_array(array(&$html, '__construct'), $args);
-        return $html;
-}
-
-/*
- * creates an AttributeList data structure
- * arguments are [attribute | array] ...
- * where attribute is a string of name="value" and array contains arrays or
- * attributes
- */
-function attributes()
-{
-        $args = func_get_args();
-        $attrs = new AttributeList();
-        call_user_func_array(array(&$attrs, '__construct'), $args);
-        return $attrs;
-}
-
-function attrs()
-{
-        $args = func_get_args();
-        $attrs = new AttributeList();
-        call_user_func_array(array(&$attrs, '__construct'), $args);
-        return $attrs;
-}
-
-
 // creates a select tag element for a form
 // returns HTML data for the element
-function create_select($name, $options, $default = false, $attrs = false)
+/**
+ * @param string $name
+ * @param string[] $options
+ * @param null|string|string[] $default
+ * @param null|AttributeList $attrs
+ * @return Html
+ */
+function create_select($name, $options, $default = null, $attrs = null)
 {
-	if($attrs === false)
-		$attrs = attrs();
+	if($attrs === null)
+		$attrs = new AttributeList();
 
 	$attrs->add("name=\"$name\"");
 	$attrs->add("id=\"$name\"");
 	$select = tag('select', $attrs);
 
 	foreach($options as $value => $text) {
-		$attributes = attrs("value=\"$value\"");
+		$attributes = new AttributeList("value=\"$value\"");
 		if($default !== false && ($value == $default ||
 					is_array($default) &&
 					in_array($value, $default))) {
@@ -251,11 +184,17 @@ function create_select($name, $options, $default = false, $attrs = false)
 
 // creates a two stage select input
 // returns HTML data for the elements
-function create_multi_select($name, $option_lists, $default = false,
-		$attrs = false)
+/**
+ * @param string $name
+ * @param mixed[] $option_lists
+ * @param null|string|string[] $default
+ * @param null|AttributeList $attrs
+ * @return Html
+ */
+function create_multi_select($name, $option_lists, $default = null, $attrs = null)
 {
-	if($attrs === false)
-		$attrs = attrs();
+	if($attrs === null)
+		$attrs = new AttributeList();
 
 	$attrs->add("name=\"$name\"");
 	$attrs->add("id=\"$name\"");
@@ -264,10 +203,10 @@ function create_multi_select($name, $option_lists, $default = false,
 
 	foreach($option_lists as $category => $options) { 
 		if(is_array($options)) { 
-			$group = tag('optgroup', attrs("label=\"$category\""));
+			$group = tag('optgroup', new AttributeList("label=\"$category\""));
 			$select->add($group);
 			foreach($options as $value => $text) {
-				$attributes = attrs("value=\"$value\"");
+				$attributes = new AttributeList("value=\"$value\"");
 				if($value === $default)
 					$attributes->add('selected');
 				$text = str_replace('_', ' ', $text);
@@ -276,7 +215,7 @@ function create_multi_select($name, $option_lists, $default = false,
 		} else {
 			$value = $options;
 			$text = $category;
-			$attributes = attrs("value=\"$value\"");
+			$attributes = new AttributeList("value=\"$value\"");
 			if($value === $default)
 				$attributes->add('selected');
 			$select->add(tag('option', $attributes, $text));
@@ -288,13 +227,23 @@ function create_multi_select($name, $option_lists, $default = false,
 
 // creates a select element for a form given a certain range
 // returns HTML data for the element
+/**
+ * @param string $name
+ * @param int $lbound
+ * @param int $ubound
+ * @param int $increment
+ * @param null|string|string[] $default
+ * @param null|callable $name_function
+ * @param null|AttributeList $attrs
+ * @return Html
+ */
 function create_select_range($name, $lbound, $ubound, $increment = 1,
-		$default = false, $name_function = false, $attrs = false)
+		$default = null, $name_function = null, $attrs = null)
 {
 	$options = array();
 
 	for ($i = $lbound; $i <= $ubound; $i += $increment){
-		if($name_function !== false) {
+		if(is_callable($name_function)) {
 			$text = $name_function($i);
 		} else {
 			$text = $i;
@@ -303,4 +252,5 @@ function create_select_range($name, $lbound, $ubound, $increment = 1,
 	}
 	return create_select($name, $options, $default, $attrs);
 }
+
 ?>

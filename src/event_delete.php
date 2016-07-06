@@ -19,22 +19,20 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-function event_delete()
+function event_delete(Context $context)
 {
-	global $vars, $phpcdb, $phpc_script;
-
 	$html = tag('div', attributes('class="phpc-container"'));
 
-	if(empty($vars["eid"])) {
+	if(empty($_REQUEST["eid"])) {
 		$message = __('No event selected.');
 		$html->add(tag('div', $message));
 		return $html;
 	}
 
-	if (is_array($vars["eid"])) {
-		$eids = $vars["eid"];
+	if (is_array($_REQUEST["eid"])) {
+		$eids = $_REQUEST["eid"];
 	} else {
-		$eids = array($vars["eid"]);
+		$eids = array($_REQUEST["eid"]);
 	}
 
 	$removed_events = array();
@@ -42,7 +40,7 @@ function event_delete()
 	$permission_denied = array();
 
 	foreach($eids as $eid) {
-		$entry = $phpcdb->get_event_by_eid($eid);
+		$entry = $context->db->get_event_by_eid($eid);
 		if(!$entry) {
 			continue;
 		}
@@ -50,7 +48,7 @@ function event_delete()
 		if(!$event->can_modify()) {
 			$permission_denied[] = $eid;
 		} else {
-			if($phpcdb->delete_event($eid)) {
+			if($context->db->delete_event($eid)) {
 				$removed_events[] = $eid;
 			} else {
 				$unremoved_events[] = $eid;
@@ -85,7 +83,7 @@ function event_delete()
 		$html->add(tag('div', $text));
 	}
 	
-        return message_redirect($html, $phpc_script);
+        return message_redirect($html, PHPC_SCRIPT);
 }
 
 ?>

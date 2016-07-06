@@ -15,11 +15,9 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
-
-require_once("$phpc_includes_path/form.php");
+require_once(__DIR__ . '/form.php');
+require_once(__DIR__ . '/html.php');
+require_once(__DIR__ . '/helpers.php');
 
 function admin() {
 	global $phpc_version;

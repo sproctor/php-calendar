@@ -19,23 +19,23 @@
    This file has the functions for the main displays of the calendar
 */
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
+namespace PhpCalendar;
 
-function get_events($from_stamp, $to_stamp) {
-	global $phpc_cal, $phpcdb, $phpcid;
-
+/**
+ * @param Context $context
+ * @param $from_stamp
+ * @param $to_stamp
+ * @return array
+ */
+function get_events(Context $context, $from_stamp, $to_stamp) {
 	//echo "<pre>$from_stamp $to_stamp\n";
-	$results = $phpcdb->get_occurrences_by_date_range($phpcid, $from_stamp,
-			$to_stamp);
+	$results = $context->db->get_occurrences_by_date_range($context->getCalendar()->cid, $from_stamp, $to_stamp);
 	$days_events = array();
 	//var_dump($results);
-	while($row = $results->fetch_assoc()) {
+	foreach ($results as $event) {
 		//var_dump($row);
 		//echo "here\n";
-		$event = new PhpcOccurrence($row);
-		if(!$event->can_read())
+		if(!$event->can_read($context->getUser()))
 			continue;
 
 		$end_stamp = mktime(0, 0, 0, $event->get_end_month(),
@@ -63,9 +63,9 @@ function get_events($from_stamp, $to_stamp) {
 			$key = date('Y-m-d', $stamp);
 			if(!isset($days_events[$key]))
 				$days_events[$key] = array();
-			if(sizeof($days_events[$key]) == $phpc_cal->events_max)
+			if(sizeof($days_events[$key]) == $context->calendar->events_max)
 				$days_events[$key][] = false;
-			if(sizeof($days_events[$key]) > $phpc_cal->events_max)
+			if(sizeof($days_events[$key]) > $context->calendar->events_max)
 				continue;
 			$days_events[$key][] = $event;
 		}
@@ -73,15 +73,23 @@ function get_events($from_stamp, $to_stamp) {
 	return $days_events;
 }
 
-// creates a display for a particular week to be embedded in a month table
-function create_week($from_stamp, $year, $days_events) {
+/**
+ * creates a display for a particular week to be embedded in a month table
+ * @param Context $context
+ * @param $from_stamp
+ * @param $year
+ * @param $days_events
+ * @return Html
+ */
+function create_week(Context $context, $from_stamp, $year, $days_events) {
 	$start_day = date("j", $from_stamp);
 	$start_month = date("n", $from_stamp);
 	$start_year = date("Y", $from_stamp);
-	$week_of_year = week_of_year($start_month, $start_day, $start_year);
+	$week_start = $context->getCalendar()->week_start;
+	$week_of_year = week_of_year($start_month, $start_day, $start_year, $week_start);
 
 	// Non ISO, the week should be of this year.
-	if(day_of_week_start() != 1) {
+	if($week_start != 1) {
 		if($start_year < $year) {
 			$week_of_year = 1;
 		}
@@ -92,25 +100,30 @@ function create_week($from_stamp, $year, $days_events) {
 	
 
 	$week_html = tag('tr', tag('th',
-				attrs('class="phpc-date ui-state-default"'),
-				create_action_link($week_of_year,
+				new AttributeList('class="phpc-date ui-state-default"'),
+				create_action_link($context, new ActionItem($week_of_year,
 					'display_week',
-					array('week' => $week_of_year,
-						'year' => $year))));
+					array('week' => $week_of_year, 'year' => $year)))));
 		
 	for($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
 		$day = $start_day + $day_of_week;
-		$week_html->add(create_day($start_month, $day, $start_year,
-					$days_events));
+		$week_html->add(create_day($context, $start_month, $day, $start_year, $days_events));
 	}
 
 	return $week_html;
 }
 
-// displays the day of the week and the following days of the week
-function create_day($month, $day, $year, $days_events) {
-	global $phpc_script, $phpc_cal, $action, $phpc_month;
-
+/**
+ * displays the day of the week and the following days of the week
+ * @param Context $context
+ * @param $month
+ * @param $day
+ * @param $year
+ * @param Event[] $days_events
+ * @return Html
+ */
+function create_day(Context $context, $month, $day, $year, $days_events)
+{
 	$date_class = 'ui-state-default';
 	if($day <= 0) {
 		$month--;
@@ -128,7 +141,7 @@ function create_day($month, $day, $year, $days_events) {
 		}
 	}
 
-	if($action == "display_month" && $month != $phpc_month) {
+	if($context->getAction() == "display_month" && $month != $context->getMonth()) {
 		$date_class .= ' phpc-shadow';
 	}
 
@@ -142,41 +155,36 @@ function create_day($month, $day, $year, $days_events) {
 		$date_class .= ' ui-state-highlight';
 	}
 
-	$date_tag = tag('div', attributes("class=\"phpc-date $date_class\""),
-			create_action_link_with_date($day,
-				'display_day', $year, $month, $day));
+	$date_tag = tag('div', new AttributeList("class=\"phpc-date $date_class\""),
+			create_action_link_with_date($context, new ActionItem($day, 'display_day'), $year, $month, $day));
 
-	if($phpc_cal->can_write()) {
-		$date_tag->add(create_action_link_with_date('+',
-					'event_form', $year, $month,
-					$day,
-					attrs('class="phpc-add"')));
+	if($context->getCalendar()->can_write($context->getUser())) {
+		$date_tag->add(create_action_link_with_date($context, new ActionItem('+', 'event_form', null,
+			new AttributeList('class="phpc-add"')), $year, $month, $day));
 	}
 
 	$html_day = tag('td', $date_tag);
 
 	$stamp = mktime(0, 0, 0, $month, $day, $year);
 
-	$can_read = $phpc_cal->can_read(); 
+	$can_read = $context->getCalendar()->can_read($context->getUser());
 	$key = date('Y-m-d', $stamp);
 	if(!$can_read || !array_key_exists($key, $days_events))
 		return $html_day;
 
-	$results = $days_events[$key];
-	if(empty($results))
+	if(empty($days_events[$key]))
 		return $html_day;
 
-	$html_events = tag('ul', attrs('class="phpc-event-list"'));
+	$html_events = tag('ul', new AttributeList('class="phpc-event-list"'));
 	$html_day->add($html_events);
 
 	// Count the number of events
-	foreach($results as $event) {
+	foreach($days_events[$key] as $event) {
 		if($event == false) {
 			$event_html = tag('li',
 					create_action_link_with_date(__("View Additional Events"),
-						'display_day', $year, $month,
-						$day,
-						attrs('class="phpc-date"')));
+						new ActionItem('display_day', $year, $month, new AttributeList('class="phpc-date"')),
+						$day));
 			$html_events->add($event_html);
 			break;
 		}
@@ -187,9 +195,9 @@ function create_day($month, $day, $year, $days_events) {
 		if($event->get_start_timestamp() >= $stamp) {
 			$event_time = $event->get_time_string();
 			if(!empty($event_time))
-				$event_time = tag('span', attrs('class="phpc-event-time ui-corner-all"'), $event_time);
+				$event_time = tag('span', new AttributeList('class="phpc-event-time ui-corner-all"'), $event_time);
 		} else {
-			$event_time = tag('span', attrs('class="fa fa-share"'), '');
+			$event_time = tag('span', new AttributeList('class="fa fa-share"'), '');
 		}
 
 		if(!empty($event_time))
@@ -207,7 +215,7 @@ function create_day($month, $day, $year, $days_events) {
 		$event_html = tag('li',
 				create_occurrence_link($title, "display_event",
 					$event->get_oid(),
-					attrs("style=\"$style\"")));
+					new AttributeList("style=\"$style\"")));
 
 		$html_events->add($event_html);
 	}
@@ -215,35 +223,34 @@ function create_day($month, $day, $year, $days_events) {
 	return $html_day;
 }
 
-function create_display_table($heading, $contents) {
-
-
-	$heading_html = tag('tr', attrs('class="ui-widget-header"'));
+function create_display_table(Context $context, $heading, $contents)
+{
+	$heading_html = tag('tr', new AttributeList('class="ui-widget-header"'));
 	$heading_html->add(tag('th', __p('Week', 'W')));
 	for($i = 0; $i < 7; $i++) {
-		$d = ($i + day_of_week_start()) % 7;
+		$d = ($i + $context->getCalendar()->week_start) % 7;
 		$heading_html->add(tag('th', day_name($d)));
 	}
 
 	return tag('div',
-			tag("div", attributes('id="phpc-summary-view"'), 
-				tag("div", attributes('id="phpc-summary-head"'),
-					tag("div", attributes('id="phpc-summary-title"'), ''),
-					tag("div", attributes('id="phpc-summary-author"'), ''),
-					tag("div", attributes('id="phpc-summary-category"'), ''),
-					tag("div", attributes('id="phpc-summary-time"'), '')),
-				tag("div", attributes('id="phpc-summary-body"'), '')),
-			tag('div', attrs('class="phpc-sub-title phpc-month-title ui-widget-content"'), $heading),
-                        tag('table', attrs('class="phpc-month-view"'),
+			tag("div", new AttributeList('id="phpc-summary-view"'),
+				tag("div", new AttributeList('id="phpc-summary-head"'),
+					tag("div", new AttributeList('id="phpc-summary-title"'), ''),
+					tag("div", new AttributeList('id="phpc-summary-author"'), ''),
+					tag("div", new AttributeList('id="phpc-summary-category"'), ''),
+					tag("div", new AttributeList('id="phpc-summary-time"'), '')),
+				tag("div", new AttributeList('id="phpc-summary-body"'), '')),
+			tag('div', new AttributeList('class="phpc-sub-title phpc-month-title ui-widget-content"'), $heading),
+                        tag('table', new AttributeList('class="phpc-month-view"'),
                                 tag('colgroup',
-					tag('col', attributes('class="phpc-week"')),
-					tag('col', attributes('class="phpc-day"')),
-					tag('col', attributes('class="phpc-day"')),
-					tag('col', attributes('class="phpc-day"')),
-					tag('col', attributes('class="phpc-day"')),
-					tag('col', attributes('class="phpc-day"')),
-					tag('col', attributes('class="phpc-day"')),
-					tag('col', attributes('class="phpc-day"'))
+					tag('col', new AttributeList('class="phpc-week"')),
+					tag('col', new AttributeList('class="phpc-day"')),
+					tag('col', new AttributeList('class="phpc-day"')),
+					tag('col', new AttributeList('class="phpc-day"')),
+					tag('col', new AttributeList('class="phpc-day"')),
+					tag('col', new AttributeList('class="phpc-day"')),
+					tag('col', new AttributeList('class="phpc-day"')),
+					tag('col', new AttributeList('class="phpc-day"'))
 				   ),
 				tag('thead', $heading_html),
                                 tag('tbody', $contents)));

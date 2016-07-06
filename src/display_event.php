@@ -24,31 +24,26 @@ if ( !defined('IN_PHPC') ) {
 }
 
 // Full view for a single event
-function display_event()
+function display_event(Context $context)
 {
-	global $vars, $phpcdb, $phpc_year, $phpc_month, $phpc_day, $phpc_cal;
-
-	if(!empty($vars['content']) && $vars['content'] == 'json')
-		return display_event_json();
+	if(!empty($_REQUEST['content']) && $_REQUEST['content'] == 'json')
+		return display_event_json($context);
 	
-	if(isset($vars['oid'])) {
-		$entry = $phpcdb->get_event_by_oid($vars['oid']);
-		if(!$entry) {
+	if(isset($_REQUEST['oid'])) {
+		$event = $context->db->get_event_by_oid($_REQUEST['oid']);
+		if(!$event) {
 			return tag('p', __('There is no event for that OID.'));
 		}
-		$event = new PhpcEvent($entry);
-	} elseif(isset($vars['eid'])) {
-		$entry = $phpcdb->get_event_by_eid($vars['eid']);
-		if(!$entry) {
+	} elseif(isset($_REQUEST['eid'])) {
+		$event = $context->db->get_event_by_eid($_REQUEST['eid']);
+		if(!$event) {
 			return tag('p', __('There is no event with that EID.'));
 		}
-		$event = new PhpcEvent($entry);
+	} else {
+		soft_error(__("Invalid arguments."));
 	}
 
-	if(!isset($event))
-		soft_error(__("Invalid arguments."));
-
-	if(!$event->can_read()) {
+	if(!$event->can_read($context->user)) {
 		return tag('p', __("You do not have permission to read this event."));
 	}
 
@@ -82,13 +77,13 @@ function display_event()
 			tag('p', $event->get_desc()));
 
 	$occurrences_tag = tag('ul');
-	$occurrences = $phpcdb->get_occurrences_by_eid($event->get_eid());
+	$occurrences = $context->db->get_occurrences_by_eid($event->get_eid());
 	$set_date = false;
 	foreach($occurrences as $occurrence) {
 		if(!$set_date) {
-			$phpc_year = $occurrence->get_start_year();
-			$phpc_month = $occurrence->get_start_month();
-			$phpc_day = $occurrence->get_start_day();
+			$context->year = $occurrence->get_start_year();
+			$context->month = $occurrence->get_start_month();
+			$context->day = $occurrence->get_start_day();
 		}
 		$oid = $occurrence->get_oid();
 		$occ_tag = tag('li', attrs('class="ui-widget-content"'),
@@ -113,7 +108,7 @@ function display_event()
 	}
 
 	foreach($event->get_fields() as $field) {
-		$def = $phpc_cal->get_field($field['fid']);
+		$def = $context->calendar->get_field($field['fid']);
 		$event_header->add(tag('div', $def['name'] . ": " . $field['value']));
 	}
 
@@ -132,14 +127,12 @@ function display_event()
 }
 
 // generates a JSON data structure for a particular event
-function display_event_json()
+function display_event_json(Context $context)
 {
-	global $phpcdb, $vars;
-
-	if(!isset($vars['oid']))
+	if(!isset($_REQUEST['oid']))
 		return "";
 
-	$event = $phpcdb->get_occurrence_by_oid($vars['oid']);
+	$event = $context->db->get_occurrence_by_oid($_REQUEST['oid']);
 
 	if(!$event->can_read())
 		return "";

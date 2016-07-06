@@ -21,6 +21,16 @@ if(!defined('IN_PHPC')) {
 
 require_once("$phpc_includes_path/form.php");
 
+$sort_options = array(
+                'start_date' => __('Start Date'),
+                'subject' => __('Subject')
+                );
+
+$order_options = array(
+                'ASC' => __('Ascending'),
+                'DESC' => __('Descending')
+                );
+
 function search_results()
 {
 	global $vars, $phpcdb, $phpcid, $sort_options, $order_options;

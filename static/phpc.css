@@ -236,9 +236,9 @@ a.phpc-add {
   float: right;
 }
 
-.phpc-logged span {
-  font-weight: bold;
+.phpc-logged a {
   margin-left: 1em;
+  text-decoration: none;
 }
 
 /* labels associated with checkboxes */

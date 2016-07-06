@@ -15,122 +15,96 @@
  * limitations under the License.
  */
 
-require_once 'vendor/autoload.php';
+namespace PhpCalendar;
 
-/*
- * The following variables are intended to be modified to fit your
- * setup.
- */
+require_once __DIR__ . '/vendor/autoload.php';
 
-/*
- * $phpc_root_path gives the location of the base calendar install.
- * if you move this file to a new location, modify $phpc_root_path to point
- * to the location where the support files for the callendar are located.
- */
-$phpc_root_path = dirname(__FILE__);
-$phpc_includes_path = "$phpc_root_path/src";
-$phpc_config_file = "$phpc_root_path/config.php";
-$phpc_locale_path = "$phpc_root_path/locale";
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\MessageSelector;
+use Symfony\Component\Translation\Loader\MoFileLoader;
 
-// path of index.php. ex. /php-calendar/index.php
-$phpc_script = htmlentities($_SERVER['SCRIPT_NAME']);
-$phpc_url_path = dirname($_SERVER['SCRIPT_NAME']);
+define('PHPC_CONFIG_FILE', __DIR__ . '/config.yml');
 
-// Port
-$phpc_port = "";
-if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
-	$phpc_port = ":{$_SERVER["SERVER_PORT"]}";
+define('PHPC_DEBUG', 1);
 
-// ex. www.php-calendar.com
-$phpc_server = $_SERVER['SERVER_NAME'] . $phpc_port;
+//if(!defined('PHPC_HOME_URL'))
+//	define('PHPC_HOME_URL', PHPC_PROTOCOL . '://' . PHPC_SERVER . PHPC_SCRIPT);
+//$url = PHPC_HOME_URL . (empty($_SERVER['QUERY_STRING']) ? ''
+//		: '?' . $_SERVER['QUERY_STRING']);
 
-// Protcol ex. http or https
-if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'
-		|| $_SERVER['SERVER_PORT'] == 443
-		|| isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
-		|| isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
-    $phpc_proto = "https";
-} else {
-    $phpc_proto = "http";
-}
+require_once __DIR__ . '/src/helpers.php';
 
-$phpc_home_url="$phpc_proto://$phpc_server$phpc_script";
-$phpc_url = $phpc_home_url . (empty($_SERVER['QUERY_STRING']) ? ''
-		: '?' . $_SERVER['QUERY_STRING']);
 
-$phpc_static_path = "$phpc_url_path/static";
-
-if(defined('PHPC_DEBUG'))
-	$phpc_min = '';
-else
-	$phpc_min = '.min';
-
-$phpc_theme = $phpc_cal->theme;
-if(empty($phpc_theme))
-	$phpc_theme = 'smoothness';
-$jquery_version = "1.11.1";
-$jqueryui_version = "1.11.2";
-$fa_version = "4.2.0";
-
-if(!isset($phpc_jqui_path))
-	$phpc_jqui_path = "//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version";
-if(!isset($phpc_fa_path))
-	$phpc_fa_path = "//maxcdn.bootstrapcdn.com/font-awesome/$fa_version";
-if(!isset($phpc_jq_file))
-	$phpc_jq_file = "//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$phpc_min.js";
-
-/*
- * Do not modify anything under this point
- */
-define('IN_PHPC', true);
-
-require_once("$phpc_includes_path/calendar.php");
 try {
-	require_once("$phpc_includes_path/setup.php");
-} catch(Exception $e) {
-	header("Content-Type: text/html; charset=UTF-8");
-	echo "<!DOCTYPE html>\n";
-	echo display_exception($e)->toString();
-	exit;
+	$context = new Context();
+
+
+$min = defined('PHPC_DEBUG') ? '' : '.min';
+
+$theme = $context->getCalendar()->theme;
+if(empty($theme))
+	$theme = 'smoothness';
+$jquery_version = "1.12.2";
+$jqueryui_version = "1.11.4";
+$fa_version = "4.5.0";
+
+if(!isset($jqui_path))
+	$jqui_path = "//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version";
+if(!isset($fa_path))
+	$fa_path = "//maxcdn.bootstrapcdn.com/font-awesome/$fa_version";
+if(!isset($jq_file))
+	$jq_file = "//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$min.js";
+
+if($context->getLang() != 'en') {
+	$translator = new Translator($context->getLang(), new MessageSelector());
+	$translator->addLoader('mo', new MoFileLoader());
+	$translator->addResource('mo', __DIR__ . "locale/" . $context->getLang() . "/LC_MESSAGES/messages.mo",
+		$context->getLang());
 }
 
-if ($vars["content"] == "json") {
+if (isset($_REQUEST["content"]) && $_REQUEST["content"] == "json") {
 	header("Content-Type: application/json; charset=UTF-8");
-	echo do_action();
+	echo display_phpc($context)->toString();
 } else {
 	header("Content-Type: text/html; charset=UTF-8");
 
 	// This sets global variables that determine the title in the header
-	$content = display_phpc();
+	$content = display_phpc($context);
 	$embed_script = '';
-	if($vars["content"] == "embed") {
+	if(isset($_REQUEST["content"]) && $_REQUEST["content"] == "embed") {
 		$underscore_version = "1.5.2";
 		$embed_script = array(tag("script",
-					attrs('src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/'
+					new AttributeList('src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/'
 						."$underscore_version/underscore-min.js\""), ''),
-				tag('script', attrs('src="static/embed.js"'), ''));
+				tag('script', new AttributeList('src="static/embed.js"'), ''));
 	}
 
-	$html = tag('html', attrs("lang=\"$phpc_lang\""),
+	$html = tag('html', new AttributeList("lang=\"" . $context->getLang() . "\""),
 			tag('head',
-				tag('title', $phpc_title),
-				tag('link', attrs('rel="icon"',
-						"href=\"$phpc_url_path/static/office-calendar.png\"")),
-				tag('meta', attrs('http-equiv="Content-Type"',
+				tag('title', $context->getCalendar()->get_title()),
+				tag('link', new AttributeList('rel="icon"',
+						'href="static/office-calendar.png"')),
+				tag('meta', new AttributeList('http-equiv="Content-Type"',
 						'content="text/html; charset=UTF-8"')),
-				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_static_path/phpc.css\"")),
-				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_jqui_path/themes/$phpc_theme/jquery-ui$phpc_min.css\"")),
-				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_static_path/jquery-ui-timepicker.css\"")),
-				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_fa_path/css/font-awesome$phpc_min.css\"")),
-				tag("script", attrs("src=\"$phpc_jq_file\""), ''),
-				tag("script", attrs("src=\"$phpc_jqui_path/jquery-ui$phpc_min.js\""), ''),
-				tag('script', attrs("src=\"$phpc_static_path/phpc.js\""), ''),
-				tag("script", attrs("src=\"$phpc_static_path/jquery.ui.timepicker.js\""), ''),
-				tag("script", attrs("src=\"$phpc_static_path/farbtastic.min.js\""), ''),
-				tag('link', attrs('rel="stylesheet"', "href=\"$phpc_static_path/farbtastic.css\""))
+				tag('link', new AttributeList('rel="stylesheet"', 'href="static/phpc.css"')),
+				tag('link', new AttributeList('rel="stylesheet"', "href=\"$jqui_path/themes/$theme/jquery-ui$min.css\"")),
+				tag('link', new AttributeList('rel="stylesheet"', 'href="static/jquery-ui-timepicker.css"')),
+				tag('link', new AttributeList('rel="stylesheet"', "href=\"$fa_path/css/font-awesome$min.css\"")),
+				tag("script", new AttributeList("src=\"$jq_file\""), ''),
+				tag("script", new AttributeList("src=\"$jqui_path/jquery-ui$min.js\""), ''),
+				tag('script', new AttributeList('src="static/phpc.js"'), ''),
+				tag("script", new AttributeList('src="static/jquery.ui.timepicker.js"'), ''),
+				tag("script", new AttributeList('src="static/farbtastic.min.js"'), ''),
+				tag('link', new AttributeList('rel="stylesheet"', 'href="static/farbtastic.css"'))
 			),
 			tag('body', $embed_script, $content));
 
 	echo "<!DOCTYPE html>\n", $html->toString();
+}
+} catch(\Exception $e) {
+	header("Content-Type: text/html; charset=UTF-8");
+	echo "<!DOCTYPE html>\n";
+	echo display_exception($e)->toString();
+	exit;
 }
 ?>

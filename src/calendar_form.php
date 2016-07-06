@@ -15,56 +15,48 @@
  * limitations under the License.
  */
 
-if(!defined('IN_PHPC')) {
-       die("Hacking attempt");
-}
-
-function calendar_form() {
-	global $vars;
-
+function calendar_form($context) {
         if(!is_admin()) {
                 return tag('div', __('Permission denied'));
         }
 
-	if(!empty($vars['submit_form']))
-		process_form();
+	if(!empty($_REQUEST['submit_form']))
+		process_form($context);
 
-	return display_form();
+	return display_form($context);
 
 }
 
-function process_form()
+function process_form($context)
 {
-	global $vars, $phpcdb, $phpc_script;
-
 	verify_token();
 
-	$cid = $phpcdb->create_calendar();
+	$cid = $context->db->create_calendar();
 
 	foreach(get_config_options() as $item) {
 		$name = $item[0];
 		$type = $item[2];
 
 		if($type == PHPC_CHECK) {
-			if(isset($vars[$name]))
+			if(isset($_REQUEST[$name]))
 				$value = "1";
 			else
 				$value = "0";
 		} else {
-			if(isset($vars[$name])) {
+			if(isset($_REQUEST[$name])) {
 				$value = $vars[$name];
 			} else {
 				soft_error(__("$name was not set."));
 			}
 		}
 
-		$phpcdb->set_calendar_config($cid, $name, $value);
+		$context->db->set_calendar_config($cid, $name, $value);
 	}
 
-        message(__('Calendar created.'));
+        $context->add_message(__('Calendar created.'));
 }
 
-function display_form()
+function display_form($context)
 {
 	global $phpc_script, $phpc_token;
 
