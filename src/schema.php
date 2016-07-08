@@ -35,7 +35,6 @@ function phpc_table_schemas($prefix) {
 		, phpc_config_table($prefix)
 		, phpc_events_table($prefix)
 		, phpc_groups_table($prefix)
-		, phpc_logins_table($prefix)
 		, phpc_occurrences_table($prefix)
 		, phpc_permissions_table($prefix)
 		, phpc_users_table($prefix)
@@ -132,19 +131,6 @@ function phpc_groups_table($prefix) {
 	return $table;
 }
 
-function phpc_logins_table($prefix) {
-	$table = new SqlTable($prefix . 'logins');
-
-	$table->addColumn('uid', "int(11) unsigned NOT NULL");
-	$table->addColumn('series', "char(43) COLLATE utf8_unicode_ci NOT NULL");
-	$table->addColumn('token', "char(43) COLLATE utf8_unicode_ci NOT NULL");
-	$table->addColumn('atime', "timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP");
-
-	$table->addKey('PRIMARY', 0, '`uid`,`series`');
-
-	return $table;
-}
-
 function phpc_occurrences_table($prefix) {
 	$table = new SqlTable($prefix . 'occurrences');
 
@@ -229,12 +215,12 @@ function phpc_event_fields_table($prefix) {
 	return $table;
 }
 
-function phpc_updatedb(Context $context)
+function phpc_updatedb(Context $context, $prefix)
 {
 	$message_tags = tag('div', tag('div', __("Updating calendar")));
 
 	$updated = false;
-	foreach(phpc_table_schemas() as $table) {
+	foreach(phpc_table_schemas($prefix) as $table) {
 		$tags = $table->update($context->db->dbh);
 		$message_tags->add($tags);
 		if(sizeof($tags) > 0)
@@ -245,7 +231,7 @@ function phpc_updatedb(Context $context)
 	if(!$updated)
 		$message_tags->add(tag('div', __('Already up to date.')));
 
-	message_redirect($message_tags, PHPC_SCRIPT);
+	message_redirect($context, $message_tags, $context->script);
 }
 
 ?>

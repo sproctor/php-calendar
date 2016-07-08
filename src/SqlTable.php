@@ -36,13 +36,18 @@ class SqlTable {
 		$this->keys[] = new SqlKey($name, $non_unique, $columns);
 	}
 
-	function create($dbh, $drop = false) {
+	/**
+	 * @param \mysqli $dbh
+	 * @param bool $drop
+	 * @return bool
+	 */
+	function create(\mysqli $dbh, $drop = false) {
 		//echo "creating table\n";
 		if ($drop) {
 			$query = "DROP TABLE IF EXISTS `{$this->name}`";
 
 			$dbh->query($query)
-				or db_error($dbh, "Error dropping table `{$this->name}`.", $query);
+				or $this->db_error($dbh, "Error dropping table `{$this->name}`.", $query);
 		}
 
 		$query = "CREATE TABLE `{$this->name}` (";
@@ -58,11 +63,17 @@ class SqlTable {
 			$query .= ",\n" . $key->get_create_query();
 		}
 		$query .= ')';
-		$dbh->query($query)
-			or db_error($dbh, __("Error creating table"), $query);
+		$result = $dbh->query($query);
+		if (!$result)
+			$this->db_error($dbh, __("Error creating table"), $query);
+		return $result;
 	}
 
-	function update($dbh) {
+	/**
+	 * @param \mysqli $dbh
+	 * @return array|bool
+	 */
+	function update(\mysqli $dbh) {
 		// Check if the table exists
 		$result = $dbh->query("SHOW TABLES LIKE '{$this->name}'");
 		if($result->num_rows == 0) {
@@ -74,7 +85,11 @@ class SqlTable {
 		}
 	}
 
-	function updateColumns($dbh) {
+	/**
+	 * @param \mysqli $dbh
+	 * @return array
+	 */
+	function updateColumns(\mysqli $dbh) {
 		$tags = array();
 
 		// Update Columns
@@ -113,14 +128,14 @@ class SqlTable {
 				//echo "existing type: $type\nnew type: {$column->type}\n";
 					//echo $query, "\n";
 					$dbh->query($query)
-						or db_error($dbh, "error in query", $query);
+						or $this->db_error($dbh, "error in query", $query);
 				}
 			} else {
 				$query = "ALTER TABLE `{$this->name}`\n"
 					.$column->get_add_query();
 				//echo $query, "\n";
 				$dbh->query($query)
-					or db_error($dbh, "error in query", $query);
+					or $this->db_error($dbh, "error in query", $query);
 				$tags[] = tag('div', __('Added column: ')
 						. $this->name . '.'
 						. $column->name);
@@ -130,7 +145,11 @@ class SqlTable {
 		return $tags;
 	}
 
-	function updateKeys($dbh) {
+	/**
+	 * @param \mysqli $dbh
+	 * @return Html[]
+	 */
+	function updateKeys(\mysqli $dbh) {
 		$tags = array();
 
 		// Upate Keys
@@ -163,16 +182,16 @@ class SqlTable {
 				//echo "existing columns: $existing_columns\n";
 				//echo "new columns: {$key->columns}\n";
 					//echo "running query: $query\n";
-					$tags = tag('div', __("Updating key: ") . $key->name);
+					$tags[] = tag('div', __("Updating key: ") . $key->name);
 					$dbh->query($query)
-						or db_error($dbh, "error in query", $query);
+						or $this->db_error($dbh, "error in query", $query);
 				}
 			} else {
 				$query = "ALTER TABLE `{$this->name}`\n"
-					.$column->get_add_query();
+					.$key->get_add_query();
 			//echo $query, "\n";
 				$dbh->query($query)
-					or db_error($dbh, "error in query", $query);
+					or $this->db_error($dbh, "error in query", $query);
 			}
 		}
 		//echo "</pre>";

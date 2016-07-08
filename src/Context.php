@@ -25,7 +25,8 @@ class Context {
 	private $year;
 	private $month;
 	private $day;
-	private $config;
+	public $config;
+	private $lang;
 	public $db;
 	public $token;
 	public $script;
@@ -38,14 +39,42 @@ class Context {
 	 * Context constructor.
      */
 	function __construct() {
+
+		ini_set('arg_separator.output', '&amp;');
+		mb_internal_encoding('UTF-8');
+		mb_http_output('pass');
+
+		if(defined('PHPC_DEBUG')) {
+			error_reporting(E_ALL);
+			ini_set('display_errors', 1);
+			ini_set('html_errors', 1);
+		}
+
 		$this->initVars();
 		$this->config = load_config($this, PHPC_CONFIG_FILE);
 		$this->db = new Database($this->config);
 
-		$this->initCurrentUser();
-		$this->initCurrentCalendar();
+		require_once(__DIR__ . '/schema.php');
+		if ($this->db->get_config('version') < PHPC_DB_VERSION) {
+			if(isset($_GET['update'])) {
+				phpc_updatedb($this);
+			} else {
+				print_update_form();
+			}
+			exit;
+		}
+
+		read_login_token($this);
+
+		if(!empty($_REQUEST['clearmsg'])) {
+			$this->clearMessages();
+		}
 
 		$this->messages = array();
+
+		if(!empty($_COOKIE["messages"])) {
+			$this->messages = json_decode($_COOKIE["messages"]);
+		}
 
 		$this->initTimezone();
 		$this->initLang();
@@ -54,21 +83,17 @@ class Context {
 		$this->initDate();
 	}
 
+	public function clearMessages() {
+		setcookie("messages", "", time() - 3600);
+		unset($_COOKIE["messages"]);
+		$this->messages = array();
+	}
+
 	/**
 	 * @return string
      */
 	public function getAction() {
 		return empty($_REQUEST['action']) ? 'display_month' : $_REQUEST['action'];
-	}
-
-	public function initCurrentUser() {
-		if(!empty($_SESSION['uid'])) {
-			// We have a logged in user
-			$this->user = $this->db->get_user($_SESSION['uid']);
-		} else {
-			// No logged in user, construct anonymous
-			$this->user = User::createAnonymous($this->db);
-		}
 	}
 
 	private function initVars() {
@@ -130,8 +155,8 @@ class Context {
 				// TODO: create a page to fix this
 				soft_error("There are no calendars.");
 			} else {
-				if ($this->user->get_default_cid() !== false)
-					$default_cid = $this->user->get_default_cid();
+				if ($this->getUser()->get_default_cid() !== false)
+					$default_cid = $this->getUser()->get_default_cid();
 				else
 					$default_cid = $this->db->get_config('default_cid');
 				if (!empty($calendars[$default_cid]))
@@ -143,10 +168,10 @@ class Context {
 
 	private function initTimezone() {
 		// Set timezone
-		if(!empty($this->user->timezone))
-			$this->tz = $this->user->timezone;
+		if(!empty($this->getUser()->get_timezone()))
+			$this->tz = $this->getUser()->get_timezone();
 		else
-			$this->tz = $this->calendar->timezone;
+			$this->tz = $this->getCalendar()->timezone;
 
 		if(!empty($tz))
 			date_default_timezone_set($this->tz);
@@ -203,25 +228,31 @@ class Context {
 	function getMessages() {
 		return $this->messages;
 	}
-	/**
-	 * @return User
-	 */
-	//public function getUser() {
-	//	return $this->user;
-	//}
-
-	/**
-	 * @return Calendar
-	 */
-	public function getCalendar() {
-		return $this->calendar;
-	}
 
 	/**
 	 * @return User
 	 */
 	public function getUser() {
+		if (!isset($this->user))
+			$this->user = User::createAnonymous($this->db);
 		return $this->user;
+	}
+
+	/**
+	 * @param User $user
+	 */
+	public function setUser(User $user) {
+		$this->user = $user;
+	}
+
+	/**
+	 * @return Calendar
+	 */
+	public function getCalendar() {
+		if(!isset($this->calendar))
+			$this->initCurrentCalendar();
+
+		return $this->calendar;
 	}
 
 	/**
@@ -249,10 +280,10 @@ class Context {
 		// setup translation stuff
 		if(!empty($_REQUEST['lang'])) {
 			$lang = $_REQUEST['lang'];
-		} elseif(!empty($this->user->language)) {
-			$lang = $this->user->language;
-		} elseif(!empty($this->cal->language)) {
-			$lang = $$this->cal->language;
+		} elseif(!empty($this->getUser()->get_language())) {
+			$lang = $this->getUser()->get_language();
+		} elseif(!empty($this->getCalendar()->language)) {
+			$lang = $this->getCalendar()->language;
 		} elseif(!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
 			$lang = substr(htmlentities($_SERVER['HTTP_ACCEPT_LANGUAGE']),
 				0, 2);

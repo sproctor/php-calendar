@@ -1074,58 +1074,6 @@ class Database {
 					$query);
 	}
 
-	function get_login_token($uid, $series) {
-		$query = "SELECT token FROM ".$this->prefix."logins\n"
-			."WHERE `uid`='$uid' AND `series`='$series'";
-
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__("Error getting login token."),
-					$query);
-
-		$result = $sth->fetch_assoc();
-		if(!$result)
-			return false;
-		return $result["token"];
-	}
-
-	function add_login_token($uid, $series, $token) {
-		$query = "INSERT INTO ".$this->prefix."logins\n"
-			."(`uid`, `series`, `token`)\n"
-			."VALUES ('$uid', '$series', '$token')";
-
-		$this->dbh->query($query)
-			or $this->db_error(__("Error adding login token."),
-					$query);
-	}
-
-	function update_login_token($uid, $series, $token) {
-		$query = "UPDATE ".$this->prefix."logins\n"
-			."SET `token`='$token', `atime`=NOW()\n"
-			."WHERE `uid`='$uid' AND `series`='$series'";
-
-		$this->dbh->query($query)
-			or $this->db_error(__("Error updating login token."),
-					$query);
-	}
-
-	function remove_login_tokens($uid) {
-		$query = "DELETE FROM ".$this->prefix."logins\n"
-			."WHERE `uid`='$uid'";
-
-		$this->dbh->query($query)
-			or $this->db_error(__("Error removing login tokens."),
-					$query);
-	}
-
-	function cleanup_login_tokens() {
-		$query = "DELETE FROM ".$this->prefix."logins\n"
-			."WHERE `atime` < DATE_SUB(CURDATE(), INTERVAL 31 DAY)";
-
-		$this->dbh->query($query)
-			or $this->db_error(__("Error cleaning login tokens."),
-					$query);
-	}
-
 	// called when there is an error involving the DB
 	function db_error($str, $query = "")
 	{

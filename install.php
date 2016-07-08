@@ -25,7 +25,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 */
 
 define('PHPC_ROOT_PATH', __DIR__);
-define('PHPC_CONFIG_FILE', PHPC_ROOT_PATH . "/config.yml");
+define('PHPC_CONFIG_FILE', PHPC_ROOT_PATH . "/config.php");
 	
 if(!function_exists("mysqli_connect"))
 	soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
@@ -273,7 +273,8 @@ function create_config($sql_hostname, $sql_username, $sql_passwd, $sql_database,
 		"sql_passwd" => $sql_passwd,
 		"sql_database" => $sql_database,
 		"sql_prefix" => $sql_prefix,
-		"sql_type" => $sql_type);
+		"sql_type" => $sql_type,
+		"token_key" => base64_encode(random_bytes(55)));
 }
 
 function install_base()
@@ -288,9 +289,11 @@ function install_base()
 	$my_database = $_POST['my_database'];
 
 	$config = create_config($my_hostname, $my_username, $my_passwd, $my_database, $my_prefix, $sql_type);
-	$yaml = \Symfony\Component\Yaml\Yaml::dump($config);
+	$writer = new \Zend\Config\Writer\PhpArray();
+	$writer->toFile(PHPC_CONFIG_FILE, new \Zend\Config\Config($config));
+	//$yaml = \Symfony\Component\Yaml\Yaml::dump($config);
 
-	file_put_contents(PHPC_CONFIG_FILE, $yaml);
+	//file_put_contents(PHPC_CONFIG_FILE, $yaml);
 
 
 	// Make the database connection.

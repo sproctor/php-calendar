@@ -75,7 +75,7 @@ function load_config(Context $context, $filename) {
  * @return string[]
  */
 function read_config($filename) {
-	return \Symfony\Component\Yaml\Yaml::parse(file_get_contents($filename));
+	return include $filename;
 }
 
 /**
@@ -137,8 +137,6 @@ function minute_pad($minute)
  * @param string $page
  */
 function redirect($context, $page) {
-	session_write_close();
-
 	$dir = $page{0} == '/' ?  '' : dirname($context->script) . '/';
 	$url = $context->proto . '://'. $context->server . $dir . $page;
 
@@ -152,11 +150,11 @@ function redirect($context, $page) {
  * @param string $css_classes
  */
 function message_redirect(Context $context, $message, $page, $css_classes) {
-	if(empty($_SESSION[PHPC_PREFIX . "messages"]))
-		$_SESSION[PHPC_PREFIX . "messages"] = array();
+	$messages = $context->getMessages();
+	$messages[] = tag('div', new AttributeList("class=\"phpc-message $css_classes\""), $message);
 
-	$_SESSION[PHPC_PREFIX . "messages"][] = tag('div', new AttributeList("class=\"phpc-message $css_classes\""),
-		$message);
+	setcookie("messages", json_encode($messages));
+
 	redirect($context, $page);
 }
 
@@ -297,86 +295,50 @@ function days_between($ts1, $ts2) {
 	return date('z', $ts2) - date('z', $ts1);
 }
 
-// Adapted from Drupal
-function phpc_get_private_key() {
-	static $key;
-
-	if(!isset($key))
-		$key = phpc_hash_base64(random_bytes(55));
-
-	return $key;
-}
-
-function phpc_get_token($value='') {
-	return phpc_hmac_base64($value, session_id() . phpc_get_private_key()
-		. phpc_get_hash_salt());
-}
-
-// Stolen from Drupal
-function phpc_hmac_base64($data, $key) {
-	$hmac = base64_encode(hash_hmac('sha256', $data, $key, TRUE));
-	// Modify the hmac so it's safe to use in URLs.
-	return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
-}
-
-// Stolen from Drupal
-function phpc_hash_base64($data) {
-	$hash = base64_encode(hash('sha256', $data, TRUE));
-	// Modify the hash so it's safe to use in URLs.
-	return strtr($hash, array('+' => '-', '/' => '_', '=' => ''));
-}
-
-// Adapted from Drupal
-function phpc_get_hash_salt() {
-	return hash('sha256', SQL_HOST . SQL_USER . SQL_PASSWD . SQL_DATABASE . SQL_PREFIX);
-}
-
+/**
+ * @param Context $context
+ * @param string $username
+ * @param string $password
+ * @return bool
+ */
 function login_user(Context $context, $username, $password)
 {
-	// Regenerate the session in case our non-logged in version was
-	//   snooped
-	// TODO: Verify that this is needed, and make sure it's called in setup
-	// 	 so it doesn't create issues for embedded users
-	// session_regenerate_id();
-
 	$user = $context->db->get_user_by_name($username);
 	if(!$user || $user->get_password() != md5($password))
 		return false;
 
-	phpc_do_login($context, $user, false);
+	$context->setUser($user);
+	set_login_token($context, $user);
 
 	return true;
 }
 
-function phpc_do_login(Context $context, User $user, $series_token = false) {
-	$uid = $user->get_uid();
-	$login_token = phpc_get_token();
-	$_SESSION['uid'] = $uid;
-	$_SESSION['login'] = $login_token;
-
-	if(!$series_token) {
-		$series_token = phpc_get_token();
-		$context->db->add_login_token($uid, $series_token, $login_token);
-	} else {
-		$context->db->update_login_token($uid, $series_token, $login_token);
-	}
+/**
+ * @param Context $context
+ * @param User $user
+ */
+function set_login_token(Context $context, User $user) {
+	$issuedAt = time();
+	// expire credentials in 30 days.
+	$expires = $issuedAt + 30 * 24 * 60 * 60;
+	$token = array(
+		"iss" => $context->server,
+		"iat" => $issuedAt,
+		"exp" => $expires,
+		"data" => array(
+			"uid" => $user->get_uid()
+		)
+	);
+	$jwt = \Firebase\JWT\JWT::encode($token, $context->config['token_key']);
 
 	// TODO: Add a remember me checkbox to the login form, and have the
 	//	cookies expire at the end of the session if it's not checked
 
-	// expire credentials in 30 days.
-	$expiration_time = time() + 30 * 24 * 60 * 60;
-	setcookie('uid', $uid, $expiration_time);
-	setcookie('login', $login_token, $expiration_time);
-	setcookie('login_series', $series_token, $expiration_time);
-
-	return true;
+	setcookie('identity', $jwt, $expires);
 }
 
 function phpc_do_logout() {
-   	session_destroy();
-	setcookie('uid', "", time() - 3600);
-	setcookie('login', "", time() - 3600);
+	setcookie('identity', "", time() - 3600);
 }
 
 // returns tag data for the links at the bottom of the calendar
@@ -959,7 +921,7 @@ function display_phpc(Context $context)
 				$messageHtml->add($message);
 			}
 
-			$_SESSION['messages'] = NULL;
+			$context->clearMessages();
 		} else {
 			$messageHtml = '';
 		}
@@ -973,7 +935,7 @@ function display_phpc(Context $context)
 	} catch(PermissionException $e) {
 		$msg = __('You do not have permission to do that: ') . $e->getMessage();
 		if($context->getUser()->is_user())
-			return error_message_redirect($context, $msg, $script);
+			return error_message_redirect($context, $msg, $context->script);
 		else
 			return error_message_redirect($context, $msg,
 					"{$context->script}?action=login");
@@ -1120,7 +1082,7 @@ function short_month_name($month)
 
 function verify_token(Context $context)
 {
-	if(!$context->user->is_user())
+	if(!$context->getUser()->is_user())
 		return true;
 
 	if(empty($_REQUEST["phpc_token"]) || $_REQUEST["phpc_token"] != $context->token) {
@@ -1159,6 +1121,7 @@ function create_config_input($element, $default = false)
 			break;
 		default:
 			soft_error(__('Unsupported config type') . ": $type");
+			$input = "";
 	}
 	return $input;
 }
@@ -1249,67 +1212,17 @@ function tag()
         return $html;
 }
 
-function setup(Context $context)
-{
-	ini_set('arg_separator.output', '&amp;');
-	mb_internal_encoding('UTF-8');
-	mb_http_output('pass');
+function read_login_token(Context $context) {
+	if(isset($_COOKIE["identity"])) {
 
-	if(defined('PHPC_DEBUG')) {
-		error_reporting(E_ALL);
-		ini_set('display_errors', 1);
-		ini_set('html_errors', 1);
+		$decoded = \Firebase\JWT\JWT::decode($_COOKIE["identity"], $context->config["token_key"], array('HS256'));
+		$decoded_array = (array) $decoded;
+		$data = (array) $decoded_array["data"];
+
+		$uid = $data["uid"];
+		$user = $context->db->get_user($uid);
+		$context->setUser($user);
 	}
-
-	session_start();
-
-	require_once(PHPC_ROOT_PATH . '/src/schema.php');
-	if ($context->db->get_config('version') < PHPC_DB_VERSION) {
-		if(isset($_GET['update'])) {
-			phpc_updatedb($context);
-		} else {
-			print_update_form();
-		}
-		exit;
-	}
-
-	if(empty($_SESSION["uid"])) {
-		if(!empty($_COOKIE["login"])
-			&& !empty($_COOKIE["uid"])) {
-			// Cleanup before we check their token so they can't login with
-			//   an ancient token
-			$context->db->cleanup_login_tokens();
-
-			// FIXME should this be _SESSION below?
-			$uid = $_COOKIE["uid"];
-			if($context->db->validate_login_token($uid, $_COOKIE["login"])) {
-				$user = $context->db->get_user($uid);
-				phpc_do_login($context, $user);
-			} else {
-				$uid = 0;
-			}
-		}
-	} else {
-		$token = $_SESSION["{$prefix}login"];
-	}
-
-	if(empty($token))
-		$token = '';
-
-	if(empty($vars['content']))
-		$vars['content'] = "html";
-
-	if(!empty($vars['clearmsg']))
-		$_SESSION["{$prefix}messages"] = NULL;
-
-	$messages = array();
-
-	if(!empty($_SESSION["{$prefix}messages"])) {
-		foreach($_SESSION["{$prefix}messages"] as $message) {
-			$messages[] = $message;
-		}
-	}
-
 }
 
 ?>

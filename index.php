@@ -23,7 +23,7 @@ use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Loader\MoFileLoader;
 
-define('PHPC_CONFIG_FILE', __DIR__ . '/config.yml');
+define('PHPC_CONFIG_FILE', __DIR__ . '/config.php');
 
 define('PHPC_DEBUG', 1);
 

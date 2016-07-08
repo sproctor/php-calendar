@@ -26,13 +26,13 @@ class LoginPage extends Page
 
 		//Check password and username
 		if(isset($_REQUEST['username'])){
-			$user = $_REQUEST['username'];
+			$username = $_REQUEST['username'];
 			if(!isset($_REQUEST['password'])) {
 				$context->addMessage(__("No password specified."));
 			} else {
 				$password = $_REQUEST['password'];
 
-				if(login_user($context, $user, $password)){
+				if(login_user($context, $username, $password)){
 					$url = $context->script;
 					if(!empty($_REQUEST['lasturl'])) {
 						$url .= '?' . urldecode($_REQUEST['lasturl']);
