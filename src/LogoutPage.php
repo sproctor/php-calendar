@@ -15,17 +15,18 @@
  * limitations under the License.
  */
 
-if(!defined('IN_PHPC')) {
-       die("Hacking attempt");
-}
+namespace PhpCalendar;
 
-function logout()
+class LogoutPage extends Page
 {
-	global $vars, $phpc_script;
 
-	phpc_do_logout();
-        redirect($phpc_script);
+    function display(Context $context)
+    {
+        phpc_do_logout();
+        redirect($context, $context->script);
 
         return tag('h2', __('Loggin out...'));
+    }
 }
+
 ?>

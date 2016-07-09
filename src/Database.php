@@ -67,10 +67,17 @@ class Database {
 	// returns all the events for a particular day
 	// $from and $to are timestamps only significant to the date.
 	// an event that happens later in the day of $to is included
-	function get_occurrences_by_date_range($cid, $from, $to)
+	/**
+	 * @param int $cid
+	 * @param \DateTime $from
+	 * @param \DateTime $to
+	 * @return Occurrence[]
+	 * @throws \Exception
+	 */
+	function get_occurrences_by_date_range($cid, \DateTime $from, \DateTime $to)
 	{
-		$from_str = "FROM_UNIXTIME('$from')";
-		$to_str = "FROM_UNIXTIME('$to')";
+		$from_str = "FROM_UNIXTIME('" . $from->getTimestamp() . "')";
+		$to_str = "FROM_UNIXTIME('" . $to->getTimestamp() . "')";
 
 		$events_table = $this->prefix . "events";
 		$occurrences_table = $this->prefix . "occurrences";
@@ -83,8 +90,8 @@ class Database {
 			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` ON `$events_table`.`catid` = `$cats_table`.`catid`\n"
 			."WHERE `$events_table`.`cid` = '$cid'\n"
-			."	AND IF(`start_ts`, `start_ts` <= FROM_UNIXTIME(?), `start_date` <= DATE(FROM_UNIXTIME(?)))\n"
-			."	AND IF(`end_ts`, `end_ts` >= FROM_UNIXTIME(?), `end_date` >= DATE(FROM_UNIXTIME(?)))\n"
+			."	AND IF(`start_ts`, `start_ts` <= ?, `start_date` <= DATE(?))\n"
+			."	AND IF(`end_ts`, `end_ts` >= ?, `end_date` >= DATE(?))\n"
 			."	ORDER BY `start_ts`, `start_date`, `oid`";
 		$stmt = $this->dbh->prepare($query);
 		$stmt->bind_param('ssss', $to_str, $to_str, $from_str, $from_str);

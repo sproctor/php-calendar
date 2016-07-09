@@ -34,6 +34,7 @@ class Context {
 	public $port;
 	public $server;
 	public $proto;
+	public $twig;
 
 	/**
 	 * Context constructor.
@@ -81,6 +82,21 @@ class Context {
 
 		// set day/month/year - This needs to be done after the timezone is set.
 		$this->initDate();
+
+		$this->initTwig();
+	}
+
+	private function initTwig() {
+		$template_loader = new \Twig_Loader_Filesystem(__DIR__ . '/../templates');
+		$this->twig = new \Twig_Environment($template_loader, array(
+			//'cache' => __DIR__ . '/cache',
+		));
+		$this->twig->addFunction(new \Twig_SimpleFunction('fa', '\PhpCalendar\fa'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('dropdown', '\PhpCalendar\create_dropdown'));
+		$this->twig->addFilter(new \Twig_SimpleFilter('_', '\PhpCalendar\__'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('_p', '\PhpCalendar\__p'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('day_name', '\PhpCalendar\day_name'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('index_of_date', '\PhpCalendar\index_of_date'));
 	}
 
 	public function clearMessages() {

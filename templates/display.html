@@ -1,0 +1,35 @@
+<div id="phpc-summary-view">
+    <div id="phpc-summary-head">
+        <div id="phpc-summary-title"></div>
+        <div id="phpc-summary-author"></div>
+        <div id="phpc-summary-category"></div>
+        <div id="phpc-summary-time"></div>
+    </div>
+    <div id="phpc-summary-body"></div>
+</div>
+<div class="phpc-sub-title phpc-month-title ui-widget-content">
+    {% block navigation %}{% endblock %}
+</div>
+<table class="phpc-month-view">
+    <colgroup>
+        <col class="phpc-week">
+        <col class="phpc-day">
+        <col class="phpc-day">
+        <col class="phpc-day">
+        <col class="phpc-day">
+        <col class="phpc-day">
+        <col class="phpc-day">
+        <col class="phpc-day">
+    </colgroup>
+    <thead>
+        <tr class="ui-widget-header">
+            <th>{{ _p('Week', 'W') }}</th>
+            {% for i in range(0, 7) %}
+            <th>{{ day_name(i + week_start % 7) }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+    {% block content %}{% endblock %}
+    </tbody>
+</table>

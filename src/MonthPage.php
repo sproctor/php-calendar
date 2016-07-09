@@ -29,7 +29,8 @@ class MonthPage extends Page
 	// Full display for a month
 	function display(Context $context)
 	{
-		$cid = $context->getCalendar()->cid;
+		$calendar = $context->getCalendar();
+		$cid = $calendar->cid;
 		$month = $context->getMonth();
 		$year = $context->getYear();
 
@@ -55,20 +56,33 @@ class MonthPage extends Page
 			$prev_year--;
 		}
 
-		$heading = tag('',
-				tag('a', new AttributeList('class="phpc-icon-link"',
-						"href=\"{$context->script}?action=display_month&amp;phpcid=$cid&amp;month=$prev_month&amp;year=$prev_year\""),
-					tag('span', new AttributeList('class="fa fa-chevron-left"'), '')),
-				create_dropdown_list(month_name($month), $months),
-				create_dropdown_list($year, $years),
-				tag('a', new AttributeList('class="phpc-icon-link"',
-						"href=\"{$context->script}?action=display_month&amp;phpcid=$cid&amp;month=$next_month&amp;year=$next_year\""),
-					tag('span', new AttributeList('class="fa fa-chevron-right"'), '')));
-		return create_display_table($context, $heading, create_month($context, $month, $year));
+		$week_start = $calendar->week_start;
+		
+		return $context->twig->render("month.html", [
+			'script' => $context->script,
+			'cid' => $cid,
+			'prev_month' => $prev_month,
+			'prev_year' => $prev_year,
+			'next_month' => $next_month,
+			'next_year' => $next_year,
+			'month_name' => month_name($month),
+			'months' => $months,
+			'year' => $year,
+			'years' => $years,
+			'week_start' => $week_start,
+			'weeks' => weeks_in_month($month, $year, $week_start),
+			
+		]);
 	}
 }
 
 // creates a display for a particular month to be embedded in a full view
+/**
+ * @param Context $context
+ * @param int $month
+ * @param int $year
+ * @return string
+ */
 function create_month(Context $context, $month, $year)
 {
 	$week_start = $context->getCalendar()->week_start;
@@ -81,14 +95,14 @@ function create_month(Context $context, $month, $year)
 	$to_stamp = mktime(23, 59, 59, $month, $last_day, $year);
 
 	$days_events = get_events($context, $from_stamp, $to_stamp);
-	$week_list = array();
+	$output = "";
 	for($week_of_month = 1; $week_of_month <= $weeks; $week_of_month++) {
 		// We could be showing a week from the previous or next year
 		$days = ($week_of_month - 1) * 7;
 		$start_stamp = strtotime("+$days day", $from_stamp);
-		$week_list[] = create_week($context, $start_stamp, $year, $days_events);
+		$output .= create_week($context, $start_stamp, $year, $days_events);
 	}
 
-	return $week_list;
+	return $output;
 }
 ?>

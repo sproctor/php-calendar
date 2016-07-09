@@ -23,19 +23,20 @@ namespace PhpCalendar;
 
 /**
  * @param Context $context
- * @param $from_stamp
- * @param $to_stamp
- * @return array
+ * @param \DateTime $from
+ * @param \DateTime $to
+ * @return Occurrence[][]
  */
-function get_events(Context $context, $from_stamp, $to_stamp) {
+function get_occurrences(Context $context, \DateTime $from, \DateTime $to) {
 	//echo "<pre>$from_stamp $to_stamp\n";
-	$results = $context->db->get_occurrences_by_date_range($context->getCalendar()->cid, $from_stamp, $to_stamp);
-	$days_events = array();
+	$calendar = $context->getCalendar();
+	$results = $context->db->get_occurrences_by_date_range($calendar->cid, $from, $to);
+	$occurrences_by_day = array();
 	//var_dump($results);
-	foreach ($results as $event) {
+	foreach ($results as $occurrence) {
 		//var_dump($row);
 		//echo "here\n";
-		if(!$event->can_read($context->getUser()))
+		if(!$occurrence->can_read($context->getUser()))
 			continue;
 
 		$end_stamp = mktime(0, 0, 0, $event->get_end_month(),
@@ -45,6 +46,7 @@ function get_events(Context $context, $from_stamp, $to_stamp) {
 				$event->get_start_day(),
 				$event->get_start_year());
 
+		// if the event started before the range we're showing
 		$diff = $from_stamp - $start_stamp;
 		if($diff > 0)
 			$add_days = floor($diff / 86400);
@@ -63,9 +65,9 @@ function get_events(Context $context, $from_stamp, $to_stamp) {
 			$key = date('Y-m-d', $stamp);
 			if(!isset($days_events[$key]))
 				$days_events[$key] = array();
-			if(sizeof($days_events[$key]) == $context->calendar->events_max)
-				$days_events[$key][] = false;
-			if(sizeof($days_events[$key]) > $context->calendar->events_max)
+			if(sizeof($days_events[$key]) == $calendar->events_max)
+				$days_events[$key][] = null;
+			if(sizeof($days_events[$key]) > $calendar->events_max)
 				continue;
 			$days_events[$key][] = $event;
 		}
@@ -76,86 +78,55 @@ function get_events(Context $context, $from_stamp, $to_stamp) {
 /**
  * creates a display for a particular week to be embedded in a month table
  * @param Context $context
- * @param $from_stamp
- * @param $year
- * @param $days_events
- * @return Html
+ * @param int $from_stamp
+ * @param array $days_events
+ * @return string
  */
-function create_week(Context $context, $from_stamp, $year, $days_events) {
+function create_week(Context $context, $from_stamp, $days_events) {
 	$start_day = date("j", $from_stamp);
 	$start_month = date("n", $from_stamp);
 	$start_year = date("Y", $from_stamp);
 	$week_start = $context->getCalendar()->week_start;
-	$week_of_year = week_of_year($start_month, $start_day, $start_year, $week_start);
-
-	// Non ISO, the week should be of this year.
-	if($week_start != 1) {
-		if($start_year < $year) {
-			$week_of_year = 1;
-		}
-	} else {
-		// Use week's year as year for ISO
-		$year = $start_year;
-	}
-	
+	list($week_number, $week_year) = week_of_year($start_month, $start_day, $start_year, $week_start);
 
 	$week_html = tag('tr', tag('th',
 				new AttributeList('class="phpc-date ui-state-default"'),
-				create_action_link($context, new ActionItem($week_of_year,
+				create_action_link($context, new ActionItem($week_number,
 					'display_week',
-					array('week' => $week_of_year, 'year' => $year)))));
+					array('week' => $week_number, 'year' => $week_year)))));
 		
 	for($day_of_week = 0; $day_of_week < 7; $day_of_week++) {
 		$day = $start_day + $day_of_week;
 		$week_html->add(create_day($context, $start_month, $day, $start_year, $days_events));
 	}
 
-	return $week_html;
+	return $week_html->toString();
 }
 
 /**
  * displays the day of the week and the following days of the week
  * @param Context $context
- * @param $month
- * @param $day
- * @param $year
- * @param Event[] $days_events
+ * @param int $month
+ * @param int $day
+ * @param int $year
+ * @param Occurrence[][] $days_events
  * @return Html
  */
 function create_day(Context $context, $month, $day, $year, $days_events)
 {
-	$date_class = 'ui-state-default';
-	if($day <= 0) {
-		$month--;
-		if($month < 1) {
-			$month = 12;
-			$year--;
-		}
-		$day += days_in_month($month, $year);
-	} elseif($day > days_in_month($month, $year)) {
-		$day -= days_in_month($month, $year);
-		$month++;
-		if($month > 12) {
-			$month = 1;
-			$year++;
-		}
-	}
+	$date_classes = 'phpc-date ui-state-default';
+	normalize_date($month, $day, $year);
 
+	// TODO: I hate this next section. Find a way to change it
 	if($context->getAction() == "display_month" && $month != $context->getMonth()) {
-		$date_class .= ' phpc-shadow';
+		$date_classes .= ' phpc-shadow';
 	}
 
-	$currentday = date('j');
-	$currentmonth = date('n');
-	$currentyear = date('Y');
-
-	// set whether the date is in the past or future/present
-	if($currentyear == $year && $currentmonth == $month
-			&& $currentday == $day) {
-		$date_class .= ' ui-state-highlight';
+	if(is_today($month, $day, $year)) {
+		$date_classes .= ' ui-state-highlight';
 	}
 
-	$date_tag = tag('div', new AttributeList("class=\"phpc-date $date_class\""),
+	$date_tag = tag('div', new AttributeList("class=\"$date_classes\""),
 			create_action_link_with_date($context, new ActionItem($day, 'display_day'), $year, $month, $day));
 
 	if($context->getCalendar()->can_write($context->getUser())) {
@@ -165,14 +136,9 @@ function create_day(Context $context, $month, $day, $year, $days_events)
 
 	$html_day = tag('td', $date_tag);
 
-	$stamp = mktime(0, 0, 0, $month, $day, $year);
-
 	$can_read = $context->getCalendar()->can_read($context->getUser());
-	$key = date('Y-m-d', $stamp);
-	if(!$can_read || !array_key_exists($key, $days_events))
-		return $html_day;
-
-	if(empty($days_events[$key]))
+	$key = index_of_date($month, $day, $year);
+	if(!$can_read || empty($days_events[$key]))
 		return $html_day;
 
 	$html_events = tag('ul', new AttributeList('class="phpc-event-list"'));
@@ -180,7 +146,7 @@ function create_day(Context $context, $month, $day, $year, $days_events)
 
 	// Count the number of events
 	foreach($days_events[$key] as $event) {
-		if($event == false) {
+		if($event == null) {
 			$event_html = tag('li',
 					create_action_link_with_date(__("View Additional Events"),
 						new ActionItem('display_day', $year, $month, new AttributeList('class="phpc-date"')),

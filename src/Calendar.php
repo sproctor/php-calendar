@@ -30,7 +30,7 @@ class Calendar {
 	var $anon_permission;
 	var $timezone;
 	var $language;
-	var $theme;
+	private $theme;
 	var $groups;
 	var $fields;
 	private $db;
@@ -150,6 +150,12 @@ class Calendar {
 			$this->fields = $this->db->get_fields($this->cid);
 		}
 		return $this->fields[$fid];
+	}
+
+	public function get_theme() {
+		if (empty($this->theme))
+			return 'smoothness';
+		return $this->theme;
 	}
 }
 

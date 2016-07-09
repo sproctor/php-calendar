@@ -4,7 +4,7 @@ var cache = new Object;
 $(document).ready(function(){
   // Add theme to appropriate items
   // All widgets
-  $(".phpc-event-list a, .phpc-message, .phpc-date, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .php-calendar td, .phpc-message, .phpc-dropdown-list ul").addClass("ui-widget");
+  $(".phpc-event-list a, .phpc-message, .phpc-date, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .php-calendar td, .phpc-message, .phpc-dropdown ul").addClass("ui-widget");
   // Buttons
   $(".phpc-add").button({
       text: false,
@@ -26,15 +26,15 @@ $(document).ready(function(){
         window.location.href = $(this).children('a').attr('href');
       });
   // fancy corners
-  $(".phpc-event-list a, .phpc-message, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .phpc-dropdown-list ul").addClass("ui-corner-all");
+  $(".phpc-event-list a, .phpc-message, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .phpc-dropdown ul").addClass("ui-corner-all");
   // add jquery ui style classes
-  $(".php-calendar td, #phpc-summary-view, .phpc-dropdown-list ul").addClass("ui-widget-content");
+  $(".php-calendar td, #phpc-summary-view, .phpc-dropdown ul").addClass("ui-widget-content");
   $(".phpc-event-list a, .phpc-message").addClass("ui-state-default");
 
   // Find the color of ui-widget-content
   var $tempElem = $("<p class=ui-widget-content></p>").hide().appendTo("body");
   var color = $tempElem.css("color");
-  $(".phpc-dropdown-list ul a").css("color", color);
+  $(".phpc-dropdown ul a").css("color", color);
   $tempElem.remove();
 
   // Tabs - Persistence reference: http://stackoverflow.com/questions/19539547/maintaining-jquery-ui-previous-active-tab-before-reload-on-page-reload
@@ -136,8 +136,8 @@ $(document).ready(function(){
   });
 
   // Dropdown list stuff
-  $(".phpc-dropdown-list").each(function(index, elem) {
-    var titleElement = $(elem).children(".phpc-dropdown-list-header");
+  $(".phpc-dropdown").each(function(index, elem) {
+    var titleElement = $(elem).children(".phpc-dropdown-header");
     var listElement = $(elem).children("ul");
     $(document).mouseup(function(e) {
       var container = $(elem);
@@ -162,7 +162,7 @@ $(document).ready(function(){
         positionList();
         listElement.toggle();
       });
-      $(this).find(".phpc-dropdown-list-title").click(function() {
+      $(this).find(".phpc-dropdown-title").click(function() {
         $(window).resize(positionList);
         positionList();
         listElement.toggle();

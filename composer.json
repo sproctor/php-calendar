@@ -14,7 +14,8 @@
         "symfony/translation": "^2.8",
         "paragonie/random_compat": "^2.0",
         "zendframework/zend-config": "^2.6",
-        "firebase/php-jwt": "^3.0"
+        "firebase/php-jwt": "^3.0",
+        "twig/twig": "~1.0"
     },
     "autoload": {
         "psr-4": {

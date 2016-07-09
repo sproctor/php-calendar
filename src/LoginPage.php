@@ -37,7 +37,7 @@ class LoginPage extends Page
 					if(!empty($_REQUEST['lasturl'])) {
 						$url .= '?' . urldecode($_REQUEST['lasturl']);
 					}
-					//redirect($context, $url);
+					redirect($context, $url);
 					return tag('h2', __('Logged in.'));
 				}
 

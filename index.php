@@ -18,6 +18,7 @@
 namespace PhpCalendar;
 
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/src/helpers.php';
 
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\MessageSelector;
@@ -32,18 +33,12 @@ define('PHPC_DEBUG', 1);
 //$url = PHPC_HOME_URL . (empty($_SERVER['QUERY_STRING']) ? ''
 //		: '?' . $_SERVER['QUERY_STRING']);
 
-require_once __DIR__ . '/src/helpers.php';
-
-
 try {
 	$context = new Context();
 
 
 $min = defined('PHPC_DEBUG') ? '' : '.min';
-
-$theme = $context->getCalendar()->theme;
-if(empty($theme))
-	$theme = 'smoothness';
+	
 $jquery_version = "1.12.2";
 $jqueryui_version = "1.11.4";
 $fa_version = "4.5.0";
@@ -68,38 +63,24 @@ if (isset($_REQUEST["content"]) && $_REQUEST["content"] == "json") {
 } else {
 	header("Content-Type: text/html; charset=UTF-8");
 
-	// This sets global variables that determine the title in the header
 	$content = display_phpc($context);
 	$embed_script = '';
 	if(isset($_REQUEST["content"]) && $_REQUEST["content"] == "embed") {
 		$underscore_version = "1.5.2";
-		$embed_script = array(tag("script",
-					new AttributeList('src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/'
-						."$underscore_version/underscore-min.js\""), ''),
-				tag('script', new AttributeList('src="static/embed.js"'), ''));
+		$embed_script = "<script src=\"//cdnjs.cloudflare.com/ajax/libs/underscore.js/"
+						."$underscore_version/underscore-min.js\"></script>\n"
+						.'<script src="static/embed.js"></script>';
 	}
 
-	$html = tag('html', new AttributeList("lang=\"" . $context->getLang() . "\""),
-			tag('head',
-				tag('title', $context->getCalendar()->get_title()),
-				tag('link', new AttributeList('rel="icon"',
-						'href="static/office-calendar.png"')),
-				tag('meta', new AttributeList('http-equiv="Content-Type"',
-						'content="text/html; charset=UTF-8"')),
-				tag('link', new AttributeList('rel="stylesheet"', 'href="static/phpc.css"')),
-				tag('link', new AttributeList('rel="stylesheet"', "href=\"$jqui_path/themes/$theme/jquery-ui$min.css\"")),
-				tag('link', new AttributeList('rel="stylesheet"', 'href="static/jquery-ui-timepicker.css"')),
-				tag('link', new AttributeList('rel="stylesheet"', "href=\"$fa_path/css/font-awesome$min.css\"")),
-				tag("script", new AttributeList("src=\"$jq_file\""), ''),
-				tag("script", new AttributeList("src=\"$jqui_path/jquery-ui$min.js\""), ''),
-				tag('script', new AttributeList('src="static/phpc.js"'), ''),
-				tag("script", new AttributeList('src="static/jquery.ui.timepicker.js"'), ''),
-				tag("script", new AttributeList('src="static/farbtastic.min.js"'), ''),
-				tag('link', new AttributeList('rel="stylesheet"', 'href="static/farbtastic.css"'))
-			),
-			tag('body', $embed_script, $content));
-
-	echo "<!DOCTYPE html>\n", $html->toString();
+	echo $context->twig->render("index.html", [
+		'embed' => $embed_script,
+		'content' => $content->toString(),
+		'lang' => $context->getLang(),
+		'title' => $context->getCalendar()->get_title(),
+		'theme' => $context->getCalendar()->get_theme(),
+		'min' => $min,
+		'script' => $context->script
+	]);
 }
 } catch(\Exception $e) {
 	header("Content-Type: text/html; charset=UTF-8");

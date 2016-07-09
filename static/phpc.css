@@ -256,11 +256,13 @@ div.ui-datepicker, div.ui-timepicker {
   font-size: 1em;
 }
 
-.phpc-dropdown-list {
+.phpc-dropdown {
   display: inline-block;
+  margin: 0 .6em;
+  padding: 0;
 }
 
-.phpc-dropdown-list ul {
+.phpc-dropdown ul {
   position: absolute;
   margin: 0;
   padding: 0;
@@ -268,23 +270,18 @@ div.ui-datepicker, div.ui-timepicker {
   z-index: 99;
 }
 
-.phpc-dropdown-list li {
+.phpc-dropdown li {
   text-align: left;
   font-size: medium;
   font-weight: normal;
   padding: 0.1em;
 }
 
-.phpc-dropdown-list {
-  margin: 0 .6em;
-  padding: 0;
-}
-
-.phpc-dropdown-list ul li a {
+.phpc-dropdown li a {
   text-decoration: none;
 }
 
-.phpc-dropdown-list-title {
+.phpc-dropdown-title {
   cursor: pointer;
 }
 

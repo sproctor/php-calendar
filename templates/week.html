@@ -1,0 +1,11 @@
+<tr>
+    <th class="phpc-date ui-state-default">
+        create_action_link($context, new ActionItem($week_number,
+        'display_week',
+        array('week' => $week_number, 'year' => $week_year)))));
+    </th>
+    {% for day_of_week in range(0, 7) %}
+        {% set day = start_day + day_of_week %}
+        {% include "day.html" %}
+    {% endfor %}
+</tr>

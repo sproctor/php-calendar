@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="icon" href="static/office-calendar.png">
+    <link rel="stylesheet" href="static/phpc.css">
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/{{ theme }}/jquery-ui{{ min }}.css">
+    <link rel="stylesheet" href="static/jquery-ui-timepicker.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome{{ min }}.css">
+    <link rel="stylesheet" href="static/farbtastic.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery{{ min }}.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui{{ min }}.js"></script>
+    <script src="static/phpc.js"></script>
+    <script src="static/jquery.ui.timepicker.js"></script>
+    <script src="static/farbtastic.min.js"></script>
+</head>
+<body>
+{% autoescape %}
+{{ embed|raw }}
+{{ content|raw }}
+{% endautoescape %}
+</body>
+</html>

@@ -148,6 +148,7 @@ function redirect($context, $page) {
  * @param string $message
  * @param string $page
  * @param string $css_classes
+ * @return Html
  */
 function message_redirect(Context $context, $message, $page, $css_classes) {
 	$messages = $context->getMessages();
@@ -156,14 +157,17 @@ function message_redirect(Context $context, $message, $page, $css_classes) {
 	setcookie("messages", json_encode($messages));
 
 	redirect($context, $page);
+
+	return tag('', $messages);
 }
 
 /**
  * @param string $message
  * @param string $page
+ * @return Html
  */
 function error_message_redirect(Context $context, $message, $page) {
-	message_redirect($context, $message, $page, 'ui-state-error');
+	return message_redirect($context, $message, $page, 'ui-state-error');
 }
 
 function escape_entities($string) {
@@ -434,7 +438,7 @@ function weeks_in_year($year, $week_start) {
  * @param int $day
  * @param int $year
  * @param int $week_start
- * @return float
+ * @return int[]
  */
 // return the week number corresponding to the $day.
 function week_of_year($month, $day, $year, $week_start)
@@ -478,7 +482,7 @@ function week_of_year($month, $day, $year, $week_start)
 	/* find the number of weeks by adding the days in the week before
 	 * the start of the year, days up to $day, and the days left in
 	 * this week, then divide by 7 */
-	return ($days_before_year + $day_of_year + $days_left) / 7;
+	return [(int)(($days_before_year + $day_of_year + $days_left) / 7), $year];
 }
 
 /**
@@ -647,25 +651,20 @@ function create_checkbox($name, $value, $checked = false, $label = null)
 		return $input;
 }
 
-// $title - string or html element displayed by default
-// $values - Array of URL => title
-// returns an html structure for a dropdown box that will change the page
-//		to the URL from $values when an element is selected
 /**
  * @param string $title
- * @param string[] $values
- * @return Html
+ * @param string[] $values // Array of URL => title
+ * @return string // dropdown box that will change the page to the URL from $values when an element is selected
  */
-function create_dropdown_list($title, $values) {
-	$list = tag('ul');
+function create_dropdown($title, $values) {
+	$output = "<div class=\"phpc-dropdown\">\n"
+		."    <span class=\"phpc-dropdown-header\"><span class=\"phpc-dropdown-title\">$title</span></span>"
+		."    <ul>\n";
 	foreach($values as $key => $value) {
-		$list->add(tag('li', tag('a', new AttributeList("href=\"$key\""), $value)));
+		$output .= "        <li><a href=\"$key\">$value</a></li>\n";
 	}
-	return tag('div', new AttributeList('class="phpc-dropdown-list"'),
-			tag('span', new AttributeList('class="phpc-dropdown-list-header"'),
-				tag('span', new AttributeList('class="phpc-dropdown-list-title"'),
-					$title)),
-			$list);
+	$output .= "    </ul></div>";
+	return $output;
 }
 
 function fa($name)
@@ -900,7 +899,7 @@ function display_phpc(Context $context)
 		if(!empty($cal)) {
 			$title = $cal->get_title();
 			$title_link = tag('a', new AttributeList("href=\"{$context->script}?phpcid={$cal->get_cid()}\"",
-						'class="phpc-dropdown-list-title"'), $title);
+						'class="phpc-dropdown-title"'), $title);
 		} else {
 			$title = __("(No calendars)");
 			$title_link = $title;
@@ -909,7 +908,7 @@ function display_phpc(Context $context)
 			$list[$context->script . '?phpcid=' . $calendar->get_cid()] = $calendar->get_title();
 		}
 		if (sizeof($calendars) > 1) {
-			$title_tag = create_dropdown_list($title_link, $list);
+			$title_tag = create_dropdown($title_link->toString(), $list);
 		} else {
 			$title_tag = $title_link;
 		}
@@ -930,7 +929,7 @@ function display_phpc(Context $context)
 				user_menu($context),
 				tag('br', new AttributeList('style="clear:both;"')),
 				tag('div', new AttributeList('class="phpc-title ui-widget-header"'), $title_tag),
-				navbar($context), $messages, $content, footer($context));
+				navbar($context), $messageHtml, $content, footer($context));
 
 	} catch(PermissionException $e) {
 		$msg = __('You do not have permission to do that: ') . $e->getMessage();
@@ -988,6 +987,8 @@ function get_page($action)
 			return new DayPage;
 		case 'login':
 			return new LoginPage;
+		case 'logout':
+			return new LogoutPage;
 		default:
 			soft_error(__('Invalid action'));
 	}
@@ -1225,4 +1226,46 @@ function read_login_token(Context $context) {
 	}
 }
 
+function index_of_date($month, $day, $year) {
+	return date('Y-m-d', mktime(0, 0, 0, $month, $day, $year));
+}
+
+function is_today($month, $day, $year) {
+	$currentday = date('j');
+	$currentmonth = date('n');
+	$currentyear = date('Y');
+	
+	return $currentyear == $year && $currentmonth == $month && $currentday == $day;
+}
+
+/**
+ * normalize date after month or day were incremented or decremented
+ * @param $month
+ * @param $day
+ * @param $year
+ */
+function normalize_date(&$month, &$day, &$year) {
+	if($day <= 0) {
+		$month--;
+		if($month < 1) {
+			$month += 12;
+			$year--;
+		}
+		$day += days_in_month($month, $year);
+	} elseif($day > days_in_month($month, $year)) {
+		$day -= days_in_month($month, $year);
+		$month++;
+		if($month > 12) {
+			$month -= 12;
+			$year++;
+		}
+	}
+	if($month < 1) {
+		$month = 12;
+		$year--;
+	} elseif($month > 12) {
+		$month = 1;
+		$year++;
+	}
+}
 ?>
