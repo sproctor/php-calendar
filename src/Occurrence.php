@@ -38,7 +38,7 @@ class Occurrence extends Event
 	 * @param Database $db
 	 * @param \string[] $event
 	 */
-	function __construct($db, $event) {
+	function __construct(Database $db, $event) {
 		parent::__construct($db, $event);
 
 		$this->oid = $event['oid'];
@@ -287,6 +287,22 @@ class Occurrence extends Event
 		return mktime($start_hour, $start_minute, 0,
 				$this->start_month, $this->start_day,
 				$this->start_year);
+	}
+
+	/**
+	 * @return \DateTimeImmutable
+	 */
+	function getStart() {
+		return new \DateTimeImmutable($this->start_year . "-" . $this->start_month . "-" . $this->start_day . "T" .
+			$this->start_hour . ":" . $this->start_minute . ":0");
+	}
+
+	/**
+	 * @return \DateTimeImmutable
+	 */
+	function getEnd() {
+		return new \DateTimeImmutable($this->end_year . "-" . $this->end_month . "-" . $this->end_day . "T" .
+			$this->end_hour . ":" . $this->end_minute . ":0");
 	}
 }
 

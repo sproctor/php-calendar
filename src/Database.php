@@ -18,7 +18,7 @@
 namespace PhpCalendar;
 
 class Database {
-	private $dbh;
+	private $pdo;
 	private $calendars;
 	private $config;
 	private $event_columns;
@@ -30,21 +30,18 @@ class Database {
 	 * Database constructor.
      */
 	function __construct($config) {
+		$dsn = "mysql:dbname={$config["sql_database"]};host={$config["sql_host"]};charset=utf8";
 		if(isset($config["sql_port"]))
-			$port = $config["sql_port"];
-		else
-			$port = ini_get("mysqli.default_port");
+			$dsn .= ";port=" . $config["sql_port"];
 
 		$this->prefix = $config["sql_prefix"];
 
 		// Make the database connection.
-		$this->dbh = @new \mysqli($config["sql_host"], $config["sql_user"], $config["sql_passwd"], $config["sql_database"], $port);
-
-		if($this->dbh->connect_errno) {
-			soft_error("Database connect failed ({$this->dbh->connect_errno}): {$this->dbh->connect_error}");
+		try {
+			$this->pdo = new \PDO($dsn, $config["sql_user"], $config["sql_passwd"]);
+		} catch (\PDOException $e) {
+			soft_error(__("Database connect failed: " . $e->getMessage()));
 		}
-
-		$this->dbh->set_charset("utf8");
 
 		// TODO: Make these const
 		$this->event_columns = "`{$this->prefix}categories`.`gid`, `{$this->prefix}events`.`subject`, "
@@ -60,21 +57,17 @@ class Database {
 			."`password_editable`, `default_cid`, `timezone`, `language`, `disabled`";
 	}
 
-	function __destruct() {
-		$this->dbh->close();
-	}
-
 	// returns all the events for a particular day
 	// $from and $to are timestamps only significant to the date.
 	// an event that happens later in the day of $to is included
 	/**
 	 * @param int $cid
-	 * @param \DateTime $from
-	 * @param \DateTime $to
+	 * @param \DateTimeInterface $from
+	 * @param \DateTimeInterface $to
 	 * @return Occurrence[]
 	 * @throws \Exception
 	 */
-	function get_occurrences_by_date_range($cid, \DateTime $from, \DateTime $to)
+	function get_occurrences_by_date_range($cid, \DateTimeInterface $from, \DateTimeInterface $to)
 	{
 		$from_str = "FROM_UNIXTIME('" . $from->getTimestamp() . "')";
 		$to_str = "FROM_UNIXTIME('" . $to->getTimestamp() . "')";
@@ -93,7 +86,7 @@ class Database {
 			."	AND IF(`start_ts`, `start_ts` <= ?, `start_date` <= DATE(?))\n"
 			."	AND IF(`end_ts`, `end_ts` >= ?, `end_date` >= DATE(?))\n"
 			."	ORDER BY `start_ts`, `start_date`, `oid`";
-		$stmt = $this->dbh->prepare($query);
+		$stmt = $this->pdo->prepare($query);
 		$stmt->bind_param('ssss', $to_str, $to_str, $from_str, $from_str);
 		$stmt->execute()
 			or $this->db_error(__('Error in get_occurrences_by_date_range'), $query);

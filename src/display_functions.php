@@ -23,13 +23,12 @@ namespace PhpCalendar;
 
 /**
  * @param Context $context
- * @param \DateTime $from
- * @param \DateTime $to
+ * @param \DateTimeImmutable $from
+ * @param \DateTimeImmutable $to
  * @return Occurrence[][]
  */
-function get_occurrences(Context $context, \DateTime $from, \DateTime $to) {
+function get_occurrences(Calendar $calendar, User $user, \DateTimeImmutable $from, \DateTimeImmutable $to) {
 	//echo "<pre>$from_stamp $to_stamp\n";
-	$calendar = $context->getCalendar();
 	$results = $context->db->get_occurrences_by_date_range($calendar->cid, $from, $to);
 	$occurrences_by_day = array();
 	//var_dump($results);
@@ -39,40 +38,31 @@ function get_occurrences(Context $context, \DateTime $from, \DateTime $to) {
 		if(!$occurrence->can_read($context->getUser()))
 			continue;
 
-		$end_stamp = mktime(0, 0, 0, $event->get_end_month(),
-				$event->get_end_day(), $event->get_end_year());
+		$end = $occurrence->getEnd();
 
-		$start_stamp = mktime(0, 0, 0, $event->get_start_month(),
-				$event->get_start_day(),
-				$event->get_start_year());
+		$start = $occurrence->getStart();
 
 		// if the event started before the range we're showing
-		$diff = $from_stamp - $start_stamp;
-		if($diff > 0)
-			$add_days = floor($diff / 86400);
-		else
-			$add_days = 0;
+		$diff = $from->diff($start);
+		if($diff < 0)
+			$diff = new \DateInterval("P0D");
 
 		// put the event in every day until the end
-		for(; ; $add_days++) {
-			$stamp = mktime(0, 0, 0, $event->get_start_month(),
-					$event->get_start_day() + $add_days,
-					$event->get_start_year());
-
-			if($stamp > $end_stamp || $stamp > $to_stamp)
-				break;
-
-			$key = date('Y-m-d', $stamp);
-			if(!isset($days_events[$key]))
-				$days_events[$key] = array();
-			if(sizeof($days_events[$key]) == $calendar->events_max)
-				$days_events[$key][] = null;
-			if(sizeof($days_events[$key]) > $calendar->events_max)
+		for($date = $start->add($diff); $date < $to && $date < $end; $date = $date->add(new \DateInterval("P1D"))) {
+			if ($date < $from)
 				continue;
-			$days_events[$key][] = $event;
+
+			$key = index_of_date($date);
+			if(!isset($occurrences_by_day[$key]))
+				$days_events[$key] = array();
+			if(sizeof($occurrences_by_day[$key]) == $calendar->events_max)
+				$days_events[$key][] = null;
+			if(sizeof($occurrences_by_day[$key]) > $calendar->events_max)
+				continue;
+			$days_events[$key][] = $occurrence;
 		}
 	}
-	return $days_events;
+	return $occurrences_by_day;
 }
 
 /**

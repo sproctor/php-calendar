@@ -1226,8 +1226,14 @@ function read_login_token(Context $context) {
 	}
 }
 
-function index_of_date($month, $day, $year) {
-	return date('Y-m-d', mktime(0, 0, 0, $month, $day, $year));
+/**
+ * @param $month
+ * @param $day
+ * @param $year
+ * @return bool|string
+ */
+function index_of_date(\DateTimeInterface $date) {
+	$date->format('Y-m-d');
 }
 
 function is_today($month, $day, $year) {
