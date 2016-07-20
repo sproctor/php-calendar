@@ -42,11 +42,9 @@ function user_permissions_submit()
 		
 		$different = false;
 		foreach($perm_names as $perm_name) {
-			$new_perms[$perm_name] =
-				asbool(!empty($vars["$perm_name$uid"]));
-			if(empty($old_perms[$perm_name]) !=
-					empty($vars["$perm_name$uid"]))
-				$different = true;
+			$new_perms[$perm_name] = !empty($vars["$perm_name$uid"]);
+			if(empty($old_perms[$perm_name]) != empty($vars["$perm_name$uid"]))
+			$different = true;
 		}
 
 		if ($different) {

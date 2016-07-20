@@ -157,6 +157,15 @@ class Calendar {
 			return 'smoothness';
 		return $this->theme;
 	}
+
+	/**
+	 * @param \DateTimeInterface $from
+	 * @param \DateTimeInterface $to
+	 * @return Occurrence[]
+	 */
+	public function get_occurrences_by_date_range(\DateTimeInterface $from, \DateTimeInterface $to) {
+		return $this->db->get_occurrences_by_date_range($this->cid, $from, $to);
+	}
 }
 
 ?>

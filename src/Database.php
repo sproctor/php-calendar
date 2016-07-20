@@ -18,7 +18,7 @@
 namespace PhpCalendar;
 
 class Database {
-	private $pdo;
+	private $dbh;
 	private $calendars;
 	private $config;
 	private $event_columns;
@@ -28,6 +28,7 @@ class Database {
 
 	/**
 	 * Database constructor.
+	 * @param string[] $config
      */
 	function __construct($config) {
 		$dsn = "mysql:dbname={$config["sql_database"]};host={$config["sql_host"]};charset=utf8";
@@ -38,7 +39,8 @@ class Database {
 
 		// Make the database connection.
 		try {
-			$this->pdo = new \PDO($dsn, $config["sql_user"], $config["sql_passwd"]);
+			$this->dbh = new \PDO($dsn, $config["sql_user"], $config["sql_passwd"]);
+			$this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		} catch (\PDOException $e) {
 			soft_error(__("Database connect failed: " . $e->getMessage()));
 		}
@@ -49,9 +51,7 @@ class Database {
 			."`{$this->prefix}events`.`cid`, `{$this->prefix}events`.`readonly`, `{$this->prefix}events`.`catid`, "
 			."UNIX_TIMESTAMP(`ctime`) AS `ctime`, UNIX_TIMESTAMP(`mtime`) AS `mtime`";
 
-		$this->occurrence_columns = $this->event_columns . ", `time_type`, `oid`, "
-			. "UNIX_TIMESTAMP(`start_ts`) AS `start_ts`, DATE_FORMAT(`start_date`, '%Y%m%d') AS `start_date`, "
-			. "UNIX_TIMESTAMP(`end_ts`) AS `end_ts`, DATE_FORMAT(`end_date`, '%Y%m%d') AS `end_date`\n";
+		$this->occurrence_columns = $this->event_columns . ", `time_type`, `oid`, `start`, `end`";
 
 		$this->user_fields = "`{$this->prefix}users`.`uid`, `username`, `password`, `{$this->prefix}users`.`admin`, "
 			."`password_editable`, `default_cid`, `timezone`, `language`, `disabled`";
@@ -69,29 +69,31 @@ class Database {
 	 */
 	function get_occurrences_by_date_range($cid, \DateTimeInterface $from, \DateTimeInterface $to)
 	{
-		$from_str = "FROM_UNIXTIME('" . $from->getTimestamp() . "')";
-		$to_str = "FROM_UNIXTIME('" . $to->getTimestamp() . "')";
-
 		$events_table = $this->prefix . "events";
 		$occurrences_table = $this->prefix . "occurrences";
 		$users_table = $this->prefix . 'users';
 		$cats_table = $this->prefix . 'categories';
 
+		$from_datetime = sqlDate($from);
+		$from_date = $from->format('Y-m-d');
+		
+		$to_datetime = sqlDate($to);
+		$to_date = $from->format('Y-m-d');
+		
 		$query = "SELECT {$this->occurrence_columns}, `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` ON `$events_table`.`catid` = `$cats_table`.`catid`\n"
-			."WHERE `$events_table`.`cid` = '$cid'\n"
-			."	AND IF(`start_ts`, `start_ts` <= ?, `start_date` <= DATE(?))\n"
-			."	AND IF(`end_ts`, `end_ts` >= ?, `end_date` >= DATE(?))\n"
-			."	ORDER BY `start_ts`, `start_date`, `oid`";
-		$stmt = $this->pdo->prepare($query);
-		$stmt->bind_param('ssss', $to_str, $to_str, $from_str, $from_str);
-		$stmt->execute()
-			or $this->db_error(__('Error in get_occurrences_by_date_range'), $query);
+			."WHERE `$events_table`.`cid`=$cid\n"
+			."	AND IF(`time_type`=0, `start` < '$to_datetime', DATE(`start`) < DATE('$to_date'))\n"
+			."	AND IF(`time_type`=0, `end` >= '$from_datetime', DATE(`end`) >= DATE('$from_date'))\n"
+			."	ORDER BY `start`, `oid`";
+		//echo "<pre>$query</pre>";
+		$sth = $this->dbh->prepare($query);
+		$sth->execute();
 		$arr = array();
-		while($row = $stmt->fetch()) {
+		while($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$arr[] = new Occurrence($this, $row);
 		}
 		return $arr;
@@ -116,14 +118,13 @@ class Database {
 		$query = "SELECT * FROM `$users_table` u\n"
 			."JOIN `$user_groups_table` ug USING (`uid`)\n"
 			."JOIN `$cats_table` c ON c.`gid`=ug.`gid`\n"
-			."WHERE c.`catid`=? AND u.`uid`=?";
+			."WHERE c.`catid`=:catid AND u.`uid`={$user->get_uid()}";
 
-		$stmt = $this->dbh->prepare($query);
-		$stmt->bind_param('ii', $catId, $user->get_uid());
-		$stmt->execute()
-			or soft_error(__("Error executing SQL statement in is_cat_visible."));
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':catid', $catId, \PDO::PARAM_INT);
+		$sth->execute();
 
-		$results = $stmt->get_result();
+		$results = $sth->fetch(\PDO::FETCH_ASSOC);
 		if(!$results)
 			return false;
 
@@ -131,15 +132,27 @@ class Database {
 	}
 
 	// returns all the events for a particular day
+	/**
+	 * @param int $cid
+	 * @param int $year
+	 * @param int $month
+	 * @param int $day
+	 * @return Occurrence[]
+	 */
 	function get_occurrences_by_date($cid, $year, $month, $day)
 	{
 		$from_stamp = mktime(0, 0, 0, $month, $day, $year);
 		$to_stamp = mktime(23, 59, 59, $month, $day, $year);
 
 		return $this->get_occurrences_by_date_range($cid, $from_stamp, $to_stamp);
-        }
+	}
 
 	// returns the event that corresponds to eid
+	/**
+	 * @param int $eid
+	 * @return bool|Event
+	 * @throws \Exception
+	 */
 	function get_event_by_eid($eid)
 	{
 		$events_table = $this->prefix . 'events';
@@ -148,23 +161,25 @@ class Database {
 
 		$query = "SELECT {$this->event_columns}, `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
-			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
+			."LEFT JOIN `$users_table` ON `uid`=`owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
-			."WHERE `eid` = ?\n";
+			."WHERE `eid`=:eid\n";
 
-		$stmt = $this->dbh->prepare($query);
-		$stmt->bind_param('i', $eid);
-		$stmt->execute()
-			or $this->db_error(__('Error in get_event_by_eid'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+		$sth->execute();
 
-		$result = $stmt->get_result();
-		$arr = $result->fetch_assoc();
-		if(!$arr)
+		$result = $sth->fetch(\PDO::FETCH_ASSOC);
+		if(!$result)
 			return false;
-		return new Event($this, $arr);
+		return new Event($this, $result);
 	}
 
 	// returns the event that corresponds to oid
+	/**
+	 * @param int $oid
+	 * @return mixed
+	 */
 	function get_event_by_oid($oid)
 	{
 		$events_table = $this->prefix . 'events';
@@ -175,18 +190,23 @@ class Database {
 		$query = "SELECT {$this->event_columns}, `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
 			."LEFT JOIN `$occurrences_table` USING (`eid`)\n"
-			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
+			."LEFT JOIN `$users_table` ON `uid`=`owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
-			."WHERE `oid` = '$oid'\n";
+			."WHERE `oid`=:oid\n";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error in get_event_by_oid'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':oid', $oid, \PDO::PARAM_INT);
+		$sth->execute();
 
-		return $sth->fetch_assoc();
+		return $sth->fetch(\PDO::FETCH_ASSOC);
 	}
 
 	// returns the category that corresponds to $catid
+	/**
+	 * @param int $catid
+	 * @return mixed
+	 * @throws \Exception
+	 */
 	function get_category($catid) {
 		$cats_table = $this->prefix . 'categories';
 		$groups_table = $this->prefix . 'groups';
@@ -197,54 +217,62 @@ class Database {
 			."`$groups_table`.`name` AS `group_name`\n"
 			."FROM `$cats_table`\n"
 			."LEFT JOIN `$groups_table` USING (`gid`)\n"
-			."WHERE `catid` = $catid";
+			."WHERE `catid`=:catid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error in get_category'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':catid', $catid);
+		$sth->execute();
 			
-		$result = $sth->fetch_assoc()
-			or soft_error(__("Category doesn't exist with catid")
-					. ": $catid");
-	
-		return $result;
+		return $sth->fetch(\PDO::FETCH_ASSOC)
+			or soft_error(__("Category doesn't exist with catid") . ": $catid");
 	}
 
+	/**
+	 * @param int $gid
+	 * @return mixed
+	 * @throws \Exception
+	 */
 	function get_group($gid) {
 		$groups_table = $this->prefix . 'groups';
 
 		$query = "SELECT `name`, `gid`, `cid`\n"
 			."FROM `$groups_table`\n"
-			."WHERE `gid` = $gid";
+			."WHERE `gid`=:gid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error in get_group'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
+		$sth->execute();
 			
-		$result = $sth->fetch_assoc()
-			or soft_error(__("Group doesn't exist with gid")
-					. ": $gid");
-	
-		return $result;
+		return $sth->fetch(\PDO::FETCH_ASSOC)
+			or soft_error(__("Group doesn't exist with gid") . ": $gid");
 	}
 
-	function get_groups($cid = false) {
+	/**
+	 * @param int $cid
+	 * @return string[][]
+	 */
+	function get_groups($cid) {
 		$groups_table = $this->prefix . 'groups';
 
 		$query = "SELECT `gid`, `name`, `cid`\n"
-			."FROM `$groups_table`\n";
+			."FROM `$groups_table`\n"
+			. "WHERE `cid`=:cid";
 
-		if($cid !== false)
-			$query .= "WHERE `cid` = $cid";
-
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error in get_groups'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->execute();
 					
 		$groups = array();
-		while($row = $sth->fetch_assoc()) {
+		while($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$groups[] = $row;
 		}					
 		return $groups;
 	}
 
+	/**
+	 * @param int $uid
+	 * @return string[][]
+	 */
 	function get_user_groups($uid) {
 		$groups_table = $this->prefix . 'groups';
 		$user_groups_table = $this->prefix . 'user_groups';
@@ -252,28 +280,27 @@ class Database {
 		$query = "SELECT `gid`, `cid`, `name`\n"
 			."FROM `$groups_table`\n"
 			."INNER JOIN `$user_groups_table` USING (`gid`)\n"
-			."WHERE `uid` = $uid";
+			."WHERE `uid`=:uid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error in get_user_groups'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		$sth->execute();
 					
 		$groups = array();
-		while($row = $sth->fetch_assoc()) {
+		while($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$groups[] = $row;
 		}					
 		return $groups;
 	}
 	
 	// returns the categories for calendar $cid
-	function get_categories($cid = false) {
+	/**
+	 * @param int $cid
+	 * @return string[][]
+	 */
+	function get_categories($cid) {
 		$cats_table = $this->prefix . 'categories';
 		$groups_table = $this->prefix . 'groups';
-
-		if($cid)
-			$where = "WHERE `$cats_table`.`cid` = '$cid'\n";
-		else
-			$where = "WHERE `$cats_table`.`cid` IS NULL\n";
 
 		$query = "SELECT `$cats_table`.`name` AS `name`, `text_color`, "
 			."`bg_color`, `$cats_table`.`cid` AS `cid`, "
@@ -281,14 +308,40 @@ class Database {
 			."`$groups_table`.`name` AS `group_name`\n"
 			."FROM `$cats_table`\n"
 			."LEFT JOIN `$groups_table` USING (`gid`)\n"
-			.$where;
+			."WHERE `$cats_table`.`cid`=:cid\n";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error in get_categories'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->execute();
 
 		$arr = array();
-		while($result = $sth->fetch_assoc()) {
+		while($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
+			$arr[] = $result;
+		}
+
+		return $arr;
+	}
+
+	/**
+	 * @return string[][]
+	 */
+	function get_global_categories() {
+		$cats_table = $this->prefix . 'categories';
+		$groups_table = $this->prefix . 'groups';
+
+		$query = "SELECT `$cats_table`.`name` AS `name`, `text_color`, "
+			."`bg_color`, `$cats_table`.`cid` AS `cid`, "
+			."`$cats_table`.`gid`, `catid`, "
+			."`$groups_table`.`name` AS `group_name`\n"
+			."FROM `$cats_table`\n"
+			."LEFT JOIN `$groups_table` USING (`gid`)\n"
+			."WHERE `$cats_table`.`cid` IS NULL\n";
+
+		$sth = $this->dbh->prepare($query);
+		$sth->execute();
+
+		$arr = array();
+		while($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$arr[] = $result;
 		}
 
@@ -296,28 +349,30 @@ class Database {
 	}
 
 	// returns the categories for calendar $cid
-	//   if there are no 
-	function get_visible_categories($uid, $cid = false)
+	//   if there are no
+	/**
+	 * @param int $uid
+	 * @param int $cid
+	 * @return string[][]
+	 */
+	function get_visible_categories($uid, $cid)
 	{
 		$cats_table = $this->prefix . 'categories';
 		$user_groups_table = $this->prefix . 'user_groups';
-
-		$where_cid = "`cid` IS NULL";
-		if($cid)
-			$where_cid = "($where_cid OR `cid` = '$cid')";
 
 		$query = "SELECT `name`, `text_color`, `bg_color`, `cid`, "
 			."`gid`, `catid`\n"
 			."FROM `$cats_table`\n"
 			."LEFT JOIN `$user_groups_table` USING (`gid`)\n"
-			."WHERE (`uid` IS NULL OR `uid` = '$uid') AND $where_cid\n";
+			."WHERE (`uid` IS NULL OR `uid`=:uid) AND (`cid` IS NULL OR `cid`=:cid)\n";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error in get_visible_categories'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->execute();
 
 		$arr = array();
-		while($result = $sth->fetch_assoc()) {
+		while($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$arr[] = $result;
 		}
 
@@ -330,18 +385,22 @@ class Database {
 		$query = "SELECT `$fields_table`.`name` AS `name`, `required`, "
 			."`format`, `$fields_table`.`cid` AS `cid`, `fid`\n"
 			."FROM `$fields_table`\n"
-			."WHERE `fid` = $fid";
+			."WHERE `fid` = :fid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error in get_field'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':fid', $fid, \PDO::PARAM_INT);
+		$sth->execute();
 			
-		$result = $sth->fetch_assoc()
+		return $sth->fetch(\PDO::FETCH_ASSOC)
 			or soft_error(__("Field doesn't exist with 'fid'") . ": $fid");
-	
-		return $result;
 	}
 
 	// returns the event that corresponds to $oid
+	/**
+	 * @param int $oid
+	 * @return Occurrence
+	 * @throws \Exception
+	 */
 	function get_occurrence_by_oid($oid)
 	{
 		$events_table = $this->prefix . 'events';
@@ -354,232 +413,280 @@ class Database {
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
-			."WHERE `oid` = '$oid'\n";
+			."WHERE `oid` = :oid\n";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error in get_occurrence_by_oid'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':oid', $oid, \PDO::PARAM_INT);
+		$sth->execute();
 
-		$result = $sth->fetch_assoc()
+		$result = $sth->fetch(\PDO::FETCH_ASSOC)
 			or soft_error(__("Event doesn't exist with oid") . ": $oid");
 
 		return new Occurrence($this, $result);
 	}
 
 	// returns the categories for calendar $cid
-	function get_fields($cid = false) {
+	/**
+	 * @param int $cid
+	 * @return string[][]
+	 */
+	function get_fields($cid) {
 		$fields_table = $this->prefix . 'fields';
-
-		if($cid)
-			$where = "WHERE `$fields_table`.`cid` = '$cid'\n";
-		else
-			$where = "WHERE `$fields_table`.`cid` IS NULL\n";
 
 		$query = "SELECT `name`, `required`, `format`, `cid`, `fid`\n"
 			."FROM `$fields_table`\n"
-			.$where;
+			."WHERE `$fields_table`.`cid` IS NULL OR `$fields_table`.`cid` = :cid\n";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error in get_fields'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->execute();
 
 		$arr = array();
-		while($result = $sth->fetch_assoc()) {
+		while($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$arr[$result['fid']] = $result;
 		}
 
 		return $arr;
 	}
 
+	/**
+	 * @param int $eid
+	 * @return string[][]
+	 */
 	function get_event_fields($eid) {
 		$event_fields_table = $this->prefix . 'event_fields';
 		$query = "SELECT `fid`, `value`\n"
 			."FROM `$event_fields_table`\n"
-			."WHERE `eid`='$eid'";
+			."WHERE `eid`=:eid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error in get_event_fields'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+		$sth->execute();
 
 		$arr = array();
-		while($result = $sth->fetch_assoc()) {
+		while($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$arr[] = $result;
 		}
 
 		return $arr;
 	}
 
-        function get_occurrences_by_eid($eid)
+	/**
+	 * @param int $eid
+	 * @return Occurrence[]
+	 */
+	function get_occurrences_by_eid($eid)
 	{
 		$events_table = $this->prefix . "events";
 		$occurrences_table = $this->prefix . "occurrences";
 		$users_table = $this->prefix . 'users';
 		$cats_table = $this->prefix . 'categories';
 
-                $query = "SELECT {$this->occurrence_columns}, `username`, `name`, `bg_color`, `text_color`\n"
+		$query = "SELECT {$this->occurrence_columns}, `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
                         ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
 			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
-			."WHERE `eid` = '$eid'\n"
+			."WHERE `eid` = :eid\n"
 			."	ORDER BY `start_ts`, `start_date`, `oid`";
 
-		$result = $this->dbh->query($query)
-			or $this->db_error(__('Error in get_occurrences_by_eid'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+		$sth->execute();
 
 		$events = array();
-		while($row = $result->fetch_assoc()) {
+		while($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$events[] = new Occurrence($this, $row);
 		}
 		return $events;
-        }
+	}
 
+	/**
+	 * @param int $eid
+	 * @return bool
+	 */
 	function delete_event($eid)
 	{
-
-		$query = 'DELETE FROM `'.$this->prefix ."events`\n"
-			."WHERE `eid` = '$eid'";
-
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error while removing an event.'),
-					$query);
-
-		$rv = $this->dbh->affected_rows > 0;
-
 		$this->delete_occurrences($eid);
 
-		return $rv;
+		$query = 'DELETE FROM `'.$this->prefix ."events`\n"
+			."WHERE `eid` = :eid";
+
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+		$sth->execute();
+
+		return $sth->rowCount() > 0;
 	}
 
 	function delete_occurrences($eid)
 	{
 		$query = 'DELETE FROM `'.$this->prefix ."occurrences`\n"
-			."WHERE `eid` = '$eid'";
+			."WHERE `eid` = :eid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error while removing an event.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+		$sth->execute();
 
-		return $this->dbh->affected_rows;
+		return $sth->rowCount();
 	}
 
+	/**
+	 * @param int $oid
+	 * @return bool
+	 */
 	function delete_occurrence($oid)
 	{
 		$query = 'DELETE FROM `'.$this->prefix ."occurrences`\n"
-			."WHERE `oid` = '$oid'";
+			."WHERE `oid` = :oid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error while removing an occurrence.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':oid', $oid, \PDO::PARAM_INT);
+		$sth->execute();
 
-		return $this->dbh->affected_rows;
+		return $sth->rowCount() > 0;
 	}
 
+	/**
+	 * @param int $cid
+	 * @return bool
+	 */
 	function delete_calendar($cid) {
 		$events = $this->prefix . 'events';
 		$occurrences = $this->prefix . 'occurrences';
 
-		$query = 'DELETE FROM `'.$this->prefix ."calendars`\n"
-			."WHERE cid='$cid'";
-
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error while removing a calendar'), $query);
-
-		$rv = $this->dbh->affected_rows > 0;
-
+		// Delete events and occurrences
 		$query = "DELETE FROM `$occurrences`, `$events`\n"
 			."USING `$occurrences` INNER JOIN `$events`\n"
-			."WHERE `$occurrences`.`eid`=`$events`.`eid` AND `$events`.`cid`='$cid'";
-			
-		$this->dbh->query($query)
-			or $this->db_error(__('Error while removing events from calendar'), $query);
+			."WHERE `$occurrences`.`eid`=`$events`.`eid` AND `$events`.`cid`=:cid";
 
-		return $rv;
+		$sth = $this->dbh->query($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->execute();
+
+		// Delete calendar config
+		$query = 'DELETE FROM `'.$this->prefix ."calendars`\n"
+			."WHERE `cid`=:cid";
+
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->execute();
+
+		return $sth->rowCount() > 0;
 	}
 
+	/**
+	 * @param int $catid
+	 * @return bool
+	 */
 	function delete_category($catid)
 	{
 
 		$query = 'DELETE FROM `'.$this->prefix ."categories`\n"
-			."WHERE `catid` = '$catid'";
+			."WHERE `catid` = :catid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error removing category.'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
+		$sth->execute();
 
-		return $this->dbh->affected_rows > 0;
+		return $sth->rowCount() > 0;
 	}
 
+	/**
+	 * @param int $gid
+	 * @return bool
+	 */
 	function delete_group($gid)
 	{
 
 		$query = 'DELETE FROM `'.$this->prefix ."groups`\n"
-			."WHERE `gid` = '$gid'";
+			."WHERE `gid` = :gid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error removing group.'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
+		$sth->execute();
 
-		return $this->dbh->affected_rows > 0;
+		return $sth->rowCount() > 0;
 	}
 
+	/**
+	 * @param int $fid
+	 * @return bool
+	 */
 	function delete_field($fid)
 	{
 
 		$query = 'DELETE FROM `'.$this->prefix ."fields`\n"
-			."WHERE `fid` = '$fid'";
+			."WHERE `fid` = :fid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error removing field.'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':fid', $fid, \PDO::PARAM_INT);
+		$sth->execute();
 
-		return $this->dbh->affected_rows > 0;
+		return $sth->rowCount() > 0;
 	}
 
-	function disable_user($id)
+	/**
+	 * @param int $uid
+	 * @return bool
+	 */
+	function disable_user($uid)
 	{
 
 		$query = 'UPDATE `'.$this->prefix ."users`\n"
 			."SET `disabled`=1\n"
-			."WHERE uid='$id'";
+			."WHERE `uid`=:uid";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error disabling a user.'),
-					$query);
-		return $this->dbh->affected_rows > 0;
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		$sth->execute();
+
+		return $sth->rowCount() > 0;
 	}
 
-	function enable_user($id)
+	function enable_user($uid)
 	{
 
 		$query = 'UPDATE `'.$this->prefix ."users`\n"
 			."SET `disabled`=0\n"
-			."WHERE uid='$id'";
+			."WHERE `uid`=:uid";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error enabling a user.'),
-					$query);
-		return $this->dbh->affected_rows > 0;
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		$sth->execute();
+
+		return $sth->rowCount() > 0;
 	}
 
+	/**
+	 * @param int $cid
+	 * @param int $uid
+	 * @return string[]
+	 * @throws \Exception
+	 */
 	public function get_permissions($cid, $uid)
 	{
 		static $perms = array();
 
 		if (empty($perms[$cid]))
 			$perms[$cid] = array();
-		elseif (!empty($perms[$cid][$uid]))
-			return $perms[$cid][$uid];
 
-		$query = "SELECT * from " . $this->prefix .
-			"permissions WHERE `cid`='$cid' AND `uid`='$uid'";
+		if (!empty($perms[$cid][$uid])) {
+			$query = "SELECT * from " . $this->prefix . "permissions WHERE `cid`=:cid AND `uid`=:uid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Could not read permissions.'),
-					$query);
+			$sth = $this->dbh->prepare($query);
+			$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+			$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+			$sth->execute();
 
-		$perms[$cid][$uid] = $sth->fetch_assoc();
+			$perms[$cid][$uid] = $sth->fetch(\PDO::FETCH_ASSOC);
+		}
+
 		return $perms[$cid][$uid];
 	}
 
 	/**
-	 * @return \PhpCalendar\Calendar[]
+	 * @return Calendar[]
 	 * @throws \Exception
 	 */
 	function get_calendars() {
@@ -590,12 +697,10 @@ class Database {
 			."FROM `" . $this->prefix .  "calendars`\n"
 			."ORDER BY `cid`";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Could not get calendars.'),
-					$query);
+		$sth = $this->dbh->query($query);
 
 		$this->calendars = array();
-		while($result = $sth->fetch_assoc()) {
+		while($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$cid = $result["cid"];
 			//assert(empty($this->calendars[$cid]));
 			$this->calendars[$cid] = Calendar::createFromMap($this, $result);
@@ -605,30 +710,31 @@ class Database {
 	}
 
 	/**
-	 * @param $cid int
-	 * @return null|\PhpCalendar\Calendar
+	 * @param int $cid
+	 * @return bool|\PhpCalendar\Calendar
 	 */
 	function get_calendar($cid)
 	{
 		$calendars = $this->get_calendars();
 		if(empty($calendars[$cid])) {
-			return NULL;
+			return false;
 		}
 
 		return $calendars[$cid];
 	}
 
+	/**
+	 * @param string $name
+	 * @return bool|string
+	 */
 	function get_config($name) {
 		if (!isset($this->config)) {
-			$query = "SELECT `name`, `value` FROM `" . $this->prefix
-				. "config`";
-			$sth = $this->dbh->query($query)
-				or $this->db_error(__('Could not get config.'),
-						$query);
+			$query = "SELECT `name`, `value` FROM `" . $this->prefix . "config`";
+			$sth = $this->dbh->query($query);
+
 			$this->config = array();
-			while($result = $sth->fetch_assoc()) {
-				$this->config[$result['name']] =
-					$result['value'];
+			while($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
+				$this->config[$result['name']] = $result['value'];
 			}
 		}
 		if (isset($this->config[$name]))
@@ -637,40 +743,54 @@ class Database {
 		return false;
 	}
 
+	/**
+	 * @param string $name
+	 * @param string $value
+	 */
 	function set_config($name, $value) {
 		$query = "REPLACE INTO `".$this->prefix."config`\n"
 			."(`name`, `value`) VALUES\n"
-			."('$name', '$value')";
+			."(':name', ':value')";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error setting option.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->execute(array(':name' => $name, ':value' => $value));
 	}
 
+	/**
+	 * @param int $uid
+	 * @param int $cid
+	 */
 	function set_user_default_cid($uid, $cid) {
 		$query = "UPDATE `".$this->prefix."users`\n"
-			."SET `default_cid`='$cid'\n"
-			."WHERE `uid`='$uid'";
+			."SET `default_cid`=:cid\n"
+			."WHERE `uid`=:uid";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error setting default cid.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		$sth->execute();
 	}
 
+	/**
+	 * @return User[]
+	 */
 	function get_users()
 	{
 		$query = "SELECT * FROM `" . $this->prefix .  "users`";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Could not get user.'), $query);
+		$sth = $this->dbh->query($query);
 
 		$users = array();
-		while($user = $sth->fetch_assoc()) {
+		while($user = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$users[] = User::createFromMap($this, $user);
 		}
 		return $users;
 	}
 
+	/**
+	 * @param int $cid
+	 * @return string[][]
+	 */
 	function get_users_with_permissions($cid)
 	{
 		$permissions_table = $this->prefix . "permissions";
@@ -678,415 +798,530 @@ class Database {
 		$query = "SELECT *, `permissions`.`admin` AS `calendar_admin`\n"
 			."FROM `" . $this->prefix . "users`\n"
 			."LEFT JOIN (SELECT * FROM `$permissions_table`\n"
-			."	WHERE `cid`='$cid') AS `permissions`\n"
+			."	WHERE `cid`=:cid) AS `permissions`\n"
 			."USING (`uid`)\n";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Could not get user.'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->execute();
 
 		$users = array();
-		while($user = $sth->fetch_assoc()) {
+		while($user = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$users[] = $user;
 		}
 		return $users;
 	}
 
+	/**
+	 * @param string $username
+	 * @return bool|User
+	 */
 	function get_user_by_name($username)
 	{
 		$query = "SELECT {$this->user_fields}\n"
 			."FROM ".$this->prefix."users\n"
-			."WHERE username='$username'";
+			."WHERE username=':username'";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__("Error getting user."), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->execute(array(':username' => $username));
 
-		$result = $sth->fetch_assoc();
+		$result = $sth->fetch(\PDO::FETCH_ASSOC);
 		if($result)
 			return User::createFromMap($this, $result);
 		else
 			return false;
 	}
 
+	/**
+	 * @param int $uid
+	 * @return bool|User
+	 */
 	function get_user($uid)
 	{
 		$query = "SELECT {$this->user_fields}\n"
 			."FROM ".$this->prefix."users\n"
-			."WHERE `uid`='$uid'";
+			."WHERE `uid`=:uid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__("Error getting user."), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		$sth->execute();
 
-		$result = $sth->fetch_assoc();
+		$result = $sth->fetch(\PDO::FETCH_ASSOC);
 		if($result)
 			return User::createFromMap($this, $result);
 		else
 			return false;
 	}
 
+	/**
+	 * @param string $username
+	 * @param string $password
+	 * @param bool $make_admin
+	 * @return string
+	 */
 	function create_user($username, $password, $make_admin) {
 		$admin = $make_admin ? 1 : 0;
 		$query = "INSERT into `".$this->prefix."users`\n"
 			."(`username`, `password`, `admin`) VALUES\n"
-			."('$username', '$password', $admin)";
+			."(':username', ':password', $admin)";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error creating user.'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->execute(array(':username' => $username, ':password' => $password));
 
-		return $this->dbh->insert_id;
+		return $this->dbh->lastInsertId();
 	}
 
+	/**
+	 * @return string
+	 */
 	function create_calendar()
 	{
 		$query = "INSERT INTO ".$this->prefix."calendars\n"
 			."(`cid`) VALUE (DEFAULT)";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error reading options'), $query);
+		$this->dbh->query($query);
 
-		return $this->dbh->insert_id;
+		return $this->dbh->lastInsertId();
 	}
 
+	/**
+	 * @param int $cid
+	 * @param string $name
+	 * @param string $value
+	 */
 	function set_calendar_config($cid, $name, $value)
 	{
 		$query = "UPDATE `".$this->prefix."calendars`\n"
-			."SET `$name`='$value'\n"
-			."WHERE `cid`='$cid'";
+			."SET `:name`=':value'\n"
+			."WHERE `cid`=:cid";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error setting calendar option.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->execute(array(':name' => $name, ':value' => $value));
 	}
 
+	/**
+	 * @param int $uid
+	 * @param string $password
+	 */
 	function set_password($uid, $password)
 	{
 		$query = "UPDATE `" . $this->prefix . "users`\n"
-			."SET `password`='$password'\n"
-			."WHERE `uid`='$uid'";
+			."SET `password`=':password'\n"
+			."WHERE `uid`=:uid";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error updating password.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		$sth->execute(array(':password' => $password));
 	}
 
+	/**
+	 * @param int $uid
+	 * @param string $timezone
+	 */
 	function set_timezone($uid, $timezone)
 	{
 		$query = "UPDATE `" . $this->prefix . "users`\n"
-			."SET `timezone`='$timezone'\n"
-			."WHERE `uid`='$uid'";
+			."SET `timezone`=':timezone'\n"
+			."WHERE `uid`=:uid";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error updating timezone.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		$sth->execute(array(':timezone' => $timezone));
 	}
 
+	/**
+	 * @param int $uid
+	 * @param string $language
+	 */
 	function set_language($uid, $language)
 	{
 		$query = "UPDATE `" . $this->prefix . "users`\n"
-			."SET `language`='$language'\n"
-			."WHERE `uid`='$uid'";
+			."SET `language`=':language'\n"
+			."WHERE `uid`=:uid";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error updating language.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		$sth->execute(array(':language' => $language));
 	}
 
+	/**
+	 * @param int $uid
+	 * @param int $gid
+	 */
 	function user_add_group($uid, $gid) {
 		$user_groups_table = $this->prefix . 'user_groups';
 
 		$query = "INSERT INTO `$user_groups_table`\n"
 			."(`gid`, `uid`) VALUES\n"
-			."('$gid', '$uid')";
+			."(:gid, :uid)";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error adding group to user.'),
-					$query);
+		$sth = $this->dbh->query($query);
+		$sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		$sth->execute();
 	}
 
+	/**
+	 * @param int $uid
+	 * @param int $gid
+	 */
 	function user_remove_group($uid, $gid) {
 		$user_groups_table = $this->prefix . 'user_groups';
 
 		$query = "DELETE FROM `$user_groups_table`\n"
-			."WHERE `uid` = '$uid' AND `gid` = '$gid'";
+			."WHERE `uid` :uid AND `gid`=:gid";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error removing group from user.'), $query);
+		$sth = $this->dbh->query($query);
+		$sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		$sth->execute();
 	}
 
-	function create_event($cid, $uid, $subject, $description, $readonly,
-			$catid = false)
+	/**
+	 * @param int $cid
+	 * @param int $uid
+	 * @param string $subject
+	 * @param string $description
+	 * @param bool $readonly
+	 * @param bool|int $catid
+	 * @return string
+	 */
+	function create_event($cid, $uid, $subject, $description, $readonly, $catid = false)
 	{
 		$fmt_readonly = asbool($readonly);
 
 		if(!$catid)
-			$catid = 'NULL';
+			$catid_str = 'NULL';
 		else
-			$catid = "'$catid'";
+			$catid_str = ':catid';
 
 		$query = "INSERT INTO `" . $this->prefix . "events`\n"
 			."(`cid`, `owner`, `subject`, `description`, "
 			."`readonly`, `catid`)\n"
-			."VALUES ('$cid', '$uid', '$subject', '$description', "
-			."$fmt_readonly, $catid)";
+			."VALUES (:cid, :uid, ':subject', ':description', "
+			."$fmt_readonly, $catid_str)";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error creating event.'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		if($catid)
+			$sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
+		$sth->execute(array(':subject' => $subject, ':description' => $description));
 
-		$eid = $this->dbh->insert_id;
-
-		if($eid <= 0)
-			soft_error("Bad eid creating event.");
-
-		return $eid;
+		return $this->dbh->lastInsertId();
 	}
 
-	function create_occurrence($eid, $time_type, $start_ts, $end_ts)
+	/**
+	 * @param int $eid
+	 * @param int $time_type
+	 * @param \DateTimeInterface $start
+	 * @param \DateTimeInterface $end
+	 * @return string
+	 */
+	function create_occurrence($eid, $time_type, \DateTimeInterface $start, \DateTimeInterface $end)
 	{
-
-		$query = "INSERT INTO `" . $this->prefix . "occurrences`\n"
-			."SET `eid` = '$eid', `time_type` = '$time_type'";
-
+		// Stored as UTC
 		if($time_type == 0) {
-			$query .= ", `start_ts` = FROM_UNIXTIME('$start_ts')"
-				. ", `end_ts` = FROM_UNIXTIME('$end_ts')";
+
+			$start_str = sqlDate($start);
+			$end_str = sqlDate($start);
 		} else {
-			$start_date = date("Y-m-d", $start_ts);
-			$end_date = date("Y-m-d", $end_ts);
-			$query .= ", `start_date` = '$start_date'"
-				. ", `end_date` = '$end_date'";
+			// ignore the time for full day events
+			$start_str = $start->format("Y-m-d");
+			$end_str = $end->format("Y-m-d");
 		}
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error creating occurrence.'),
-					$query);
+		$query = "INSERT INTO `{$this->prefix}occurrences`\n"
+			."SET `eid`=:eid, `time_type`=:time_type, `start`='$start_str', `end`='$end_str'";
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+		$sth->bindValue(':time_type', $time_type, \PDO::PARAM_INT);
+		$sth->execute();
 
-		return $this->dbh->insert_id;
+		return $this->dbh->lastInsertId();
 	}
 
 	function add_event_field($eid, $fid, $value)
 	{
-		$query = "INSERT INTO `" . $this->prefix . "event_fields`\n"
-			."SET `eid` = '$eid', `fid` = '$fid', `value` = '$value'";
+		$query = "INSERT INTO `{$this->prefix}event_fields`\n"
+			."SET `eid`=:eid, `fid`=:fid, `value`=':value'";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error adding field to event.'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+		$sth->bindValue(':fid', $fid, \PDO::PARAM_INT);
+		$sth->execute(array(':value' => $value));
 	}
 
-	function modify_occurrence($oid, $time_type, $start_ts, $end_ts)
+	/**
+	 * @param int $oid
+	 * @param int $time_type
+	 * @param \DateTimeInterface $start
+	 * @param \DateTimeInterface $end
+	 * @return bool
+	 */
+	function modify_occurrence($oid, $time_type, \DateTimeInterface $start, \DateTimeInterface $end)
 	{
-
-		$query = "UPDATE `" . $this->prefix . "occurrences`\n"
-			."SET `time_type` = '$time_type'";
-
+		// Stored as UTC
 		if($time_type == 0) {
-			$query .= ", `start_ts` = FROM_UNIXTIME('$start_ts')"
-				. ", `end_ts` = FROM_UNIXTIME('$end_ts')"
-				. ", `start_date` = NULL"
-				. ", `end_date` = NULL";
+
+			$start_str = sqlDate($start);
+			$end_str = sqlDate($start);
 		} else {
-			$start_date = date("Y-m-d", $start_ts);
-			$end_date = date("Y-m-d", $end_ts);
-			$query .= ", `start_date` = '$start_date'"
-				. ", `end_date` = '$end_date'"
-				. ", `start_ts` = NULL"
-				. ", `end_ts` = NULL";
+			// ignore the time for full day events
+			$start_str = $start->format("Y-m-d");
+			$end_str = $end->format("Y-m-d");
 		}
 
-		$query .= "\nWHERE `oid`='$oid'";
+		$query = "UPDATE `{$this->prefix}occurrences`\n"
+			. "SET `time_type`=:time_type, `start`='$start_str', `end`='$end_str'\n"
+			. "WHERE `oid`=:oid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error modifying occurrence.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':time_type', $time_type, \PDO::PARAM_INT);
+		$sth->bindValue(':oid', $oid, \PDO::PARAM_INT);
+		$sth->execute();
 
-		return $this->dbh->affected_rows > 0;
+		return $sth->rowCount() > 0;
 	}
 
-	function modify_event($eid, $subject, $description, $readonly,
-			$catid = false)
+	/**
+	 * @param int $eid
+	 * @param string $subject
+	 * @param string $description
+	 * @param bool $readonly
+	 * @param bool|int $catid
+	 * @return bool
+	 */
+	function modify_event($eid, $subject, $description, $readonly, $catid = false)
 	{
 		$fmt_readonly = asbool($readonly);
 
-		$query = "UPDATE `" . $this->prefix . "events`\n"
+		$query = "UPDATE `{$this->prefix}events`\n"
 			."SET\n"
-			."`subject`='$subject',\n"
-			."`description`='$description',\n"
+			."`subject`=':subject',\n"
+			."`description`=':description',\n"
 			."`readonly`=$fmt_readonly,\n"
 			."`mtime`=NOW(),\n"
-			.($catid !== false ? "`catid`='$catid'\n"
-				: "`catid`=NULL\n")
-			."WHERE eid='$eid'";
+			."`catid`=" . ($catid !== false ? ":catid" : "NULL") . "\n"
+			."WHERE `eid`=:eid";
 
-		$this->dbh->query($query)
-			or $this->db_error(__('Error modifying event.'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+		if ($catid !== false)
+			$sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
+		$sth->execute(array(':subject' => $subject, ':description' => $description));
 
-		return $this->dbh->affected_rows > 0;
+		return $sth->rowCount() > 0;
 	}
 
-	function create_category($cid, $name, $text_color, $bg_color,
-			$gid = false) {
-		$gid_key = $gid ? ', `gid`' : '';
-		$gid_value = $gid ? ", '$gid'" : '';
-		$query = "INSERT INTO `" . $this->prefix . "categories`\n"
-			."(`cid`, `name`, `text_color`, `bg_color`$gid_key)\n"
-			."VALUES ('$cid', '$name', '$text_color', '$bg_color'$gid_value)";
+	/**
+	 * @param int $cid
+	 * @param string $name
+	 * @param string $text_color
+	 * @param string $bg_color
+	 * @param bool|int $gid
+	 * @return string
+	 */
+	function create_category($cid, $name, $text_color, $bg_color, $gid = false) {
+		$query = "INSERT INTO `{$this->prefix}categories`\n"
+			."SET `cid`=:cid, `name`=':name', `text_color`=':text_color', `bg_color`=':bg_color'\n";
+		if ($gid !== false)
+			$query .= ", `gid`=:gid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error creating category.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		if ($gid !== false)
+			$sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
+		$sth->execute(array(':name' => $name, ':text_color' => $text_color, ':bg_color' => $bg_color));
 		
-		return $this->dbh->insert_id;
+		return $this->dbh->lastInsertId();
 	}
 
 	function create_group($cid, $name)
 	{
-		$query = "INSERT INTO `" . $this->prefix . "groups`\n"
-			."(`cid`, `name`)\n"
-			."VALUES ('$cid', '$name')";
+		$query = "INSERT INTO `{$this->prefix}groups`\n"
+			."SET `cid`=:cid, `name`=':name'";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error creating group.'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->execute(array(':name' => $name));
 		
-		return $this->dbh->insert_id;
+		return $this->dbh->lastInsertId();
 	}
 
+	/**
+	 * @param int $cid
+	 * @param string $name
+	 * @param bool $required
+	 * @param string $format
+	 * @return string
+	 */
 	function create_field($cid, $name, $required, $format) {
 		if($format === false)
-			$format_val = 'NULL';
+			$format_str = 'NULL';
 		else
-			$format_val = "'$format'";
+			$format_str = "':format'";
 
-		$query = "INSERT INTO `" . $this->prefix . "fields`\n"
-			."(`cid`, `name`, `required`, `format`)\n"
-			."VALUES ('$cid', '$name', '$required', $format_val)";
+		$query = "INSERT INTO `{$this->prefix}fields`\n"
+			."`cid`=:cid, `name`=':name', `required`=:required, `format`=$format_str";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error creating field.'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->bindValue(':required', asbool($required), \PDO::PARAM_BOOL);
+		if ($format !== false)
+			$sth->bindValue(':format', $format);
+		$sth->execute(array(':name' => $name));
 		
-		return $this->dbh->insert_id;
+		return $this->dbh->lastInsertId();
 	}
 
+	/**
+	 * @param int $catid
+	 * @param string $name
+	 * @param string $text_color
+	 * @param string $bg_color
+	 * @param int $gid
+	 * @return bool
+	 */
 	function modify_category($catid, $name, $text_color, $bg_color, $gid)
 	{
-		$query = "UPDATE " . $this->prefix . "categories\n"
-			."SET\n"
-			."`name`='$name',\n"
-			."`text_color`='$text_color',\n"
-			."`bg_color`='$bg_color',\n"
-			."`gid`='$gid'\n"
-			."WHERE `catid`='$catid'";
+		$query = "UPDATE `{$this->prefix}categories`\n"
+			."SET `name`=':name', `text_color`=':text_color', `bg_color`=':bg_color', `gid`=:gid\n"
+			."WHERE `catid`=:catid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error modifying category.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
+		$sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
+		$sth->execute(array(':name' => $name, ':text_color' => $text_color, ':bg_color' => $bg_color));
 
-		return $this->dbh->affected_rows > 0;
+		return $sth->rowCount() > 0;
 	}
 
+	/**
+	 * @param int $gid
+	 * @param string $name
+	 * @return bool
+	 */
 	function modify_group($gid, $name)
 	{
-		$query = "UPDATE " . $this->prefix . "groups\n"
-			."SET `name`='$name'\n"
-			."WHERE `gid`='$gid'";
+		$query = "UPDATE `{$this->prefix}groups`\n"
+			."SET `name`=':name'\n"
+			."WHERE `gid`=:gid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error modifying group.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
+		$sth->execute(array(':name' => $name));
 
-		return $this->dbh->affected_rows > 0;
+		return $sth->rowCount() > 0;
 	}
 
+	/**
+	 * @param int $fid
+	 * @param string $name
+	 * @param bool $required
+	 * @param bool|string $format
+	 * @return bool
+	 */
 	function modify_field($fid, $name, $required, $format)
 	{
 		if($format === false)
 			$format_val = 'NULL';
 		else
-			$format_val = "'$format'";
+			$format_val = "':format'";
 
-		$query = "UPDATE " . $this->prefix . "fields\n"
-			."SET\n"
-			."`name`='$name',\n"
-			."`required`='$required',\n"
-			."`format`=$format_val\n"
-			."WHERE `fid`='$fid'";
+		$query = "UPDATE `{$this->prefix}fields`\n"
+			."SET `name`=':name', `required`=:required, `format`=$format_val\n"
+			."WHERE `fid`=:fid";
 
-		$sth = $this->dbh->query($query)
-			or $this->db_error(__('Error modifying field.'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':fid', $fid, \PDO::PARAM_INT);
+		$sth->bindValue(':required', asbool($required), \PDO::PARAM_BOOL);
+		if ($format !== false)
+			$sth->bindValue(':format', $format);
+		$sth->execute(array(':name' => $name));
 
-		return $this->dbh->affected_rows > 0;
+		return $sth->rowCount() > 0;
 	}
 
-	function search($cid, $keywords, $start, $end, $sort, $order) {
+	/**
+	 * $sort and $order must be checked
+	 * @param int $cid
+	 * @param string[] $keywords
+	 * @param \DateTimeInterface $start
+	 * @param \DateTimeInterface $end
+	 * @param string $sort
+	 * @param string $order
+	 * @return Occurrence[]
+	 */
+	function search($cid, $keywords, \DateTimeInterface $start, \DateTimeInterface $end, $sort, $order) {
 		$events_table = $this->prefix . 'events';
 		$occurrences_table = $this->prefix . 'occurrences';
 		$users_table = $this->prefix . 'users';
 		$cats_table = $this->prefix . 'categories';
-		$start_str = "FROM_UNIXTIME('$start')";
-		$end_str = "FROM_UNIXTIME('$end')";
 
 		$words = array();
-		foreach($keywords as $keyword) {
-			$words[] = "(`subject` LIKE '%$keyword%' "
-				."OR `description` LIKE '%$keyword%')\n";
+		foreach($keywords as $unsafe_keyword) {
+			$keyword = $this->dbh->quote($unsafe_keyword);
+			$words[] = "(`subject` LIKE '%$keyword%' OR `description` LIKE '%$keyword%')\n";
 		}
 		$where = implode(' AND ', $words);
 
-		if($start)
-			$where .= "AND IF(`start_ts`, `start_ts` <= $end_str, `start_date` <= DATE($start_str))\n";
-		if($end)
-			$where .= "AND IF(`end_ts`, `end_ts` >= $start_str, `end_date` >= DATE($end_str))\n";
+		if($start) {
+			//$start_str = sqlDate($start);
+			$start_date = $start->format('Y-m-d');
+			//$where .= "AND IF(`time_type`=0, `end` <= DATETIME('$start_str'), DATE(`start`) <= DATE('$start_date'))\n";
+			// Search doesn't have a field for time
+			$where .= "AND DATE(`start`) <= DATE('$start_date')\n";
+		}
+		if($end) {
+			//$end_str = sqlDate($end);
+			$end_date = $end->format('Y-m-d');
+			$where .= "AND DATE(`end`) >= DATE('$end_date')\n";
+		}
 
-                $query = "SELECT {$this->occurrence_columns}, `username`, `name`, `bg_color`, `text_color`\n"
+		$query = "SELECT {$this->occurrence_columns}, `username`, `name`, `bg_color`, `text_color`\n"
 			."FROM `$events_table`\n"
-                        ."INNER JOIN `$occurrences_table` USING (`eid`)\n"
-			."LEFT JOIN `$users_table` ON `uid` = `owner`\n"
+			."INNER JOIN `$occurrences_table` USING (`eid`)\n"
+			."LEFT JOIN `$users_table` ON `uid`=`owner`\n"
 			."LEFT JOIN `$cats_table` USING (`catid`)\n"
 			."WHERE ($where)\n"
-			."AND `$events_table`.`cid` = '$cid'\n"
+			."AND `$events_table`.`cid`=:cid\n"
 			."ORDER BY `$sort` $order";
 
-		if(!($result = $this->dbh->query($query)))
-			$this->db_error(__('Error during searching'), $query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->execute();
 
-		$events = array();
-		while($row = $result->fetch_assoc()) {
-			$events[] = new Occurrence($row);
+		$occurrences = array();
+		while($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
+			$occurrences[] = new Occurrence($this, $row);
 		}
-		return $events;
+		return $occurrences;
 	}
 
+	/**
+	 * @param int $cid
+	 * @param int $uid
+	 * @param bool[] $perms
+	 */
 	function update_permissions($cid, $uid, $perms)
 	{
-		$names = array();
-		$values = array();
-		$sets = array();
+		$stmts = array();
 		foreach($perms as $name => $value) {
-			$names[] = "`$name`";
-			$values[] = $value;
-			$sets[] = "`$name`=$value";
+			$stmts[] = "`$name`=". asbool($value);
 		}
+		$perm_str = implode(', ', $stmts);
 
-		$query = "INSERT INTO ".$this->prefix."permissions\n"
-			."(`cid`, `uid`, ".implode(", ", $names).")\n"
-			."VALUES ('$cid', '$uid', ".implode(", ", $values).")\n"
-			."ON DUPLICATE KEY UPDATE ".implode(", ", $sets);
+		$query = "INSERT INTO `{$this->prefix}permissions`\n"
+			."SET `cid`=:cid, `uid`=:uid, $perm_str\n"
+			."ON DUPLICATE KEY UPDATE $perm_str";
 
-		if(!($sth = $this->dbh->query($query)))
-			$this->db_error(__('Error updating user permissions.'),
-					$query);
+		$sth = $this->dbh->prepare($query);
+		$sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+		$sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+		$sth->execute();
 	}
-
-	// called when there is an error involving the DB
-	function db_error($str, $query = "")
-	{
-		$string = $str . "<pre>" . htmlspecialchars($this->dbh->error,
-				ENT_COMPAT, "UTF-8") . "</pre>";
-		if($query != "") {
-			$string .= "<pre>" . __('SQL query') . ": "
-				. htmlspecialchars($query, ENT_COMPAT, "UTF-8")
-				. "</pre>";
-		}
-		throw new \Exception($string);
-	}
-
 }
 
 ?>

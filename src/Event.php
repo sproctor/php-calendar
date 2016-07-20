@@ -27,7 +27,7 @@ class Event {
 	var $readonly;
 	var $category;
 	var $bg_color;
-	var $text_color;
+	private $text_color;
 	var $catid;
 	var $gid;
 	var $ctime;
@@ -114,13 +114,21 @@ class Event {
 		return $this->readonly;
 	}
 
-	function get_text_color()
-	{
-		return htmlspecialchars($this->text_color, ENT_COMPAT, "UTF-8");
+	/**
+	 * @return NULL|string
+	 */
+	public function getTextColor() {
+		if (empty($this->text_color))
+			return null;
+		return htmlspecialchars ( $this->text_color, ENT_COMPAT, "UTF-8" );
 	}
 
-	function get_bg_color()
-	{
+	/**
+	 * @return NULL|string
+	 */
+	function getBgColor() {
+		if (empty($this->bg_color))
+			return null;
 		return htmlspecialchars($this->bg_color, ENT_COMPAT, "UTF-8");
 	}
 

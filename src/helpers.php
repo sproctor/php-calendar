@@ -174,129 +174,114 @@ function escape_entities($string) {
 	return htmlspecialchars($string, ENT_NOQUOTES, "UTF-8");
 }
 
+/**
+ * @param bool $val
+ * @return string
+ */
 function asbool($val)
 {
 	return $val ? "1" : "0";
 }
 
-function format_timestamp_string($timestamp, $date_format, $hours24) {
-	$year = date('Y', $timestamp);
-	$month = date('n', $timestamp);
-	$day = date('j', $timestamp);
-	$hour = date('H', $timestamp);
-	$minute = date('i', $timestamp);
-
-	return format_date_string($year, $month, $day, $date_format) . ' '
-	. __('at') . ' ' . format_time_string($hour, $minute, $hours24);
+/**
+ * @param \DateTimeInterface $date
+ * @param int $date_format
+ * @param bool $hours24
+ * @return string
+ */
+function format_datetime(\DateTimeInterface $date, $date_format, $hours24) {
+	return format_date ( $date, $date_format ) . ' '
+			. __ ( 'at' ) . ' ' . format_time ( $date, $hours24 );
 }
 
-function format_date_string($year, $month, $day, $date_format)
+/**
+ * @param \DateTimeInterface $date
+ * @param int $date_format
+ * @return string
+ */
+function format_date(\DateTimeInterface $date, $date_format)
 {
-	$month_name = short_month_name($month);
+	$month = short_month_name($date->format('n'));
+	$day = $date->format('j');
+	$year = $date->format('Y');
+	
 	switch($date_format) {
-		case 0: // Month Day Year
-			return "$month_name $day, $year";
-		case 1: // Year Month Day
-			return "$year $month_name $day";
-		case 2: // Day Month Year
-			return "$day $month_name $year";
 		default:
-			soft_error("Invalid date_format");
-			return "";
+		case 0:
+			return "$month $day, $year";
+		case 1:
+			return "$year $month $day";
+		case 2:
+			return "$day $month $year";
 	}
 }
 
-function format_short_date_string($year, $month, $day, $date_format)
+/**
+ * @param \DateTimeInterface $date
+ * @param int $date_format
+ * @return string
+ */
+function format_date_short(\DateTimeInterface $date, $date_format)
 {
 	switch($date_format) {
-		case 0: // Month Day Year
-			return "$month/$day/$year";
-		case 1: // Year Month Day
-			return "$year-$month-$day";
-		case 2: // Day Month Year
-			return "$day-$month-$year";
 		default:
-			soft_error("Invalid date_format");
-			return "";
+		case 0: // Month Day Year
+			return $date->format('n\/j\/Y');
+		case 1: // Year Month Day
+			return $date->format('Y\-n\-j');
+		case 2: // Day Month Year
+			return $date->format('j\-n\-Y');
 	}
 }
 
-function format_time_string($hour, $minute, $hour24)
+/**
+ * @param \DateTimeInterface $date
+ * @param bool $hour24
+ * @return string
+ */
+function format_time(\DateTimeInterface $date, $hour24)
 {
-	if(!$hour24) {
-		if($hour >= 12) {
-			$hour -= 12;
-			$pm = ' PM';
-		} else {
-			$pm = ' AM';
-		}
-		if($hour == 0) {
-			$hour = 12;
-		}
+	if($hour24) {
+		return $date->format('G\:i');
 	} else {
-		$pm = '';
+		return $date->format('g\:i\ A');
 	}
-
-	return sprintf('%d:%02d%s', $hour, $minute, $pm);
 }
 
 // parses a description and adds the appropriate mark-up
+/**
+ * @param string $text
+ * @return string
+ */
 function parse_desc($text)
 {
 	return \Parsedown::instance()->parse($text);
 }
 
-function days_in_year_ts($timestamp) {
-	return 365 + date('L', $timestamp);
+/**
+ * @param \DateTimeInterface $date
+ * @return int
+ */
+function days_in_year_dt(\DateTimeInterface $date) {
+	return 365 + $date->format('L');
 }
 
+/**
+ * @param int $year
+ * @return int
+ */
 function days_in_year($year) {
-	return days_in_year_ts(mktime(0, 0, 0, 1, 1, $year));
+	return days_in_year_dt(create_datetime(1, 1, $year));
 }
 
-function add_days($stamp, $days)
-{
-	if($stamp == NULL)
-		return NULL;
-
-	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
-		date('n', $stamp), date('j', $stamp) + $days,
-		date('Y', $stamp));
-}
-
-function add_months($stamp, $months)
-{
-	if($stamp == NULL)
-		return NULL;
-
-	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
-		date('m', $stamp) + $months, date('d', $stamp),
-		date('Y', $stamp));
-}
-
-function add_years($stamp, $years)
-{
-	if($stamp == NULL)
-		return NULL;
-
-	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
-		date('m', $stamp), date('d', $stamp),
-		date('Y', $stamp) + $years);
-}
-
-function days_between($ts1, $ts2) {
-	// First date always comes first
-	if($ts1 > $ts2)
-		return -days_between($ts2, $ts1);
-
-	// If we're in different years, keep adding years until we're in
-	//   the same year
-	if(date('Y', $ts2) > date('Y', $ts1))
-		return days_in_year_ts($ts1)
-		+ days_between(add_years($ts1, 1), $ts2);
-
-	// The years are equal, subtract day of the year of each
-	return date('z', $ts2) - date('z', $ts1);
+/**
+ * @param \DateTimeInterface $date1
+ * @param \DateTimeInterface $date2
+ * @return int
+ */
+function days_between(\DateTimeInterface $date1, \DateTimeInterface $date2) {
+	$diff = $date1->diff($date2, true);
+	return intval($diff->format('%a'));
 }
 
 /**
@@ -350,7 +335,7 @@ function footer(Context $context)
 {
 	$tag = tag('div', new AttributeList('class="phpc-bar ui-widget-content"'),
 			"[" . __('Language') . ": {$context->getLang()}]" .
-			" [" . __('Timezone') . ": {$context->getTimezone()}]");
+			" [" . __('Timezone') . ": " . date_default_timezone_get() . "]");
 
 	if(defined('PHPC_DEBUG')) {
 		$tag->add(tag('a', new AttributeList('href="http://validator.w3.org/check/referer"'), 'Validate HTML'));
@@ -393,14 +378,14 @@ function get_languages()
 //  taking into account whether we start on sunday or monday
 function day_of_week($month, $day, $year, $week_start)
 {
-	return day_of_week_ts(mktime(0, 0, 0, $month, $day, $year), $week_start);
+	return day_of_week_date(_create_datetime($month, $day, $year), $week_start);
 }
 
 // returns the number of days in the week before the 
 //  taking into account whether we start on sunday or monday
-function day_of_week_ts($timestamp, $week_start)
+function day_of_week_date(\DateTimeInterface $date, $week_start)
 {
-	$days = date('w', $timestamp);
+	$days = intval($date->format('w'));
 
 	return ($days + 7 - $week_start) % 7;
 }
@@ -408,10 +393,16 @@ function day_of_week_ts($timestamp, $week_start)
 // returns the number of days in $month
 function days_in_month($month, $year)
 {
-	return date('t', mktime(0, 0, 0, $month, 1, $year));
+	return _create_datetime($month, 1, $year)->format('t');
 }
 
 //returns the number of weeks in $month
+/**
+ * @param int $month
+ * @param int $year
+ * @param int $week_start
+ * @return number
+ */
 function weeks_in_month($month, $year, $week_start)
 {
 	$days = days_in_month($month, $year);
@@ -422,44 +413,50 @@ function weeks_in_month($month, $year, $week_start)
 
 	// add up the days in the month and the outliers in the partial weeks
 	// divide by 7 for the weeks in the month
-	return ($days_before_month + $days + $days_after_month) / 7;
-}
-
-function weeks_in_year($year, $week_start) {
-	// This is true for ISO, not US
-	if($week_start == 1)
-		return date("W", mktime(0, 0, 0, 12, 28, $year));
-	// else
-	return ceil((day_of_week(1, 1, $year, $week_start) + days_in_year($year)) / 7.0);
+	return intval(($days_before_month + $days + $days_after_month) / 7);
 }
 
 /**
- * @param int $month
- * @param int $day
  * @param int $year
+ * @param int $week_start
+ * @return int
+ */
+function weeks_in_year($year, $week_start) {
+	// This is true for ISO, not US
+	if($week_start == 1)
+		return _create_datetime(12, 28, $year)->format("W");
+	// else
+	return intval((day_of_week(1, 1, $year, $week_start) + days_in_year($year)) / 7);
+}
+
+/**
+ * @param \DateTimeInterface $date
  * @param int $week_start
  * @return int[]
  */
 // return the week number corresponding to the $day.
-function week_of_year($month, $day, $year, $week_start)
+function week_of_year(\DateTimeInterface $date, $week_start)
 {
-	$timestamp = mktime(0, 0, 0, $month, $day, $year);
-
+	$day = $date->format('d');
+	$month = $date->format('m');
+	$year = $date->format('Y');
+	
 	// week_start = 1 uses ISO 8601 and contains the Jan 4th,
 	//   Most other places the first week contains Jan 1st
 	//   There are a few outliers that start weeks on Monday and use
 	//   Jan 1st for the first week. We'll ignore them for now.
 	if($week_start == 1) {
 		$year_contains = 4;
-		// if the week is in December and contains Jan 4th, it's a week
-		// from next year
-		if($month == 12 && $day - 24 >= $year_contains) {
-			$year++;
-			$month = 1;
-			$day -= 31;
-		}
 	} else {
 		$year_contains = 1;
+	}
+	
+	// if the week is in December and contains Jan $year_contains, it's a week
+	// from next year
+	if($month == 12 && $day - 24 >= $year_contains) {
+		$year++;
+		$month = 1;
+		$day -= 31;
 	}
 	
 	// $day is the first day of the week relative to the current month,
@@ -469,55 +466,55 @@ function week_of_year($month, $day, $year, $week_start)
 	if($day < 1 && $month == 1 && $day > $year_contains - 7) {
 		$day_of_year = $day - 1;
 	} else {
-		$day_of_year = date('z', $timestamp);
-		$year = date('Y', $timestamp);
+		$day_of_year = $date->format('z');
+		$year = $date->format('Y');
 	}
 
 	/* Days in the week before Jan 1. */
 	$days_before_year = day_of_week(1, $year_contains, $year, $week_start);
 
 	// Days left in the week
-	$days_left = 8 - day_of_week_ts($timestamp, $week_start) - $year_contains;
+	$days_left = 8 - day_of_week_date($date, $week_start) - $year_contains;
 
 	/* find the number of weeks by adding the days in the week before
 	 * the start of the year, days up to $day, and the days left in
 	 * this week, then divide by 7 */
-	return [(int)(($days_before_year + $day_of_year + $days_left) / 7), $year];
+	return [intval(($days_before_year + $day_of_year + $days_left) / 7), $year];
 }
 
 /**
- * @param Context $context
+ * @param Calendar $calendar
  * @param ActionItem $item
  * @param string $eid
  * @return Html
  */
-function create_event_link(Context $context, ActionItem $item, $eid)
+function create_event_link(Calendar $calendar, ActionItem $item, $eid)
 {
 	$item->addArgument("eid", $eid);
-	return create_action_link($context, $item);
+	return create_action_link($calendar, $item);
 }
 
 /**
- * @param Context $context
+ * @param Calendar $context
  * @param ActionItem $item
  * @param string $oid
  * @return Html
  */
-function create_occurrence_link(Context $context, ActionItem $item, $oid)
+function create_occurrence_link(Calendar $calendar, ActionItem $item, $oid)
 {
 	$item->addArgument("oid", $oid);
-	return create_action_link($context, $item);
+	return create_action_link($calendar, $item);
 }
 
 /**
- * @param Context $context
+ * @param Calendar $calendar
  * @param ActionItem $item
  * @param null|string $year
  * @param null|string $month
  * @param null|string $day
  * @return Html
  */
-function create_action_link_with_date(Context $context, ActionItem $item, $year = null, $month = null, $day = null)
+function create_action_link_with_date(Calendar $calendar, ActionItem $item, $year = null, $month = null, $day = null)
 {
 	if($year !== null)
 		$item->addArgument("year", $year);
@@ -526,13 +523,23 @@ function create_action_link_with_date(Context $context, ActionItem $item, $year 
 	if($day !== null)
 		$item->addArgument("day", $day);
 
-	return create_action_link($context, $item);
+	return create_action_link($calendar, $item);
+}
+
+/**
+ * @param Context $context
+ * @param string $action
+ * @param \DateTimeInterface $date
+ * @return string
+ */
+function action_date_url(Context $context, $action, \DateTimeInterface $date) {
+	return "{$context->script}?action={$action}&amp;year={$date->format('Y')}&amp;month={$date->format('n')}&amp;day={$date->format('j')}";
 }
 
 /**
  * @param Context $context
  * @param ActionItem $item
- * @return Html
+ * @return string
  */
 function create_action_link(Context $context, ActionItem $item)
 {
@@ -565,7 +572,7 @@ function create_action_link(Context $context, ActionItem $item)
 	} else {
 		$attributes = new AttributeList($url);
 	}
-	return tag('a', $attributes, $item->getText());
+	return tag('a', $attributes, $item->getText())->toString();
 }
 
 // takes a menu $html and appends an entry
@@ -960,8 +967,10 @@ function display_exception(\Exception $e, $navbar = false)
 					$args[] = "'$arg'";
 				} elseif(is_object($arg)) {
 					$args[] = get_class($arg);
+				} elseif(is_scalar($arg)) {
+					$args[] = strval($arg);
 				} else {
-					$args[] = $arg;
+					$args[] = gettype($arg);
 				}
 			}
 			$args_string = implode(", ", $args);
@@ -1227,21 +1236,21 @@ function read_login_token(Context $context) {
 }
 
 /**
- * @param $month
- * @param $day
- * @param $year
+ * @param \DateTimeInterface $date
  * @return bool|string
  */
 function index_of_date(\DateTimeInterface $date) {
 	$date->format('Y-m-d');
 }
 
-function is_today($month, $day, $year) {
-	$currentday = date('j');
-	$currentmonth = date('n');
-	$currentyear = date('Y');
+/**
+ * @param \DateTimeInterface $date
+ * @return boolean
+ */
+function is_today(\DateTimeInterface $date) {
+	$diff = $date->diff(new \DateTime());
 	
-	return $currentyear == $year && $currentmonth == $month && $currentday == $day;
+	return intval($diff->format('%a')) == 0;
 }
 
 /**
@@ -1251,6 +1260,13 @@ function is_today($month, $day, $year) {
  * @param $year
  */
 function normalize_date(&$month, &$day, &$year) {
+	if($month < 1) {
+		$month = 12;
+		$year--;
+	} elseif($month > 12) {
+		$month = 1;
+		$year++;
+	}
 	if($day <= 0) {
 		$month--;
 		if($month < 1) {
@@ -1266,12 +1282,55 @@ function normalize_date(&$month, &$day, &$year) {
 			$year++;
 		}
 	}
-	if($month < 1) {
-		$month = 12;
-		$year--;
-	} elseif($month > 12) {
-		$month = 1;
-		$year++;
-	}
+}
+
+/**
+ * @param \DateTimeInterface $date
+ * @return string
+ */
+function sqlDate(\DateTimeInterface $date) {
+	$utcDate = new \DateTime($date->format('Y-m-d H:i:s'), $date->getTimezone());
+	$utcDate->setTimezone(new \DateTimeZone('UTC'));
+	return $date->format('Y-m-d H:i:s');
+}
+
+/**
+ * @param string $dateStr
+ * @return \DateTime
+ */
+function fromSqlDate($dateStr) {
+	$date = \DateTime::createFromFormat('Y-m-d H:i:s', $dateStr, new \DateTimeZone('UTC'));
+	$date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+	return $date;
+}
+
+/**
+ * @param string $dateStr
+ * @return \DateTimeImmutable
+ */
+function fromSqlDateImmutable($dateStr) {
+	$date = fromSqlDate($dateStr);
+	return new \DateTimeImmutable($date->format('c'));
+}
+
+/**
+ * @param int $month
+ * @param int $day
+ * @param int $year
+ * @return \DateTime
+ */
+function _create_datetime($month, $day, $year) {
+	return new \DateTime(sprintf("%04d-%02d-%02d", $year, $month, $day));
+}
+
+/**
+ * @param int $month
+ * @param int $day
+ * @param int $year
+ * @return \DateTime
+ */
+function create_datetime($month, $day, $year) {
+	normalize_date($month, $day, $year);
+	return _create_datetime($month, $day, $year);
 }
 ?>

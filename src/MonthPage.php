@@ -57,21 +57,34 @@ class MonthPage extends Page
 		}
 
 		$week_start = $calendar->week_start;
-		
+		$weeks = weeks_in_month($month, $year, $week_start);
+
+		$first_day = 1 - day_of_week($month, 1, $year, $week_start);
+		$from_date = create_datetime($month, $first_day, $year);
+
+		$last_day = $weeks * 7 - day_of_week($month, 1, $year, $week_start);
+		$to_date = create_datetime($month, $last_day + 1, $year);
+
+		$occurrences_by_day = get_occurrences_by_day($calendar, $context->getUser(), $from_date, $to_date);
+
 		return $context->twig->render("month.html", [
-			'script' => $context->script,
-			'cid' => $cid,
-			'prev_month' => $prev_month,
-			'prev_year' => $prev_year,
-			'next_month' => $next_month,
-			'next_year' => $next_year,
-			'month_name' => month_name($month),
-			'months' => $months,
-			'year' => $year,
-			'years' => $years,
-			'week_start' => $week_start,
-			'weeks' => weeks_in_month($month, $year, $week_start),
-			
+				'context' => $context,
+				'calendar' => $context->getCalendar(),
+				'user' => $context->getUser(),
+				'script' => $context->script,
+				'cid' => $cid,
+				'prev_month' => $prev_month,
+				'prev_year' => $prev_year,
+				'next_month' => $next_month,
+				'next_year' => $next_year,
+				'month_name' => month_name ( $month ),
+				'months' => $months,
+				'year' => $year,
+				'years' => $years,
+				'week_start' => $week_start,
+				'weeks' => $weeks,
+				'occurrences' => $occurrences_by_day,
+				'start_date' => $from_date
 		]);
 	}
 }
@@ -85,7 +98,7 @@ class MonthPage extends Page
  */
 function create_month(Context $context, $month, $year)
 {
-	$week_start = $context->getCalendar()->week_start;
+	$week_start = $calendar->week_start;
 	$weeks = weeks_in_month($month, $year, $week_start);
 
 	$first_day = 1 - day_of_week($month, 1, $year, $week_start);
@@ -94,7 +107,7 @@ function create_month(Context $context, $month, $year)
 	$last_day = $weeks * 7 - day_of_week($month, 1, $year, $week_start);
 	$to_stamp = mktime(23, 59, 59, $month, $last_day, $year);
 
-	$days_events = get_events($context, $from_stamp, $to_stamp);
+	$days_events = get_occurrences_by_day($calendar, $from_stamp, $to_stamp);
 	$output = "";
 	for($week_of_month = 1; $week_of_month <= $weeks; $week_of_month++) {
 		// We could be showing a week from the previous or next year

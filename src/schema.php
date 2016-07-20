@@ -136,10 +136,8 @@ function phpc_occurrences_table($prefix) {
 
 	$table->addColumn('oid', "int(11) unsigned NOT NULL auto_increment");
 	$table->addColumn('eid', "int(11) unsigned NOT NULL");
-	$table->addColumn('start_date', "date");
-	$table->addColumn('end_date', "date");
-	$table->addColumn('start_ts', "timestamp");
-	$table->addColumn('end_ts', "timestamp");
+	$table->addColumn('start', "datetime");
+	$table->addColumn('end', "datetime");
 	$table->addColumn('time_type', "tinyint(4) NOT NULL DEFAULT '0'");
 
 	$table->addKey('PRIMARY', 0, '`oid`');

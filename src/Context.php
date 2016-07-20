@@ -21,7 +21,6 @@ class Context {
 	private $calendar;
 	private $user;
 	private $messages;
-	private $tz;
 	private $year;
 	private $month;
 	private $day;
@@ -31,8 +30,7 @@ class Context {
 	public $token;
 	public $script;
 	public $url_path;
-	public $port;
-	public $server;
+	public $host_name;
 	public $proto;
 	public $twig;
 
@@ -94,9 +92,41 @@ class Context {
 		$this->twig->addFunction(new \Twig_SimpleFunction('fa', '\PhpCalendar\fa'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('dropdown', '\PhpCalendar\create_dropdown'));
 		$this->twig->addFilter(new \Twig_SimpleFilter('_', '\PhpCalendar\__'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('_', '\PhpCalendar\__'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('_p', '\PhpCalendar\__p'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('day_name', '\PhpCalendar\day_name'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('index_of_date', '\PhpCalendar\index_of_date'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('week_link',
+				function(Context $context, \DateTimeInterface $date) {
+					list($week, $year) = week_of_year($date, $context->getCalendar()->week_start);
+					return create_action_link($context, new ActionItem($week,
+							'display_week', array('week' => $week, 'year' => $year)));
+				}));
+		$this->twig->addFunction(new \Twig_SimpleFunction('add_days',
+				function (\DateTime $date, $days) {
+					$date->add ( new \DateInterval ( "P{$days}D" ) );
+					return $date;
+			}));
+		$this->twig->addFunction(new \Twig_SimpleFunction('is_date_in_month',
+				function(Context $context, \DateTimeInterface $date) {
+					$currentDate = new \DateTime();
+					return $context->getAction() == 'display_month'
+							&& $date->format('m') == $context->getMonth()
+							&& $date->format('Y') == $context->getYear();
+		}));
+		$this->twig->addFunction(new \Twig_SimpleFunction('is_today', '\PhpCalendar\is_today'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('action_date_url', '\PhpCalendar\action_date_url'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('day',
+				function(\DateTimeInterface $date) { return $date->format('j'); }));
+		$this->twig->addFunction(new \Twig_SimpleFunction('can_write',
+				function(User $user, Calendar $calendar) { return $calendar->can_write($user); }));
+		$this->twig->addFunction(new \Twig_SimpleFunction('occurrences_for_date',
+			function($occurrences, \DateTimeInterface $date) {
+				$key = index_of_date($date);
+				if(array_key_exists($key, $occurrences))
+					return $occurrences[index_of_date($date)];
+				return null;
+			}));
 	}
 
 	public function clearMessages() {
@@ -115,11 +145,12 @@ class Context {
 	private function initVars() {
 		$this->script = htmlentities($_SERVER['SCRIPT_NAME']);
 		$this->url_path = dirname($_SERVER['SCRIPT_NAME']);
-		$this->port = empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] == 80 ? ""
+		$port = empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] == 80 ? ""
 			: ":{$_SERVER["SERVER_PORT"]}";
-		$this->server = $_SERVER['SERVER_NAME'] . $this->port;
+		$this->host_name = isset($_SERVER['HOST_NAME']) ? $_SERVER['HOST_NAME'] :
+			(isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] . $port : "localhost");
 		$this->proto = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'
-			|| $_SERVER['SERVER_PORT'] == 443
+			|| isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443
 			|| isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
 			|| isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on'
 			?  "https"
@@ -184,14 +215,12 @@ class Context {
 
 	private function initTimezone() {
 		// Set timezone
-		if(!empty($this->getUser()->get_timezone()))
-			$this->tz = $this->getUser()->get_timezone();
-		else
-			$this->tz = $this->getCalendar()->timezone;
+		$tz = $this->getUser()->get_timezone();
+		if(empty($tz))
+			$tz = $this->getCalendar()->timezone;
 
 		if(!empty($tz))
 			date_default_timezone_set($this->tz);
-		$this->tz = date_default_timezone_get();
 	}
 
 	private function initDate() {
@@ -225,7 +254,7 @@ class Context {
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
      */
 	public function getTimezone() {
 		return $this->tz;

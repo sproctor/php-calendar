@@ -27,15 +27,15 @@ namespace PhpCalendar;
  * @param \DateTimeImmutable $to
  * @return Occurrence[][]
  */
-function get_occurrences(Calendar $calendar, User $user, \DateTimeImmutable $from, \DateTimeImmutable $to) {
+function get_occurrences_by_day(Calendar $calendar, User $user, \DateTimeInterface $from, \DateTimeInterface $to) {
 	//echo "<pre>$from_stamp $to_stamp\n";
-	$results = $context->db->get_occurrences_by_date_range($calendar->cid, $from, $to);
+	$all_occurrences = $calendar->get_occurrences_by_date_range($from, $to);
 	$occurrences_by_day = array();
 	//var_dump($results);
-	foreach ($results as $occurrence) {
+	foreach ($all_occurrences as $occurrence) {
 		//var_dump($row);
 		//echo "here\n";
-		if(!$occurrence->can_read($context->getUser()))
+		if(!$occurrence->can_read($user))
 			continue;
 
 		$end = $occurrence->getEnd();
@@ -49,9 +49,6 @@ function get_occurrences(Calendar $calendar, User $user, \DateTimeImmutable $fro
 
 		// put the event in every day until the end
 		for($date = $start->add($diff); $date < $to && $date < $end; $date = $date->add(new \DateInterval("P1D"))) {
-			if ($date < $from)
-				continue;
-
 			$key = index_of_date($date);
 			if(!isset($occurrences_by_day[$key]))
 				$days_events[$key] = array();
