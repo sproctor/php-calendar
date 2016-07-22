@@ -4,11 +4,14 @@
 		{% if can_write(user, calendar) %}
 		<a href="{{ action_date_url(context, 'event_form', start_date) }}" class="phpc-add">+</a>
 		{% endif %}
+	</div>
+	{% set days_occurrences = occurrences_for_date(occurrences, start_date) %}
+	{% if not days_occurrences is null %}
 		<ul class="phpc-event-list">
-		{% for occurrence in occurrences_for_date(occurrences, start_date) %}
+		{% for occurrence in days_occurrences %}
 			{% if occurrence is null %}
 				<li>
-					<a href="{{ action_date_url(context, 'display_day', start_date) }}" class="phpc-date">{{ _("View Additional Events") }}</a>
+					<a href="{{ action_date_url(context, 'display_day', start_date) }}" class="phpc-date">{{ "View Additional Events"|_ }}</a>
 				</li>
 			{% else %}
 				{% set textcolor = attribute(occurrence, getTextColor) %}
@@ -29,5 +32,5 @@
 			{% endif %}
 		{% endfor %}
 		</ul>
-	</div>
+	{% endif %}
 </td>

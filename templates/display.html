@@ -1,3 +1,6 @@
+{% extends "index.html" %}
+
+{% block body %}
 <div id="phpc-summary-view">
     <div id="phpc-summary-head">
         <div id="phpc-summary-title"></div>
@@ -24,7 +27,7 @@
     <thead>
         <tr class="ui-widget-header">
             <th>{{ _p('Week', 'W') }}</th>
-            {% for i in range(0, 7) %}
+            {% for i in range(0, 6) %}
             <th>{{ day_name(i + week_start % 7) }}</th>
             {% endfor %}
         </tr>
@@ -33,3 +36,4 @@
     {% block content %}{% endblock %}
     </tbody>
 </table>
+{% endblock %}

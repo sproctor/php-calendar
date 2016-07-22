@@ -538,6 +538,19 @@ function action_date_url(Context $context, $action, \DateTimeInterface $date) {
 
 /**
  * @param Context $context
+ * @param string $action
+ * @param string[] $parameters
+ */
+function action_url(Context $context, $action, $parameters = array()) {
+	$url = "{$context->script}?action={$action}";
+	foreach($parameters as $key => $value) {
+		$url .= "&amp;$key=$value";
+	}
+	return $url;
+}
+
+/**
+ * @param Context $context
  * @param ActionItem $item
  * @return string
  */
@@ -578,13 +591,19 @@ function create_action_link(Context $context, ActionItem $item)
 // takes a menu $html and appends an entry
 /**
  * @param Context $context
- * @param Html $html
- * @param ActionItem $item
+ * @param string $action
+ * @param string $text
+ * @return string
  */
-function menu_item_append(Context $context, Html &$html, ActionItem $item)
+function menu_item(Context $context, $action, $text)
 {
-	$html->add(create_action_link($context, $item));
-	$html->add("\n");
+	
+	return create_action_link($context, new ActionItem($text, $action,
+			array(
+					'year' => $context->getYear(),
+					'month' => $context->getMonth(),
+					'day' => $context->getDay()
+			)));
 }
 
 // creates a hidden input for a form
@@ -677,84 +696,6 @@ function create_dropdown($title, $values) {
 function fa($name)
 {
 	return "<span class=\"fa fa-$name\"></span>";
-}
-
-// creates the user menu
-// returns tag data for the menu
-/**
- * @param Context $context
- * @return Html
- */
-function user_menu(Context $context)
-{
-	if($context->getUser()->is_user()) {
-		$welcome = __('Welcome') . '&nbsp;' . $context->getUser()->get_username();
-	} else {
-		$welcome = "";
-	}
-
-	$span = tag('span');
-	
-	$html = tag('div', new AttributeList('class="phpc-logged ui-widget-content"'), $welcome, $span);
-
-	if($context->getAction() != 'user_settings')
-		$span->add(create_action_link($context, new ActionItem(__('Settings'), 'user_settings', false, false, 'cog')));
-		
-	if($context->getUser()->is_user()) {
-		menu_item_append($context, $span, new ActionItem(__('Log out'), 'logout',
-				array('lasturl' => escape_entities(urlencode($_SERVER['QUERY_STRING']))),
-				null, 'sign-out'));
-	} else {
-		menu_item_append($context, $span, new ActionItem(__('Log in'), 'login',
-				array('lasturl' => escape_entities(urlencode($_SERVER['QUERY_STRING']))),
-				null, 'sign-in'));
-	}
-	return $html;
-}
-
-// creates the navbar for the top of the calendar
-// returns tag data for the navbar
-/**
- * @param Context $context
- * @return Html
- */
-function navbar(Context $context)
-{
-	$cal = $context->getCalendar();
-	$action = $context->getAction();
-
-	$html = tag('div', new AttributeList('class="phpc-bar ui-widget-header"'));
-
-	$args = array('year' => $context->getYear(),
-			'month' => $context->getMonth(),
-			'day' => $context->getDay());
-
-	// TODO There needs to be a better way to decide what to show
-	if($cal->can_write($context->getUser()) && $action != 'add') {
-		menu_item_append($context, $html, new ActionItem(__('Add Event'), 'event_form', $args));
-	}
-
-	if($action != 'search') {
-		menu_item_append($context, $html, new ActionItem(__('Search'), 'search', $args));
-	}
-
-	if($action != 'display_month') {
-		menu_item_append($context, $html, new ActionItem(__('View Month'), 'display_month', $args));
-	}
-
-	if($action == 'display_event') {
-		menu_item_append($context, $html, new ActionItem(__('View date'), 'display_day', $args));
-	}
-
-	if($cal->can_admin($context->getUser()) && $action != 'cadmin') {
-		menu_item_append($context, $html, new ActionItem(__('Calendar Admin'), 'cadmin'));
-	}
-
-	if($context->getUser()->is_admin() && $action != 'admin') {
-		menu_item_append($context, $html, new ActionItem(__('Admin'), 'admin'));
-	}
-
-	return $html;
 }
 
 // creates an array from $start to $end, with an $interval
@@ -889,67 +830,6 @@ function get_date_format_list()
 	return [__("Month Day Year"),
 			__("Year Month Day"),
 			__("Day Month Year")];
-}
-
-/**
- * @param Context $context
- * @return Html
- */
-function display_phpc(Context $context)
-{
-	$navbar = false;
-
-	try {
-		$calendars = $context->db->get_calendars();
-		$list = array();
-		$cal = $context->getCalendar();
-		if(!empty($cal)) {
-			$title = $cal->get_title();
-			$title_link = tag('a', new AttributeList("href=\"{$context->script}?phpcid={$cal->get_cid()}\"",
-						'class="phpc-dropdown-title"'), $title);
-		} else {
-			$title = __("(No calendars)");
-			$title_link = $title;
-		}
-		foreach($calendars as $calendar) {
-			$list[$context->script . '?phpcid=' . $calendar->get_cid()] = $calendar->get_title();
-		}
-		if (sizeof($calendars) > 1) {
-			$title_tag = create_dropdown($title_link->toString(), $list);
-		} else {
-			$title_tag = $title_link;
-		}
-		$content = get_page($context->getAction())->display($context);
-		$messages = $context->getMessages();
-		if(sizeof($messages) > 0) {
-			$messageHtml = tag('div');
-			foreach($messages as $message) {
-				$messageHtml->add($message);
-			}
-
-			$context->clearMessages();
-		} else {
-			$messageHtml = '';
-		}
-
-		return tag('div', new AttributeList('class="php-calendar ui-widget"'),
-				user_menu($context),
-				tag('br', new AttributeList('style="clear:both;"')),
-				tag('div', new AttributeList('class="phpc-title ui-widget-header"'), $title_tag),
-				navbar($context), $messageHtml, $content, footer($context));
-
-	} catch(PermissionException $e) {
-		$msg = __('You do not have permission to do that: ') . $e->getMessage();
-		if($context->getUser()->is_user())
-			return error_message_redirect($context, $msg, $context->script);
-		else
-			return error_message_redirect($context, $msg,
-					"{$context->script}?action=login");
-	} catch(InvalidInputException $e) {
-		return error_message_redirect($context, $e->getMessage(), $e->target);
-	} catch(\Exception $e) {
-		return display_exception($e, $navbar);
-	}
 }
 
 function display_exception(\Exception $e, $navbar = false)

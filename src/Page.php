@@ -19,7 +19,12 @@ namespace PhpCalendar;
 
 abstract class Page
 {
-	abstract function display(Context $context);
+	/**
+	 * @param Context $context
+	 * @param string[] $template_variables
+	 * @return string
+	 */
+	abstract function display(Context $context, $template_variables);
 }
 
 ?>

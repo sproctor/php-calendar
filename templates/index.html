@@ -16,9 +16,63 @@
     <script src="static/farbtastic.min.js"></script>
 </head>
 <body>
-{% autoescape %}
-{{ embed|raw }}
-{{ content|raw }}
-{% endautoescape %}
+{% if embed %}
+	<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+	<script src="static/embed.js"></script>
+{% endif %}
+	<div class="php-calendar ui-widget">
+		<div class="phpc-logged ui-widget-content">
+			{% if calendar.can_write(user) %}
+				{{ menu_item(context, "event_form", "Create Event"|trans)|raw }}
+			{% endif %}
+			{{ menu_item(context, "search", "Search"|trans)|raw }}
+			{{ menu_item(context, "display_month", "View Month"|trans)|raw }}
+			{% if action == "display_event" %}
+				{{ menu_item(context, "display_day", "View date"|trans)|raw }}
+			{% endif %}
+			{% if calendar.can_admin(user) %}
+				{{ menu_item(context, "cadmin", "Calendar Admin"|trans)|raw }}
+			{% endif %}
+			{% if user.is_admin() %}
+				{{ menu_item(context, "admin", "Admin"|trans)|raw }}
+			{% endif %}
+			{% if user.is_user() %}
+				{{ fa("user")|raw }}{{ user.get_username()|raw }}
+			{% endif %}
+			<a href="{{ action_url(context, "user_settings") }}">{{ "Settings"|trans }} {{ fa("cog")|raw }}</a>
+			{% if user.is_user() %}
+				<a href="{{ action_url(context, "logout") }}&amp;lasturl={{ query_string|url_encode }}">{{ "Log out"|trans }} {{ fa("sign-out")|raw }}</a>
+			{% else %}
+				<a href="{{ action_url(context, "login") }}&amp;lasturl={{ query_string|url_encode }}">{{ "Log in"|trans }} {{ fa("sign-in")|raw }}</a>
+			{% endif %}
+		</div>
+		<br style="clear:both;">
+		{% set title_link %}
+			<a href="{{ script }}?phpcid={{ calendar.get_cid() }}"
+				class="phpc-dropdown-title">{{ calendar.get_title() }}</a>
+		{% endset %}
+		<div class="phpc-title ui-widget-header">
+			{% if calendars|length > 1 %}
+				<div class="phpc-dropdown">
+					<span class="phpc-dropdown-header"><span class="phpc-dropdown-title">{{ title_link }}</span></span>
+					<ul>
+						{% for cal in calendars %}
+							<li><a href="{{ script }}?phpcid={{ cal.get_cid() }}">{{ cal.get_title() }}</a></li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% else %}
+				{{ title_link }}
+			{% endif %}
+		</div>
+		{% if messages|length > 0 %}
+			<div>
+				{% for message in messages %}
+					{{ message }}
+				{% endfor %}
+			</div>
+		{% endif %}
+		{% block body %}{% endblock %}
+	</div>
 </body>
 </html>

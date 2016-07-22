@@ -37,51 +37,52 @@ try {
 	$context = new Context();
 
 
-$min = defined('PHPC_DEBUG') ? '' : '.min';
+	$min = defined ( 'PHPC_DEBUG' ) ? '' : '.min';
 	
-$jquery_version = "1.12.2";
-$jqueryui_version = "1.11.4";
-$fa_version = "4.5.0";
-
-if(!isset($jqui_path))
-	$jqui_path = "//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version";
-if(!isset($fa_path))
-	$fa_path = "//maxcdn.bootstrapcdn.com/font-awesome/$fa_version";
-if(!isset($jq_file))
-	$jq_file = "//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$min.js";
-
-if($context->getLang() != 'en') {
-	$translator = new Translator($context->getLang(), new MessageSelector());
-	$translator->addLoader('mo', new MoFileLoader());
-	$translator->addResource('mo', __DIR__ . "locale/" . $context->getLang() . "/LC_MESSAGES/messages.mo",
-		$context->getLang());
-}
-
-if (isset($_REQUEST["content"]) && $_REQUEST["content"] == "json") {
-	header("Content-Type: application/json; charset=UTF-8");
-	echo display_phpc($context)->toString();
-} else {
-	header("Content-Type: text/html; charset=UTF-8");
-
-	$content = display_phpc($context);
-	$embed_script = '';
-	if(isset($_REQUEST["content"]) && $_REQUEST["content"] == "embed") {
-		$underscore_version = "1.5.2";
-		$embed_script = "<script src=\"//cdnjs.cloudflare.com/ajax/libs/underscore.js/"
-						."$underscore_version/underscore-min.js\"></script>\n"
-						.'<script src="static/embed.js"></script>';
+	$jquery_version = "1.12.2";
+	$jqueryui_version = "1.11.4";
+	$fa_version = "4.5.0";
+	
+	if (! isset ( $jqui_path ))
+		$jqui_path = "//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version";
+	if (! isset ( $fa_path ))
+		$fa_path = "//maxcdn.bootstrapcdn.com/font-awesome/$fa_version";
+	if (! isset ( $jq_file ))
+		$jq_file = "//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$min.js";
+	
+	if ($context->getLang () != 'en') {
+		$translator = new Translator ( $context->getLang (), new MessageSelector () );
+		$translator->addLoader ( 'mo', new MoFileLoader () );
+		$translator->addResource ( 'mo', __DIR__ . "locale/" . $context->getLang () . "/LC_MESSAGES/messages.mo", $context->getLang () );
 	}
-
-	echo $context->twig->render("index.html", [
-		'embed' => $embed_script,
-		'content' => $content->toString(),
-		'lang' => $context->getLang(),
-		'title' => $context->getCalendar()->get_title(),
-		'theme' => $context->getCalendar()->get_theme(),
-		'min' => $min,
-		'script' => $context->script
-	]);
-}
+	
+	if (isset ( $_REQUEST ["content"] ) && $_REQUEST ["content"] == "json") {
+		header ( "Content-Type: application/json; charset=UTF-8" );
+		echo display_phpc ( $context )->toString ();
+	} else {
+		header ( "Content-Type: text/html; charset=UTF-8" );
+		
+		echo get_page($context->getAction())->display( $context, array(
+				'context' => $context,
+				'calendar' => $context->getCalendar(),
+				'user' => $context->getUser(),
+				'script' => $context->script,
+				'embed' => isset ( $_REQUEST ["content"] ) && $_REQUEST ["content"] == "embed",
+				'lang' => $context->getLang (),
+				'title' => $context->getCalendar ()->get_title (),
+				'theme' => $context->getCalendar ()->get_theme (),
+				'min' => $min,
+				'query_string' => $_SERVER ['QUERY_STRING'] 
+		) );
+	}
+} catch(PermissionException $e) {
+	$msg = __ ( 'You do not have permission to do that: ' ) . $e->getMessage ();
+	if ($context->getUser ()->is_user ())
+		echo error_message_redirect ( $context, $msg, $context->script );
+	else
+		echo error_message_redirect ( $context, $msg, "{$context->script}?action=login");
+} catch(InvalidInputException $e) {
+	echo error_message_redirect($context, $e->getMessage(), $e->target);
 } catch(\Exception $e) {
 	header("Content-Type: text/html; charset=UTF-8");
 	echo "<!DOCTYPE html>\n";

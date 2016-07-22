@@ -89,10 +89,11 @@ class Context {
 		$this->twig = new \Twig_Environment($template_loader, array(
 			//'cache' => __DIR__ . '/cache',
 		));
+		$this->twig->addExtension(new \Twig_Extensions_Extension_I18n());
+		
 		$this->twig->addFunction(new \Twig_SimpleFunction('fa', '\PhpCalendar\fa'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('dropdown', '\PhpCalendar\create_dropdown'));
 		$this->twig->addFilter(new \Twig_SimpleFilter('_', '\PhpCalendar\__'));
-		$this->twig->addFunction(new \Twig_SimpleFunction('_', '\PhpCalendar\__'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('_p', '\PhpCalendar\__p'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('day_name', '\PhpCalendar\day_name'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('index_of_date', '\PhpCalendar\index_of_date'));
@@ -116,6 +117,7 @@ class Context {
 		}));
 		$this->twig->addFunction(new \Twig_SimpleFunction('is_today', '\PhpCalendar\is_today'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('action_date_url', '\PhpCalendar\action_date_url'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('action_url', '\PhpCalendar\action_url'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('day',
 				function(\DateTimeInterface $date) { return $date->format('j'); }));
 		$this->twig->addFunction(new \Twig_SimpleFunction('can_write',
@@ -127,6 +129,7 @@ class Context {
 					return $occurrences[index_of_date($date)];
 				return null;
 			}));
+		$this->twig->addFunction(new \Twig_SimpleFunction('menu_item', '\PhpCalendar\menu_item'));
 	}
 
 	public function clearMessages() {

@@ -27,7 +27,7 @@ require_once __DIR__ . '/display_functions.php';
 class MonthPage extends Page
 {
 	// Full display for a month
-	function display(Context $context)
+	function display(Context $context, $template_variables)
 	{
 		$calendar = $context->getCalendar();
 		$cid = $calendar->cid;
@@ -67,11 +67,7 @@ class MonthPage extends Page
 
 		$occurrences_by_day = get_occurrences_by_day($calendar, $context->getUser(), $from_date, $to_date);
 
-		return $context->twig->render("month.html", [
-				'context' => $context,
-				'calendar' => $context->getCalendar(),
-				'user' => $context->getUser(),
-				'script' => $context->script,
+		return $context->twig->render("month.html", array_merge($template_variables, array(
 				'cid' => $cid,
 				'prev_month' => $prev_month,
 				'prev_year' => $prev_year,
@@ -85,7 +81,7 @@ class MonthPage extends Page
 				'weeks' => $weeks,
 				'occurrences' => $occurrences_by_day,
 				'start_date' => $from_date
-		]);
+		)));
 	}
 }
 
