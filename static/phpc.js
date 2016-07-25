@@ -37,6 +37,10 @@ $(document).ready(function(){
   $(".phpc-dropdown ul a").css("color", color);
   $tempElem.remove();
 
+  $(".phpc-menubar").menu({
+	  position: { my: "left top", at: "left bottom" }
+  });
+  
   // Tabs - Persistence reference: http://stackoverflow.com/questions/19539547/maintaining-jquery-ui-previous-active-tab-before-reload-on-page-reload
   var currentTabId = "0";
   $tab = $(".phpc-tabs").tabs({

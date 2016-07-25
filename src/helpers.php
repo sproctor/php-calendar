@@ -259,19 +259,11 @@ function parse_desc($text)
 }
 
 /**
- * @param \DateTimeInterface $date
- * @return int
- */
-function days_in_year_dt(\DateTimeInterface $date) {
-	return 365 + $date->format('L');
-}
-
-/**
  * @param int $year
  * @return int
  */
 function days_in_year($year) {
-	return days_in_year_dt(create_datetime(1, 1, $year));
+	return 365 + create_datetime(1, 1, $year)->format('L');
 }
 
 /**
@@ -280,8 +272,18 @@ function days_in_year($year) {
  * @return int
  */
 function days_between(\DateTimeInterface $date1, \DateTimeInterface $date2) {
-	$diff = $date1->diff($date2, true);
-	return intval($diff->format('%a'));
+	$year1 = $date1->format('Y');
+	$year2 = $date2->format('Y');
+	if ($year2 < $year1)
+		return -days_between($date2, $date1);
+	$days = 0;
+	for ($year = $year1; $year < $year2; $year++) {
+		$days += days_in_year($year);
+	}
+	// add day of year of $date2, subtract day of year of $date1
+	$days += $date2->format('z');
+	$days -= $date1->format('z');
+	return $days;
 }
 
 /**
@@ -1128,9 +1130,7 @@ function index_of_date(\DateTimeInterface $date) {
  * @return boolean
  */
 function is_today(\DateTimeInterface $date) {
-	$diff = $date->diff(new \DateTime());
-	
-	return intval($diff->format('%a')) == 0;
+	return days_between($date, new \DateTime()) == 0;
 }
 
 /**

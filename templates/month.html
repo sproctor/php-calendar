@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-    {% for week_of_month in 0..weeks %}
+    {% for week_of_month in 1..weeks %}
         {% include('week.html') %}
     {% endfor %}
 {% endblock %}

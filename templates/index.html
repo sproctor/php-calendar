@@ -5,12 +5,12 @@
     <title>{{ title }}</title>
     <link rel="icon" href="static/office-calendar.png">
     <link rel="stylesheet" href="static/phpc.css">
-    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/{{ theme }}/jquery-ui{{ min }}.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="static/jquery-ui-timepicker.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome{{ min }}.css">
     <link rel="stylesheet" href="static/farbtastic.css">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery{{ min }}.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui{{ min }}.js"></script>
+    <script src="//code.jquery.com/jquery-3.1.0{{ min }}.js"></script>
+    <script src="//code.jquery.com/ui/1.12.0/jquery-ui{{ min }}.js"></script>
     <script src="static/phpc.js"></script>
     <script src="static/jquery.ui.timepicker.js"></script>
     <script src="static/farbtastic.min.js"></script>
@@ -21,32 +21,33 @@
 	<script src="static/embed.js"></script>
 {% endif %}
 	<div class="php-calendar ui-widget">
-		<div class="phpc-logged ui-widget-content">
+		<ul class="phpc-menubar">
 			{% if calendar.can_write(user) %}
-				{{ menu_item(context, "event_form", "Create Event"|trans)|raw }}
+				<li>{{ menu_item(context, "event_form", "Create Event"|trans)|raw }}</li>
 			{% endif %}
-			{{ menu_item(context, "search", "Search"|trans)|raw }}
-			{{ menu_item(context, "display_month", "View Month"|trans)|raw }}
+			<li>{{ menu_item(context, "search", "Search"|trans)|raw }}</li>
+			<li>{{ menu_item(context, "display_month", "View Month"|trans)|raw }}</li>
 			{% if action == "display_event" %}
-				{{ menu_item(context, "display_day", "View date"|trans)|raw }}
+				<li>{{ menu_item(context, "display_day", "View date"|trans)|raw }}
 			{% endif %}
 			{% if calendar.can_admin(user) %}
-				{{ menu_item(context, "cadmin", "Calendar Admin"|trans)|raw }}
+				<li>{{ menu_item(context, "cadmin", "Calendar Admin"|trans)|raw }}</li>
 			{% endif %}
 			{% if user.is_admin() %}
-				{{ menu_item(context, "admin", "Admin"|trans)|raw }}
+				<li>{{ menu_item(context, "admin", "Admin"|trans)|raw }}</li>
 			{% endif %}
-			{% if user.is_user() %}
-				{{ fa("user")|raw }}{{ user.get_username()|raw }}
-			{% endif %}
-			<a href="{{ action_url(context, "user_settings") }}">{{ "Settings"|trans }} {{ fa("cog")|raw }}</a>
-			{% if user.is_user() %}
-				<a href="{{ action_url(context, "logout") }}&amp;lasturl={{ query_string|url_encode }}">{{ "Log out"|trans }} {{ fa("sign-out")|raw }}</a>
-			{% else %}
-				<a href="{{ action_url(context, "login") }}&amp;lasturl={{ query_string|url_encode }}">{{ "Log in"|trans }} {{ fa("sign-in")|raw }}</a>
-			{% endif %}
-		</div>
-		<br style="clear:both;">
+			<li>
+				<span>{{ fa("user")|raw }}{{ user.get_username() }}</span>
+				<ul>
+					<li><a href="{{ action_url(context, "user_settings") }}">{{ fa("cog")|raw }} {{ "Settings"|trans }}</a></li>
+					{% if user.is_user() %}
+						<li><a href="{{ action_url(context, "logout") }}&amp;lasturl={{ query_string|url_encode }}">{{ fa("sign-out")|raw }} {{ "Log out"|trans }}</a></li>
+					{% else %}
+						<li><a href="{{ action_url(context, "login") }}&amp;lasturl={{ query_string|url_encode }}">{{ fa("sign-in")|raw }} {{ "Log in"|trans }}</a></li>
+					{% endif %}
+				</ul>
+			</li>
+		</ul>
 		{% set title_link %}
 			<a href="{{ script }}?phpcid={{ calendar.get_cid() }}"
 				class="phpc-dropdown-title">{{ calendar.get_title() }}</a>
@@ -65,6 +66,7 @@
 				{{ title_link }}
 			{% endif %}
 		</div>
+		<br style="clear: both">
 		{% if messages|length > 0 %}
 			<div>
 				{% for message in messages %}
