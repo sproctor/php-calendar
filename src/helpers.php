@@ -138,7 +138,7 @@ function minute_pad($minute)
  */
 function redirect($context, $page) {
 	$dir = $page{0} == '/' ?  '' : dirname($context->script) . '/';
-	$url = $context->proto . '://'. $context->server . $dir . $page;
+	$url = $context->proto . '://'. $context->host_name . $dir . $page;
 
 	header("Location: $url", true, 303);
 	exit;
