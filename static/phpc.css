@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Sean Proctor
+ * Copyright 2016 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ body {
 
 .phpc-title {
   font-size: 2em !important;
-  margin: .6em auto;
-  padding: .3em;
+  margin: .15em auto;
+  padding: .15em .25em;
   float: left;
   width: auto;
 }
@@ -162,8 +162,8 @@ table.phpc-month-view td {
 
 a.phpc-add {
   float: right;
-  padding: 0;
-  font-size: .5em !important;
+  padding: 3px;
+  font-size: .65em !important;
 }
 
 #phpc-summary-view {

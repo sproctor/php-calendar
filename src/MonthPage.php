@@ -21,13 +21,15 @@
 
 namespace PhpCalendar;
 
-require_once __DIR__ . '/display_functions.php';
-
-
 class MonthPage extends Page
 {
 	// Full display for a month
-	function display(Context $context, $template_variables)
+    /**
+     * @param Context $context
+     * @param \string[] $template_variables
+     * @return string
+     */
+    function display(Context $context, $template_variables)
 	{
 		$calendar = $context->getCalendar();
 		$cid = $calendar->cid;
@@ -65,53 +67,20 @@ class MonthPage extends Page
 		$last_day = $weeks * 7 - day_of_week($month, 1, $year, $week_start);
 		$to_date = create_datetime($month, $last_day + 1, $year);
 
-		$occurrences_by_day = get_occurrences_by_day($calendar, $context->getUser(), $from_date, $to_date);
-
-		return $context->twig->render("month.html", array_merge($template_variables, array(
-				'cid' => $cid,
-				'prev_month' => $prev_month,
-				'prev_year' => $prev_year,
-				'next_month' => $next_month,
-				'next_year' => $next_year,
-				'month_name' => month_name ( $month ),
-				'months' => $months,
-				'year' => $year,
-				'years' => $years,
-				'week_start' => $week_start,
-				'weeks' => $weeks,
-				'occurrences' => $occurrences_by_day,
-				'start_date' => $from_date
-		)));
+		$template_variables['cid'] = $cid;
+		$template_variables['prev_month'] = $prev_month;
+        $template_variables['prev_year'] = $prev_year;
+        $template_variables['next_month'] = $next_month;
+        $template_variables['next_year'] = $next_year;
+        $template_variables['month_name'] = month_name ( $month );
+        $template_variables['months'] = $months;
+        $template_variables['year'] = $year;
+        $template_variables['years'] = $years;
+        $template_variables['week_start'] = $week_start;
+        $template_variables['weeks'] = $weeks;
+        $template_variables['occurrences'] = get_occurrences_by_day($calendar, $context->getUser(), $from_date,
+            $to_date);
+        $template_variables['start_date'] = $from_date;
+		return $context->twig->render("month.html", $template_variables);
 	}
 }
-
-// creates a display for a particular month to be embedded in a full view
-/**
- * @param Context $context
- * @param int $month
- * @param int $year
- * @return string
- */
-function create_month(Context $context, $month, $year)
-{
-	$week_start = $calendar->week_start;
-	$weeks = weeks_in_month($month, $year, $week_start);
-
-	$first_day = 1 - day_of_week($month, 1, $year, $week_start);
-	$from_stamp = mktime(0, 0, 0, $month, $first_day, $year);
-
-	$last_day = $weeks * 7 - day_of_week($month, 1, $year, $week_start);
-	$to_stamp = mktime(23, 59, 59, $month, $last_day, $year);
-
-	$days_events = get_occurrences_by_day($calendar, $from_stamp, $to_stamp);
-	$output = "";
-	for($week_of_month = 1; $week_of_month <= $weeks; $week_of_month++) {
-		// We could be showing a week from the previous or next year
-		$days = ($week_of_month - 1) * 7;
-		$start_stamp = strtotime("+$days day", $from_stamp);
-		$output .= create_week($context, $start_stamp, $year, $days_events);
-	}
-
-	return $output;
-}
-?>

@@ -5,7 +5,7 @@
     <title>{{ title }}</title>
     <link rel="icon" href="static/office-calendar.png">
     <link rel="stylesheet" href="static/phpc.css">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="static/jquery-ui-timepicker.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome{{ min }}.css">
     <link rel="stylesheet" href="static/farbtastic.css">
@@ -23,7 +23,7 @@
 	<div class="php-calendar ui-widget">
 		<ul class="phpc-menubar">
 			{% if calendar.can_write(user) %}
-				<li>{{ menu_item(context, "event_form", "Create Event"|trans)|raw }}</li>
+				<li>{{ menu_item(context, "create_event", "Create Event"|trans)|raw }}</li>
 			{% endif %}
 			<li>{{ menu_item(context, "search", "Search"|trans)|raw }}</li>
 			<li>{{ menu_item(context, "display_month", "View Month"|trans)|raw }}</li>

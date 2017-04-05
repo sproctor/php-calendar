@@ -212,24 +212,3 @@ function phpc_event_fields_table($prefix) {
 
 	return $table;
 }
-
-function phpc_updatedb(Context $context, $prefix)
-{
-	$message_tags = tag('div', tag('div', __("Updating calendar")));
-
-	$updated = false;
-	foreach(phpc_table_schemas($prefix) as $table) {
-		$tags = $table->update($context->db->dbh);
-		$message_tags->add($tags);
-		if(sizeof($tags) > 0)
-			$updated = true;
-	}
-	$context->db->set_config("version", PHPC_DB_VERSION);
-
-	if(!$updated)
-		$message_tags->add(tag('div', __('Already up to date.')));
-
-	message_redirect($context, $message_tags, $context->script);
-}
-
-?>

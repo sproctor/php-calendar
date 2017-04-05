@@ -147,7 +147,7 @@ class SqlTable {
 
 	/**
 	 * @param \mysqli $dbh
-	 * @return Html[]
+	 * @return Tag[]
 	 */
 	function updateKeys(\mysqli $dbh) {
 		$tags = array();

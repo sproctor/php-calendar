@@ -20,14 +20,17 @@ namespace PhpCalendar;
 class LoginPage extends Page
 {
 
-	function display(Context $context)
+    /**
+     * @param Context $context
+     * @param string[] $template_variables
+     * @return string
+     */
+    function display(Context $context, $template_variables)
 	{
-		$html = tag('div');
-
 		//Check password and username
 		if(isset($_REQUEST['username'])){
 			$username = $_REQUEST['username'];
-			if(!isset($_REQUEST['password'])) {
+			if(empty($_REQUEST['password'])) {
 				$context->addMessage(__("No password specified."));
 			} else {
 				$password = $_REQUEST['password'];
@@ -38,44 +41,13 @@ class LoginPage extends Page
 						$url .= '?' . urldecode($_REQUEST['lasturl']);
 					}
 					redirect($context, $url);
-					return tag('h2', __('Logged in.'));
+					$template_variables['logged_in'] = true;
+				} else {
+					$context->addMessage(__("Invalid login credentials."));
 				}
-
-				$html->add(tag('h2', __('Sorry, Invalid Login')));
 			}
 		}
-
-		$html->add(login_form($context));
-		return $html;
+		$template_variables['messages'] = $context->getMessages();
+        return $context->twig->render("login.html", $template_variables);
 	}
 }
-
-function login_form(Context $context)
-{
-	$submit_data = tag('td', new AttributeList('colspan="2"'),
-			create_hidden('action', 'login'),
-			create_submit(__('Log in')));
-
-	if(!empty($_REQUEST['lasturl'])) {
-		$submit_data->prepend(create_hidden('lasturl', escape_entities(urlencode($_REQUEST['lasturl']))));
-	}
-
-	return tag('form', new AttributeList('action="' . $context->script . '"', 'method="post"'),
-			tag('table',
-				tag('caption', __('Log in')),
-				tag('thead',
-					tag('tr',
-						tag('th', new AttributeList('colspan="2"'),
-							__('You must have cookies enabled to login.')))),
-				tag('tfoot',
-					tag('tr', $submit_data)),
-				tag('tbody',
-					tag('tr',
-						tag('th', __('Username')),
-						tag('td', create_text('username'))),
-					tag('tr',
-						tag('th', __('Password')),
-						tag('td', create_password('password'))))));
-}
-
-?>

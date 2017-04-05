@@ -44,8 +44,6 @@ require_once(PHPC_ROOT_PATH . "/src/schema.php");
 <h1>PHP Calendar</h1>
 <?php
 
-$must_upgrade = false;
-
 if(file_exists(PHPC_CONFIG_FILE)) {
 	$config = read_config(PHPC_CONFIG_FILE);
 	if(isset($config["sql_host"])) {
@@ -72,8 +70,6 @@ if(file_exists(PHPC_CONFIG_FILE)) {
 
 		if($have_calendar) {
 
-			$must_upgrade = true;
-
 			if($existing_version > PHPC_DB_VERSION) {
 				echo "<p>DB version is newer than the upgrader.</p>";
 				exit;
@@ -89,6 +85,11 @@ if(file_exists(PHPC_CONFIG_FILE)) {
 echo '<p>Welcome to the PHP Calendar installation process.</p>
 <form method="post" action="install.php">
 ';
+
+if(!check_config()) {
+    report_config();
+    exit;
+}
 
 foreach($_POST as $key => $value) {
 	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">\n";
@@ -133,22 +134,17 @@ function report_config()
 		.'create it. You need to make sure this script can write to '
 		.'it. We suggest logging in with a shell and typing:</p>
 		<p><pre>
-		touch config.yml
-		chmod 666 config.yml
+		touch config.php
+		chmod 666 config.php
 		</pre></p>
 		<p>or if you only have ftp access, upload a blank file named '
-		.'config.yml to your php-calendar directory then use the chmod '
-		.'command to change the permissions of config.yml to 666.</p>
+		.'config.php to your php-calendar directory then use the chmod '
+		.'command to change the permissions of config.php to 666.</p>
 		<input type="submit" value="Retry"/>';
 }
 
 function get_server_setup()
 {
-	if(!check_config()) {
-		report_config();
-		return;
-	}
-
 	echo '
 		<h3>Step 1: Database</h3>
 		<table class="display">
@@ -291,9 +287,6 @@ function install_base()
 	$config = create_config($my_hostname, $my_username, $my_passwd, $my_database, $my_prefix, $sql_type);
 	$writer = new \Zend\Config\Writer\PhpArray();
 	$writer->toFile(PHPC_CONFIG_FILE, new \Zend\Config\Config($config));
-	//$yaml = \Symfony\Component\Yaml\Yaml::dump($config);
-
-	//file_put_contents(PHPC_CONFIG_FILE, $yaml);
 
 
 	// Make the database connection.
@@ -378,7 +371,7 @@ function add_calendar()
 	
 	echo "<p>Admin account created.</p>";
 	echo "<p>Now you should delete install.php file from root directory (for security reasons).</p>";
-	echo "<p>You should also change the permissions on config.yml so only your webserver can read it.</p>";
+	echo "<p>You should also change the permissions on config.php so only your webserver can read it.</p>";
 	echo "<p><a href=\"index.php\">View calendar</a></p>";
 }
 

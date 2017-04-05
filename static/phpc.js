@@ -6,15 +6,11 @@ $(document).ready(function(){
   // All widgets
   $(".phpc-event-list a, .phpc-message, .phpc-date, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .php-calendar td, .phpc-message, .phpc-dropdown ul").addClass("ui-widget");
   // Buttons
-  $(".phpc-add").button({
-      text: false,
-      icons: { primary: "ui-icon-plus" }
-    });
   $(".php-calendar input[type=submit], .php-calendar tfoot a, .phpc-button").button();
   // The buttons are too hard to read waiting on:
   //    http://wiki.jqueryui.com/w/page/12137730/Checkbox
   // $(".php-calendar input[type=checkbox] + label").prev().button();
-  $(".phpc-date, .phpc-event-list a, .phpc-calendar th.ui-state-default").on('mouseover mouseout',
+  $(".phpc-date, .phpc-event-list a, .phpc-calendar th.ui-state-default, .phpc-add").on('mouseover mouseout',
       function (event) {
         $(this).toggleClass("ui-state-hover");
       });
@@ -26,7 +22,7 @@ $(document).ready(function(){
         window.location.href = $(this).children('a').attr('href');
       });
   // fancy corners
-  $(".phpc-event-list a, .phpc-message, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .phpc-dropdown ul").addClass("ui-corner-all");
+  $(".phpc-event-list a, .phpc-message, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .phpc-dropdown ul, .phpc-add").addClass("ui-corner-all");
   // add jquery ui style classes
   $(".php-calendar td, #phpc-summary-view, .phpc-dropdown ul").addClass("ui-widget-content");
   $(".phpc-event-list a, .phpc-message").addClass("ui-state-default");

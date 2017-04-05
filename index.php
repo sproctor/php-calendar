@@ -89,4 +89,3 @@ try {
 	echo display_exception($e)->toString();
 	exit;
 }
-?>

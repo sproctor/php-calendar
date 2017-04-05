@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+
+{% block body %}
+    {% if logged_in %}
+        <div>{{ "Log in successful."|trans }}</div>
+    {% else %}
+        <form action="{{ script }}" method="post">
+            <h2>{{ "Log in"|trans }}</h2>
+            <div>{{ "You must have cookies enabled to login."|trans }}</div>
+            <div>
+                <label for="username">{{ "Username"|trans }}: </label>
+                <input type="text" name="username" id="username"/>
+            </div>
+            <div>
+                <label for="password">{{ "Password"|trans }}: </label>
+                <input type="password" name="password" id="password"/>
+            </div>
+            <div>
+                {% if lasturl %}<input type="hidden" name="lasturl" value="{{ lasturl }}"/>{% endif %}
+                <input type="hidden" name="action" value="login"/>
+                <input type="submit" value="{{ 'Log In'|trans }}"/>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}

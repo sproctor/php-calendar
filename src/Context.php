@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016 Sean Proctor
+ * Copyright 2017 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,14 @@ class Context {
 	private $day;
 	public $config;
 	private $lang;
+	/** @var Database */
 	public $db;
 	public $token;
 	public $script;
 	public $url_path;
 	public $host_name;
 	public $proto;
+	/** @var  \Twig_Environment */
 	public $twig;
 
 	/**
@@ -56,7 +58,7 @@ class Context {
 		require_once(__DIR__ . '/schema.php');
 		if ($this->db->get_config('version') < PHPC_DB_VERSION) {
 			if(isset($_GET['update'])) {
-				phpc_updatedb($this);
+				$this->db->update($this);
 			} else {
 				print_update_form();
 			}
@@ -100,8 +102,8 @@ class Context {
 		$this->twig->addFunction(new \Twig_SimpleFunction('week_link',
 				function(Context $context, \DateTimeInterface $date) {
 					list($week, $year) = week_of_year($date, $context->getCalendar()->week_start);
-					return create_action_link($context, new ActionItem($week,
-							'display_week', array('week' => $week, 'year' => $year)));
+					$url = action_url($context, 'display_week', ['week' => $week, 'year' => $year]);
+					return "<a href=\"$url\">$week</a>";
 				}));
 		$this->twig->addFunction(new \Twig_SimpleFunction('add_days',
 				function (\DateTime $date, $days) {
@@ -116,7 +118,7 @@ class Context {
 							&& $date->format('Y') == $context->getYear();
 		}));
 		$this->twig->addFunction(new \Twig_SimpleFunction('is_today', '\PhpCalendar\is_today'));
-		$this->twig->addFunction(new \Twig_SimpleFunction('action_date_url', '\PhpCalendar\action_date_url'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('action_date_url', '\PhpCalendar\action_date_url_from_datetime'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('action_url', '\PhpCalendar\action_url'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('day',
 				function(\DateTimeInterface $date) { return $date->format('j'); }));
@@ -202,8 +204,8 @@ class Context {
 		}
 			$calendars = $this->db->get_calendars();
 			if(empty($calendars)) {
+                throw new \Exception(escape_entities("There are no calendars."));
 				// TODO: create a page to fix this
-				soft_error("There are no calendars.");
 			} else {
 				if ($this->getUser()->get_default_cid() !== false)
 					$default_cid = $this->getUser()->get_default_cid();
@@ -223,7 +225,7 @@ class Context {
 			$tz = $this->getCalendar()->timezone;
 
 		if(!empty($tz))
-			date_default_timezone_set($this->tz);
+			date_default_timezone_set($tz);
 	}
 
 	private function initDate() {
@@ -254,13 +256,6 @@ class Context {
 				$this->day = 1;
 			}
 		}
-	}
-
-	/**
-	 * @return string
-     */
-	public function getTimezone() {
-		return $this->tz;
 	}
 
 	/**

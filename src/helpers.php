@@ -101,29 +101,35 @@ function permission_error($message)
 }
 
 class InvalidInputException extends \Exception {
+    /** @var string */
 	var $target;
 
 	/**
 	 * InvalidInputException constructor.
 	 * @param string $msg
-	 * @param int $target
+	 * @param string $target
      */
-	function __construct($msg, $target) {
+	function __construct($msg, $target = null) {
 		parent::__construct($msg);
 		$this->target = $target;
 	}
 }
 
 /**
- * @param $message
- * @param $target
+ * @param string $message
+ * @param string $target
  * @throws InvalidInputException
  */
-function input_error($message, $target) {
+function input_error($message, $target = null) {
 	throw new InvalidInputException(htmlspecialchars($message, ENT_COMPAT, "UTF-8"), $target);
 }
 
-function check_input($arg, $target) {
+/**
+ * @param string $arg
+ * @param string $target
+ * @throws InvalidInputException
+ */
+function check_input($arg, $target = null) {
 	if(!isset($_REQUEST[$arg]))
 		throw new InvalidInputException(sprintf(__('Required field "%s" is not set.'), $arg), $target);
 }
@@ -148,23 +154,23 @@ function redirect($context, $page) {
  * @param string $message
  * @param string $page
  * @param string $css_classes
- * @return Html
+ * @return Tag
  */
 function message_redirect(Context $context, $message, $page, $css_classes) {
 	$messages = $context->getMessages();
-	$messages[] = tag('div', new AttributeList("class=\"phpc-message $css_classes\""), $message);
+	$messages[] = new Tag('div', new AttributeList("class=\"phpc-message $css_classes\""), $message);
 
 	setcookie("messages", json_encode($messages));
 
 	redirect($context, $page);
 
-	return tag('', $messages);
+	return new Tag('', $messages);
 }
 
 /**
  * @param string $message
  * @param string $page
- * @return Html
+ * @return Tag
  */
 function error_message_redirect(Context $context, $message, $page) {
 	return message_redirect($context, $message, $page, 'ui-state-error');
@@ -263,7 +269,7 @@ function parse_desc($text)
  * @return int
  */
 function days_in_year($year) {
-	return 365 + create_datetime(1, 1, $year)->format('L');
+	return 365 + intval(create_datetime(1, 1, $year)->format('L'));
 }
 
 /**
@@ -272,8 +278,8 @@ function days_in_year($year) {
  * @return int
  */
 function days_between(\DateTimeInterface $date1, \DateTimeInterface $date2) {
-	$year1 = $date1->format('Y');
-	$year2 = $date2->format('Y');
+	$year1 = intval($date1->format('Y'));
+	$year2 = intval($date2->format('Y'));
 	if ($year2 < $year1)
 		return -days_between($date2, $date1);
 	$days = 0;
@@ -281,8 +287,8 @@ function days_between(\DateTimeInterface $date1, \DateTimeInterface $date2) {
 		$days += days_in_year($year);
 	}
 	// add day of year of $date2, subtract day of year of $date1
-	$days += $date2->format('z');
-	$days -= $date1->format('z');
+	$days += intval($date2->format('z'));
+	$days -= intval($date1->format('z'));
 	return $days;
 }
 
@@ -313,7 +319,7 @@ function set_login_token(Context $context, User $user) {
 	// expire credentials in 30 days.
 	$expires = $issuedAt + 30 * 24 * 60 * 60;
 	$token = array(
-		"iss" => $context->server,
+		"iss" => $context->proto . "://" . $context->host_name,
 		"iat" => $issuedAt,
 		"exp" => $expires,
 		"data" => array(
@@ -335,15 +341,15 @@ function phpc_do_logout() {
 // returns tag data for the links at the bottom of the calendar
 function footer(Context $context)
 {
-	$tag = tag('div', new AttributeList('class="phpc-bar ui-widget-content"'),
+	$tag = new Tag('div', new AttributeList('class="phpc-bar ui-widget-content"'),
 			"[" . __('Language') . ": {$context->getLang()}]" .
 			" [" . __('Timezone') . ": " . date_default_timezone_get() . "]");
 
 	if(defined('PHPC_DEBUG')) {
-		$tag->add(tag('a', new AttributeList('href="http://validator.w3.org/check/referer"'), 'Validate HTML'));
-		$tag->add(tag('a', new AttributeList('href="http://jigsaw.w3.org/css-validator/check/referer"'),
+		$tag->add(new Tag('a', new AttributeList('href="http://validator.w3.org/check/referer"'), 'Validate HTML'));
+		$tag->add(new Tag('a', new AttributeList('href="http://jigsaw.w3.org/css-validator/check/referer"'),
 					'Validate CSS'));
-		$tag->add(tag('span', "Internal Encoding: " . mb_internal_encoding() . " Output Encoding: " . mb_http_output()));
+		$tag->add(new Tag('span', "Internal Encoding: " . mb_internal_encoding() . " Output Encoding: " . mb_http_output()));
 	}
 
 	return $tag;
@@ -378,6 +384,13 @@ function get_languages()
 
 // returns the number of days in the week before the 
 //  taking into account whether we start on sunday or monday
+/**
+ * @param int $month
+ * @param int $day
+ * @param int $year
+ * @param int $week_start
+ * @return int
+ */
 function day_of_week($month, $day, $year, $week_start)
 {
 	return day_of_week_date(_create_datetime($month, $day, $year), $week_start);
@@ -393,9 +406,14 @@ function day_of_week_date(\DateTimeInterface $date, $week_start)
 }
 
 // returns the number of days in $month
+/**
+ * @param int $month
+ * @param int $year
+ * @return int
+ */
 function days_in_month($month, $year)
 {
-	return _create_datetime($month, 1, $year)->format('t');
+	return intval(_create_datetime($month, 1, $year)->format('t'));
 }
 
 //returns the number of weeks in $month
@@ -485,38 +503,38 @@ function week_of_year(\DateTimeInterface $date, $week_start)
 }
 
 /**
- * @param Calendar $calendar
+ * @param Context $context
  * @param ActionItem $item
  * @param string $eid
- * @return Html
+ * @return Tag
  */
-function create_event_link(Calendar $calendar, ActionItem $item, $eid)
+function create_event_link(Context $context, ActionItem $item, $eid)
 {
 	$item->addArgument("eid", $eid);
-	return create_action_link($calendar, $item);
+	return create_action_link($context, $item);
 }
 
 /**
- * @param Calendar $context
+ * @param Context $context
  * @param ActionItem $item
  * @param string $oid
- * @return Html
+ * @return Tag
  */
-function create_occurrence_link(Calendar $calendar, ActionItem $item, $oid)
+function create_occurrence_link(Context $context, ActionItem $item, $oid)
 {
 	$item->addArgument("oid", $oid);
-	return create_action_link($calendar, $item);
+	return create_action_link($context, $item);
 }
 
 /**
- * @param Calendar $calendar
+ * @param Context $context
  * @param ActionItem $item
  * @param null|string $year
  * @param null|string $month
  * @param null|string $day
- * @return Html
+ * @return Tag
  */
-function create_action_link_with_date(Calendar $calendar, ActionItem $item, $year = null, $month = null, $day = null)
+function create_action_link_with_date(Context $context, ActionItem $item, $year = null, $month = null, $day = null)
 {
 	if($year !== null)
 		$item->addArgument("year", $year);
@@ -525,7 +543,7 @@ function create_action_link_with_date(Calendar $calendar, ActionItem $item, $yea
 	if($day !== null)
 		$item->addArgument("day", $day);
 
-	return create_action_link($calendar, $item);
+	return create_action_link($context, $item);
 }
 
 /**
@@ -534,14 +552,27 @@ function create_action_link_with_date(Calendar $calendar, ActionItem $item, $yea
  * @param \DateTimeInterface $date
  * @return string
  */
-function action_date_url(Context $context, $action, \DateTimeInterface $date) {
-	return "{$context->script}?action={$action}&amp;year={$date->format('Y')}&amp;month={$date->format('n')}&amp;day={$date->format('j')}";
+function action_date_url_from_datetime(Context $context, $action, \DateTimeInterface $date) {
+	return action_date_url($context, $action, $date->format('Y'), $date->format('n'), $date->format('j'));
+}
+
+/**
+ * @param Context $context
+ * @param string $action
+ * @param int $year
+ * @param int $month
+ * @param int $day
+ * @return string
+ */
+function action_date_url(Context $context, $action, $year, $month, $day) {
+	return action_url($context, $action, ['year' => $year, 'month' => $month, 'day' => $day]);
 }
 
 /**
  * @param Context $context
  * @param string $action
  * @param string[] $parameters
+ * @return string
  */
 function action_url(Context $context, $action, $parameters = array()) {
 	$url = "{$context->script}?action={$action}";
@@ -554,7 +585,7 @@ function action_url(Context $context, $action, $parameters = array()) {
 /**
  * @param Context $context
  * @param ActionItem $item
- * @return string
+ * @return Tag
  */
 function create_action_link(Context $context, ActionItem $item)
 {
@@ -587,7 +618,7 @@ function create_action_link(Context $context, ActionItem $item)
 	} else {
 		$attributes = new AttributeList($url);
 	}
-	return tag('a', $attributes, $item->getText())->toString();
+	return new Tag('a', $attributes, $item->getText());
 }
 
 // takes a menu $html and appends an entry
@@ -599,13 +630,8 @@ function create_action_link(Context $context, ActionItem $item)
  */
 function menu_item(Context $context, $action, $text)
 {
-	
-	return create_action_link($context, new ActionItem($text, $action,
-			array(
-					'year' => $context->getYear(),
-					'month' => $context->getMonth(),
-					'day' => $context->getDay()
-			)));
+	$url = action_date_url($context, $action, $context->getYear(), $context->getMonth(), $context->getDay());
+	return "<a href=\"$url\">$text</a>";
 }
 
 // creates a hidden input for a form
@@ -613,22 +639,22 @@ function menu_item(Context $context, $action, $text)
 /**
  * @param string $name
  * @param string $value
- * @return Html
+ * @return Tag
  */
 function create_hidden($name, $value)
 {
-	return tag('input', new AttributeList("name=\"$name\"", "value=\"$value\"", 'type="hidden"'));
+	return new Tag('input', new AttributeList("name=\"$name\"", "value=\"$value\"", 'type="hidden"'));
 }
 
 // creates a submit button for a form
 // return tag data for the button
 /**
  * @param string $value
- * @return Html
+ * @return Tag
  */
 function create_submit($value)
 {
-	return tag('input', new AttributeList("value=\"$value\"", 'type="submit"'));
+	return new Tag('input', new AttributeList("value=\"$value\"", 'type="submit"'));
 }
 
 // creates a text entry for a form
@@ -636,7 +662,7 @@ function create_submit($value)
 /**
  * @param string $name
  * @param null|string $value
- * @return Html
+ * @return Tag
  */
 function create_text($name, $value = null)
 {
@@ -644,18 +670,18 @@ function create_text($name, $value = null)
 	if($value !== null) {
 		$attributes->add("value=\"$value\"");
 	}
-	return tag('input', $attributes);
+	return new Tag('input', $attributes);
 }
 
 // creates a password entry for a form
 // returns tag data for the entry
 /**
  * @param string $name
- * @return Html
+ * @return Tag
  */
 function create_password($name)
 {
-	return tag('input', new AttributeList("name=\"$name\"", 'type="password"'));
+	return new Tag('input', new AttributeList("name=\"$name\"", 'type="password"'));
 }
 
 // creates a checkbox for a form
@@ -665,16 +691,16 @@ function create_password($name)
  * @param string $value
  * @param bool $checked
  * @param null|string $label
- * @return array|Html
+ * @return array|Tag
  */
 function create_checkbox($name, $value, $checked = false, $label = null)
 {
 	$attrs = new AttributeList("id=\"$name\"", "name=\"$name\"", 'type="checkbox"', "value=\"$value\"");
 	if($checked)
 		$attrs->add('checked="checked"');
-	$input = tag('input', $attrs);
+	$input = new Tag('input', $attrs);
 	if($label !== null)
-		return array($input, tag('label', new AttributeList("for=\"$name\""), $label));
+		return array($input, new Tag('label', new AttributeList("for=\"$name\""), $label));
 	else
 		return $input;
 }
@@ -836,10 +862,10 @@ function get_date_format_list()
 
 function display_exception(\Exception $e, $navbar = false)
 {
-	$results = tag('');
+	$results = new Tag('');
 	if($navbar !== false)
 		$results->add($navbar);
-	$backtrace = tag("ol");
+	$backtrace = new Tag("ol");
 	foreach($e->getTrace() as $bt) {
 		$filename = basename($bt["file"]);
 		$args = array();
@@ -859,12 +885,12 @@ function display_exception(\Exception $e, $navbar = false)
 		} else {
 			$args_string = "...";
 		}
-		$backtrace->add(tag("li", "$filename({$bt["line"]}): {$bt["function"]}($args_string)"));
+		$backtrace->add(new Tag("li", "$filename({$bt["line"]}): {$bt["function"]}($args_string)"));
 	}
-	$results->add(tag('div', new AttributeList('class="php-calendar"'),
-				tag('h2', __('Error')),
-				tag('p', $e->getMessage()),
-				tag('h3', __('Backtrace')),
+	$results->add(new Tag('div', new AttributeList('class="php-calendar"'),
+				new Tag('h2', __('Error')),
+				new Tag('p', $e->getMessage()),
+				new Tag('h3', __('Backtrace')),
 				$backtrace));
 	return $results;
 }
@@ -881,11 +907,15 @@ function get_page($action)
 		case 'logout':
 			return new LogoutPage;
 		default:
-			soft_error(__('Invalid action'));
+			throw new \Exception(__('Invalid action'));
 	}
 }
 
 // takes a number of the month, returns the name
+/**
+ * @param int $month
+ * @return string
+ */
 function month_name($month)
 {
 	$month = ($month - 1) % 12 + 1;
@@ -915,6 +945,7 @@ function month_name($month)
 		case 12:
 			return __('December');
 	}
+	return ''; // This can't happen
 }
 
 //takes a day number of the week, returns a name (0 for the beginning)
@@ -938,8 +969,13 @@ function day_name($day)
 		case 6:
 			return __('Saturday');
 	}
+	return ''; // This can't happen
 }
 
+/**
+ * @param int $month
+ * @return string
+ */
 function short_month_name($month)
 {
 	$month = ($month - 1) % 12 + 1;
@@ -970,17 +1006,22 @@ function short_month_name($month)
 		case 12:
 			return __('Dec');
 	}
+	return ''; // This can't happen
 }
 
+/**
+ * @param Context $context
+ * @throws \Exception
+ */
 function verify_token(Context $context)
 {
 	if(!$context->getUser()->is_user())
-		return true;
+		return;
 
 	if(empty($_REQUEST["phpc_token"]) || $_REQUEST["phpc_token"] != $context->token) {
 		//echo "<pre>real token: $token\n";
 		//echo "form token: {$_REQUEST["phpc_token"]}</pre>";
-		soft_error(__("Secret token mismatch. Possible request forgery attempt."));
+		throw new \Exception(__("Secret token mismatch. Possible request forgery attempt."));
 	}
 }
 
@@ -990,7 +1031,7 @@ function create_config_input($element, $default = false)
 	$name = $element[0];
 	$text = $element[1];
 	$type = $element[2];
-	$value = false;
+	$value = null;
 	if(isset($element[3]))
 		$value = $element[3];
 
@@ -1090,20 +1131,6 @@ function print_update_form() {
 </html>";
 }
 
-/*
- * creates an Html data structure
- * arguments are tagName [AttributeList] [Html | array | string] ...
- * where array contains an array, Html, or a string, same requirements for that
- * array
- */
-function tag()
-{
-        $args = func_get_args();
-        $html = new Html();
-        call_user_func_array(array(&$html, '__construct'), $args);
-        return $html;
-}
-
 function read_login_token(Context $context) {
 	if(isset($_COOKIE["identity"])) {
 
@@ -1122,7 +1149,7 @@ function read_login_token(Context $context) {
  * @return bool|string
  */
 function index_of_date(\DateTimeInterface $date) {
-	$date->format('Y-m-d');
+	return $date->format('Y-m-d');
 }
 
 /**
@@ -1213,4 +1240,42 @@ function create_datetime($month, $day, $year) {
 	normalize_date($month, $day, $year);
 	return _create_datetime($month, $day, $year);
 }
-?>
+
+/**
+ * @param Calendar $calendar
+ * @param User $user
+ * @param \DateTimeInterface $from
+ * @param \DateTimeInterface $to
+ * @return Occurrence[][]
+ */
+function get_occurrences_by_day(Calendar $calendar, User $user, \DateTimeInterface $from, \DateTimeInterface $to) {
+	$all_occurrences = $calendar->get_occurrences_by_date_range($from, $to);
+	$occurrences_by_day = array();
+	
+	foreach ($all_occurrences as $occurrence) {
+		if(!$occurrence->can_read($user))
+			continue;
+
+			$end = $occurrence->getEnd();
+
+			$start = $occurrence->getStart();
+
+			// if the event started before the range we're showing
+			$diff = $from->diff($start);
+			if($diff < 0)
+				$diff = new \DateInterval("P0D");
+
+				// put the event in every day until the end
+				for($date = $start->add($diff); $date < $to && $date < $end; $date = $date->add(new \DateInterval("P1D"))) {
+					$key = index_of_date($date);
+					if(!isset($occurrences_by_day[$key]))
+						$days_events[$key] = array();
+						if(sizeof($occurrences_by_day[$key]) == $calendar->events_max)
+							$days_events[$key][] = null;
+							if(sizeof($occurrences_by_day[$key]) > $calendar->events_max)
+								continue;
+								$days_events[$key][] = $occurrence;
+				}
+	}
+	return $occurrences_by_day;
+}

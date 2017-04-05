@@ -1,10 +1,8 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
 require_once __DIR__ . "/../src/helpers.php";
 
-class DaysInYearTest extends TestCase
+class DaysInYearTest extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * @dataProvider yearProvider
