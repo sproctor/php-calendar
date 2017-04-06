@@ -58,7 +58,11 @@ class Context {
 		require_once(__DIR__ . '/schema.php');
 		if ($this->db->get_config('version') < PHPC_DB_VERSION) {
 			if(isset($_GET['update'])) {
-				$this->db->update($this);
+				$this->db->update();
+                if (!$this->db->update())
+                	$this->addMessage(__('Already up to date.'));
+
+                redirect($this, $this->script);
 			} else {
 				print_update_form();
 			}

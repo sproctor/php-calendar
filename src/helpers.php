@@ -140,9 +140,10 @@ function minute_pad($minute)
 }
 
 /**
+ * @param Context $context
  * @param string $page
  */
-function redirect($context, $page) {
+function redirect(Context $context, $page) {
 	$dir = $page{0} == '/' ?  '' : dirname($context->script) . '/';
 	$url = $context->proto . '://'. $context->host_name . $dir . $page;
 
@@ -301,7 +302,8 @@ function days_between(\DateTimeInterface $date1, \DateTimeInterface $date2) {
 function login_user(Context $context, $username, $password)
 {
 	$user = $context->db->get_user_by_name($username);
-	if(!$user || $user->get_password() != md5($password))
+	echo "<pre>"; var_dump($user); echo "</pre>";
+	if(!$user || !password_verify($password, $user->getPasswordHash()))
 		return false;
 
 	$context->setUser($user);

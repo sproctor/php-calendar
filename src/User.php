@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2009 Sean Proctor
+ * Copyright 2017 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,29 +18,48 @@
 namespace PhpCalendar;
 
 class User {
+	/** @var int */
 	private $uid;
+	/** @var string */
 	private $username;
-	private $password;
+	/** @var string */
+	private $hash;
+	/** @var string */
 	private $admin;
+	/** @var bool */
 	private $password_editable;
+	/** @var int */
 	private $default_cid;
+	/** @var string */
 	private $timezone;
+	/** @var string */
 	private $language;
 	private $groups;
+	/** @var bool */
 	private $disabled;
+	/** @var Database */
 	private $db;
 
+    /**
+     * User constructor.
+     * @param Database $db
+     */
 	private function __construct(Database $db)
 	{
 		$this->db = $db;
 	}
 
+    /**
+     * @param Database $db
+     * @param $map
+     * @return User
+     */
 	public static function createFromMap(Database $db, $map) {
 		$user = new User($db);
 
 		$user->uid = $map['uid'];
 		$user->username = $map['username'];
-		$user->password = $map['password'];
+		$user->hash = $map['password'];
 		$user->admin = $map['admin'];
 		$user->password_editable = $map['password_editable'];
 		$user->default_cid = $map['default_cid'];
@@ -51,6 +70,10 @@ class User {
 		return $user;
 	}
 
+    /**
+     * @param Database $db
+     * @return User
+     */
 	public static function createAnonymous(Database $db) {
 		$user = new User($db);
 
@@ -65,24 +88,39 @@ class User {
 		return $user;
 	}
 
+    /**
+     * @return string
+     */
 	function get_username()
 	{
 		return $this->username;
 	}
 
+    /**
+     * @return int
+     */
 	function get_uid()
 	{
 		return $this->uid;
 	}
 
-	function get_password() {
-		return $this->password;
+    /**
+     * @return string
+     */
+	function getPasswordHash() {
+		return $this->hash;
 	}
 
+    /**
+     * @return bool
+     */
 	function is_password_editable() {
 		return $this->password_editable;
 	}
 
+    /**
+     * @return string
+     */
 	function get_timezone() {
 		return $this->timezone;
 	}
@@ -134,5 +172,3 @@ function getAnonymousLanguage() {
 	else
 		return NULL;
 }
-
-?>

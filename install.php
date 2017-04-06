@@ -26,9 +26,6 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 define('PHPC_ROOT_PATH', __DIR__);
 define('PHPC_CONFIG_FILE', PHPC_ROOT_PATH . "/config.php");
-	
-if(!function_exists("mysqli_connect"))
-	soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
 
 require_once(PHPC_ROOT_PATH . "/src/helpers.php");
 require_once(PHPC_ROOT_PATH . "/src/schema.php");
@@ -47,26 +44,10 @@ require_once(PHPC_ROOT_PATH . "/src/schema.php");
 if(file_exists(PHPC_CONFIG_FILE)) {
 	$config = read_config(PHPC_CONFIG_FILE);
 	if(isset($config["sql_host"])) {
-		$dbh = connect_db($config["sql_host"], $config["sql_user"], $config["sql_passwd"], $config["sql_database"]);
+	    $db = new Database($config);
+	    $have_calendar = sizeof($db->get_calendars()) > 0;
 
-		$query = "SELECT *\n"
-			."FROM `" . $config["sql_prefix"] .  "calendars`\n";
-
-		$sth = $dbh->query($query);
-		$have_calendar = $sth && $sth->fetch_assoc();
-
-		$existing_version = 0;
-
-		$query = "SELECT `value`\n"
-			."FROM `" . $config["sql_prefix"] .  "config`\n"
-			."WHERE `name`='version'";
-
-		$sth = $dbh->query($query);
-		if($sth) {
-			$result = $sth->fetch_assoc();
-			if(!empty($result['value']))
-				$existing_version = $result['value'];
-		}
+		$existing_version = $db->get_config('version');
 
 		if($have_calendar) {
 
@@ -110,7 +91,7 @@ if(!isset($_POST['my_hostname'])
 		&& !isset($_POST['admin_pass'])) {
 	get_admin();
 } else {
-	add_calendar();
+	add_calendar($config);
 }
 
 function check_config()
@@ -221,11 +202,21 @@ function add_sql_user_db()
 	$create_db = isset($_POST['create_db']) && $_POST['create_db'] == 'yes';
 	
 	// Make the database connection.
-	if($create_user) {
-		$dbh = connect_db($my_hostname, $my_adminname, $my_adminpasswd);
-	} else {
-		$dbh = connect_db($my_hostname, $my_username, $my_passwd);
-	}
+
+
+    $dsn = "mysql:host={$my_hostname};charset=utf8";
+
+    // Make the database connection.
+    try {
+        if($create_user) {
+            $dbh = new \PDO($dsn, $my_adminname, $my_adminpasswd);
+        } else {
+            $dbh = new \PDO($dsn, $my_username, $my_passwd);
+        }
+        $dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+    } catch (\PDOException $e) {
+        soft_error(__("Database connect failed: " . $e->getMessage()));
+    }
 
 	$string = "<h3>Step 2: Database Setup</h3>";
 
@@ -289,17 +280,11 @@ function install_base()
 	$writer->toFile(PHPC_CONFIG_FILE, new \Zend\Config\Config($config));
 
 
-	// Make the database connection.
-	$dbh = connect_db($my_hostname, $my_username, $my_passwd, $my_database);
+	$db = new Database($config);
 
-	create_tables($dbh);
+	create_tables($db);
 
-	$query = "REPLACE INTO `" . $my_prefix . "config`\n"
-		."(`name`, `value`)\n"
-		."VALUES ('version', '".PHPC_DB_VERSION."')";
-
-	$dbh->query($query)
-		or install_db_error($dbh, 'Error creating version row.', $query);
+	$db->set_config('version', PHPC_DB_VERSION);
 
 	echo "<p>Config file created at \"". realpath(PHPC_CONFIG_FILE) ."\"</p>"
 		."<p>Calendars database created</p>\n"
@@ -307,17 +292,19 @@ function install_base()
 		."</div>\n";
 }
 
-function create_tables($dbh)
+/**
+ * @param Database $db
+ */
+function create_tables(Database $db)
 {
-	global $config;
-
 	$drop_tables = isset($_POST["drop_tables"]) && $_POST["drop_tables"] == "yes";
 
-	foreach(phpc_table_schemas($config["sql_prefix"]) as $table) {
-		$table->create($dbh, $drop_tables);
-	}
+	$db->create($drop_tables);
 }
 
+/**
+ *
+ */
 function get_admin()
 {
 	echo '<h3>Step 4: Administration account</h3>';
@@ -338,36 +325,21 @@ function get_admin()
 
 }
 
-function add_calendar()
+/**
+ * @param $config
+ */
+function add_calendar($config)
 {
-	global $config;
-
-	$calendar_title = 'PHP-Calendar';
-
 	// Make the database connection.
-	$dbh = connect_db($config["sql_host"], $config["sql_user"], $config["sql_passwd"], $config["sql_database"]);
-	$prefix = $config["sql_prefix"];
+	$db = new Database($config);
 
-	$query = "INSERT INTO `{$prefix}calendars`\n"
-		."(`cid`) VALUE (1)";
-
-	$dbh->query($query)
-		or install_db_error($dbh, 'Error reading options', $query);
-
-	$cid = $dbh->insert_id;
+	$db->create_calendar();
 
 	echo "<h3>Final Step</h3>\n";
 	
 	echo "<p>Saved default configuration</p>\n";
 
-	$passwd = md5($_POST['admin_pass']);
-
-	$query = "INSERT INTO `{$prefix}users`\n"
-		."(`username`, `password`, `admin`) VALUES\n"
-		."('{$_POST["admin_user"]}', '$passwd', 1)";
-
-	$dbh->query($query)
-		or install_db_error($dbh, 'Error adding admin.', $query);
+	$db->create_user($_POST['admin_user'], $_POST['admin_pass'], true);
 	
 	echo "<p>Admin account created.</p>";
 	echo "<p>Now you should delete install.php file from root directory (for security reasons).</p>";
@@ -378,30 +350,17 @@ function add_calendar()
 echo '</form></body></html>';
 
 // called when there is an error involving the DB
-function install_db_error($dbh, $str, $query = "")
+/**
+ * @param \PDO $dbh
+ * @param string $str
+ * @param string $query
+ */
+function install_db_error(\PDO $dbh, $str, $query = "")
 {
-	$string = "$str<br />" . $dbh->error;
+	$string = "$str<br />" . json_encode($dbh->errorInfo());
 
 	if($query != "")
 		$string .= "<br />SQL query: $query";
 
 	soft_error($string);
 }
-
-function connect_db($hostname, $username, $passwd, $database = false)
-{
-	$dbh = new \mysqli($hostname, $username, $passwd);
-
-	if(mysqli_connect_errno()) {
-		soft_error("Database connect failed (" . mysqli_connect_errno()
-				. "): " . mysqli_connect_error());
-	}
-
-	if($database)
-		$dbh->select_db($database);
-	$dbh->query("SET NAMES 'utf8'");
-
-	return $dbh;
-}
-
-?>

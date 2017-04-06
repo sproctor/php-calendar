@@ -167,7 +167,7 @@ function phpc_users_table($prefix) {
 
 	$table->addColumn('uid', 'int(11) unsigned NOT NULL auto_increment');
 	$table->addColumn('username', 'varchar(255) COLLATE utf8_unicode_ci NOT NULL');
-	$table->addColumn('password', 'char(32) COLLATE utf8_unicode_ci NOT NULL');
+	$table->addColumn('password', 'char(255) COLLATE utf8_unicode_ci NOT NULL');
 	$table->addColumn('admin', "tinyint(1) NOT NULL DEFAULT '0'");
 	$table->addColumn('password_editable', "tinyint(1) NOT NULL DEFAULT '1'");
 	$table->addColumn('default_cid', "int(11)");

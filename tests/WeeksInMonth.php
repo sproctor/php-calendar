@@ -10,7 +10,10 @@ class WeeksInMonthTest extends PHPUnit_Framework_TestCase
 	public function testWeeksInMonth($month, $year, $week_start, $expected) {
 		$this->assertEquals($expected, PhpCalendar\weeks_in_month($month, $year, $week_start));
 	}
-	
+
+    /**
+     * @return array
+     */
 	public function dateProvider() {
 		return [
 				[1, 2016, 0, 6],

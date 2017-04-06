@@ -19,12 +19,16 @@ namespace PhpCalendar;
 
 class Database
 {
+    /** @var \PDO */
     private $dbh;
+    /** @var Calendar[] */
     private $calendars;
+    /** @var string[] */
     private $config;
     private $event_columns;
     private $occurrence_columns;
     private $user_fields;
+    /** @var string */
     private $prefix;
 
     /**
@@ -772,7 +776,7 @@ class Database
     {
         $query = "REPLACE INTO `" . $this->prefix . "config`\n"
             . "(`name`, `value`) VALUES\n"
-            . "(':name', ':value')";
+            . "(:name, :value)";
 
         $sth = $this->dbh->prepare($query);
         $sth->execute(array(':name' => $name, ':value' => $value));
@@ -843,7 +847,7 @@ class Database
     {
         $query = "SELECT {$this->user_fields}\n"
             . "FROM " . $this->prefix . "users\n"
-            . "WHERE username=':username'";
+            . "WHERE username=:username";
 
         $sth = $this->dbh->prepare($query);
         $sth->execute(array(':username' => $username));
@@ -887,10 +891,10 @@ class Database
         $admin = $make_admin ? 1 : 0;
         $query = "INSERT into `" . $this->prefix . "users`\n"
             . "(`username`, `password`, `admin`) VALUES\n"
-            . "(':username', ':password', $admin)";
+            . "(:username, :password, $admin)";
 
         $sth = $this->dbh->prepare($query);
-        $sth->execute(array(':username' => $username, ':password' => $password));
+        $sth->execute(array(':username' => $username, ':password' => password_hash($password, PASSWORD_DEFAULT)));
 
         return $this->dbh->lastInsertId();
     }
@@ -916,12 +920,14 @@ class Database
     function set_calendar_config($cid, $name, $value)
     {
         $query = "UPDATE `" . $this->prefix . "calendars`\n"
-            . "SET `:name`=':value'\n"
+            . "SET :name=:value\n"
             . "WHERE `cid`=:cid";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
-        $sth->execute(array(':name' => $name, ':value' => $value));
+        $sth->bindValue(':name', $name);
+        $sth->bindValue(':value', $value);
+        $sth->execute();
     }
 
     /**
@@ -931,7 +937,7 @@ class Database
     function set_password($uid, $password)
     {
         $query = "UPDATE `" . $this->prefix . "users`\n"
-            . "SET `password`=':password'\n"
+            . "SET `password`=:password\n"
             . "WHERE `uid`=:uid";
 
         $sth = $this->dbh->prepare($query);
@@ -946,7 +952,7 @@ class Database
     function set_timezone($uid, $timezone)
     {
         $query = "UPDATE `" . $this->prefix . "users`\n"
-            . "SET `timezone`=':timezone'\n"
+            . "SET `timezone`=:timezone\n"
             . "WHERE `uid`=:uid";
 
         $sth = $this->dbh->prepare($query);
@@ -961,7 +967,7 @@ class Database
     function set_language($uid, $language)
     {
         $query = "UPDATE `" . $this->prefix . "users`\n"
-            . "SET `language`=':language'\n"
+            . "SET `language`=:language\n"
             . "WHERE `uid`=:uid";
 
         $sth = $this->dbh->prepare($query);
@@ -1025,7 +1031,7 @@ class Database
         $query = "INSERT INTO `" . $this->prefix . "events`\n"
             . "(`cid`, `owner`, `subject`, `description`, "
             . "`readonly`, `catid`)\n"
-            . "VALUES (:cid, :uid, ':subject', ':description', "
+            . "VALUES (:cid, :uid, :subject, :description, "
             . "$fmt_readonly, $catid_str)";
 
         $sth = $this->dbh->prepare($query);
@@ -1071,7 +1077,7 @@ class Database
     function add_event_field($eid, $fid, $value)
     {
         $query = "INSERT INTO `{$this->prefix}event_fields`\n"
-            . "SET `eid`=:eid, `fid`=:fid, `value`=':value'";
+            . "SET `eid`=:eid, `fid`=:fid, `value`=:value";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
@@ -1125,8 +1131,8 @@ class Database
 
         $query = "UPDATE `{$this->prefix}events`\n"
             . "SET\n"
-            . "`subject`=':subject',\n"
-            . "`description`=':description',\n"
+            . "`subject`=:subject,\n"
+            . "`description`=:description,\n"
             . "`readonly`=$fmt_readonly,\n"
             . "`mtime`=NOW(),\n"
             . "`catid`=" . ($catid !== false ? ":catid" : "NULL") . "\n"
@@ -1152,7 +1158,7 @@ class Database
     function create_category($cid, $name, $text_color, $bg_color, $gid = false)
     {
         $query = "INSERT INTO `{$this->prefix}categories`\n"
-            . "SET `cid`=:cid, `name`=':name', `text_color`=':text_color', `bg_color`=':bg_color'\n";
+            . "SET `cid`=:cid, `name`=:name, `text_color`=:text_color, `bg_color`=:bg_color\n";
         if ($gid !== false)
             $query .= ", `gid`=:gid";
 
@@ -1168,7 +1174,7 @@ class Database
     function create_group($cid, $name)
     {
         $query = "INSERT INTO `{$this->prefix}groups`\n"
-            . "SET `cid`=:cid, `name`=':name'";
+            . "SET `cid`=:cid, `name`=:name";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
@@ -1189,10 +1195,10 @@ class Database
         if ($format === false)
             $format_str = 'NULL';
         else
-            $format_str = "':format'";
+            $format_str = ":format";
 
         $query = "INSERT INTO `{$this->prefix}fields`\n"
-            . "`cid`=:cid, `name`=':name', `required`=:required, `format`=$format_str";
+            . "`cid`=:cid, `name`=:name, `required`=:required, `format`=$format_str";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
@@ -1215,7 +1221,7 @@ class Database
     function modify_category($catid, $name, $text_color, $bg_color, $gid)
     {
         $query = "UPDATE `{$this->prefix}categories`\n"
-            . "SET `name`=':name', `text_color`=':text_color', `bg_color`=':bg_color', `gid`=:gid\n"
+            . "SET `name`=:name, `text_color`=:text_color, `bg_color`=:bg_color, `gid`=:gid\n"
             . "WHERE `catid`=:catid";
 
         $sth = $this->dbh->prepare($query);
@@ -1234,7 +1240,7 @@ class Database
     function modify_group($gid, $name)
     {
         $query = "UPDATE `{$this->prefix}groups`\n"
-            . "SET `name`=':name'\n"
+            . "SET `name`=:name\n"
             . "WHERE `gid`=:gid";
 
         $sth = $this->dbh->prepare($query);
@@ -1256,10 +1262,10 @@ class Database
         if ($format === false)
             $format_val = 'NULL';
         else
-            $format_val = "':format'";
+            $format_val = ":format";
 
         $query = "UPDATE `{$this->prefix}fields`\n"
-            . "SET `name`=':name', `required`=:required, `format`=$format_val\n"
+            . "SET `name`=:name, `required`=:required, `format`=$format_val\n"
             . "WHERE `fid`=:fid";
 
         $sth = $this->dbh->prepare($query);
@@ -1352,22 +1358,36 @@ class Database
         $sth->execute();
     }
 
-    function update(Context $context)
+    /**
+     * @return string[]
+     */
+    function update()
     {
-        $message_tags = tag('div', tag('div', __("Updating calendar")));
+        $updates = [];
 
-        $updated = false;
         foreach (phpc_table_schemas($this->prefix) as $table) {
-            $tags = $table->update($this->dbh);
-            $message_tags->add($tags);
-            if (sizeof($tags) > 0)
-                $updated = true;
+            $updates[] = $table->update($this->dbh);
         }
-        $context->db->set_config("version", PHPC_DB_VERSION);
 
-        if (!$updated)
-            $message_tags->add(tag('div', __('Already up to date.')));
+        $this->set_config("version", PHPC_DB_VERSION);
 
-        message_redirect($context, $message_tags, $context->script);
+        return $updates;
+    }
+
+    /**
+     * @param bool $drop
+     * @return string[]
+     */
+    function create($drop = false)
+    {
+        $updates = [];
+
+        foreach (phpc_table_schemas($this->prefix) as $table) {
+            $updates[] = $table->create($this->dbh, $drop);
+        }
+
+        $this->set_config("version", PHPC_DB_VERSION);
+
+        return $updates;
     }
 }

@@ -22,26 +22,40 @@ class SqlTable {
 	var $keys;
 	var $name;
 
+    /**
+     * SqlTable constructor.
+     * @param $name
+     * @param SqlColumn[] $columns
+     * @param SqlKey[] $keys
+     */
 	function __construct($name, $columns = array(), $keys = array()) {
 		$this->name = $name;
 		$this->columns = $columns;
 		$this->keys = $keys;
 	}
 
+    /**
+     * @param string $name
+     * @param string $type
+     */
 	function addColumn($name, $type) {
 		$this->columns[] = new SqlColumn($name, $type);
 	}
 
+    /**
+     * @param string $name
+     * @param $non_unique
+     * @param $columns
+     */
 	function addKey($name, $non_unique, $columns) {
 		$this->keys[] = new SqlKey($name, $non_unique, $columns);
 	}
 
 	/**
-	 * @param \mysqli $dbh
+	 * @param \PDO $dbh
 	 * @param bool $drop
-	 * @return bool
 	 */
-	function create(\mysqli $dbh, $drop = false) {
+	function create(\PDO $dbh, $drop = false) {
 		//echo "creating table\n";
 		if ($drop) {
 			$query = "DROP TABLE IF EXISTS `{$this->name}`";
@@ -63,21 +77,24 @@ class SqlTable {
 			$query .= ",\n" . $key->get_create_query();
 		}
 		$query .= ')';
-		$result = $dbh->query($query);
-		if (!$result)
-			$this->db_error($dbh, __("Error creating table"), $query);
-		return $result;
+		try {
+			// echo "<pre>Creating table '{$this->name}': $query\n</pre>";
+            $dbh->exec($query);
+        } catch(\PDOException $e) {
+            $this->db_error($dbh, __("Error creating table"), $query);
+        }
 	}
 
 	/**
-	 * @param \mysqli $dbh
-	 * @return array|bool
+	 * @param \PDO $dbh
+	 * @return string[]
 	 */
-	function update(\mysqli $dbh) {
+	function update(\PDO $dbh) {
 		// Check if the table exists
-		$result = $dbh->query("SHOW TABLES LIKE '{$this->name}'");
-		if($result->num_rows == 0) {
-			return $this->create($dbh);
+		$stmt = $dbh->query("SHOW TABLES LIKE '{$this->name}'");
+		if($stmt->rowCount() == 0) {
+			$this->create($dbh);
+			return [__("Created table") . ": {$this->name}"];
 		} else {
 			$column_messages = $this->updateColumns($dbh);
 			$key_messages = $this->updateKeys($dbh);
@@ -86,20 +103,20 @@ class SqlTable {
 	}
 
 	/**
-	 * @param \mysqli $dbh
-	 * @return array
+	 * @param \PDO $dbh
+	 * @return string[]
 	 */
-	function updateColumns(\mysqli $dbh) {
-		$tags = array();
+	function updateColumns(\PDO $dbh) {
+		$updates = array();
 
 		// Update Columns
 		$query = "SHOW FULL COLUMNS FROM {$this->name}";
 		$sth = $dbh->query($query);
 		//echo "<pre>";
 		$current_columns = array();
-		while($sth && $result = $sth->fetch_assoc()) {
+		while($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$current_columns[$result['Field']] = $result;
-			//print_r($result);
+			//var_dump($result);
 		}
 		foreach($this->columns as $column) {
 			if (isset($current_columns[$column->name])) {
@@ -123,9 +140,9 @@ class SqlTable {
 				if ($type != $column->type) {
 					$query = "ALTER TABLE `{$this->name}`\n"
 						.$column->get_update_query();
-					$tags[] = tag('div', __('Updating column: ') . $column->name);
-					//print_r($existing_column);
-				//echo "existing type: $type\nnew type: {$column->type}\n";
+					$updates[] = __('Updating column: ') . $this->name . '.' . $column->name;
+					//var_dump($existing_column);
+					//echo "existing type: $type\nnew type: {$column->type}\n";
 					//echo $query, "\n";
 					$dbh->query($query)
 						or $this->db_error($dbh, "error in query", $query);
@@ -136,28 +153,26 @@ class SqlTable {
 				//echo $query, "\n";
 				$dbh->query($query)
 					or $this->db_error($dbh, "error in query", $query);
-				$tags[] = tag('div', __('Added column: ')
-						. $this->name . '.'
-						. $column->name);
+				$updates[] = __('Added column: ') . $this->name . '.' . $column->name;
 			}
 		}
 		//echo "</pre>";
-		return $tags;
+		return $updates;
 	}
 
 	/**
-	 * @param \mysqli $dbh
-	 * @return Tag[]
+	 * @param \PDO $dbh
+	 * @return string[]
 	 */
-	function updateKeys(\mysqli $dbh) {
-		$tags = array();
+	function updateKeys(\PDO $dbh) {
+		$updates = array();
 
 		// Upate Keys
 		$query = "SHOW INDEX FROM {$this->name}";
 		$sth = $dbh->query($query);
 		//echo "<pre>";
 		$current_keys = array();
-		while($result = $sth->fetch_assoc()) {
+		while($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
 			$key_name = $result['Key_name'];
 			if (isset($current_keys[$key_name])) {
 				$key = $current_keys[$key_name];
@@ -182,7 +197,7 @@ class SqlTable {
 				//echo "existing columns: $existing_columns\n";
 				//echo "new columns: {$key->columns}\n";
 					//echo "running query: $query\n";
-					$tags[] = tag('div', __("Updating key: ") . $key->name);
+					$updates[] = __("Updating key: ") . $this->name . '.' . $key->name;
 					$dbh->query($query)
 						or $this->db_error($dbh, "error in query", $query);
 				}
@@ -192,23 +207,26 @@ class SqlTable {
 			//echo $query, "\n";
 				$dbh->query($query)
 					or $this->db_error($dbh, "error in query", $query);
+                $updates[] = __('Added column: ') . $this->name . '.' . $key->name;
 			}
 		}
 		//echo "</pre>";
-		return $tags;
+		return $updates;
 	}
 
-	static function db_error($dbh, $str, $query = "") {
-		$string = $str . "<pre>" . htmlspecialchars($dbh->error,
-				ENT_COMPAT, "UTF-8") . "</pre>";
+    /**
+     * @param \PDO $dbh
+     * @param string $str
+     * @param string $query
+     */
+	static function db_error(\PDO $dbh, $str, $query = "") {
+		echo $str . "<pre>" . json_encode($dbh->errorInfo()) . "\n";
 		if($query != "") {
-			$string .= "<pre>" . __('SQL query') . ": "
-				. htmlspecialchars($query, ENT_COMPAT, "UTF-8")
-				. "</pre>";
+			echo __('SQL query') . ": "
+				. htmlspecialchars($query, ENT_COMPAT, "UTF-8") . "\n";
 		}
-		die($string);
+		debug_print_backtrace();
+		print "</pre>";
+		die;
 	}
 }
-
-
-?>
