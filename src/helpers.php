@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016 Sean Proctor
+ * Copyright 2017 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@
 */
 
 namespace PhpCalendar;
+
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 define('PHPC_CHECK', 1);
 define('PHPC_TEXT', 2);
@@ -57,12 +59,14 @@ function load_config(Context $context, $filename) {
 	// Run the installer if we have no config file
 	// This doesn't work when embedded from outside
 	if(!file_exists($filename)) {
+		throw new InvalidConfigException();
 		redirect($context, 'install.php');
 		exit;
 	}
 	$config = read_config($filename);
 
 	if(!isset($config["sql_host"])) {
+		throw new InvalidConfigException();
 		redirect($context, 'install.php');
 		exit;
 	}
@@ -98,6 +102,11 @@ class PermissionException extends \Exception {
 function permission_error($message)
 {
 	throw new PermissionException(htmlspecialchars($message, ENT_COMPAT, "UTF-8"));
+}
+
+class InvalidConfigException extends \Exception {
+	function __construct() {
+	}
 }
 
 class InvalidInputException extends \Exception {
@@ -142,20 +151,20 @@ function minute_pad($minute)
 /**
  * @param Context $context
  * @param string $page
+ * @return RedirectResponse
  */
 function redirect(Context $context, $page) {
 	$dir = $page{0} == '/' ?  '' : dirname($context->script) . '/';
 	$url = $context->proto . '://'. $context->host_name . $dir . $page;
 
-	header("Location: $url", true, 303);
-	exit;
+	return new RedirectResponse($url);
 }
 
 /**
  * @param string $message
  * @param string $page
  * @param string $css_classes
- * @return Tag
+ * @return RedirectResponse
  */
 function message_redirect(Context $context, $message, $page, $css_classes) {
 	$messages = $context->getMessages();
@@ -163,9 +172,7 @@ function message_redirect(Context $context, $message, $page, $css_classes) {
 
 	setcookie("messages", json_encode($messages));
 
-	redirect($context, $page);
-
-	return new Tag('', $messages);
+	return redirect($context, $page);
 }
 
 /**
@@ -302,7 +309,7 @@ function days_between(\DateTimeInterface $date1, \DateTimeInterface $date2) {
 function login_user(Context $context, $username, $password)
 {
 	$user = $context->db->get_user_by_name($username);
-	echo "<pre>"; var_dump($user); echo "</pre>";
+	//echo "<pre>"; var_dump($user); echo "</pre>";
 	if(!$user || !password_verify($password, $user->getPasswordHash()))
 		return false;
 
@@ -334,10 +341,6 @@ function set_login_token(Context $context, User $user) {
 	//	cookies expire at the end of the session if it's not checked
 
 	setcookie('identity', $jwt, $expires);
-}
-
-function phpc_do_logout() {
-	setcookie('identity', "", time() - 3600);
 }
 
 // returns tag data for the links at the bottom of the calendar

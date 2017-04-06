@@ -17,15 +17,20 @@
 
 namespace PhpCalendar;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class LogoutPage extends Page
 {
 
-    function display(Context $context)
+    /**
+     * @param Context $context
+     * @param \string[] $template_variables
+     * @return Response
+     */
+    function action(Context $context, $template_variables)
     {
-        phpc_do_logout();
-        redirect($context, $context->script);
-
-        return tag('h2', __('Loggin out...'));
+        setcookie('identity', "", time() - 3600);
+        return redirect($context, $context->script);
     }
 }
 

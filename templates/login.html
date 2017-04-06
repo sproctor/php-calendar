@@ -1,9 +1,6 @@
 {% extends "index.html" %}
 
 {% block body %}
-    {% if logged_in %}
-        <div>{{ "Log in successful."|trans }}</div>
-    {% else %}
         <form action="{{ script }}" method="post">
             <h2>{{ "Log in"|trans }}</h2>
             <div>{{ "You must have cookies enabled to login."|trans }}</div>
@@ -21,5 +18,4 @@
                 <input type="submit" value="{{ 'Log In'|trans }}"/>
             </div>
         </form>
-    {% endif %}
 {% endblock %}

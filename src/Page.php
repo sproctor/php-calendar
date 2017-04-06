@@ -22,9 +22,9 @@ abstract class Page
 	/**
 	 * @param Context $context
 	 * @param string[] $template_variables
-	 * @return string
+	 * @return \Symfony\Component\HttpFoundation\Response
 	 */
-	abstract function display(Context $context, $template_variables);
+	abstract function action(Context $context, $template_variables);
 }
 
 ?>

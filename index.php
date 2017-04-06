@@ -17,9 +17,12 @@
 
 namespace PhpCalendar;
 
-require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/src/helpers.php';
+require_once 'vendor/autoload.php';
+require_once 'src/helpers.php';
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Loader\MoFileLoader;
@@ -28,14 +31,11 @@ define('PHPC_CONFIG_FILE', __DIR__ . '/config.php');
 
 define('PHPC_DEBUG', 1);
 
-//if(!defined('PHPC_HOME_URL'))
-//	define('PHPC_HOME_URL', PHPC_PROTOCOL . '://' . PHPC_SERVER . PHPC_SCRIPT);
-//$url = PHPC_HOME_URL . (empty($_SERVER['QUERY_STRING']) ? ''
-//		: '?' . $_SERVER['QUERY_STRING']);
+$request = Request::createFromGlobals();
+
 
 try {
 	$context = new Context();
-
 
 	$min = defined ( 'PHPC_DEBUG' ) ? '' : '.min';
 	
@@ -60,9 +60,8 @@ try {
 		header ( "Content-Type: application/json; charset=UTF-8" );
 		echo display_phpc ( $context )->toString ();
 	} else {
-		header ( "Content-Type: text/html; charset=UTF-8" );
-		
-		echo get_page($context->getAction())->display( $context, array(
+		$page = get_page($context->getAction());
+		$response = $page->action($context, array(
 				'context' => $context,
 				'calendar' => $context->getCalendar(),
 				'user' => $context->getUser(),
@@ -74,6 +73,7 @@ try {
 				'min' => $min,
 				'query_string' => $_SERVER ['QUERY_STRING'] 
 		) );
+		$response->send();
 	}
 } catch(PermissionException $e) {
 	$msg = __ ( 'You do not have permission to do that: ' ) . $e->getMessage ();
@@ -81,6 +81,8 @@ try {
 		echo error_message_redirect ( $context, $msg, $context->script );
 	else
 		echo error_message_redirect ( $context, $msg, "{$context->script}?action=login");
+} catch(InvalidConfigException $e) {
+	(new RedirectResponse("/install"))->send();
 } catch(InvalidInputException $e) {
 	echo error_message_redirect($context, $e->getMessage(), $e->target);
 } catch(\Exception $e) {

@@ -15,11 +15,18 @@
  * limitations under the License.
  */
 
-if(!defined('IN_PHPC')) {
-	die("Hacking attempt");
-}
+namespace PhpCalendar;
 
-require_once("$phpc_includes_path/form.php");
+class EventCreatePage extends Page {
+    /**
+     * @param Context $context
+     * @param \string[] $template_variables
+     */
+	function display(Context $context, $template_variables)
+    {
+        // TODO: Implement display() method.
+    }
+}
 
 function event_form() {
 	global $vars;
@@ -30,7 +37,7 @@ function event_form() {
 	// else
 	try {
 		return process_form();
-	} catch(Exception $e) {
+	} catch(\Exception $e) {
 		message($e->getMessage());
 		return display_form();
 	}
@@ -444,5 +451,3 @@ function process_form()
 				"$phpc_script?action=display_month&phpcid=$cid");
 	}
 }
-
-?>

@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright 2016 Sean Proctor
+ * Copyright 2017 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,17 @@
 
 namespace PhpCalendar;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class LoginPage extends Page
 {
 
     /**
      * @param Context $context
      * @param string[] $template_variables
-     * @return string
+     * @return Response
      */
-    function display(Context $context, $template_variables)
+    function action(Context $context, $template_variables)
 	{
 		//Check password and username
 		if(isset($_REQUEST['username'])){
@@ -40,14 +42,13 @@ class LoginPage extends Page
 					if(!empty($_REQUEST['lasturl'])) {
 						$url .= '?' . urldecode($_REQUEST['lasturl']);
 					}
-					redirect($context, $url);
-					$template_variables['logged_in'] = true;
+					return redirect($context, $url);
 				} else {
 					$context->addMessage(__("Invalid login credentials."));
 				}
 			}
 		}
 		$template_variables['messages'] = $context->getMessages();
-        return $context->twig->render("login.html", $template_variables);
+        return new Response($context->twig->render("login.html", $template_variables));
 	}
 }

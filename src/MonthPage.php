@@ -21,15 +21,17 @@
 
 namespace PhpCalendar;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class MonthPage extends Page
 {
 	// Full display for a month
     /**
      * @param Context $context
      * @param \string[] $template_variables
-     * @return string
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    function display(Context $context, $template_variables)
+    function action(Context $context, $template_variables)
 	{
 		$calendar = $context->getCalendar();
 		$cid = $calendar->cid;
@@ -81,6 +83,6 @@ class MonthPage extends Page
         $template_variables['occurrences'] = get_occurrences_by_day($calendar, $context->getUser(), $from_date,
             $to_date);
         $template_variables['start_date'] = $from_date;
-		return $context->twig->render("month.html", $template_variables);
+		return new Response($context->twig->render("month.html", $template_variables));
 	}
 }
