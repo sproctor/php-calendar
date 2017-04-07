@@ -130,9 +130,10 @@ function display_event_by_oid($oid)
 	$month = $event->get_start_month();
 	$day = $event->get_start_day();
 
-	$desc_tag = tag('div', attributes('class="phpc-desc"'),
+	$desc_tag = tag('div',
 			tag('h3', __("Description")),
-			tag('p', $event->get_desc()));
+			tag('p', attributes('class="phpc-desc"'),
+				$event->get_desc()));
 
 	return tag('div', attributes('class="phpc-main phpc-event"'),
 			tag('h2', $event->get_subject()), $event_header,
@@ -178,9 +179,9 @@ function display_event_by_eid($eid)
 						'event_delete', $eid)));
 	}
 
-	$desc_tag = tag('div', attributes('class="phpc-desc"'),
+	$desc_tag = tag('div',
 			tag('h3', __("Description")),
-			tag('p', $event->get_desc()));
+			tag('p', attributes('class="phpc-desc"'), $event->get_desc()));
 
 	$occurrences_tag = tag('ul');
 	$occurrences = $phpcdb->get_occurrences_by_eid($eid);

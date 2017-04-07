@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2017 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -905,9 +905,10 @@ function get_header_tags($path)
 	$theme = $phpc_cal->theme;
 	if(empty($theme))
 		$theme = 'smoothness';
-    $jquery_version = "1.12.4";
-    $jqueryui_version = "1.12.1";
+	$jquery_version = "1.12.4";
+	$jqueryui_version = "1.12.1";
 	$jpicker_version = "1.1.6";
+	$showdown_version = "1.6.3";
 
 	return array(
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
@@ -916,22 +917,16 @@ function get_header_tags($path)
 					"href=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/themes/$theme/jquery-ui$jq_min.css\"")),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/jquery-ui-timepicker.css\"")),
-			tag("script", attrs('type="text/javascript"',
-					"src=\"//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
-			tag("script", attrs('type="text/javascript"',
-					"src=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
-			tag('script', attrs('type="text/javascript"'),
-					"var imagePath='$path/images/'"),
-			tag('script', attrs('type="text/javascript"',
-					"src=\"$path/phpc.js\""), ''),
-			tag("script", attrs('type="text/javascript"',
-					"src=\"$path/jquery.ui.timepicker.js\""), ''),
-			tag("script", attributes('type="text/javascript"',
-					"src=\"$path/jquery.hoverIntent.minified.js\""), ''),
-			tag("script", attrs('type="text/javascript"',
-					"src=\"$path/jpicker-$jpicker_version$jq_min.js\""), ''),
+			tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
+			tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
+			tag('script', "var imagePath='$path/images/'"),
+			tag('script', attrs("src=\"$path/phpc.js\""), ''),
+			tag("script", attrs("src=\"$path/jquery.ui.timepicker.js\""), ''),
+			tag("script", attrs("src=\"$path/jquery.hoverIntent.minified.js\""), ''),
+			tag("script", attrs("src=\"$path/jpicker-$jpicker_version$jq_min.js\""), ''),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/jPicker-$jpicker_version$jq_min.css\"")),
+			tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/showdown/$showdown_version/showdown.min.js\""), ''),
 		  );
 }
 

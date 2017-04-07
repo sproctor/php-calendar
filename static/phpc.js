@@ -36,6 +36,14 @@ $(document).ready(function(){
   $(".phpc-dropdown-list ul a").css("color", color);
   $tempElem.remove();
 
+  // Replace descriptions with the description run through markdown
+  var converter = new showdown.Converter();
+  $(".phpc-desc").each(function() {
+    var text = $(this).text();
+    var html = converter.makeHtml(text);
+    $(this).html(html);
+  });
+
   // Summary init
   $("#phpc-summary-view").hide();
   $(".phpc-event-list a").hoverIntent(
@@ -263,10 +271,11 @@ function textcolor(bgcolor) {
 
 // sets he specified text in the floating div
 function setSummaryText(title,author,time,description,category) {
+  var converter = new showdown.Converter();
 	$("#phpc-summary-title").html(title);
 	$("#phpc-summary-author").html(author);
 	$("#phpc-summary-time").html(time);
-	$("#phpc-summary-body").html(description);
+	$("#phpc-summary-body").html(converter.makeHtml(description));
 	$("#phpc-summary-category").html(category);
 }
  

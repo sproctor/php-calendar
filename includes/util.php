@@ -19,8 +19,6 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-require_once("$phpc_includes_path/lib_autolink.php");
-
 // called when some error happens
 /**
  * @param string $message
@@ -240,27 +238,6 @@ function display_error($str)
 	echo "</ol>\n",
 	     "</body></html>\n";
 	exit;
-}
-
-// parses a description and adds the appropriate mark-up
-/**
- * @param string $text
- * @return string
- */
-function parse_desc($text)
-{
-	// Don't allow tags and make the description HTML-safe
-        $text = phpc_html_escape($text);
-
-        $text = nl2br($text);
-
-	// linkify urls
-	$text = autolink($text, 0);
-
-	// linkify emails
-	$text = autolink_email($text);
-
-	return $text;
 }
 
 /**
