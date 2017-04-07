@@ -128,6 +128,9 @@ abstract class FormQuestion extends FormPart
     function __construct($qid, $subject, $description)
     {
         $this->class .= " form-question";
+        $this->qid = $qid;
+        $this->subject = $subject;
+        $this->description = $description;
     }
 
     function get_html($parent, $defaults = array())
@@ -280,6 +283,7 @@ class FormDateQuestion extends FormAtomicQuestion
         }
 
         return tag('div', attrs("class=\"{$this->class}\""),
+            __("Date") . " ($date_string): ",
             form_date_input($this->qid, $defaults,
                 $dateFormat));
     }
