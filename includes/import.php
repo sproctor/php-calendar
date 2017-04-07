@@ -19,8 +19,11 @@ if(!defined('IN_PHPC')) {
 	die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function import() {
-	global $vars, $phpcdb, $phpc_cal, $phpcid, $phpc_script;
+    global $vars, $phpcdb, $phpcid, $phpc_script;
 
 	if(!is_admin()) {
 		permission_error(__('Need to be admin'));
@@ -155,5 +158,3 @@ function import() {
 				$events, $occurrences),
 			$form_page);
 }
-
-?>

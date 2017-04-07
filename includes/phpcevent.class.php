@@ -16,29 +16,46 @@
  */
 
 class PhpcEvent {
+    /** @var int */
 	var $eid;
+    /** @var int */
 	var $cid;
+    /** @var int */
 	var $uid;
+    /** @var string */
 	var $author;
+    /** @var string */
 	var $subject;
+    /** @var string */
 	var $desc;
+    /** @var bool */
 	var $readonly;
+    /** @var string */
 	var $category;
+    /** @var string */
 	var $bg_color;
+    /** @var string */
 	var $text_color;
+    /** @var int */
 	var $catid;
+    /** @var int */
 	var $gid;
 	var $ctime;
 	var $mtime;
+    /** @var PhpcCalendar */
 	var $cal;
 
+    /**
+     * PhpcEvent constructor.
+     * @param string[] $event
+     */
 	function __construct($event)
 	{
-		global $phpcid, $phpc_cal, $phpcdb;
+        global $phpcdb;
 
-		$this->eid = $event['eid'];
-		$this->cid = $event['cid'];
-		$this->uid = $event['owner'];
+        $this->eid = intval($event['eid']);
+        $this->cid = intval($event['cid']);
+        $this->uid = intval($event['owner']);
 		if(empty($event['owner']))
 			$this->author = __('anonymous');
 		elseif(empty($event['username']))
@@ -47,25 +64,27 @@ class PhpcEvent {
 			$this->author = $event['username'];
 		$this->subject = $event['subject'];
 		$this->desc = $event['description'];
-		$this->readonly = $event['readonly'];
+        $this->readonly = intval($event['readonly']) != 0;
 		$this->category = $event['name'];
 		$this->bg_color = $event['bg_color'];
 		$this->text_color = $event['text_color'];
-		$this->catid = $event['catid'];
-		$this->gid = $event['gid'];
+        $this->catid = intval($event['catid']);
+        $this->gid = intval($event['gid']);
 		$this->ctime = $event['ctime'];
 		$this->mtime = $event['mtime'];
-
-		if($this->cid == $phpcid)
-			$this->cal = $phpc_cal;
-		else
-			$this->cal = $phpcdb->get_calendar($this->cid);
+        $this->cal = $phpcdb->get_calendar($this->cid);
 	}
 
+    /**
+     * @return string
+     */
 	function get_raw_subject() {
 		return phpc_html_escape($this->subject);
 	}
 
+    /**
+     * @return string
+     */
 	function get_subject()
 	{
 		if(empty($this->subject))
@@ -74,51 +93,81 @@ class PhpcEvent {
 		return phpc_html_escape(stripslashes($this->subject));
 	}
 
+    /**
+     * @return string
+     */
 	function get_author()
 	{
 		return $this->author;
 	}
 
+    /**
+     * @return int
+     */
 	function get_uid()
 	{
 		return $this->uid;
 	}
 
+    /**
+     * @return string
+     */
 	function get_raw_desc() {
 		// Don't allow tags and make the description HTML-safe
 		return phpc_html_escape($this->desc);
 	}
 
+    /**
+     * @return string
+     */
 	function get_desc()
 	{
 		return parse_desc($this->desc);
 	}
 
+    /**
+     * @return int
+     */
 	function get_eid()
 	{
 		return $this->eid;
 	}
 
+    /**
+     * @return int
+     */
 	function get_cid()
 	{
 		return $this->cid;
 	}
 
+    /**
+     * @return bool
+     */
 	function is_readonly()
 	{
 		return $this->readonly;
 	}
 
+    /**
+     * @return string
+     */
 	function get_text_color()
 	{
 		return phpc_html_escape($this->text_color);
 	}
 
+    /**
+     * @return string
+     */
 	function get_bg_color()
 	{
 		return phpc_html_escape($this->bg_color);
 	}
 
+    /**
+     * @return string
+     */
 	function get_category()
 	{
 		if(empty($this->category))
@@ -126,8 +175,12 @@ class PhpcEvent {
 		return phpc_html_escape($this->category);
 	}
 
+    /**
+     * @return bool
+     */
 	function is_owner() {
 		global $phpc_user;
+        /** @var PhpcUser $phpc_user */
 
 		return $phpc_user->get_uid() == $this->get_uid();
 	}
@@ -142,6 +195,7 @@ class PhpcEvent {
 	// returns whether or not the current user can read $event
 	function can_read() {
 		global $phpcdb, $phpc_user;
+        /** @var PhpcUser $phpc_user */
 
 		$visible_category = empty($this->gid) || !isset($this->catid)
 			|| $phpcdb->is_cat_visible($phpc_user->get_uid(),
@@ -161,4 +215,3 @@ class PhpcEvent {
 				$this->cal->hours_24);
 	}
 }
-?>

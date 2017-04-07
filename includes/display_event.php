@@ -24,6 +24,9 @@ if ( !defined('IN_PHPC') ) {
 }
 
 // Full view for a single event
+/**
+ * @return Html|string
+ */
 function display_event()
 {
 	global $vars;
@@ -41,6 +44,10 @@ function display_event()
 	soft_error(__("Invalid arguments."));
 }
 
+/**
+ * @param int $oid
+ * @return Html
+ */
 function display_event_by_oid($oid)
 {
 	global $phpcdb, $year, $month, $day;
@@ -132,6 +139,10 @@ function display_event_by_oid($oid)
 			$desc_tag);
 }
 
+/**
+ * @param int $eid
+ * @return Html
+ */
 function display_event_by_eid($eid)
 {
 	global $phpcdb, $year, $month, $day;
@@ -203,6 +214,9 @@ function display_event_by_eid($eid)
 }
 
 // generates a JSON data structure for a particular event
+/**
+ * @return string
+ */
 function display_event_json()
 {
 	global $phpcdb, $vars;
@@ -235,4 +249,3 @@ function display_event_json()
 				"body" => $event->get_desc()));
 }
 
-?>

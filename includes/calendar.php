@@ -28,8 +28,12 @@ require_once("$phpc_includes_path/html.php");
 require_once("$phpc_includes_path/util.php");
 
 // Displayed in admin
-$phpc_version = "2.0.8";
+$phpc_version = "2.0.10";
 
+/**
+ * @param string $msg
+ * @return string
+ */
 function __($msg) {
 	global $phpc_gettext;
 
@@ -39,6 +43,11 @@ function __($msg) {
 	return $phpc_gettext->gettext($msg);
 }
 
+/**
+ * @param string $context
+ * @param string $msg
+ * @return string
+ */
 function __p($context, $msg) {
 	global $phpc_gettext;
 
@@ -46,18 +55,29 @@ function __p($context, $msg) {
 }
 
 // checks global variables to see if the user is logged in.
+/**
+ * @return bool
+ */
 function is_user() {
 	global $phpc_user;
 
 	return $phpc_user->uid > 0;
 }
 
+/**
+ * @return bool
+ */
 function is_admin() {
 	global $phpc_user;
 
 	return $phpc_user->admin;
 }
 
+/**
+ * @param string $username
+ * @param string $password
+ * @return bool
+ */
 function login_user($username, $password)
 {
         global $phpcdb;
@@ -77,6 +97,11 @@ function login_user($username, $password)
 	return true;
 }
 
+/**
+ * @param PhpcUser $user
+ * @param bool $series_token
+ * @return bool
+ */
 function phpc_do_login($user, $series_token = false) {
         global $phpcdb, $phpc_prefix;
 
@@ -117,6 +142,9 @@ function phpc_do_logout() {
 }
 
 // returns tag data for the links at the bottom of the calendar
+/**
+ * @return Html
+ */
 function footer()
 {
 	global $phpc_url, $phpc_tz, $phpc_lang;
@@ -136,10 +164,13 @@ function footer()
 	return $tag;
 }
 
+/**
+ * @return array
+ */
 function get_languages() {
 	global $phpc_locale_path;
 
-	static $langs = NULL;
+    static $langs;
 
 	if(!empty($langs))
 		return $langs;
@@ -164,6 +195,9 @@ function get_languages() {
 	return $langs;
 }
 
+/**
+ * @return int
+ */
 function day_of_week_start()
 {
 	global $phpc_cal;
@@ -173,6 +207,12 @@ function day_of_week_start()
 
 // returns the number of days in the week before the 
 //  taking into account whether we start on sunday or monday
+/**
+ * @param int $month
+ * @param int $day
+ * @param int $year
+ * @return int
+ */
 function day_of_week($month, $day, $year)
 {
 	return day_of_week_ts(mktime(0, 0, 0, $month, $day, $year));
@@ -180,6 +220,10 @@ function day_of_week($month, $day, $year)
 
 // returns the number of days in the week before the 
 //  taking into account whether we start on sunday or monday
+/**
+ * @param int $timestamp
+ * @return int
+ */
 function day_of_week_ts($timestamp)
 {
 	$days = date('w', $timestamp);
@@ -188,6 +232,11 @@ function day_of_week_ts($timestamp)
 }
 
 // returns the number of days in $month
+/**
+ * @param int $month
+ * @param int $year
+ * @return false|string
+ */
 function days_in_month($month, $year)
 {
 	return date('t', mktime(0, 0, 0, $month, 1, $year));
@@ -275,9 +324,15 @@ function create_action_link_with_date($text, $action, $year = false,
 	return create_action_link($text, $action, $args, $attribs);
 }
 
-/*S*/
-function create_plain_link($text, $action, $year = false,
-		$month = false, $day = false, $attribs = false, $args = array())
+/**
+ * @param $action
+ * @param bool $year
+ * @param bool $month
+ * @param bool $day
+ * @param array $args
+ * @return string
+ */
+function create_action_url($action, $year = false, $month = false, $day = false, $args = array())
 {
 	global $phpc_script, $vars;
 	if($year !== false) $args["year"] = $year;
@@ -288,25 +343,31 @@ function create_plain_link($text, $action, $year = false,
 	if(isset($vars["phpcid"]))
 		$url .= "phpcid=" . phpc_html_escape($vars["phpcid"]) . "&amp;";
 	$url .= "action=" . phpc_html_escape($action);
-	
-	if (!empty($args)) {
-		foreach ($args as $key => $value) {
-			if(empty($value))
-				continue;
-			if (is_array($value)) {
-				foreach ($value as $v) {
-					$url .= "&amp;"
-						. phpc_html_escape("{$key}[]=$v");
-				}
-			} else
-				$url .= "&amp;" . phpc_html_escape("$key=$value");
-		}
+
+
+    foreach ($args as $key => $value) {
+        if (empty($value))
+            continue;
+        if (is_array($value)) {
+            foreach ($value as $v) {
+                $url .= "&amp;"
+                    . phpc_html_escape("{$key}[]=$v");
+            }
+        } else
+            $url .= "&amp;" . phpc_html_escape("$key=$value");
 	}
-	$url .= '';
+
 	return $url;
 }
 
-function create_action_link($text, $action, $args = false, $attribs = false)
+/**
+ * @param string $text
+ * @param string $action
+ * @param string[] $args
+ * @param bool|AttributeList $attribs
+ * @return Html
+ */
+function create_action_link($text, $action, $args = array(), $attribs = false)
 {
 	global $phpc_script, $vars;
 
@@ -315,18 +376,16 @@ function create_action_link($text, $action, $args = false, $attribs = false)
 		$url .= "phpcid=" . phpc_html_escape($vars["phpcid"]) . "&amp;";
 	$url .= "action=" . phpc_html_escape($action);
 
-	if (!empty($args)) {
-		foreach ($args as $key => $value) {
-			if(empty($value))
-				continue;
-			if (is_array($value)) {
-				foreach ($value as $v) {
-					$url .= "&amp;"
-						. phpc_html_escape("{$key}[]=$v");
-				}
-			} else
-				$url .= "&amp;" . phpc_html_escape("$key=$value");
-		}
+    foreach ($args as $key => $value) {
+        if (empty($value))
+            continue;
+        if (is_array($value)) {
+            foreach ($value as $v) {
+                $url .= "&amp;"
+                    . phpc_html_escape("{$key}[]=$v");
+            }
+        } else
+            $url .= "&amp;" . phpc_html_escape("$key=$value");
 	}
 	$url .= '"';
 
@@ -339,7 +398,14 @@ function create_action_link($text, $action, $args = false, $attribs = false)
 }
 
 // takes a menu $html and appends an entry
-function menu_item_append(&$html, $name, $action, $args = false,
+/**
+ * @param Html $html
+ * @param string $name
+ * @param string $action
+ * @param string[] $args
+ * @param bool|AttributeList $attribs
+ */
+function menu_item_append(&$html, $name, $action, $args = array(),
 		$attribs = false)
 {
 	$name=str_replace(' ','&nbsp;',$name); /*not breaking space on menus*/
@@ -352,6 +418,15 @@ function menu_item_append(&$html, $name, $action, $args = false,
 }
 
 // takes a menu $html and appends an entry with the date
+/**
+ * @param Html $html
+ * @param string $name
+ * @param string $action
+ * @param bool|int $year
+ * @param bool|int $month
+ * @param bool|int $day
+ * @param bool|AttributeList $attribs
+ */
 function menu_item_append_with_date(&$html, $name, $action, $year = false,
 		$month = false, $day = false, $attribs = false)
 {
@@ -366,7 +441,14 @@ function menu_item_append_with_date(&$html, $name, $action, $year = false,
 }
 
 // same as above, but prepends the entry
-function menu_item_prepend(&$html, $name, $action, $args = false,
+/**
+ * @param Html $html
+ * @param string $name
+ * @param string $action
+ * @param string[] $args
+ * @param bool|AttributeList $attribs
+ */
+function menu_item_prepend(&$html, $name, $action, $args = array(),
 		$attribs = false)
 {
 	if(!is_object($html)) {
@@ -378,6 +460,11 @@ function menu_item_prepend(&$html, $name, $action, $args = false,
 
 // creates a hidden input for a form
 // returns tag data for the input
+/**
+ * @param string $name
+ * @param mixed $value
+ * @return Html
+ */
 function create_hidden($name, $value)
 {
 	return tag('input', attributes("name=\"$name\"", "value=\"$value\"",
@@ -386,6 +473,10 @@ function create_hidden($name, $value)
 
 // creates a submit button for a form
 // return tag data for the button
+/**
+ * @param mixed $value
+ * @return Html
+ */
 function create_submit($value)
 {
 	return tag('input', attributes('name="submit"', "value=\"$value\"",
@@ -394,6 +485,11 @@ function create_submit($value)
 
 // creates a text entry for a form
 // returns tag data for the entry
+/**
+ * @param string $name
+ * @param mixed $value
+ * @return Html
+ */
 function create_text($name, $value = false)
 {
 	$attributes = attributes("name=\"$name\"", 'type="text"');
@@ -405,6 +501,10 @@ function create_text($name, $value = false)
 
 // creates a password entry for a form
 // returns tag data for the entry
+/**
+ * @param string $name
+ * @return Html
+ */
 function create_password($name)
 {
 	return tag('input', attributes("name=\"$name\"", 'type="password"'));
@@ -412,6 +512,13 @@ function create_password($name)
 
 // creates a checkbox for a form
 // returns tag data for the checkbox
+/**
+ * @param string $name
+ * @param mixed $value
+ * @param bool $checked
+ * @param bool|string $label
+ * @return array|Html
+ */
 function create_checkbox($name, $value, $checked = false, $label = false)
 {
 	$attributes = attributes("id=\"$name\"", "name=\"$name\"",
@@ -429,7 +536,13 @@ function create_checkbox($name, $value, $checked = false, $label = false)
 // $values - Array of URL => title
 // returns an html structure for a dropdown box that will change the page
 //		to the URL from $values when an element is selected
-function create_dropdown_list($title, $values, $attrs = false) {
+/**
+ * @param mixed $title
+ * @param mixed $values
+ * @return Html
+ */
+function create_dropdown_list($title, $values)
+{
 	$list = tag('ul');
 	foreach($values as $key => $value) {
 		$list->add(tag('li', tag('a', attrs("href=\"$key\""), $value)));
@@ -443,6 +556,9 @@ function create_dropdown_list($title, $values, $attrs = false) {
 
 // creates the user menu
 // returns tag data for the menu
+/**
+ * @return Html
+ */
 function userMenu()
 {
 	global $action, $phpc_user;
@@ -470,9 +586,12 @@ function userMenu()
 
 // creates the navbar for the top of the calendar
 // returns tag data for the navbar
+/**
+ * @return Html
+ */
 function navbar()
 {
-	global $vars, $action, $year, $month, $day, $phpc_cal;
+    global $action, $year, $month, $day, $phpc_cal;
 
 	$html = tag('div', attributes('class="phpc-bar ui-widget-header"'));
 
@@ -507,7 +626,14 @@ function navbar()
 }
 
 // creates an array from $start to $end, with an $interval
-function create_sequence($start, $end, $interval = 1, $display = NULL)
+/**
+ * @param int $start
+ * @param int $end
+ * @param int $interval
+ * @param mixed $display
+ * @return array
+ */
+function create_sequence($start, $end, $interval = 1, $display = false)
 {
 	$arr = array();
 	for ($i = $start; $i <= $end; $i += $interval){
@@ -520,6 +646,9 @@ function create_sequence($start, $end, $interval = 1, $display = NULL)
 	return $arr;
 }
 
+/**
+ * @return array
+ */
 function get_config_options()
 {
 	static $options = NULL;
@@ -530,6 +659,9 @@ function get_config_options()
 	return $options;
 }
 
+/**
+ * @return array
+ */
 function init_config_options() {
 	$languages = array("" => __("Default"));
 	foreach(get_languages() as $language) {
@@ -565,6 +697,9 @@ function init_config_options() {
 	);
 }
 
+/**
+ * @return array
+ */
 function get_theme_list() {
 	$themes = array(
 			'black-tie',
@@ -599,6 +734,9 @@ function get_theme_list() {
 	return $theme_list;	
 }
 
+/**
+ * @return array
+ */
 function get_timezone_list() {
 	$timezones = array();
 	$timezones[__("Default")] = "";
@@ -617,6 +755,9 @@ function get_timezone_list() {
 	return $timezones;
 }
 
+/**
+ * @return array
+ */
 function get_date_format_list()
 {
 	return array(	__("Month Day Year"),
@@ -624,6 +765,9 @@ function get_date_format_list()
 			__("Day Month Year"));
 }
 
+/**
+ * @return Html
+ */
 function display_phpc() {
 	global $phpc_messages, $phpc_redirect, $phpc_script, $phpc_prefix;
 
@@ -675,9 +819,12 @@ function display_phpc() {
 
 }
 
+/**
+ * @return mixed
+ */
 function do_action()
 {
-	global $action, $phpc_includes_path, $vars;
+    global $action, $phpc_includes_path;
 
 	$action_file = "$phpc_includes_path/$action.php";
 	if(!preg_match('/^\w+$/', $action) || !file_exists($action_file))
@@ -685,43 +832,55 @@ function do_action()
 
 	require_once($action_file);
 
-	eval("\$action_output = $action();");
+    $action_output = call_user_func($action);
 
 	return $action_output;
 }
 
 // takes a number of the month, returns the name
+/**
+ * @param int $month
+ * @return string
+ */
 function month_name($month)
 {
-        global $month_names;
+    global $month_names;
 
 	$month = ($month - 1) % 12 + 1;
-        return $month_names[$month];
+    return $month_names[$month];
 }
 
 //takes a day number of the week, returns a name (0 for the beginning)
+/**
+ * @param int $day
+ * @return string
+ */
 function day_name($day)
 {
 	global $day_names;
 
 	$day = $day % 7;
 
-        return $day_names[$day];
+    return $day_names[$day];
 }
 
+/**
+ * @param int $month
+ * @return string
+ */
 function short_month_name($month)
 {
-        global $short_month_names;
+    global $short_month_names;
 
 	$month = ($month - 1) % 12 + 1;
-        return $short_month_names[$month];
+    return $short_month_names[$month];
 }
 
 function verify_token() {
-	global $phpc_prefix, $vars, $phpc_token;
+    global $vars, $phpc_token;
 
 	if(!is_user())
-		return true;
+        return;
 
 	if(empty($vars["phpc_token"]) || $vars["phpc_token"] != $phpc_token) {
 		//echo "<pre>real token: $phpc_token\n";
@@ -730,6 +889,10 @@ function verify_token() {
 	}
 }
 
+/**
+ * @param string $path
+ * @return array
+ */
 function get_header_tags($path)
 {
 	global $phpc_cal;
@@ -742,8 +905,8 @@ function get_header_tags($path)
 	$theme = $phpc_cal->theme;
 	if(empty($theme))
 		$theme = 'smoothness';
-	$jquery_version = "1.10.2";
-	$jqueryui_version = "1.10.3";
+    $jquery_version = "1.12.4";
+    $jqueryui_version = "1.12.1";
 	$jpicker_version = "1.1.6";
 
 	return array(
@@ -772,12 +935,20 @@ function get_header_tags($path)
 		  );
 }
 
+/**
+ * @param $path
+ */
 function embed_header($path)
 {
-	echo tag('', get_header_tags())->toString();
+    echo tag('', get_header_tags($path))->toString();
 }
 
 // $element: { name, text, type, value(s) }
+/**
+ * @param array $element
+ * @param mixed $default
+ * @return array|Html
+ */
 function create_config_input($element, $default = false)
 {
 	$name = $element[0];
@@ -814,6 +985,13 @@ function create_config_input($element, $default = false)
    uses $phpc_cal->date_format to determine the format of the date
    if there's no $prefix-time, uses values passed as parameters
 */
+/**
+ * @param string $prefix
+ * @param int $hour
+ * @param int $minute
+ * @param int $second
+ * @return false|int
+ */
 function get_timestamp($prefix, $hour = 0, $minute = 0, $second = 0)
 {
 	global $vars, $phpc_cal;
@@ -875,7 +1053,13 @@ function get_timestamp($prefix, $hour = 0, $minute = 0, $second = 0)
 	return mktime($hour, $minute, $second, $month, $day, $year);
 }
 
+/**
+ * @param string $name
+ * @param mixed $value
+ * @param int $expire
+ * @return bool
+ */
 function phpc_set_cookie($name, $value, $expire = 0) {
 	return setcookie($name, $value, $expire, "", "", false, true);
 }
-?>
+

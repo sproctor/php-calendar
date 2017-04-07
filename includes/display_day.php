@@ -24,17 +24,16 @@ if ( !defined('IN_PHPC') ) {
 }
 
 // View for a single day
+/**
+ * @return Html
+ */
 function display_day()
 {
-	global $phpcid, $phpc_cal, $phpc_user, $phpc_script, $phpcdb, $day,
-	       $month, $year;
+    global $phpcid, $phpc_cal, $phpc_script, $phpcdb, $day, $month, $year;
 
 	$monthname = month_name($month);
 
-	$results = $phpcdb->get_occurrences_by_date($phpcid, $year, $month,
-			$day);
-
-	$today_epoch = mktime(0, 0, 0, $month, $day, $year);
+    $results = $phpcdb->get_occurrences_by_date($phpcid, $year, $month, $day);
 
 	$have_events = false;
 
@@ -113,12 +112,13 @@ function display_day()
 	return tag('', create_day_menu(), $output);
 }
 
+/**
+ * @return Html
+ */
 function create_day_menu() {
 	global $month, $day, $year;
 
 	$html = tag('div', attrs('class="phpc-bar ui-widget-content"'));
-
-	$monthname = month_name($month);
 
 	$lasttime = mktime(0, 0, 0, $month, $day - 1, $year);
 	$lastday = date('j', $lasttime);
@@ -147,4 +147,3 @@ function create_day_menu() {
 	return $html;
 }
 
-?>

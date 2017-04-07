@@ -21,6 +21,9 @@ if ( !defined('IN_PHPC') ) {
 
 require_once("$phpc_includes_path/msgfmt-functions.php");
 
+/**
+ * @return Html
+ */
 function translate() {
 	global $phpc_locale_path;
 
@@ -32,7 +35,7 @@ function translate() {
 	$handle = opendir($phpc_locale_path);
 
 	if(!$handle) {
-		return soft_error("Error reading locale directory.");
+        soft_error("Error reading locale directory.");
 	}
 
 	$output_tag = tag('div', tag('h2', __('Translate')));
@@ -57,4 +60,3 @@ function translate() {
 
 	return $output_tag;
 }
-?>

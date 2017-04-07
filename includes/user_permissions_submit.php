@@ -19,6 +19,9 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function user_permissions_submit()
 {
 	global $phpcid, $phpc_cal, $vars, $phpcdb, $phpc_script;
@@ -62,5 +65,3 @@ function user_permissions_submit()
 
 	return message_redirect($message, "$phpc_script?action=cadmin&phpcid=$phpcid");
 }
-
-?>

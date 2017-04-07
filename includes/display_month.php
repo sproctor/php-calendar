@@ -24,6 +24,9 @@ if ( !defined('IN_PHPC') ) {
 }
 
 // Full display for a month
+/**
+ * @return Html
+ */
 function display_month()
 {
 	global $month, $year, $phpc_home_url, $phpcid;
@@ -72,6 +75,11 @@ function display_month()
 }
 
 // creates a display for a particular month to be embedded in a full view
+/**
+ * @param int $month
+ * @param int $year
+ * @return Html
+ */
 function create_month($month, $year)
 {
 	global $phpcdb, $phpc_cal, $phpcid;
@@ -138,6 +146,13 @@ function create_month($month, $year)
 }
 
 // creates a display for a particular week to be embedded in a month table
+/**
+ * @param int $week_of_month
+ * @param int $month
+ * @param int $year
+ * @param PhpcOccurrence[][] $days_events
+ * @return Html
+ */
 function create_week($week_of_month, $month, $year, $days_events)
 {
 	$start_day = 1 + ($week_of_month - 1) * 7
@@ -145,8 +160,7 @@ function create_week($week_of_month, $month, $year, $days_events)
 	$week_of_year = week_of_year($month, $start_day, $year);
 
 	$args = array('week' => $week_of_year, 'year' => $year);
-	$click = create_plain_link($week_of_year, 'display_week', false, false,
-			false, false, $args);
+    $click = create_action_url('display_week', false, false, false, $args);
 	$week_html = tag('tr', tag('th', attrs('class="ui-state-default"',
 					"onclick=\"window.location.href='$click'\""),
 				create_action_link($week_of_year,
@@ -161,9 +175,16 @@ function create_week($week_of_month, $month, $year, $days_events)
 }
 
 // displays the day of the week and the following days of the week
+/**
+ * @param int $month
+ * @param int $day
+ * @param int $year
+ * @param PhpcOccurrence[][] $days_events
+ * @return Html
+ */
 function create_day($month, $day, $year, $days_events)
 {
-	global $phpc_script, $phpc_cal;
+    global $phpc_cal;
 
 	$date_class = 'ui-state-default';
 	if($day <= 0) {
@@ -194,8 +215,7 @@ function create_day($month, $day, $year, $days_events)
 		}
 	}
 
-	$click = create_plain_link($day, 'display_day', $year, $month,
-			$day);
+    $click = create_action_url('display_day', $year, $month, $day);
 	$date_tag = tag('div', attributes("class=\"phpc-date $date_class\"",
 				"onclick=\"window.location.href='$click'\""),
 			create_action_link_with_date($day,
@@ -266,4 +286,3 @@ function create_day($month, $day, $year, $days_events)
 	return $html_day;
 }
 
-?>

@@ -16,52 +16,85 @@
  */
 
 class PhpcUser {
+    /** @var int */
 	var $uid;
+    /** @var string */
 	var $username;
+    /** @var string */
 	var $password;
+    /** @var bool */
 	var $admin;
+    /** @var bool */
 	var $password_editable;
-	var $timezone;	
+    /** @var string */
+    var $timezone;
+    /** @var string */
 	var $language;
+    /** @var array */
 	var $groups;
 
-	function PhpcUser($result)
+    /**
+     * PhpcUser constructor.
+     * @param string[] $result
+     */
+    function __construct($result)
 	{
-		$this->uid = $result['uid'];
+        $this->uid = intval($result['uid']);
 		$this->username = $result['username'];
 		$this->password = $result['password'];
-		$this->admin = $result['admin'];
-		$this->password_editable = $result['password_editable'];
+        $this->admin = intval($result['admin']) != 0;
+        $this->password_editable = intval($result['password_editable']) != 0;
 		$this->timezone = $result['timezone'];
 		$this->language = $result['language'];
 	}
 
+    /**
+     * @return string
+     */
 	function get_username()
 	{
 		return $this->username;
 	}
 
+    /**
+     * @return int
+     */
 	function get_uid()
 	{
 		return $this->uid;
 	}
 
+    /**
+     * @return string
+     */
 	function get_password() {
 		return $this->password;
 	}
 
+    /**
+     * @return bool
+     */
 	function is_password_editable() {
 		return $this->password_editable;
 	}
 
+    /**
+     * @return string
+     */
 	function get_timezone() {
 		return $this->timezone;
 	}
 
+    /**
+     * @return string
+     */
 	function get_language() {
 		return $this->language;
 	}
-	
+
+    /**
+     * @return array
+     */
 	function get_groups() {
 		global $phpcdb;
 
@@ -71,5 +104,3 @@ class PhpcUser {
 		return $this->groups;
 	}
 }
-
-?>

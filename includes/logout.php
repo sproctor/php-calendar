@@ -19,13 +19,15 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function logout()
 {
-	global $vars, $phpc_script;
+	global $phpc_script;
 
 	phpc_do_logout();
         redirect($phpc_script);
 
         return tag('h2', __('Loggin out...'));
 }
-?>

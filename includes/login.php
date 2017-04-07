@@ -19,6 +19,9 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function login()
 {
 	global $vars, $phpc_script;
@@ -47,7 +50,9 @@ function login()
 	return $html;
 }
 
-
+/**
+ * @return Html
+ */
 function login_form()
 {
         global $vars, $phpc_script;
@@ -80,5 +85,3 @@ function login_form()
 					tag('th', __('Password')),
 					tag('td', create_password('password'))))));
 }
-
-?>

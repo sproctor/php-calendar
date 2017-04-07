@@ -105,14 +105,13 @@ if(!empty($vars['phpcid'])) {
 	$phpcid = 1;
 }
 
-$phpc_cal = $phpcdb->get_calendar($phpcid);
-
-if(empty($phpc_cal)) {
-	$phpcid = 1;
-	$phpc_cal = $phpcdb->get_calendar($phpcid);
-	if(empty($phpc_cal))
-		soft_error(__("Could not find a calendar."));
+if (!$phpcdb->have_calendar($phpcid)) {
+    $phpcid = 1;
+    if (!$phpcdb->have_calendar($phpcid))
+        soft_error(__("Could not find a calendar."));
 }
+
+$phpc_cal = $phpcdb->get_calendar($phpcid);
 
 //set action
 if(empty($vars['action'])) {
@@ -227,4 +226,3 @@ header("Content-Type: text/html; charset=UTF-8");
 header("X-Content-Type-Options: nosniff");
 header("X-Frame-Options: DENY");
 
-?>

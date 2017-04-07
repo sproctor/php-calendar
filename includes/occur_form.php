@@ -21,6 +21,9 @@ if(!defined('IN_PHPC')) {
 
 require_once("$phpc_includes_path/form.php");
 
+/**
+ * @return Html
+ */
 function occur_form() {
 	global $vars;
 
@@ -31,6 +34,9 @@ function occur_form() {
 	return process_form();
 }
 
+/**
+ * @return Html
+ */
 function display_form() {
 	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal,
 		$phpc_token;
@@ -177,5 +183,3 @@ function process_form()
 				"$phpc_script?action=display_month&phpcid=$phpcid");
 	}
 }
-
-?>

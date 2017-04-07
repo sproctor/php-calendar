@@ -71,4 +71,3 @@ ob_start();
 
 require_once("$phpc_includes_path/setup.php");
 
-?>

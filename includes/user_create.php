@@ -19,6 +19,9 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function user_create() {
 	global $vars;
 
@@ -33,6 +36,9 @@ function user_create() {
 
 }
 
+/**
+ * @return Html
+ */
 function display_form() {
 	global $phpc_script, $phpc_token, $phpcdb;
 
@@ -78,7 +84,7 @@ function display_form() {
 
 function process_form()
 {
-	global $phpcid, $vars, $phpcdb, $phpc_script;
+    global $vars, $phpcdb;
 
 	verify_token();
 
@@ -112,5 +118,3 @@ function process_form()
 
         return message(__('Added user.'));
 }
-
-?>

@@ -21,9 +21,21 @@ require_once("$phpc_includes_path/phpcoccurrence.class.php");
 require_once("$phpc_includes_path/phpcuser.class.php");
 
 class PhpcDatabase {
+    /** @var mysqli */
 	var $dbh;
+    /** @var PhpcCalendar[] */
 	var $calendars;
+    /** @var */
+    var $perms = array();
 
+    /**
+     * PhpcDatabase constructor.
+     * @param string $host
+     * @param string $username
+     * @param string $passwd
+     * @param string $dbname
+     * @param string $port
+     */
 	function __construct($host, $username, $passwd, $dbname, $port) {
 		// Make the database connection.
 		$this->dbh = new mysqli($host, $username, $passwd, $dbname,
@@ -42,6 +54,9 @@ class PhpcDatabase {
 		$this->dbh->close();
 	}
 
+    /**
+     * @return string
+     */
 	private function get_event_fields() {
 		$events_table = SQL_PREFIX . "events";
 		$cats_table = SQL_PREFIX . "categories";
@@ -53,6 +68,9 @@ class PhpcDatabase {
 			. "UNIX_TIMESTAMP(`mtime`) AS `mtime`";
 	}
 
+    /**
+     * @return string
+     */
 	private function get_occurrence_fields() {
 		return $this->get_event_fields() . ", `time_type`, `oid`, "
 			. "UNIX_TIMESTAMP(`start_ts`) AS `start_ts`, "
@@ -61,6 +79,9 @@ class PhpcDatabase {
 			. "DATE_FORMAT(`end_date`, '%Y%m%d') AS `end_date`\n";
 	}
 
+    /**
+     * @return string
+     */
 	private function get_user_fields() {
 		$users_table = SQL_PREFIX . "users";
 		return "`$users_table`.`uid`, `username`, `password`, `$users_table`.`admin`, `password_editable`, `timezone`, `language`";
@@ -69,6 +90,12 @@ class PhpcDatabase {
 	// returns all the events for a particular day
 	// $from and $to are timestamps only significant to the date.
 	// an event that happens later in the day of $to is included
+    /**
+     * @param int $cid
+     * @param int $from
+     * @param int $to
+     * @return mysqli_result
+     */
 	function get_occurrences_by_date_range($cid, $from, $to)
 	{
 		$from_str = "FROM_UNIXTIME('$from')";
@@ -99,6 +126,11 @@ class PhpcDatabase {
         }
 		
 	/* if category is visible to user id */
+    /**
+     * @param int $uid
+     * @param int $catid
+     * @return bool
+     */
 	function is_cat_visible($uid, $catid) {
 		$users_table = SQL_PREFIX . 'users';
 		$user_groups_table = SQL_PREFIX . 'user_groups';
@@ -121,15 +153,28 @@ class PhpcDatabase {
 	}
 
 	// returns all the events for a particular day
+
+    /**
+     * @param int $cid
+     * @param int $year
+     * @param int $month
+     * @param int $day
+     * @return mysqli_result
+     */
 	function get_occurrences_by_date($cid, $year, $month, $day)
 	{
 		$from_stamp = mktime(0, 0, 0, $month, $day, $year);
 		$to_stamp = mktime(23, 59, 59, $month, $day, $year);
 
 		return $this->get_occurrences_by_date_range($cid, $from_stamp, $to_stamp);
-        }
+    }
 
 	// returns the event that corresponds to eid
+
+    /**
+     * @param int $eid
+     * @return array
+     */
 	function get_event_by_eid($eid)
 	{
 		$events_table = SQL_PREFIX . 'events';
@@ -154,6 +199,11 @@ class PhpcDatabase {
 	}
 
 	// returns the event that corresponds to oid
+
+    /**
+     * @param int $oid
+     * @return array
+     */
 	function get_event_by_oid($oid)
 	{
 		$events_table = SQL_PREFIX . 'events';
@@ -181,6 +231,11 @@ class PhpcDatabase {
 	}
 
 	// returns the category that corresponds to $catid
+
+    /**
+     * @param int $catid
+     * @return array
+     */
 	function get_category($catid) {
 		$cats_table = SQL_PREFIX . 'categories';
 		$groups_table = SQL_PREFIX . 'groups';
@@ -203,6 +258,10 @@ class PhpcDatabase {
 		return $result;
 	}
 
+    /**
+     * @param int $gid
+     * @return array
+     */
 	function get_group($gid) {
 		$groups_table = SQL_PREFIX . 'groups';
 
@@ -220,6 +279,10 @@ class PhpcDatabase {
 		return $result;
 	}
 
+    /**
+     * @param bool|int $cid
+     * @return array
+     */
 	function get_groups($cid = false) {
 		$groups_table = SQL_PREFIX . 'groups';
 
@@ -239,6 +302,10 @@ class PhpcDatabase {
 		return $groups;
 	}
 
+    /**
+     * @param int $uid
+     * @return array
+     */
 	function get_user_groups($uid) {
 		$groups_table = SQL_PREFIX . 'groups';
 		$user_groups_table = SQL_PREFIX . 'user_groups';
@@ -260,6 +327,11 @@ class PhpcDatabase {
 	}
 	
 	// returns the categories for calendar $cid
+
+    /**
+     * @param bool|int $cid
+     * @return array
+     */
 	function get_categories($cid = false) {
 		$cats_table = SQL_PREFIX . 'categories';
 		$groups_table = SQL_PREFIX . 'groups';
@@ -290,7 +362,12 @@ class PhpcDatabase {
 	}
 
 	// returns the categories for calendar $cid
-	//   if there are no 
+    //   if there are no
+    /**
+     * @param int $uid
+     * @param bool|int $cid
+     * @return array
+     */
 	function get_visible_categories($uid, $cid = false)
 	{
 		$cats_table = SQL_PREFIX . 'categories';
@@ -319,6 +396,11 @@ class PhpcDatabase {
 	}
 
 	// returns the event that corresponds to $oid
+
+    /**
+     * @param int $oid
+     * @return PhpcOccurrence
+     */
 	function get_occurrence_by_oid($oid)
 	{
 		$events_table = SQL_PREFIX . 'events';
@@ -344,7 +426,11 @@ class PhpcDatabase {
 		return new PhpcOccurrence($result);
 	}
 
-        function get_occurrences_by_eid($eid)
+    /**
+     * @param int $eid
+     * @return PhpcOccurrence[]
+     */
+    function get_occurrences_by_eid($eid)
 	{
 		$events_table = SQL_PREFIX . "events";
 		$occurrences_table = SQL_PREFIX . "occurrences";
@@ -369,8 +455,12 @@ class PhpcDatabase {
 			$events[] = new PhpcOccurrence($row);
 		}
 		return $events;
-        }
+    }
 
+    /**
+     * @param int $eid
+     * @return bool
+     */
 	function delete_event($eid)
 	{
 
@@ -388,6 +478,10 @@ class PhpcDatabase {
 		return $rv;
 	}
 
+    /**
+     * @param int $eid
+     * @return int
+     */
 	function delete_occurrences($eid)
 	{
 		$query = 'DELETE FROM `'.SQL_PREFIX ."occurrences`\n"
@@ -400,6 +494,10 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows;
 	}
 
+    /**
+     * @param int $oid
+     * @return int
+     */
 	function delete_occurrence($oid)
 	{
 		$query = 'DELETE FROM `'.SQL_PREFIX ."occurrences`\n"
@@ -412,6 +510,10 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows;
 	}
 
+    /**
+     * @param int $id
+     * @return bool
+     */
 	function delete_calendar($id)
 	{
 
@@ -425,6 +527,10 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows > 0;
 	}
 
+    /**
+     * @param int $catid
+     * @return bool
+     */
 	function delete_category($catid)
 	{
 
@@ -438,6 +544,10 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows > 0;
 	}
 
+    /**
+     * @param int $gid
+     * @return bool
+     */
 	function delete_group($gid)
 	{
 
@@ -451,6 +561,10 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows > 0;
 	}
 
+    /**
+     * @param int $id
+     * @return bool
+     */
 	function delete_user($id)
 	{
 
@@ -471,6 +585,11 @@ class PhpcDatabase {
 		return $rv;
 	}
 
+    /**
+     * @param int $cid
+     * @param int $uid
+     * @return string[]
+     */
 	function get_permissions($cid, $uid)
 	{
 		static $perms = array();
@@ -491,6 +610,9 @@ class PhpcDatabase {
 		return $perms[$cid][$uid];
 	}
 
+    /**
+     * @return PhpcCalendar[]
+     */
 	function get_calendars() {
 		if(!empty($this->calendars))
 			return $this->calendars;
@@ -512,17 +634,34 @@ class PhpcDatabase {
 		return $this->calendars;
 	}
 
+    /**
+     * @param int $cid
+     * @return PhpcCalendar
+     */
 	function get_calendar($cid)
 	{
 		// Make sure we've cached the calendars
-		$this->get_calendars();
-		if(empty($this->calendars[$cid])) {
-			return NULL;
+        $calendars = $this->get_calendars();
+        if (empty($calendars[$cid])) {
+            soft_error('Calendar $cid does not exist.');
 		}
 
-		return $this->calendars[$cid];
+        return $calendars[$cid];
 	}
 
+    /**
+     * @param int $cid
+     * @return bool
+     */
+    function have_calendar($cid)
+    {
+        $calendars = $this->get_calendars();
+        return isset($calendars[$cid]);
+    }
+
+    /**
+     * @return PhpcUser[]
+     */
 	function get_users()
 	{
 		$query = "SELECT * FROM `" . SQL_PREFIX .  "users`";
@@ -537,6 +676,10 @@ class PhpcDatabase {
 		return $users;
 	}
 
+    /**
+     * @param int $cid
+     * @return array
+     */
 	function get_users_with_permissions($cid)
 	{
 		$permissions_table = SQL_PREFIX . "permissions";
@@ -557,6 +700,10 @@ class PhpcDatabase {
 		return $users;
 	}
 
+    /**
+     * @param string $username
+     * @return bool|PhpcUser
+     */
 	function get_user_by_name($username)
 	{
 		$query = "SELECT " . $this->get_user_fields()
@@ -573,6 +720,10 @@ class PhpcDatabase {
 			return false;
 	}
 
+    /**
+     * @param int $uid
+     * @return PhpcUser
+     */
 	function get_user($uid)
 	{
 		$query = "SELECT " . $this->get_user_fields()
@@ -582,13 +733,18 @@ class PhpcDatabase {
 		$sth = $this->dbh->query($query)
 			or $this->db_error(__("Error getting user."), $query);
 
-		$result = $sth->fetch_assoc();
-		if($result)
-			return new PhpcUser($result);
-		else
-			return false;
+        $result = $sth->fetch_assoc()
+        or soft_error('Invalid UID');
+
+        return new PhpcUser($result);
 	}
 
+    /**
+     * @param string $username
+     * @param string $password
+     * @param bool $make_admin
+     * @return mixed
+     */
 	function create_user($username, $password, $make_admin) {
 		$admin = $make_admin ? 1 : 0;
 		$query = "INSERT into `".SQL_PREFIX."users`\n"
@@ -601,6 +757,9 @@ class PhpcDatabase {
 		return $this->dbh->insert_id;
 	}
 
+    /**
+     * @return mixed
+     */
 	function create_calendar()
 	{
 		$query = "INSERT INTO ".SQL_PREFIX."calendars\n"
@@ -612,6 +771,11 @@ class PhpcDatabase {
 		return $this->dbh->insert_id;
 	}
 
+    /**
+     * @param int $cid
+     * @param string $name
+     * @param string $value
+     */
 	function update_config($cid, $name, $value)
 	{
 		$query = "UPDATE ".SQL_PREFIX."calendars \n"
@@ -619,9 +783,14 @@ class PhpcDatabase {
 		."WHERE `cid`='$cid'";
 
 		$this->dbh->query($query)
-			or $this->db_error(__('Error reading options'), $query);
+        or $this->db_error(__('Error updating option'), $query);
 	}
 
+    /**
+     * @param int $cid
+     * @param string $name
+     * @param string $value
+     */
 	function create_config($cid, $name, $value)
 	{
 	
@@ -630,9 +799,13 @@ class PhpcDatabase {
 			."WHERE `cid`='$cid'"; 
 
 		$this->dbh->query($query)
-			or $this->db_error(__('Error creating options'), $query);
+        or $this->db_error(__('Error creating option'), $query);
 	}
-	
+
+    /**
+     * @param int $uid
+     * @param string $password
+     */
 	function set_password($uid, $password)
 	{
 		$query = "UPDATE `" . SQL_PREFIX . "users`\n"
@@ -644,6 +817,10 @@ class PhpcDatabase {
 					$query);
 	}
 
+    /**
+     * @param int $uid
+     * @param string $timezone
+     */
 	function set_timezone($uid, $timezone)
 	{
 		$query = "UPDATE `" . SQL_PREFIX . "users`\n"
@@ -655,6 +832,10 @@ class PhpcDatabase {
 					$query);
 	}
 
+    /**
+     * @param int $uid
+     * @param string $language
+     */
 	function set_language($uid, $language)
 	{
 		$query = "UPDATE `" . SQL_PREFIX . "users`\n"
@@ -666,6 +847,10 @@ class PhpcDatabase {
 					$query);
 	}
 
+    /**
+     * @param int $uid
+     * @param int $gid
+     */
 	function user_add_group($uid, $gid) {
 		$user_groups_table = SQL_PREFIX . 'user_groups';
 
@@ -678,6 +863,10 @@ class PhpcDatabase {
 					$query);
 	}
 
+    /**
+     * @param int $uid
+     * @param int $gid
+     */
 	function user_remove_group($uid, $gid) {
 		$user_groups_table = SQL_PREFIX . 'user_groups';
 
@@ -688,6 +877,15 @@ class PhpcDatabase {
 			or $this->db_error(__('Error removing group from user.'), $query);
 	}
 
+    /**
+     * @param int $cid
+     * @param int $uid
+     * @param string $subject
+     * @param string $description
+     * @param bool $readonly
+     * @param bool|string $catid
+     * @return mixed
+     */
 	function create_event($cid, $uid, $subject, $description, $readonly,
 			$catid = false)
 	{
@@ -715,6 +913,13 @@ class PhpcDatabase {
 		return $eid;
 	}
 
+    /**
+     * @param int $eid
+     * @param int $time_type
+     * @param int $start_ts
+     * @param int $end_ts
+     * @return mixed
+     */
 	function create_occurrence($eid, $time_type, $start_ts, $end_ts)
 	{
 
@@ -738,6 +943,13 @@ class PhpcDatabase {
 		return $this->dbh->insert_id;
 	}
 
+    /**
+     * @param int $oid
+     * @param int $time_type
+     * @param int $start_ts
+     * @param int $end_ts
+     * @return bool
+     */
 	function modify_occurrence($oid, $time_type, $start_ts, $end_ts)
 	{
 
@@ -767,6 +979,14 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows > 0;
 	}
 
+    /**
+     * @param int $eid
+     * @param string $subject
+     * @param string $description
+     * @param bool $readonly
+     * @param bool|int $catid
+     * @return bool
+     */
 	function modify_event($eid, $subject, $description, $readonly,
 			$catid = false)
 	{
@@ -788,6 +1008,14 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows > 0;
 	}
 
+    /**
+     * @param int $cid
+     * @param string $name
+     * @param string $text_color
+     * @param string $bg_color
+     * @param bool|int $gid
+     * @return mixed
+     */
 	function create_category($cid, $name, $text_color, $bg_color,
 			$gid = false) {
 		$gid_key = $gid ? ', `gid`' : '';
@@ -803,6 +1031,11 @@ class PhpcDatabase {
 		return $this->dbh->insert_id;
 	}
 
+    /**
+     * @param int $cid
+     * @param string $name
+     * @return mixed
+     */
 	function create_group($cid, $name)
 	{
 		$query = "INSERT INTO `" . SQL_PREFIX . "groups`\n"
@@ -815,6 +1048,14 @@ class PhpcDatabase {
 		return $this->dbh->insert_id;
 	}
 
+    /**
+     * @param int $catid
+     * @param string $name
+     * @param string $text_color
+     * @param string $bg_color
+     * @param int $gid
+     * @return bool
+     */
 	function modify_category($catid, $name, $text_color, $bg_color, $gid)
 	{
 		$query = "UPDATE " . SQL_PREFIX . "categories\n"
@@ -832,6 +1073,11 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows > 0;
 	}
 
+    /**
+     * @param int $gid
+     * @param string $name
+     * @return bool
+     */
 	function modify_group($gid, $name)
 	{
 		$query = "UPDATE " . SQL_PREFIX . "groups\n"
@@ -845,6 +1091,15 @@ class PhpcDatabase {
 		return $this->dbh->affected_rows > 0;
 	}
 
+    /**
+     * @param int $cid
+     * @param string[] $keywords
+     * @param int $start
+     * @param int $end
+     * @param string $sort
+     * @param string $order
+     * @return PhpcOccurrence[]
+     */
 	function search($cid, $keywords, $start, $end, $sort, $order) {
 		$events_table = SQL_PREFIX . 'events';
 		$occurrences_table = SQL_PREFIX . 'occurrences';
@@ -885,6 +1140,11 @@ class PhpcDatabase {
 		return $events;
 	}
 
+    /**
+     * @param int $cid
+     * @param int $uid
+     * @param array $perms
+     */
 	function update_permissions($cid, $uid, $perms)
 	{
 		$names = array();
@@ -906,6 +1166,11 @@ class PhpcDatabase {
 					$query);
 	}
 
+    /**
+     * @param int $uid
+     * @param int $series
+     * @return bool
+     */
 	function get_login_token($uid, $series) {
 		$query = "SELECT token FROM ".SQL_PREFIX."logins\n"
 			."WHERE `uid`='$uid' AND `series`='$series'";
@@ -920,6 +1185,11 @@ class PhpcDatabase {
 		return $result["token"];
 	}
 
+    /**
+     * @param int $uid
+     * @param int $series
+     * @param int $token
+     */
 	function add_login_token($uid, $series, $token) {
 		$query = "INSERT INTO ".SQL_PREFIX."logins\n"
 			."(`uid`, `series`, `token`)\n"
@@ -930,6 +1200,11 @@ class PhpcDatabase {
 					$query);
 	}
 
+    /**
+     * @param int $uid
+     * @param int $series
+     * @param int $token
+     */
 	function update_login_token($uid, $series, $token) {
 		$query = "UPDATE ".SQL_PREFIX."logins\n"
 			."SET `token`='$token', `atime`=NOW()\n"
@@ -940,6 +1215,9 @@ class PhpcDatabase {
 					$query);
 	}
 
+    /**
+     * @param int $uid
+     */
 	function remove_login_tokens($uid) {
 		$query = "DELETE FROM ".SQL_PREFIX."logins\n"
 			."WHERE `uid`='$uid'";
@@ -959,6 +1237,12 @@ class PhpcDatabase {
 	}
 
 	// called when there is an error involving the DB
+
+    /**
+     * @param string $str
+     * @param string $query
+     * @throws Exception
+     */
 	function db_error($str, $query = "")
 	{
 		$string = $str . "<pre>" . phpc_html_escape($this->dbh->error)
@@ -972,5 +1256,3 @@ class PhpcDatabase {
 	}
 
 }
-
-?>

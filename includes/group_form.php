@@ -21,6 +21,9 @@ if(!defined('IN_PHPC')) {
 
 require_once("$phpc_includes_path/form.php");
 
+/**
+ * @return Html
+ */
 function group_form() {
 	global $phpc_script, $vars, $phpcdb, $phpcid;
 
@@ -42,5 +45,3 @@ function group_form() {
 	}
         return $form->get_form($defaults);
 }
-
-?>

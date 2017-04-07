@@ -19,6 +19,9 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function group_delete()
 {
 	global $vars, $phpcdb, $phpcid, $phpc_script;
@@ -44,7 +47,7 @@ function group_delete()
 	if (empty($vars["confirm"])) {
 		$list = tag('ul');
 		foreach ($groups as $group) {
-			$list->add(tag('li', "$id: ".$group['name']));
+            $list->add(tag('li', $group['name']));
 		}
 		$html->add(tag('p', __('Confirm you want to delete:')));
 		$html->add($list);
@@ -75,5 +78,3 @@ function group_delete()
 
         return message_redirect($html, "$phpc_script?action=cadmin&phpcid=$phpcid");
 }
-
-?>

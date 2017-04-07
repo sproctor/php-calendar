@@ -21,6 +21,9 @@ if(!defined('IN_PHPC')) {
 
 require_once("$phpc_includes_path/form.php");
 
+/**
+ * @return Html
+ */
 function category_form() {
 	global $phpc_script, $vars, $phpcdb, $phpcid;
 
@@ -66,4 +69,3 @@ function category_form() {
         return $form->get_form($defaults);
 }
 
-?>

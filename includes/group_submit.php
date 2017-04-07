@@ -19,9 +19,12 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function group_submit()
 {
-	global $vars, $phpcdb, $phpc_script, $phpc_cal;
+    global $vars, $phpcdb, $phpc_script;
 
 	if(!isset($vars['gid'])) {
 		$modify = false;
@@ -64,4 +67,3 @@ function group_submit()
 	return tag('div', attributes('class="phpc-error"'),
 			__('Error submitting group.'));
 }
-?>

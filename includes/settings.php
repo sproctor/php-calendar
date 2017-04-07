@@ -19,9 +19,13 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function settings()
 {
-	global $vars, $phpcdb, $phpc_user;
+    /** @var PhpcUser $phpc_user */
+    global $vars, $phpc_user;
 
 	if(!empty($vars["phpc_submit"]))
 		settings_submit();
@@ -42,6 +46,9 @@ function settings()
 	return tag('div', attrs('class="phpc-tabs"'), $index, $forms);
 }
 
+/**
+ * @return Html
+ */
 function password_form()
 {
 	global $phpc_script, $phpc_token;
@@ -71,6 +78,9 @@ function password_form()
 	return tag('div', attrs('id="phpc-password"'), $form);
 }
 
+/**
+ * @return Html
+ */
 function config_form()
 {
 	global $phpc_script, $phpc_user_tz, $phpc_user_lang, $phpc_token;
@@ -110,7 +120,8 @@ function config_form()
 
 function settings_submit()
 {
-	global $phpcid, $vars, $phpcdb, $phpc_user_tz, $phpc_user_lang,
+    /** @var PhpcUser $phpc_user */
+    global $vars, $phpcdb, $phpc_user_tz, $phpc_user_lang,
 	       $phpc_prefix, $phpc_user;
 
 	verify_token();
@@ -136,7 +147,5 @@ function settings_submit()
 		$phpc_user_lang = $vars["language"];
 	}
 
-        return message(__('Settings updated.'));
+    message(__('Settings updated.'));
 }
-
-?>

@@ -19,6 +19,9 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function category_delete()
 {
 	global $vars, $phpcdb, $phpcid, $phpc_script;
@@ -44,7 +47,7 @@ function category_delete()
 	if (empty($vars["confirm"])) {
 		$list = tag('ul');
 		foreach ($categories as $category) {
-			$list->add(tag('li', "$id: ".$category['name']));
+            $list->add(tag('li', $category['name']));
 		}
 		$html->add(tag('p', __('Confirm you want to delete:')));
 		$html->add($list);
@@ -75,5 +78,3 @@ function category_delete()
 
         return message_redirect($html, "$phpc_script?action=cadmin&phpcid=$phpcid");
 }
-
-?>

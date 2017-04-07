@@ -21,6 +21,9 @@ if(!defined('IN_PHPC')) {
 
 require_once("$phpc_includes_path/form.php");
 
+/**
+ * @return Html
+ */
 function event_form() {
 	global $vars;
 
@@ -31,7 +34,11 @@ function event_form() {
 	return process_form();
 }
 
+/**
+ * @return Html
+ */
 function display_form() {
+    /** @var PhpcUser $phpc_user */
 	global $phpc_script, $year, $month, $day, $vars, $phpcdb, $phpc_cal,
 	       $phpc_user, $phpc_token;
 
@@ -179,6 +186,10 @@ function display_form() {
 	return $form->get_form($defaults);
 }
 
+/**
+ * @param PhpcOccurrence[] $occs
+ * @param $defaults
+ */
 function add_repeat_defaults($occs, &$defaults) {
 	// TODO: Handle unevenly spaced occurrences
 
@@ -191,6 +202,10 @@ function add_repeat_defaults($occs, &$defaults) {
 	$day = $event->get_start_day();
 	$month = $event->get_start_month();
 	$year = $event->get_start_year();
+
+    $cur_year = $year;
+    $cur_month = $month;
+    $cur_day = $day;
 
 	// Test if they repeat every N years
 	$nyears = $occs[1]->get_start_year() - $event->get_start_year();
@@ -267,8 +282,12 @@ function add_repeat_defaults($occs, &$defaults) {
 	}
 }
 
+/**
+ * @return Html
+ */
 function process_form()
 {
+    /** @var PhpcUser $phpc_user */
 	global $vars, $phpcdb, $phpc_cal, $phpcid, $phpc_script, $phpc_user;
 
 	// When modifying events, this is the value of the checkbox that
@@ -330,7 +349,7 @@ function process_form()
 	}
 
 	if($modify_occur) {
-		$oid = $phpcdb->create_occurrence($eid, $time_type, $start_ts, $end_ts);
+        $phpcdb->create_occurrence($eid, $time_type, $start_ts, $end_ts);
 
 		$occurrences = 1;
 		switch($vars["repeats"]) {
@@ -433,5 +452,3 @@ function process_form()
 				"$phpc_script?action=display_month&phpcid=$phpcid");
 	}
 }
-
-?>

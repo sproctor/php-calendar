@@ -17,7 +17,9 @@
 
 require_once("$phpc_includes_path/phpcevent.class.php");
 
-class PhpcOccurrence extends PhpcEvent{
+class PhpcOccurrence extends PhpcEvent
+{
+    /** @var int */
 	var $oid;
 	var $start_year;
 	var $start_month;
@@ -35,7 +37,7 @@ class PhpcOccurrence extends PhpcEvent{
 	function __construct($event) {
 		parent::__construct($event);
 
-		$this->oid = $event['oid'];
+        $this->oid = intval($event['oid']);
 
 		if(!empty($event['start_ts'])) {
 			$start_ts = $event['start_ts'];
@@ -106,7 +108,6 @@ class PhpcOccurrence extends PhpcEvent{
 	{
 		switch($this->time_type) {
 			default:
-				$hour24 = $this->cal->hours_24;
 				$start_time = $this->get_start_time();
 				$end_time = $this->get_end_time();
 				return $start_time.' '.__('to').' '.$end_time;
@@ -283,5 +284,3 @@ class PhpcOccurrence extends PhpcEvent{
 				$this->start_year);
 	}
 }
-
-?>

@@ -19,6 +19,9 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function event_delete()
 {
 	global $vars, $phpcdb, $phpc_script;
@@ -99,5 +102,3 @@ function event_delete()
 	
         return message_redirect($html, $phpc_script);
 }
-
-?>

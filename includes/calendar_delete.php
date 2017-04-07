@@ -19,6 +19,9 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function calendar_delete()
 {
 	global $vars, $phpcdb, $phpc_script;
@@ -61,4 +64,3 @@ function calendar_delete()
         return message_redirect($html, "$phpc_script?action=admin");
 }
 
-?>

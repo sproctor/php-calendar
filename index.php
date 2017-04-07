@@ -80,7 +80,8 @@ try {
 			userMenu(),
 			tag('br', attrs('style="clear:both;"')),
 			tag('h1', attrs('class="ui-widget-header"'),
-				create_dropdown_list(tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'", 'class="phpc-dropdown-list-title"'),
+                create_dropdown_list(tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'",
+                    'class="phpc-dropdown-list-title"'),
 					$calendar_title), $list)),
 			display_phpc());
 } catch(Exception $e) {

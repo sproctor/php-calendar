@@ -22,6 +22,10 @@ if ( !defined('IN_PHPC') ) {
 require_once("$phpc_includes_path/lib_autolink.php");
 
 // called when some error happens
+/**
+ * @param string $message
+ * @throws Exception
+ */
 function soft_error($message)
 {
 	throw new Exception(phpc_html_escape($message));
@@ -30,16 +34,27 @@ function soft_error($message)
 class PermissionException extends Exception {
 }
 
+/**
+ * @param string $message
+ * @throws PermissionException
+ */
 function permission_error($message)
 {
 	throw new PermissionException(phpc_html_escape($message));
 }
 
+/**
+ * @param int $minute
+ * @return string
+ */
 function minute_pad($minute)
 {
 	return sprintf('%02d', $minute);
 }
 
+/**
+ * @param string $page
+ */
 function redirect($page) {
 	global $phpc_script, $phpc_server, $phpc_redirect, $phpc_proto;
 
@@ -57,6 +72,11 @@ function redirect($page) {
 	header("Location: $url");
 }
 
+/**
+ * @param string $message
+ * @param string $page
+ * @return Html
+ */
 function message_redirect($message, $page) {
 	global $phpc_prefix;
 
@@ -75,12 +95,19 @@ function message_redirect($message, $page) {
  		tag('a', attrs("href=\"$continue_url\""), __("continue")));
 }
 
+/**
+ * @param string $message
+ */
 function message($message) {
 	global $phpc_messages;
 
 	$phpc_messages[] = $message;
 }
 
+/**
+ * @param array|string $var
+ * @return array|string
+ */
 function stripslashes_r($var) {
 	if (is_array($var))
 		return array_map("stripslashes_r", $var);
@@ -88,6 +115,10 @@ function stripslashes_r($var) {
 		return stripslashes($var);
 }
 
+/**
+ * @param array|string $var
+ * @return array|string
+ */
 function real_escape_r($var) {
 	global $phpcdb;
 
@@ -97,11 +128,21 @@ function real_escape_r($var) {
 		return mysqli_real_escape_string($phpcdb->dbh, $var);
 }
 
+/**
+ * @param bool $val
+ * @return string
+ */
 function asbool($val)
 {
 	return $val ? "1" : "0";
 }
 
+/**
+ * @param int $timestamp
+ * @param int $date_format
+ * @param bool $hours24
+ * @return string
+ */
 function format_timestamp_string($timestamp, $date_format, $hours24) {
 	$year = date('Y', $timestamp);
 	$month = date('n', $timestamp);
@@ -112,7 +153,14 @@ function format_timestamp_string($timestamp, $date_format, $hours24) {
 	return format_date_string($year, $month, $day, $date_format) . ' '
 		. __('at') . ' ' . format_time_string($hour, $minute, $hours24);
 }
-	
+
+/**
+ * @param int $year
+ * @param int $month
+ * @param int $day
+ * @param int $date_format
+ * @return string
+ */
 function format_date_string($year, $month, $day, $date_format)
 {
 	$month_name = short_month_name($month);
@@ -128,6 +176,13 @@ function format_date_string($year, $month, $day, $date_format)
 	}
 }
 
+/**
+ * @param int $year
+ * @param int $month
+ * @param int $day
+ * @param int $date_format
+ * @return string
+ */
 function format_short_date_string($year, $month, $day, $date_format)
 {
 	switch($date_format) {
@@ -142,6 +197,12 @@ function format_short_date_string($year, $month, $day, $date_format)
 	}
 }
 
+/**
+ * @param int $hour
+ * @param int $minute
+ * @param bool $hour24
+ * @return string
+ */
 function format_time_string($hour, $minute, $hour24)
 {
 	if(!$hour24) {
@@ -162,6 +223,9 @@ function format_time_string($hour, $minute, $hour24)
 }
 
 // called when some error happens
+/**
+ * @param string $str
+ */
 function display_error($str)
 {
 	echo '<html><head><title>', __('Error'), "</title></head>\n",
@@ -179,6 +243,10 @@ function display_error($str)
 }
 
 // parses a description and adds the appropriate mark-up
+/**
+ * @param string $text
+ * @return string
+ */
 function parse_desc($text)
 {
 	// Don't allow tags and make the description HTML-safe
@@ -195,40 +263,64 @@ function parse_desc($text)
 	return $text;
 }
 
+/**
+ * @param int $timestamp
+ * @return int
+ */
 function days_in_year($timestamp) {
 	return 365 + date('L', $timestamp);
 }
 
+/**
+ * @param int|null $stamp
+ * @param int $days
+ * @return false|int|null
+ */
 function add_days($stamp, $days)
 {
-	if($stamp == NULL)
-		return NULL;
+    if ($stamp == null)
+        return null;
 
 	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
 			date('n', $stamp), date('j', $stamp) + $days,
 			date('Y', $stamp));
 }
 
+/**
+ * @param int|null $stamp
+ * @param int $months
+ * @return false|int|null
+ */
 function add_months($stamp, $months)
 {
-	if($stamp == NULL)
-		return NULL;
+    if ($stamp == null)
+        return null;
 
 	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
 			date('m', $stamp) + $months, date('d', $stamp),
 			date('Y', $stamp));
 }
 
+/**
+ * @param int|null $stamp
+ * @param int $years
+ * @return false|int|null
+ */
 function add_years($stamp, $years)
 {
-	if($stamp == NULL)
-		return NULL;
+    if ($stamp == null)
+        return null;
 
 	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
 			date('m', $stamp), date('d', $stamp),
 			date('Y', $stamp) + $years);
 }
 
+/**
+ * @param int $ts1
+ * @param int $ts2
+ * @return int
+ */
 function days_between($ts1, $ts2) {
 	// First date always comes first
 	if($ts1 > $ts2)
@@ -241,7 +333,7 @@ function days_between($ts1, $ts2) {
 			+ days_between(add_years($ts1, 1), $ts2);
 
 	// The years are equal, subtract day of the year of each
-	return date('z', $ts2) - date('z', $ts1);
+    return intval(date('z', $ts2)) - intval(date('z', $ts1));
 }
 
 // Stolen from Drupal
@@ -338,4 +430,3 @@ function phpc_get_hash_salt() {
 function phpc_html_escape($str) {
 	return htmlspecialchars($str, ENT_COMPAT, "UTF-8");
 }
-?>

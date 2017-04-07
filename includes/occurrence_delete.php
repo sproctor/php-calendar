@@ -19,6 +19,9 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function occurrence_delete()
 {
 	global $vars, $phpcdb, $phpcid, $phpc_script;
@@ -100,9 +103,7 @@ function occurrence_delete()
 		$text .= ': ' . implode(', ', $permission_denied);
 		$html->add(tag('p', $text));
 	}
-	
-        return message_redirect($html,
+
+    return message_redirect($html,
 			"$phpc_script?action=display_event&phpcid=$phpcid&eid=$eid");
 }
-
-?>

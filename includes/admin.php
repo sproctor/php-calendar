@@ -16,17 +16,20 @@
  */
 
 if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
+    die("Hacking attempt");
 }
 
 require_once("$phpc_includes_path/form.php");
 
+/**
+ * @return Html
+ */
 function admin() {
 	global $phpc_version;
 
-        if(!is_admin()) {
-                permission_error(__('You must be logged in as an admin.'));
-        }
+    if (!is_admin()) {
+        permission_error(__('You must be logged in as an admin.'));
+    }
 
 	$menu = tag('ul',
 			tag('li', tag('a', attrs('href="#phpc-admin-calendars"'),
@@ -46,30 +49,33 @@ function admin() {
 				translation_link()), $version);
 }
 
+/**
+ * @return Html
+ */
 function calendar_list()
 {
-	global $phpc_script, $phpcdb;
+    global $phpcdb;
 
-        $tbody = tag('tbody');
+    $tbody = tag('tbody');
 
 		$tbody->add(tag('tr', tag('th', __("Calendar")),
 					tag('th', __("Action"))));
-        foreach($phpcdb->get_calendars() as $calendar) {
-                $title = $calendar->get_title();
-                $cid = $calendar->get_cid();
+    foreach ($phpcdb->get_calendars() as $calendar) {
+        $title = $calendar->get_title();
+        $cid = $calendar->get_cid();
 
-                $tbody->add(tag('tr',
-                                tag('th', $title),
-                                tag('td',create_action_link(__("Edit"),
+        $tbody->add(tag('tr',
+            tag('th', $title),
+            tag('td', create_action_link(__("Edit"),
 						"cadmin", array("phpcid" => $cid)),
 					" ", create_action_link(__("Delete"),
 						"calendar_delete",
 						array("cid" => $cid)))));
-        }
+    }
 
 	$create_link = create_action_link(__('Create Calendar'),
 			'calendar_form');
-        return tag('div', attributes('id="phpc-admin-calendars"'), tag('table',
+    return tag('div', attributes('id="phpc-admin-calendars"'), tag('table',
 				attributes('class="phpc-container"'),
 			tag('caption', __('Calendar List')), $tbody,
 			tag('tfoot',
@@ -79,17 +85,21 @@ function calendar_list()
 
 }
 
+/**
+ * @return Html
+ */
 function user_list()
 {
-	global $phpc_script, $phpcdb;
+    global $phpcdb;
 
-        $tbody = tag('tbody');
+    $tbody = tag('tbody');
 
-		$tbody->add(tag('tr', tag('th', __("Username")),
-					tag('th', __("Groups")),
-					tag('th', __("Edit Groups")),
-					tag('th', __("Action"))));
-        foreach($phpcdb->get_users() as $user) {
+    $tbody->add(tag('tr', tag('th', __("Username")),
+        tag('th', __("Groups")),
+        tag('th', __("Edit Groups")),
+        tag('th', __("Action"))));
+
+    foreach ($phpcdb->get_users() as $user) {
 		$group_list = array();
 		foreach($user->get_groups() as $group) {
 			$group_list[] = $group['name'];
@@ -97,7 +107,8 @@ function user_list()
 		$groups = implode(', ', $group_list);
 		$tbody->add(tag('tr', tag('th', $user->username),
 					tag('td', $groups),
-					tag('td', create_action_link(__("Edit Groups"), "user_groups", array("uid" => $user->uid))),
+            tag('td', create_action_link(__("Edit Groups"), "user_groups",
+                array("uid" => $user->uid))),
 					tag('td', create_action_link(__("Delete"),
 							"user_delete",
 							array("uid" => $user->uid)))));
@@ -105,18 +116,21 @@ function user_list()
 
 	$create_link = create_action_link(__('Create User'),
 			'user_create');
-        return tag('div', attributes('id="phpc-admin-users"'),tag('table',
-				attributes('class="phpc-container"'),
-			tag('caption', __('User List')), $tbody,
-			tag('tfoot',
-				tag('tr',
-					tag('td', attributes('colspan="3"'),
-						$create_link)))));
+    return tag('div', attributes('id="phpc-admin-users"'), tag('table',
+        attributes('class="phpc-container"'),
+        tag('caption', __('User List')), $tbody,
+        tag('tfoot',
+            tag('tr',
+                tag('td', attributes('colspan="3"'),
+                    $create_link)))));
 
 }
 
+/**
+ * @return Html
+ */
 function import() {
-	global $phpc_script, $vars;
+    global $phpc_script;
 
 	$form = new Form($phpc_script, __('Import Form'));
 	$form->add_part(new FormFreeQuestion('host', __('MySQL Host Name')));
@@ -143,6 +157,9 @@ function import() {
 			$form->get_form($defaults));
 }
 
+/**
+ * @return Html
+ */
 function translation_link() {
 	global $phpc_script;
 
@@ -152,4 +169,3 @@ function translation_link() {
 					"href=\"$phpc_script?action=translate\""),
 				__('Generate Translations')));
 }
-?>

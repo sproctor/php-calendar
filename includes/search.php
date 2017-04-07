@@ -21,6 +21,9 @@ if(!defined('IN_PHPC')) {
 
 require_once("$phpc_includes_path/form.php");
 
+/**
+ * @return Html
+ */
 function search_results()
 {
 	global $vars, $phpcdb, $phpcid, $sort_options, $order_options;
@@ -59,7 +62,6 @@ function search_results()
 		if(!$event->can_read())
 			continue;
 
-		$name = $event->get_author();
 		$subject = $event->get_subject();
 		$desc = $event->get_desc();
 		$date = $event->get_date_string();
@@ -96,10 +98,12 @@ function search_results()
 	return $html;
 }
 
+/**
+ * @return Html
+ */
 function search_form()
 {
-	global $day, $month, $year, $phpc_script, $month_names, $sort_options,
-	       $order_options, $phpcid, $phpc_cal;
+    global $phpc_script, $sort_options, $order_options, $phpcid, $phpc_cal;
 	
 	$date_format = $phpc_cal->date_format;
  
@@ -122,6 +126,9 @@ function search_form()
 	return $form->get_form();
 }
 
+/**
+ * @return Html
+ */
 function search()
 {
 	global $vars;
@@ -129,5 +136,3 @@ function search()
 	if(isset($vars['searchstring'])) return search_results();
 	return search_form();
 }
-
-?>

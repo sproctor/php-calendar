@@ -19,6 +19,9 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function user_delete()
 {
 	global $vars, $phpcid, $phpcdb, $phpc_script;
@@ -67,5 +70,3 @@ function user_delete()
 
         return message_redirect($html, "$phpc_script?action=admin&phpcid=$phpcid");
 }
-
-?>

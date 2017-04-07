@@ -40,4 +40,3 @@ $head = tag('div', attrs('class="phpc-head"'),
 			get_header_tags("static"));
 echo $head->toString();
 echo $content->toString();
-?>

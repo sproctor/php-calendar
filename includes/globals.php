@@ -74,5 +74,3 @@ $order_options = array(
                 'ASC' => __('Ascending'),
                 'DESC' => __('Descending')
                 );
-
-?>

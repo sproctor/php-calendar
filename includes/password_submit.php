@@ -19,8 +19,12 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function password_submit()
 {
+    /** @var PhpcUser $phpc_user */
 	global $vars, $phpcdb, $phpc_user;
 
         if(!is_user()) {
@@ -57,5 +61,3 @@ function password_submit()
 
         return tag('div', __('Password updated.'));
 }
-
-?>

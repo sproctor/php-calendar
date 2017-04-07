@@ -51,7 +51,9 @@ class Gettext_PHP //extends Gettext
     /**
      * Initialize a new gettext class
      *
-     * @param String $mofile The file to parse
+     * @param string $directory
+     * @param string $domain
+     * @param string $locale
      */
     public function __construct($directory, $domain, $locale)
     {
@@ -66,9 +68,9 @@ class Gettext_PHP //extends Gettext
      * If an exception occured, null is returned. This is intentionally
      * as we need to get close to ext/gettexts beahvior.
      *
-     * @oaram Ressource $fp The open file handler to the MO file
+     * @param resource $fp The open file handler to the MO file
      *
-     * @return An array of offset
+     * @return array of offset
      */
     private function parseHeader($fp)
     {
@@ -98,11 +100,11 @@ class Gettext_PHP //extends Gettext
      * If an exception occured, null is returned. This is intentionally
      * as we need to get close to ext/gettexts beahvior.
      *
-     * @param Ressource $fp     The open file handler to the MO file
+     * @param resource $fp The open file handler to the MO file
      * @param Integer   $offset The offset to the table that should be parsed
      * @param Integer   $num    The number of strings to parse
      *
-     * @return Array of offsets
+     * @return array of offsets
      */
     private function parseOffsetTable($fp, $offset, $num)
     {
@@ -123,10 +125,10 @@ class Gettext_PHP //extends Gettext
      * Parse a string as referenced by an table. Returns an
      * array with the actual string.
      *
-     * @param Ressource $fp    The open file handler to the MO fie
-     * @param Array     $entry The entry as parsed by parseOffsetTable()
+     * @param resource $fp The open file handler to the MO fie
+     * @param array $entry The entry as parsed by parseOffsetTable()
      *
-     * @return Parsed string
+     * @return string
      */
     private function parseEntry($fp, $entry)
     {
@@ -143,8 +145,6 @@ class Gettext_PHP //extends Gettext
 
     /**
      * Parse the MO file
-     *
-     * @return void
      */
     private function parse()
     {
@@ -203,7 +203,8 @@ class Gettext_PHP //extends Gettext
      * If the translation is not found, the original passed message
      * will be returned.
      *
-     * @return Translated message
+     * @param string $msg
+     * @return string Translated message
      */
     public function gettext($msg)
     {
@@ -225,10 +226,10 @@ class Gettext_PHP //extends Gettext
      * If the translation is not found, the original passed message
      * will be returned.
      *
-     * @param String $context The context of the message to search for
-     * @param String $msg The message to search for
+     * @param string $context The context of the message to search for
+     * @param string $msg The message to search for
      *
-     * @return Translated message
+     * @return string Translated message
      */
     public function pgettext($context, $msg)
     {
@@ -252,11 +253,11 @@ class Gettext_PHP //extends Gettext
      * given string. If the id is not found and $num == 1 $msg is returned,
      * otherwise $msg_plural
      *
-     * @param String $msg The message to search for
-     * @param String $msg_plural A fallback plural form
-     * @param Integer $count Which plural form
+     * @param string $msg The message to search for
+     * @param string $msg_plural A fallback plural form
+     * @param int $count Which plural form
      *
-     * @return Translated string
+     * @return string Translated string
      */
     public function ngettext($msg, $msg_plural, $count)
     {

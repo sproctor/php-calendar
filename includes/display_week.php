@@ -24,6 +24,9 @@ if ( !defined('IN_PHPC') ) {
 }
 
 // Full display for a month
+/**
+ * @return Html
+ */
 function display_week()
 {
 	global $vars;
@@ -77,12 +80,18 @@ function display_week()
 					tag('col', attributes('class="phpc-day"'))
 				   ),
 				tag('thead', $heading_html),
-				create_week($week_of_year, $from_stamp,
-					$to_stamp, $year)));
+                            create_week($week_of_year, $from_stamp, $to_stamp)));
 }
 
 // creates a display for a particular week to be embedded in a month table
-function create_week($week_of_year, $from_stamp, $to_stamp, $year) {
+/**
+ * @param int $week_of_year
+ * @param int $from_stamp
+ * @param int $to_stamp
+ * @return Html
+ */
+function create_week($week_of_year, $from_stamp, $to_stamp)
+{
 	global $phpcdb, $phpcid, $phpc_cal;
 
 	$start_day = date("j", $from_stamp);
@@ -146,9 +155,16 @@ function create_week($week_of_year, $from_stamp, $to_stamp, $year) {
 }
 
 // displays the day of the week and the following days of the week
+/**
+ * @param int $month
+ * @param int $day
+ * @param int $year
+ * @param PhpcOccurrence[][] $days_events
+ * @return Html
+ */
 function create_day($month, $day, $year, $days_events)
 {
-	global $phpc_script, $phpc_cal;
+    global $phpc_cal;
 
 	$date_class = 'ui-state-default';
 	if($day <= 0) {
@@ -178,8 +194,7 @@ function create_day($month, $day, $year, $days_events)
 		}
 	}
 
-	$click = create_plain_link($day, 'display_day', $year, $month,
-			$day);
+    $click = create_action_url('display_day', $year, $month, $day);
 	$date_tag = tag('div', attributes("class=\"phpc-date $date_class\"",
 				"onclick=\"window.location.href='$click'\""),
 			create_action_link_with_date($day,
@@ -250,4 +265,3 @@ function create_day($month, $day, $year, $days_events)
 	return $html_day;
 }
 
-?>

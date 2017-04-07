@@ -19,6 +19,9 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function user_groups() {
 	global $vars, $phpc_cal;
 
@@ -33,6 +36,9 @@ function user_groups() {
 
 }
 
+/**
+ * @return Html
+ */
 function display_form() {
 	global $phpc_script, $phpc_token, $phpcdb, $vars, $phpc_cal, $phpcid;
 
@@ -72,7 +78,7 @@ function display_form() {
 
 function process_form()
 {
-	global $phpcid, $vars, $phpcdb, $phpc_script, $phpc_cal;
+    global $phpcid, $vars, $phpcdb, $phpc_cal;
 
 	verify_token();
 
@@ -96,7 +102,5 @@ function process_form()
 		}
 	}
 
-        return message(__('Groups updated.'));
+    return message(__('Groups updated.'));
 }
-
-?>

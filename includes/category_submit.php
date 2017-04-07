@@ -19,9 +19,12 @@ if ( !defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
+/**
+ * @return Html
+ */
 function category_submit()
 {
-	global $vars, $phpcdb, $phpc_script, $phpc_cal;
+    global $vars, $phpcdb, $phpc_script;
 
 	if(empty($vars["text-color"]) || empty($vars["bg-color"])) {
 		$page = "$phpc_script?action=category_form";
@@ -93,4 +96,3 @@ function category_submit()
 function check_color($color) {
 	return preg_match('/^#[0-9a-fA-F]{6}$/', $color) == 1;
 }
-?>
