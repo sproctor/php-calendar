@@ -769,7 +769,7 @@ function get_date_format_list()
  * @return Html
  */
 function display_phpc() {
-	global $phpc_messages, $phpc_redirect, $phpc_script, $phpc_prefix, $phpc_home_url, $phpc_cal;
+	global $phpc_messages, $phpc_redirect, $phpc_script, $phpc_prefix, $phpc_home_url, $phpc_cal, $phpcdb;
 
 	$navbar = false;
 
@@ -790,9 +790,8 @@ function display_phpc() {
 			$messages = '';
 		}
 
-		$calendars = $phpcdb->get_calendars();
 		$list = array();
-		foreach($calendars as $calendar) {
+		foreach($phpcdb->get_calendars() as $calendar) {
 			$list[$phpc_home_url . '?phpcid=' . $calendar->get_cid()] = $calendar->get_title();
 		}
 
