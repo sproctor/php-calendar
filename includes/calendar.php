@@ -769,7 +769,7 @@ function get_date_format_list()
  * @return Html
  */
 function display_phpc() {
-	global $phpc_messages, $phpc_redirect, $phpc_script, $phpc_prefix;
+	global $phpc_messages, $phpc_redirect, $phpc_script, $phpc_prefix, $phpc_home_url, $phpc_cal;
 
 	$navbar = false;
 
@@ -785,13 +785,25 @@ function display_phpc() {
 			// If we're redirecting, the messages might not get
 			//   seen, so don't clear them
 			if(empty($phpc_redirect))
-				$_SESSION["{$phpc_prefix}messages"] = NULL;
+				$_SESSION[$phpc_prefix . 'messages'] = null;
 		} else {
 			$messages = '';
 		}
 
-		return tag('', $navbar, $messages,
-				$content, footer());
+		$calendars = $phpcdb->get_calendars();
+		$list = array();
+		foreach($calendars as $calendar) {
+			$list[$phpc_home_url . '?phpcid=' . $calendar->get_cid()] = $calendar->get_title();
+		}
+
+		return tag('div', attributes('class="php-calendar ui-widget"'),
+			userMenu(),
+			tag('br', attrs('style="clear:both;"')),
+			tag('h1', attrs('class="ui-widget-header"'),
+			create_dropdown_list(tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'",
+			'class="phpc-dropdown-list-title"'),
+			$phpc_cal->get_title()), $list)),
+			$navbar, $messages, $content, footer());
 	} catch(PermissionException $e) {
 		$results = tag('');
 		// TODO: make navbar show if there is an error in do_action()
