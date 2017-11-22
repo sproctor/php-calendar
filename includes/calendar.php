@@ -918,8 +918,7 @@ function get_header_tags($path)
 		$theme = 'smoothness';
 	$jquery_version = "1.12.4";
 	$jqueryui_version = "1.12.1";
-	$jpicker_version = "1.1.6";
-	$showdown_version = "1.6.3";
+	$showdown_version = "1.8.2";
 
 	return array(
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
@@ -930,13 +929,12 @@ function get_header_tags($path)
 					"href=\"$path/jquery-ui-timepicker.css\"")),
 			tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
 			tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
-			tag('script', "var imagePath='$path/images/'"),
 			tag('script', attrs("src=\"$path/phpc.js\""), ''),
 			tag("script", attrs("src=\"$path/jquery.ui.timepicker.js\""), ''),
 			tag("script", attrs("src=\"$path/jquery.hoverIntent.minified.js\""), ''),
-			tag("script", attrs("src=\"$path/jpicker-$jpicker_version$jq_min.js\""), ''),
+			tag("script", attrs("src=\"$path/spectrum.js\""), ''),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"$path/jPicker-$jpicker_version$jq_min.css\"")),
+					"href=\"$path/spectrum.css\"")),
 			tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/showdown/$showdown_version/showdown.min.js\""), ''),
 		  );
 }

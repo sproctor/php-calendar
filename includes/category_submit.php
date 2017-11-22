@@ -39,15 +39,19 @@ function category_submit()
 	// The current widget produces hex values without the "#".
 	//   We may in the future want to allow different input, so store the
 	//   values with the "#"
-	$text_color = '#'.$vars["text-color"];
-	$bg_color = '#'.$vars["bg-color"];
+	$text_color = $vars["text-color"];
+	$bg_color = $vars["bg-color"];
 	if(empty($vars['gid']) || strlen($vars['gid']) == 0)
 		$gid = 0;
 	else
 		$gid = $vars['gid'];
 
-	if(!check_color($text_color) || !check_color($bg_color))
-		soft_error(__("Invalid color."));
+	if(!check_color($text_color)) {
+		soft_error(__("Invalid color: ") . "\"$text_color\"");
+	}
+	if(!check_color($bg_color)) {
+		soft_error(__("Invalid color: ") . "\"$bg_color\"");
+	}
 
 	if(!isset($vars['catid'])) {
 		$modify = false;

@@ -62,8 +62,8 @@ function category_form() {
 				);
 	} else {
 		$defaults = array(
-				'text-color' => '000000',
-				'bg-color' => 'FFFFFF',
+				'text-color' => '#000000',
+				'bg-color' => '#FFFFFF',
 				);
 	}
         return $form->get_form($defaults);
