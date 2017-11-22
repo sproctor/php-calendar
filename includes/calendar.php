@@ -701,7 +701,7 @@ function init_config_options() {
  * @return array
  */
 function get_theme_list() {
-	$themes = array(
+	$themes = array('base',
 			'black-tie',
 			'blitzer',
 			'cupertino',
@@ -915,7 +915,7 @@ function get_header_tags($path)
 		
 	$theme = $phpc_cal->theme;
 	if(empty($theme))
-		$theme = 'smoothness';
+		$theme = 'base';
 	$jquery_version = "3.2.1";
 	$jqueryui_version = "1.12.1";
 	$showdown_version = "1.8.2";
