@@ -108,8 +108,6 @@ if(empty($_POST['action'])) {
 			upgrade_20beta10();
 			echo "<p>Update complete.</p>";
 		} elseif($_POST['version'] == "2.0beta9") {
-			upgrade_20beta10();
-			echo "<p>Update complete.</p>";
 			if(empty($_POST['timezone']))
 				upgrade_20_form();
 			else
