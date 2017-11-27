@@ -46,7 +46,7 @@ try {
 		header ( "Content-Type: application/json; charset=UTF-8" );
 		echo display_phpc ( $context )->toString ();
 	} else {
-		$page = get_page($context->getAction());
+		$page = $context->getPage();
 		$response = $page->action($context, array(
 				'context' => $context,
 				'calendar' => $context->getCalendar(),

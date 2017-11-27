@@ -26,12 +26,12 @@ use Symfony\Component\HttpFoundation\Response;
 class MonthPage extends Page
 {
 	// Full display for a month
-    /**
-     * @param Context $context
-     * @param \string[] $template_variables
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    function action(Context $context, $template_variables)
+	/**
+	 * @param Context $context
+	 * @param \string[] $template_variables
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
+	function action(Context $context, $template_variables)
 	{
 		$calendar = $context->getCalendar();
 		$cid = $calendar->cid;
@@ -71,18 +71,18 @@ class MonthPage extends Page
 
 		$template_variables['cid'] = $cid;
 		$template_variables['prev_month'] = $prev_month;
-        $template_variables['prev_year'] = $prev_year;
-        $template_variables['next_month'] = $next_month;
-        $template_variables['next_year'] = $next_year;
-        $template_variables['month_name'] = month_name ( $month );
-        $template_variables['months'] = $months;
-        $template_variables['year'] = $year;
-        $template_variables['years'] = $years;
-        $template_variables['week_start'] = $week_start;
-        $template_variables['weeks'] = $weeks;
-        $template_variables['occurrences'] = get_occurrences_by_day($calendar, $context->getUser(), $from_date,
-            $to_date);
-        $template_variables['start_date'] = $from_date;
+		$template_variables['prev_year'] = $prev_year;
+		$template_variables['next_month'] = $next_month;
+		$template_variables['next_year'] = $next_year;
+		$template_variables['month_name'] = month_name ( $month );
+		$template_variables['months'] = $months;
+		$template_variables['year'] = $year;
+		$template_variables['years'] = $years;
+		$template_variables['week_start'] = $week_start;
+		$template_variables['weeks'] = $weeks;
+		$template_variables['occurrences'] = get_occurrences_by_day($calendar, $context->getUser(), $from_date,
+				$to_date);
+		$template_variables['start_date'] = $from_date;
 		return new Response($context->twig->render("month.html", $template_variables));
 	}
 }

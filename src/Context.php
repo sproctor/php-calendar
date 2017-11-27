@@ -52,24 +52,22 @@ class Context {
 		}
 
 		$this->initVars();
-		$this->config = load_config($this, PHPC_CONFIG_FILE);
+		$this->config = $this->load_config(PHPC_CONFIG_FILE);
 		$this->db = new Database($this->config);
 
 		require_once(__DIR__ . '/schema.php');
 		if ($this->db->get_config('version') < PHPC_DB_VERSION) {
 			if(isset($_GET['update'])) {
 				$this->db->update();
-                if (!$this->db->update())
-                	$this->addMessage(__('Already up to date.'));
-
-                redirect($this, $this->script);
+				if (!$this->db->update())
+					$this->addMessage(__('Already up to date.'));
+				return redirect($this, $this->script);
 			} else {
-				print_update_form();
+				return print_update_form();
 			}
-			exit;
 		}
 
-		read_login_token($this);
+		$this->read_login_token();
 
 		if(!empty($_REQUEST['clearmsg'])) {
 			$this->clearMessages();
@@ -367,4 +365,46 @@ class Context {
 	public function getLang() {
 		return $this->lang;
 	}
+
+	/**
+ 	* @param Context $context
+ 	* @param string $page
+ 	* @return RedirectResponse
+ 	*/
+	public function redirect(Context $context, $page) {
+		$dir = $page{0} == '/' ?  '' : dirname($context->script) . '/';
+		$url = $context->proto . '://'. $context->host_name . $dir . $page;
+
+		return new RedirectResponse($url);
+	}
+
+	private function read_login_token() {
+		if(isset($_COOKIE["identity"])) {
+
+			$decoded = \Firebase\JWT\JWT::decode($_COOKIE["identity"], $this->config["token_key"], array('HS256'));
+			$decoded_array = (array) $decoded;
+			$data = (array) $decoded_array["data"];
+
+			$uid = $data["uid"];
+			$user = $this->db->get_user($uid);
+			$this->setUser($user);
+		}
+	}
+
+	function getPage()
+	{
+		switch($this->getAction()) {
+			case 'display_month':
+				return new MonthPage;
+			case 'display_day':
+				return new DayPage;
+			case 'login':
+				return new LoginPage;
+			case 'logout':
+				return new LogoutPage;
+			default:
+				throw new \Exception(__('Invalid action'));
+		}
+	}
+
 }

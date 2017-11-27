@@ -61,9 +61,6 @@ function soft_error($message)
 	throw new \Exception(escape_entities($message));
 }
 
-class PermissionException extends \Exception {
-}
-
 /**
  * @param string $message
  * @throws PermissionException
@@ -71,21 +68,6 @@ class PermissionException extends \Exception {
 function permission_error($message)
 {
 	throw new PermissionException(htmlspecialchars($message, ENT_COMPAT, "UTF-8"));
-}
-
-class InvalidInputException extends \Exception {
-    /** @var string */
-	var $target;
-
-	/**
-	 * InvalidInputException constructor.
-	 * @param string $msg
-	 * @param string $target
-     */
-	function __construct($msg, $target = null) {
-		parent::__construct($msg);
-		$this->target = $target;
-	}
 }
 
 /**
