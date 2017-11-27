@@ -90,6 +90,25 @@ class Context {
 		$this->initTwig();
 	}
 
+	/**
+	 * @param string $filename
+	 * @return string[]
+	 */
+	private function load_config($filename) {
+		// Run the installer if we have no config file
+		// This doesn't work when embedded from outside
+		if(!file_exists($filename)) {
+			throw new InvalidConfigException();
+		}
+		$config = include $filename;
+
+		if(!isset($config["sql_host"])) {
+			throw new InvalidConfigException();
+		}
+
+		return $config;
+	}
+
 	private function initTwig() {
 		$template_loader = new \Twig_Loader_Filesystem(__DIR__ . '/../templates');
 		$this->twig = new \Twig_Environment($template_loader, array(
@@ -349,5 +368,3 @@ class Context {
 		return $this->lang;
 	}
 }
-
-?>

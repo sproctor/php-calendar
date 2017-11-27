@@ -52,37 +52,6 @@ function __p($context, $msg) {
 }
 
 /**
- * @param string $filename
- * @return string[]
- */
-function load_config(Context $context, $filename) {
-	// Run the installer if we have no config file
-	// This doesn't work when embedded from outside
-	if(!file_exists($filename)) {
-		throw new InvalidConfigException();
-		redirect($context, 'install.php');
-		exit;
-	}
-	$config = read_config($filename);
-
-	if(!isset($config["sql_host"])) {
-		throw new InvalidConfigException();
-		redirect($context, 'install.php');
-		exit;
-	}
-
-	return $config;
-}
-
-/**
- * @param string $filename
- * @return string[]
- */
-function read_config($filename) {
-	return include $filename;
-}
-
-/**
  * called when some error happens
  * @param string $message
  * @throws \Exception
@@ -102,11 +71,6 @@ class PermissionException extends \Exception {
 function permission_error($message)
 {
 	throw new PermissionException(htmlspecialchars($message, ENT_COMPAT, "UTF-8"));
-}
-
-class InvalidConfigException extends \Exception {
-	function __construct() {
-	}
 }
 
 class InvalidInputException extends \Exception {

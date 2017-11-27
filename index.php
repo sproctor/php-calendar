@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016 Sean Proctor
+ * Copyright 2017 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 namespace PhpCalendar;
 
 require_once 'vendor/autoload.php';
-require_once 'src/helpers.php';
+// require_once 'src/helpers.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -33,22 +33,8 @@ define('PHPC_DEBUG', 1);
 
 $request = Request::createFromGlobals();
 
-
 try {
 	$context = new Context();
-
-	$min = defined ( 'PHPC_DEBUG' ) ? '' : '.min';
-	
-	$jquery_version = "1.12.2";
-	$jqueryui_version = "1.11.4";
-	$fa_version = "4.5.0";
-	
-	if (! isset ( $jqui_path ))
-		$jqui_path = "//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version";
-	if (! isset ( $fa_path ))
-		$fa_path = "//maxcdn.bootstrapcdn.com/font-awesome/$fa_version";
-	if (! isset ( $jq_file ))
-		$jq_file = "//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$min.js";
 	
 	if ($context->getLang () != 'en') {
 		$translator = new Translator ( $context->getLang (), new MessageSelector () );
@@ -56,7 +42,7 @@ try {
 		$translator->addResource ( 'mo', __DIR__ . "locale/" . $context->getLang () . "/LC_MESSAGES/messages.mo", $context->getLang () );
 	}
 	
-	if (isset ( $_REQUEST ["content"] ) && $_REQUEST ["content"] == "json") {
+	if ($request->get("content") == "json") {
 		header ( "Content-Type: application/json; charset=UTF-8" );
 		echo display_phpc ( $context )->toString ();
 	} else {
@@ -66,12 +52,12 @@ try {
 				'calendar' => $context->getCalendar(),
 				'user' => $context->getUser(),
 				'script' => $context->script,
-				'embed' => isset ( $_REQUEST ["content"] ) && $_REQUEST ["content"] == "embed",
-				'lang' => $context->getLang (),
-				'title' => $context->getCalendar ()->get_title (),
-				'theme' => $context->getCalendar ()->get_theme (),
-				'min' => $min,
-				'query_string' => $_SERVER ['QUERY_STRING'] 
+				'embed' => $request->get("content") == "embed",
+				'lang' => $context->getLang(),
+				'title' => $context->getCalendar()->get_title(),
+				'theme' => $context->getCalendar()->get_theme(),
+				'minified' => defined ( 'PHPC_DEBUG' ) ? '' : '.min',
+				'query_string' => $request->getQueryString() 
 		) );
 		$response->send();
 	}
