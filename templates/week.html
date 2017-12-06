@@ -1,11 +1,46 @@
 <tr>
-    <th class="phpc-date ui-state-default">
+    <th class="phpc-date" scope="row">
     	{% autoescape false %}
         {{ week_link(context, start_date) }}
         {% endautoescape %}
     </th>
     {% for day_of_week in 0..6 %}
-        {% include "day.html" %}
+    <td>
+	    <div class="phpc-date{% if not is_date_in_month(context, start_date) %} phpc-shadow{% endif %}{% if is_today(start_date) %} ui-state-highlight{% endif %}">
+		    <a href="{{ action_date_url(context, 'display_day', start_date) }}">{{ day(start_date) }}</a>
+		    {% if can_write(user, calendar) %}
+		    <a href="{{ action_date_url(context, 'create_event', start_date) }}" class="phpc-add ui-state-default ui-widget" title="{{ "Create Event"|trans }}">{{ fa("plus")|raw }}</a>
+		    {% endif %}
+	    </div>
+	    {% set days_occurrences = occurrences_for_date(occurrences, start_date) %}
+	    {% if not days_occurrences is null %}
+		    <ul class="phpc-event-list">
+		    {% for occurrence in days_occurrences %}
+			    {% if occurrence is null %}
+				    <li>
+					    <a href="{{ action_date_url(context, 'display_day', start_date) }}" class="phpc-date">{{ "View Additional Events"|_ }}</a>
+				    </li>
+			    {% else %}
+				    {% set textcolor = attribute(occurrence, getTextColor) %}
+				    {% set bgcolor = attribute(occurrence, getBgColor) %}
+				    <li style="{% if not textcolor is null %}color: {{ textcolor }} !important;{% endif %}{% if not bgcolor is null %}background: {{ bgcolor }} !important;{% endif %}">
+				    {% set time = attribute(occurrence, getTimeString) %}
+				    <span>
+				    {% if not time is null %}
+					    {% if attribute(occurrence, getStart) >= start_date %}
+						    <span class="phpc-event-time ui-corner-all">{{ time }}</span>
+					    {% else %}
+						    {{ fa('share') }}
+					    {% endif %}
+				    {% endif %}
+				    {{ attribute(occurrence, getSubject) }}
+				    </span>
+				    </li>
+			    {% endif %}
+		    {% endfor %}
+		    </ul>
+	    {% endif %}
+    </td>
         {% set start_date = add_days(start_date, 1) %}
     {% endfor %}
 </tr>

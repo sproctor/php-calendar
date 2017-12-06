@@ -91,7 +91,7 @@ class User {
     /**
      * @return string
      */
-	function get_username()
+	function getUsername()
 	{
 		return $this->username;
 	}
@@ -99,7 +99,7 @@ class User {
     /**
      * @return int
      */
-	function get_uid()
+	function getUid()
 	{
 		return $this->uid;
 	}

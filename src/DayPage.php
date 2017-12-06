@@ -24,7 +24,12 @@ namespace PhpCalendar;
 class DayPage extends Page
 {
 	// View for a single day
-	function display(Context $context)
+	/**
+	 * @param Context $context
+	 * @param \string[] $template_variables
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
+	function action(Context $context, $template_variables)
 	{
 		$year = $context->getYear();
 		$month = $context->getMonth();
@@ -101,7 +106,12 @@ class DayPage extends Page
 		$dialog = tag('div', attrs('id="phpc-dialog"', 'title="' . __("Confirmation required") . '"'),
 				__("Permanently delete the selected events?"));
 
-		return tag('', create_day_menu($context, $year, $month, $day), $dialog, $output);
+		//$template_variables['cid'] = $cid;
+		$template_variables['year'] = $year;
+		//$template_variables['week_start'] = $week_start;
+		$template_variables['occurrences'] = get_occurrences_by_day($calendar, $context->getUser(), $from_date,
+				$to_date);
+		return new Response($context->twig->render("day.html", $template_variables));
 	}
 }
 

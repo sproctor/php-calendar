@@ -256,8 +256,17 @@ function login_user(Context $context, $username, $password)
 {
 	$user = $context->db->get_user_by_name($username);
 	//echo "<pre>"; var_dump($user); echo "</pre>";
-	if(!$user || !password_verify($password, $user->getPasswordHash()))
+	if(!$user)
 		return false;
+
+	$password_hash = $user->getPasswordHash();
+
+	// migrate old passwords
+	if($password_hash[0] != '$' && md5($password) == $password_hash)
+		$context->db->set_password($user->getUid(), $password);
+	else // otherwise use the normal password verifier
+		if(!password_verify($password, $password_hash))
+			return false;
 
 	$context->setUser($user);
 	set_login_token($context, $user);
@@ -278,7 +287,7 @@ function set_login_token(Context $context, User $user) {
 		"iat" => $issuedAt,
 		"exp" => $expires,
 		"data" => array(
-			"uid" => $user->get_uid()
+			"uid" => $user->getUid()
 		)
 	);
 	$jwt = \Firebase\JWT\JWT::encode($token, $context->config['token_key']);
@@ -455,14 +464,16 @@ function week_of_year(\DateTimeInterface $date, $week_start)
 
 /**
  * @param Context $context
- * @param ActionItem $item
+ * @param string $text
+ * @param string $action
  * @param string $eid
- * @return Tag
+ * @param string|null $classes
+ * @param string|null $id
+ * @return string
  */
-function create_event_link(Context $context, ActionItem $item, $eid)
+function create_event_link(Context $context, $text, $action, $eid, $classes = null, $id = null)
 {
-	$item->addArgument("eid", $eid);
-	return create_action_link($context, $item);
+	return create_action_link($context, $text, $action, array("eid" => $eid), $classes, $id);
 }
 
 /**
@@ -522,6 +533,16 @@ function action_date_url(Context $context, $action, $year, $month, $day) {
 /**
  * @param Context $context
  * @param string $action
+ * @param string $eid
+ * @return string
+ */
+function action_event_url(Context $context, $action, $eid) {
+	return action_url($context, $action, array("eid" => $eid));
+}
+
+/**
+ * @param Context $context
+ * @param string $action
  * @param string[] $parameters
  * @return string
  */
@@ -535,14 +556,15 @@ function action_url(Context $context, $action, $parameters = array()) {
 
 /**
  * @param Context $context
- * @param ActionItem $item
- * @return Tag
+ * @param string $text
+ * @param string $action
+ * @param string[]|null $args
+ * @param string|null $classes
+ * @param string|null $id
+ * @return string
  */
-function create_action_link(Context $context, ActionItem $item)
+function create_action_link(Context $context, $text, $action, $args = null, $classes = null, $id = null)
 {
-	$url = 'href="' . $context->script . '?action=' . htmlentities($item->getAction());
-
-	$args = $item->getArguments();
 	if (!$args) {
 		$args = array();
 	}
@@ -550,6 +572,7 @@ function create_action_link(Context $context, ActionItem $item)
 		$args["phpcid"] = htmlentities($context->getCalendar()->cid);
 	}
 
+	$url = $context->script . '?action=' . htmlentities($action);
 	foreach ($args as $key => $value) {
 		if(empty($value))
 			continue;
@@ -561,15 +584,8 @@ function create_action_link(Context $context, ActionItem $item)
 			$url .= "&amp;" . htmlentities("$key=$value");
 		}
 	}
-	$url .= '"';
 
-	$attributes = $item->getAttributes();
-	if($attributes != null) {
-		$attributes->add($url);
-	} else {
-		$attributes = new AttributeList($url);
-	}
-	return new Tag('a', $attributes, $item->getText());
+	return "<a href=\"$url\"" . ($classes ? " class=\"$classes\"" : '') . ($id ? " id=\"$id\"" :  '') . ">$text</a>";
 }
 
 // takes a menu $html and appends an entry
@@ -582,7 +598,8 @@ function create_action_link(Context $context, ActionItem $item)
 function menu_item(Context $context, $action, $text)
 {
 	$url = action_date_url($context, $action, $context->getYear(), $context->getMonth(), $context->getDay());
-	return "<a href=\"$url\">$text</a>";
+	$active = $context->getAction() == $action ? " active" : "";
+	return "<li class=\"nav-item$active\"><a class=\"nav-link\" href=\"$url\">$text</a></li>";
 }
 
 // creates a hidden input for a form
@@ -662,14 +679,13 @@ function create_checkbox($name, $value, $checked = false, $label = null)
  * @return string // dropdown box that will change the page to the URL from $values when an element is selected
  */
 function create_dropdown($title, $values) {
-	$output = "<div class=\"phpc-dropdown\">\n"
-		."    <span class=\"phpc-dropdown-header\"><span class=\"phpc-dropdown-title\">$title</span></span>"
-		."    <ul>\n";
+	$output = "<div class=\"nav-item dropdown\">\n"
+		."    <a class=\"nav-link dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">$title</a>\n"
+		."    <div class=\"dropdown-menu\">\n";
 	foreach($values as $key => $value) {
-		$output .= "        <li><a href=\"$key\">$value</a></li>\n";
+		$output .= "        <a class=\"dropdown-item\" href=\"$key\">$value</a>\n";
 	}
-	$output .= "    </ul></div>";
-	return $output;
+	return $output . "    </div></div>";
 }
 
 function fa($name)
@@ -899,7 +915,10 @@ function month_name($month)
 	return ''; // This can't happen
 }
 
-//takes a day number of the week, returns a name (0 for the beginning)
+/**
+ * @param int $day
+ * @return string
+ */
 function day_name($day)
 {
 	$day = $day % 7;
@@ -919,6 +938,33 @@ function day_name($day)
 			return __('Friday');
 		case 6:
 			return __('Saturday');
+	}
+	return ''; // This can't happen
+}
+
+/**
+ * @param int $day
+ * @return string
+ */
+function short_day_name($day)
+{
+	$day = $day % 7;
+
+	switch($day) {
+		case 0:
+			return __('Sun');
+		case 1:
+			return __('Mon');
+		case 2:
+			return __('Tue');
+		case 3:	
+			return __('Wed');
+		case 4:
+			return __('Thu');
+		case 5:	
+			return __('Fri');
+		case 6:
+			return __('Sat');
 	}
 	return ''; // This can't happen
 }

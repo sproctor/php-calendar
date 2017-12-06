@@ -942,7 +942,8 @@ class Database
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
-        $sth->execute(array(':password' => $password));
+	$sth->bindValue(':password', password_hash($password, PASSWORD_DEFAULT));
+        $sth->execute();
     }
 
     /**

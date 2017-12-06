@@ -18,7 +18,6 @@
 namespace PhpCalendar;
 
 require_once 'vendor/autoload.php';
-// require_once 'src/helpers.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -30,6 +29,7 @@ use Symfony\Component\Translation\Loader\MoFileLoader;
 define('PHPC_CONFIG_FILE', __DIR__ . '/config.php');
 
 define('PHPC_DEBUG', 1);
+error_reporting(E_ALL);
 
 $request = Request::createFromGlobals();
 

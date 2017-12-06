@@ -2,14 +2,6 @@ var activeRequest = null;
 var cache = new Object;
  
 $(document).ready(function(){
-  // Add theme to appropriate items
-  // All widgets
-  $(".phpc-event-list a, .phpc-message, .phpc-date, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .php-calendar td, .phpc-message, .phpc-dropdown ul").addClass("ui-widget");
-  // Buttons
-  $(".php-calendar input[type=submit], .php-calendar tfoot a, .phpc-button").button();
-  // The buttons are too hard to read waiting on:
-  //    http://wiki.jqueryui.com/w/page/12137730/Checkbox
-  // $(".php-calendar input[type=checkbox] + label").prev().button();
   $(".phpc-date, .phpc-event-list a, .phpc-calendar th.ui-state-default, .phpc-add").on('mouseover mouseout',
       function (event) {
         $(this).toggleClass("ui-state-hover");
@@ -21,23 +13,9 @@ $(document).ready(function(){
   $(".phpc-date").click(function () {
         window.location.href = $(this).children('a').attr('href');
       });
-  // fancy corners
-  $(".phpc-event-list a, .phpc-message, .phpc-bar, .phpc-title, #phpc-summary-view, .phpc-logged, .phpc-dropdown ul, .phpc-add").addClass("ui-corner-all");
-  // add jquery ui style classes
-  $(".php-calendar td, #phpc-summary-view, .phpc-dropdown ul").addClass("ui-widget-content");
-  $(".phpc-event-list a, .phpc-message").addClass("ui-state-default");
 
-  // Find the color of ui-widget-content
-  var $tempElem = $("<p class=ui-widget-content></p>").hide().appendTo("body");
-  var color = $tempElem.css("color");
-  $(".phpc-dropdown ul a").css("color", color);
-  $tempElem.remove();
-
-  $(".phpc-menubar").menu({
-	  position: { my: "left top", at: "left bottom" }
-  });
-  
   // Tabs - Persistence reference: http://stackoverflow.com/questions/19539547/maintaining-jquery-ui-previous-active-tab-before-reload-on-page-reload
+  /*
   var currentTabId = "0";
   $tab = $(".phpc-tabs").tabs({
       activate: function (e, ui) {
@@ -58,6 +36,7 @@ $(document).ready(function(){
   if (!haveTabs) {
     sessionStorage.removeItem("phpc-tab-index");
   }
+  */
 
   // Summary init
   $("#phpc-summary-view").hide();
@@ -172,10 +151,12 @@ $(document).ready(function(){
   });
 
   // Confirmation dialog stuff
+  /*
   $("[id^='phpc-dialog']").dialog({
     autoOpen: false,
     modal: true
   });
+  */
   // Add this class to links that should open the dialog to confirm
   $("[class*='phpc-confirm']").click(function(e) {
     e.preventDefault();

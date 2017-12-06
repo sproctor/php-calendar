@@ -119,6 +119,7 @@ class Context {
 		$this->twig->addFilter(new \Twig_SimpleFilter('_', '\PhpCalendar\__'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('_p', '\PhpCalendar\__p'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('day_name', '\PhpCalendar\day_name'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('short_day_name', '\PhpCalendar\short_day_name'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('index_of_date', '\PhpCalendar\index_of_date'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('week_link',
 				function(Context $context, \DateTimeInterface $date) {
@@ -141,6 +142,7 @@ class Context {
 		$this->twig->addFunction(new \Twig_SimpleFunction('is_today', '\PhpCalendar\is_today'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('action_date_url', '\PhpCalendar\action_date_url_from_datetime'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('action_url', '\PhpCalendar\action_url'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('action_event_url', '\PhpCalendar\action_event_url'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('day',
 				function(\DateTimeInterface $date) { return $date->format('j'); }));
 		$this->twig->addFunction(new \Twig_SimpleFunction('can_write',

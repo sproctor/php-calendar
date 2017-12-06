@@ -1,36 +1,41 @@
-<td>
-	<div class="phpc-date ui-state-default{% if not is_date_in_month(context, start_date) %} phpc-shadow{% endif %}{% if is_today(start_date) %} ui-state-highlight{% endif %}">
-		<a href="{{ action_date_url(context, 'display_day', start_date) }}">{{ day(start_date) }}</a>
-		{% if can_write(user, calendar) %}
-		<a href="{{ action_date_url(context, 'create_event', start_date) }}" class="phpc-add ui-state-default ui-widget" title="{{ "Create Event"|trans }}">{{ fa("plus")|raw }}</a>
-		{% endif %}
-	</div>
-	{% set days_occurrences = occurrences_for_date(occurrences, start_date) %}
-	{% if not days_occurrences is null %}
-		<ul class="phpc-event-list">
-		{% for occurrence in days_occurrences %}
-			{% if occurrence is null %}
-				<li>
-					<a href="{{ action_date_url(context, 'display_day', start_date) }}" class="phpc-date">{{ "View Additional Events"|_ }}</a>
-				</li>
-			{% else %}
-				{% set textcolor = attribute(occurrence, getTextColor) %}
-				{% set bgcolor = attribute(occurrence, getBgColor) %}
-				<li style="{% if not textcolor is null %}color: {{ textcolor }} !important;{% endif %}{% if not bgcolor is null %}background: {{ bgcolor }} !important;{% endif %}">
-				{% set time = attribute(occurrence, getTimeString) %}
-				<span>
-				{% if not time is null %}
-					{% if attribute(occurrence, getStart) >= start_date %}
-						<span class="phpc-event-time ui-corner-all">{{ time }}</span>
-					{% else %}
-						{{ fa('share') }}
-					{% endif %}
-				{% endif %}
-				{{ attribute(occurrence, getSubject) }}
-				</span>
-				</li>
-			{% endif %}
-		{% endfor %}
-		</ul>
-	{% endif %}
-</td>
+{% extends "display.html" %}
+
+{% block navigation %}
+{% autoescape false %}
+{% endautoescape %}
+{% endblock %}
+
+{% block content %}
+  <h2>{{ day }} {{ month_name }} {{ year }}</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>{{ "Title"|_ }}</th>
+        <th>{{ "Time"|_ }}</th>
+        <th>{{ "Description"|_ }}</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for occurrence in occurrences %}
+      {% if occurrence is null %}
+      <tr>
+        <td><a href="{{ action_event_url(context, 'display_day', attribute(occurrence, getEid)) }}">{{ attribute(occurrence, getSubject) }}</a></td>
+        {% else %}
+	    {% set textcolor = attribute(occurrence, getTextColor) %}
+	    {% set bgcolor = attribute(occurrence, getBgColor) %}
+	    <li style="{% if not textcolor is null %}color: {{ textcolor }} !important;{% endif %}{% if not bgcolor is null %}background: {{ bgcolor }} !important;{% endif %}">
+	    {% set time = attribute(occurrence, getTimeString) %}
+	    <span>
+	    {% if not time is null %}
+		    {% if attribute(occurrence, getStart) >= start_date %}
+			    <span class="phpc-event-time ui-corner-all">{{ time }}</span>
+		    {% else %}
+			    {{ fa('share') }}
+		    {% endif %}
+	    {% endif %}
+	    {{ attribute(occurrence, getSubject) }}
+	    </span>
+	    </li>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

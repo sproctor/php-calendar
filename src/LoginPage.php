@@ -21,13 +21,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LoginPage extends Page
 {
-
-    /**
-     * @param Context $context
-     * @param string[] $template_variables
-     * @return Response
-     */
-    function action(Context $context, $template_variables)
+	/**
+	 * @param Context $context
+	 * @param string[] $template_variables
+	 * @return Response
+	 */
+	function action(Context $context, $template_variables)
 	{
 		//Check password and username
 		if(isset($_REQUEST['username'])){
@@ -49,6 +48,6 @@ class LoginPage extends Page
 			}
 		}
 		$template_variables['messages'] = $context->getMessages();
-        return new Response($context->twig->render("login.html", $template_variables));
+		return new Response($context->twig->render("login.html", $template_variables));
 	}
 }
