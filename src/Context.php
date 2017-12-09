@@ -17,16 +17,31 @@
 
 namespace PhpCalendar;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Forms;
+use Symfony\Bridge\Twig\Extension\FormExtension;
+use Symfony\Bridge\Twig\Form\TwigRenderer;
+use Symfony\Bridge\Twig\Form\TwigRendererEngine;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
+use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
+use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
+use Symfony\Component\Security\Csrf\CsrfTokenManager;
+
 class Context {
+	/** @var Calendar $calendar */
 	private $calendar;
+	/** @var User $user */
 	private $user;
 	private $messages;
 	private $year;
 	private $month;
 	private $day;
+	/** @var Request $request */
+	public $request;
 	public $config;
 	private $lang;
-	/** @var Database */
+	/** @var Database $db*/
 	public $db;
 	public $token;
 	public $script;
@@ -39,7 +54,7 @@ class Context {
 	/**
 	 * Context constructor.
      */
-	function __construct() {
+	function __construct(Request $request) {
 
 		ini_set('arg_separator.output', '&amp;');
 		mb_internal_encoding('UTF-8');
@@ -51,8 +66,10 @@ class Context {
 			ini_set('html_errors', 1);
 		}
 
+		$this->request = $request;
+
 		$this->initVars();
-		$this->config = $this->load_config(PHPC_CONFIG_FILE);
+		$this->config = $this->loadConfig(PHPC_CONFIG_FILE);
 		$this->db = new Database($this->config);
 
 		require_once(__DIR__ . '/schema.php');
@@ -69,18 +86,14 @@ class Context {
 
 		$this->read_login_token();
 
-		if(!empty($_REQUEST['clearmsg'])) {
+		if(!empty($request->get('clearmsg'))) {
 			$this->clearMessages();
 		}
 
-		$this->messages = array();
-
-		if(!empty($_COOKIE["messages"])) {
-			$this->messages = json_decode($_COOKIE["messages"]);
-		}
+		$this->messages = json_decode($request->cookies->get("messages"));
 
 		$this->initTimezone();
-		$this->initLang();
+		$this->initLang($request);
 
 		// set day/month/year - This needs to be done after the timezone is set.
 		$this->initDate();
@@ -92,7 +105,7 @@ class Context {
 	 * @param string $filename
 	 * @return string[]
 	 */
-	private function load_config($filename) {
+	private function loadConfig($filename) {
 		// Run the installer if we have no config file
 		// This doesn't work when embedded from outside
 		if(!file_exists($filename)) {
@@ -108,11 +121,28 @@ class Context {
 	}
 
 	private function initTwig() {
-		$template_loader = new \Twig_Loader_Filesystem(__DIR__ . '/../templates');
+		$defaultFormTheme = 'form_div_layout.html.twig';
+		$appVariableReflection = new \ReflectionClass('\Symfony\Bridge\Twig\AppVariable');
+		$vendorTwigBridgeDir = dirname($appVariableReflection->getFileName());
+		$template_loader = new \Twig_Loader_Filesystem(array(
+			__DIR__ . '/../templates',
+			$vendorTwigBridgeDir.'/Resources/views/Form',));
 		$this->twig = new \Twig_Environment($template_loader, array(
 			//'cache' => __DIR__ . '/cache',
 		));
+		$session = new Session();
+		
+		$csrfGenerator = new UriSafeTokenGenerator();
+		$csrfStorage = new SessionTokenStorage($session);
+		$csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
+		$formEngine = new TwigRendererEngine(array($defaultFormTheme), $this->twig);
+		$this->twig->addRuntimeLoader(new \Twig_FactoryRuntimeLoader(array(
+			TwigRenderer::class => function () use ($formEngine, $csrfManager) {
+				return new TwigRenderer($formEngine, $csrfManager);
+			},
+		)));
 		$this->twig->addExtension(new \Twig_Extensions_Extension_I18n());
+		$this->twig->addExtension(new FormExtension());
 		
 		$this->twig->addFunction(new \Twig_SimpleFunction('fa', '\PhpCalendar\fa'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('dropdown', '\PhpCalendar\create_dropdown'));
@@ -167,7 +197,7 @@ class Context {
 	 * @return string
      */
 	public function getAction() {
-		return empty($_REQUEST['action']) ? 'display_month' : $_REQUEST['action'];
+		return $this->request->get('action', 'display_month');
 	}
 
 	private function initVars() {
@@ -189,7 +219,7 @@ class Context {
 		// Find current calendar
 		$current_cid = $this->getCurrentCID();
 
-		$this->calendar = $this->db->get_calendar($current_cid);
+		$this->calendar = $this->db->getCalendar($current_cid);
 		if(empty($this->calendar))
 			soft_error(__("Bad calendar ID."));
 	}
@@ -199,17 +229,17 @@ class Context {
 	 * @throws \Exception
      */
 	private function getCurrentCID() {
-		if(!empty($_REQUEST['phpcid'])) {
-			if(!is_numeric($_REQUEST['phpcid']))
+		$phpcid = $this->request->get('phpcid');
+		if(isset($phpcid)) {
+			if(!is_numeric($phpcid))
 				soft_error(__("Invalid calendar ID."));
-			return $_REQUEST['phpcid'];
+			return $phpcid;
 		}
 		
-		if(!empty($_REQUEST['eid'])) {
-			if(is_array($_REQUEST['eid'])) {
-				$eid = $_REQUEST['eid'][0];
-			} else {
-				$eid = $_REQUEST['eid'];
+		$eid = $this->request->get('eid');
+		if(isset($eid)) {
+			if(is_array($$eid)) {
+				$eid = $$eid[0];
 			}
 			$event = $this->db->get_event_by_eid($eid);
 			if(empty($event))
@@ -218,34 +248,36 @@ class Context {
 			return $event['cid'];
 		}
 		
-		if(!empty($_REQUEST['oid'])) {
+		$oid = $this->request->get('oid');
+		if(isset($oid)) {
 			$event = $this->db->get_event_by_oid($_REQUEST['oid']);
 			if(empty($event))
 				soft_error(__("Invalid occurrence ID."));
 
 			return $event['cid'];
 		}
-			$calendars = $this->db->get_calendars();
-			if(empty($calendars)) {
-                throw new \Exception(escape_entities("There are no calendars."));
-				// TODO: create a page to fix this
-			} else {
-				if ($this->getUser()->get_default_cid() !== false)
-					$default_cid = $this->getUser()->get_default_cid();
-				else
-					$default_cid = $this->db->get_config('default_cid');
-				if (!empty($calendars[$default_cid]))
-					return $default_cid;
-				else
-					return reset($calendars)->get_cid();
+		
+		$calendars = $this->db->getCalendars();
+		if(empty($calendars)) {
+			throw new \Exception(escape_entities("There are no calendars."));
+			// TODO: create a page to fix this
+		} else {
+			if ($this->getUser()->defaultCID() !== false)
+				$default_cid = $this->getUser()->defaultCID();
+			else
+				$default_cid = $this->db->get_config('default_cid');
+			if (!empty($calendars[$default_cid]))
+				return $default_cid;
+			else
+				return reset($calendars)->getCID();
 		}
 	}
 
 	private function initTimezone() {
 		// Set timezone
-		$tz = $this->getUser()->get_timezone();
+		$tz = $this->getUser()->getTimezone();
 		if(empty($tz))
-			$tz = $this->getCalendar()->timezone;
+			$tz = $this->getCalendar()->getTimezone();
 
 		if(!empty($tz))
 			date_default_timezone_set($tz);
@@ -342,19 +374,16 @@ class Context {
 		return $this->day;
 	}
 
-	private function initLang() {
+	private function initLang(Request $request) {
 		// setup translation stuff
-		if(!empty($_REQUEST['lang'])) {
-			$lang = $_REQUEST['lang'];
-		} elseif(!empty($this->getUser()->get_language())) {
-			$lang = $this->getUser()->get_language();
-		} elseif(!empty($this->getCalendar()->language)) {
-			$lang = $this->getCalendar()->language;
-		} elseif(!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-			$lang = substr(htmlentities($_SERVER['HTTP_ACCEPT_LANGUAGE']),
-				0, 2);
-		} else {
-			$lang = 'en';
+		$lang = $request->get('lang', $this->getUser()->getLanguage());
+		if (empty($lang)) {
+			$lang = $this->getCalendar()->getLanguage();
+			if (empty($lang)) {
+				$lang = substr($request->getLocale(), 0, 2);
+				if (empty($lang))
+					$lang = 'en';
+			}
 		}
 
 		// Require a 2 letter language
@@ -396,6 +425,8 @@ class Context {
 	function getPage()
 	{
 		switch($this->getAction()) {
+			case 'create_event':
+				return new EventCreatePage;
 			case 'display_month':
 				return new MonthPage;
 			case 'display_day':

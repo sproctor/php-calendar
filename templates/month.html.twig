@@ -1,4 +1,4 @@
-{% extends "display.html" %}
+{% extends "display.html.twig" %}
 
 {% block navigation %}
 {% autoescape false %}
@@ -11,6 +11,6 @@
 
 {% block content %}
     {% for week_of_month in 1..weeks %}
-        {% include('week.html') %}
+        {% include('week.html.twig') %}
     {% endfor %}
 {% endblock %}

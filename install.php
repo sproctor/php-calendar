@@ -27,10 +27,10 @@ require_once __DIR__ . '/vendor/autoload.php';
 define('PHPC_ROOT_PATH', __DIR__);
 define('PHPC_CONFIG_FILE', PHPC_ROOT_PATH . "/config.php");
 
-require_once(PHPC_ROOT_PATH . "/src/helpers.php");
+// require_once(PHPC_ROOT_PATH . "/src/helpers.php");
 require_once(PHPC_ROOT_PATH . "/src/schema.php");
 
-?><!DOCTYPE html>
+?><!doctype html>
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="static/phpc.css"/>
@@ -42,7 +42,7 @@ require_once(PHPC_ROOT_PATH . "/src/schema.php");
 <?php
 
 if(file_exists(PHPC_CONFIG_FILE)) {
-	$config = read_config(PHPC_CONFIG_FILE);
+	$config = include PHPC_CONFIG_FILE;
 	if(isset($config["sql_host"])) {
 	    $db = new Database($config);
 	    $have_calendar = sizeof($db->get_calendars()) > 0;

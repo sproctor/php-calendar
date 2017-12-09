@@ -18,26 +18,26 @@
 namespace PhpCalendar;
 
 class User {
-	/** @var int */
+	/** @var int $uid */
 	private $uid;
-	/** @var string */
+	/** @var string $username */
 	private $username;
-	/** @var string */
+	/** @var string $hash */
 	private $hash;
-	/** @var string */
+	/** @var string $admin */
 	private $admin;
-	/** @var bool */
+	/** @var bool $password_editable */
 	private $password_editable;
-	/** @var int */
+	/** @var int $default_cid */
 	private $default_cid;
-	/** @var string */
+	/** @var string|null $timezone */
 	private $timezone;
-	/** @var string */
+	/** @var string|null $language */
 	private $language;
 	private $groups;
-	/** @var bool */
+	/** @var bool $disabled */
 	private $disabled;
-	/** @var Database */
+	/** @var Database $db */
 	private $db;
 
     /**
@@ -72,17 +72,18 @@ class User {
 
     /**
      * @param Database $db
+	 * @param Request $request
      * @return User
      */
-	public static function createAnonymous(Database $db) {
+	public static function createAnonymous(Database $db, Request $request) {
 		$user = new User($db);
 
 		$user->uid = 0;
 		$user->username = 'anonymous';
 		$user->admin = false;
 		$user->password_editable = false;
-		$user->timezone = getAnonymousTimezone();
-		$user->language = getAnonymousLanguage();
+		$user->timezone = User::getAnonymousTimezone($request);
+		$user->language = User::getAnonymousLanguage($request);
 		$user->disabled = false;
 
 		return $user;
@@ -114,61 +115,65 @@ class User {
     /**
      * @return bool
      */
-	function is_password_editable() {
+	function hasEditablePassword() {
 		return $this->password_editable;
 	}
 
     /**
      * @return string
      */
-	function get_timezone() {
+	function getTimezone() {
 		return $this->timezone;
 	}
 
-	function get_language() {
+	function getLanguage() {
 		return $this->language;
 	}
 	
-	function get_groups() {
+	function getGroups() {
 		if(!isset($this->groups))
 			$this->groups = $this->db->get_user_groups($this->uid);
 
 		return $this->groups;
 	}
 
-	function is_disabled() {
+	function isDisabled() {
 		return $this->disabled;
 	}
 
-	function is_admin() {
+	function isAdmin() {
 		return $this->admin;
 	}
 
-	function get_default_cid() {
+	function defaultCID() {
 		return $this->default_cid;
 	}
 
-	function is_user()
+	function isUser()
 	{
 		return $this->uid > 0;
 	}
-}
 
-function getAnonymousTimezone() {
-	if(isset($_REQUEST['tz'])) {
-		$tz = $_COOKIE[$_REQUEST["tz"]];
+	/**
+	 * @param Request $request
+	 * @return string|null
+	 */
+	private static function getAnonymousTimezone(Request $request)
+	{
+		$tz = $request->get('tz');
 		// If we have a timezone, make sure it's valid
 		if(in_array($tz, timezone_identifiers_list())) {
 			return $tz;
 		}
+	
+		return null;
 	}
-
-	return '';
-}
-
-function getAnonymousLanguage() {
-	if(isset($_REQUEST['lang']))
-		return $_REQUEST['lang'];
-	else
-		return NULL;
+	
+	/**
+	 * @param Request $request
+	 * @return string|null
+	 */
+	private static function getAnonymousLanguage(Request $request) {
+		return $request->get('lang');
+	}
 }

@@ -25,8 +25,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class MonthPage extends Page
 {
-	// Full display for a month
 	/**
+	 * Full display for a month
+	 * 
 	 * @param Context $context
 	 * @param \string[] $template_variables
 	 * @return \Symfony\Component\HttpFoundation\Response
@@ -83,6 +84,6 @@ class MonthPage extends Page
 		$template_variables['occurrences'] = get_occurrences_by_day($calendar, $context->getUser(), $from_date,
 				$to_date);
 		$template_variables['start_date'] = $from_date;
-		return new Response($context->twig->render("month.html", $template_variables));
+		return new Response($context->twig->render("month.html.twig", $template_variables));
 	}
 }

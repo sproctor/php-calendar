@@ -30,11 +30,12 @@ define('PHPC_CONFIG_FILE', __DIR__ . '/config.php');
 
 define('PHPC_DEBUG', 1);
 error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 $request = Request::createFromGlobals();
 
 try {
-	$context = new Context();
+	$context = new Context($request);
 	
 	if ($context->getLang () != 'en') {
 		$translator = new Translator ( $context->getLang (), new MessageSelector () );
@@ -43,8 +44,8 @@ try {
 	}
 	
 	if ($request->get("content") == "json") {
-		header ( "Content-Type: application/json; charset=UTF-8" );
-		echo display_phpc ( $context )->toString ();
+		header("Content-Type: application/json; charset=UTF-8");
+		echo display_phpc($context)->toString();
 	} else {
 		$page = $context->getPage();
 		$response = $page->action($context, array(
@@ -54,7 +55,7 @@ try {
 				'script' => $context->script,
 				'embed' => $request->get("content") == "embed",
 				'lang' => $context->getLang(),
-				'title' => $context->getCalendar()->get_title(),
+				'title' => $context->getCalendar()->getTitle(),
 				'theme' => $context->getCalendar()->get_theme(),
 				'minified' => defined ( 'PHPC_DEBUG' ) ? '' : '.min',
 				'query_string' => $request->getQueryString() 

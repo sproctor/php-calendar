@@ -17,50 +17,57 @@
 
 namespace PhpCalendar;
 
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+
 class EventCreatePage extends Page {
     /**
-     * @param Context $context
-     * @param \string[] $template_variables
-     */
-	function display(Context $context, $template_variables)
+	 * Display event form or submit event
+	 * 
+	 * @param Context $context
+	 * @param \string[] $template_variables
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
+	public function action(Context $context, $template_variables)
     {
-        // TODO: Implement display() method.
-    }
-}
+		$form = $this->eventForm($context);
+		$template_variables['form'] = $form;
 
-function event_form() {
-	global $vars;
+		if($context->request->get('submit_form') == null)
+			return new Response($context->twig->render("event_create.html.twig", $template_variables));
+		// else
+		try {
+			return process_form();
+		} catch(\Exception $e) {
+			//message($e->getMessage());
+			return new Response($context->twig->render("event_create.html.twig", $template_variables));
+		}
+	}
+	
+	private function eventForm(Context $context) {
+		$formFactory = Forms::createFormFactory();
 
-	if(empty($vars["submit_form"]))
-		return display_form();
-
-	// else
-	try {
-		return process_form();
-	} catch(\Exception $e) {
-		message($e->getMessage());
-		return display_form();
+		$calendar_choices = array();
+		foreach($context->db->getCalendars() as $calendar) {
+			if($calendar->canWrite($context->getUser()))
+				$calendar_choices[$calendar->getTitle()] = $calendar->getCID();
+		}
+		$form = $formFactory->createBuilder()
+			->add('cid', ChoiceType::class, array('choices' => $calendar_choices))
+			->add('subject', TextType::class, array('attr' =>
+					array('autocomplete' => 'off', 'maxlength' => $context->getCalendar()->getSubjectMax())))
+			->add('description', TextareaType::class)
+			->getForm();
+		return $form;
 	}
 }
+
+
 
 function display_form() {
-	global $phpc_script, $phpc_year, $phpc_month, $phpc_day, $vars, $phpcdb,
-	       $phpc_cal, $phpc_user, $phpc_token, $phpcid;
-
-	$hour24 = $phpc_cal->hours_24;
-	$date_format = $phpc_cal->date_format;
-	$form = new Form($phpc_script, __('Event Form'));
-	$cid_select = new FormDropdownQuestion('cid', __('Calendar'));
-	foreach($phpcdb->get_calendars() as $calendar) {
-		if($calendar->can_write())
-			$cid_select->add_option($calendar->cid,
-					$calendar->title);
-	}
-	$form->add_part($cid_select);
-	$subject_part = new FormFreeQuestion('subject', __('Subject'),
-			false, $phpc_cal->subject_max, true);
-	$subject_part->setAutocomplete("off");
-	$form->add_part($subject_part);
 	$form->add_part(new FormLongFreeQuestion('description',
 				tag('', __('Description'), tag('br'),
 					tag('a', attrs('href="http://daringfireball.net/projects/markdown/syntax"', 'target="_new"'), __('syntax')))));

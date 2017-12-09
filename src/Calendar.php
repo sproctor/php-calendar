@@ -18,21 +18,21 @@
 namespace PhpCalendar;
 
 class Calendar {
-	var $cid;
-	var $title;
-	var $user_perms = array();
-	var $categories;
-	var $hours_24;
-	var $date_format;
-	var $week_start;
-	var $subject_max;
-	var $events_max;
-	var $anon_permission;
-	var $timezone;
-	var $language;
+	private $cid;
+	private $title;
+	private $user_perms = array();
+	private $categories;
+	private $hours_24;
+	private $date_format;
+	private $week_start;
+	private $subject_max;
+	private $events_max;
+	private $anon_permission;
+	private $timezone;
+	private $language;
 	private $theme;
-	var $groups;
-	var $fields;
+	private $groups;
+	private $fields;
 	private $db;
 
 	private function __construct(Database $db) {
@@ -47,7 +47,7 @@ class Calendar {
 		$calendar->hours_24 = $result['hours_24'];
 		$calendar->date_format = $result['date_format'];
 		$calendar->week_start = $result['week_start'];
-		$calendar->subject_max = $result['subject_max'];
+		$calendar->subject_max = intval($result['subject_max']);
 		$calendar->events_max = $result['events_max'];
 		$calendar->anon_permission = $result['anon_permission'];
 		$calendar->timezone = $result['timezone'];
@@ -57,7 +57,10 @@ class Calendar {
 		return $calendar;
 	}
 
-	function get_title()
+	/**
+	 * @return string
+	 */
+	function getTitle()
 	{
 		if(empty($this->title))
 			return __('(No title)');
@@ -65,12 +68,36 @@ class Calendar {
 		return htmlspecialchars($this->title);
 	}
 
-	function get_cid()
+	/**
+	 * @return int
+	 */
+	function getCID()
 	{
 		return $this->cid;
 	}
 
-	function get_user_perm($uid, $perm)
+	/**
+	 * @return string|null
+	 */
+	public function getTimezone() {
+		return $this->timezone;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getLanguage() {
+		return $this->language;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getSubjectMax() {
+		return $this->subject_max;
+	}
+
+	function getUserPerm($uid, $perm)
 	{
 		if(!isset($this->user_perms[$uid]))
 			$this->user_perms[$uid] = $this->db->get_permissions($this->cid, $uid);
@@ -78,53 +105,53 @@ class Calendar {
 		return !empty($this->user_perms[$uid][$perm]);
 	}
 
-	function can_read(User $user)
+	function canRead(User $user)
 	{
 		if ($this->anon_permission >= 1)
 			return true;
 
-		if (!$user->is_user())
+		if (!$user->isUser())
 			return false;
 
-		return $this->can_admin($user) || $this->get_user_perm($user->get_uid(), 'read');
+		return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'read');
 	}
 
-	function can_write(User $user)
+	function canWrite(User $user)
 	{
 		if ($this->anon_permission >= 2)
 			return true;
 
-		if (!$user->is_user())
+		if (!$user->isUser())
 			return false;
 
-		return $this->can_admin($user) || $this->get_user_perm($user->get_uid(), 'write');
+		return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'write');
 	}
 
-	function can_admin(User $user)
+	function canAdmin(User $user)
 	{
-		if (!$user->is_user())
+		if (!$user->isUser())
 			return false;
 
-		return $user->is_admin() || $this->get_user_perm($user->get_uid(), 'admin');
+		return $user->isAdmin() || $this->getUserPerm($user->getUID(), 'admin');
 	}
 
-	function can_modify(User $user)
+	function canModify(User $user)
 	{
 		if ($this->anon_permission >= 3)
 			return true;
 
-		if (!$user->is_user())
+		if (!$user->isUser())
 			return false;
 
-		return $this->can_admin($user) || $this->get_user_perm($user->get_uid(), 'modify');
+		return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'modify');
 	}
 
-	function can_create_readonly(User $user)
+	function canCreateReadonly(User $user)
 	{
-		if (!$user->is_user())
+		if (!$user->isUser())
 			return false;
 
-		return $this->can_admin($user) || $this->get_user_perm($user->get_uid(), 'readonly');
+		return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'readonly');
 	}
 
 	function get_visible_categories($uid) {

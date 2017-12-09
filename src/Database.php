@@ -712,7 +712,7 @@ class Database
      * @return Calendar[]
      * @throws \Exception
      */
-    function get_calendars()
+    function getCalendars()
     {
         if (!empty($this->calendars))
             return $this->calendars;
@@ -737,9 +737,9 @@ class Database
      * @param int $cid
      * @return bool|\PhpCalendar\Calendar
      */
-    function get_calendar($cid)
+    function getCalendar($cid)
     {
-        $calendars = $this->get_calendars();
+        $calendars = $this->getCalendars();
         if (empty($calendars[$cid])) {
             return false;
         }
