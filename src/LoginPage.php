@@ -48,6 +48,6 @@ class LoginPage extends Page
 			}
 		}
 		$template_variables['messages'] = $context->getMessages();
-		return new Response($context->twig->render("login.html", $template_variables));
+		return new Response($context->twig->render("login.html.twig", $template_variables));
 	}
 }

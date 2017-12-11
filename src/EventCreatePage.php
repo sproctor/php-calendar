@@ -28,13 +28,13 @@ class EventCreatePage extends Page {
 	 * Display event form or submit event
 	 * 
 	 * @param Context $context
-	 * @param \string[] $template_variables
-	 * @return \Symfony\Component\HttpFoundation\Response
+	 * @param string[] $template_variables
+	 * @return Response
 	 */
 	public function action(Context $context, $template_variables)
     {
 		$form = $this->eventForm($context);
-		$template_variables['form'] = $form;
+		$template_variables['form'] = $form->createView();
 
 		if($context->request->get('submit_form') == null)
 			return new Response($context->twig->render("event_create.html.twig", $template_variables));
@@ -47,6 +47,10 @@ class EventCreatePage extends Page {
 		}
 	}
 	
+	/**
+	* @param Context $context
+	* @return Form
+	*/
 	private function eventForm(Context $context) {
 		$formFactory = Forms::createFormFactory();
 
@@ -55,13 +59,12 @@ class EventCreatePage extends Page {
 			if($calendar->canWrite($context->getUser()))
 				$calendar_choices[$calendar->getTitle()] = $calendar->getCID();
 		}
-		$form = $formFactory->createBuilder()
+		return $formFactory->createBuilder()
 			->add('cid', ChoiceType::class, array('choices' => $calendar_choices))
 			->add('subject', TextType::class, array('attr' =>
 					array('autocomplete' => 'off', 'maxlength' => $context->getCalendar()->getSubjectMax())))
 			->add('description', TextareaType::class)
 			->getForm();
-		return $form;
 	}
 }
 
