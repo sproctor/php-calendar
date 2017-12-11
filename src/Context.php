@@ -153,7 +153,7 @@ class Context {
 		$this->twig->addFunction(new \Twig_SimpleFunction('index_of_date', '\PhpCalendar\index_of_date'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('week_link',
 				function(Context $context, \DateTimeInterface $date) {
-					list($week, $year) = week_of_year($date, $context->getCalendar()->week_start);
+					list($week, $year) = week_of_year($date, $context->getCalendar()->getWeekStart());
 					$url = action_url($context, 'display_week', ['week' => $week, 'year' => $year]);
 					return "<a href=\"$url\">$week</a>";
 				}));
@@ -176,7 +176,7 @@ class Context {
 		$this->twig->addFunction(new \Twig_SimpleFunction('day',
 				function(\DateTimeInterface $date) { return $date->format('j'); }));
 		$this->twig->addFunction(new \Twig_SimpleFunction('can_write',
-				function(User $user, Calendar $calendar) { return $calendar->can_write($user); }));
+				function(User $user, Calendar $calendar) { return $calendar->canWrite($user); }));
 		$this->twig->addFunction(new \Twig_SimpleFunction('occurrences_for_date',
 			function($occurrences, \DateTimeInterface $date) {
 				$key = index_of_date($date);
@@ -332,7 +332,7 @@ class Context {
 	 */
 	public function getUser() {
 		if (!isset($this->user))
-			$this->user = User::createAnonymous($this->db);
+			$this->user = User::createAnonymous($this->db, $this->request);
 		return $this->user;
 	}
 

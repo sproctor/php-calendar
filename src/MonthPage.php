@@ -35,7 +35,7 @@ class MonthPage extends Page
 	function action(Context $context, $template_variables)
 	{
 		$calendar = $context->getCalendar();
-		$cid = $calendar->cid;
+		$cid = $calendar->getCID();
 		$month = $context->getMonth();
 		$year = $context->getYear();
 
@@ -61,7 +61,7 @@ class MonthPage extends Page
 			$prev_year--;
 		}
 
-		$week_start = $calendar->week_start;
+		$week_start = $calendar->getWeekStart();
 		$weeks = weeks_in_month($month, $year, $week_start);
 
 		$first_day = 1 - day_of_week($month, 1, $year, $week_start);

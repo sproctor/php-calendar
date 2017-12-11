@@ -97,6 +97,13 @@ class Calendar {
 		return $this->subject_max;
 	}
 
+	/**
+	* @return string
+	*/
+	public function getWeekStart() {
+		return $this->week_start;
+	}
+
 	function getUserPerm($uid, $perm)
 	{
 		if(!isset($this->user_perms[$uid]))

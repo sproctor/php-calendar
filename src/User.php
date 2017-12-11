@@ -17,6 +17,8 @@
 
 namespace PhpCalendar;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class User {
 	/** @var int $uid */
 	private $uid;
