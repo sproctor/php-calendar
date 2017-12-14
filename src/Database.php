@@ -1016,14 +1016,11 @@ class Database
      * @param int $uid
      * @param string $subject
      * @param string $description
-     * @param bool $readonly
      * @param bool|int $catid
      * @return string
      */
-    function create_event($cid, $uid, $subject, $description, $readonly, $catid = false)
+    function createEvent($cid, $uid, $subject, $description, $catid = false)
     {
-        $fmt_readonly = asbool($readonly);
-
         if (!$catid)
             $catid_str = 'NULL';
         else
@@ -1033,14 +1030,16 @@ class Database
             . "(`cid`, `owner`, `subject`, `description`, "
             . "`readonly`, `catid`)\n"
             . "VALUES (:cid, :uid, :subject, :description, "
-            . "$fmt_readonly, $catid_str)";
+            . "0, $catid_str)";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
         $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':subject', $subject);
+        $sth->bindValue(':description', $description);
         if ($catid)
             $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
-        $sth->execute(array(':subject' => $subject, ':description' => $description));
+        $sth->execute();
 
         return $this->dbh->lastInsertId();
     }
@@ -1122,19 +1121,16 @@ class Database
      * @param int $eid
      * @param string $subject
      * @param string $description
-     * @param bool $readonly
      * @param bool|int $catid
      * @return bool
      */
-    function modify_event($eid, $subject, $description, $readonly, $catid = false)
+    function modifyEvent($eid, $subject, $description, $catid = false)
     {
-        $fmt_readonly = asbool($readonly);
 
         $query = "UPDATE `{$this->prefix}events`\n"
             . "SET\n"
             . "`subject`=:subject,\n"
             . "`description`=:description,\n"
-            . "`readonly`=$fmt_readonly,\n"
             . "`mtime`=NOW(),\n"
             . "`catid`=" . ($catid !== false ? ":catid" : "NULL") . "\n"
             . "WHERE `eid`=:eid";

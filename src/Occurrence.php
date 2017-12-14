@@ -27,15 +27,15 @@ class Occurrence extends Event
 	/**
 	 * Occurrence constructor.
 	 * @param Database $db
-	 * @param \string[] $event
+	 * @param string[] $row
 	 */
 	function __construct(Database $db, $row) {
 		parent::__construct($db, $row);
 
-		$this->oid = $event['oid'];
+		$this->oid = intval($row['oid']);
 		$this->start = fromSqlDateImmutable($row['start']);
 		$this->end = fromSqlDateImmutable($row['end']);
-		$this->time_type = $event['time_type'];
+		$this->time_type = intval($row['time_type']);
 	}
 
 	/**
@@ -74,7 +74,10 @@ class Occurrence extends Event
 		}
 	}
 
-	// takes start and end dates and returns a nice display
+	/** takes start and end dates and returns a nice display
+	 * 
+	 * @return string
+	 */
 	function getDateString()
 	{
 		$start_time = $this->get_start_timestamp();
@@ -88,6 +91,9 @@ class Occurrence extends Event
 		return $str;
 	}
 	
+	/**
+	 * @return string
+	 */
 	function getDatetimeString()
 	{
 		if (days_between($this->start, $this->end) == 0) {
@@ -107,11 +113,17 @@ class Occurrence extends Event
 		return $str;
 	}
 
-	function getOid()
+	/**
+	 * @return int
+	 */
+	function getOID()
 	{
 		return $this->oid;
 	}
 
+	/**
+	 * @return int
+	 */
 	function getTimeType() {
 		return $this->time_type;
 	}
@@ -130,5 +142,3 @@ class Occurrence extends Event
 		return $this->end;
 	}
 }
-
-?>

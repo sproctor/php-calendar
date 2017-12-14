@@ -549,7 +549,7 @@ function action_event_url(Context $context, $action, $eid) {
 function action_url(Context $context, $action, $parameters = array()) {
 	$url = "{$context->script}?action={$action}";
 	foreach($parameters as $key => $value) {
-		$url .= "&amp;$key=$value";
+		$url .= "&$key=$value";
 	}
 	return $url;
 }
@@ -1243,14 +1243,14 @@ function create_datetime($month, $day, $year) {
  * @param User $user
  * @param \DateTimeInterface $from
  * @param \DateTimeInterface $to
- * @return Occurrence[][]
+ * @return array
  */
 function get_occurrences_by_day(Calendar $calendar, User $user, \DateTimeInterface $from, \DateTimeInterface $to) {
 	$all_occurrences = $calendar->get_occurrences_by_date_range($from, $to);
 	$occurrences_by_day = array();
 	
 	foreach ($all_occurrences as $occurrence) {
-		if(!$occurrence->can_read($user))
+		if(!$occurrence->canRead($user))
 			continue;
 
 			$end = $occurrence->getEnd();
@@ -1258,12 +1258,9 @@ function get_occurrences_by_day(Calendar $calendar, User $user, \DateTimeInterfa
 			$start = $occurrence->getStart();
 
 			// if the event started before the range we're showing
-			$diff = $from->diff($start);
-			if($diff < 0)
-				$diff = new \DateInterval("P0D");
-
+			if($start < $from)
 				// put the event in every day until the end
-				for($date = $start->add($diff); $date < $to && $date < $end; $date = $date->add(new \DateInterval("P1D"))) {
+				for($date = $start->add(new \DateInterval("P0D")); $date < $to && $date < $end; $date = $date->add(new \DateInterval("P1D"))) {
 					$key = index_of_date($date);
 					if(!isset($occurrences_by_day[$key]))
 						$days_events[$key] = array();

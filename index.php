@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * Copyright 2017 Sean Proctor
  *
@@ -29,8 +29,8 @@ use Symfony\Component\Translation\Loader\MoFileLoader;
 define('PHPC_CONFIG_FILE', __DIR__ . '/config.php');
 
 define('PHPC_DEBUG', 1);
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+error_reporting(-1);
+ini_set('display_errors', '1');
 
 $request = Request::createFromGlobals();
 
@@ -38,9 +38,9 @@ try {
 	$context = new Context($request);
 	
 	if ($context->getLang () != 'en') {
-		$translator = new Translator ( $context->getLang (), new MessageSelector () );
-		$translator->addLoader ( 'mo', new MoFileLoader () );
-		$translator->addResource ( 'mo', __DIR__ . "locale/" . $context->getLang () . "/LC_MESSAGES/messages.mo", $context->getLang () );
+		$translator = new Translator($context->getLang(), new MessageSelector());
+		$translator->addLoader('mo', new MoFileLoader());
+		$translator->addResource('mo', __DIR__ . "locale/" . $context->getLang() . "/LC_MESSAGES/messages.mo", $context->getLang());
 	}
 	
 	if ($request->get("content") == "json") {
@@ -56,25 +56,25 @@ try {
 				'embed' => $request->get("content") == "embed",
 				'lang' => $context->getLang(),
 				'title' => $context->getCalendar()->getTitle(),
-				'theme' => $context->getCalendar()->get_theme(),
-				'minified' => defined ( 'PHPC_DEBUG' ) ? '' : '.min',
+				//'theme' => $context->getCalendar()->get_theme(),
+				'minified' => defined('PHPC_DEBUG') ? '' : '.min',
 				'query_string' => $request->getQueryString() 
 		) );
 		$response->send();
 	}
 } catch(PermissionException $e) {
-	$msg = __ ( 'You do not have permission to do that: ' ) . $e->getMessage ();
-	if ($context->getUser ()->is_user ())
-		echo error_message_redirect ( $context, $msg, $context->script );
+	$msg = __('You do not have permission to do that: ') . $e->getMessage();
+	if ($context->getUser()->is_user())
+		echo error_message_redirect($context, $msg, $context->script);
 	else
-		echo error_message_redirect ( $context, $msg, "{$context->script}?action=login");
+		echo error_message_redirect($context, $msg, "{$context->script}?action=login");
 } catch(InvalidConfigException $e) {
 	(new RedirectResponse("/install"))->send();
 } catch(InvalidInputException $e) {
 	echo error_message_redirect($context, $e->getMessage(), $e->target);
 } catch(\Exception $e) {
 	header("Content-Type: text/html; charset=UTF-8");
-	echo "<!DOCTYPE html>\n";
+	echo "<!doctype html>\n";
 	echo display_exception($e)->toString();
 	exit;
 }

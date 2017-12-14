@@ -9,7 +9,7 @@
 	    <div class="phpc-date{% if not is_date_in_month(context, start_date) %} phpc-shadow{% endif %}{% if is_today(start_date) %} ui-state-highlight{% endif %}">
 		    <a href="{{ action_date_url(context, 'display_day', start_date) }}">{{ day(start_date) }}</a>
 		    {% if can_write(user, calendar) %}
-		    <a href="{{ action_date_url(context, 'create_event', start_date) }}" class="phpc-add ui-state-default ui-widget" title="{{ "Create Event"|trans }}">{{ fa("plus")|raw }}</a>
+		    <a href="{{ action_date_url(context, 'event_form', start_date) }}" class="phpc-add ui-state-default ui-widget" title="{{ "Create Event"|trans }}">{{ fa("plus")|raw }}</a>
 		    {% endif %}
 	    </div>
 	    {% set days_occurrences = occurrences_for_date(occurrences, start_date) %}
@@ -18,7 +18,7 @@
 		    {% for occurrence in days_occurrences %}
 			    {% if occurrence is null %}
 				    <li>
-					    <a href="{{ action_date_url(context, 'display_day', start_date) }}" class="phpc-date">{{ "View Additional Events"|_ }}</a>
+					    <a href="{{ action_date_url(context, 'display_day', start_date) }}" class="phpc-date">{{ "View Additional Events"|trans }}</a>
 				    </li>
 			    {% else %}
 				    {% set textcolor = attribute(occurrence, getTextColor) %}

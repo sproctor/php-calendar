@@ -18,12 +18,21 @@
 namespace PhpCalendar;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
+use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
+use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
+use Symfony\Component\Security\Csrf\CsrfTokenManager;
 
-class EventCreatePage extends Page {
+class EventFormPage extends Page {
     /**
 	 * Display event form or submit event
 	 * 
@@ -36,15 +45,13 @@ class EventCreatePage extends Page {
 		$form = $this->eventForm($context);
 		$template_variables['form'] = $form->createView();
 
-		if($context->request->get('submit_form') == null)
-			return new Response($context->twig->render("event_create.html.twig", $template_variables));
-		// else
-		try {
-			return process_form();
-		} catch(\Exception $e) {
-			//message($e->getMessage());
-			return new Response($context->twig->render("event_create.html.twig", $template_variables));
+		$form->handleRequest($context->request);
+		if($form->isSubmitted() && $form->isValid()) {
+			return $this->processForm($context, $form->getData());
 		}
+		
+		// else
+		return new Response($context->twig->render("event_create.html.twig", $template_variables));
 	}
 	
 	/**
@@ -52,28 +59,188 @@ class EventCreatePage extends Page {
 	* @return Form
 	*/
 	private function eventForm(Context $context) {
-		$formFactory = Forms::createFormFactory();
+		// create a Session object from the HttpFoundation component
+		$session = new Session();
 
+		$csrfGenerator = new UriSafeTokenGenerator();
+		$csrfStorage = new SessionTokenStorage($session);
+		$csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
+
+		$formFactory = Forms::createFormFactoryBuilder()
+			->addExtension(new HttpFoundationExtension())
+			->addExtension(new CsrfExtension($csrfManager))
+			->getFormFactory();
+
+		/*
 		$calendar_choices = array();
 		foreach($context->db->getCalendars() as $calendar) {
 			if($calendar->canWrite($context->getUser()))
 				$calendar_choices[$calendar->getTitle()] = $calendar->getCID();
-		}
-		return $formFactory->createBuilder()
-			->add('cid', ChoiceType::class, array('choices' => $calendar_choices))
-			->add('subject', TextType::class, array('attr' =>
-					array('autocomplete' => 'off', 'maxlength' => $context->getCalendar()->getSubjectMax())))
-			->add('description', TextareaType::class)
+		}*/
+
+		$builder = $formFactory->createBuilder();
+
+		/*if(sizeof($calendar_choices) > 1) {
+			$builder->add('cid', ChoiceType::class, array('choices' => $calendar_choices));
+		} else {
+			$builder->add('cid', HiddenType::class, array('data' => $context->getCalendar()->getCID()));
+		}*/
+		return $builder->add('subject', TextType::class, array('attr' =>
+						array('autocomplete' => 'off', 'maxlength' => $context->getCalendar()->getSubjectMax()),
+					'label' => _('Subject')))
+			->add('description', TextareaType::class, array('label' => __('Description') . ' <a href="http://commonmark.org/help/" target="_new">' . __('(syntax)') . '</a>'))
+			->add('start', DateTimeType::class, array('label' => __('From'), 'widget' => 'single_text'))
+			->add('end', DateTimeType::class, array('label' => __('To'), 'widget' => 'single_text'))
+			->add('time-type', ChoiceType::class, array('label' => __('Time Type'),
+				'choices' => array(
+					__('Normal') => 'normal',
+					__('Full Day') => 'full',
+					__('To Be Announced') => 'tba')))
 			->getForm();
 	}
+
+	/**
+	 * @param Context $context
+	 * @param array $data
+	 * @return Response
+	 */
+	private function processForm(Context $context, $data)
+	{
+		// When modifying events, this is the value of the checkbox that
+		//   determines if the date should change
+		$modify_occur = !isset($data['eid']) || !empty($data['modify']);
+	
+		if ($modify_occur && $data['end'] < $data['start']) {
+			throw new Exception(__("An event cannot have an end earlier than its start."));
+		}
+	
+		$calendar = $context->getCalendar();
+		$user = $context->getUser();
+	
+		if (!$calendar->canWrite($user))
+			permission_error(__('You do not have permission to write to this calendar.'));
+	
+		$catid = empty($data['catid']) ? false : $data['catid'];
+	
+		if(!isset($data['eid'])) {
+			$modify = false;
+			$eid = $context->db->createEvent($calendar->getCID(), $user->getUID(),
+					$data["subject"], $data["description"], $catid);
+		} else {
+			$modify = true;
+			$eid = $data['eid'];
+			$context->db->modify_event($eid, $data['subject'],
+					$data['description'], $catid);
+			if($modify_occur)
+				$context->db->delete_occurrences($eid);
+		}
+	
+		/*foreach($calendar->get_fields() as $field) {
+			$fid = $field['fid'];
+			if(empty($vars["phpc-field-$fid"])) {
+				if($field['required'])
+					throw new Exception(sprintf(__('Field "%s" is required but was not set.'), $field['name']));
+				continue;
+			}
+			$phpcdb->add_event_field($eid, $fid, $vars["phpc-field-$fid"]);
+		}*/
+	
+		if($modify_occur) {
+			switch($data["time-type"]) {
+				case 'normal':
+					$time_type = 0;
+					break;
+	
+				case 'full':
+					$time_type = 1;
+					break;
+	
+				case 'tba':
+					$time_type = 2;
+					break;
+	
+				default:
+					soft_error(__("Unrecognized Time Type."));
+			}
+	
+			$duration = $data['end'] - $data['start'];
+	
+			$occurrences = 0;
+			$n = 1;
+			$until = $data['start'];
+			/*switch($data['repeats']) {
+			case 'daily':
+				check_input("every-day");
+				$n = $data["every-day"];
+				$until = get_timestamp("daily-until");
+				break;
+	
+			case 'weekly':
+				check_input("every-week");
+				$n = $vars["every-week"] * 7;
+				$until = get_timestamp("weekly-until");
+				break;
+	
+			case 'monthly':
+				check_input("every-month");
+				$n = $vars["every-month"];
+				$until = get_timestamp("monthly-until");
+				break;
+	
+			case 'yearly':
+				check_input("every-year");
+				$n = $vars["every-year"];
+				$until = get_timestamp("yearly-until");
+				break;
+			}*/
+			if($n < 1)
+				soft_error(__('Increment must be 1 or greater.'));
+	
+			//while($occurrences <= 730 && days_between($data['start'], $until) >= 0) {
+				$oid = $context->db->create_occurrence($eid, $time_type, $data['start'], $data['end']);
+				$occurrences++;
+	
+				/*switch($vars["repeats"]) {
+				case 'daily':
+				case 'weekly':
+					$start_ts = add_days($start_ts, $n);
+					$end_ts = add_days($end_ts, $n);
+					break;
+	
+				case 'monthly':
+					$start_ts = add_months($start_ts, $n);
+					$end_ts = add_months($end_ts, $n);
+					break;
+	
+				case 'yearly':
+					$start_ts = add_years($start_ts, $n);
+					$end_ts = add_years($end_ts, $n);
+					break;
+	
+				default:
+					break 2;
+				}
+			}*/
+		}
+	
+		if($eid != 0) {
+			if($modify)
+				$message = __("Modified event: ");
+			else
+				$message = __("Created event: ");
+			$context->addMessage($message);
+			return new RedirectResponse(action_event_url($context, 'display_event', $eid));
+		} else {
+			$context->addMessage(__('Error submitting event.'));
+			return new RedirectResponse($context, 'display_month', array('phpcid' => $calendar->getCID()));
+		}
+	}
+	
 }
 
 
 
 function display_form() {
-	$form->add_part(new FormLongFreeQuestion('description',
-				tag('', __('Description'), tag('br'),
-					tag('a', attrs('href="http://daringfireball.net/projects/markdown/syntax"', 'target="_new"'), __('syntax')))));
 
 	$when_group = new FormGroup(__('When'), 'phpc-when');
 	if(isset($vars['eid'])) {
@@ -81,18 +248,6 @@ function display_form() {
 					false,
 					__('Change the event date and time')));
 	}
-	$when_group->add_part(new FormDateTimeQuestion('start',
-				__('From'), $hour24, $date_format));
-	$when_group->add_part(new FormDateTimeQuestion('end', __('To'),
-				$hour24, $date_format));
-
-	$time_type = new FormDropDownQuestion('time-type', __('Time Type'));
-	$time_type->add_option('normal', __('Normal'));
-	$time_type->add_option('full', __('Full Day'));
-	$time_type->add_option('tba', __('To Be Announced'));
-
-	$when_group->add_part($time_type);
-
 	$form->add_part($when_group);
 
 	$repeat_type = new FormDropdownQuestion('repeats', __('Repeats'),
@@ -309,155 +464,3 @@ function add_repeat_defaults($occs, &$defaults) {
 	}
 }
 
-function process_form()
-{
-	global $vars, $phpcdb, $phpc_script, $phpc_user, $phpc_cal;
-
-	// When modifying events, this is the value of the checkbox that
-	//   determines if the date should change
-	$modify_occur = !isset($vars['eid']) || !empty($vars['phpc-modify']);
-
-	if($modify_occur) {
-		$start_ts = get_timestamp("start");
-		$end_ts = get_timestamp("end");
-
-		switch($vars["time-type"]) {
-			case 'normal':
-				$time_type = 0;
-				break;
-
-			case 'full':
-				$time_type = 1;
-				break;
-
-			case 'tba':
-				$time_type = 2;
-				break;
-
-			default:
-				soft_error(__("Unrecognized Time Type."));
-		}
-
-		$duration = $end_ts - $start_ts;
-		if($duration < 0) {
-			throw new Exception(__("An event cannot have an end earlier than its start."));
-		}
-	}
-
-	verify_token();
-
-	if(!isset($vars['cid'])) {
-		throw new Exception(__("Calendar ID is not set."));
-	}
-
-	$cid = $vars['cid'];
-	$calendar = $phpcdb->get_calendar($cid);
-
-	if(!$calendar->can_write())
-		permission_error(__('You do not have permission to write to this calendar.'));
-
-	if($calendar->can_create_readonly() && !empty($vars['readonly']))
-		$readonly = true;
-	else
-		$readonly = false;
-
-	$catid = empty($vars['catid']) ? false : $vars['catid'];
-
-	if(!isset($vars['eid'])) {
-		$modify = false;
-		$eid = $phpcdb->create_event($cid, $phpc_user->get_uid(),
-				$vars["subject"], $vars["description"],
-				$readonly, $catid);
-	} else {
-		$modify = true;
-		$eid = $vars['eid'];
-		$phpcdb->modify_event($eid, $vars['subject'],
-				$vars['description'], $readonly, $catid);
-		if($modify_occur)
-			$phpcdb->delete_occurrences($eid);
-	}
-
-	foreach($phpc_cal->get_fields() as $field) {
-		$fid = $field['fid'];
-		if(empty($vars["phpc-field-$fid"])) {
-			if($field['required'])
-				throw new Exception(sprintf(__('Field "%s" is required but was not set.'), $field['name']));
-			continue;
-		}
-		$phpcdb->add_event_field($eid, $fid, $vars["phpc-field-$fid"]);
-	}
-
-	if($modify_occur) {
-		$occurrences = 0;
-		$n = 1;
-		$until = $start_ts;
-		switch($vars['repeats']) {
-		case 'daily':
-			check_input("every-day");
-			$n = $vars["every-day"];
-			$until = get_timestamp("daily-until");
-			break;
-
-		case 'weekly':
-			check_input("every-week");
-			$n = $vars["every-week"] * 7;
-			$until = get_timestamp("weekly-until");
-			break;
-
-		case 'monthly':
-			check_input("every-month");
-			$n = $vars["every-month"];
-			$until = get_timestamp("monthly-until");
-			break;
-
-		case 'yearly':
-			check_input("every-year");
-			$n = $vars["every-year"];
-			$until = get_timestamp("yearly-until");
-			break;
-		}
-		if($n < 1)
-			soft_error(__('Increment must be 1 or greater.'));
-
-		while($occurrences <= 730 && days_between($start_ts, $until) >= 0) {
-			$oid = $phpcdb->create_occurrence($eid, $time_type, $start_ts, $end_ts);
-			$occurrences++;
-
-			switch($vars["repeats"]) {
-			case 'daily':
-			case 'weekly':
-				$start_ts = add_days($start_ts, $n);
-				$end_ts = add_days($end_ts, $n);
-				break;
-
-			case 'monthly':
-				$start_ts = add_months($start_ts, $n);
-				$end_ts = add_months($end_ts, $n);
-				break;
-
-			case 'yearly':
-				$start_ts = add_years($start_ts, $n);
-				$end_ts = add_years($end_ts, $n);
-				break;
-
-			default:
-				break 2;
-			}
-		}
-	}
-
-	if($eid != 0) {
-		if($modify)
-			$message = __("Modified event: ");
-		else
-			$message = __("Created event: ");
-
-		return message_redirect(tag('', $message,
-					create_event_link($eid, 'display_event',
-						$eid)),
-				"$phpc_script?action=display_event&eid=$eid");
-	} else {
-		return message_redirect(__('Error submitting event.'),
-				"$phpc_script?action=display_month&phpcid=$cid");
-	}
-}

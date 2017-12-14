@@ -17,16 +17,19 @@
 
 namespace PhpCalendar;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\Forms;
 use Symfony\Bridge\Twig\Extension\FormExtension;
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Form\Forms;
+use SYmfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
 use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
+
 
 class Context {
 	/** @var Calendar $calendar */
@@ -121,32 +124,33 @@ class Context {
 	}
 
 	private function initTwig() {
-		$defaultFormTheme = 'form_div_layout.html.twig';
+		
 		$appVariableReflection = new \ReflectionClass('\Symfony\Bridge\Twig\AppVariable');
 		$vendorTwigBridgeDir = dirname($appVariableReflection->getFileName());
 		$template_loader = new \Twig_Loader_Filesystem(array(
-			__DIR__ . '/../templates',
-			$vendorTwigBridgeDir.'/Resources/views/Form',));
-		$this->twig = new \Twig_Environment($template_loader, array(
-			//'cache' => __DIR__ . '/cache',
-		));
-		$session = new Session();
-		
-		$csrfGenerator = new UriSafeTokenGenerator();
-		$csrfStorage = new SessionTokenStorage($session);
-		$csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
-		$formEngine = new TwigRendererEngine(array($defaultFormTheme), $this->twig);
+			realpath(__DIR__ . '/../templates')));
+		$this->twig = new \Twig_Environment($template_loader
+			//, array('cache' => __DIR__ . '/cache',)
+		);
+
+		//$session = new Session();
+		//$csrfGenerator = new UriSafeTokenGenerator();
+		//$csrfStorage = new SessionTokenStorage($session);
+		//$csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
+
+		$formTheme = 'bootstrap_4_layout.html.twig';
+		$formEngine = new TwigRendererEngine(array($formTheme), $this->twig);
 		$this->twig->addRuntimeLoader(new \Twig_FactoryRuntimeLoader(array(
-			TwigRenderer::class => function () use ($formEngine, $csrfManager) {
-				return new TwigRenderer($formEngine, $csrfManager);
+			TwigRenderer::class => function () use ($formEngine) {
+				return new TwigRenderer($formEngine);
 			},
 		)));
-		$this->twig->addExtension(new \Twig_Extensions_Extension_I18n());
+		//$this->twig->addExtension(new TranslationExtension());
 		$this->twig->addExtension(new FormExtension());
 		
 		$this->twig->addFunction(new \Twig_SimpleFunction('fa', '\PhpCalendar\fa'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('dropdown', '\PhpCalendar\create_dropdown'));
-		$this->twig->addFilter(new \Twig_SimpleFilter('_', '\PhpCalendar\__'));
+		$this->twig->addFilter(new \Twig_SimpleFilter('trans', '\PhpCalendar\__'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('_p', '\PhpCalendar\__p'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('day_name', '\PhpCalendar\day_name'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('short_day_name', '\PhpCalendar\short_day_name'));
@@ -425,8 +429,8 @@ class Context {
 	function getPage()
 	{
 		switch($this->getAction()) {
-			case 'create_event':
-				return new EventCreatePage;
+			case 'event_form':
+				return new EventFormPage;
 			case 'display_month':
 				return new MonthPage;
 			case 'display_day':

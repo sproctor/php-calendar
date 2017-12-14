@@ -18,35 +18,34 @@
 namespace PhpCalendar;
 
 class Event {
-	var $eid;
-	var $cid;
-	var $uid;
-	var $author;
-	var $subject;
-	var $desc;
-	var $readonly;
-	var $category;
-	var $bg_color;
+	private $eid;
+	private $cid;
+	private $owner_uid;
+	private $author;
+	private $subject;
+	private $desc;
+	private $category;
+	private $bg_color;
 	private $text_color;
-	var $catid;
-	var $gid;
-	var $ctime;
-	var $mtime;
-	var $cal;
-	var $fields;
-	var $db;
+	private $catid;
+	private $gid;
+	private $ctime;
+	private $mtime;
+	private $cal;
+	private $fields;
+	private $db;
 
 	/**
 	 * Event constructor.
 	 * @param Database $db
-	 * @param \string[] $event
+	 * @param string[] $event
 	 */
 	function __construct(Database $db, $event)
 	{
 		$this->db = $db;
-		$this->eid = $event['eid'];
+		$this->eid = intval($event['eid']);
 		$this->cid = $event['cid'];
-		$this->uid = $event['owner'];
+		$this->owner_uid = $event['owner'];
 		if(empty($event['owner']))
 			$this->author = __('anonymous');
 		elseif(empty($event['username']))
@@ -55,7 +54,6 @@ class Event {
 			$this->author = $event['username'];
 		$this->subject = $event['subject'];
 		$this->desc = $event['description'];
-		$this->readonly = $event['readonly'];
 		$this->category = $event['name'];
 		$this->bg_color = $event['bg_color'];
 		$this->text_color = $event['text_color'];
@@ -63,55 +61,65 @@ class Event {
 		$this->gid = $event['gid'];
 		$this->ctime = $event['ctime'];
 		$this->mtime = $event['mtime'];
-		$this->cal = $db->get_calendar($this->cid);
+		$this->cal = $db->getCalendar($this->cid);
 	}
 
-	function get_raw_subject() {
-		return htmlspecialchars($this->subject, ENT_COMPAT, "UTF-8");
+	/**
+	 * @return string
+	 */
+	function getRawSubject() {
+		return $this->subject;
 	}
 
-	function get_subject()
+	/**
+	 * @return string
+	 */
+	function getSubject()
 	{
 		if(empty($this->subject))
 			return __('(No subject)');
 
-		return htmlspecialchars(stripslashes($this->subject),
-				ENT_COMPAT, "UTF-8");
+		return $this->subject;
 	}
 
-	function get_author()
+	/**
+	 * @return string
+	 */
+	function getAuthor()
 	{
 		return $this->author;
 	}
 
-	function get_uid()
+	/**
+	 * @return User
+	 */
+	function getOwner()
 	{
-		return $this->uid;
+		return $this->db->get_user($this->owner);
 	}
 
-	function get_raw_desc() {
-		// Don't allow tags and make the description HTML-safe
-		return htmlspecialchars($this->desc, ENT_COMPAT, "UTF-8");
-	}
-
-	function get_desc()
+	/**
+	 * @return string
+	 */
+	function getDescription()
 	{
-		return parse_desc($this->desc);
+		return $this->desc;
 	}
 
-	function get_eid()
+	/**
+	 * @return int
+	 */
+	function getEID()
 	{
 		return $this->eid;
 	}
 
-	function get_cid()
+	/**
+	 * @return Calendar
+	 */
+	function getCalendar()
 	{
-		return $this->cid;
-	}
-
-	function is_readonly()
-	{
-		return $this->readonly;
+		return $this->db->getCalendar($this->cid);
 	}
 
 	/**
@@ -124,37 +132,40 @@ class Event {
 	}
 
 	/**
-	 * @return NULL|string
+	 * @return null|string
 	 */
 	function getBgColor() {
 		if (empty($this->bg_color))
 			return null;
-		return htmlspecialchars($this->bg_color, ENT_COMPAT, "UTF-8");
+		return $this->bg_color;
 	}
 
-	function get_category()
+	/**
+	 * @return string
+	 */
+	function getCategory()
 	{
 		if(empty($this->category))
 			return $this->category;
-		return htmlspecialchars($this->category, ENT_COMPAT, "UTF-8");
+		return $this->category;
 	}
 
-	function is_owner(User $user) {
-		return $user->get_uid() == $this->get_uid();
+	function isOwner(User $user) {
+		return $user->getUID() == $this->owner_uid;
 	}
 
 	// returns whether or not the current user can modify $event
-	function can_modify(User $user)
+	function canModify(User $user)
 	{
-		return $this->cal->can_admin($user) || $this->is_owner($user)
-			|| ($this->cal->can_modify() && !$this->is_readonly());
+		return $this->cal->canAdmin($user) || $this->isOwner($user)
+			|| ($this->cal->canModify($user));
 	}
 
 	// returns whether or not the user can read this event
-	function can_read(User $user) {
+	function canRead(User $user) {
 		$visible_category = empty($this->gid) || !isset($this->catid)
-			|| $this->db->is_cat_visible($user->get_uid(), $this->catid);
-		return $this->cal->can_read() && $visible_category;
+			|| $this->db->is_cat_visible($user->getUID(), $this->catid);
+		return $this->cal->canRead($user) && $visible_category;
 	}
 
 	function get_ctime_string() {
@@ -176,4 +187,3 @@ class Event {
 		return $this->fields;
 	}
 }
-?>
