@@ -242,14 +242,14 @@ class Context {
 		
 		$eid = $this->request->get('eid');
 		if(isset($eid)) {
-			if(is_array($$eid)) {
-				$eid = $$eid[0];
+			if(is_array($eid)) {
+				$eid = $eid[0];
 			}
 			$event = $this->db->get_event_by_eid($eid);
 			if(empty($event))
 				soft_error(__("Invalid event ID."));
 
-			return $event['cid'];
+			return $event->getCalendar()->getCID();
 		}
 		
 		$oid = $this->request->get('oid');

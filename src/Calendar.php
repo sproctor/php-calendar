@@ -48,7 +48,7 @@ class Calendar {
 		$calendar->date_format = $result['date_format'];
 		$calendar->week_start = $result['week_start'];
 		$calendar->subject_max = intval($result['subject_max']);
-		$calendar->events_max = $result['events_max'];
+		$calendar->events_max = intval($result['events_max']);
 		$calendar->anon_permission = $result['anon_permission'];
 		$calendar->timezone = $result['timezone'];
 		$calendar->language = $result['language'];
@@ -161,6 +161,10 @@ class Calendar {
 		return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'readonly');
 	}
 
+	function getMaxDisplayEvents() {
+		return $this->events_max;
+	}
+
 	function get_visible_categories($uid) {
 		return $this->db->get_visible_categories($uid, $this->cid);
 	}
@@ -202,4 +206,3 @@ class Calendar {
 	}
 }
 
-?>

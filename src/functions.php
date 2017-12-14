@@ -1248,28 +1248,32 @@ function create_datetime($month, $day, $year) {
 function get_occurrences_by_day(Calendar $calendar, User $user, \DateTimeInterface $from, \DateTimeInterface $to) {
 	$all_occurrences = $calendar->get_occurrences_by_date_range($from, $to);
 	$occurrences_by_day = array();
-	
+
 	foreach ($all_occurrences as $occurrence) {
 		if(!$occurrence->canRead($user))
 			continue;
 
-			$end = $occurrence->getEnd();
+		$end = $occurrence->getEnd();
 
-			$start = $occurrence->getStart();
+		$start = $occurrence->getStart();
 
-			// if the event started before the range we're showing
-			if($start < $from)
-				// put the event in every day until the end
-				for($date = $start->add(new \DateInterval("P0D")); $date < $to && $date < $end; $date = $date->add(new \DateInterval("P1D"))) {
-					$key = index_of_date($date);
-					if(!isset($occurrences_by_day[$key]))
-						$days_events[$key] = array();
-						if(sizeof($occurrences_by_day[$key]) == $calendar->events_max)
-							$days_events[$key][] = null;
-							if(sizeof($occurrences_by_day[$key]) > $calendar->events_max)
-								continue;
-								$days_events[$key][] = $occurrence;
-				}
+		if($start > $from) {
+			$diff = new \DateInterval("P0D");
+		} else { // the event started before the range we're showing
+			$diff = $from->diff($start);
+		}
+
+		// put the event in every day until the end
+		for($date = $start->add($diff); $date < $to && $date <= $end; $date = $date->add(new \DateInterval("P1D"))) {
+			$key = index_of_date($date);
+			if(!isset($occurrences_by_day[$key]))
+				$occurrences_by_day[$key] = array();
+			if(sizeof($occurrences_by_day[$key]) == $calendar->getMaxDisplayEvents())
+				$occurrences_by_day[$key][] = null;
+			if(sizeof($occurrences_by_day[$key]) > $calendar->getMaxDisplayEvents())
+				continue;
+			$occurrences_by_day[$key][] = $occurrence;
+		}
 	}
 	return $occurrences_by_day;
 }

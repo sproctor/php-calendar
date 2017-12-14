@@ -1055,9 +1055,8 @@ class Database
     {
         // Stored as UTC
         if ($time_type == 0) {
-
             $start_str = sqlDate($start);
-            $end_str = sqlDate($start);
+            $end_str = sqlDate($end);
         } else {
             // ignore the time for full day events
             $start_str = $start->format("Y-m-d");
