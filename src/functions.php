@@ -106,30 +106,6 @@ function redirect(Context $context, $page) {
 	return new RedirectResponse($url);
 }
 
-/**
- * @param string $message
- * @param string $page
- * @param string $css_classes
- * @return RedirectResponse
- */
-function message_redirect(Context $context, $message, $page, $css_classes) {
-	$messages = $context->getMessages();
-	$messages[] = new Tag('div', new AttributeList("class=\"phpc-message $css_classes\""), $message);
-
-	setcookie("messages", json_encode($messages));
-
-	return redirect($context, $page);
-}
-
-/**
- * @param string $message
- * @param string $page
- * @return Tag
- */
-function error_message_redirect(Context $context, $message, $page) {
-	return message_redirect($context, $message, $page, 'ui-state-error');
-}
-
 function escape_entities($string) {
 	return htmlspecialchars($string, ENT_NOQUOTES, "UTF-8");
 }
