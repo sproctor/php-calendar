@@ -42,11 +42,11 @@ class Occurrence extends Event
 	 * formats the time according to type
 	 * @return NULL|string
 	 */
-	function get_time_string()
+	function getTimeString()
 	{
 		switch($this->time_type) {
 			default:
-				return format_time($this->start, $this->cal->hours_24);
+				return format_time($this->start, $this->cal->is24Hour());
 			case 1: // FULL DAY
 			case 3: // None
 				return null;
@@ -56,16 +56,17 @@ class Occurrence extends Event
 	}
 
 	/**
-	 * @return NULL|string
+	 * @return null|string
 	 */
 	function getTimespanString()
 	{
 		switch($this->time_type) {
 			default:
-				$hour24 = $this->cal->hours_24;
-				$start_time = $this->get_start_time();
-				$end_time = $this->get_end_time();
-				return $start_time.' '.__('to').' '.$end_time;
+				$hour24 = $this->cal->is24hour();
+				$str = format_time($this->start, $hour24);
+				if ($this->start != $this->end)
+					$str .= ' ' . __('to') . ' ' . format_time($this->end, $hour24);
+				return $str;
 			case 1: // FULL DAY
 			case 3: // None
 				return null;
@@ -80,13 +81,10 @@ class Occurrence extends Event
 	 */
 	function getDateString()
 	{
-		$start_time = $this->get_start_timestamp();
-		$end_time = $this->get_end_timestamp();
+		$str = format_date($this->start, $this->cal->getDateFormat());
 
-		$str = $this->get_start_date();
-
-		if($start_time != $end_time)
-			$str .= ' - ' . $this->get_end_date();
+		if (days_between($this->start, $this->end) > 0)
+			$str .= ' - ' . format_date($this->end, $this->cal->getDateFormat());
 
 		return $str;
 	}
@@ -100,14 +98,14 @@ class Occurrence extends Event
 			// normal behaviour
 			$str = $this->getDateString();
 			$event_time = $this->getTimespanString();
-			if (! empty ( $event_time ))
-				$str .= ' ' . __ ( 'at' ) . " $event_time";
+			if (!empty($event_time))
+				$str .= ' ' . __('at') . " $event_time";
 			
 		} else {
 			// format on multiple days
-			$str = ' ' . __ ( 'From' ) . ' '
+			$str = ' ' . __('From') . ' '
 					. format_datetime($this->start, $this->cal->date_format, $this->cal->hours_24) . ' '
-					. __ ( 'to' ) . ' '
+					. __('to') . ' '
 					. format_datetime($this->end, $this->cal->date_format, $this->cal->hours_24);
 		}
 		return $str;

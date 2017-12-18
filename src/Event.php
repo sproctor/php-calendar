@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2017 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ class Event {
 	private $gid;
 	private $ctime;
 	private $mtime;
-	private $cal;
+	protected $cal;
 	private $fields;
 	private $db;
 
@@ -59,22 +59,22 @@ class Event {
 		$this->text_color = $event['text_color'];
 		$this->catid = $event['catid'];
 		$this->gid = $event['gid'];
-		$this->ctime = $event['ctime'];
-		$this->mtime = $event['mtime'];
+		$this->ctime = fromTimestampImmutable($event['ctime']);
+		$this->mtime = empty($event['mtime']) ? null : fromTimestampImmutable($event['mtime']);
 		$this->cal = $db->getCalendar($this->cid);
 	}
 
 	/**
 	 * @return string
 	 */
-	function getRawSubject() {
+	private function getRawSubject() {
 		return $this->subject;
 	}
 
 	/**
 	 * @return string
 	 */
-	function getSubject()
+	public function getSubject()
 	{
 		if(empty($this->subject))
 			return __('(No subject)');
@@ -93,7 +93,7 @@ class Event {
 	/**
 	 * @return User
 	 */
-	function getOwner()
+	public function getOwner()
 	{
 		return $this->db->get_user($this->owner);
 	}
@@ -101,7 +101,7 @@ class Event {
 	/**
 	 * @return string
 	 */
-	function getDescription()
+	public function getDescription()
 	{
 		return $this->desc;
 	}
@@ -109,15 +109,22 @@ class Event {
 	/**
 	 * @return int
 	 */
-	function getEID()
+	public function getEID()
 	{
 		return $this->eid;
 	}
 
 	/**
+	 * @return Occurrence[]
+	 */
+	public function getOccurrences() {
+		return $this->db->get_occurrences_by_eid($this->eid);
+	}
+
+	/**
 	 * @return Calendar
 	 */
-	function getCalendar()
+	public function getCalendar()
 	{
 		return $this->db->getCalendar($this->cid);
 	}
@@ -134,7 +141,7 @@ class Event {
 	/**
 	 * @return null|string
 	 */
-	function getBgColor() {
+	public function getBgColor() {
 		if (empty($this->bg_color))
 			return null;
 		return $this->bg_color;
@@ -143,41 +150,59 @@ class Event {
 	/**
 	 * @return string
 	 */
-	function getCategory()
+	public function getCategory()
 	{
 		if(empty($this->category))
 			return $this->category;
 		return $this->category;
 	}
 
-	function isOwner(User $user) {
+	/**
+	 * @param User $user
+	 * @return bool
+	 */
+	public function isOwner(User $user) {
 		return $user->getUID() == $this->owner_uid;
 	}
 
-	// returns whether or not the current user can modify $event
-	function canModify(User $user)
+	/** returns whether or not the current user can modify $event
+	 * 
+	 * @param User $user
+	 * @return bool
+	 */
+	public function canModify(User $user)
 	{
 		return $this->cal->canAdmin($user) || $this->isOwner($user)
 			|| ($this->cal->canModify($user));
 	}
 
-	// returns whether or not the user can read this event
-	function canRead(User $user) {
+	/** returns whether or not the user can read this event
+	 * 
+	 * @param User $user
+	 * @return
+	 */
+	public function canRead(User $user) {
 		$visible_category = empty($this->gid) || !isset($this->catid)
 			|| $this->db->is_cat_visible($user->getUID(), $this->catid);
 		return $this->cal->canRead($user) && $visible_category;
 	}
 
-	function get_ctime_string() {
-		return format_timestamp_string($this->ctime,
-				$this->cal->date_format,
-				$this->cal->hours_24);
+	function getCtimeString() {
+		return format_datetime($this->ctime,
+				$this->cal->getDateFormat(),
+				$this->cal->is24Hour());
 	}
 
-	function get_mtime_string() {
-		return format_timestamp_string($this->mtime,
-				$this->cal->date_format,
-				$this->cal->hours_24);
+	/**
+	 * @return \Datetime|null
+	 */
+	function getMtimeString() {
+		if (empty($this->mtime))
+			return null;
+			
+		return format_datetime($this->mtime,
+				$this->cal->getDateFormat(),
+				$this->cal->is24Hour());
 	}
 
 	function get_fields() {

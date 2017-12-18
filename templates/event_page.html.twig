@@ -1,0 +1,56 @@
+{% extends "index.html.twig" %}
+
+{% block body %}
+<h3>{{ event.getSubject() }}</h3>
+
+<div class="phpc-event-header">
+	<div>{{ "created by"|trans }} <cite>{{ event.getAuthor() }}</cite> {{ "on"|trans }} {{ event.getCtimeString() }}</div>
+  {% set mtime = event.getMtimeString() %}
+  {% if mtime %}
+    <div>{{ "Last modified on"|trans }} {{ mtime }}</div>
+  {% endif %}
+  {% set category = event.getCategory() %}
+	{%	if category %}
+		<div>{{ "Category"|trans }}: {{ category }}</div>
+	{% endif %}
+</div>
+
+<nav class="nav nav-pills">
+  <a class="nav-item nav-link" href="{{ action_event_url(context, 'event_form', event.getEID()) }}">{{ "Modify"|trans }}</a>
+  <a class="nav-item nav-link" href="{{ action_event_url(context, 'occur_form', event.getEID()) }}">{{ "Add occurrence"|trans }}</a>
+  <a class="nav-item nav-link" href="{{ action_event_url(context, 'event_delete', event.getEID()) }}"
+    data-toggle="confirmation" data-title="{{ "Confirmation Required"|trans }}" data-button-text="{{ "Delete"|trans }}"
+    data-content="{{ "Permanently delete this event?"|trans }}">{{ "Delete"|trans }}</a>
+</nav>
+
+{% set fields = event.getFields() %}
+{% if fields %}
+  <h4>{{ "Fields"|trans }}</h4>
+  {% for field in fields %}
+    {% set def = calendar.getField(field['fid']) %}
+    <div>{{ def['name'] }}: {{ field['value'] }}</div>
+  {% endfor %}
+{% endif %}
+
+<div class="phpc-desc">
+	<h4>{{ "Description"|trans }}</h4>
+	<p>{{ event.getDescription() }}</p>
+</div>
+
+<div class="phpc-occ">
+	<h4>{{ "Occurrences"|trans }}</h4>
+  <ul class="list-group">
+	  {% for occurrence in event.getOccurrences() %}
+			<li class="list-group-item">{{ occurrence.getDatetimeString() }}
+			  {% if event.canModify(user) %}
+				  <a href="{{ action_occurrence_url(context, 'occur_form', occurrence.getOID()) }}">{{ "Edit"|trans }}</a>
+				  <a href="{{ action_occurrence_url(context, 'occurrence_delete', occurrence.getOID()) }}"
+            data-toggle="confirmation" data-title="{{ "Confirmation Required"|trans }}" data-button-text="{{ "Remove"|trans }}"
+            data-content="{{ "Permanently remove this occurrence?"|trans }}">{{ "Remove"|trans }}</a>
+        {% endif %}
+			</li>
+		{% endfor %}
+  </ul>
+</div>
+
+{% endblock %}

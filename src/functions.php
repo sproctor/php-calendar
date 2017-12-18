@@ -543,6 +543,16 @@ function action_event_url(Context $context, $action, $eid) {
 /**
  * @param Context $context
  * @param string $action
+ * @param string $eid
+ * @return string
+ */
+function action_occurrence_url(Context $context, $action, $oid) {
+	return action_url($context, $action, array("oid" => $oid));
+}
+
+/**
+ * @param Context $context
+ * @param string $action
  * @param string[] $parameters
  * @return string
  */
@@ -690,7 +700,7 @@ function create_dropdown($title, $values) {
 
 function fa($name)
 {
-	return "<span class=\"fa fa-$name\"></span>";
+	return "<i class=\"fa fa-$name\"></i>";
 }
 
 // creates an array from $start to $end, with an $interval
@@ -862,22 +872,6 @@ function display_exception(\Exception $e, $navbar = false)
 	return $results;
 }
 
-function get_page($action)
-{
-	switch($action) {
-		case 'display_month':
-			return new MonthPage;
-		case 'display_day':
-			return new DayPage;
-		case 'login':
-			return new LoginPage;
-		case 'logout':
-			return new LogoutPage;
-		default:
-			throw new \Exception(__('Invalid action'));
-	}
-}
-
 // takes a number of the month, returns the name
 /**
  * @param int $month
@@ -1006,22 +1000,6 @@ function short_month_name($month)
 	return ''; // This can't happen
 }
 
-/**
- * @param Context $context
- * @throws \Exception
- */
-function verify_token(Context $context)
-{
-	if(!$context->getUser()->is_user())
-		return;
-
-	if(empty($_REQUEST["phpc_token"]) || $_REQUEST["phpc_token"] != $context->token) {
-		//echo "<pre>real token: $token\n";
-		//echo "form token: {$_REQUEST["phpc_token"]}</pre>";
-		throw new \Exception(__("Secret token mismatch. Possible request forgery attempt."));
-	}
-}
-
 // $element: { name, text, type, value(s) }
 function create_config_input($element, $default = false)
 {
@@ -1054,62 +1032,6 @@ function create_config_input($element, $default = false)
 			$input = "";
 	}
 	return $input;
-}
-
-/* Make a timestamp from the input fields $prefix-time and $prefix-date
-   uses $cal->date_format to determine the format of the date
-   if there's no $prefix-time, uses values passed as parameters
-*/
-function get_timestamp($context, $prefix, $hour = 0, $minute = 0, $second = 0)
-{
-	check_input("$prefix-date");
-
-	if(!empty($_REQUEST["$prefix-time"])) {
-		if(!preg_match('/(\d+)[:\.](\d+)\s?(\w+)?/', $_REQUEST["$prefix-time"],
-					$time_matches)) {
-			throw new \Exception(sprintf(__("Malformed \"%s\" time: \"%s\""), $prefix, $_REQUEST["$prefix-time"]));
-		}
-		$hour = $time_matches[1];
-		$minute = $time_matches[2];
-		if(isset($time_matches[3])) {
-			$period = $time_matches[3];
-			if($hour == 12)
-				$hour = 0;
-			if(strcasecmp("am", $period) == 0) {
-				// AM
-			} else if(strcasecmp("pm", $period) == 0) {
-				$hour += 12;
-			} else {
-				throw new \Exception(__("Unrecognized period: ") . $period);
-			}
-		}
-	}
-
-	if(!preg_match('/(\d+)[\.\/\-\ ](\d+)[\.\/\-\ ](\d+)/', $_REQUEST["$prefix-date"], $date_matches)) {
-		throw new \Exception(sprintf(__("Malformed \"%s\" date: \"%s\""), $prefix, $_REQUEST["$prefix-date"]));
-	}
-	
-	switch($context->calendar->date_format) {
-		case 0: // Month Day Year
-			$month = $date_matches[1];
-			$day = $date_matches[2];
-			$year = $date_matches[3];
-			break;
-		case 1: // Year Month Day
-			$year = $date_matches[1];
-			$month = $date_matches[2];
-			$day = $date_matches[3];
-			break;
-		case 2: // Day Month Year
-			$day = $date_matches[1];
-			$month = $date_matches[2];
-			$year = $date_matches[3];
-			break;
-		default:
-			throw new \Exception(__("Invalid date_format."));
-	}
-
-	return mktime($hour, $minute, $second, $month, $day, $year);
 }
 
 function print_update_form() {
@@ -1214,6 +1136,25 @@ function fromSqlDate($dateStr) {
  */
 function fromSqlDateImmutable($dateStr) {
 	$date = fromSqlDate($dateStr);
+	return new \DateTimeImmutable($date->format('c'));
+}
+
+/**
+ * @param string $timestamp
+ * @return \DateTime
+ */
+function fromTimestamp($timestamp) {
+	$date = \DateTime::createFromFormat('U', $timestamp, new \DateTimeZone('UTC'));
+	$date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+	return $date;
+}
+
+/**
+ * @param string $timestamp
+ * @return \DateTimeImmutable
+ */
+function fromTimestampImmutable($timestamp) {
+	$date = fromTimestamp($timestamp);
 	return new \DateTimeImmutable($date->format('c'));
 }
 

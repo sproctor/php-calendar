@@ -1,6 +1,8 @@
 <?php
 
-class InvalidInputException extends \Exception {
+namespace PhpCalendar;
+
+class InvalidInputException extends \UnexpectedValueException {
 	/** @var string */
 	var $target;
 

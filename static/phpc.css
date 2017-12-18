@@ -23,3 +23,19 @@
     font-size: 0.8rem;
   }
 }
+
+col.day {
+  width: 14%;
+}
+
+col.wnumber {
+  width: 2%;
+}
+
+.phpc-add {
+  float: right;
+}
+
+.phpc-month-view td {
+  height: 8rem;
+}

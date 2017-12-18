@@ -7,9 +7,9 @@
 	<title>{{ title }}</title>
 	<link rel="icon" href="static/office-calendar.png">
 	<link rel="stylesheet" href="static/phpc.css">
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome{{ minified }}.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.14/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+	<script defer src="https://use.fontawesome.com/releases/v5.0.1/js/all.js"></script>
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -29,40 +29,43 @@
 		<div class="collapse navbar-collapse">
 			<ul class="navbar-nav">
 				{% if calendar.canWrite(user) %}
-					{{ menu_item(context, "event_form", "Create Event"|trans)|raw }}
+					{{ menu_item(context, "event_form", "Create Event"|trans) }}
 				{% endif %}
-				{{ menu_item(context, "search", "Search"|trans)|raw }}
-				{{ menu_item(context, "display_month", "View Month"|trans)|raw }}
+				{{ menu_item(context, "search", "Search"|trans) }}
+				{{ menu_item(context, "display_month", "View Month"|trans) }}
 				{% if action == "display_event" %}
-					{{ menu_item(context, "display_day", "View date"|trans)|raw }}
+					{{ menu_item(context, "display_day", "View date"|trans) }}
 				{% endif %}
 				{% if calendar.canAdmin(user) %}
-					{{ menu_item(context, "cadmin", "Calendar Admin"|trans)|raw }}
+					{{ menu_item(context, "cadmin", "Calendar Admin"|trans) }}
 				{% endif %}
 				{% if user.isAdmin() %}
-					{{ menu_item(context, "admin", "Admin"|trans)|raw }}
+					{{ menu_item(context, "admin", "Admin"|trans) }}
 				{% endif %}
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ fa("user")|raw }}{{ user.get_username() }}</a>
+					<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i> {{ user.getUsername() }}</a>
 					<div class="dropdown-menu" aria-labelledby="userDropdown">
-						<a class="dropdown-item" href="{{ action_url(context, "user_settings") }}">{{ fa("cog")|raw }} {{ "Settings"|trans }}</a>
+						<a class="dropdown-item" href="{{ action_url(context, "user_settings") }}"><i class="fas fa-cog"></i> {{ "Settings"|trans }}</a>
 						{% if user.isUser() %}
-						<a class="dropdown-item" href="{{ action_url(context, "logout") }}&amp;lasturl={{ query_string|url_encode }}">{{ fa("sign-out")|raw }} {{ "Log out"|trans }}</a>
+						<a class="dropdown-item" href="{{ action_url(context, "logout") }}&amp;lasturl={{ query_string|url_encode }}"><i class="fas fa-sign-out-alt"></i> {{ "Log out"|trans }}</a>
 						{% else %}
-						<a class="dropdown-item" href="{{ action_url(context, "login") }}&amp;lasturl={{ query_string|url_encode }}">{{ fa("sign-in")|raw }} {{ "Log in"|trans }}</a>
+						<a class="dropdown-item" href="{{ action_url(context, "login") }}&amp;lasturl={{ query_string|url_encode }}"><i class="fas fa-sign-in"></i> {{ "Log in"|trans }}</a>
 						{% endif %}
 					</div>
 				</li>
 			</ul>
 		</div>
 	</nav>
-	{% if messages|length > 0 %}
-		<div>
-		{% for message in messages %}
-			{{ message }}
-		{% endfor %}
+
+	{% for message in messages %}
+		<div class="alert alert-primary alert-dismissible fade show" role="alert">
+  			{{ message }}
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    			<span aria-hidden="true">&times;</span>
+			</button>
 		</div>
-	{% endif %}
+	{% endfor %}
+	
 	<div class="phpc-body container-fluid">
 	{% block body %}{% endblock %}
 	</div>

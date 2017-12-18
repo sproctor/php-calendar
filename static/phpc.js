@@ -28,11 +28,36 @@ $(document).ready(function(){
   */
 
   // Summary init
-  $("#phpc-summary-view").hide();
-  $(".phpc-event-list li").mouseenter(function() {
-    showSummary(this, $(this).find("a").attr("href"));
-  }).mouseleave(function() {
-    hideSummary();
+  $('[data-toggle="popover"]').popover();
+
+  // Enable confirmation dialogues
+  $('[data-toggle=confirmation]').click(function(e) {
+    var title = $(this).attr('data-title');
+    var href = $(this).attr('href');
+    var content = $(this).attr('data-content');
+    var okButtonTxt = $(this).attr('data-button-text');
+    var confirmModal = 
+      $('<div class="modal fade">' +    
+          '<div class="modal-dialog" role="document">' +
+            '<div class="modal-content">' +
+              '<div class="modal-header">' +
+                '<h5 class="modal-title">' + title + '</h5>' +
+                '<button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
+                  '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+              '</div>' +
+              '<div class="modal-body">' +
+                '<p>' + content + '</p>' +
+              '</div>' +
+              '<div class="modal-footer">' +
+                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>' + 
+                '<a href="' + href + '" class="btn btn-primary">' + okButtonTxt + '</a>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>');
+    confirmModal.modal();
+    e.preventDefault();
   });
 
   $('input[type=datetime]').datetimepicker({step: 15});
@@ -70,72 +95,4 @@ function copyDate(date1, date2) {
   $("#" + date2 + "-year").val($("#" + date1 + "-year").val());
   $("#" + date2 + "-month").val($("#" + date1 + "-month").val());
   $("#" + date2 + "-day").val($("#" + date1 + "-day").val());
-}
-
-// sets he specified text in the floating div
-function setSummaryText(title,author,time,description,category) {
-	$("#phpc-summary-title").html(title);
-	$("#phpc-summary-author").html(author);
-	$("#phpc-summary-time").html(time);
-	$("#phpc-summary-body").html(description);
-	$("#phpc-summary-category").html(category);
-}
- 
-// set the location of the div relative to the current link and display it
-function showSummaryDiv(elem) {
-	
-	var div = $("#phpc-summary-view");
-	var newTop = $(elem).offset().top + $(elem).innerHeight();
-
-	$(elem).append(div);
-
-	if(newTop + div.outerHeight()
-			> $(window).height() + $(window).scrollTop())
-		newTop -= $(elem).outerHeight() + div.outerHeight();
-	
-	var newLeft = $(elem).offset().left - ((div.outerWidth()
-			- $(elem).outerWidth()) / 2)
-	if(newLeft < 1)
-		newLeft = 1;
-	else if(newLeft + div.outerWidth() > $(window).width()) 
-		newLeft -= (newLeft + div.outerWidth()) - $(window).width();
-
-	div.css("top", newTop + "px");
-	div.css("left", newLeft + "px");
-	div.show();
-}
- 
-// shows the summary for a particular anchor's url. This will display cached data after the first request
-function showSummary(elem, href) {
-	if( cache[href] != null ) {
-		var data = cache[href];
-		setSummaryText(data.title,data.author,data.time,data.body,
-				data.category);
-		showSummaryDiv(elem);
-	}
-	else {
-		// abort any pending requests
-		if( activeRequest != null )
-			activeRequest.abort();
-		
-		// get the calendar data
-		activeRequest = $.getJSON(href + "&content=json",
-			function(data) {
-				cache[href] = data;
-				setSummaryText(data.title,data.author,data.time,
-					data.body,data.category);
-				showSummaryDiv(elem);
-				activeRequest = null;
-			});
-	}	
-}
- 
-// hides the event summary information
-function hideSummary() {
-	// abort any pending requests
-	if( activeRequest != null )
-		activeRequest.abort();
-
-	$("#phpc-summary-view").hide();
-	setSummaryText('','','','','');
 }

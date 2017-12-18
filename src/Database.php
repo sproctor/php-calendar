@@ -438,8 +438,9 @@ class Database
         $sth->bindValue(':oid', $oid, \PDO::PARAM_INT);
         $sth->execute();
 
-        $result = $sth->fetch(\PDO::FETCH_ASSOC)
-        or soft_error(__("Event doesn't exist with oid") . ": $oid");
+        $result = $sth->fetch(\PDO::FETCH_ASSOC);
+        if (empty($result))
+            return null;
 
         return new Occurrence($this, $result);
     }
@@ -510,7 +511,7 @@ class Database
             . "LEFT JOIN `$users_table` ON `uid` = `owner`\n"
             . "LEFT JOIN `$cats_table` USING (`catid`)\n"
             . "WHERE `eid` = :eid\n"
-            . "	ORDER BY `start_ts`, `start_date`, `oid`";
+            . "	ORDER BY `start`, `oid`";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);

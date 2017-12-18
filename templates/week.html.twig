@@ -9,33 +9,33 @@
 	    <div class="phpc-date{% if not is_date_in_month(context, start_date) %} phpc-shadow{% endif %}{% if is_today(start_date) %} ui-state-highlight{% endif %}">
 		    <a href="{{ action_date_url(context, 'display_day', start_date) }}">{{ day(start_date) }}</a>
 		    {% if can_write(user, calendar) %}
-		    <a href="{{ action_date_url(context, 'event_form', start_date) }}" class="phpc-add ui-state-default ui-widget" title="{{ "Create Event"|trans }}">{{ fa("plus")|raw }}</a>
+		    <a href="{{ action_date_url(context, 'event_form', start_date) }}" class="phpc-add" title="{{ "Create Event"|trans }}"><i class="fas fa-plus"></i></a>
 		    {% endif %}
 	    </div>
 	    {% set days_occurrences = occurrences_for_date(occurrences, start_date) %}
 	    {% if not days_occurrences is null %}
-		    <ul class="phpc-event-list">
+		    <div class="list-group">
 		    {% for occurrence in days_occurrences %}
 			    {% if occurrence is null %}
-				    <li>
-					    <a href="{{ action_date_url(context, 'display_day', start_date) }}" class="phpc-date">{{ "View Additional Events"|trans }}</a>
-				    </li>
+					<a href="{{ action_date_url(context, 'display_day', start_date) }}" class="list-group-item">{{ "View Additional Events"|trans }}</a>
 			    {% else %}
-				    {% set textcolor = attribute(occurrence, getTextColor) %}
-				    {% set bgcolor = attribute(occurrence, getBgColor) %}
-				    <li style="{% if not textcolor is null %}color: {{ textcolor }} !important;{% endif %}{% if not bgcolor is null %}background: {{ bgcolor }} !important;{% endif %}">
-				    {% set time = attribute(occurrence, getTimeString) %}
-				    <span>
+				    {% set textcolor = occurrence.getTextColor() %}
+				    {% set bgcolor = occurrence.getBgColor() %}
+				    <a class="list-group-item" href="{{ action_event_url(context, 'display_event', occurrence.getEID()) }}"
+						style="{% if not textcolor is null %}color: {{ textcolor }} !important;{% endif %}{% if not bgcolor is null %}background: {{ bgcolor }} !important;{% endif %}"
+						data-toggle="popover" data-trigger="hover" data-html=true data-placement="auto"
+						title="{{ occurrence.getSubject() }}" 
+						data-content="{{ "by"|trans }} {{ occurrence.getAuthor() }}<br>{{ occurrence.getDescription() }}">
+				    {% set time = occurrence.getTimeString() %}
 				    {% if not time is null %}
-					    {% if attribute(occurrence, getStart) >= start_date %}
-						    <span class="phpc-event-time ui-corner-all">{{ time }}</span>
+					    {% if occurrence.getStart() >= start_date %}
+						    <span class="badge badge-default">{{ time }}</span>
 					    {% else %}
-						    {{ fa('share') }}
+						    <i class="fas fa-ellipsis-h"></i>
 					    {% endif %}
 				    {% endif %}
 				    {{ occurrence.getSubject() }}
-				    </span>
-				    </li>
+				    </a>
 			    {% endif %}
 		    {% endfor %}
 		    </ul>

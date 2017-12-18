@@ -1,29 +1,20 @@
 {% extends "index.html.twig" %}
 
 {% block body %}
-<div id="phpc-summary-view">
-    <div id="phpc-summary-head">
-        <div id="phpc-summary-title"></div>
-        <div id="phpc-summary-author"></div>
-        <div id="phpc-summary-category"></div>
-        <div id="phpc-summary-time"></div>
-    </div>
-    <div id="phpc-summary-body"></div>
-</div>
 <nav class="nav">
     {% block navigation %}{% endblock %}
 </nav>
-<table class="phpc-month-view table">
-    <!-- colgroup>
-        <col class="phpc-week">
-        <col class="phpc-day">
-        <col class="phpc-day">
-        <col class="phpc-day">
-        <col class="phpc-day">
-        <col class="phpc-day">
-        <col class="phpc-day">
-        <col class="phpc-day">
-    </colgroup -->
+<table class="phpc-month-view table table-bordered">
+    <colgroup>
+        <col class="wnumber">
+        <col class="day">
+        <col class="day">
+        <col class="day">
+        <col class="day">
+        <col class="day">
+        <col class="day">
+        <col class="day">
+    </colgroup>
     <thead class="thead-light">
         <tr>
             <th scope="col">{{ _p('Week', 'W') }}</th>

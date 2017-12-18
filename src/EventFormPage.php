@@ -19,31 +19,23 @@ namespace PhpCalendar;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Form\Forms;
-use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
-use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
-use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
-use Symfony\Component\Security\Csrf\CsrfTokenManager;
 
 class EventFormPage extends Page {
     /**
 	 * Display event form or submit event
 	 * 
 	 * @param Context $context
-	 * @param string[] $template_variables
 	 * @return Response
 	 */
-	public function action(Context $context, $template_variables)
+	public function action(Context $context)
     {
 		$form = $this->eventForm($context);
-		$template_variables['form'] = $form->createView();
 
 		$form->handleRequest($context->request);
 		if($form->isSubmitted() && $form->isValid()) {
@@ -51,7 +43,7 @@ class EventFormPage extends Page {
 		}
 		
 		// else
-		return new Response($context->twig->render("event_create.html.twig", $template_variables));
+		return new Response($context->twig->render("event_create.html.twig", array('form' => $form->createView())));
 	}
 	
 	/**
@@ -59,17 +51,7 @@ class EventFormPage extends Page {
 	* @return Form
 	*/
 	private function eventForm(Context $context) {
-		// create a Session object from the HttpFoundation component
-		$session = new Session();
 
-		$csrfGenerator = new UriSafeTokenGenerator();
-		$csrfStorage = new SessionTokenStorage($session);
-		$csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
-
-		$formFactory = Forms::createFormFactoryBuilder()
-			->addExtension(new HttpFoundationExtension())
-			->addExtension(new CsrfExtension($csrfManager))
-			->getFormFactory();
 
 		/*
 		$calendar_choices = array();
@@ -78,7 +60,7 @@ class EventFormPage extends Page {
 				$calendar_choices[$calendar->getTitle()] = $calendar->getCID();
 		}*/
 
-		$builder = $formFactory->createBuilder();
+		$builder = $context->getFormFactory()->createBuilder();
 
 		/*if(sizeof($calendar_choices) > 1) {
 			$builder->add('cid', ChoiceType::class, array('choices' => $calendar_choices));
@@ -225,10 +207,10 @@ class EventFormPage extends Page {
 	
 		if($eid != 0) {
 			if($modify)
-				$message = __("Modified event: ");
+				$message = __("Modified event");
 			else
-				$message = __("Created event: ");
-			$context->addMessage($message);
+				$message = __("Created event");
+			$context->addMessage($message . ": $eid");
 			return new RedirectResponse(action_event_url($context, 'display_event', $eid));
 		} else {
 			$context->addMessage(__('Error submitting event.'));

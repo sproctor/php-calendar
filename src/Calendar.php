@@ -42,11 +42,11 @@ class Calendar {
 	public static function createFromMap(Database $db, $result) {
 		$calendar = new Calendar($db);
 
-		$calendar->cid = $result['cid'];
+		$calendar->cid = intval($result['cid']);
 		$calendar->title = $result['title'];
-		$calendar->hours_24 = $result['hours_24'];
-		$calendar->date_format = $result['date_format'];
-		$calendar->week_start = $result['week_start'];
+		$calendar->hours_24 = boolval($result['hours_24']);
+		$calendar->date_format = intval($result['date_format']);
+		$calendar->week_start = intval($result['week_start']);
 		$calendar->subject_max = intval($result['subject_max']);
 		$calendar->events_max = intval($result['events_max']);
 		$calendar->anon_permission = $result['anon_permission'];
@@ -203,6 +203,20 @@ class Calendar {
 	 */
 	public function get_occurrences_by_date_range(\DateTimeInterface $from, \DateTimeInterface $to) {
 		return $this->db->get_occurrences_by_date_range($this->cid, $from, $to);
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getDateFormat() {
+		return $this->date_format;
+	}
+	
+	/**
+	 * @return bool
+	 */
+	public function is24Hour() {
+		return $this->hours_24;
 	}
 }
 

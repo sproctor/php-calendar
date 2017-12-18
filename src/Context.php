@@ -24,6 +24,7 @@ use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Component\Form\Forms;
 use SYmfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
+use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
@@ -36,7 +37,8 @@ class Context {
 	private $calendar;
 	/** @var User $user */
 	private $user;
-	private $messages;
+	private $session;
+	private $formFactory;
 	private $year;
 	private $month;
 	private $day;
@@ -70,6 +72,18 @@ class Context {
 		}
 
 		$this->request = $request;
+		
+		$this->session = new Session();
+		$this->session->start();
+
+		$csrfGenerator = new UriSafeTokenGenerator();
+		$csrfStorage = new SessionTokenStorage($this->session);
+		$csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
+
+		$this->formFactory = Forms::createFormFactoryBuilder()
+			->addExtension(new HttpFoundationExtension())
+			->addExtension(new CsrfExtension($csrfManager))
+			->getFormFactory();
 
 		$this->initVars();
 		$this->config = $this->loadConfig(PHPC_CONFIG_FILE);
@@ -88,12 +102,6 @@ class Context {
 		}
 
 		$this->read_login_token();
-
-		if(!empty($request->get('clearmsg'))) {
-			$this->clearMessages();
-		}
-
-		$this->messages = json_decode($request->cookies->get("messages"));
 
 		$this->initTimezone();
 		$this->initLang($request);
@@ -148,8 +156,19 @@ class Context {
 		//$this->twig->addExtension(new TranslationExtension());
 		$this->twig->addExtension(new FormExtension());
 		
-		$this->twig->addFunction(new \Twig_SimpleFunction('fa', '\PhpCalendar\fa'));
-		$this->twig->addFunction(new \Twig_SimpleFunction('dropdown', '\PhpCalendar\create_dropdown'));
+		$this->twig->addGlobal('context', $this);
+		$this->twig->addGlobal('calendar', $this->getCalendar());
+		$this->twig->addGlobal('user', $this->getUser());
+		$this->twig->addGlobal('script', $this->script);
+		$this->twig->addGlobal('embed', $this->request->get("content") == "embed");
+		$this->twig->addGlobal('lang', $this->getLang());
+		$this->twig->addGlobal('title', $this->getCalendar()->getTitle());
+		$this->twig->addGlobal('messages', $this->getMessages());
+		//'theme' => $context->getCalendar()->get_theme(),
+		$this->twig->addGlobal('minified', defined('PHPC_DEBUG') ? '' : '.min');
+		$this->twig->addGlobal('query_string', $this->request->getQueryString());
+
+		$this->twig->addFunction(new \Twig_SimpleFunction('dropdown', '\PhpCalendar\create_dropdown', array('is_safe' => array('html'))));
 		$this->twig->addFilter(new \Twig_SimpleFilter('trans', '\PhpCalendar\__'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('_p', '\PhpCalendar\__p'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('day_name', '\PhpCalendar\day_name'));
@@ -177,6 +196,7 @@ class Context {
 		$this->twig->addFunction(new \Twig_SimpleFunction('action_date_url', '\PhpCalendar\action_date_url_from_datetime'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('action_url', '\PhpCalendar\action_url'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('action_event_url', '\PhpCalendar\action_event_url'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('action_occurrence_url', '\PhpCalendar\action_occurrence_url'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('day',
 				function(\DateTimeInterface $date) { return $date->format('j'); }));
 		$this->twig->addFunction(new \Twig_SimpleFunction('can_write',
@@ -188,13 +208,7 @@ class Context {
 					return $occurrences[index_of_date($date)];
 				return null;
 			}));
-		$this->twig->addFunction(new \Twig_SimpleFunction('menu_item', '\PhpCalendar\menu_item'));
-	}
-
-	public function clearMessages() {
-		setcookie("messages", "", time() - 3600);
-		unset($_COOKIE["messages"]);
-		$this->messages = array();
+		$this->twig->addFunction(new \Twig_SimpleFunction('menu_item', '\PhpCalendar\menu_item', array('is_safe' => array('html'))));
 	}
 
 	/**
@@ -246,19 +260,15 @@ class Context {
 				$eid = $eid[0];
 			}
 			$event = $this->db->get_event_by_eid($eid);
-			if(empty($event))
-				soft_error(__("Invalid event ID."));
-
-			return $event->getCalendar()->getCID();
+			if($event != null)
+				return $event->getCalendar()->getCID();
 		}
 		
 		$oid = $this->request->get('oid');
 		if(isset($oid)) {
 			$event = $this->db->get_event_by_oid($_REQUEST['oid']);
-			if(empty($event))
-				soft_error(__("Invalid occurrence ID."));
-
-			return $event['cid'];
+			if($event != null)
+				return $event->getCalendar()->getCID();
 		}
 		
 		$calendars = $this->db->getCalendars();
@@ -321,14 +331,14 @@ class Context {
 	 * @param string $message
      */
 	function addMessage($message) {
-		$this->messages[] = $message;
+		$this->session->getFlashBag()->add('message', $message);
 	}
 
 	/**
 	 * @return string[]
      */
 	function getMessages() {
-		return $this->messages;
+		return $this->session->getFlashBag()->get('message');
 	}
 
 	/**
@@ -401,6 +411,10 @@ class Context {
 		return $this->lang;
 	}
 
+	public function getFormFactory() {
+		return $this->formFactory;
+	}
+
 	/**
  	* @param Context $context
  	* @param string $page
@@ -431,6 +445,8 @@ class Context {
 		switch($this->getAction()) {
 			case 'event_form':
 				return new EventFormPage;
+			case 'display_event':
+				return new EventPage;
 			case 'display_month':
 				return new MonthPage;
 			case 'display_day':

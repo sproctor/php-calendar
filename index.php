@@ -43,25 +43,9 @@ try {
 		$translator->addResource('mo', __DIR__ . "locale/" . $context->getLang() . "/LC_MESSAGES/messages.mo", $context->getLang());
 	}
 	
-	if ($request->get("content") == "json") {
-		header("Content-Type: application/json; charset=UTF-8");
-		echo display_phpc($context)->toString();
-	} else {
-		$page = $context->getPage();
-		$response = $page->action($context, array(
-				'context' => $context,
-				'calendar' => $context->getCalendar(),
-				'user' => $context->getUser(),
-				'script' => $context->script,
-				'embed' => $request->get("content") == "embed",
-				'lang' => $context->getLang(),
-				'title' => $context->getCalendar()->getTitle(),
-				//'theme' => $context->getCalendar()->get_theme(),
-				'minified' => defined('PHPC_DEBUG') ? '' : '.min',
-				'query_string' => $request->getQueryString() 
-		) );
-		$response->send();
-	}
+	$page = $context->getPage();
+	$response = $page->action($context);
+	$response->send();
 } catch(PermissionException $e) {
 	$msg = __('You do not have permission to do that: ') . $e->getMessage();
 	if ($context->getUser()->is_user())
@@ -71,7 +55,10 @@ try {
 } catch(InvalidConfigException $e) {
 	(new RedirectResponse("/install"))->send();
 } catch(InvalidInputException $e) {
-	echo error_message_redirect($context, $e->getMessage(), $e->target);
+	if ($context !== null)
+		(new Response($context->twig->render('error.html.twig', array('message' => $e->getMessage()))))->send();
+	else
+		throw $e;
 } catch(\Exception $e) {
 	header("Content-Type: text/html; charset=UTF-8");
 	echo "<!doctype html>\n";

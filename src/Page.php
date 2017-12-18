@@ -21,10 +21,9 @@ abstract class Page
 {
 	/**
 	 * @param Context $context
-	 * @param string[] $template_variables
 	 * @return \Symfony\Component\HttpFoundation\Response
 	 */
-	abstract function action(Context $context, $template_variables);
+	abstract function action(Context $context);
 }
 
 ?>

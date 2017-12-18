@@ -29,10 +29,9 @@ class MonthPage extends Page
 	 * Full display for a month
 	 * 
 	 * @param Context $context
-	 * @param \string[] $template_variables
-	 * @return \Symfony\Component\HttpFoundation\Response
+	 * @return Response
 	 */
-	function action(Context $context, $template_variables)
+	function action(Context $context)
 	{
 		$calendar = $context->getCalendar();
 		$cid = $calendar->getCID();
@@ -70,6 +69,7 @@ class MonthPage extends Page
 		$last_day = $weeks * 7 - day_of_week($month, 1, $year, $week_start);
 		$to_date = create_datetime($month, $last_day + 1, $year);
 
+		$template_variables = array();
 		$template_variables['cid'] = $cid;
 		$template_variables['prev_month'] = $prev_month;
 		$template_variables['prev_year'] = $prev_year;
@@ -84,6 +84,6 @@ class MonthPage extends Page
 		$template_variables['occurrences'] = get_occurrences_by_day($calendar, $context->getUser(), $from_date,
 				$to_date);
 		$template_variables['start_date'] = $from_date;
-		return new Response($context->twig->render("month.html.twig", $template_variables));
+		return new Response($context->twig->render("month_page.html.twig", $template_variables));
 	}
 }
