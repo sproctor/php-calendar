@@ -26,7 +26,10 @@
 		<a href="{{ script }}?phpcid={{ calendar.getCID() }}"
 		class="navbar-brand">{{ calendar.getTitle() }}</a>
 		{% endif %}
-		<div class="collapse navbar-collapse">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#phpc-navbar" aria-controls="phpc-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    		<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="phpc-navbar">
 			<ul class="navbar-nav">
 				{% if calendar.canWrite(user) %}
 					{{ menu_item(context, "event_form", "Create Event"|trans) }}
@@ -65,7 +68,7 @@
 			</button>
 		</div>
 	{% endfor %}
-	
+
 	<div class="phpc-body container-fluid">
 	{% block body %}{% endblock %}
 	</div>
