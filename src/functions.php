@@ -22,6 +22,7 @@
 namespace PhpCalendar;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 define('PHPC_CHECK', 1);
 define('PHPC_TEXT', 2);
@@ -291,22 +292,26 @@ function footer(Context $context)
 	return $tag;
 }
 
+/**
+ * @return string[]
+ */
 function get_languages()
 {
-	static $langs = NULL;
+	static $langs = null;
 
+	$translation_path = PHPC_ROOT_PATH . '/translations';
 	if(!empty($langs))
 		return $langs;
 
 	// create links for each existing language translation
-	$handle = opendir(PHPC_ROOT_PATH . '/locale');
+	$handle = opendir($translation_path);
 
 	if(!$handle)
 		soft_error("Error reading locale directory.");
 
 	$langs = array('en');
 	while(($filename = readdir($handle)) !== false) {
-		$pathname = PHPC_ROOT_PATH . "/locale/$filename";
+		$pathname = "$translation_path/$filename";
 		if(strncmp($filename, ".", 1) == 0 || !is_dir($pathname))
 			continue;
 		if(file_exists("$pathname/LC_MESSAGES/messages.mo"))
@@ -538,6 +543,20 @@ function action_url(Context $context, $action, $parameters = array()) {
 		$url .= "&$key=$value";
 	}
 	return $url;
+}
+
+/**
+ * @param Request $request
+ * @return string
+ */
+function change_lang_url(Request $request, $lang) {
+	$uri = $request->getRequestUri();
+	if (strpos($uri, "?") !== false) {
+		$uri .= 'amp;';
+	} else {
+		$uri .= '?';
+	}
+	return $uri . $lang;
 }
 
 /**

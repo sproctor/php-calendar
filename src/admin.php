@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright 2013 Sean Proctor
+ * Copyright 2017 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,4 +173,3 @@ function translation_link() {
 					"href=\"$phpc_script?action=translate\""),
 				__('Generate Translations')));
 }
-?>

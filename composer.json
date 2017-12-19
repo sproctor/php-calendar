@@ -13,14 +13,15 @@
         "paragonie/random_compat": "^2.0",
         "zendframework/zend-config": "~2.6",
         "firebase/php-jwt": "~5.0",
-        "symfony/translation": "3.3.*",
-        "symfony/http-foundation": "3.3.*",
-        "symfony/form": "3.3.*",
+        "symfony/translation": "3.4.*",
+        "symfony/http-foundation": "3.4.*",
+        "symfony/form": "3.4.*",
         "twig/twig": "~1.0",
         "twig/extensions": "~1.0",
-        "symfony/security-csrf": "3.3.*",
-        "symfony/templating": "3.3.*",
-        "symfony/twig-bridge": "3.3.*"
+        "symfony/security-csrf": "3.4.*",
+        "symfony/templating": "3.4.*",
+        "symfony/twig-bridge": "3.4.*",
+        "symfony/console": "3.4.*"
     },
     "autoload": {
         "psr-4": {

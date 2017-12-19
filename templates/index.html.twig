@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ lang }}">
+<html lang="{{ context.getLang() }}">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -45,6 +45,16 @@
 				{% if user.isAdmin() %}
 					{{ menu_item(context, "admin", "Admin"|trans) }}
 				{% endif %}
+				{% if not user.isUser() %}
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-language"></i> {{ "Language"|trans }} ({{ context.getLang() }})</a>
+						<div class="dropdown-menu" aria-labelledby="langDropdown">
+							{% for lang in languages %}
+								<a class="dropdown-item" href="{{ change_lang_url(context.request, lang) }}">{{ lang }}</a>
+							{% endfor %}
+						</div>
+					</li>
+				{% endif %}
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i> {{ user.getUsername() }}</a>
 					<div class="dropdown-menu" aria-labelledby="userDropdown">
@@ -52,7 +62,7 @@
 						{% if user.isUser() %}
 						<a class="dropdown-item" href="{{ action_url(context, "logout") }}&amp;lasturl={{ query_string|url_encode }}"><i class="fas fa-sign-out-alt"></i> {{ "Log out"|trans }}</a>
 						{% else %}
-						<a class="dropdown-item" href="{{ action_url(context, "login") }}&amp;lasturl={{ query_string|url_encode }}"><i class="fas fa-sign-in"></i> {{ "Log in"|trans }}</a>
+						<a class="dropdown-item" href="{{ action_url(context, "login") }}&amp;lasturl={{ query_string|url_encode }}"><i class="fas fa-sign-in-alt"></i> {{ "Log in"|trans }}</a>
 						{% endif %}
 					</div>
 				</li>

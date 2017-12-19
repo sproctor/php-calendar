@@ -19,10 +19,9 @@ namespace PhpCalendar;
 
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
-use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Component\Form\Forms;
-use SYmfony\Component\Form\FormRenderer;
+use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 use Symfony\Component\HttpFoundation\Request;
@@ -72,18 +71,9 @@ class Context {
 		}
 
 		$this->request = $request;
-		
+
 		$this->session = new Session();
 		$this->session->start();
-
-		$csrfGenerator = new UriSafeTokenGenerator();
-		$csrfStorage = new SessionTokenStorage($this->session);
-		$csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
-
-		$this->formFactory = Forms::createFormFactoryBuilder()
-			->addExtension(new HttpFoundationExtension())
-			->addExtension(new CsrfExtension($csrfManager))
-			->getFormFactory();
 
 		$this->initVars();
 		$this->config = $this->loadConfig(PHPC_CONFIG_FILE);
@@ -135,38 +125,42 @@ class Context {
 		
 		$appVariableReflection = new \ReflectionClass('\Symfony\Bridge\Twig\AppVariable');
 		$vendorTwigBridgeDir = dirname($appVariableReflection->getFileName());
-		$template_loader = new \Twig_Loader_Filesystem(array(
-			realpath(__DIR__ . '/../templates')));
-		$this->twig = new \Twig_Environment($template_loader
+		$this->twig = new \Twig_Environment(new \Twig_Loader_Filesystem(array(
+			realpath(__DIR__ . '/../templates'),
+			$vendorTwigBridgeDir.'/Resources/views/Form'))
 			//, array('cache' => __DIR__ . '/cache',)
 		);
 
-		//$session = new Session();
-		//$csrfGenerator = new UriSafeTokenGenerator();
-		//$csrfStorage = new SessionTokenStorage($session);
-		//$csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
+		$csrfGenerator = new UriSafeTokenGenerator();
+		$csrfStorage = new SessionTokenStorage($this->session);
+		$csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
 
 		$formTheme = 'bootstrap_4_layout.html.twig';
 		$formEngine = new TwigRendererEngine(array($formTheme), $this->twig);
 		$this->twig->addRuntimeLoader(new \Twig_FactoryRuntimeLoader(array(
-			TwigRenderer::class => function () use ($formEngine) {
-				return new TwigRenderer($formEngine);
+			FormRenderer::class => function () use ($formEngine, $csrfManager) {
+				return new FormRenderer($formEngine, $csrfManager);
 			},
 		)));
 		//$this->twig->addExtension(new TranslationExtension());
 		$this->twig->addExtension(new FormExtension());
+
+		$this->formFactory = Forms::createFormFactoryBuilder()
+			->addExtension(new HttpFoundationExtension())
+			->addExtension(new CsrfExtension($csrfManager))
+			->getFormFactory();
 		
 		$this->twig->addGlobal('context', $this);
 		$this->twig->addGlobal('calendar', $this->getCalendar());
 		$this->twig->addGlobal('user', $this->getUser());
 		$this->twig->addGlobal('script', $this->script);
 		$this->twig->addGlobal('embed', $this->request->get("content") == "embed");
-		$this->twig->addGlobal('lang', $this->getLang());
 		$this->twig->addGlobal('title', $this->getCalendar()->getTitle());
 		$this->twig->addGlobal('messages', $this->getMessages());
 		//'theme' => $context->getCalendar()->get_theme(),
 		$this->twig->addGlobal('minified', defined('PHPC_DEBUG') ? '' : '.min');
 		$this->twig->addGlobal('query_string', $this->request->getQueryString());
+		$this->twig->addGlobal('languages', get_languages());
 
 		$this->twig->addFunction(new \Twig_SimpleFunction('dropdown', '\PhpCalendar\create_dropdown', array('is_safe' => array('html'))));
 		$this->twig->addFilter(new \Twig_SimpleFilter('trans', '\PhpCalendar\__'));
@@ -197,6 +191,7 @@ class Context {
 		$this->twig->addFunction(new \Twig_SimpleFunction('action_url', '\PhpCalendar\action_url'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('action_event_url', '\PhpCalendar\action_event_url'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('action_occurrence_url', '\PhpCalendar\action_occurrence_url'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('change_lang_url', '\PhpCalendar\change_lang_url'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('day',
 				function(\DateTimeInterface $date) { return $date->format('j'); }));
 		$this->twig->addFunction(new \Twig_SimpleFunction('can_write',

@@ -26,8 +26,10 @@ use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Loader\MoFileLoader;
 
-define('PHPC_CONFIG_FILE', __DIR__ . '/config.php');
+define('PHPC_ROOT_PATH', __DIR__);
+define('PHPC_CONFIG_FILE', PHPC_ROOT_PATH . '/config.php');
 
+define('PHPC_VERSION', '2.1.0');
 define('PHPC_DEBUG', 1);
 error_reporting(-1);
 ini_set('display_errors', '1');
