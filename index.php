@@ -19,6 +19,7 @@ namespace PhpCalendar;
 
 require_once 'vendor/autoload.php';
 
+use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +31,9 @@ define('PHPC_ROOT_PATH', __DIR__);
 define('PHPC_CONFIG_FILE', PHPC_ROOT_PATH . '/config.php');
 
 define('PHPC_VERSION', '2.1.0');
+
+// TODO: Make this conditional
+Debug::enable();
 define('PHPC_DEBUG', 1);
 error_reporting(-1);
 ini_set('display_errors', '1');
@@ -61,9 +65,4 @@ try {
 		(new Response($context->twig->render('error.html.twig', array('message' => $e->getMessage()))))->send();
 	else
 		throw $e;
-} catch(\Exception $e) {
-	header("Content-Type: text/html; charset=UTF-8");
-	echo "<!doctype html>\n";
-	echo display_exception($e)->toString();
-	exit;
 }

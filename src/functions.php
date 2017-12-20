@@ -832,41 +832,6 @@ function get_date_format_list()
 			__("Day Month Year")];
 }
 
-function display_exception(\Exception $e, $navbar = false)
-{
-	$results = new Tag('');
-	if($navbar !== false)
-		$results->add($navbar);
-	$backtrace = new Tag("ol");
-	foreach($e->getTrace() as $bt) {
-		$filename = basename($bt["file"]);
-		$args = array();
-		if(isset($bt["args"])) { 
-			foreach($bt["args"] as $arg) {
-				if(is_string($arg)) {
-					$args[] = "'$arg'";
-				} elseif(is_object($arg)) {
-					$args[] = get_class($arg);
-				} elseif(is_scalar($arg)) {
-					$args[] = strval($arg);
-				} else {
-					$args[] = gettype($arg);
-				}
-			}
-			$args_string = implode(", ", $args);
-		} else {
-			$args_string = "...";
-		}
-		$backtrace->add(new Tag("li", "$filename({$bt["line"]}): {$bt["function"]}($args_string)"));
-	}
-	$results->add(new Tag('div', new AttributeList('class="php-calendar"'),
-				new Tag('h2', __('Error')),
-				new Tag('p', $e->getMessage()),
-				new Tag('h3', __('Backtrace')),
-				$backtrace));
-	return $results;
-}
-
 // takes a number of the month, returns the name
 /**
  * @param int $month

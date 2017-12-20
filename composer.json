@@ -21,7 +21,8 @@
         "symfony/security-csrf": "3.4.*",
         "symfony/templating": "3.4.*",
         "symfony/twig-bridge": "3.4.*",
-        "symfony/console": "3.4.*"
+        "symfony/console": "3.4.*",
+        "symfony/debug": "^3.4"
     },
     "autoload": {
         "psr-4": {

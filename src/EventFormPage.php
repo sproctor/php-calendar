@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2017 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,17 @@ namespace PhpCalendar;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EventFormPage extends Page {
     /**
@@ -45,40 +51,52 @@ class EventFormPage extends Page {
 		// else
 		return new Response($context->twig->render("event_create.html.twig", array('form' => $form->createView())));
 	}
-	
+
 	/**
-	* @param Context $context
-	* @return Form
-	*/
+	 * @return Form
+	 */
 	private function eventForm(Context $context) {
+		$builder = $context->getFormFactory()->createBuilder();
 
+		$builder->add('subject', TextType::class, array('attr' =>
+                array('autocomplete' => 'off', /* 'maxlength' => $context->getCalendar()->getSubjectMax()*/),
+                    'label' => _('Subject')))
+            ->add('description', TextareaType::class, array('label' => __('Description') . ' <a href="http://commonmark.org/help/" target="_new">' . __('(syntax)') . '</a>'))
+            ->add('start', DateTimeType::class, array('label' => __('From'), 'widget' => 'single_text'))
+            ->add('end', DateTimeType::class, array('label' => __('To'), 'widget' => 'single_text'))
+            ->add('time-type', ChoiceType::class, array('label' => __('Time Type'),
+                'choices' => array(
+                    __('Normal') => 'normal',
+                    __('Full Day') => 'full',
+                    __('To Be Announced') => 'tba')));
 
-		/*
+        /*
 		$calendar_choices = array();
 		foreach($context->db->getCalendars() as $calendar) {
 			if($calendar->canWrite($context->getUser()))
 				$calendar_choices[$calendar->getTitle()] = $calendar->getCID();
-		}*/
-
-		$builder = $context->getFormFactory()->createBuilder();
-
-		/*if(sizeof($calendar_choices) > 1) {
+        }
+        
+        if(sizeof($calendar_choices) > 1) {
 			$builder->add('cid', ChoiceType::class, array('choices' => $calendar_choices));
 		} else {
 			$builder->add('cid', HiddenType::class, array('data' => $context->getCalendar()->getCID()));
-		}*/
-		return $builder->add('subject', TextType::class, array('attr' =>
-						array('autocomplete' => 'off', 'maxlength' => $context->getCalendar()->getSubjectMax()),
-					'label' => _('Subject')))
-			->add('description', TextareaType::class, array('label' => __('Description') . ' <a href="http://commonmark.org/help/" target="_new">' . __('(syntax)') . '</a>'))
-			->add('start', DateTimeType::class, array('label' => __('From'), 'widget' => 'single_text'))
-			->add('end', DateTimeType::class, array('label' => __('To'), 'widget' => 'single_text'))
-			->add('time-type', ChoiceType::class, array('label' => __('Time Type'),
-				'choices' => array(
-					__('Normal') => 'normal',
-					__('Full Day') => 'full',
-					__('To Be Announced') => 'tba')))
-			->getForm();
+        }*/
+        
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $form_event) {
+            $event = $form_event->getData();
+            $form = $form_event->getForm();
+    
+            // check if the Product object is "new"
+            // If no data is passed to the form, the data is "null".
+            // This should be considered a new "Product"
+            if (!empty($event)) {
+                $form->add('modify', CheckboxType::class, array('label' => __('Change the event date and time'),
+                        'required' => false));
+            }
+		});
+
+		return $builder->getForm();
 	}
 
 	/**
@@ -93,7 +111,7 @@ class EventFormPage extends Page {
 		$modify_occur = !isset($data['eid']) || !empty($data['modify']);
 	
 		if ($modify_occur && $data['end'] < $data['start']) {
-			throw new Exception(__("An event cannot have an end earlier than its start."));
+			throw new InvalidInputException(__("An event cannot have an end earlier than its start."));
 		}
 	
 		$calendar = $context->getCalendar();
@@ -145,7 +163,7 @@ class EventFormPage extends Page {
 					soft_error(__("Unrecognized Time Type."));
 			}
 	
-			$duration = $data['end'] - $data['start'];
+			$duration = $data['end']->getTimestamp() - $data['start']->getTimestamp();
 	
 			$occurrences = 0;
 			$n = 1;
@@ -220,16 +238,10 @@ class EventFormPage extends Page {
 	
 }
 
-
-
 function display_form() {
 
 	$when_group = new FormGroup(__('When'), 'phpc-when');
-	if(isset($vars['eid'])) {
-		$when_group->add_part(new FormCheckBoxQuestion('phpc-modify',
-					false,
-					__('Change the event date and time')));
-	}
+	
 	$form->add_part($when_group);
 
 	$repeat_type = new FormDropdownQuestion('repeats', __('Repeats'),

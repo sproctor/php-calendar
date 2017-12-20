@@ -40,7 +40,7 @@ class Event {
 	 * @param Database $db
 	 * @param string[] $event
 	 */
-	function __construct(Database $db, $event)
+	public function __construct(Database $db, $event)
 	{
 		$this->db = $db;
 		$this->eid = intval($event['eid']);
