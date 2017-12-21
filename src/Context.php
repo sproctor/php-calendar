@@ -167,6 +167,7 @@ class Context {
 		$this->twig->addFunction(new \Twig_SimpleFunction('_p', '\PhpCalendar\__p'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('day_name', '\PhpCalendar\day_name'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('short_day_name', '\PhpCalendar\short_day_name'));
+		$this->twig->addFunction(new \Twig_SimpleFunction('short_month_name', '\PhpCalendar\short_month_name'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('index_of_date', '\PhpCalendar\index_of_date'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('week_link',
 				function(Context $context, \DateTimeInterface $date) {
@@ -194,6 +195,8 @@ class Context {
 		$this->twig->addFunction(new \Twig_SimpleFunction('change_lang_url', '\PhpCalendar\change_lang_url'));
 		$this->twig->addFunction(new \Twig_SimpleFunction('day',
 				function(\DateTimeInterface $date) { return $date->format('j'); }));
+		$this->twig->addFunction(new \Twig_SimpleFunction('month',
+				function(\DateTimeInterface $date) { return $date->format('n'); }));
 		$this->twig->addFunction(new \Twig_SimpleFunction('can_write',
 				function(User $user, Calendar $calendar) { return $calendar->canWrite($user); }));
 		$this->twig->addFunction(new \Twig_SimpleFunction('occurrences_for_date',
