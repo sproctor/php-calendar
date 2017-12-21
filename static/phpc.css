@@ -39,3 +39,11 @@ col.wnumber {
 .phpc-month-view td {
   height: 8rem;
 }
+
+.phpc-day-number {
+  padding: .25rem;
+}
+
+.occurrence-list {
+  margin-top: .5rem;
+}

@@ -5,16 +5,16 @@
         {% endautoescape %}
     </th>
     {% for day_of_week in 0..6 %}
-    <td>
-	    <div class="phpc-date{% if not is_date_in_month(context, start_date) %} phpc-shadow{% endif %}{% if is_today(start_date) %} ui-state-highlight{% endif %}">
-		    <a href="{{ action_date_url(context, 'display_day', start_date) }}">{% if (not is_date_in_month(context, start_date) and day_of_week == 0) or day(start_date) == 1 %}{{ short_month_name(month(start_date)) }}{% endif %} {{ day(start_date) }}</a>
+    <td class="phpc-date{% if not is_date_in_month(context, start_date) %} phpc-shadow{% endif %}{% if is_today(start_date) %} phpc-today{% endif %}">
+	    <div>
+		    <a class="phpc-day-number" href="{{ action_date_url(context, 'display_day', start_date) }}">{% if (not is_date_in_month(context, start_date) and day_of_week == 0) or day(start_date) == 1 %}{{ short_month_name(month(start_date)) }}{% endif %} {{ day(start_date) }}</a>
 		    {% if can_write(user, calendar) %}
 		    <a href="{{ action_date_url(context, 'event_form', start_date) }}" class="phpc-add" title="{{ "Create Event"|trans }}"><i class="fas fa-plus"></i></a>
 		    {% endif %}
 	    </div>
 	    {% set days_occurrences = occurrences_for_date(occurrences, start_date) %}
 	    {% if not days_occurrences is null %}
-		    <div class="list-group">
+		    <div class="occurrence-list list-group">
 		    {% for occurrence in days_occurrences %}
 			    {% if occurrence is null %}
 					<a href="{{ action_date_url(context, 'display_day', start_date) }}" class="list-group-item">{{ "View Additional Events"|trans }}</a>
@@ -38,7 +38,7 @@
 				    </a>
 			    {% endif %}
 		    {% endfor %}
-		    </ul>
+		    </div>
 	    {% endif %}
     </td>
         {% set start_date = add_days(start_date, 1) %}

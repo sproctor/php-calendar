@@ -69,6 +69,10 @@ $(document).ready(function(){
 
   // Make days out of month gray
   $('.phpc-shadow a').addClass('text-secondary');
+
+  // Highlight today
+  $('.phpc-today').addClass('bg-light');
+  $('.phpc-today .phpc-day-number').addClass('bg-primary rounded text-white');
 });
 
 
