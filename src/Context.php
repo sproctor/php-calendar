@@ -29,7 +29,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
 use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
-
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Validator\Validation;
 
 class Context {
 	/** @var Calendar $calendar */
@@ -148,6 +149,7 @@ class Context {
 		$this->formFactory = Forms::createFormFactoryBuilder()
 			->addExtension(new HttpFoundationExtension())
 			->addExtension(new CsrfExtension($csrfManager))
+			->addExtension(new ValidatorExtension(Validation::createValidator()))
 			->getFormFactory();
 		
 		$this->twig->addGlobal('context', $this);
@@ -237,7 +239,7 @@ class Context {
 
 		$this->calendar = $this->db->getCalendar($current_cid);
 		if(empty($this->calendar))
-			soft_error(__("Bad calendar ID."));
+			throw new \Exception(__("Bad calendar ID."));
 	}
 
 	/**
@@ -248,7 +250,7 @@ class Context {
 		$phpcid = $this->request->get('phpcid');
 		if(isset($phpcid)) {
 			if(!is_numeric($phpcid))
-				soft_error(__("Invalid calendar ID."));
+				throw new InvalidInputException(__("Invalid calendar ID."));
 			return $phpcid;
 		}
 		
@@ -299,7 +301,7 @@ class Context {
 		if(isset($_REQUEST['month']) && is_numeric($_REQUEST['month'])) {
 			$this->month = $_REQUEST['month'];
 			if($this->month < 1 || $this->month > 12)
-				soft_error(__("Month is out of range."));
+				throw new InvalidInputException(__("Month is out of range."));
 		} else {
 			$this->month = date('n');
 		}
@@ -307,7 +309,7 @@ class Context {
 		if(isset($_REQUEST['year']) && is_numeric($_REQUEST['year'])) {
 			$time = mktime(0, 0, 0, $this->month, 1, $_REQUEST['year']);
 			if(!$time || $time < 0) {
-				soft_error(__('Invalid year') . ": {$_REQUEST['year']}");
+				throw new InvalidInputException(__('Invalid year') . ": {$_REQUEST['year']}");
 			}
 			$this->year = date('Y', $time);
 		} else {

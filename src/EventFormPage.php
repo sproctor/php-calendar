@@ -19,18 +19,22 @@ namespace PhpCalendar;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class EventFormPage extends Page {
     /**
@@ -53,6 +57,7 @@ class EventFormPage extends Page {
 	}
 
 	/**
+	 * @param Context $context
 	 * @return Form
 	 */
 	private function eventForm(Context $context) {
@@ -60,16 +65,37 @@ class EventFormPage extends Page {
 
 		$builder->add('subject', TextType::class, array('attr' =>
                 array('autocomplete' => 'off', /* 'maxlength' => $context->getCalendar()->getSubjectMax()*/),
-                    'label' => _('Subject')))
-            ->add('description', TextareaType::class, array('label' => __('Description') . ' <a href="http://commonmark.org/help/" target="_new">' . __('(syntax)') . '</a>'))
+                    'label' => _('Subject'), 'constraints' => new Assert\NotBlank()))
+			->add('description', TextareaType::class, array('required' => false))
             ->add('start', DateTimeType::class, array('label' => __('From'), 'widget' => 'single_text'))
-            ->add('end', DateTimeType::class, array('label' => __('To'), 'widget' => 'single_text'))
-            ->add('time-type', ChoiceType::class, array('label' => __('Time Type'),
+			->add('end', DateTimeType::class, array('label' => __('To'), 'widget' => 'single_text'))
+            ->add('time_type', ChoiceType::class, array('label' => __('Time Type'),
                 'choices' => array(
-                    __('Normal') => 'normal',
-                    __('Full Day') => 'full',
-                    __('To Be Announced') => 'tba')));
+                    __('Normal') => 0,
+                    __('Full Day') => 1,
+					__('To Be Announced') => 2)))
+			->add('repeats', ChoiceType::class, array('label' => __('Repeats'),
+					'choices' => array(
+						__('Never') => 'never',
+						__('Daily') => 'daily',
+						__('Weekly') => 'weekly',
+						__('Monthly') => 'monthly',
+						__('Yearly') => 'yearly')));
 
+		$formModifier = function (FormInterface $form, $repeat_type) {
+			if (!empty($repeat_type) && $repeat_type != 'never') {
+				switch ($repeat_type) {
+					case 'daily':
+					$label = __('Repeat every how many days?');
+					break;
+					default:
+					$label = $repeat_type;
+				}
+				$form->add('frequency', IntegerType::class, array('label' => $label,
+						'constraints' => new Assert\GreaterThan(0)));
+				$form->add('until', DateTimeType::class, array('label' => __('Until')));
+			}
+		};
         /*
 		$calendar_choices = array();
 		foreach($context->db->getCalendars() as $calendar) {
@@ -83,18 +109,50 @@ class EventFormPage extends Page {
 			$builder->add('cid', HiddenType::class, array('data' => $context->getCalendar()->getCID()));
         }*/
         
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $form_event) {
-            $event = $form_event->getData();
-            $form = $form_event->getForm();
-    
-            // check if the Product object is "new"
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
+            $data = $event->getData();
+            $form = $event->getForm();
+	
+			$formModifier($form, $data['repeats']);
+			
+            // check if the calendar event is "new"
             // If no data is passed to the form, the data is "null".
-            // This should be considered a new "Product"
-            if (!empty($event)) {
+			// This should be considered a new "Product"
+			/* TODO: Implement a checkbox that shows/hides the occurrence info for "old" events
+            if (!empty($data)) {
                 $form->add('modify', CheckboxType::class, array('label' => __('Change the event date and time'),
                         'required' => false));
-            }
+			}
+			*/
 		});
+
+		$builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $form_event) {
+            $data = $form_event->getData();
+            $form = $form_event->getForm();
+	
+			if (!empty($data)) {
+				if ($data['end']->getTimestamp() < $data['start']->getTimestamp()) {
+					$form->get('end')->addError(new FormError('The end date/time cannot be before the start date/time.'));
+				}
+			}
+		});
+
+		$builder->get('repeats')->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) use ($formModifier) {
+                // It's important here to fetch $event->getForm()->getData(), as
+                // $event->getData() will get you the client data (that is, the ID)
+                $repeat_type = $event->getForm()->getData();
+
+                // since we've added the listener to the child, we'll have to pass on
+                // the parent to the callback functions!
+                $formModifier($event->getForm()->getParent(), $repeat_type);
+            }
+		);
+		
+		$builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+			$event->stopPropagation();
+		}, 900); // Always set a higher priority than ValidationListener
 
 		return $builder->getForm();
 	}
@@ -110,22 +168,18 @@ class EventFormPage extends Page {
 		//   determines if the date should change
 		$modify_occur = !isset($data['eid']) || !empty($data['modify']);
 	
-		if ($modify_occur && $data['end'] < $data['start']) {
-			throw new InvalidInputException(__("An event cannot have an end earlier than its start."));
-		}
-	
 		$calendar = $context->getCalendar();
 		$user = $context->getUser();
 	
 		if (!$calendar->canWrite($user))
 			permission_error(__('You do not have permission to write to this calendar.'));
 	
-		$catid = empty($data['catid']) ? false : $data['catid'];
+		$catid = empty($data['catid']) ? null : $data['catid'];
 	
 		if(!isset($data['eid'])) {
 			$modify = false;
 			$eid = $context->db->createEvent($calendar->getCID(), $user->getUID(),
-					$data["subject"], $data["description"], $catid);
+					$data["subject"], (string) $data["description"], $catid);
 		} else {
 			$modify = true;
 			$eid = $data['eid'];
@@ -146,149 +200,57 @@ class EventFormPage extends Page {
 		}*/
 	
 		if($modify_occur) {
-			switch($data["time-type"]) {
-				case 'normal':
-					$time_type = 0;
-					break;
-	
-				case 'full':
-					$time_type = 1;
-					break;
-	
-				case 'tba':
-					$time_type = 2;
-					break;
-	
-				default:
-					soft_error(__("Unrecognized Time Type."));
-			}
-	
 			$duration = $data['end']->getTimestamp() - $data['start']->getTimestamp();
 	
 			$occurrences = 0;
-			$n = 1;
-			$until = $data['start'];
-			/*switch($data['repeats']) {
-			case 'daily':
-				check_input("every-day");
-				$n = $data["every-day"];
-				$until = get_timestamp("daily-until");
-				break;
-	
-			case 'weekly':
-				check_input("every-week");
-				$n = $vars["every-week"] * 7;
-				$until = get_timestamp("weekly-until");
-				break;
-	
-			case 'monthly':
-				check_input("every-month");
-				$n = $vars["every-month"];
-				$until = get_timestamp("monthly-until");
-				break;
-	
-			case 'yearly':
-				check_input("every-year");
-				$n = $vars["every-year"];
-				$until = get_timestamp("yearly-until");
-				break;
-			}*/
-			if($n < 1)
-				soft_error(__('Increment must be 1 or greater.'));
-	
-			//while($occurrences <= 730 && days_between($data['start'], $until) >= 0) {
-				$oid = $context->db->create_occurrence($eid, $time_type, $data['start'], $data['end']);
+			
+			if ($data['repeats'] != 'never') {
+				$freq = $data['frequency'];
+				$until = $data['until'];
+			} else {
+				$freq = 1;
+				$until = $data['start'];
+			}
+			echo "days between: " . days_between($data['start'], $until);
+
+			while($occurrences <= 730 && days_between($data['start'], $until) >= 0) {
+				$oid = $context->db->create_occurrence($eid, $data['time_type'], $data['start'], $data['end']);
 				$occurrences++;
 	
-				/*switch($vars["repeats"]) {
+				switch($vars["repeats"]) {
 				case 'daily':
+					$data['start'] = add_days($data['start'], $freq);
+					$data['end'] = add_days($data['end'], $freq);
+					break;
+					
 				case 'weekly':
-					$start_ts = add_days($start_ts, $n);
-					$end_ts = add_days($end_ts, $n);
+					$data['start'] = add_days($data['start'], 7 * $freq);
+					$data['end'] = add_days($data['end'], 7 * $freq);
 					break;
 	
 				case 'monthly':
-					$start_ts = add_months($start_ts, $n);
-					$end_ts = add_months($end_ts, $n);
+					$data['start'] = add_months($data['start'], $freq);
+					$data['end'] = add_months($data['end'], $freq);
 					break;
 	
 				case 'yearly':
-					$start_ts = add_years($start_ts, $n);
-					$end_ts = add_years($end_ts, $n);
+					$data['start'] = add_years($data['start'], $freq);
+					$data['end'] = add_years($data['end'], $freq);
 					break;
 	
 				default:
 					break 2;
 				}
-			}*/
+			}
 		}
 	
-		if($eid != 0) {
-			if($modify)
-				$message = __("Modified event");
-			else
-				$message = __("Created event");
-			$context->addMessage($message . ": $eid");
-			return new RedirectResponse(action_event_url($context, 'display_event', $eid));
-		} else {
-			$context->addMessage(__('Error submitting event.'));
-			return new RedirectResponse($context, 'display_month', array('phpcid' => $calendar->getCID()));
-		}
+		$context->addMessage(($modify ? __("Modified event") : __("Created event")).": $eid");
+		return new RedirectResponse(action_event_url($context, 'display_event', $eid));
 	}
 	
 }
 
 function display_form() {
-
-	$when_group = new FormGroup(__('When'), 'phpc-when');
-	
-	$form->add_part($when_group);
-
-	$repeat_type = new FormDropdownQuestion('repeats', __('Repeats'),
-			array(), true, 'never');
-	$repeat_type->add_option('never', __('Never'));
-	$daily_group = new FormGroup();
-	$repeat_type->add_option('daily', __('Daily'), NULL, $daily_group);
-	$weekly_group = new FormGroup();
-	$repeat_type->add_option('weekly', __('Weekly'), NULL, $weekly_group);
-	$monthly_group = new FormGroup();
-	$repeat_type->add_option('monthly', __('Monthly'), NULL, $monthly_group);
-	$yearly_group = new FormGroup();
-	$repeat_type->add_option('yearly', __('Yearly'), NULL, $yearly_group);
-
-	$every_day = new FormDropdownQuestion('every-day', __('Every'),
-			__('Repeat every how many days?'));
-	$every_day->add_options(create_sequence(1, 30));
-	$daily_group->add_part($every_day);
-	$daily_group->add_part(new FormDateQuestion('daily-until', __('Until'),
-				$date_format));
-
-	$every_week = new FormDropdownQuestion('every-week', __('Every'),
-			__('Repeat every how many weeks?'));
-	$every_week->add_options(create_sequence(1, 30));
-	$weekly_group->add_part($every_week);
-	$weekly_group->add_part(new FormDateQuestion('weekly-until',
-				__('Until'), $date_format));
-
-	$every_month = new FormDropdownQuestion('every-month', __('Every'),
-			__('Repeat every how many months?'));
-	$every_month->add_options(create_sequence(1, 30));
-	$monthly_group->add_part($every_month);
-	$monthly_group->add_part(new FormDateQuestion('monthly-until',
-				__('Until'), $date_format));
-
-	$every_year = new FormDropdownQuestion('every-year', __('Every'),
-			__('Repeat every how many years?'));
-	$every_year->add_options(create_sequence(1, 30));
-	$yearly_group->add_part($every_year);
-	$yearly_group->add_part(new FormDateQuestion('yearly-until',
-				__('Until'), $date_format));
-
-	$when_group->add_part($repeat_type);
-
-	if($phpc_cal->can_create_readonly())
-		$form->add_part(new FormCheckBoxQuestion('readonly', false,
-					__('Read-only')));
 
 	$categories = new FormDropdownQuestion('catid', __('Category'));
 	$categories->add_option('', __('None'));
@@ -300,18 +262,9 @@ function display_form() {
 	if($have_categories)
 		$form->add_part($categories);
 
-	if(isset($vars['phpcid']))
-		$form->add_hidden('phpcid', $vars['phpcid']);
-
 	foreach($phpc_cal->get_fields() as $field) {
 		$form->add_part(new FormFreeQuestion('phpc-field-'.$field['fid'], $field['name']));
 	}
-
-	$form->add_hidden('phpc_token', $phpc_token);
-	$form->add_hidden('action', 'event_form');
-	$form->add_hidden('submit_form', 'submit_form');
-
-	$form->add_part(new FormSubmitButton(__("Submit Event")));
 
 	if(isset($vars['eid'])) {
 		$form->add_hidden('eid', $vars['eid']);

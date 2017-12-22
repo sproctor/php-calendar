@@ -53,41 +53,12 @@ function __p($context, $msg) {
 }
 
 /**
- * called when some error happens
- * @param string $message
- * @throws \Exception
- */
-function soft_error($message)
-{
-	throw new \Exception(escape_entities($message));
-}
-
-/**
  * @param string $message
  * @throws PermissionException
  */
 function permission_error($message)
 {
 	throw new PermissionException(htmlspecialchars($message, ENT_COMPAT, "UTF-8"));
-}
-
-/**
- * @param string $message
- * @param string $target
- * @throws InvalidInputException
- */
-function input_error($message, $target = null) {
-	throw new InvalidInputException(htmlspecialchars($message, ENT_COMPAT, "UTF-8"), $target);
-}
-
-/**
- * @param string $arg
- * @param string $target
- * @throws InvalidInputException
- */
-function check_input($arg, $target = null) {
-	if(!isset($_REQUEST[$arg]))
-		throw new InvalidInputException(sprintf(__('Required field "%s" is not set.'), $arg), $target);
 }
 
 function minute_pad($minute)
@@ -602,7 +573,7 @@ function create_action_link(Context $context, $text, $action, $args = null, $cla
  */
 function menu_item(Context $context, $action, $text)
 {
-	$url = action_date_url($context, $action, $context->getYear(), $context->getMonth(), $context->getDay());
+	$url = htmlentities(action_date_url($context, $action, $context->getYear(), $context->getMonth(), $context->getDay()));
 	$active = $context->getAction() == $action ? " active" : "";
 	return "<li class=\"nav-item$active\"><a class=\"nav-link\" href=\"$url\">$text</a></li>";
 }

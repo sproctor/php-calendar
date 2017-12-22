@@ -736,14 +736,11 @@ class Database
 
     /**
      * @param int $cid
-     * @return bool|\PhpCalendar\Calendar
+     * @return null|Calendar
      */
     function getCalendar($cid)
     {
         $calendars = $this->getCalendars();
-        if (empty($calendars[$cid])) {
-            return false;
-        }
 
         return $calendars[$cid];
     }
@@ -1017,32 +1014,26 @@ class Database
      * @param int $uid
      * @param string $subject
      * @param string $description
-     * @param bool|int $catid
-     * @return string
+     * @param int|null $catid
+     * @return int
      */
-    function createEvent($cid, $uid, $subject, $description, $catid = false)
+    function createEvent($cid, $uid, $subject, $description, $catid)
     {
-        if (!$catid)
-            $catid_str = 'NULL';
-        else
-            $catid_str = ':catid';
-
         $query = "INSERT INTO `" . $this->prefix . "events`\n"
             . "(`cid`, `owner`, `subject`, `description`, "
             . "`readonly`, `catid`)\n"
             . "VALUES (:cid, :uid, :subject, :description, "
-            . "0, $catid_str)";
+            . "0, :catid)";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
         $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
         $sth->bindValue(':subject', $subject);
         $sth->bindValue(':description', $description);
-        if ($catid)
-            $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
+        $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
         $sth->execute();
 
-        return $this->dbh->lastInsertId();
+        return intval($this->dbh->lastInsertId());
     }
 
     /**

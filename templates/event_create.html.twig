@@ -2,8 +2,57 @@
 
 {% block body %}
   {{ form_start(form) }}
-    {{ form_widget(form) }}
-
+    {{ form_widget(form.subject) }}
+    <div class="form-group">
+      <label class="form-control-label" for="form_description">{{ "Description"|trans }} <a href="http://commonmark.org/help/" target="_new">({{ "syntax"|trans }})</a></label>
+      {{ form_errors(form.description) }}
+      {{ form_widget(form.description) }}
+    </div>
+    {{ form_row(form.start) }}
+    {{ form_row(form.end) }}
+    {{ form_row(form.time_type) }}
+    {{ form_row(form.repeats) }}
+    <div id="repeat_data">
+    {% if form.frequency %}
+      {{ form_row(form.frequency) }}
+      {{ form_row(form.until) }}
+    {% endif %}
+    </div>
     <input type="submit">
   {{ form_end(form) }}
+
+  <script>
+    var $repeat = $('#form_repeats');
+    // When sport gets selected ...
+    $repeat.change(function() {
+      console.log('clicked...');
+      // ... retrieve the corresponding form.
+      var $form = $(this).closest('form');
+      // Simulate form data, but only include the selected sport value.
+      var data = {};
+      data[$repeat.attr('name')] = $repeat.val();
+      // Submit data via AJAX to the form's action path.
+      $.ajax({
+        url : $form.attr('action'),
+        type: $form.attr('method'),
+        data : data,
+        success: function(html) {
+          console.log("replacing...");
+          // Replace current position field ...
+          $('#repeat_data').replaceWith(
+            // ... with the returned one from the AJAX response.
+            $(html).find('#repeat_data')
+          );
+          // Repeat field now displays the appropriate positions.
+        },
+        error: function(html) {
+          console.log("problem..." + encodeURI($(html).html()));
+          $('#repeat_data').replaceWith(
+            // ... with the returned one from the AJAX response.
+            $(html).find('#repeat_data')
+          );
+        }
+      });
+    });
+  </script>
 {% endblock %}
