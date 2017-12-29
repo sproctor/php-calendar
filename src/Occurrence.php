@@ -104,9 +104,9 @@ class Occurrence extends Event
 		} else {
 			// format on multiple days
 			$str = ' ' . __('From') . ' '
-					. format_datetime($this->start, $this->cal->date_format, $this->cal->hours_24) . ' '
+					. format_datetime($this->start, $this->cal->getDateFormat(), $this->cal->is24Hour()) . ' '
 					. __('to') . ' '
-					. format_datetime($this->end, $this->cal->date_format, $this->cal->hours_24);
+					. format_datetime($this->end, $this->cal->getDateFormat(), $this->cal->is24Hour());
 		}
 		return $str;
 	}

@@ -2,57 +2,74 @@
 
 {% block body %}
   {{ form_start(form) }}
-    {{ form_widget(form.subject) }}
+    {{ form_row(form.subject) }}
     <div class="form-group">
-      <label class="form-control-label" for="form_description">{{ "Description"|trans }} <a href="http://commonmark.org/help/" target="_new">({{ "syntax"|trans }})</a></label>
+      <label class="form-control-label" for="form_description">{{ "Description"|trans }} <a href="http://commonmark.org/help/" target="_blank">({{ "syntax"|trans }})</a></label>
       {{ form_errors(form.description) }}
       {{ form_widget(form.description) }}
     </div>
-    {{ form_row(form.start) }}
-    {{ form_row(form.end) }}
-    {{ form_row(form.time_type) }}
-    {{ form_row(form.repeats) }}
-    <div id="repeat_data">
-    {% if form.frequency %}
-      {{ form_row(form.frequency) }}
-      {{ form_row(form.until) }}
+    {% if form.modify is defined %}
+      {{ form_row(form.modify) }}
     {% endif %}
+    <div id="time_data">
+      {{ form_row(form.start) }}
+      {{ form_row(form.end) }}
+      {{ form_row(form.time_type) }}
+      {{ form_row(form.repeats) }}
+      <div id="repeat_data">
+      {% if form.frequency is defined %}
+        {{ form_row(form.frequency) }}
+        {{ form_row(form.until) }}
+      {% endif %}
+      </div>
     </div>
-    <input type="submit">
   {{ form_end(form) }}
 
   <script>
-    var $repeat = $('#form_repeats');
-    // When sport gets selected ...
-    $repeat.change(function() {
-      console.log('clicked...');
-      // ... retrieve the corresponding form.
-      var $form = $(this).closest('form');
-      // Simulate form data, but only include the selected sport value.
-      var data = {};
-      data[$repeat.attr('name')] = $repeat.val();
-      // Submit data via AJAX to the form's action path.
-      $.ajax({
-        url : $form.attr('action'),
-        type: $form.attr('method'),
-        data : data,
-        success: function(html) {
-          console.log("replacing...");
-          // Replace current position field ...
-          $('#repeat_data').replaceWith(
-            // ... with the returned one from the AJAX response.
-            $(html).find('#repeat_data')
-          );
-          // Repeat field now displays the appropriate positions.
-        },
-        error: function(html) {
-          console.log("problem..." + encodeURI($(html).html()));
-          $('#repeat_data').replaceWith(
-            // ... with the returned one from the AJAX response.
-            $(html).find('#repeat_data')
-          );
-        }
+    {% if form.eid is defined %}
+      // show hide time stuff with modify checkbox
+      $('#time_data').toggle(this.checked);
+      $('#form_modify').click(function() {
+        $('#time_data').toggle(this.checked);
       });
+    {% endif %}
+
+    var $repeat_selector = $('#form_repeats');
+    var $repeat_data = $('#repeat_data');
+    if ($repeat_selector.val() == '0') {
+      $repeat_data.hide();
+      $repeat_data.find("input").prop('disabled', true);
+    } else {
+      $repeat_data.show();
+      $repeat_data.find("input").prop('disabled', false);
+    }
+    // When selected ...
+    $repeat_selector.change(function() {
+      console.log('changed...');
+      var label = '';
+      switch($repeat_selector.val()) {
+        case '0':
+          $repeat_data.hide();
+          $repeat_data.find("input").prop('disabled', true);
+          return;
+        case 'D':
+          label = "{{ "Repeat every how many days?"|trans }}";
+					break;
+				case 'W':
+					label = "{{" Repeat every how many weeks?"|trans }}";
+          break;
+        case 'M':
+					label = "{{" Repeat every how many months?"|trans }}";
+          break;
+        case 'Y':
+					label = "{{" Repeat every how many years?"|trans }}";
+          break;
+        default:
+          // invalid option
+      }
+      $repeat_data.show();
+      $('label[for="form_frequency"]').html(label);
+      $repeat_data.find("input").prop('disabled', false);
     });
   </script>
 {% endblock %}

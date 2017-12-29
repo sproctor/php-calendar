@@ -44,12 +44,8 @@ class Database
         $this->prefix = $config["sql_prefix"];
 
         // Make the database connection.
-        try {
-            $this->dbh = new \PDO($dsn, $config["sql_user"], $config["sql_passwd"]);
-            $this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        } catch (\PDOException $e) {
-            soft_error(__("Database connect failed: " . $e->getMessage()));
-        }
+        $this->dbh = new \PDO($dsn, $config["sql_user"], $config["sql_passwd"]);
+        $this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         // TODO: Make these const
         $this->event_columns = "`{$this->prefix}categories`.`gid`, `{$this->prefix}events`.`subject`, "
@@ -158,10 +154,10 @@ class Database
 
     /**
      * @param int $eid
-     * @return bool|Event
+     * @return null|Event
      * @throws \Exception
      */
-    function get_event_by_eid($eid)
+    function getEvent($eid)
     {
         $events_table = $this->prefix . 'events';
         $users_table = $this->prefix . 'users';
@@ -179,7 +175,7 @@ class Database
 
         $result = $sth->fetch(\PDO::FETCH_ASSOC);
         if (!$result)
-            return false;
+            return null;
         return new Event($this, $result);
     }
 
@@ -1130,7 +1126,9 @@ class Database
         $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
         if ($catid !== false)
             $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
-        $sth->execute(array(':subject' => $subject, ':description' => $description));
+        $sth->bindValue(':subject', $subject);
+        $sth->bindValue(':description', $description);
+        $sth->execute();
 
         return $sth->rowCount() > 0;
     }

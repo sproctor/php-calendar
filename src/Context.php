@@ -259,16 +259,16 @@ class Context {
 			if(is_array($eid)) {
 				$eid = $eid[0];
 			}
-			$event = $this->db->get_event_by_eid($eid);
+			$event = $this->db->getEvent($eid);
 			if($event != null)
-				return $event->getCalendar()->getCID();
+				return $event->getCalendar()->getCid();
 		}
 		
 		$oid = $this->request->get('oid');
 		if(isset($oid)) {
-			$event = $this->db->get_event_by_oid($_REQUEST['oid']);
+			$event = $this->db->getEventByOid($_REQUEST['oid']);
 			if($event != null)
-				return $event->getCalendar()->getCID();
+				return $event->getCalendar()->getCid();
 		}
 		
 		$calendars = $this->db->getCalendars();
@@ -276,14 +276,14 @@ class Context {
 			throw new \Exception(escape_entities("There are no calendars."));
 			// TODO: create a page to fix this
 		} else {
-			if ($this->getUser()->defaultCID() !== false)
-				$default_cid = $this->getUser()->defaultCID();
+			if ($this->getUser()->defaultCid() !== false)
+				$default_cid = $this->getUser()->defaultCid();
 			else
 				$default_cid = $this->db->get_config('default_cid');
 			if (!empty($calendars[$default_cid]))
 				return $default_cid;
 			else
-				return reset($calendars)->getCID();
+				return reset($calendars)->getCid();
 		}
 	}
 

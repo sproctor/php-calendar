@@ -67,7 +67,7 @@ class Event {
 	/**
 	 * @return string
 	 */
-	private function getRawSubject() {
+	public function getRawSubject() {
 		return $this->subject;
 	}
 
@@ -109,7 +109,7 @@ class Event {
 	/**
 	 * @return int
 	 */
-	public function getEID()
+	public function getEid()
 	{
 		return $this->eid;
 	}

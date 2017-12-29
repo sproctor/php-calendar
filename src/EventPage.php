@@ -39,7 +39,7 @@ class EventPage extends Page
 				throw new InvalidInputException(__('There is no event for that OID.'));
 			}
 		} elseif($context->request->get('eid') !== null) {
-			$event = $context->db->get_event_by_eid($context->request->get('eid'));
+			$event = $context->db->getEvent($context->request->get('eid'));
 			if(!$event) {
 				throw new InvalidInputException(__('There is no event with that EID.'));
 			}

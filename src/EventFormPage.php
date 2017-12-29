@@ -28,6 +28,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -64,38 +65,45 @@ class EventFormPage extends Page {
 		$builder = $context->getFormFactory()->createBuilder();
 
 		$builder->add('subject', TextType::class, array('attr' =>
-                array('autocomplete' => 'off', /* 'maxlength' => $context->getCalendar()->getSubjectMax()*/),
+                array('autocomplete' => 'off', 'maxlength' => $context->getCalendar()->getSubjectMax()),
                     'label' => _('Subject'), 'constraints' => new Assert\NotBlank()))
 			->add('description', TextareaType::class, array('required' => false))
-            ->add('start', DateTimeType::class, array('label' => __('From'), 'widget' => 'single_text'))
+			->add('start', DateTimeType::class, array('label' => __('From'), 'widget' => 'single_text'))
 			->add('end', DateTimeType::class, array('label' => __('To'), 'widget' => 'single_text'))
-            ->add('time_type', ChoiceType::class, array('label' => __('Time Type'),
-                'choices' => array(
-                    __('Normal') => 0,
-                    __('Full Day') => 1,
+			->add('time_type', ChoiceType::class, array('label' => __('Time Type'),
+				'choices' => array(
+					__('Normal') => 0,
+					__('Full Day') => 1,
 					__('To Be Announced') => 2)))
 			->add('repeats', ChoiceType::class, array('label' => __('Repeats'),
 					'choices' => array(
-						__('Never') => 'never',
-						__('Daily') => 'daily',
-						__('Weekly') => 'weekly',
-						__('Monthly') => 'monthly',
-						__('Yearly') => 'yearly')));
+						__('Never') => '0',
+						__('Daily') => 'D',
+						__('Weekly') => 'W',
+						__('Monthly') => 'M',
+						__('Yearly') => 'Y')))
+			->add('frequency', IntegerType::class, array('constraints' => new Assert\GreaterThan(0),
+					'data' => 1))
+			->add('until', DateType::class, array('label' => __('Until'), 'widget' => 'single_text'));
 
-		$formModifier = function (FormInterface $form, $repeat_type) {
-			if (!empty($repeat_type) && $repeat_type != 'never') {
-				switch ($repeat_type) {
-					case 'daily':
-					$label = __('Repeat every how many days?');
-					break;
-					default:
-					$label = $repeat_type;
-				}
-				$form->add('frequency', IntegerType::class, array('label' => $label,
-						'constraints' => new Assert\GreaterThan(0)));
-				$form->add('until', DateTimeType::class, array('label' => __('Until')));
-			}
-		};
+		//echo "<pre>"; var_dump($context->request); echo "</pre>";
+		if ($context->request->get('eid') !== null) {
+			$eid = $context->request->get('eid');
+			$event = $context->db->getEvent($eid);
+			$occs = $context->db->get_occurrences_by_eid($eid);
+			$occurrence = $occs[0];
+			$builder->add('modify', CheckboxType::class, array('label' => __('Change the event date and time'),
+						'required' => false));
+			$builder->add('eid', HiddenType::class, array('data' => $eid));
+			$builder->get('subject')->setData($event->getRawSubject());
+			$builder->get('description')->setData($event->getDescription());
+			$builder->get('start')->setData($occurrence->getStart());
+			$builder->get('end')->setData($occurrence->getEnd());
+			$builder->add('save', SubmitType::class, array('label' => __('Modify Event')));
+		} else {
+			$builder->add('save', SubmitType::class, array('label' => __('Create Event')));
+		}
+
         /*
 		$calendar_choices = array();
 		foreach($context->db->getCalendars() as $calendar) {
@@ -107,52 +115,20 @@ class EventFormPage extends Page {
 			$builder->add('cid', ChoiceType::class, array('choices' => $calendar_choices));
 		} else {
 			$builder->add('cid', HiddenType::class, array('data' => $context->getCalendar()->getCID()));
-        }*/
-        
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
-            $data = $event->getData();
-            $form = $event->getForm();
-	
-			$formModifier($form, $data['repeats']);
-			
-            // check if the calendar event is "new"
-            // If no data is passed to the form, the data is "null".
-			// This should be considered a new "Product"
-			/* TODO: Implement a checkbox that shows/hides the occurrence info for "old" events
-            if (!empty($data)) {
-                $form->add('modify', CheckboxType::class, array('label' => __('Change the event date and time'),
-                        'required' => false));
-			}
-			*/
-		});
+		}*/
 
-		$builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $form_event) {
-            $data = $form_event->getData();
-            $form = $form_event->getForm();
-	
-			if (!empty($data)) {
-				if ($data['end']->getTimestamp() < $data['start']->getTimestamp()) {
-					$form->get('end')->addError(new FormError('The end date/time cannot be before the start date/time.'));
+		$builder->addEventListener(
+			FormEvents::POST_SUBMIT,
+			function (FormEvent $event) {
+				$form = $event->getForm();
+				$data = $form->getData();
+				if (!empty($data) && !empty($data['save']) && (empty($data['eid']) || $data['modify'])) {
+					if ($data['end']->getTimestamp() < $data['start']->getTimestamp()) {
+						$form->get('end')->addError(new FormError('The end date/time cannot be before the start date/time.'));
+					}
 				}
 			}
-		});
-
-		$builder->get('repeats')->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($formModifier) {
-                // It's important here to fetch $event->getForm()->getData(), as
-                // $event->getData() will get you the client data (that is, the ID)
-                $repeat_type = $event->getForm()->getData();
-
-                // since we've added the listener to the child, we'll have to pass on
-                // the parent to the callback functions!
-                $formModifier($event->getForm()->getParent(), $repeat_type);
-            }
 		);
-		
-		$builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-			$event->stopPropagation();
-		}, 900); // Always set a higher priority than ValidationListener
 
 		return $builder->getForm();
 	}
@@ -183,7 +159,7 @@ class EventFormPage extends Page {
 		} else {
 			$modify = true;
 			$eid = $data['eid'];
-			$context->db->modify_event($eid, $data['subject'],
+			$context->db->modifyEvent($eid, $data['subject'],
 					$data['description'], $catid);
 			if($modify_occur)
 				$context->db->delete_occurrences($eid);
@@ -200,46 +176,21 @@ class EventFormPage extends Page {
 		}*/
 	
 		if($modify_occur) {
-			$duration = $data['end']->getTimestamp() - $data['start']->getTimestamp();
-	
 			$occurrences = 0;
 			
-			if ($data['repeats'] != 'never') {
-				$freq = $data['frequency'];
-				$until = $data['until'];
+			if ($data['repeats'] == '0') {
+				$context->db->create_occurrence($eid, $data['time_type'], $data['start'], $data['end']);
 			} else {
-				$freq = 1;
-				$until = $data['start'];
-			}
-			echo "days between: " . days_between($data['start'], $until);
+				$interval = new \DateInterval('P'.$data['frequency'].$data['repeats']);
+				
+				echo "days between: " . days_between($data['start'], $data['until']);
 
-			while($occurrences <= 730 && days_between($data['start'], $until) >= 0) {
-				$oid = $context->db->create_occurrence($eid, $data['time_type'], $data['start'], $data['end']);
-				$occurrences++;
-	
-				switch($vars["repeats"]) {
-				case 'daily':
-					$data['start'] = add_days($data['start'], $freq);
-					$data['end'] = add_days($data['end'], $freq);
-					break;
-					
-				case 'weekly':
-					$data['start'] = add_days($data['start'], 7 * $freq);
-					$data['end'] = add_days($data['end'], 7 * $freq);
-					break;
-	
-				case 'monthly':
-					$data['start'] = add_months($data['start'], $freq);
-					$data['end'] = add_months($data['end'], $freq);
-					break;
-	
-				case 'yearly':
-					$data['start'] = add_years($data['start'], $freq);
-					$data['end'] = add_years($data['end'], $freq);
-					break;
-	
-				default:
-					break 2;
+				while($occurrences <= 730 && days_between($data['start'], $data['until']) >= 0) {
+					$oid = $context->db->create_occurrence($eid, $data['time_type'], $data['start'], $data['end']);
+					$occurrences++;
+		
+					$data['start']->add($interval);
+					$data['end']->add($interval);
 				}
 			}
 		}

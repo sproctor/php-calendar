@@ -71,7 +71,7 @@ class Calendar {
 	/**
 	 * @return int
 	 */
-	function getCID()
+	function getCid()
 	{
 		return $this->cid;
 	}

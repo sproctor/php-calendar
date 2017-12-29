@@ -8,6 +8,11 @@
             "email": "sproctor@gmail.com"
         }
     ],
+    "config": {
+        "platform": {
+            "php": "5.6.0"
+        }
+    },
     "require": {
         "php": ">=5.6.0",
         "paragonie/random_compat": "^2.0",

@@ -1048,7 +1048,7 @@ function normalize_date(&$month, &$day, &$year) {
 function sqlDate(\DateTimeInterface $date) {
 	$utcDate = new \DateTime($date->format('Y-m-d H:i:s'), $date->getTimezone());
 	$utcDate->setTimezone(new \DateTimeZone('UTC'));
-	return $date->format('Y-m-d H:i:s');
+	return $utcDate->format('Y-m-d H:i:s');
 }
 
 /**
