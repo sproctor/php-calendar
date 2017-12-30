@@ -1,0 +1,24 @@
+{% extends "index.html.twig" %}
+
+{% block body %}
+  <ul class="nav nav-tabs" role="tablist">
+  {% if user.isAdmin() %}
+    <li class="nav-item"><a class="nav-link active" id="calendars-tab" data-toggle="tab" href="#calendars" role="tab" aria-controls="calendars">{{ "Calendars"|trans }}</a></li>
+    <li class="nav-item"><a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users">{{ "Users"|trans }}</a></li>
+    <li class="nav-item"><a class="nav-link" id="import-tab" data-toggle="tab" href="#import" role="tab" aria-controls="import">{{ "Import"|trans }}</a></li>
+  {% endif %}
+  {% if calendar.canAdmin(user) %}
+      
+  {% endif %}
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane fade show active" id="calendars" role="tabpanel" aria-labelledby="calendars-tab">calendars info</div>
+    <div role="tabpanel" class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">users info</div>
+    <div role="tabpanel" class="tab-pane fade" id="import" role="tabpanel" aria-labelledby="import-tab">import info</div>
+  </div>
+  
+  <script>
+    console.log("hash " + window.location.hash);
+    $('.nav-tabs a[href="' + window.location.hash + '"]').tab('show');
+  </script>
+{% endblock %}
