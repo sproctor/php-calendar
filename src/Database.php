@@ -154,12 +154,16 @@ class Database
      * @param int $day
      * @return Occurrence[]
      */
-    function get_occurrences_by_date($cid, $year, $month, $day)
+    public function getOccurrencesByDate($cid, $year, $month, $day)
     {
         $from_stamp = mktime(0, 0, 0, $month, $day, $year);
         $to_stamp = mktime(23, 59, 59, $month, $day, $year);
 
-        return $this->get_occurrences_by_date_range($cid, $from_stamp, $to_stamp);
+        return $this->get_occurrences_by_date_range(
+            $cid,
+            new \DateTime("$year-$month-$day 00:00:00"),
+            (new \DateTime("$year-$month-$day 00:00:00"))->add(new \DateInterval("P1D"))
+        );
     }
 
     // returns the event that corresponds to eid

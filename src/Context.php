@@ -26,6 +26,7 @@ use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
@@ -39,16 +40,13 @@ class Context
     /**
      * @var Calendar $calendar
      */
-    private $calendar;
+    public $calendar;
     /**
      * @var User $user
      */
-    private $user;
+    public $user;
     private $session;
     private $formFactory;
-    private $year;
-    private $month;
-    private $day;
     /**
      * @var Request $request
      */
@@ -107,13 +105,16 @@ class Context
             }
         }
 
+        // Validate user
         $this->readLoginToken();
+        if (!isset($this->user)) {
+            $this->user = User::createAnonymous($this->db, $this->request);
+        }
+
+        $this->initCurrentCalendar();
 
         $this->initTimezone();
         $this->initLang($request);
-
-        // set day/month/year - This needs to be done after the timezone is set.
-        $this->initDate();
 
         $this->initTwig();
     }
@@ -177,11 +178,10 @@ class Context
             ->getFormFactory();
         
         $this->twig->addGlobal('context', $this);
-        $this->twig->addGlobal('calendar', $this->getCalendar());
-        $this->twig->addGlobal('user', $this->getUser());
+        $this->twig->addGlobal('calendar', $this->calendar);
+        $this->twig->addGlobal('user', $this->user);
         $this->twig->addGlobal('script', $this->script);
         $this->twig->addGlobal('embed', $this->request->get("content") == "embed");
-        $this->twig->addGlobal('title', $this->getCalendar()->getTitle());
         $this->twig->addGlobal('messages', $this->getMessages());
         //'theme' => $context->getCalendar()->get_theme(),
         $this->twig->addGlobal('minified', defined('PHPC_DEBUG') ? '' : '.min');
@@ -203,7 +203,7 @@ class Context
             new \Twig_SimpleFunction(
                 'week_link',
                 function (Context $context, \DateTimeInterface $date) {
-                    list($week, $year) = week_of_year($date, $context->getCalendar()->getWeekStart());
+                    list($week, $year) = week_of_year($date, $context->calendar->getWeekStart());
                     $url = action_url($context, 'display_week', ['week' => $week, 'year' => $year]);
                     return "<a href=\"$url\">$week</a>";
                 }
@@ -354,8 +354,8 @@ class Context
             throw new \Exception(escape_entities("There are no calendars."));
             // TODO: create a page to fix this
         } else {
-            if ($this->getUser()->defaultCid() !== false) {
-                $default_cid = $this->getUser()->defaultCid();
+            if ($this->user->defaultCid() !== false) {
+                $default_cid = $this->user->defaultCid();
             } else {
                 $default_cid = $this->db->get_config('default_cid');
             }
@@ -370,45 +370,13 @@ class Context
     private function initTimezone()
     {
         // Set timezone
-        $tz = $this->getUser()->getTimezone();
+        $tz = $this->user->getTimezone();
         if (empty($tz)) {
-            $tz = $this->getCalendar()->getTimezone();
+            $tz = $this->calendar->getTimezone();
         }
 
         if (!empty($tz)) {
             date_default_timezone_set($tz);
-        }
-    }
-
-    private function initDate()
-    {
-        if (isset($_REQUEST['month']) && is_numeric($_REQUEST['month'])) {
-            $this->month = $_REQUEST['month'];
-            if ($this->month < 1 || $this->month > 12) {
-                throw new InvalidInputException(__("Month is out of range."));
-            }
-        } else {
-            $this->month = date('n');
-        }
-
-        if (isset($_REQUEST['year']) && is_numeric($_REQUEST['year'])) {
-            $time = mktime(0, 0, 0, $this->month, 1, $_REQUEST['year']);
-            if (!$time || $time < 0) {
-                throw new InvalidInputException(__('Invalid year') . ": {$_REQUEST['year']}");
-            }
-            $this->year = date('Y', $time);
-        } else {
-            $this->year = date('Y');
-        }
-
-        if (isset($_REQUEST['day']) && is_numeric($_REQUEST['day'])) {
-            $this->day = ($_REQUEST['day'] - 1) % date('t', mktime(0, 0, 0, $this->month, 1, $this->year)) + 1;
-        } else {
-            if ($this->month == date('n') && $this->year == date('Y')) {
-                $this->day = date('j');
-            } else {
-                $this->day = 1;
-            }
         }
     }
 
@@ -429,42 +397,15 @@ class Context
     }
 
     /**
-     * @return User
-     */
-    public function getUser()
-    {
-        if (!isset($this->user)) {
-            $this->user = User::createAnonymous($this->db, $this->request);
-        }
-        return $this->user;
-    }
-
-    /**
-     * @param User $user
-     */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
-    }
-
-    /**
-     * @return Calendar
-     */
-    public function getCalendar()
-    {
-        if (!isset($this->calendar)) {
-            $this->initCurrentCalendar();
-        }
-
-        return $this->calendar;
-    }
-
-    /**
      * @return int
      */
     public function getYear()
     {
-        return $this->year;
+        if (is_numeric($this->request->get('year'))) {
+            return $this->request->get('year');
+        } else {
+            return date('Y');
+        }
     }
 
     /**
@@ -472,7 +413,15 @@ class Context
      */
     public function getMonth()
     {
-        return $this->month;
+        $month = $this->request->get('month');
+        if (is_numeric($month)) {
+            if ($month < 1 || $month > 12) {
+                throw new InvalidInputException(__("Month is out of range."));
+            }
+            return $month;
+        } else {
+            return date('n');
+        }
     }
 
     /**
@@ -480,15 +429,27 @@ class Context
      */
     public function getDay()
     {
-        return $this->day;
+        $day = $this->request->get('day');
+        if (is_numeric($day)) {
+            if ($day < 1 || $day > days_in_month($this->getMonth(), $this->getYear())) {
+                throw new InvalidInputException(__('Day is out of range.'));
+            }
+            return $day;
+        } else {
+            if ($this->getMonth() == date('n') && $this->getYear() == date('Y')) {
+                return date('j');
+            } else {
+                return 1;
+            }
+        }
     }
 
     private function initLang(Request $request)
     {
         // setup translation stuff
-        $lang = $request->get('lang', $this->getUser()->getLanguage());
+        $lang = $request->get('lang', $this->user->getLanguage());
         if (empty($lang)) {
-            $lang = $this->getCalendar()->getLanguage();
+            $lang = $this->calendar->getLanguage();
             if (empty($lang)) {
                 $lang = substr($request->getLocale(), 0, 2);
                 if (empty($lang)) {
@@ -516,14 +477,13 @@ class Context
     }
 
     /**
-     * @param Context $context
-     * @param string  $page
+     * @param string $page
      * @return RedirectResponse
      */
-    public function redirect(Context $context, $page)
+    public function redirect($page)
     {
-        $dir = $page{0} == '/' ?  '' : dirname($context->script) . '/';
-        $url = $context->proto . '://'. $context->host_name . $dir . $page;
+        $dir = $page{0} == '/' ?  '' : dirname($this->script) . '/';
+        $url = $this->proto . '://'. $this->host_name . $dir . $page;
 
         return new RedirectResponse($url);
     }
@@ -538,12 +498,64 @@ class Context
 
                 $uid = $data["uid"];
                 $user = $this->db->get_user($uid);
-                $this->setUser($user);
+                $this->user = $user;
             } catch (SignatureInvalidException $e) {
                 // TODO: log this event
                 setcookie('identity', "", time() - 3600);
             }
         }
+    }
+
+    /**
+     * @param string $username
+     * @param string $password
+     * @return bool
+     */
+    public function loginUser($username, $password)
+    {
+        $user = $this->db->get_user_by_name($username);
+        //echo "<pre>"; var_dump($user); echo "</pre>";
+        if (!$user) {
+            return false;
+        }
+
+        $password_hash = $user->getPasswordHash();
+
+        // migrate old passwords
+        if ($password_hash[0] != '$' && md5($password) == $password_hash) {
+            $this->db->set_password($user->getUid(), $password);
+        } else { // otherwise use the normal password verifier
+            if (!password_verify($password, $password_hash)) {
+                return false;
+            }
+        }
+
+        $this->user = $user;
+        $this->setLoginToken($user);
+
+        return true;
+    }
+
+    /**
+     * @param User $user
+     */
+    private function setLoginToken(User $user)
+    {
+        $issuedAt = time();
+        // expire credentials in 30 days.
+        $expires = $issuedAt + 30 * 24 * 60 * 60;
+        $token = array(
+            "iss" => $this->proto . "://" . $this->host_name,
+            "iat" => $issuedAt,
+            "exp" => $expires,
+            "data" => array("uid" => $user->getUid())
+        );
+        $jwt = \Firebase\JWT\JWT::encode($token, $this->config['token_key']);
+
+        // TODO: Add a remember me checkbox to the login form, and have the
+        //    cookies expire at the end of the session if it's not checked
+
+        setcookie('identity', $jwt, $expires);
     }
 
     public function getPage()

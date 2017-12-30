@@ -1,0 +1,46 @@
+{% extends "index.html.twig" %}
+
+{% block body %}
+  <h2>{{ day }} {{ month_name }} {{ year }}</h2>
+  {% if occurrences|length > 0 %}
+    <form>
+    {% set can_modify = false %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>{{ "Title"|trans }}</th>
+          <th>{{ "Time"|trans }}</th>
+          <th>{{ "Description"|trans }}</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for occurrence in occurrences %}
+      {% if occurrence.canRead(user) %}
+        <tr>
+          <td>{% if occurrence.canModify(user) %}<div class="form-check form-check-inline">
+            {% set can_modify = true %}
+            <input name="eid[]" type="checkbox" class="form-check-input" id="eid_{{ occurrence.getEid() }}">
+            <label class="form-check-label" for="eid_{{ occurrence.getEid() }}">
+            {% endif %}<a href="{{ action_event_url(context, 'display_event', occurrence.getEid()) }}">{{ occurrence.getSubject() }}</a>
+            {% if occurrence.canModify(user) %}
+            </label></div> <a href="{{ action_event_url(context, 'event_form', occurrence.getEid()) }}">{{ "(Modify)"|trans }}</a>
+            {% endif %}
+          </td>
+          {% set textcolor = occurrence.getTextColor() %}
+          {% set bgcolor = occurrence.getBgColor() %}
+          <td>{{ occurrence.getTimeString() }}</td>
+          <td>{{ occurrence.getDescription() }}</td>
+        </tr>
+      {% endif %}
+      {% endfor %}
+      </tbody>
+    </table>
+    {% if can_modify %}
+      <button type="submit" class="btn btn-primary" data-toggle="confirmation" data-title="{{ "Confirmation Required"|trans }}" data-button-text="{{ "Delete Events"|trans }}"
+              data-content="{{ "Permanently delete the selected events?"|trans }}">{{ "Delete Selected Events"|trans }}</button>
+    {% endif %}
+    </form>
+  {% else %}
+    <h3>{{ "No events on this day."|trans }}</h3>
+  {% endif %}
+{% endblock %}

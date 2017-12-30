@@ -1,6 +1,6 @@
-<?php 
+<?php
 /*
- * Copyright 2013 Sean Proctor
+ * Copyright 2017 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,28 @@
  * limitations under the License.
  */
 
-function calendar_form($context) 
+namespace PhpCalendar;
+
+class CreateCalendarPage extends Page
 {
-    if(!is_admin()) {
-            return tag('div', __('Permission denied'));
+    /**
+     * Display event form or submit event
+     *
+     * @param  Context $context
+     * @return Response
+     */
+    public function action(Context $context)
+    {
+        if (!$context->user->isAdmin()) {
+                throw new PermissionException(__('Only admins can create calendars.'));
+        }
+
+        if (!empty($_REQUEST['submit_form'])) {
+            process_form($context);
+        }
+
+        return display_form($context);
     }
-
-    if(!empty($_REQUEST['submit_form'])) {
-        process_form($context);
-    }
-
-    return display_form($context);
-
 }
 
 function process_form($context)

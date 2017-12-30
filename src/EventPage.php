@@ -27,27 +27,27 @@ class EventPage extends Page
 {
     /**
      * Display for a single event
-     * 
+     *
      * @param  Context $context
      * @return Response
      */
-    function action(Context $context)
-    {    
+    public function action(Context $context)
+    {
         if ($context->request->get('oid') !== null) {
             $event = $context->db->get_event_by_oid($context->request->get('oid'));
-            if(!$event) {
+            if (!$event) {
                 throw new InvalidInputException(__('There is no event for that OID.'));
             }
-        } elseif($context->request->get('eid') !== null) {
+        } elseif ($context->request->get('eid') !== null) {
             $event = $context->db->getEvent($context->request->get('eid'));
-            if(!$event) {
+            if (!$event) {
                 throw new InvalidInputException(__('There is no event with that EID.'));
             }
         } else {
             throw new InvalidInputException(__("Invalid arguments."));
         }
 
-        if(!$event->canRead($context->getUser())) {
+        if (!$event->canRead($context->user)) {
             throw new InvalidInputException(__("You do not have permission to read this event."));
         }
 

@@ -177,7 +177,7 @@ class Event
      */
     public function isOwner(User $user)
     {
-        return $user->getUID() == $this->owner_uid;
+        return $user->getUid() == $this->owner_uid;
     }
 
     /**

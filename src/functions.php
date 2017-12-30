@@ -21,7 +21,6 @@
 
 namespace PhpCalendar;
 
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 define('PHPC_CONFIG_FILE', realpath(__DIR__.'/../config.php'));
@@ -61,31 +60,9 @@ function __p($context, $msg)
     }
 }
 
-/**
- * @param string $message
- * @throws PermissionException
- */
-function permission_error($message)
-{
-    throw new PermissionException(htmlspecialchars($message, ENT_COMPAT, "UTF-8"));
-}
-
 function minute_pad($minute)
 {
     return sprintf('%02d', $minute);
-}
-
-/**
- * @param Context $context
- * @param string  $page
- * @return RedirectResponse
- */
-function redirect(Context $context, $page)
-{
-    $dir = $page{0} == '/' ?  '' : dirname($context->script) . '/';
-    $url = $context->proto . '://'. $context->host_name . $dir . $page;
-
-    return new RedirectResponse($url);
 }
 
 function escape_entities($string)
@@ -207,62 +184,6 @@ function days_between(\DateTimeInterface $date1, \DateTimeInterface $date2)
     $days += intval($date2->format('z'));
     $days -= intval($date1->format('z'));
     return $days;
-}
-
-/**
- * @param Context $context
- * @param string  $username
- * @param string  $password
- * @return bool
- */
-function login_user(Context $context, $username, $password)
-{
-    $user = $context->db->get_user_by_name($username);
-    //echo "<pre>"; var_dump($user); echo "</pre>";
-    if (!$user) {
-        return false;
-    }
-
-    $password_hash = $user->getPasswordHash();
-
-    // migrate old passwords
-    if($password_hash[0] != '$' && md5($password) == $password_hash) {
-        $context->db->set_password($user->getUid(), $password);
-    } else { // otherwise use the normal password verifier
-        if(!password_verify($password, $password_hash)) {
-            return false;
-        }
-    }
-
-    $context->setUser($user);
-    set_login_token($context, $user);
-
-    return true;
-}
-
-/**
- * @param Context $context
- * @param User    $user
- */
-function set_login_token(Context $context, User $user) 
-{
-    $issuedAt = time();
-    // expire credentials in 30 days.
-    $expires = $issuedAt + 30 * 24 * 60 * 60;
-    $token = array(
-    "iss" => $context->proto . "://" . $context->host_name,
-    "iat" => $issuedAt,
-    "exp" => $expires,
-    "data" => array(
-    "uid" => $user->getUid()
-    )
-    );
-    $jwt = \Firebase\JWT\JWT::encode($token, $context->config['token_key']);
-
-    // TODO: Add a remember me checkbox to the login form, and have the
-    //    cookies expire at the end of the session if it's not checked
-
-    setcookie('identity', $jwt, $expires);
 }
 
 // returns tag data for the links at the bottom of the calendar
@@ -501,7 +422,7 @@ function action_url(Context $context, $action, $parameters = array())
  * @param Request $request
  * @return string
  */
-function change_lang_url(Request $request, $lang) 
+function change_lang_url(Request $request, $lang)
 {
     $uri = $request->getRequestUri();
     if (strpos($uri, "?") !== false) {
@@ -958,7 +879,7 @@ function create_config_input($element, $default = false)
     return $input;
 }
 
-function print_update_form() 
+function print_update_form()
 {
     global $script;
 

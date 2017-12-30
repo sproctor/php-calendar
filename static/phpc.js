@@ -60,8 +60,6 @@ $(document).ready(function(){
     e.preventDefault();
   });
 
-  $('input[type=datetime]').datetimepicker({step: 15});
-
   // Markdown descriptions
   var md = new Remarkable('commonmark');
   $('.markdown').html(function() { return md.render($(this).html()) });

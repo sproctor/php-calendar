@@ -48,14 +48,10 @@ try {
     $response = $page->action($context);
     $response->send();
 } catch (PermissionException $e) {
-    $msg = __('You do not have permission to do that: ') . $e->getMessage();
-    if ($context->getUser()->is_user()) {
-        echo error_message_redirect($context, $msg, $context->script);
-    } else {
-        echo error_message_redirect($context, $msg, "{$context->script}?action=login");
-    }
+    $context->addMessage($e->getMessage());
+    (new RedirectResponse($context->user->isUser() ? $context->script : "{$context->script}?action=login"))->send();
 } catch (InvalidConfigException $e) {
-    (new RedirectResponse("/install"))->send();
+    (new RedirectResponse("/install.php"))->send();
 } catch (InvalidInputException $e) {
     if ($context !== null) {
         (new Response($context->twig->render('error.html.twig', array('message' => $e->getMessage()))))->send();

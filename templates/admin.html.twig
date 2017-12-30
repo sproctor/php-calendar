@@ -12,11 +12,37 @@
   {% endif %}
   </ul>
   <div class="tab-content">
-    <div role="tabpanel" class="tab-pane fade show active" id="calendars" role="tabpanel" aria-labelledby="calendars-tab">calendars info</div>
+    <div role="tabpanel" class="tab-pane fade show active" id="calendars" role="tabpanel" aria-labelledby="calendars-tab">
+      <h3>{{ "Calendars"|trans }}</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">{{ "Calendar"|trans }}</th>
+            <th scope="col">{{ "Actions"|trans }}</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for calendar in calendars %}
+          <tr>
+            <td>{{ calendar.getTitle() }}</td>
+            <td>
+              <a class="btn btn-primary" href="{{ script }}?action=admin&amp;phpcid={{ calendar.getCid() }}#calendar_settings"><i class="fas fa-wrench"></i> {{ "Settings"|trans }}</a>
+              <a class="btn btn-primary" href="{{ script }}?action=calendar_delete&amp;cid={{ calendar.getCid() }}"
+                data-toggle="confirmation" data-title="{{ "Confirmation Required"|trans }}" data-button-text="{{ "Delete"|trans }}"
+                data-content="{{ "Permanently delete this calendar?"|trans }}"><i class="fas fa-trash"></i> {{ "Delete"|trans }}</a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <a class="btn btn-primary" href="{{ script }}?action=calendar_create"><i class="fas fa-plus-square"></i> {{ "Create Calendar"|trans }}</a>
+    </div>
+
     <div role="tabpanel" class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">users info</div>
     <div role="tabpanel" class="tab-pane fade" id="import" role="tabpanel" aria-labelledby="import-tab">import info</div>
   </div>
   
+
   <script>
     console.log("hash " + window.location.hash);
     $('.nav-tabs a[href="' + window.location.hash + '"]').tab('show');

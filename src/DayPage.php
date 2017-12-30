@@ -21,122 +21,25 @@
 
 namespace PhpCalendar;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class DayPage extends Page
 {
     // View for a single day
     /**
-     * @param Context   $context
-     * @param \string[] $template_variables
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param Context $context
+     * @return Response
      */
-    function action(Context $context, $template_variables)
+    public function action(Context $context)
     {
-        $year = $context->getYear();
-        $month = $context->getMonth();
-        $day = $context->getDay();
-
-        $monthname = month_name($month);
-
-        $have_events = false;
-
-        $html_table = tag(
-            'table', attributes('class="phpc-main"'),
-            tag('caption', "$day $monthname $year"),
-            tag(
-                'thead',
-                tag(
-                    'tr',
-                    tag('th', __('Title')),
-                    tag('th', __('Time')),
-                    tag('th', __('Description'))
-                )
-            )
+        $occurrences = $context->db->getOccurrencesByDate(
+            $context->calendar->getCid(),
+            $context->getYear(),
+            $context->getMonth(),
+            $context->getDay()
         );
-        if($context->getCalendar()->can_modify($context->getUser())) {
-            $html_table->add(
-                tag(
-                    'tfoot',
-                    tag(
-                        'tr',
-                        tag(
-                            'td',
-                            attributes('colspan="4"'),
-                            create_hidden('action', 'event_delete'),
-                            create_hidden('day', $day),
-                            create_hidden('month', $month),
-                            create_hidden('year', $year),
-                            create_submit(__('Delete Selected'))
-                        )
-                    )
-                )
-            );
-        }
-
-        $html_body = tag('tbody');
-
-        $results = $context->db->get_occurrences_by_date($context->getCalendar()->cid, $year, $month, $day);
-        while($row = $results->fetch_assoc()) {
-
-            $event = new Occurrence($context, $row);
-
-            if(!$event->can_read($context->getUser())) {
-                continue;
-            }
-
-            $have_events = true;
-
-            $eid = $event->get_eid();
-
-            $html_subject = tag('td');
-
-            if($event->can_modify($context->getUser())) {
-                $html_subject->add(create_checkbox('eid[]', $eid));
-            }
-
-            $html_subject->add(create_event_link(tag('strong', $event->get_subject()), 'display_event', $eid));
-
-            if($event->can_modify($context->getUser())) {
-                $html_subject->add(create_event_link(__(' (Modify)'), 'event_form', $eid));
-            }
-
-            $html_body->add(
-                tag(
-                    'tr',
-                    $html_subject,
-                    tag('td', $event->get_time_span_string()),
-                    tag('td', $event->get_desc())
-                )
-            );
-        }
-
-        $html_table->add($html_body);
-
-        if($context->getCalendar()->can_modify($context->getUser())) {
-            $output = tag(
-                'form', attrs('action="' . PHPC_SCRIPT . '"', 'class="phpc-form-confirm"', 'method="post"'),
-                $html_table
-            );
-        } else {
-            $output = $html_table;
-        }
-
-        if(!$have_events) {
-            $output = tag('h2', __('No events on this day.'));
-        }
-
-        $dialog = tag(
-            'div', attrs('id="phpc-dialog"', 'title="' . __("Confirmation required") . '"'),
-            __("Permanently delete the selected events?")
-        );
-
-        //$template_variables['cid'] = $cid;
-        $template_variables['year'] = $year;
-        //$template_variables['week_start'] = $week_start;
-        $template_variables['occurrences'] = get_occurrences_by_day(
-            $calendar, $context->getUser(), $from_date,
-            $to_date
-        );
-        return new Response($context->twig->render("day.html", $template_variables));
+        
+        return new Response($context->twig->render("day_page.html.twig", array('occurrences' => $occurrences)));
     }
 }
 
@@ -167,9 +70,3 @@ function create_day_menu(Context $context, $year, $month, $day)
 
     return $html;
 }
-
-function create_day_item($time) 
-{
-    
-}
-?>

@@ -47,6 +47,10 @@ class EventFormPage extends Page
      */
     public function action(Context $context)
     {
+        if (!$context->calendar->canWrite($context->user)) {
+            throw new PermissionException(__('You do not have permission to create events on this calendar.'));
+        }
+
         $form = $this->eventForm($context);
 
         $form->handleRequest($context->request);
@@ -66,10 +70,18 @@ class EventFormPage extends Page
     {
         $builder = $context->getFormFactory()->createBuilder();
 
+        $default_date = new \DateTime();
+        if ($context->request->get('year') !== null && $context->request->get('month') !== null) {
+            $default_date->setDate(
+                $context->request->get('year'),
+                $context->request->get('month'),
+                $context->request->get('day', 1)
+            );
+        }
         $builder->add(
             'subject',
             TextType::class,
-            array('attr' => array('autocomplete' => 'off', 'maxlength' => $context->getCalendar()->getSubjectMax()),
+            array('attr' => array('autocomplete' => 'off', 'maxlength' => $context->calendar->getSubjectMax()),
                 'label' => _('Subject'), 'constraints' => new Assert\NotBlank())
         )
         ->add('description', TextareaType::class, array('required' => false))
@@ -77,13 +89,13 @@ class EventFormPage extends Page
             'start',
             DateTimeType::class,
             array('label' => __('From'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
-                'data' => (new \DateTime())->setTime(17, 0))
+                'data' => $default_date->setTime(17, 0))
         )
         ->add(
             'end',
             DateTimeType::class,
             array('label' => __('To'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
-                'data' => (new \DateTime())->setTime(18, 0))
+                'data' => (clone $default_date)->setTime(18, 0))
         )
         ->add(
             'time_type',
@@ -175,10 +187,7 @@ class EventFormPage extends Page
         //   determines if the date should change
         $modify_occur = !isset($data['eid']) || !empty($data['modify']);
     
-        $calendar = $context->getCalendar();
-        $user = $context->getUser();
-    
-        if (!$calendar->canWrite($user)) {
+        if (!$context->calendar->canWrite($context->user)) {
             permission_error(__('You do not have permission to write to this calendar.'));
         }
     
@@ -187,8 +196,8 @@ class EventFormPage extends Page
         if (!isset($data['eid'])) {
             $modify = false;
             $eid = $context->db->createEvent(
-                $calendar->getCID(),
-                $user->getUID(),
+                $context->calendar->getCID(),
+                $context->user->getUid(),
                 $data["subject"],
                 (string) $data["description"],
                 $catid
@@ -261,21 +270,6 @@ function display_form()
     }
 
     if (isset($vars['eid'])) {
-        $form->add_hidden('eid', $vars['eid']);
-        $occs = $phpcdb->get_occurrences_by_eid($vars['eid']);
-        $event = $occs[0];
-
-        $defaults = array(
-        'cid' => $event->get_cid(),
-        'subject' => $event->get_raw_subject(),
-        'description' => $event->get_raw_desc(),
-        'start-date' => $event->get_short_start_date(),
-        'end-date' => $event->get_short_end_date(),
-        'start-time' => $event->get_start_time(),
-        'end-time' => $event->get_end_time(),
-        'readonly' => $event->is_readonly(),
-        );
-
         foreach ($event->get_fields() as $field) {
             $defaults["phpc-field-{$field['fid']}"] = $field['value'];
         }
@@ -284,34 +278,7 @@ function display_form()
             $defaults['catid'] = $event->catid;
         }
 
-        switch ($event->get_time_type()) {
-            case 0:
-                $defaults['time-type'] = 'normal';
-                break;
-            case 1:
-                $defaults['time-type'] = 'full';
-                break;
-            case 2:
-                $defaults['time-type'] = 'tba';
-                break;
-        }
-
         add_repeat_defaults($occs, $defaults);
-    } else {
-        $hour24 = $phpc_cal->hours_24;
-        $datefmt = $phpc_cal->date_format;
-        $date_string = format_short_date_string($phpc_year, $phpc_month, $phpc_day, $datefmt);
-        $defaults = array(
-        'cid' => $phpcid,
-        'start-date' => $date_string,
-        'end-date' => $date_string,
-        'start-time' => format_time_string(17, 0, $hour24),
-        'end-time' => format_time_string(18, 0, $hour24),
-        'daily-until-date' => $date_string,
-        'weekly-until-date' => $date_string,
-        'monthly-until-date' => $date_string,
-        'yearly-until-date' => $date_string,
-        );
     }
     return $form->get_form($defaults);
 }
@@ -335,7 +302,7 @@ function add_repeat_defaults($occs, &$defaults)
     $nyears = $occs[1]->get_start_year() - $event->get_start_year();
     $repeats_yearly = true;
     $nmonths = ($occs[1]->get_start_year() - $year) * 12
-    + $occs[1]->get_start_month() - $month;
+        + $occs[1]->get_start_month() - $month;
     $repeats_monthly = true;
     $ndays = days_between($event->get_start_ts(), $occs[1]->get_start_ts());
     $repeats_daily = true;
