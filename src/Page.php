@@ -23,7 +23,5 @@ abstract class Page
      * @param Context $context
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    abstract function action(Context $context);
+    abstract public function action(Context $context);
 }
-
-?>

@@ -30,7 +30,7 @@ class Occurrence extends Event
      * @param Database $db
      * @param string[] $row
      */
-    function __construct(Database $db, $row) 
+    public function __construct(Database $db, $row)
     {
         parent::__construct($db, $row);
 
@@ -45,46 +45,46 @@ class Occurrence extends Event
      *
      * @return NULL|string
      */
-    function getTimeString()
+    public function getTimeString()
     {
-        switch($this->time_type) {
-        default:
-            return format_time($this->start, $this->cal->is24Hour());
-        case 1: // FULL DAY
-        case 3: // None
-            return null;
-        case 2:
-            return __('TBA');
+        switch ($this->time_type) {
+            default:
+                return format_time($this->start, $this->cal->is24Hour());
+            case 1: // FULL DAY
+            case 3: // None
+                return null;
+            case 2:
+                return __('TBA');
         }
     }
 
     /**
      * @return null|string
      */
-    function getTimespanString()
+    public function getTimespanString()
     {
-        switch($this->time_type) {
-        default:
-            $hour24 = $this->cal->is24hour();
-            $str = format_time($this->start, $hour24);
-            if ($this->start != $this->end) {
-                $str .= ' ' . __('to') . ' ' . format_time($this->end, $hour24);
-            }
-            return $str;
-        case 1: // FULL DAY
-        case 3: // None
-            return null;
-        case 2:
-            return __('TBA');
+        switch ($this->time_type) {
+            default:
+                $hour24 = $this->cal->is24hour();
+                $str = format_time($this->start, $hour24);
+                if ($this->start != $this->end) {
+                    $str .= ' ' . __('to') . ' ' . format_time($this->end, $hour24);
+                }
+                return $str;
+            case 1: // FULL DAY
+            case 3: // None
+                return null;
+            case 2:
+                return __('TBA');
         }
     }
 
     /**
      * takes start and end dates and returns a nice display
-     * 
+     *
      * @return string
      */
-    function getDateString()
+    public function getDateString()
     {
         $str = format_date($this->start, $this->cal->getDateFormat());
 
@@ -98,7 +98,7 @@ class Occurrence extends Event
     /**
      * @return string
      */
-    function getDatetimeString()
+    public function getDatetimeString()
     {
         if (days_between($this->start, $this->end) == 0) {
             // normal behaviour
@@ -107,7 +107,6 @@ class Occurrence extends Event
             if (!empty($event_time)) {
                 $str .= ' ' . __('at') . " $event_time";
             }
-            
         } else {
             // format on multiple days
             $str = ' ' . __('From') . ' '
@@ -121,7 +120,7 @@ class Occurrence extends Event
     /**
      * @return int
      */
-    function getOID()
+    public function getOid()
     {
         return $this->oid;
     }
@@ -129,7 +128,7 @@ class Occurrence extends Event
     /**
      * @return int
      */
-    function getTimeType() 
+    public function getTimeType()
     {
         return $this->time_type;
     }
@@ -137,7 +136,7 @@ class Occurrence extends Event
     /**
      * @return \DateTimeImmutable
      */
-    function getStart() 
+    public function getStart()
     {
         return $this->start;
     }
@@ -145,7 +144,7 @@ class Occurrence extends Event
     /**
      * @return \DateTimeImmutable
      */
-    function getEnd() 
+    public function getEnd()
     {
         return $this->end;
     }

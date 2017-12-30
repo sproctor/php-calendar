@@ -36,12 +36,12 @@ class Calendar
     private $fields;
     private $db;
 
-    private function __construct(Database $db) 
+    private function __construct(Database $db)
     {
         $this->db = $db;
     }
 
-    public static function createFromMap(Database $db, $result) 
+    public static function createFromMap(Database $db, $result)
     {
         $calendar = new Calendar($db);
 
@@ -63,9 +63,9 @@ class Calendar
     /**
      * @return string
      */
-    function getTitle()
+    public function getTitle()
     {
-        if(empty($this->title)) {
+        if (empty($this->title)) {
             return __('(No title)');
         }
 
@@ -75,7 +75,7 @@ class Calendar
     /**
      * @return int
      */
-    function getCid()
+    public function getCid()
     {
         return $this->cid;
     }
@@ -83,7 +83,7 @@ class Calendar
     /**
      * @return string|null
      */
-    public function getTimezone() 
+    public function getTimezone()
     {
         return $this->timezone;
     }
@@ -91,7 +91,7 @@ class Calendar
     /**
      * @return string|null
      */
-    public function getLanguage() 
+    public function getLanguage()
     {
         return $this->language;
     }
@@ -99,7 +99,7 @@ class Calendar
     /**
      * @return int
      */
-    public function getSubjectMax() 
+    public function getSubjectMax()
     {
         return $this->subject_max;
     }
@@ -107,21 +107,30 @@ class Calendar
     /**
      * @return string
      */
-    public function getWeekStart() 
+    public function getWeekStart()
     {
         return $this->week_start;
     }
 
-    function getUserPerm($uid, $perm)
+    /**
+     * @param int $uid
+     * @param string $perm
+     * @return bool
+     */
+    public function getUserPerm($uid, $perm)
     {
-        if(!isset($this->user_perms[$uid])) {
+        if (!isset($this->user_perms[$uid])) {
             $this->user_perms[$uid] = $this->db->get_permissions($this->cid, $uid);
         }
 
         return !empty($this->user_perms[$uid][$perm]);
     }
 
-    function canRead(User $user)
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function canRead(User $user)
     {
         if ($this->anon_permission >= 1) {
             return true;
@@ -134,7 +143,11 @@ class Calendar
         return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'read');
     }
 
-    function canWrite(User $user)
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function canWrite(User $user)
     {
         if ($this->anon_permission >= 2) {
             return true;
@@ -147,7 +160,11 @@ class Calendar
         return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'write');
     }
 
-    function canAdmin(User $user)
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function canAdmin(User $user)
     {
         if (!$user->isUser()) {
             return false;
@@ -156,7 +173,11 @@ class Calendar
         return $user->isAdmin() || $this->getUserPerm($user->getUID(), 'admin');
     }
 
-    function canModify(User $user)
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function canModify(User $user)
     {
         if ($this->anon_permission >= 3) {
             return true;
@@ -169,7 +190,11 @@ class Calendar
         return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'modify');
     }
 
-    function canCreateReadonly(User $user)
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function canCreateReadonly(User $user)
     {
         if (!$user->isUser()) {
             return false;
@@ -178,46 +203,54 @@ class Calendar
         return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'readonly');
     }
 
-    function getMaxDisplayEvents() 
+    /**
+     * @return int
+     */
+    public function getMaxDisplayEvents()
     {
         return $this->events_max;
     }
 
-    function get_visible_categories($uid) 
+    /**
+     * @return array
+     */
+    public function getVisibleCategories($uid)
     {
         return $this->db->get_visible_categories($uid, $this->cid);
     }
-        
-    function get_categories() 
+    
+    /**
+     * @return array
+     */
+    public function getCategories()
     {
-        if(!isset($this->categories)) {
+        if (!isset($this->categories)) {
             $this->categories = $this->db->get_categories($this->cid);
         }
         return $this->categories;
     }
 
-    function get_groups() 
+    /**
+     * @return array
+     */
+    public function getGroups()
     {
-        if(!isset($this->groups)) {
+        if (!isset($this->groups)) {
             $this->groups = $this->db->get_groups($this->cid);
         }
         return $this->groups;
     }
 
-    function get_field($fid) 
+    /**
+     * @param int $fid
+     * @return string[]
+     */
+    public function getField($fid)
     {
-        if(!isset($this->fields)) {
+        if (!isset($this->fields)) {
             $this->fields = $this->db->get_fields($this->cid);
         }
         return $this->fields[$fid];
-    }
-
-    public function get_theme() 
-    {
-        if (empty($this->theme)) {
-            return 'smoothness';
-        }
-        return $this->theme;
     }
 
     /**
@@ -225,7 +258,7 @@ class Calendar
      * @param \DateTimeInterface $to
      * @return Occurrence[]
      */
-    public function get_occurrences_by_date_range(\DateTimeInterface $from, \DateTimeInterface $to) 
+    public function getOccurrencesByDateRange(\DateTimeInterface $from, \DateTimeInterface $to)
     {
         return $this->db->get_occurrences_by_date_range($this->cid, $from, $to);
     }
@@ -233,7 +266,7 @@ class Calendar
     /**
      * @return int
      */
-    public function getDateFormat() 
+    public function getDateFormat()
     {
         return $this->date_format;
     }
@@ -241,9 +274,8 @@ class Calendar
     /**
      * @return bool
      */
-    public function is24Hour() 
+    public function is24Hour()
     {
         return $this->hours_24;
     }
 }
-

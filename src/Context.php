@@ -35,11 +35,11 @@ use Symfony\Component\Validator\Validation;
 class Context
 {
     /**
-     * @var Calendar $calendar 
+     * @var Calendar $calendar
      */
     private $calendar;
     /**
-     * @var User $user 
+     * @var User $user
      */
     private $user;
     private $session;
@@ -48,7 +48,7 @@ class Context
     private $month;
     private $day;
     /**
-     * @var Request $request 
+     * @var Request $request
      */
     public $request;
     public $config;
@@ -63,21 +63,21 @@ class Context
     public $host_name;
     public $proto;
     /**
-     * @var  \Twig_Environment 
+     * @var  \Twig_Environment
      */
     public $twig;
 
     /**
      * Context constructor.
      */
-    function __construct(Request $request) 
+    public function __construct(Request $request)
     {
 
         ini_set('arg_separator.output', '&amp;');
         mb_internal_encoding('UTF-8');
         mb_http_output('pass');
 
-        if(defined('PHPC_DEBUG')) {
+        if (defined('PHPC_DEBUG')) {
             error_reporting(E_ALL);
             ini_set('display_errors', 1);
             ini_set('html_errors', 1);
@@ -94,7 +94,7 @@ class Context
 
         include_once __DIR__ . '/schema.php';
         if ($this->db->get_config('version') < PHPC_DB_VERSION) {
-            if(isset($_GET['update'])) {
+            if ($request->get('update') !== null) {
                 $this->db->update();
                 if (!$this->db->update()) {
                     $this->addMessage(__('Already up to date.'));
@@ -105,7 +105,7 @@ class Context
             }
         }
 
-        $this->read_login_token();
+        $this->readLoginToken();
 
         $this->initTimezone();
         $this->initLang($request);
@@ -120,23 +120,23 @@ class Context
      * @param string $filename
      * @return string[]
      */
-    private function loadConfig($filename) 
+    private function loadConfig($filename)
     {
         // Run the installer if we have no config file
         // This doesn't work when embedded from outside
-        if(!file_exists($filename)) {
+        if (!file_exists($filename)) {
             throw new InvalidConfigException();
         }
         $config = include $filename;
 
-        if(!isset($config["sql_host"])) {
+        if (!isset($config["sql_host"])) {
             throw new InvalidConfigException();
         }
 
         return $config;
     }
 
-    private function initTwig() 
+    private function initTwig()
     {
         
         $appVariableReflection = new \ReflectionClass('\Symfony\Bridge\Twig\AppVariable');
@@ -186,7 +186,11 @@ class Context
         $this->twig->addGlobal('query_string', $this->request->getQueryString());
         $this->twig->addGlobal('languages', get_languages());
 
-        $this->twig->addFunction(new \Twig_SimpleFunction('dropdown', '\PhpCalendar\create_dropdown', array('is_safe' => array('html'))));
+        $this->twig->addFunction(new \Twig_SimpleFunction(
+            'dropdown',
+            '\PhpCalendar\create_dropdown',
+            array('is_safe' => array('html'))
+        ));
         $this->twig->addFilter(new \Twig_SimpleFilter('trans', '\PhpCalendar\__'));
         $this->twig->addFunction(new \Twig_SimpleFunction('_p', '\PhpCalendar\__p'));
         $this->twig->addFunction(new \Twig_SimpleFunction('day_name', '\PhpCalendar\day_name'));
@@ -224,16 +228,19 @@ class Context
             )
         );
         $this->twig->addFunction(new \Twig_SimpleFunction('is_today', '\PhpCalendar\is_today'));
-        $this->twig->addFunction(new \Twig_SimpleFunction('action_date_url', '\PhpCalendar\action_date_url_from_datetime'));
+        $this->twig->addFunction(new \Twig_SimpleFunction('action_date_url', '\PhpCalendar\action_date_url'));
         $this->twig->addFunction(new \Twig_SimpleFunction('action_url', '\PhpCalendar\action_url'));
         $this->twig->addFunction(new \Twig_SimpleFunction('action_event_url', '\PhpCalendar\action_event_url'));
-        $this->twig->addFunction(new \Twig_SimpleFunction('action_occurrence_url', '\PhpCalendar\action_occurrence_url'));
+        $this->twig->addFunction(new \Twig_SimpleFunction(
+            'action_occurrence_url',
+            '\PhpCalendar\action_occurrence_url'
+        ));
         $this->twig->addFunction(new \Twig_SimpleFunction('change_lang_url', '\PhpCalendar\change_lang_url'));
         $this->twig->addFunction(
             new \Twig_SimpleFunction(
                 'day',
                 function (\DateTimeInterface $date) {
-                    return $date->format('j'); 
+                    return $date->format('j');
                 }
             )
         );
@@ -241,7 +248,7 @@ class Context
             new \Twig_SimpleFunction(
                 'month',
                 function (\DateTimeInterface $date) {
-                    return $date->format('n'); 
+                    return $date->format('n');
                 }
             )
         );
@@ -249,7 +256,7 @@ class Context
             new \Twig_SimpleFunction(
                 'can_write',
                 function (User $user, Calendar $calendar) {
-                    return $calendar->canWrite($user); 
+                    return $calendar->canWrite($user);
                 }
             )
         );
@@ -258,25 +265,29 @@ class Context
                 'occurrences_for_date',
                 function ($occurrences, \DateTimeInterface $date) {
                     $key = index_of_date($date);
-                    if(array_key_exists($key, $occurrences)) {
+                    if (array_key_exists($key, $occurrences)) {
                         return $occurrences[index_of_date($date)];
                     }
                     return null;
                 }
             )
         );
-        $this->twig->addFunction(new \Twig_SimpleFunction('menu_item', '\PhpCalendar\menu_item', array('is_safe' => array('html'))));
+        $this->twig->addFunction(new \Twig_SimpleFunction(
+            'menu_item',
+            '\PhpCalendar\menu_item',
+            array('is_safe' => array('html'))
+        ));
     }
 
     /**
      * @return string
      */
-    public function getAction() 
+    public function getAction()
     {
         return $this->request->get('action', 'display_month');
     }
 
-    private function initVars() 
+    private function initVars()
     {
         $this->script = htmlentities($_SERVER['SCRIPT_NAME']);
         $this->url_path = dirname($_SERVER['SCRIPT_NAME']);
@@ -292,13 +303,13 @@ class Context
         : "http";
     }
 
-    private function initCurrentCalendar() 
+    private function initCurrentCalendar()
     {
         // Find current calendar
         $current_cid = $this->getCurrentCID();
 
         $this->calendar = $this->db->getCalendar($current_cid);
-        if(empty($this->calendar)) {
+        if (empty($this->calendar)) {
             throw new \Exception(__("Bad calendar ID."));
         }
     }
@@ -307,37 +318,37 @@ class Context
      * @return int
      * @throws \Exception
      */
-    private function getCurrentCID() 
+    private function getCurrentCID()
     {
         $phpcid = $this->request->get('phpcid');
-        if(isset($phpcid)) {
-            if(!is_numeric($phpcid)) {
+        if (isset($phpcid)) {
+            if (!is_numeric($phpcid)) {
                 throw new InvalidInputException(__("Invalid calendar ID."));
             }
             return $phpcid;
         }
         
         $eid = $this->request->get('eid');
-        if(isset($eid)) {
-            if(is_array($eid)) {
+        if (isset($eid)) {
+            if (is_array($eid)) {
                 $eid = $eid[0];
             }
             $event = $this->db->getEvent($eid);
-            if($event != null) {
+            if ($event != null) {
                 return $event->getCalendar()->getCid();
             }
         }
         
         $oid = $this->request->get('oid');
-        if(isset($oid)) {
+        if (isset($oid)) {
             $event = $this->db->getEventByOid($_REQUEST['oid']);
-            if($event != null) {
+            if ($event != null) {
                 return $event->getCalendar()->getCid();
             }
         }
         
         $calendars = $this->db->getCalendars();
-        if(empty($calendars)) {
+        if (empty($calendars)) {
             throw new \Exception(escape_entities("There are no calendars."));
             // TODO: create a page to fix this
         } else {
@@ -354,33 +365,33 @@ class Context
         }
     }
 
-    private function initTimezone() 
+    private function initTimezone()
     {
         // Set timezone
         $tz = $this->getUser()->getTimezone();
-        if(empty($tz)) {
+        if (empty($tz)) {
             $tz = $this->getCalendar()->getTimezone();
         }
 
-        if(!empty($tz)) {
+        if (!empty($tz)) {
             date_default_timezone_set($tz);
         }
     }
 
-    private function initDate() 
+    private function initDate()
     {
-        if(isset($_REQUEST['month']) && is_numeric($_REQUEST['month'])) {
+        if (isset($_REQUEST['month']) && is_numeric($_REQUEST['month'])) {
             $this->month = $_REQUEST['month'];
-            if($this->month < 1 || $this->month > 12) {
+            if ($this->month < 1 || $this->month > 12) {
                 throw new InvalidInputException(__("Month is out of range."));
             }
         } else {
             $this->month = date('n');
         }
 
-        if(isset($_REQUEST['year']) && is_numeric($_REQUEST['year'])) {
+        if (isset($_REQUEST['year']) && is_numeric($_REQUEST['year'])) {
             $time = mktime(0, 0, 0, $this->month, 1, $_REQUEST['year']);
-            if(!$time || $time < 0) {
+            if (!$time || $time < 0) {
                 throw new InvalidInputException(__('Invalid year') . ": {$_REQUEST['year']}");
             }
             $this->year = date('Y', $time);
@@ -388,10 +399,10 @@ class Context
             $this->year = date('Y');
         }
 
-        if(isset($_REQUEST['day']) && is_numeric($_REQUEST['day'])) {
+        if (isset($_REQUEST['day']) && is_numeric($_REQUEST['day'])) {
             $this->day = ($_REQUEST['day'] - 1) % date('t', mktime(0, 0, 0, $this->month, 1, $this->year)) + 1;
         } else {
-            if($this->month == date('n') && $this->year == date('Y')) {
+            if ($this->month == date('n') && $this->year == date('Y')) {
                 $this->day = date('j');
             } else {
                 $this->day = 1;
@@ -402,7 +413,7 @@ class Context
     /**
      * @param string $message
      */
-    function addMessage($message) 
+    public function addMessage($message)
     {
         $this->session->getFlashBag()->add('message', $message);
     }
@@ -410,7 +421,7 @@ class Context
     /**
      * @return string[]
      */
-    function getMessages() 
+    public function getMessages()
     {
         return $this->session->getFlashBag()->get('message');
     }
@@ -418,7 +429,7 @@ class Context
     /**
      * @return User
      */
-    public function getUser() 
+    public function getUser()
     {
         if (!isset($this->user)) {
             $this->user = User::createAnonymous($this->db, $this->request);
@@ -429,7 +440,7 @@ class Context
     /**
      * @param User $user
      */
-    public function setUser(User $user) 
+    public function setUser(User $user)
     {
         $this->user = $user;
     }
@@ -437,9 +448,9 @@ class Context
     /**
      * @return Calendar
      */
-    public function getCalendar() 
+    public function getCalendar()
     {
-        if(!isset($this->calendar)) {
+        if (!isset($this->calendar)) {
             $this->initCurrentCalendar();
         }
 
@@ -449,7 +460,7 @@ class Context
     /**
      * @return int
      */
-    public function getYear() 
+    public function getYear()
     {
         return $this->year;
     }
@@ -457,7 +468,7 @@ class Context
     /**
      * @return int
      */
-    public function getMonth() 
+    public function getMonth()
     {
         return $this->month;
     }
@@ -465,12 +476,12 @@ class Context
     /**
      * @return int
      */
-    public function getDay() 
+    public function getDay()
     {
         return $this->day;
     }
 
-    private function initLang(Request $request) 
+    private function initLang(Request $request)
     {
         // setup translation stuff
         $lang = $request->get('lang', $this->getUser()->getLanguage());
@@ -485,19 +496,19 @@ class Context
         }
 
         // Require a 2 letter language
-        if(!preg_match('/^\w+$/', $lang, $matches)) {
+        if (!preg_match('/^\w+$/', $lang, $matches)) {
             $lang = 'en';
         }
 
         $this->lang = $lang;
     }
 
-    public function getLang() 
+    public function getLang()
     {
         return $this->lang;
     }
 
-    public function getFormFactory() 
+    public function getFormFactory()
     {
         return $this->formFactory;
     }
@@ -507,7 +518,7 @@ class Context
      * @param string  $page
      * @return RedirectResponse
      */
-    public function redirect(Context $context, $page) 
+    public function redirect(Context $context, $page)
     {
         $dir = $page{0} == '/' ?  '' : dirname($context->script) . '/';
         $url = $context->proto . '://'. $context->host_name . $dir . $page;
@@ -515,10 +526,9 @@ class Context
         return new RedirectResponse($url);
     }
 
-    private function read_login_token() 
+    private function readLoginToken()
     {
-        if(isset($_COOKIE["identity"])) {
-
+        if (isset($_COOKIE["identity"])) {
             $decoded = \Firebase\JWT\JWT::decode($_COOKIE["identity"], $this->config["token_key"], array('HS256'));
             $decoded_array = (array) $decoded;
             $data = (array) $decoded_array["data"];
@@ -529,24 +539,23 @@ class Context
         }
     }
 
-    function getPage()
+    public function getPage()
     {
-        switch($this->getAction()) {
-        case 'event_form':
-            return new EventFormPage;
-        case 'display_event':
-            return new EventPage;
-        case 'display_month':
-            return new MonthPage;
-        case 'display_day':
-            return new DayPage;
-        case 'login':
-            return new LoginPage;
-        case 'logout':
-            return new LogoutPage;
-        default:
-            throw new \Exception(__('Invalid action'));
+        switch ($this->getAction()) {
+            case 'event_form':
+                return new EventFormPage;
+            case 'display_event':
+                return new EventPage;
+            case 'display_month':
+                return new MonthPage;
+            case 'display_day':
+                return new DayPage;
+            case 'login':
+                return new LoginPage;
+            case 'logout':
+                return new LogoutPage;
+            default:
+                throw new \Exception(__('Invalid action'));
         }
     }
-
 }

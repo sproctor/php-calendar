@@ -27,35 +27,35 @@ class MonthPage extends Page
 {
     /**
      * Full display for a month
-     * 
+     *
      * @param  Context $context
      * @return Response
      */
-    function action(Context $context)
+    public function action(Context $context)
     {
         $calendar = $context->getCalendar();
-        $cid = $calendar->getCID();
+        $cid = $calendar->getCid();
         $month = $context->getMonth();
         $year = $context->getYear();
 
         $months = array();
-        for($i = 1; $i <= 12; $i++) {
+        for ($i = 1; $i <= 12; $i++) {
             $months["{$context->script}?action=display_month&amp;phpcid=$cid&amp;month=$i&amp;year=$year"] =
             month_name($i);
         }
         $years = array();
-        for($i = $year - 5; $i <= $year + 5; $i++) {
+        for ($i = $year - 5; $i <= $year + 5; $i++) {
             $years["{$context->script}?action=display_month&amp;phpcid=$cid&amp;month=$month&amp;year=$i"] = $i;
         }
         $next_month = $month + 1;
         $next_year = $year;
-        if($next_month > 12) {
+        if ($next_month > 12) {
             $next_month -= 12;
             $next_year++;
         }
         $prev_month = $month - 1;
         $prev_year = $year;
-        if($prev_month < 1) {
+        if ($prev_month < 1) {
             $prev_month += 12;
             $prev_year--;
         }
@@ -82,7 +82,9 @@ class MonthPage extends Page
         $template_variables['week_start'] = $week_start;
         $template_variables['weeks'] = $weeks;
         $template_variables['occurrences'] = get_occurrences_by_day(
-            $calendar, $context->getUser(), $from_date,
+            $calendar,
+            $context->getUser(),
+            $from_date,
             $to_date
         );
         $template_variables['start_date'] = $from_date;

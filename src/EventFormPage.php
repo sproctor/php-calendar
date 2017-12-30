@@ -41,7 +41,7 @@ class EventFormPage extends Page
 {
     /**
      * Display event form or submit event
-     * 
+     *
      * @param  Context $context
      * @return Response
      */
@@ -50,7 +50,7 @@ class EventFormPage extends Page
         $form = $this->eventForm($context);
 
         $form->handleRequest($context->request);
-        if($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             return $this->processForm($context, $form->getData());
         }
         
@@ -62,39 +62,45 @@ class EventFormPage extends Page
      * @param Context $context
      * @return Form
      */
-    private function eventForm(Context $context) 
+    private function eventForm(Context $context)
     {
         $builder = $context->getFormFactory()->createBuilder();
 
         $builder->add(
-            'subject', TextType::class, array('attr' =>
-                array('autocomplete' => 'off', 'maxlength' => $context->getCalendar()->getSubjectMax()),
-            'label' => _('Subject'), 'constraints' => new Assert\NotBlank())
+            'subject',
+            TextType::class,
+            array('attr' => array('autocomplete' => 'off', 'maxlength' => $context->getCalendar()->getSubjectMax()),
+                'label' => _('Subject'), 'constraints' => new Assert\NotBlank())
         )
-            ->add('description', TextareaType::class, array('required' => false))
-            ->add('start', DateTimeType::class, array('label' => __('From'), 'widget' => 'single_text'))
-            ->add('end', DateTimeType::class, array('label' => __('To'), 'widget' => 'single_text'))
-            ->add(
-                'time_type', ChoiceType::class, array('label' => __('Time Type'),
+        ->add('description', TextareaType::class, array('required' => false))
+        ->add('start', DateTimeType::class, array('label' => __('From'), 'widget' => 'single_text'))
+        ->add('end', DateTimeType::class, array('label' => __('To'), 'widget' => 'single_text'))
+        ->add(
+            'time_type',
+            ChoiceType::class,
+            array('label' => __('Time Type'),
                 'choices' => array(
-                __('Normal') => 0,
-                __('Full Day') => 1,
-                __('To Be Announced') => 2))
-            )
-            ->add(
-                'repeats', ChoiceType::class, array('label' => __('Repeats'),
+                    __('Normal') => 0,
+                    __('Full Day') => 1,
+                    __('To Be Announced') => 2))
+        )
+        ->add(
+            'repeats',
+            ChoiceType::class,
+            array('label' => __('Repeats'),
                 'choices' => array(
-                __('Never') => '0',
-                __('Daily') => 'D',
-                __('Weekly') => 'W',
-                __('Monthly') => 'M',
-                __('Yearly') => 'Y'))
-            )
-            ->add(
-                'frequency', IntegerType::class, array('constraints' => new Assert\GreaterThan(0),
-                'data' => 1)
-            )
-            ->add('until', DateType::class, array('label' => __('Until'), 'widget' => 'single_text'));
+                    __('Never') => '0',
+                    __('Daily') => 'D',
+                    __('Weekly') => 'W',
+                    __('Monthly') => 'M',
+                    __('Yearly') => 'Y'))
+        )
+        ->add(
+            'frequency',
+            IntegerType::class,
+            array('constraints' => new Assert\GreaterThan(0), 'data' => 1)
+        )
+        ->add('until', DateType::class, array('label' => __('Until'), 'widget' => 'single_text'));
 
         //echo "<pre>"; var_dump($context->request); echo "</pre>";
         if ($context->request->get('eid') !== null) {
@@ -103,8 +109,9 @@ class EventFormPage extends Page
             $occs = $context->db->get_occurrences_by_eid($eid);
             $occurrence = $occs[0];
             $builder->add(
-                'modify', CheckboxType::class, array('label' => __('Change the event date and time'),
-                'required' => false)
+                'modify',
+                CheckboxType::class,
+                array('label' => __('Change the event date and time'), 'required' => false)
             );
             $builder->add('eid', HiddenType::class, array('data' => $eid));
             $builder->get('subject')->setData($event->getRawSubject());
@@ -165,20 +172,25 @@ class EventFormPage extends Page
     
         $catid = empty($data['catid']) ? null : $data['catid'];
     
-        if(!isset($data['eid'])) {
+        if (!isset($data['eid'])) {
             $modify = false;
             $eid = $context->db->createEvent(
-                $calendar->getCID(), $user->getUID(),
-                $data["subject"], (string) $data["description"], $catid
+                $calendar->getCID(),
+                $user->getUID(),
+                $data["subject"],
+                (string) $data["description"],
+                $catid
             );
         } else {
             $modify = true;
             $eid = $data['eid'];
             $context->db->modifyEvent(
-                $eid, $data['subject'],
-                $data['description'], $catid
+                $eid,
+                $data['subject'],
+                $data['description'],
+                $catid
             );
-            if($modify_occur) {
+            if ($modify_occur) {
                 $context->db->delete_occurrences($eid);
             }
         }
@@ -193,7 +205,7 @@ class EventFormPage extends Page
         $phpcdb->add_event_field($eid, $fid, $vars["phpc-field-$fid"]);
         }*/
     
-        if($modify_occur) {
+        if ($modify_occur) {
             $occurrences = 0;
             
             if ($data['repeats'] == '0') {
@@ -203,7 +215,7 @@ class EventFormPage extends Page
                 
                 echo "days between: " . days_between($data['start'], $data['until']);
 
-                while($occurrences <= 730 && days_between($data['start'], $data['until']) >= 0) {
+                while ($occurrences <= 730 && days_between($data['start'], $data['until']) >= 0) {
                     $oid = $context->db->create_occurrence($eid, $data['time_type'], $data['start'], $data['end']);
                     $occurrences++;
         
@@ -216,28 +228,27 @@ class EventFormPage extends Page
         $context->addMessage(($modify ? __("Modified event") : __("Created event")).": $eid");
         return new RedirectResponse(action_event_url($context, 'display_event', $eid));
     }
-    
 }
 
-function display_form() 
+function display_form()
 {
 
     $categories = new FormDropdownQuestion('catid', __('Category'));
     $categories->add_option('', __('None'));
     $have_categories = false;
-    foreach($phpc_cal->get_visible_categories($phpc_user->get_uid()) as $category) {
+    foreach ($phpc_cal->get_visible_categories($phpc_user->get_uid()) as $category) {
         $categories->add_option($category['catid'], $category['name']);
         $have_categories = true;
     }
-    if($have_categories) {
+    if ($have_categories) {
         $form->add_part($categories);
     }
 
-    foreach($phpc_cal->get_fields() as $field) {
+    foreach ($phpc_cal->get_fields() as $field) {
         $form->add_part(new FormFreeQuestion('phpc-field-'.$field['fid'], $field['name']));
     }
 
-    if(isset($vars['eid'])) {
+    if (isset($vars['eid'])) {
         $form->add_hidden('eid', $vars['eid']);
         $occs = $phpcdb->get_occurrences_by_eid($vars['eid']);
         $event = $occs[0];
@@ -253,35 +264,31 @@ function display_form()
         'readonly' => $event->is_readonly(),
         );
 
-        foreach($event->get_fields() as $field) {
+        foreach ($event->get_fields() as $field) {
             $defaults["phpc-field-{$field['fid']}"] = $field['value'];
         }
 
-        if(!empty($event->catid)) {
+        if (!empty($event->catid)) {
             $defaults['catid'] = $event->catid;
         }
 
-        switch($event->get_time_type()) {
-        case 0:
-            $defaults['time-type'] = 'normal';
-            break;
-        case 1:
-            $defaults['time-type'] = 'full';
-            break;
-        case 2:
-            $defaults['time-type'] = 'tba';
-            break;
+        switch ($event->get_time_type()) {
+            case 0:
+                $defaults['time-type'] = 'normal';
+                break;
+            case 1:
+                $defaults['time-type'] = 'full';
+                break;
+            case 2:
+                $defaults['time-type'] = 'tba';
+                break;
         }
 
         add_repeat_defaults($occs, $defaults);
-
     } else {
         $hour24 = $phpc_cal->hours_24;
         $datefmt = $phpc_cal->date_format;
-        $date_string = format_short_date_string(
-            $phpc_year, $phpc_month,
-            $phpc_day, $datefmt
-        );
+        $date_string = format_short_date_string($phpc_year, $phpc_month, $phpc_day, $datefmt);
         $defaults = array(
         'cid' => $phpcid,
         'start-date' => $date_string,
@@ -297,13 +304,13 @@ function display_form()
     return $form->get_form($defaults);
 }
 
-function add_repeat_defaults($occs, &$defaults) 
+function add_repeat_defaults($occs, &$defaults)
 {
     // TODO: Handle unevenly spaced occurrences
 
     $defaults['repeats'] = 'never';
 
-    if(sizeof($occs) < 2) {
+    if (sizeof($occs) < 2) {
         return;
     }
 
@@ -321,7 +328,7 @@ function add_repeat_defaults($occs, &$defaults)
     $ndays = days_between($event->get_start_ts(), $occs[1]->get_start_ts());
     $repeats_daily = true;
 
-    for($i = 1; $i < sizeof($occs); $i++) {
+    for ($i = 1; $i < sizeof($occs); $i++) {
         $cur_occ = $occs[$i];
         $cur_year = $cur_occ->get_start_year();
         $cur_month = $cur_occ->get_start_month();
@@ -329,7 +336,7 @@ function add_repeat_defaults($occs, &$defaults)
 
         // Check year
         $cur_nyears = $cur_year - $occs[$i - 1]->get_start_year();
-        if($cur_day != $day || $cur_month != $month
+        if ($cur_day != $day || $cur_month != $month
             || $cur_nyears != $nyears
         ) {
             $repeats_yearly = false;
@@ -338,7 +345,7 @@ function add_repeat_defaults($occs, &$defaults)
         // Check month
         $cur_nmonths = ($cur_year - $occs[$i - 1]->get_start_year())
         * 12 + $cur_month - $occs[$i - 1]->get_start_month();
-        if($cur_day != $day || $cur_nmonths != $nmonths) {
+        if ($cur_day != $day || $cur_nmonths != $nmonths) {
             $repeats_monthly = false;
         }
 
@@ -347,7 +354,7 @@ function add_repeat_defaults($occs, &$defaults)
             $occs[$i - 1]->get_start_ts(),
             $occs[$i]->get_start_ts()
         );
-        if($cur_ndays != $ndays) {
+        if ($cur_ndays != $ndays) {
             $repeats_daily = false;
         }
     }
@@ -357,9 +364,9 @@ function add_repeat_defaults($occs, &$defaults)
     $defaults['weekly-until-date'] = "$cur_month/$cur_day/$cur_year";
     $defaults['daily-until-date'] = "$cur_month/$cur_day/$cur_year";
 
-    if($repeats_daily) {
+    if ($repeats_daily) {
         // repeats weekly
-        if($ndays % 7 == 0) {
+        if ($ndays % 7 == 0) {
             $defaults['repeats'] = 'weekly';
             $defaults['every-week'] = $ndays / 7;
         } else {
@@ -369,24 +376,22 @@ function add_repeat_defaults($occs, &$defaults)
             $defaults['repeats'] = 'daily';
             $defaults['every-day'] = $ndays;
         }
-
     } else {
         $defaults['every-day'] = 1;
         $defaults['every-week'] = 1;
     }
 
-    if($repeats_monthly) {
+    if ($repeats_monthly) {
         $defaults['repeats'] = 'monthly';
         $defaults['every-month'] = $nmonths;
     } else {
         $defaults['every-month'] = 1;
     }
 
-    if($repeats_yearly) {
+    if ($repeats_yearly) {
         $defaults['repeats'] = 'yearly';
         $defaults['every-year'] = $nyears;
     } else {
         $defaults['every-year'] = 1;
     }
 }
-

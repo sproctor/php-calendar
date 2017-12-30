@@ -22,44 +22,44 @@ use Symfony\Component\HttpFoundation\Request;
 class User
 {
     /**
-     * @var int $uid 
+     * @var int $uid
      */
     private $uid;
     /**
-     * @var string $username 
+     * @var string $username
      */
     private $username;
     /**
-     * @var string $hash 
+     * @var string $hash
      */
     private $hash;
     /**
-     * @var string $admin 
+     * @var string $admin
      */
     private $admin;
     /**
-     * @var bool $password_editable 
+     * @var bool $password_editable
      */
     private $password_editable;
     /**
-     * @var int $default_cid 
+     * @var int $default_cid
      */
     private $default_cid;
     /**
-     * @var string|null $timezone 
+     * @var string|null $timezone
      */
     private $timezone;
     /**
-     * @var string|null $language 
+     * @var string|null $language
      */
     private $language;
     private $groups;
     /**
-     * @var bool $disabled 
+     * @var bool $disabled
      */
     private $disabled;
     /**
-     * @var Database $db 
+     * @var Database $db
      */
     private $db;
 
@@ -78,7 +78,7 @@ class User
      * @param $map
      * @return User
      */
-    public static function createFromMap(Database $db, $map) 
+    public static function createFromMap(Database $db, $map)
     {
         $user = new User($db);
 
@@ -100,7 +100,7 @@ class User
      * @param Request  $request
      * @return User
      */
-    public static function createAnonymous(Database $db, Request $request) 
+    public static function createAnonymous(Database $db, Request $request)
     {
         $user = new User($db);
 
@@ -118,7 +118,7 @@ class User
     /**
      * @return string
      */
-    function getUsername()
+    public function getUsername()
     {
         return $this->username;
     }
@@ -126,7 +126,7 @@ class User
     /**
      * @return int
      */
-    function getUid()
+    public function getUid()
     {
         return $this->uid;
     }
@@ -134,7 +134,7 @@ class User
     /**
      * @return string
      */
-    function getPasswordHash() 
+    public function getPasswordHash()
     {
         return $this->hash;
     }
@@ -142,7 +142,7 @@ class User
     /**
      * @return bool
      */
-    function hasEditablePassword() 
+    public function hasEditablePassword()
     {
         return $this->password_editable;
     }
@@ -150,41 +150,41 @@ class User
     /**
      * @return string
      */
-    function getTimezone() 
+    public function getTimezone()
     {
         return $this->timezone;
     }
 
-    function getLanguage() 
+    public function getLanguage()
     {
         return $this->language;
     }
     
-    function getGroups() 
+    public function getGroups()
     {
-        if(!isset($this->groups)) {
+        if (!isset($this->groups)) {
             $this->groups = $this->db->get_user_groups($this->uid);
         }
 
         return $this->groups;
     }
 
-    function isDisabled() 
+    public function isDisabled()
     {
         return $this->disabled;
     }
 
-    function isAdmin() 
+    public function isAdmin()
     {
         return $this->admin;
     }
 
-    function defaultCID() 
+    public function defaultCid()
     {
         return $this->default_cid;
     }
 
-    function isUser()
+    public function isUser()
     {
         return $this->uid > 0;
     }
@@ -197,7 +197,7 @@ class User
     {
         $tz = $request->get('tz');
         // If we have a timezone, make sure it's valid
-        if(in_array($tz, timezone_identifiers_list())) {
+        if (in_array($tz, timezone_identifiers_list())) {
             return $tz;
         }
     
@@ -208,7 +208,7 @@ class User
      * @param Request $request
      * @return string|null
      */
-    private static function getAnonymousLanguage(Request $request) 
+    private static function getAnonymousLanguage(Request $request)
     {
         return $request->get('lang');
     }

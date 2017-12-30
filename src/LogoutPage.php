@@ -26,11 +26,9 @@ class LogoutPage extends Page
      * @param Context $context
      * @return Response
      */
-    function action(Context $context)
+    public function action(Context $context)
     {
         setcookie('identity', "", time() - 3600);
         return redirect($context, $context->script);
     }
 }
-
-?>

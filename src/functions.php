@@ -24,12 +24,16 @@ namespace PhpCalendar;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+define('PHPC_CONFIG_FILE', realpath(__DIR__.'/../config.php'));
+define('PHPC_VERSION', '2.1.0');
+define('PHPC_DEBUG', 1);
+
 define('PHPC_CHECK', 1);
 define('PHPC_TEXT', 2);
 define('PHPC_DROPDOWN', 3);
 define('PHPC_MULTI_DROPDOWN', 4);
 
-function __($msg) 
+function __($msg)
 {
     global $translator;
 
@@ -40,7 +44,7 @@ function __($msg)
     return $translator->trans($msg);
 }
 
-function __p($context, $msg) 
+function __p($context, $msg)
 {
     global $translator;
 
@@ -76,7 +80,7 @@ function minute_pad($minute)
  * @param string  $page
  * @return RedirectResponse
  */
-function redirect(Context $context, $page) 
+function redirect(Context $context, $page)
 {
     $dir = $page{0} == '/' ?  '' : dirname($context->script) . '/';
     $url = $context->proto . '://'. $context->host_name . $dir . $page;
@@ -84,7 +88,7 @@ function redirect(Context $context, $page)
     return new RedirectResponse($url);
 }
 
-function escape_entities($string) 
+function escape_entities($string)
 {
     return htmlspecialchars($string, ENT_NOQUOTES, "UTF-8");
 }
@@ -104,7 +108,7 @@ function asbool($val)
  * @param bool               $hours24
  * @return string
  */
-function format_datetime(\DateTimeInterface $date, $date_format, $hours24) 
+function format_datetime(\DateTimeInterface $date, $date_format, $hours24)
 {
     return format_date($date, $date_format) . ' '
     . __('at') . ' ' . format_time($date, $hours24);
@@ -121,14 +125,14 @@ function format_date(\DateTimeInterface $date, $date_format)
     $day = $date->format('j');
     $year = $date->format('Y');
     
-    switch($date_format) {
-    default:
-    case 0:
-        return "$month $day, $year";
-    case 1:
-        return "$year $month $day";
-    case 2:
-        return "$day $month $year";
+    switch ($date_format) {
+        default:
+        case 0:
+            return "$month $day, $year";
+        case 1:
+            return "$year $month $day";
+        case 2:
+            return "$day $month $year";
     }
 }
 
@@ -139,14 +143,14 @@ function format_date(\DateTimeInterface $date, $date_format)
  */
 function format_date_short(\DateTimeInterface $date, $date_format)
 {
-    switch($date_format) {
-    default:
-    case 0: // Month Day Year
-        return $date->format('n\/j\/Y');
-    case 1: // Year Month Day
-        return $date->format('Y\-n\-j');
-    case 2: // Day Month Year
-        return $date->format('j\-n\-Y');
+    switch ($date_format) {
+        default:
+        case 0: // Month Day Year
+            return $date->format('n\/j\/Y');
+        case 1: // Year Month Day
+            return $date->format('Y\-n\-j');
+        case 2: // Day Month Year
+            return $date->format('j\-n\-Y');
     }
 }
 
@@ -157,7 +161,7 @@ function format_date_short(\DateTimeInterface $date, $date_format)
  */
 function format_time(\DateTimeInterface $date, $hour24)
 {
-    if($hour24) {
+    if ($hour24) {
         return $date->format('G\:i');
     } else {
         return $date->format('g\:i\ A');
@@ -178,7 +182,7 @@ function parse_desc($text)
  * @param int $year
  * @return int
  */
-function days_in_year($year) 
+function days_in_year($year)
 {
     return 365 + intval(create_datetime(1, 1, $year)->format('L'));
 }
@@ -188,7 +192,7 @@ function days_in_year($year)
  * @param \DateTimeInterface $date2
  * @return int
  */
-function days_between(\DateTimeInterface $date1, \DateTimeInterface $date2) 
+function days_between(\DateTimeInterface $date1, \DateTimeInterface $date2)
 {
     $year1 = intval($date1->format('Y'));
     $year2 = intval($date2->format('Y'));
@@ -215,7 +219,7 @@ function login_user(Context $context, $username, $password)
 {
     $user = $context->db->get_user_by_name($username);
     //echo "<pre>"; var_dump($user); echo "</pre>";
-    if(!$user) {
+    if (!$user) {
         return false;
     }
 
@@ -291,7 +295,7 @@ function get_languages()
 {
     static $langs = null;
 
-    $translation_path = PHPC_ROOT_PATH . '/translations';
+    $translation_path = realpath(__DIR__.'/../translations');
     if(!empty($langs)) {
         return $langs;
     }
@@ -404,7 +408,7 @@ function week_of_year(\DateTimeInterface $date, $week_start)
     //   Most other places the first week contains Jan 1st
     //   There are a few outliers that start weeks on Monday and use
     //   Jan 1st for the first week. We'll ignore them for now.
-    if($week_start == 1) {
+    if ($week_start == 1) {
         $year_contains = 4;
     } else {
         $year_contains = 1;
@@ -412,7 +416,7 @@ function week_of_year(\DateTimeInterface $date, $week_start)
     
     // if the week is in December and contains Jan $year_contains, it's a week
     // from next year
-    if($month == 12 && $day - 24 >= $year_contains) {
+    if ($month == 12 && $day - 24 >= $year_contains) {
         $year++;
         $month = 1;
         $day -= 31;
@@ -422,7 +426,7 @@ function week_of_year(\DateTimeInterface $date, $week_start)
     // so it can be negative. If it's in the previous year, we want to use
     // that negative value, unless the week is also in the previous year,
     // then we want to switch to using that year.
-    if($day < 1 && $month == 1 && $day > $year_contains - 7) {
+    if ($day < 1 && $month == 1 && $day > $year_contains - 7) {
         $day_of_year = $day - 1;
     } else {
         $day_of_year = $date->format('z');
@@ -442,76 +446,18 @@ function week_of_year(\DateTimeInterface $date, $week_start)
 }
 
 /**
- * @param Context     $context
- * @param string      $text
- * @param string      $action
- * @param string      $eid
- * @param string|null $classes
- * @param string|null $id
- * @return string
- */
-function create_event_link(Context $context, $text, $action, $eid, $classes = null, $id = null)
-{
-    return create_action_link($context, $text, $action, array("eid" => $eid), $classes, $id);
-}
-
-/**
- * @param Context    $context
- * @param ActionItem $item
- * @param string     $oid
- * @return Tag
- */
-function create_occurrence_link(Context $context, ActionItem $item, $oid)
-{
-    $item->addArgument("oid", $oid);
-    return create_action_link($context, $item);
-}
-
-/**
- * @param Context     $context
- * @param ActionItem  $item
- * @param null|string $year
- * @param null|string $month
- * @param null|string $day
- * @return Tag
- */
-function create_action_link_with_date(Context $context, ActionItem $item, $year = null, $month = null, $day = null)
-{
-    if($year !== null) {
-        $item->addArgument("year", $year);
-    }
-    if($month !== null) {
-        $item->addArgument("month", $month);
-    }
-    if($day !== null) {
-        $item->addArgument("day", $day);
-    }
-
-    return create_action_link($context, $item);
-}
-
-/**
  * @param Context            $context
  * @param string             $action
  * @param \DateTimeInterface $date
  * @return string
  */
-function action_date_url_from_datetime(Context $context, $action, \DateTimeInterface $date) 
+function action_date_url(Context $context, $action, \DateTimeInterface $date)
 {
-    return action_date_url($context, $action, $date->format('Y'), $date->format('n'), $date->format('j'));
-}
-
-/**
- * @param Context $context
- * @param string  $action
- * @param int     $year
- * @param int     $month
- * @param int     $day
- * @return string
- */
-function action_date_url(Context $context, $action, $year, $month, $day) 
-{
-    return action_url($context, $action, ['year' => $year, 'month' => $month, 'day' => $day]);
+    return action_url(
+        $context,
+        $action,
+        ['year' => $date->format('Y'), 'month' => $date->format('n'), 'day' => $date->format('j')]
+    );
 }
 
 /**
@@ -520,7 +466,7 @@ function action_date_url(Context $context, $action, $year, $month, $day)
  * @param string  $eid
  * @return string
  */
-function action_event_url(Context $context, $action, $eid) 
+function action_event_url(Context $context, $action, $eid)
 {
     return action_url($context, $action, array("eid" => $eid));
 }
@@ -610,7 +556,7 @@ function create_action_link(Context $context, $text, $action, $args = null, $cla
  */
 function menu_item(Context $context, $action, $text)
 {
-    $url = htmlentities(action_date_url($context, $action, $context->getYear(), $context->getMonth(), $context->getDay()));
+    $url = htmlentities(action_url($context, $action));
     $active = $context->getAction() == $action ? " active" : "";
     return "<li class=\"nav-item$active\"><a class=\"nav-link\" href=\"$url\">$text</a></li>";
 }
@@ -1179,11 +1125,11 @@ function create_datetime($month, $day, $year)
  */
 function get_occurrences_by_day(Calendar $calendar, User $user, \DateTimeInterface $from, \DateTimeInterface $to) 
 {
-    $all_occurrences = $calendar->get_occurrences_by_date_range($from, $to);
+    $all_occurrences = $calendar->getOccurrencesByDateRange($from, $to);
     $occurrences_by_day = array();
 
     foreach ($all_occurrences as $occurrence) {
-        if(!$occurrence->canRead($user)) {
+        if (!$occurrence->canRead($user)) {
             continue;
         }
 
@@ -1191,22 +1137,22 @@ function get_occurrences_by_day(Calendar $calendar, User $user, \DateTimeInterfa
 
         $start = $occurrence->getStart();
 
-        if($start > $from) {
+        if ($start > $from) {
             $diff = new \DateInterval("P0D");
         } else { // the event started before the range we're showing
             $diff = $from->diff($start);
         }
 
         // put the event in every day until the end
-        for($date = $start->add($diff); $date < $to && $date <= $end; $date = $date->add(new \DateInterval("P1D"))) {
+        for ($date = $start->add($diff); $date < $to && $date <= $end; $date = $date->add(new \DateInterval("P1D"))) {
             $key = index_of_date($date);
-            if(!isset($occurrences_by_day[$key])) {
+            if (!isset($occurrences_by_day[$key])) {
                 $occurrences_by_day[$key] = array();
             }
-            if(sizeof($occurrences_by_day[$key]) == $calendar->getMaxDisplayEvents()) {
+            if (sizeof($occurrences_by_day[$key]) == $calendar->getMaxDisplayEvents()) {
                 $occurrences_by_day[$key][] = null;
             }
-            if(sizeof($occurrences_by_day[$key]) > $calendar->getMaxDisplayEvents()) {
+            if (sizeof($occurrences_by_day[$key]) > $calendar->getMaxDisplayEvents()) {
                 continue;
             }
             $occurrences_by_day[$key][] = $occurrence;

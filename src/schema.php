@@ -27,7 +27,7 @@ define('PHPC_DB_VERSION', 2);
  * @param string $prefix
  * @return SqlTable[]
  */
-function phpc_table_schemas($prefix) 
+function phpc_table_schemas($prefix)
 {
     return array
     ( phpc_calendars_table($prefix)
@@ -45,7 +45,7 @@ function phpc_table_schemas($prefix)
     );
 }
 
-function phpc_calendars_table($prefix) 
+function phpc_calendars_table($prefix)
 {
     $table = new SqlTable($prefix . 'calendars');
 
@@ -66,7 +66,7 @@ function phpc_calendars_table($prefix)
     return $table;
 }
 
-function phpc_calendar_fields_table($prefix) 
+function phpc_calendar_fields_table($prefix)
 {
     $table = new SqlTable($prefix . 'calendar_fields');
 
@@ -76,7 +76,7 @@ function phpc_calendar_fields_table($prefix)
     return $table;
 }
 
-function phpc_categories_table($prefix) 
+function phpc_categories_table($prefix)
 {
     $table = new SqlTable($prefix . 'categories');
 
@@ -94,7 +94,7 @@ function phpc_categories_table($prefix)
     return $table;
 }
 
-function phpc_config_table($prefix) 
+function phpc_config_table($prefix)
 {
     $table = new SqlTable($prefix . 'config');
     
@@ -106,7 +106,7 @@ function phpc_config_table($prefix)
     return $table;
 }
 
-function phpc_events_table($prefix) 
+function phpc_events_table($prefix)
 {
     $table = new SqlTable($prefix . 'events');
 
@@ -118,14 +118,14 @@ function phpc_events_table($prefix)
     $table->addColumn('readonly', "tinyint(1) NOT NULL DEFAULT '0'");
     $table->addColumn('catid', "int(11) unsigned");
     $table->addColumn('ctime', "timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP");
-    $table->addColumn('mtime', "timestamp");
+    $table->addColumn('mtime', "timestamp NULL");
 
     $table->addKey('PRIMARY', 0, '`eid`');
 
     return $table;
 }
 
-function phpc_groups_table($prefix) 
+function phpc_groups_table($prefix)
 {
     $table = new SqlTable($prefix . 'groups');
 

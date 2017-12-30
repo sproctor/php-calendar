@@ -20,22 +20,22 @@ namespace PhpCalendar;
 class Database
 {
     /**
-     * @var \PDO 
+     * @var \PDO
      */
     private $dbh;
     /**
-     * @var Calendar[] 
+     * @var Calendar[]
      */
     private $calendars;
     /**
-     * @var string[] 
+     * @var string[]
      */
     private $config;
     private $event_columns;
     private $occurrence_columns;
     private $user_fields;
     /**
-     * @var string 
+     * @var string
      */
     private $prefix;
 
@@ -44,7 +44,7 @@ class Database
      *
      * @param string[] $config
      */
-    function __construct($config)
+    public function __construct($config)
     {
         $dsn = "mysql:dbname={$config["sql_database"]};host={$config["sql_host"]};charset=utf8";
         if (isset($config["sql_port"])) {
@@ -79,7 +79,7 @@ class Database
      * @return Occurrence[]
      * @throws \Exception
      */
-    function get_occurrences_by_date_range($cid, \DateTimeInterface $from, \DateTimeInterface $to)
+    public function get_occurrences_by_date_range($cid, \DateTimeInterface $from, \DateTimeInterface $to)
     {
         $events_table = $this->prefix . "events";
         $occurrences_table = $this->prefix . "occurrences";
@@ -459,7 +459,7 @@ class Database
 
     /**
      * @param int $cid
-     * @return string[][]
+     * @return array[]
      */
     function get_fields($cid)
     {

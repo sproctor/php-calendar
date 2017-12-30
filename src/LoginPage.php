@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Copyright 2017 Sean Proctor
  *
@@ -25,19 +25,19 @@ class LoginPage extends Page
      * @param Context $context
      * @return Response
      */
-    function action(Context $context)
+    public function action(Context $context)
     {
         //Check password and username
-        if(isset($_REQUEST['username'])) {
+        if (isset($_REQUEST['username'])) {
             $username = $_REQUEST['username'];
-            if(empty($_REQUEST['password'])) {
+            if (empty($_REQUEST['password'])) {
                 $context->addMessage(__("No password specified."));
             } else {
                 $password = $_REQUEST['password'];
 
-                if(login_user($context, $username, $password)) {
+                if (login_user($context, $username, $password)) {
                     $url = $context->script;
-                    if(!empty($_REQUEST['lasturl'])) {
+                    if (!empty($_REQUEST['lasturl'])) {
                         $url .= '?' . urldecode($_REQUEST['lasturl']);
                     }
                     return redirect($context, $url);

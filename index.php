@@ -27,42 +27,39 @@ use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Loader\MoFileLoader;
 
-define('PHPC_ROOT_PATH', __DIR__);
-define('PHPC_CONFIG_FILE', PHPC_ROOT_PATH . '/config.php');
-
-define('PHPC_VERSION', '2.1.0');
-
 // TODO: Make this conditional
 Debug::enable();
-define('PHPC_DEBUG', 1);
 error_reporting(-1);
 ini_set('display_errors', '1');
 
 $request = Request::createFromGlobals();
 
 try {
-	$context = new Context($request);
-	
-	if ($context->getLang () != 'en') {
-		$translator = new Translator($context->getLang(), new MessageSelector());
-		$translator->addLoader('mo', new MoFileLoader());
-		$translator->addResource('mo', __DIR__ . "locale/" . $context->getLang() . "/LC_MESSAGES/messages.mo", $context->getLang());
-	}
-	
-	$page = $context->getPage();
-	$response = $page->action($context);
-	$response->send();
-} catch(PermissionException $e) {
-	$msg = __('You do not have permission to do that: ') . $e->getMessage();
-	if ($context->getUser()->is_user())
-		echo error_message_redirect($context, $msg, $context->script);
-	else
-		echo error_message_redirect($context, $msg, "{$context->script}?action=login");
-} catch(InvalidConfigException $e) {
-	(new RedirectResponse("/install"))->send();
-} catch(InvalidInputException $e) {
-	if ($context !== null)
-		(new Response($context->twig->render('error.html.twig', array('message' => $e->getMessage()))))->send();
-	else
-		throw $e;
+    $context = new Context($request);
+    
+    if ($context->getLang() != 'en') {
+        $translator = new Translator($context->getLang(), new MessageSelector());
+        $translator->addLoader('mo', new MoFileLoader());
+        $translator->addResource('mo', __DIR__ . "locale/" . $context->getLang()
+            . "/LC_MESSAGES/messages.mo", $context->getLang());
+    }
+    
+    $page = $context->getPage();
+    $response = $page->action($context);
+    $response->send();
+} catch (PermissionException $e) {
+    $msg = __('You do not have permission to do that: ') . $e->getMessage();
+    if ($context->getUser()->is_user()) {
+        echo error_message_redirect($context, $msg, $context->script);
+    } else {
+        echo error_message_redirect($context, $msg, "{$context->script}?action=login");
+    }
+} catch (InvalidConfigException $e) {
+    (new RedirectResponse("/install"))->send();
+} catch (InvalidInputException $e) {
+    if ($context !== null) {
+        (new Response($context->twig->render('error.html.twig', array('message' => $e->getMessage()))))->send();
+    } else {
+        throw $e;
+    }
 }

@@ -17,6 +17,11 @@
 
 namespace PhpCalendar;
 
+/**
+ * Event represents an event that may have multiple occurrences.
+ *
+ * @author Sean Proctor <sproctor@gmail.com>
+ */
 class Event
 {
     private $eid;
@@ -37,8 +42,6 @@ class Event
     private $db;
 
     /**
-     * Event constructor.
-     *
      * @param Database $db
      * @param string[] $event
      */
@@ -48,9 +51,9 @@ class Event
         $this->eid = intval($event['eid']);
         $this->cid = $event['cid'];
         $this->owner_uid = $event['owner'];
-        if(empty($event['owner'])) {
+        if (empty($event['owner'])) {
             $this->author = __('anonymous');
-        } elseif(empty($event['username'])) {
+        } elseif (empty($event['username'])) {
             $this->author = __('unknown');
         } else {
             $this->author = $event['username'];
@@ -70,7 +73,7 @@ class Event
     /**
      * @return string
      */
-    public function getRawSubject() 
+    public function getRawSubject()
     {
         return $this->subject;
     }
@@ -80,7 +83,7 @@ class Event
      */
     public function getSubject()
     {
-        if(empty($this->subject)) {
+        if (empty($this->subject)) {
             return __('(No subject)');
         }
 
@@ -90,7 +93,7 @@ class Event
     /**
      * @return string
      */
-    function getAuthor()
+    public function getAuthor()
     {
         return $this->author;
     }
@@ -122,7 +125,7 @@ class Event
     /**
      * @return Occurrence[]
      */
-    public function getOccurrences() 
+    public function getOccurrences()
     {
         return $this->db->get_occurrences_by_eid($this->eid);
     }
@@ -138,7 +141,7 @@ class Event
     /**
      * @return NULL|string
      */
-    public function getTextColor() 
+    public function getTextColor()
     {
         if (empty($this->text_color)) {
             return null;
@@ -149,7 +152,7 @@ class Event
     /**
      * @return null|string
      */
-    public function getBgColor() 
+    public function getBgColor()
     {
         if (empty($this->bg_color)) {
             return null;
@@ -162,7 +165,7 @@ class Event
      */
     public function getCategory()
     {
-        if(empty($this->category)) {
+        if (empty($this->category)) {
             return $this->category;
         }
         return $this->category;
@@ -172,15 +175,15 @@ class Event
      * @param User $user
      * @return bool
      */
-    public function isOwner(User $user) 
+    public function isOwner(User $user)
     {
         return $user->getUID() == $this->owner_uid;
     }
 
     /**
-     * returns whether or not the current user can modify $event
-     * 
-     * @param  User $user
+     * Returns whether or not the current user can modify $event
+     *
+     * @param User $user
      * @return bool
      */
     public function canModify(User $user)
@@ -190,19 +193,22 @@ class Event
     }
 
     /**
-     * returns whether or not the user can read this event
-     * 
-     * @param  User $user
-     * @return
+     * Returns whether or not the user can read this event
+     *
+     * @param User $user
+     * @return bool
      */
-    public function canRead(User $user) 
+    public function canRead(User $user)
     {
         $visible_category = empty($this->gid) || !isset($this->catid)
         || $this->db->is_cat_visible($user->getUID(), $this->catid);
         return $this->cal->canRead($user) && $visible_category;
     }
 
-    function getCtimeString() 
+    /**
+     * @return string
+     */
+    public function getCtimeString()
     {
         return format_datetime(
             $this->ctime,
@@ -212,9 +218,9 @@ class Event
     }
 
     /**
-     * @return \Datetime|null
+     * @return string|null
      */
-    function getMtimeString() 
+    public function getMtimeString()
     {
         if (empty($this->mtime)) {
             return null;
@@ -227,9 +233,12 @@ class Event
         );
     }
 
-    function get_fields() 
+    /**
+     * @return array
+     */
+    public function getFields()
     {
-        if(!isset($this->fields)) {
+        if (!isset($this->fields)) {
             $this->fields = $this->db->get_event_fields($this->eid);
         }
 
