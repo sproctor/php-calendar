@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016 Sean Proctor
+ * Copyright 2017 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,17 @@ require_once __DIR__ . '/vendor/autoload.php';
    it needs very much work
 */
 
-// require_once(PHPC_ROOT_PATH . "/src/helpers.php");
 require_once(__DIR__ . "/src/schema.php");
 
 ?><!doctype html>
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="static/phpc.css"/>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
+      integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
     <title>PHP Calendar Installation</title>
   </head>
 <body>
+<div class="container-fluid">
 <h1>PHP Calendar</h1>
 <?php
 
@@ -59,9 +59,9 @@ if (file_exists(PHPC_CONFIG_FILE)) {
     }
 }
 
-echo '<p>Welcome to the PHP Calendar installation process.</p>
+?><p>Welcome to the PHP Calendar installation process.</p>
 <form method="post" action="install.php">
-';
+<?php
 
 if (!check_config()) {
     report_config();
@@ -106,81 +106,55 @@ function check_config()
 
 function report_config()
 {
-    echo '<p>Your configuration file could not be written to. This file '
-        .'probably does not yet exist. If that is the case, youneed to '
-        .'create it. You need to make sure this script can write to '
-        .'it. We suggest logging in with a shell and typing:</p>
-        <p><pre>
+    ?><p>Your configuration file could not be written to. This file
+        probably does not yet exist. If that is the case, youneed to
+        create it. You need to make sure this script can write to
+        it. We suggest logging in with a shell and typing:</p>
+    <pre>
         touch config.php
         chmod 666 config.php
-        </pre></p>
-        <p>or if you only have ftp access, upload a blank file named '
-        .'config.php to your php-calendar directory then use the chmod '
-        .'command to change the permissions of config.php to 666.</p>
-        <input type="submit" value="Retry"/>';
+    </pre>
+    <p>or if you only have ftp access, upload a blank file named
+        config.php to your php-calendar directory then use the chmod
+        command to change the permissions of config.php to 666.</p>
+    <button type="submit" class="btn btn-primary">Retry</button>
+    <?php
 }
 
 function get_server_setup()
 {
-    echo '
+    ?>
         <h3>Step 1: Database</h3>
-        <table class="display">
-        <tr>
-        <td>SQL Server Hostname:</td>
-        <td><input type="text" name="my_hostname" value="localhost"></td>
-        </tr>
-        <tr>
-        <td>SQL Database name:</td>
-        <td><input type="text" name="my_database" value="calendar"></td>
-        </tr>
-        <tr>
-        <td>SQL Table prefix:</td>
-        <td><input type="text" name="my_prefix" value="phpc_"></td>
-        </tr>
-        <tr>
-        <td>SQL Username:</td>
-        <td><input type="text" name="my_username" value="calendar"></td>
-        </tr>
-        <tr>
-        <td>SQL Password:</td>
-        <td><input type="password" name="my_passwd"></td>
-        </tr>
-        <tr>
-        <td colspan="2">
-          <input type="checkbox" name="create_db" value="yes"/>
-          Create the database (don\'t check this if it already exists)
-        </td>
-        </tr>
-        <tr>
-        <td colspan="2">
-          <input type="checkbox" name="drop_tables" value="yes">
-          Drop tables before creating them
-        </td>
-        </tr>
-        <tr><td colspan="2">
-        <span style="font-weight:bold;">Optional: user creation on database</span>
-        </td></tr>
-        <tr><td colspan="2">
-        If the credentials supplied above are new, you have to be the database administrator.
-        </td></tr>
-        <tr><td colspan="2">
-         <input type="checkbox" name="create_user" value="yes">
-            Check this if you want to do it and provide admin user and password.
-        </td></tr>
-        <tr>
-        <td>SQL Admin name:</td>
-        <td><input type="text" name="my_adminname"></td>
-        </tr>
-        <tr>
-        <td>SQL Admin Password:</td>
-        <td><input type="password" name="my_adminpasswd"></td>
-        </tr>
-        <tr>
-        <td colspan="2">
-          <input name="action" type="submit" value="Install">
-        </td>
-        </tr>
-        </table>';
+        <div class="form-group">
+          <label for="my_hostname">SQL Server Hostname:</label>
+          <input type="text" class="form-control" name="my_hostname" id="my_hostname" value="localhost">
+        </div>
+        <div class="form-group">
+          <label for="my_database">SQL Database name:</label>
+          <input type="text" class="form-control" name="my_database" id="my_database" value="calendar">
+        </div>
+        <div class="form-group">
+          <label for="my_prefix">SQL Table prefix:</label>
+          <input type="text" class="form-control" name="my_prefix" id="my_username" value="phpc_">
+        </div>
+        <div class="form-group">
+          <label for="my_username">SQL Username:</label>
+          <input type="text" class="form-control" name="my_username" id="my_username" value="calendar">
+        </div>
+        <div class="form-group">
+          <label for="my_passwd">SQL Password:</label>
+          <input type="password" class="form-control" name="my_passwd" id="my_passwd" placeholder="Password">
+        </div>
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" name="create_db" id="create_db" value="yes">
+          <label class="form-check-label" for="create_db">Create the database (don't check this if it already exists)</label>
+        </div>
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" name="drop_tables" id="drop_tables" value="yes">
+          <label class="form-check-label" for="drop_tables">Drop tables before creating them</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Install</button>
+        <?php
 }
 
 function add_sql_user_db()
@@ -190,25 +164,13 @@ function add_sql_user_db()
     $my_passwd = $_POST['my_passwd'];
     //$my_prefix = $_POST['my_prefix'];
     $my_database = $_POST['my_database'];
-    $my_adminname = $_POST['my_adminname'];
-    $my_adminpasswd = $_POST['my_adminpasswd'];
 
-    $create_user = isset($_POST['create_user'])
-        && $_POST['create_user'] == 'yes';
     $create_db = isset($_POST['create_db']) && $_POST['create_db'] == 'yes';
     
-    // Make the database connection.
-
-
-    $dsn = "mysql:host={$my_hostname};charset=utf8";
 
     // Make the database connection.
     try {
-        if ($create_user) {
-            $dbh = new \PDO($dsn, $my_adminname, $my_adminpasswd);
-        } else {
-            $dbh = new \PDO($dsn, $my_username, $my_passwd);
-        }
+        $dbh = new \PDO("mysql:host={$my_hostname};charset=utf8", $my_username, $my_passwd);
         $dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     } catch (\PDOException $e) {
         soft_error(__("Database connect failed: " . $e->getMessage()));
@@ -223,22 +185,6 @@ function add_sql_user_db()
             or install_db_error($dbh, 'error creating db', $query);
 
         $string .= "<p>Successfully created database</p>";
-    }
-    
-    if ($create_user) {
-        $query = "GRANT ALL ON accounts.* TO '$my_username'@'$my_hostname' identified by '$my_passwd'";
-        $dbh->query($query)
-            or install_db_error($dbh, 'Could not grant:', $query);
-        $query = "GRANT ALL ON `$my_database`.*\n"
-            ."TO '$my_username'@'$my_hostname'";
-        $dbh->query($query)
-            or install_db_error($dbh, 'Could not grant:', $query);
-
-        $query = "FLUSH PRIVILEGES";
-        $dbh->query($query)
-            or install_db_error($dbh, "Could not flush privileges", $query);
-
-        $string .= "<p>Successfully added user</p>";
     }
 
     echo "$string\n"
@@ -301,21 +247,19 @@ function create_tables(Database $db)
  */
 function get_admin()
 {
-    echo '<h3>Step 4: Administration account</h3>';
-    echo "<table>\n"
-        ."<tr><td colspan=\"2\">Now you must create the calendar administrative "
-        ."account.</td></tr>\n"
-        ."<tr><td>\n"
-        ."Admin name:\n"
-        ."</td><td>\n"
-        ."<input type=\"text\" name=\"admin_user\" />\n"
-        ."</td></tr><tr><td>\n"
-        ."Admin password:"
-        ."</td><td>\n"
-        ."<input type=\"password\" name=\"admin_pass\" />\n"
-        ."</td></tr><tr><td colspan=\"2\">"
-        ."<input type=\"submit\" value=\"Create Admin Account\" />\n"
-        ."</td></tr></table>\n";
+    ?>
+    <h3>Step 4: Administration account</h3>
+    <div>Now you must create the calendar administrative account.</div>
+    <div class="form-group">
+        <label for="admin_user">Admin name:</label>
+        <input type="text" class="form-control" name="admin_user" id="admin_user">
+    </div>
+    <div class="form-group">
+        <label for="admin_pass">Admin password:</label>
+        <input type="password" class="form-control" name="admin_pass" id="admin_pass">
+    </div>
+    <button type="submit" class="btn btn-primary">Create Account</button>
+    <?php
 }
 
 /**
@@ -340,7 +284,7 @@ function add_calendar($config)
     echo "<p><a href=\"index.php\">View calendar</a></p>";
 }
 
-echo '</form></body></html>';
+echo '</form></div></body></html>';
 
 // called when there is an error involving the DB
 /**

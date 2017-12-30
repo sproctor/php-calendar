@@ -45,10 +45,7 @@
 				{% if action == "display_event" %}
 					{{ menu_item(context, "display_day", "View date"|trans) }}
 				{% endif %}
-				{% if calendar.canAdmin(user) %}
-					{{ menu_item(context, "cadmin", "Calendar Admin"|trans) }}
-				{% endif %}
-				{% if user.isAdmin() %}
+				{% if user.isAdmin() or calendar.canAdmin(user) %}
 					{{ menu_item(context, "admin", "Admin"|trans) }}
 				{% endif %}
 				{% if not user.isUser() %}

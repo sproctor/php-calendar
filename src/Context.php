@@ -17,6 +17,8 @@
 
 namespace PhpCalendar;
 
+use Firebase\JWT\JWT;
+use Firebase\JWT\SignatureInvalidException;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
@@ -529,13 +531,18 @@ class Context
     private function readLoginToken()
     {
         if (isset($_COOKIE["identity"])) {
-            $decoded = \Firebase\JWT\JWT::decode($_COOKIE["identity"], $this->config["token_key"], array('HS256'));
-            $decoded_array = (array) $decoded;
-            $data = (array) $decoded_array["data"];
+            try {
+                $decoded = \Firebase\JWT\JWT::decode($_COOKIE["identity"], $this->config["token_key"], array('HS256'));
+                $decoded_array = (array) $decoded;
+                $data = (array) $decoded_array["data"];
 
-            $uid = $data["uid"];
-            $user = $this->db->get_user($uid);
-            $this->setUser($user);
+                $uid = $data["uid"];
+                $user = $this->db->get_user($uid);
+                $this->setUser($user);
+            } catch (SignatureInvalidException $e) {
+                // TODO: log this event
+                setcookie('identity', "", time() - 3600);
+            }
         }
     }
 
@@ -554,6 +561,8 @@ class Context
                 return new LoginPage;
             case 'logout':
                 return new LogoutPage;
+            case 'admin':
+                return new AdminPage;
             default:
                 throw new \Exception(__('Invalid action'));
         }

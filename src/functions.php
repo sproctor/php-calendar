@@ -975,25 +975,11 @@ function print_update_form()
 </html>";
 }
 
-function read_login_token(Context $context) 
-{
-    if(isset($_COOKIE["identity"])) {
-
-        $decoded = \Firebase\JWT\JWT::decode($_COOKIE["identity"], $context->config["token_key"], array('HS256'));
-        $decoded_array = (array) $decoded;
-        $data = (array) $decoded_array["data"];
-
-        $uid = $data["uid"];
-        $user = $context->db->get_user($uid);
-        $context->setUser($user);
-    }
-}
-
 /**
  * @param \DateTimeInterface $date
  * @return bool|string
  */
-function index_of_date(\DateTimeInterface $date) 
+function index_of_date(\DateTimeInterface $date)
 {
     return $date->format('Y-m-d');
 }
@@ -1002,7 +988,7 @@ function index_of_date(\DateTimeInterface $date)
  * @param \DateTimeInterface $date
  * @return boolean
  */
-function is_today(\DateTimeInterface $date) 
+function is_today(\DateTimeInterface $date)
 {
     return days_between($date, new \DateTime()) == 0;
 }
