@@ -73,8 +73,18 @@ class EventFormPage extends Page
                 'label' => _('Subject'), 'constraints' => new Assert\NotBlank())
         )
         ->add('description', TextareaType::class, array('required' => false))
-        ->add('start', DateTimeType::class, array('label' => __('From'), 'widget' => 'single_text'))
-        ->add('end', DateTimeType::class, array('label' => __('To'), 'widget' => 'single_text'))
+        ->add(
+            'start',
+            DateTimeType::class,
+            array('label' => __('From'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
+                'data' => (new \DateTime())->setTime(17, 0))
+        )
+        ->add(
+            'end',
+            DateTimeType::class,
+            array('label' => __('To'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
+                'data' => (new \DateTime())->setTime(18, 0))
+        )
         ->add(
             'time_type',
             ChoiceType::class,
@@ -143,7 +153,9 @@ class EventFormPage extends Page
                 $data = $form->getData();
                 if (!empty($data) && !empty($data['save']) && (empty($data['eid']) || $data['modify'])) {
                     if ($data['end']->getTimestamp() < $data['start']->getTimestamp()) {
-                        $form->get('end')->addError(new FormError('The end date/time cannot be before the start date/time.'));
+                        $form->get('end')->addError(
+                            new FormError(__('The end date/time cannot be before the start date/time.'))
+                        );
                     }
                 }
             }
