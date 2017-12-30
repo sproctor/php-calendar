@@ -15,48 +15,50 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
+if (!defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-require_once("$phpc_includes_path/msgfmt-functions.php");
+require_once "$phpc_includes_path/msgfmt-functions.php";
 
-function translate() {
-	global $phpc_locale_path;
+function translate() 
+{
+    global $phpc_locale_path;
 
-	if(!is_admin()) {
-		permission_error(__('Need to be admin'));
-		exit;
-	}
+    if(!is_admin()) {
+        permission_error(__('Need to be admin'));
+        exit;
+    }
 
-	$handle = opendir($phpc_locale_path);
+    $handle = opendir($phpc_locale_path);
 
-	if(!$handle) {
-		return soft_error("Error reading locale directory.");
-	}
+    if(!$handle) {
+        return soft_error("Error reading locale directory.");
+    }
 
-	$output_tag = tag('div', tag('h2', __('Translate')));
-	while(($filename = readdir($handle)) !== false) {
-		$pathname = "$phpc_locale_path/$filename";
-		if(strncmp($filename, ".", 1) == 0 || !is_dir($pathname))
-			continue;
-		$msgs_path = "$pathname/LC_MESSAGES";
-		$po_filename = "$msgs_path/messages.po";
+    $output_tag = tag('div', tag('h2', __('Translate')));
+    while(($filename = readdir($handle)) !== false) {
+        $pathname = "$phpc_locale_path/$filename";
+        if(strncmp($filename, ".", 1) == 0 || !is_dir($pathname)) {
+            continue;
+        }
+        $msgs_path = "$pathname/LC_MESSAGES";
+        $po_filename = "$msgs_path/messages.po";
 
-		if(file_exists($po_filename)) {
-			$hash = parse_po_file("$msgs_path/messages.po");
-			if ($hash === FALSE) {
-				$output_tag->add(tag('div', __("Error reading '$po_filename'.")));
-			} else {
-				$mo_filename = "$msgs_path/messages.mo";
-				write_mo_file($hash, $mo_filename);
-				$output_tag->add(tag('div', sprintf(__('Translated "%s"'), $filename)));
-			}
-		}
-	}
+        if(file_exists($po_filename)) {
+            $hash = parse_po_file("$msgs_path/messages.po");
+            if ($hash === false) {
+                $output_tag->add(tag('div', __("Error reading '$po_filename'.")));
+            } else {
+                $mo_filename = "$msgs_path/messages.mo";
+                write_mo_file($hash, $mo_filename);
+                $output_tag->add(tag('div', sprintf(__('Translated "%s"'), $filename)));
+            }
+        }
+    }
 
-	closedir($handle);
+    closedir($handle);
 
-	return $output_tag;
+    return $output_tag;
 }
 ?>

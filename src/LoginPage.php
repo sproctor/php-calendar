@@ -21,31 +21,31 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LoginPage extends Page
 {
-	/**
-	 * @param Context $context
-	 * @return Response
-	 */
-	function action(Context $context)
-	{
-		//Check password and username
-		if(isset($_REQUEST['username'])){
-			$username = $_REQUEST['username'];
-			if(empty($_REQUEST['password'])) {
-				$context->addMessage(__("No password specified."));
-			} else {
-				$password = $_REQUEST['password'];
+    /**
+     * @param Context $context
+     * @return Response
+     */
+    function action(Context $context)
+    {
+        //Check password and username
+        if(isset($_REQUEST['username'])) {
+            $username = $_REQUEST['username'];
+            if(empty($_REQUEST['password'])) {
+                $context->addMessage(__("No password specified."));
+            } else {
+                $password = $_REQUEST['password'];
 
-				if(login_user($context, $username, $password)){
-					$url = $context->script;
-					if(!empty($_REQUEST['lasturl'])) {
-						$url .= '?' . urldecode($_REQUEST['lasturl']);
-					}
-					return redirect($context, $url);
-				} else {
-					$context->addMessage(__("Invalid login credentials."));
-				}
-			}
-		}
-		return new Response($context->twig->render("login.html.twig"));
-	}
+                if(login_user($context, $username, $password)) {
+                    $url = $context->script;
+                    if(!empty($_REQUEST['lasturl'])) {
+                        $url .= '?' . urldecode($_REQUEST['lasturl']);
+                    }
+                    return redirect($context, $url);
+                } else {
+                    $context->addMessage(__("Invalid login credentials."));
+                }
+            }
+        }
+        return new Response($context->twig->render("login.html.twig"));
+    }
 }

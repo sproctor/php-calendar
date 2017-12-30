@@ -17,61 +17,72 @@
 
 function field_submit()
 {
-	global $vars, $phpcdb, $phpc_script, $phpc_cal;
+    global $vars, $phpcdb, $phpc_script, $phpc_cal;
 
-	$form_page = "$phpc_script?action=field_form";
-	if(!empty($vars["cid"]))
-		$form_page .= "&cid={$vars["cid"]}";
-	if(!empty($vars["fid"]))
-		$form_page .= "&fid={$vars["fid"]}";
+    $form_page = "$phpc_script?action=field_form";
+    if(!empty($vars["cid"])) {
+        $form_page .= "&cid={$vars["cid"]}";
+    }
+    if(!empty($vars["fid"])) {
+        $form_page .= "&fid={$vars["fid"]}";
+    }
 
-	if(empty($vars["name"])) {
-		return input_error(__("Name not specified."), $form_page);
-	}
+    if(empty($vars["name"])) {
+        return input_error(__("Name not specified."), $form_page);
+    }
 
-	$required = !empty($vars['name']) && $vars['required'] == '1';
+    $required = !empty($vars['name']) && $vars['required'] == '1';
 
-	if(empty($vars['format']))
-		$format = false;
-	else
-		$format = $vars['format'];
+    if(empty($vars['format'])) {
+        $format = false;
+    } else {
+        $format = $vars['format'];
+    }
 
-	if(!isset($vars['fid'])) {
-		$modify = false;
+    if(!isset($vars['fid'])) {
+        $modify = false;
 
-		if(!isset($vars['cid'])) {
-			$cid = null;
-			if(!is_admin())
-				permission_error(__('You do not have permission to add fields to all calendars.'));
-		} else { 
-			$cid = $vars['cid'];
-			$calendar = $phpcdb->get_calendar($cid);
-			if(!$calendar->can_admin())
-				permission_error(__('You do not have permission to add fields to this calendar.'));
-		}
-		$fid = $phpcdb->create_field($cid, $vars["name"], $required, $format);
-	} else {
-		$modify = true;
+        if(!isset($vars['cid'])) {
+            $cid = null;
+            if(!is_admin()) {
+                permission_error(__('You do not have permission to add fields to all calendars.'));
+            }
+        } else { 
+            $cid = $vars['cid'];
+            $calendar = $phpcdb->get_calendar($cid);
+            if(!$calendar->can_admin()) {
+                permission_error(__('You do not have permission to add fields to this calendar.'));
+            }
+        }
+        $fid = $phpcdb->create_field($cid, $vars["name"], $required, $format);
+    } else {
+        $modify = true;
 
-		$fid = $vars['fid'];
-		$field = $phpcdb->get_field($fid);
+        $fid = $vars['fid'];
+        $field = $phpcdb->get_field($fid);
 
-		if(!(empty($field['cid']) && is_admin() ||
-					$phpcdb->get_calendar($field["cid"])->can_admin()))
-			permission_error(__("You do not have permission to modify this field."));
-			
-		$phpcdb->modify_field($fid, $vars['name'], $required, $format);
-	}
+        if(!(empty($field['cid']) && is_admin() 
+            || $phpcdb->get_calendar($field["cid"])->can_admin())
+        ) {
+            permission_error(__("You do not have permission to modify this field."));
+        }
+            
+        $phpcdb->modify_field($fid, $vars['name'], $required, $format);
+    }
 
-	$page = "$phpc_script?action=cadmin&phpcid={$vars['phpcid']}#phpc-fields";
+    $page = "$phpc_script?action=cadmin&phpcid={$vars['phpcid']}#phpc-fields";
 
-	if($modify)
-		return message_redirect(__("Modified field: ") . $fid, $page);
+    if($modify) {
+        return message_redirect(__("Modified field: ") . $fid, $page);
+    }
 
-	if($fid > 0)
-		return message_redirect(__("Created field: ") . $fid, $page);
+    if($fid > 0) {
+        return message_redirect(__("Created field: ") . $fid, $page);
+    }
 
-	return tag('div', attributes('class="phpc-error"'),
-			__('Error submitting field.'));
+    return tag(
+        'div', attributes('class="phpc-error"'),
+        __('Error submitting field.')
+    );
 }
 ?>

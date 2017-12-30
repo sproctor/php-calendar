@@ -15,26 +15,30 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
+if (!defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
 function default_calendar()
 {
-	global $vars, $phpcdb, $phpc_script, $phpc_user;
+    global $vars, $phpcdb, $phpc_script, $phpc_user;
 
-	$html = tag('div', attributes('class="phpc-container"'));
+    $html = tag('div', attributes('class="phpc-container"'));
 
-	if(empty($vars["cid"])) {
-		$html->add(tag('p', __('No calendar selected.')));
-		return $html;
-	}
+    if(empty($vars["cid"])) {
+        $html->add(tag('p', __('No calendar selected.')));
+        return $html;
+    }
 
-	if ($phpc_user->is_admin()) {
-		$phpcdb->set_config('default_cid', $vars['cid']);
-		$html->add(tag('p', __('Default calendar set to: ')
-					. $vars['cid']));
-	}
+    if ($phpc_user->is_admin()) {
+        $phpcdb->set_config('default_cid', $vars['cid']);
+        $html->add(
+            tag(
+                'p', __('Default calendar set to: ')
+                . $vars['cid']
+            )
+        );
+    }
 
         return message_redirect($html, "$phpc_script?action=admin");
 }

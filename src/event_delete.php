@@ -15,74 +15,77 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
+if (!defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
 function event_delete(Context $context)
 {
-	$html = tag('div', attributes('class="phpc-container"'));
+    $html = tag('div', attributes('class="phpc-container"'));
 
-	if(empty($_REQUEST["eid"])) {
-		$message = __('No event selected.');
-		$html->add(tag('div', $message));
-		return $html;
-	}
+    if(empty($_REQUEST["eid"])) {
+        $message = __('No event selected.');
+        $html->add(tag('div', $message));
+        return $html;
+    }
 
-	if (is_array($_REQUEST["eid"])) {
-		$eids = $_REQUEST["eid"];
-	} else {
-		$eids = array($_REQUEST["eid"]);
-	}
+    if (is_array($_REQUEST["eid"])) {
+        $eids = $_REQUEST["eid"];
+    } else {
+        $eids = array($_REQUEST["eid"]);
+    }
 
-	$removed_events = array();
-	$unremoved_events = array();
-	$permission_denied = array();
+    $removed_events = array();
+    $unremoved_events = array();
+    $permission_denied = array();
 
-	foreach($eids as $eid) {
-		$entry = $context->db->get_event_by_eid($eid);
-		if(!$entry) {
-			continue;
-		}
-		$event = new PhpcEvent($entry);
-		if(!$event->can_modify()) {
-			$permission_denied[] = $eid;
-		} else {
-			if($context->db->delete_event($eid)) {
-				$removed_events[] = $eid;
-			} else {
-				$unremoved_events[] = $eid;
-			}
-		}
-	}
+    foreach($eids as $eid) {
+        $entry = $context->db->get_event_by_eid($eid);
+        if(!$entry) {
+            continue;
+        }
+        $event = new PhpcEvent($entry);
+        if(!$event->can_modify()) {
+            $permission_denied[] = $eid;
+        } else {
+            if($context->db->delete_event($eid)) {
+                $removed_events[] = $eid;
+            } else {
+                $unremoved_events[] = $eid;
+            }
+        }
+    }
 
-	if(sizeof($removed_events) > 0) {
-		if(sizeof($removed_events) == 1)
-			$text = __("Removed event");
-		else
-			$text = __("Removed events");
-		$text .= ': ' . implode(', ', $removed_events);
-		$html->add(tag('div', $text));
-	}
+    if(sizeof($removed_events) > 0) {
+        if(sizeof($removed_events) == 1) {
+            $text = __("Removed event");
+        } else {
+            $text = __("Removed events");
+        }
+        $text .= ': ' . implode(', ', $removed_events);
+        $html->add(tag('div', $text));
+    }
 
-	if(sizeof($unremoved_events) > 0) {
-		if(sizeof($unremoved_events) == 1)
-			$text = __("Could not remove event");
-		else
-			$text = __("Could not remove events");
-		$text .= ': ' . implode(', ', $unremoved_events);
-		$html->add(tag('div', $text));
-	}
+    if(sizeof($unremoved_events) > 0) {
+        if(sizeof($unremoved_events) == 1) {
+            $text = __("Could not remove event");
+        } else {
+            $text = __("Could not remove events");
+        }
+        $text .= ': ' . implode(', ', $unremoved_events);
+        $html->add(tag('div', $text));
+    }
 
-	if(sizeof($permission_denied) > 0) {
-		if(sizeof($permission_denied) == 1)
-			$text = __("You do not have permission to remove event");
-		else
-			$text = __("You do not have permission to remove events");
-		$text .= ': ' . implode(', ', $permission_denied);
-		$html->add(tag('div', $text));
-	}
-	
+    if(sizeof($permission_denied) > 0) {
+        if(sizeof($permission_denied) == 1) {
+            $text = __("You do not have permission to remove event");
+        } else {
+            $text = __("You do not have permission to remove events");
+        }
+        $text .= ': ' . implode(', ', $permission_denied);
+        $html->add(tag('div', $text));
+    }
+    
         return message_redirect($html, PHPC_SCRIPT);
 }
 

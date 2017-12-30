@@ -25,32 +25,32 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EventPage extends Page
 {
-	/**
-	 * Display for a single event
-	 * 
-	 * @param Context $context
-	 * @return Response
-	 */
-	function action(Context $context)
-	{	
-		if ($context->request->get('oid') !== null) {
-			$event = $context->db->get_event_by_oid($context->request->get('oid'));
-			if(!$event) {
-				throw new InvalidInputException(__('There is no event for that OID.'));
-			}
-		} elseif($context->request->get('eid') !== null) {
-			$event = $context->db->getEvent($context->request->get('eid'));
-			if(!$event) {
-				throw new InvalidInputException(__('There is no event with that EID.'));
-			}
-		} else {
-			throw new InvalidInputException(__("Invalid arguments."));
-		}
+    /**
+     * Display for a single event
+     * 
+     * @param  Context $context
+     * @return Response
+     */
+    function action(Context $context)
+    {    
+        if ($context->request->get('oid') !== null) {
+            $event = $context->db->get_event_by_oid($context->request->get('oid'));
+            if(!$event) {
+                throw new InvalidInputException(__('There is no event for that OID.'));
+            }
+        } elseif($context->request->get('eid') !== null) {
+            $event = $context->db->getEvent($context->request->get('eid'));
+            if(!$event) {
+                throw new InvalidInputException(__('There is no event with that EID.'));
+            }
+        } else {
+            throw new InvalidInputException(__("Invalid arguments."));
+        }
 
-		if(!$event->canRead($context->getUser())) {
-			throw new InvalidInputException(__("You do not have permission to read this event."));
-		}
+        if(!$event->canRead($context->getUser())) {
+            throw new InvalidInputException(__("You do not have permission to read this event."));
+        }
 
-		return new Response($context->twig->render('event_page.html.twig', array('event' => $event)));
-	}
+        return new Response($context->twig->render('event_page.html.twig', array('event' => $event)));
+    }
 }

@@ -19,19 +19,24 @@ namespace PhpCalendar;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminPage extends Page {
+class AdminPage extends Page
+{
     /**
-	 * Display event form or submit event
-	 * 
-	 * @param Context $context
-	 * @return Response
-	 */
-	public function action(Context $context)
+     * Display event form or submit event
+     * 
+     * @param  Context $context
+     * @return Response
+     */
+    public function action(Context $context)
     {
-		
-		
-		return new Response($context->twig->render("admin.html.twig", array(
-			'calendars' => $context->db->getCalendars())));
-	}
+        
+        
+        return new Response(
+            $context->twig->render(
+                "admin.html.twig", array(
+                'calendars' => $context->db->getCalendars())
+            )
+        );
+    }
 
 }

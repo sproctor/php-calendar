@@ -15,39 +15,39 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
+if (!defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
 function user_enable()
 {
-	global $vars, $phpcid, $phpcdb, $phpc_script;
+    global $vars, $phpcid, $phpcdb, $phpc_script;
 
-	$html = tag('div', attributes('class="phpc-container"'));
+    $html = tag('div', attributes('class="phpc-container"'));
 
-	if(!is_admin()) {
-		$html->add(tag('p', __('You must be an admin to enable users.')));
-		return $html;
-	}
+    if(!is_admin()) {
+        $html->add(tag('p', __('You must be an admin to enable users.')));
+        return $html;
+    }
 
-	if(empty($vars["uid"])) {
-		$html->add(tag('p', __('No user selected.')));
-		return $html;
-	}
+    if(empty($vars["uid"])) {
+        $html->add(tag('p', __('No user selected.')));
+        return $html;
+    }
 
-	if (is_array($vars["uid"])) {
-		$ids = $vars["uid"];
-	} else {
-		$ids = array($vars["uid"]);
-	}
+    if (is_array($vars["uid"])) {
+        $ids = $vars["uid"];
+    } else {
+        $ids = array($vars["uid"]);
+    }
 
-	foreach($ids as $id) {
-		if($phpcdb->enable_user($id)) {
-			$html->add(tag('p', __("Enabled user: $id")));
-		} else {        
-			$html->add(tag('p', __("Could not enable user: $id")));
-		}
-	}
+    foreach($ids as $id) {
+        if($phpcdb->enable_user($id)) {
+            $html->add(tag('p', __("Enabled user: $id")));
+        } else {        
+            $html->add(tag('p', __("Could not enable user: $id")));
+        }
+    }
 
         return message_redirect($html, "$phpc_script?action=admin&phpcid=$phpcid");
 }

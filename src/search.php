@@ -19,7 +19,7 @@ if(!defined('IN_PHPC')) {
         die("Hacking attempt");
 }
 
-require_once("$phpc_includes_path/form.php");
+require_once "$phpc_includes_path/form.php";
 
 $sort_options = array(
                 'start_date' => __('Start Date'),
@@ -33,116 +33,153 @@ $order_options = array(
 
 function search_results()
 {
-	global $vars, $phpcdb, $phpcid, $sort_options, $order_options;
+    global $vars, $phpcdb, $phpcid, $sort_options, $order_options;
 
-	$searchstring = $vars['searchstring'];
-	if(!empty($vars['search-from-date'])
-			&& strlen($vars['search-from-date']) > 0)
-		$start = get_timestamp('search-from');
-	else
-		$start = false;
-	if(!empty($vars['search-to-date'])
-			&& strlen($vars['search-to-date']) > 0)
-		$end = get_timestamp('search-to', 23, 59, 59);
-	else
-		$end = false;
+    $searchstring = $vars['searchstring'];
+    if(!empty($vars['search-from-date'])
+        && strlen($vars['search-from-date']) > 0
+    ) {
+        $start = get_timestamp('search-from');
+    } else {
+        $start = false;
+    }
+    if(!empty($vars['search-to-date'])
+        && strlen($vars['search-to-date']) > 0
+    ) {
+        $end = get_timestamp('search-to', 23, 59, 59);
+    } else {
+        $end = false;
+    }
 
         // make sure sort is valid
-	$sort = htmlentities($vars['sort']);
-        if(array_search($sort, array_keys($sort_options)) === false) {
-                soft_error(__('Invalid sort option') . ": $sort");
-        }
+    $sort = htmlentities($vars['sort']);
+    if(array_search($sort, array_keys($sort_options)) === false) {
+            soft_error(__('Invalid sort option') . ": $sort");
+    }
 
         // make sure order is valid
-	$order = htmlentities($vars['order']);
-        if(array_search($order, array_keys($order_options)) === false) {
-                soft_error(__('Invalid order option') . ": $order");
+    $order = htmlentities($vars['order']);
+    if(array_search($order, array_keys($order_options)) === false) {
+            soft_error(__('Invalid order option') . ": $order");
+    }
+
+    $keywords = explode(" ", $searchstring);
+
+    $results = $phpcdb->search(
+        $phpcid, $keywords, $start, $end, $sort,
+        $order
+    );
+
+    $tags = array();
+    foreach ($results as $event) {
+        if(!$event->can_read()) {
+            continue;
         }
 
-	$keywords = explode(" ", $searchstring);
+        $name = $event->get_author();
+        $subject = $event->get_subject();
+        $desc = $event->get_desc();
+        $date = $event->get_date_string();
+        $time = $event->get_time_string();
+        $eid = $event->get_eid();
 
-	$results = $phpcdb->search($phpcid, $keywords, $start, $end, $sort,
-			$order);
+        $tags[] = tag(
+            'tr',
+            tag(
+                'td',
+                tag(
+                    'strong',
+                    create_event_link(
+                        $subject,
+                        'display_event',
+                        $eid
+                    )
+                )
+            ),
+            tag('td', "$date $time"),
+            tag('td', $desc)
+        );
+    }
 
-	$tags = array();
-	foreach ($results as $event) {
-		if(!$event->can_read())
-			continue;
+    if(sizeof($tags) == 0) {
+        $html = tag(
+            'div', tag(
+                'strong',
+                __('No events matched your search criteria.')
+            )
+        );
+    } else {
+        $html = tag(
+            'table',
+            attributes('class="phpc-main"'),
+            tag('caption', __('Search Results')),
+            tag(
+                'thead',
+                tag(
+                    'tr',
+                    tag('th', __('Subject')),
+                    tag('th', __('Date Time')),
+                    tag('th', __('Description'))
+                )
+            )
+        );
+        foreach($tags as $tag) { $html->add($tag);
+        }
+    }
 
-		$name = $event->get_author();
-		$subject = $event->get_subject();
-		$desc = $event->get_desc();
-		$date = $event->get_date_string();
-		$time = $event->get_time_string();
-		$eid = $event->get_eid();
-
-		$tags[] = tag('tr',
-				tag('td',
-					tag('strong',
-						create_event_link(
-							$subject,
-							'display_event',
-							$eid)
-					   )),
-				tag('td', "$date $time"),
-				tag('td', $desc));
-	}
-
-	if(sizeof($tags) == 0) {
-		$html = tag('div', tag('strong',
-					__('No events matched your search criteria.')));
-	} else {
-		$html = tag('table',
-				attributes('class="phpc-main"'),
-				tag('caption', __('Search Results')),
-				tag('thead',
-					tag('tr',
-						tag('th', __('Subject')),
-						tag('th', __('Date Time')),
-						tag('th', __('Description')))));
-		foreach($tags as $tag) $html->add($tag);
-	}
-
-	return $html;
+    return $html;
 }
 
 function search_form()
 {
-	global $phpc_script, $sort_options, $order_options, $phpcid, $phpc_cal;
-	
-	$date_format = $phpc_cal->date_format;
+    global $phpc_script, $sort_options, $order_options, $phpcid, $phpc_cal;
+    
+    $date_format = $phpc_cal->date_format;
  
-	$form = new Form($phpc_script, __('Search'),'post');
-    	$form->add_part(new FormFreeQuestion('searchstring', __('Phrase'),
-				false, 32, true));
-	$form->add_hidden('action', 'search');
-	$form->add_hidden('phpcid', $phpcid);
-	$form->add_part(new FormDateQuestion('search-from', __('From'),
-				$date_format));
-	$form->add_part(new FormDateQuestion('search-to', __('To'),
-				$date_format));
-	$sort = new FormDropdownQuestion('sort', __('Sort By'));
-	$sort->add_options($sort_options);
-	$form->add_part($sort);
-	$order = new FormDropdownQuestion('order', __('Order'));
-	$order->add_options($order_options);
-	$form->add_part($order);
-	$form->add_part(new FormSubmitButton(__("Search")));
-	return $form->get_form();
+    $form = new Form($phpc_script, __('Search'), 'post');
+        $form->add_part(
+            new FormFreeQuestion(
+                'searchstring', __('Phrase'),
+                false, 32, true
+            )
+        );
+    $form->add_hidden('action', 'search');
+    $form->add_hidden('phpcid', $phpcid);
+    $form->add_part(
+        new FormDateQuestion(
+            'search-from', __('From'),
+            $date_format
+        )
+    );
+    $form->add_part(
+        new FormDateQuestion(
+            'search-to', __('To'),
+            $date_format
+        )
+    );
+    $sort = new FormDropdownQuestion('sort', __('Sort By'));
+    $sort->add_options($sort_options);
+    $form->add_part($sort);
+    $order = new FormDropdownQuestion('order', __('Order'));
+    $order->add_options($order_options);
+    $form->add_part($order);
+    $form->add_part(new FormSubmitButton(__("Search")));
+    return $form->get_form();
 }
 
 function search()
 {
-	global $vars;
+    global $vars;
 
-	try {
-		if(isset($vars['searchstring']))
-			return search_results();
-	} catch(Exception $e) {
-		message($e->getMessage());
-	}
+    try {
+        if(isset($vars['searchstring'])) {
+            return search_results();
+        }
+    } catch(Exception $e) {
+        message($e->getMessage());
+    }
 
-	return search_form();
+    return search_form();
 }
 
 ?>

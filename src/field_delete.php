@@ -17,40 +17,42 @@
 
 function field_delete()
 {
-	global $vars, $phpcdb, $phpcid, $phpc_script;
+    global $vars, $phpcdb, $phpcid, $phpc_script;
 
-	$html = tag('div', attributes('class="phpc-container"'));
+    $html = tag('div', attributes('class="phpc-container"'));
 
-	if(empty($vars["fid"])) {
-		return message_redirect(__('No field selected.'),
-				"$phpc_script?action=cadmin&phpcid=$phpcid");
-	}
+    if(empty($vars["fid"])) {
+        return message_redirect(
+            __('No field selected.'),
+            "$phpc_script?action=cadmin&phpcid=$phpcid"
+        );
+    }
 
-	if (is_array($vars["fid"])) {
-		$ids = $vars["fid"];
-	} else {
-		$ids = array($vars["fid"]);
-	}
+    if (is_array($vars["fid"])) {
+        $ids = $vars["fid"];
+    } else {
+        $ids = array($vars["fid"]);
+    }
 
-	$fields = array();
-	foreach ($ids as $id) {
-		$fields[] = $phpcdb->get_field($id);
-	}
+    $fields = array();
+    foreach ($ids as $id) {
+        $fields[] = $phpcdb->get_field($id);
+    }
 
-	foreach($fields as $field) {
-		if((empty($field['cid']) && !is_admin()) ||
-					!$phpcdb->get_calendar($field['cid'])
-					->can_admin()) {
-			$html->add(tag('p', __("You do not have permission to delete field: ") . $field['fid']));
-			continue;
-		}
+    foreach($fields as $field) {
+        if((empty($field['cid']) && !is_admin()) 
+            || !$phpcdb->get_calendar($field['cid'])        ->can_admin()
+        ) {
+            $html->add(tag('p', __("You do not have permission to delete field: ") . $field['fid']));
+            continue;
+        }
 
-		if($phpcdb->delete_field($field['fid'])) {
-			$html->add(tag('p', __("Removed field: ") . $field['fid']));
-		} else {        
-			$html->add(tag('p', __("Could not remove field: ") . $field['fid']));
-		}
-	}
+        if($phpcdb->delete_field($field['fid'])) {
+            $html->add(tag('p', __("Removed field: ") . $field['fid']));
+        } else {        
+            $html->add(tag('p', __("Could not remove field: ") . $field['fid']));
+        }
+    }
 
         return message_redirect($html, "$phpc_script?action=cadmin&phpcid=$phpcid");
 }

@@ -15,82 +15,103 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
+if (!defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
 function category_submit()
 {
-	global $vars, $phpcdb, $phpc_script, $phpc_cal;
+    global $vars, $phpcdb, $phpc_script, $phpc_cal;
 
-	$form_page = "$phpc_script?action=category_form";
-	if(!empty($vars["cid"]))
-		$form_page .= "&cid={$vars["cid"]}";
-	if(!empty($vars["catid"]))
-		$form_page .= "&catid={$vars["catid"]}";
+    $form_page = "$phpc_script?action=category_form";
+    if(!empty($vars["cid"])) {
+        $form_page .= "&cid={$vars["cid"]}";
+    }
+    if(!empty($vars["catid"])) {
+        $form_page .= "&catid={$vars["catid"]}";
+    }
 
-	if(empty($vars["text-color"]) || empty($vars["bg-color"])) {
-		return input_error(__("Color not specified."), $form_page);
-	}
+    if(empty($vars["text-color"]) || empty($vars["bg-color"])) {
+        return input_error(__("Color not specified."), $form_page);
+    }
 
-	$text_color = $vars["text-color"];
-	$bg_color = $vars["bg-color"];
-	if(empty($vars['gid']) || strlen($vars['gid']) == 0)
-		$gid = 0;
-	else
-		$gid = $vars['gid'];
+    $text_color = $vars["text-color"];
+    $bg_color = $vars["bg-color"];
+    if(empty($vars['gid']) || strlen($vars['gid']) == 0) {
+        $gid = 0;
+    } else {
+        $gid = $vars['gid'];
+    }
 
-	if(empty($vars['name']))
-		input_error(__("Category name not specified."), $form_page);
+    if(empty($vars['name'])) {
+        input_error(__("Category name not specified."), $form_page);
+    }
 
-	if(!check_color($text_color) || !check_color($bg_color))
-		input_error(__("Invalid color."), $form_page);
+    if(!check_color($text_color) || !check_color($bg_color)) {
+        input_error(__("Invalid color."), $form_page);
+    }
 
-	if(!isset($vars['catid'])) {
-		$modify = false;
+    if(!isset($vars['catid'])) {
+        $modify = false;
 
-		if(!isset($vars['cid'])) {
-			$cid = null;
-			if(!is_admin())
-				permission_error(__('You do not have permission to add categories to all calendars.'));
-		} else { 
-			$cid = $vars['cid'];
-			$calendar = $phpcdb->get_calendar($cid);
-			if(!$calendar->can_admin())
-				permission_error(__('You do not have permission to add categories to this calendar.'));
-		}
-		$catid = $phpcdb->create_category($cid, $vars["name"],
-				$text_color, $bg_color, $gid);
-	} else {
-		$modify = true;
+        if(!isset($vars['cid'])) {
+            $cid = null;
+            if(!is_admin()) {
+                permission_error(__('You do not have permission to add categories to all calendars.'));
+            }
+        } else { 
+            $cid = $vars['cid'];
+            $calendar = $phpcdb->get_calendar($cid);
+            if(!$calendar->can_admin()) {
+                permission_error(__('You do not have permission to add categories to this calendar.'));
+            }
+        }
+        $catid = $phpcdb->create_category(
+            $cid, $vars["name"],
+            $text_color, $bg_color, $gid
+        );
+    } else {
+        $modify = true;
 
-		$catid = $vars['catid'];
-		$category = $phpcdb->get_category($catid);
+        $catid = $vars['catid'];
+        $category = $phpcdb->get_category($catid);
 
-		if(!(empty($category['cid']) && is_admin() ||
-					$phpcdb->get_calendar($category["cid"])
-					->can_admin()))
-			permission_error(__("You do not have permission to modify this category."));
-			
-		$phpcdb->modify_category($catid, $vars['name'],
-				$text_color, $bg_color, $gid);
-	}
+        if(!(empty($category['cid']) && is_admin() 
+            || $phpcdb->get_calendar($category["cid"])        ->can_admin())
+        ) {
+            permission_error(__("You do not have permission to modify this category."));
+        }
+            
+        $phpcdb->modify_category(
+            $catid, $vars['name'],
+            $text_color, $bg_color, $gid
+        );
+    }
 
-	$page = "$phpc_script?action=cadmin&phpcid={$vars['phpcid']}#phpc-categories";
+    $page = "$phpc_script?action=cadmin&phpcid={$vars['phpcid']}#phpc-categories";
 
-	if($modify)
-		return message_redirect(__("Modified category: ") . $catid,
-				$page);
+    if($modify) {
+        return message_redirect(
+            __("Modified category: ") . $catid,
+            $page
+        );
+    }
 
-	if($catid > 0)
-		return message_redirect(__("Created category: ") . $catid,
-				$page);
+    if($catid > 0) {
+        return message_redirect(
+            __("Created category: ") . $catid,
+            $page
+        );
+    }
 
-	return tag('div', attributes('class="phpc-error"'),
-			__('Error submitting category.'));
+    return tag(
+        'div', attributes('class="phpc-error"'),
+        __('Error submitting category.')
+    );
 }
 
-function check_color($color) {
-	return preg_match('/^#[0-9a-fA-F]{6}$/', $color) == 1;
+function check_color($color) 
+{
+    return preg_match('/^#[0-9a-fA-F]{6}$/', $color) == 1;
 }
 ?>

@@ -19,27 +19,37 @@ namespace PhpCalendar;
 
 class Database
 {
-    /** @var \PDO */
+    /**
+     * @var \PDO 
+     */
     private $dbh;
-    /** @var Calendar[] */
+    /**
+     * @var Calendar[] 
+     */
     private $calendars;
-    /** @var string[] */
+    /**
+     * @var string[] 
+     */
     private $config;
     private $event_columns;
     private $occurrence_columns;
     private $user_fields;
-    /** @var string */
+    /**
+     * @var string 
+     */
     private $prefix;
 
     /**
      * Database constructor.
+     *
      * @param string[] $config
      */
     function __construct($config)
     {
         $dsn = "mysql:dbname={$config["sql_database"]};host={$config["sql_host"]};charset=utf8";
-        if (isset($config["sql_port"]))
+        if (isset($config["sql_port"])) {
             $dsn .= ";port=" . $config["sql_port"];
+        }
 
         $this->prefix = $config["sql_prefix"];
 
@@ -63,7 +73,7 @@ class Database
     // $from and $to are timestamps only significant to the date.
     // an event that happens later in the day of $to is included
     /**
-     * @param int $cid
+     * @param int                $cid
      * @param \DateTimeInterface $from
      * @param \DateTimeInterface $to
      * @return Occurrence[]
@@ -104,7 +114,7 @@ class Database
     /* if category is visible to user id */
     /**
      * @param User $user
-     * @param int $catId
+     * @param int  $catId
      * @return bool
      * @throws \Exception
      */
@@ -114,8 +124,9 @@ class Database
         $user_groups_table = $this->prefix . 'user_groups';
         $cats_table = $this->prefix . 'categories';
 
-        if ($user->is_admin())
+        if ($user->is_admin()) {
             return true;
+        }
 
         $query = "SELECT * FROM `$users_table` u\n"
             . "JOIN `$user_groups_table` ug USING (`uid`)\n"
@@ -127,8 +138,9 @@ class Database
         $sth->execute();
 
         $results = $sth->fetch(\PDO::FETCH_ASSOC);
-        if (!$results)
+        if (!$results) {
             return false;
+        }
 
         return $results->num_rows > 0;
     }
@@ -174,8 +186,9 @@ class Database
         $sth->execute();
 
         $result = $sth->fetch(\PDO::FETCH_ASSOC);
-        if (!$result)
+        if (!$result) {
             return null;
+        }
         return new Event($this, $result);
     }
 
@@ -435,8 +448,9 @@ class Database
         $sth->execute();
 
         $result = $sth->fetch(\PDO::FETCH_ASSOC);
-        if (empty($result))
+        if (empty($result)) {
             return null;
+        }
 
         return new Occurrence($this, $result);
     }
@@ -688,8 +702,9 @@ class Database
     {
         static $perms = array();
 
-        if (empty($perms[$cid]))
+        if (empty($perms[$cid])) {
             $perms[$cid] = array();
+        }
 
         if (!empty($perms[$cid][$uid])) {
             $query = "SELECT * FROM " . $this->prefix . "permissions WHERE `cid`=:cid AND `uid`=:uid";
@@ -711,8 +726,9 @@ class Database
      */
     function getCalendars()
     {
-        if (!empty($this->calendars))
+        if (!empty($this->calendars)) {
             return $this->calendars;
+        }
 
         $query = "SELECT *\n"
             . "FROM `" . $this->prefix . "calendars`\n"
@@ -756,8 +772,9 @@ class Database
                 $this->config[$result['name']] = $result['value'];
             }
         }
-        if (isset($this->config[$name]))
+        if (isset($this->config[$name])) {
             return $this->config[$name];
+        }
         // otherwise
         return false;
     }
@@ -847,10 +864,11 @@ class Database
         $sth->execute(array(':username' => $username));
 
         $result = $sth->fetch(\PDO::FETCH_ASSOC);
-        if ($result)
+        if ($result) {
             return User::createFromMap($this, $result);
-        else
+        } else {
             return false;
+        }
     }
 
     /**
@@ -868,16 +886,17 @@ class Database
         $sth->execute();
 
         $result = $sth->fetch(\PDO::FETCH_ASSOC);
-        if ($result)
+        if ($result) {
             return User::createFromMap($this, $result);
-        else
+        } else {
             return false;
+        }
     }
 
     /**
      * @param string $username
      * @param string $password
-     * @param bool $make_admin
+     * @param bool   $make_admin
      * @return string
      */
     function create_user($username, $password, $make_admin)
@@ -907,7 +926,7 @@ class Database
     }
 
     /**
-     * @param int $cid
+     * @param int    $cid
      * @param string $name
      * @param string $value
      */
@@ -925,7 +944,7 @@ class Database
     }
 
     /**
-     * @param int $uid
+     * @param int    $uid
      * @param string $password
      */
     function set_password($uid, $password)
@@ -936,12 +955,12 @@ class Database
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
-	$sth->bindValue(':password', password_hash($password, PASSWORD_DEFAULT));
+        $sth->bindValue(':password', password_hash($password, PASSWORD_DEFAULT));
         $sth->execute();
     }
 
     /**
-     * @param int $uid
+     * @param int    $uid
      * @param string $timezone
      */
     function set_timezone($uid, $timezone)
@@ -956,7 +975,7 @@ class Database
     }
 
     /**
-     * @param int $uid
+     * @param int    $uid
      * @param string $language
      */
     function set_language($uid, $language)
@@ -1006,10 +1025,10 @@ class Database
     }
 
     /**
-     * @param int $cid
-     * @param int $uid
-     * @param string $subject
-     * @param string $description
+     * @param int      $cid
+     * @param int      $uid
+     * @param string   $subject
+     * @param string   $description
      * @param int|null $catid
      * @return int
      */
@@ -1033,8 +1052,8 @@ class Database
     }
 
     /**
-     * @param int $eid
-     * @param int $time_type
+     * @param int                $eid
+     * @param int                $time_type
      * @param \DateTimeInterface $start
      * @param \DateTimeInterface $end
      * @return string
@@ -1073,8 +1092,8 @@ class Database
     }
 
     /**
-     * @param int $oid
-     * @param int $time_type
+     * @param int                $oid
+     * @param int                $time_type
      * @param \DateTimeInterface $start
      * @param \DateTimeInterface $end
      * @return bool
@@ -1105,9 +1124,9 @@ class Database
     }
 
     /**
-     * @param int $eid
-     * @param string $subject
-     * @param string $description
+     * @param int      $eid
+     * @param string   $subject
+     * @param string   $description
      * @param bool|int $catid
      * @return bool
      */
@@ -1124,8 +1143,9 @@ class Database
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
-        if ($catid !== false)
+        if ($catid !== false) {
             $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
+        }
         $sth->bindValue(':subject', $subject);
         $sth->bindValue(':description', $description);
         $sth->execute();
@@ -1134,10 +1154,10 @@ class Database
     }
 
     /**
-     * @param int $cid
-     * @param string $name
-     * @param string $text_color
-     * @param string $bg_color
+     * @param int      $cid
+     * @param string   $name
+     * @param string   $text_color
+     * @param string   $bg_color
      * @param bool|int $gid
      * @return string
      */
@@ -1145,13 +1165,15 @@ class Database
     {
         $query = "INSERT INTO `{$this->prefix}categories`\n"
             . "SET `cid`=:cid, `name`=:name, `text_color`=:text_color, `bg_color`=:bg_color\n";
-        if ($gid !== false)
+        if ($gid !== false) {
             $query .= ", `gid`=:gid";
+        }
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
-        if ($gid !== false)
+        if ($gid !== false) {
             $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
+        }
         $sth->execute(array(':name' => $name, ':text_color' => $text_color, ':bg_color' => $bg_color));
 
         return $this->dbh->lastInsertId();
@@ -1170,18 +1192,19 @@ class Database
     }
 
     /**
-     * @param int $cid
+     * @param int    $cid
      * @param string $name
-     * @param bool $required
+     * @param bool   $required
      * @param string $format
      * @return string
      */
     function create_field($cid, $name, $required, $format)
     {
-        if ($format === false)
+        if ($format === false) {
             $format_str = 'NULL';
-        else
+        } else {
             $format_str = ":format";
+        }
 
         $query = "INSERT INTO `{$this->prefix}fields`\n"
             . "`cid`=:cid, `name`=:name, `required`=:required, `format`=$format_str";
@@ -1189,19 +1212,20 @@ class Database
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
         $sth->bindValue(':required', asbool($required), \PDO::PARAM_BOOL);
-        if ($format !== false)
+        if ($format !== false) {
             $sth->bindValue(':format', $format);
+        }
         $sth->execute(array(':name' => $name));
 
         return $this->dbh->lastInsertId();
     }
 
     /**
-     * @param int $catid
+     * @param int    $catid
      * @param string $name
      * @param string $text_color
      * @param string $bg_color
-     * @param int $gid
+     * @param int    $gid
      * @return bool
      */
     function modify_category($catid, $name, $text_color, $bg_color, $gid)
@@ -1219,7 +1243,7 @@ class Database
     }
 
     /**
-     * @param int $gid
+     * @param int    $gid
      * @param string $name
      * @return bool
      */
@@ -1237,18 +1261,19 @@ class Database
     }
 
     /**
-     * @param int $fid
-     * @param string $name
-     * @param bool $required
+     * @param int         $fid
+     * @param string      $name
+     * @param bool        $required
      * @param bool|string $format
      * @return bool
      */
     function modify_field($fid, $name, $required, $format)
     {
-        if ($format === false)
+        if ($format === false) {
             $format_val = 'NULL';
-        else
+        } else {
             $format_val = ":format";
+        }
 
         $query = "UPDATE `{$this->prefix}fields`\n"
             . "SET `name`=:name, `required`=:required, `format`=$format_val\n"
@@ -1257,8 +1282,9 @@ class Database
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':fid', $fid, \PDO::PARAM_INT);
         $sth->bindValue(':required', asbool($required), \PDO::PARAM_BOOL);
-        if ($format !== false)
+        if ($format !== false) {
             $sth->bindValue(':format', $format);
+        }
         $sth->execute(array(':name' => $name));
 
         return $sth->rowCount() > 0;
@@ -1266,12 +1292,13 @@ class Database
 
     /**
      * $sort and $order must be checked
-     * @param int $cid
-     * @param string[] $keywords
-     * @param \DateTimeInterface $start
-     * @param \DateTimeInterface $end
-     * @param string $sort
-     * @param string $order
+     *
+     * @param  int                $cid
+     * @param  string[]           $keywords
+     * @param  \DateTimeInterface $start
+     * @param  \DateTimeInterface $end
+     * @param  string             $sort
+     * @param  string             $order
      * @return Occurrence[]
      */
     function search($cid, $keywords, \DateTimeInterface $start, \DateTimeInterface $end, $sort, $order)
@@ -1322,8 +1349,8 @@ class Database
     }
 
     /**
-     * @param int $cid
-     * @param int $uid
+     * @param int    $cid
+     * @param int    $uid
      * @param bool[] $perms
      */
     function update_permissions($cid, $uid, $perms)

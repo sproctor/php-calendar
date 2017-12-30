@@ -21,44 +21,46 @@ if(!defined('IN_PHPC')) {
 
 function user_permissions_submit()
 {
-	global $phpcid, $phpc_cal, $vars, $phpcdb, $phpc_script;
+    global $phpcid, $phpc_cal, $vars, $phpcdb, $phpc_script;
 
-        if(!$phpc_cal->can_admin()) {
-                return tag('div', __('Permission denied'));
+    if(!$phpc_cal->can_admin()) {
+            return tag('div', __('Permission denied'));
+    }
+
+    if(empty($vars['uid'])) {
+            return tag('div', __('No users'));
+    }
+
+    $users = array();
+
+    foreach ($vars['uid'] as $uid) {
+        $perm_names = array('read', 'write', 'readonly', 'modify',
+        'admin');
+        $old_perms = $phpcdb->get_permissions($phpcid, $uid);
+
+        $new_perms = array();
+        
+        $different = false;
+        foreach($perm_names as $perm_name) {
+            $new_perms[$perm_name] = !empty($vars["$perm_name$uid"]);
+            if(empty($old_perms[$perm_name]) != empty($vars["$perm_name$uid"])) {
+                $different = true;
+            }
         }
 
-        if(empty($vars['uid'])) {
-                return tag('div', __('No users'));
+        if ($different) {
+            $user = $phpcdb->get_user($uid);
+            $users[] = $user->get_username();
+            $phpcdb->update_permissions($phpcid, $uid, $new_perms);
         }
+    }
+    if(sizeof($users) == 0) {
+        $message = __('No changes to make.');
+    } else {
+        $message = __('Updated user(s):').' ' .implode(', ', $users);
+    }
 
-	$users = array();
-
-	foreach ($vars['uid'] as $uid) {
-		$perm_names = array('read', 'write', 'readonly', 'modify',
-				'admin');
-		$old_perms = $phpcdb->get_permissions($phpcid, $uid);
-
-		$new_perms = array();
-		
-		$different = false;
-		foreach($perm_names as $perm_name) {
-			$new_perms[$perm_name] = !empty($vars["$perm_name$uid"]);
-			if(empty($old_perms[$perm_name]) != empty($vars["$perm_name$uid"]))
-			$different = true;
-		}
-
-		if ($different) {
-			$user = $phpcdb->get_user($uid);
-			$users[] = $user->get_username();
-			$phpcdb->update_permissions($phpcid, $uid, $new_perms);
-		}
-	}
-	if(sizeof($users) == 0)
-		$message = __('No changes to make.');
-	else
-		$message = __('Updated user(s):').' ' .implode(', ', $users);
-
-	return message_redirect($message, "$phpc_script?action=cadmin&phpcid=$phpcid");
+    return message_redirect($message, "$phpc_script?action=cadmin&phpcid=$phpcid");
 }
 
 ?>

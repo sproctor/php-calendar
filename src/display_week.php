@@ -19,67 +19,85 @@
    This file has the functions for the main displays of the calendar
 */
 
-if ( !defined('IN_PHPC') ) {
+if (!defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
-require_once("$phpc_includes_path/display_functions.php");
+require_once "$phpc_includes_path/display_functions.php";
 
 // Full display for a month
 function display_week()
 {
-	global $vars, $phpc_home_url, $phpcid, $phpc_year, $phpc_month, $phpc_day;
+    global $vars, $phpc_home_url, $phpcid, $phpc_year, $phpc_month, $phpc_day;
 
-	if(!isset($vars['week'])) {
-		$week_of_year = week_of_year($phpc_month, $phpc_day, $phpc_year);
-	} else {
-		if(!is_numeric($vars['week']))
-			soft_error(__('Invalid date.'));
-		$week_of_year = $vars['week'];
-	}
+    if(!isset($vars['week'])) {
+        $week_of_year = week_of_year($phpc_month, $phpc_day, $phpc_year);
+    } else {
+        if(!is_numeric($vars['week'])) {
+            soft_error(__('Invalid date.'));
+        }
+        $week_of_year = $vars['week'];
+    }
 
-	$day_of_year = 1 + ($week_of_year - 1) * 7 - day_of_week(1, 1, $phpc_year);
-	$from_stamp = mktime(0, 0, 0, 1, $day_of_year, $phpc_year);
-	$start_day = date("j", $from_stamp);
-	$start_month = date("n", $from_stamp);
-	$start_year = date("Y", $from_stamp);
+    $day_of_year = 1 + ($week_of_year - 1) * 7 - day_of_week(1, 1, $phpc_year);
+    $from_stamp = mktime(0, 0, 0, 1, $day_of_year, $phpc_year);
+    $start_day = date("j", $from_stamp);
+    $start_month = date("n", $from_stamp);
+    $start_year = date("Y", $from_stamp);
 
-	$last_day = $day_of_year + 6;
-	$to_stamp = mktime(23, 59, 59, 1, $last_day, $phpc_year);
-	$end_day = date("j", $to_stamp);
-	$end_month = date("n", $to_stamp);
-	$end_year = date("Y", $to_stamp);
+    $last_day = $day_of_year + 6;
+    $to_stamp = mktime(23, 59, 59, 1, $last_day, $phpc_year);
+    $end_day = date("j", $to_stamp);
+    $end_month = date("n", $to_stamp);
+    $end_year = date("Y", $to_stamp);
 
-	$title = month_name($start_month) .  " $start_year";
-	if($end_month != $start_month)
-		$title .= " - " . month_name($end_month) . " $end_year";
+    $title = month_name($start_month) .  " $start_year";
+    if($end_month != $start_month) {
+        $title .= " - " . month_name($end_month) . " $end_year";
+    }
 
-	$prev_week = $week_of_year - 1;
-	$prev_year = $phpc_year;
-	if($prev_week < 1) {
-		$prev_year--;
-		$prev_week = week_of_year($start_month, $start_day - 7,
-				$start_year);
-	}
+    $prev_week = $week_of_year - 1;
+    $prev_year = $phpc_year;
+    if($prev_week < 1) {
+        $prev_year--;
+        $prev_week = week_of_year(
+            $start_month, $start_day - 7,
+            $start_year
+        );
+    }
 
-	$next_week = $week_of_year + 1;
-	$next_year = $phpc_year;
-	if($next_week > weeks_in_year($phpc_year)) {
-		$next_week = week_of_year($end_month, $end_day + 1, $end_year);
-		$next_year++;
-	}
+    $next_week = $week_of_year + 1;
+    $next_year = $phpc_year;
+    if($next_week > weeks_in_year($phpc_year)) {
+        $next_week = week_of_year($end_month, $end_day + 1, $end_year);
+        $next_year++;
+    }
 
-	$heading = tag('',
-			tag('a', attrs('class="phpc-icon-link"',
-					"href=\"$phpc_home_url?action=display_week&amp;phpcid=$phpcid&amp;week=$prev_week&amp;year=$prev_year\""),
-				tag('span', attrs('class="fa fa-chevron-left"'), '')),
-			$title,
-			tag('a', attrs('class="phpc-icon-link"',
-					"href=\"$phpc_home_url?action=display_week&amp;phpcid=$phpcid&amp;week=$next_week&amp;year=$next_year\""),
-				tag('span', attrs('class="fa fa-chevron-right"'), '')));
+    $heading = tag(
+        '',
+        tag(
+            'a', attrs(
+                'class="phpc-icon-link"',
+                "href=\"$phpc_home_url?action=display_week&amp;phpcid=$phpcid&amp;week=$prev_week&amp;year=$prev_year\""
+            ),
+            tag('span', attrs('class="fa fa-chevron-left"'), '')
+        ),
+        $title,
+        tag(
+            'a', attrs(
+                'class="phpc-icon-link"',
+                "href=\"$phpc_home_url?action=display_week&amp;phpcid=$phpcid&amp;week=$next_week&amp;year=$next_year\""
+            ),
+            tag('span', attrs('class="fa fa-chevron-right"'), '')
+        )
+    );
 
-	return create_display_table($heading, create_week($from_stamp, $phpc_year,
-				get_events($from_stamp, $to_stamp)));
+    return create_display_table(
+        $heading, create_week(
+            $from_stamp, $phpc_year,
+            get_events($from_stamp, $to_stamp)
+        )
+    );
 }
 
 ?>

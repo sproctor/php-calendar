@@ -19,13 +19,15 @@ class ActionItem
 
     /**
      * ActionItem constructor.
-     * @param string $text
-     * @param string $action
-     * @param null|string[] $arguments
+     *
+     * @param string             $text
+     * @param string             $action
+     * @param null|string[]      $arguments
      * @param null|AttributeList $attributes
-     * @param null|string $icon
+     * @param null|string        $icon
      */
-    public function __construct($text, $action, $arguments = null, $attributes = null, $icon = null) {
+    public function __construct($text, $action, $arguments = null, $attributes = null, $icon = null) 
+    {
         $this->text = $text;
         $this->action = $action;
         $this->arguments = $arguments;
@@ -36,31 +38,36 @@ class ActionItem
     /**
      * @return string
      */
-    public function getText() {
+    public function getText() 
+    {
         $text = str_replace(' ', '&nbsp;', $this->text);
-        if ($this->icon != null)
+        if ($this->icon != null) {
             $text = fa($this->icon) . "&nbsp;$text";
+        }
         return $text;
     }
 
     /**
      * @return string
      */
-    public function getAction() {
+    public function getAction() 
+    {
         return $this->action;
     }
 
     /**
      * @return null|string[]
      */
-    public function getArguments() {
+    public function getArguments() 
+    {
         return $this->arguments;
     }
 
     /**
      * @return null|AttributeList
      */
-    public function getAttributes() {
+    public function getAttributes() 
+    {
         return $this->attributes;
     }
 
@@ -68,9 +75,11 @@ class ActionItem
      * @param string $key
      * @param string $value
      */
-    public function addArgument($key, $value) {
-        if(empty($this->arguments))
+    public function addArgument($key, $value) 
+    {
+        if(empty($this->arguments)) {
             $this->arguments = array();
+        }
         $this->arguments[$key] = $value;
     }
 }

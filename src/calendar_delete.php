@@ -15,38 +15,43 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
+if (!defined('IN_PHPC') ) {
        die("Hacking attempt");
 }
 
 function calendar_delete()
 {
-	global $vars, $phpcdb, $phpc_script;
+    global $vars, $phpcdb, $phpc_script;
 
-	$html = tag('div', attributes('class="phpc-container"'));
+    $html = tag('div', attributes('class="phpc-container"'));
 
-	if(empty($vars["cid"])) {
-		$html->add(tag('p', __('No calendar selected.')));
-		return $html;
-	}
+    if(empty($vars["cid"])) {
+        $html->add(tag('p', __('No calendar selected.')));
+        return $html;
+    }
 
-	$id = $vars["cid"];
+    $id = $vars["cid"];
 
-	$calendar = $phpcdb->get_calendar($id);
+    $calendar = $phpcdb->get_calendar($id);
 
-	if(empty($calendar))
-		soft_error(__("Calendar does not exist") . ": $id");
+    if(empty($calendar)) {
+        soft_error(__("Calendar does not exist") . ": $id");
+    }
 
-	if(!$calendar->can_admin()) {
-		soft_error(__("You do not have permission to remove calendar") . ": $id");
-	}
+    if(!$calendar->can_admin()) {
+        soft_error(__("You do not have permission to remove calendar") . ": $id");
+    }
 
-	if($phpcdb->delete_calendar($id)) {
-		$html->add(tag('p', __("Removed calendar") . ": $id"));
-	} else {        
-		$html->add(tag('p', __("Could not remove calendar")
-					. ": $id"));
-	}
+    if($phpcdb->delete_calendar($id)) {
+        $html->add(tag('p', __("Removed calendar") . ": $id"));
+    } else {        
+        $html->add(
+            tag(
+                'p', __("Could not remove calendar")
+                . ": $id"
+            )
+        );
+    }
 
         return message_redirect($html, "$phpc_script?action=admin");
 }

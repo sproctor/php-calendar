@@ -21,39 +21,41 @@ if(!defined('IN_PHPC')) {
 
 function password_submit()
 {
-	global $vars, $phpcdb, $phpc_user;
+    global $vars, $phpcdb, $phpc_user;
 
-        if(!is_user()) {
-                return tag('div', __('You must be logged in.'));
-        }
+    if(!is_user()) {
+            return tag('div', __('You must be logged in.'));
+    }
 
-	verify_token();
+    verify_token();
 
-	if(!$phpc_user->is_password_editable())
-		soft_error(__('You do not have permission to change your password.'));
+    if(!$phpc_user->is_password_editable()) {
+        soft_error(__('You do not have permission to change your password.'));
+    }
 
-        if(!isset($vars['old_password'])) {
-                return tag('div', __('You must specify your old password.'));
-        } else {
-		$old_password = $vars['old_password'];
-	}
+    if(!isset($vars['old_password'])) {
+            return tag('div', __('You must specify your old password.'));
+    } else {
+        $old_password = $vars['old_password'];
+    }
 
-	if($phpc_user->password != md5($old_password)) {
+    if($phpc_user->password != md5($old_password)) {
                 return tag('div', __('The password you entered did not match your old password.'));
-	}
+    }
 
-        if(empty($vars['password1'])) {
-                return tag('div', __('You must specify a password'));
-        }
+    if(empty($vars['password1'])) {
+            return tag('div', __('You must specify a password'));
+    }
 
-        if(empty($vars['password2'])
-                || $vars['password1'] != $vars['password2']) {
-                return tag('div', __('Your passwords did not match'));
-        }
+    if(empty($vars['password2'])
+        || $vars['password1'] != $vars['password2']
+    ) {
+            return tag('div', __('Your passwords did not match'));
+    }
 
         $passwd = md5($vars['password1']);
 
-	$phpcdb->set_password($phpc_user->get_uid(), $passwd);
+    $phpcdb->set_password($phpc_user->get_uid(), $passwd);
 
         return tag('div', __('Password updated.'));
 }

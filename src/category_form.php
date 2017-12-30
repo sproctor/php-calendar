@@ -19,50 +19,57 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
-require_once("$phpc_includes_path/form.php");
+require_once "$phpc_includes_path/form.php";
 
-function category_form() {
-	global $phpc_script, $vars, $phpcdb, $phpcid;
+function category_form() 
+{
+    global $phpc_script, $vars, $phpcdb, $phpcid;
 
         $form = new Form($phpc_script, __('Category Form'));
-        $form->add_part(new FormFreeQuestion('name', __('Name'),
-				false, 32, true));
+        $form->add_part(
+            new FormFreeQuestion(
+                'name', __('Name'),
+                false, 32, true
+            )
+        );
 
-	if(isset($vars['cid'])) {
-		$form->add_hidden('cid', $vars['cid']);
-		$cid = $vars['cid'];
-	} else {
-		$cid = $phpcid;
-	}
+    if(isset($vars['cid'])) {
+        $form->add_hidden('cid', $vars['cid']);
+        $cid = $vars['cid'];
+    } else {
+        $cid = $phpcid;
+    }
 
-	$form->add_hidden('action', 'category_submit');
-	$form->add_hidden('phpcid', $phpcid);
-	$form->add_part(new FormColorPicker('text-color',__('Text Color')));
-	$form->add_part(new FormColorPicker('bg-color',__('Background Color')));
-	$group_question = new FormDropDownQuestion('gid',
-			__('Accessible to group'));
-	$group_question->add_option('', __('Any'));
-	foreach($phpcdb->get_groups($cid) as $group) {
-		$group_question->add_option($group['gid'], $group['name']);
-	}
-	$form->add_part($group_question);
-	$form->add_part(new FormSubmitButton(__("Submit Category")));
+    $form->add_hidden('action', 'category_submit');
+    $form->add_hidden('phpcid', $phpcid);
+    $form->add_part(new FormColorPicker('text-color', __('Text Color')));
+    $form->add_part(new FormColorPicker('bg-color', __('Background Color')));
+    $group_question = new FormDropDownQuestion(
+        'gid',
+        __('Accessible to group')
+    );
+    $group_question->add_option('', __('Any'));
+    foreach($phpcdb->get_groups($cid) as $group) {
+        $group_question->add_option($group['gid'], $group['name']);
+    }
+    $form->add_part($group_question);
+    $form->add_part(new FormSubmitButton(__("Submit Category")));
 
-	if(isset($vars['catid'])) {
-		$form->add_hidden('catid', $vars['catid']);
-		$category = $phpcdb->get_category($vars['catid']);
-		$defaults = array(
-				'name' => htmlspecialchars($category['name']),
-				'text-color' => htmlspecialchars($category['text_color']),
-				'bg-color' => htmlspecialchars($category['bg_color']),
-				'gid' => htmlspecialchars($category['gid']),
-				);
-	} else {
-		$defaults = array(
-				'text-color' => '#000000',
-				'bg-color' => '#ffffff',
-				);
-	}
+    if(isset($vars['catid'])) {
+        $form->add_hidden('catid', $vars['catid']);
+        $category = $phpcdb->get_category($vars['catid']);
+        $defaults = array(
+        'name' => htmlspecialchars($category['name']),
+        'text-color' => htmlspecialchars($category['text_color']),
+        'bg-color' => htmlspecialchars($category['bg_color']),
+        'gid' => htmlspecialchars($category['gid']),
+        );
+    } else {
+        $defaults = array(
+        'text-color' => '#000000',
+        'bg-color' => '#ffffff',
+        );
+    }
         return $form->get_form($defaults);
 }
 

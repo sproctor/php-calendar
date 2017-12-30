@@ -19,27 +19,32 @@ if(!defined('IN_PHPC')) {
        die("Hacking attempt");
 }
 
-require_once("$phpc_includes_path/form.php");
+require_once "$phpc_includes_path/form.php";
 
-function group_form() {
-	global $phpc_script, $vars, $phpcdb, $phpcid;
+function group_form() 
+{
+    global $phpc_script, $vars, $phpcdb, $phpcid;
 
         $form = new Form($phpc_script, __('Group Form'));
-        $form->add_part(new FormFreeQuestion('name', __('Name'),
-				false, 32, true));
+        $form->add_part(
+            new FormFreeQuestion(
+                'name', __('Name'),
+                false, 32, true
+            )
+        );
 
-	$form->add_hidden('cid', $phpcid);
+    $form->add_hidden('cid', $phpcid);
 
-	$form->add_hidden('action', 'group_submit');
-	$form->add_part(new FormSubmitButton(__("Submit Group")));
+    $form->add_hidden('action', 'group_submit');
+    $form->add_part(new FormSubmitButton(__("Submit Group")));
 
-	if(isset($vars['gid'])) {
-		$form->add_hidden('gid', $vars['gid']);
-		$group = $phpcdb->get_group($vars['gid']);
-		$defaults = array('name' => htmlspecialchars($group['name']));
-	} else {
-		$defaults = array();
-	}
+    if(isset($vars['gid'])) {
+        $form->add_hidden('gid', $vars['gid']);
+        $group = $phpcdb->get_group($vars['gid']);
+        $defaults = array('name' => htmlspecialchars($group['name']));
+    } else {
+        $defaults = array();
+    }
         return $form->get_form($defaults);
 }
 

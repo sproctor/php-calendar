@@ -25,65 +25,67 @@ use Symfony\Component\HttpFoundation\Response;
 
 class MonthPage extends Page
 {
-	/**
-	 * Full display for a month
-	 * 
-	 * @param Context $context
-	 * @return Response
-	 */
-	function action(Context $context)
-	{
-		$calendar = $context->getCalendar();
-		$cid = $calendar->getCID();
-		$month = $context->getMonth();
-		$year = $context->getYear();
+    /**
+     * Full display for a month
+     * 
+     * @param  Context $context
+     * @return Response
+     */
+    function action(Context $context)
+    {
+        $calendar = $context->getCalendar();
+        $cid = $calendar->getCID();
+        $month = $context->getMonth();
+        $year = $context->getYear();
 
-		$months = array();
-		for($i = 1; $i <= 12; $i++) {
-			$months["{$context->script}?action=display_month&amp;phpcid=$cid&amp;month=$i&amp;year=$year"] =
-				month_name($i);
-		}
-		$years = array();
-		for($i = $year - 5; $i <= $year + 5; $i++) {
-			$years["{$context->script}?action=display_month&amp;phpcid=$cid&amp;month=$month&amp;year=$i"] = $i;
-		}
-		$next_month = $month + 1;
-		$next_year = $year;
-		if($next_month > 12) {
-			$next_month -= 12;
-			$next_year++;
-		}
-		$prev_month = $month - 1;
-		$prev_year = $year;
-		if($prev_month < 1) {
-			$prev_month += 12;
-			$prev_year--;
-		}
+        $months = array();
+        for($i = 1; $i <= 12; $i++) {
+            $months["{$context->script}?action=display_month&amp;phpcid=$cid&amp;month=$i&amp;year=$year"] =
+            month_name($i);
+        }
+        $years = array();
+        for($i = $year - 5; $i <= $year + 5; $i++) {
+            $years["{$context->script}?action=display_month&amp;phpcid=$cid&amp;month=$month&amp;year=$i"] = $i;
+        }
+        $next_month = $month + 1;
+        $next_year = $year;
+        if($next_month > 12) {
+            $next_month -= 12;
+            $next_year++;
+        }
+        $prev_month = $month - 1;
+        $prev_year = $year;
+        if($prev_month < 1) {
+            $prev_month += 12;
+            $prev_year--;
+        }
 
-		$week_start = $calendar->getWeekStart();
-		$weeks = weeks_in_month($month, $year, $week_start);
+        $week_start = $calendar->getWeekStart();
+        $weeks = weeks_in_month($month, $year, $week_start);
 
-		$first_day = 1 - day_of_week($month, 1, $year, $week_start);
-		$from_date = create_datetime($month, $first_day, $year);
+        $first_day = 1 - day_of_week($month, 1, $year, $week_start);
+        $from_date = create_datetime($month, $first_day, $year);
 
-		$last_day = $weeks * 7 - day_of_week($month, 1, $year, $week_start);
-		$to_date = create_datetime($month, $last_day + 1, $year);
+        $last_day = $weeks * 7 - day_of_week($month, 1, $year, $week_start);
+        $to_date = create_datetime($month, $last_day + 1, $year);
 
-		$template_variables = array();
-		$template_variables['cid'] = $cid;
-		$template_variables['prev_month'] = $prev_month;
-		$template_variables['prev_year'] = $prev_year;
-		$template_variables['next_month'] = $next_month;
-		$template_variables['next_year'] = $next_year;
-		$template_variables['month_name'] = month_name ( $month );
-		$template_variables['months'] = $months;
-		$template_variables['year'] = $year;
-		$template_variables['years'] = $years;
-		$template_variables['week_start'] = $week_start;
-		$template_variables['weeks'] = $weeks;
-		$template_variables['occurrences'] = get_occurrences_by_day($calendar, $context->getUser(), $from_date,
-				$to_date);
-		$template_variables['start_date'] = $from_date;
-		return new Response($context->twig->render("month_page.html.twig", $template_variables));
-	}
+        $template_variables = array();
+        $template_variables['cid'] = $cid;
+        $template_variables['prev_month'] = $prev_month;
+        $template_variables['prev_year'] = $prev_year;
+        $template_variables['next_month'] = $next_month;
+        $template_variables['next_year'] = $next_year;
+        $template_variables['month_name'] = month_name($month);
+        $template_variables['months'] = $months;
+        $template_variables['year'] = $year;
+        $template_variables['years'] = $years;
+        $template_variables['week_start'] = $week_start;
+        $template_variables['weeks'] = $weeks;
+        $template_variables['occurrences'] = get_occurrences_by_day(
+            $calendar, $context->getUser(), $from_date,
+            $to_date
+        );
+        $template_variables['start_date'] = $from_date;
+        return new Response($context->twig->render("month_page.html.twig", $template_variables));
+    }
 }

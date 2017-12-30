@@ -17,46 +17,59 @@
 
 namespace PhpCalendar;
 
-class SqlKey {
-	/** @var string */
-	var $name;
-	/** @var bool */
-	var $non_unique;
-	/** @var string */
-	var $columns;
+class SqlKey
+{
+    /**
+     * @var string 
+     */
+    var $name;
+    /**
+     * @var bool 
+     */
+    var $non_unique;
+    /**
+     * @var string 
+     */
+    var $columns;
 
     /**
      * SqlKey constructor.
+     *
      * @param string $name
-     * @param bool $non_unique
+     * @param bool   $non_unique
      * @param string $columns
      */
-	function __construct($name, $non_unique, $columns) {
-		$this->name = $name;
-		$this->non_unique = $non_unique;
-		$this->columns = $columns;
-	}
+    function __construct($name, $non_unique, $columns) 
+    {
+        $this->name = $name;
+        $this->non_unique = $non_unique;
+        $this->columns = $columns;
+    }
 
     /**
      * @return string
      */
-	function get_create_query () {
-		if($this->name == "PRIMARY")
-			return "PRIMARY KEY ({$this->columns})";
+    function get_create_query() 
+    {
+        if($this->name == "PRIMARY") {
+            return "PRIMARY KEY ({$this->columns})";
+        }
 
-		return ($this->non_unique ? "" : "UNIQUE ") . "KEY `{$this->name}` ({$this->columns})";
-	}
+        return ($this->non_unique ? "" : "UNIQUE ") . "KEY `{$this->name}` ({$this->columns})";
+    }
 
     /**
      * @return string
      */
-	function get_update_query () {
-		if($this->name == "PRIMARY")
-			return "DROP PRIMARY KEY, ADD PRIMARY KEY ({$this->columns})";
-		return "DROP KEY `{$this->name}`, ADD "
-			. ($this->non_unique ? "" : "UNIQUE ") . 
-			"KEY `{$this->name}` ({$this->columns});";
-	}
+    function get_update_query() 
+    {
+        if($this->name == "PRIMARY") {
+            return "DROP PRIMARY KEY, ADD PRIMARY KEY ({$this->columns})";
+        }
+        return "DROP KEY `{$this->name}`, ADD "
+        . ($this->non_unique ? "" : "UNIQUE ") . 
+        "KEY `{$this->name}` ({$this->columns});";
+    }
 }
 
 ?>
