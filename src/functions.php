@@ -27,11 +27,6 @@ define('PHPC_CONFIG_FILE', realpath(__DIR__.'/../config.php'));
 define('PHPC_VERSION', '2.1.0');
 define('PHPC_DEBUG', 1);
 
-define('PHPC_CHECK', 1);
-define('PHPC_TEXT', 2);
-define('PHPC_DROPDOWN', 3);
-define('PHPC_MULTI_DROPDOWN', 4);
-
 function __($msg)
 {
     global $translator;
@@ -186,29 +181,6 @@ function days_between(\DateTimeInterface $date1, \DateTimeInterface $date2)
     return $days;
 }
 
-// returns tag data for the links at the bottom of the calendar
-function footer(Context $context)
-{
-    $tag = new Tag(
-        'div', new AttributeList('class="phpc-bar ui-widget-content"'),
-        "[" . __('Language') . ": {$context->getLang()}]" .
-        " [" . __('Timezone') . ": " . date_default_timezone_get() . "]"
-    );
-
-    if(defined('PHPC_DEBUG')) {
-        $tag->add(new Tag('a', new AttributeList('href="http://validator.w3.org/check/referer"'), 'Validate HTML'));
-        $tag->add(
-            new Tag(
-                'a', new AttributeList('href="http://jigsaw.w3.org/css-validator/check/referer"'),
-                'Validate CSS'
-            )
-        );
-        $tag->add(new Tag('span', "Internal Encoding: " . mb_internal_encoding() . " Output Encoding: " . mb_http_output()));
-    }
-
-    return $tag;
-}
-
 /**
  * @return string[]
  */
@@ -303,10 +275,10 @@ function weeks_in_month($month, $year, $week_start)
  * @param int $week_start
  * @return int
  */
-function weeks_in_year($year, $week_start) 
+function weeks_in_year($year, $week_start)
 {
     // This is true for ISO, not US
-    if($week_start == 1) {
+    if ($week_start == 1) {
         return _create_datetime(12, 28, $year)->format("W");
     }
     // else
@@ -454,7 +426,7 @@ function create_action_link(Context $context, $text, $action, $args = null, $cla
 
     $url = $context->script . '?action=' . htmlentities($action);
     foreach ($args as $key => $value) {
-        if(empty($value)) {
+        if (empty($value)) {
             continue;
         }
         if (is_array($value)) {
@@ -483,136 +455,37 @@ function menu_item(Context $context, $action, $text)
     return "<li class=\"nav-item$active\"><a class=\"nav-link\" href=\"$url\">$text</a></li>";
 }
 
-// creates a hidden input for a form
-// returns tag data for the input
-/**
- * @param string $name
- * @param string $value
- * @return Tag
- */
-function create_hidden($name, $value)
-{
-    return new Tag('input', new AttributeList("name=\"$name\"", "value=\"$value\"", 'type="hidden"'));
-}
-
-// creates a submit button for a form
-// return tag data for the button
-/**
- * @param string $value
- * @return Tag
- */
-function create_submit($value)
-{
-    return new Tag('input', new AttributeList("value=\"$value\"", 'type="submit"'));
-}
-
-// creates a text entry for a form
-// returns tag data for the entry
-/**
- * @param string      $name
- * @param null|string $value
- * @return Tag
- */
-function create_text($name, $value = null)
-{
-    $attributes = new AttributeList("name=\"$name\"", 'type="text"');
-    if($value !== null) {
-        $attributes->add("value=\"$value\"");
-    }
-    return new Tag('input', $attributes);
-}
-
-// creates a password entry for a form
-// returns tag data for the entry
-/**
- * @param string $name
- * @return Tag
- */
-function create_password($name)
-{
-    return new Tag('input', new AttributeList("name=\"$name\"", 'type="password"'));
-}
-
-// creates a checkbox for a form
-// returns tag data for the checkbox
-/**
- * @param string      $name
- * @param string      $value
- * @param bool        $checked
- * @param null|string $label
- * @return array|Tag
- */
-function create_checkbox($name, $value, $checked = false, $label = null)
-{
-    $attrs = new AttributeList("id=\"$name\"", "name=\"$name\"", 'type="checkbox"', "value=\"$value\"");
-    if($checked) {
-        $attrs->add('checked="checked"');
-    }
-    $input = new Tag('input', $attrs);
-    if($label !== null) {
-        return array($input, new Tag('label', new AttributeList("for=\"$name\""), $label));
-    } else {
-        return $input;
-    }
-}
-
 /**
  * @param string   $title
  * @param string[] $values // Array of URL => title
  * @return string // dropdown box that will change the page to the URL from $values when an element is selected
  */
-function create_dropdown($title, $values) 
+function create_dropdown($title, $values)
 {
     $output = "<div class=\"nav-item dropdown\">\n"
     ."    <a class=\"nav-link dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">$title</a>\n"
     ."    <div class=\"dropdown-menu\">\n";
-    foreach($values as $key => $value) {
+    foreach ($values as $key => $value) {
         $output .= "        <a class=\"dropdown-item\" href=\"$key\">$value</a>\n";
     }
     return $output . "    </div></div>";
 }
 
-function fa($name)
-{
-    return "<i class=\"fa fa-$name\"></i>";
-}
-
-// creates an array from $start to $end, with an $interval
-/**
- * @param int           $start
- * @param int           $end
- * @param int           $interval
- * @param null|callable $display
- * @return array
- */
-function create_sequence($start, $end, $interval = 1, $display = null)
-{
-    $arr = array();
-    for ($i = $start; $i <= $end; $i += $interval){
-        if(is_callable($display)) {
-            $arr[$i] = call_user_func($display, $i);
-        } else {
-            $arr[$i] = $i;
-        }
-    }
-    return $arr;
-}
-
 /**
  * @return string[]
  */
-function get_timezone_list() 
+function get_timezone_list()
 {
     $timezones = array();
     $timezones[__("Default")] = "";
-    foreach(timezone_identifiers_list() as $timezone) {
+    foreach (timezone_identifiers_list() as $timezone) {
         $sp = explode("/", $timezone, 2);
         $continent = $sp[0];
-        if(empty($sp[1])) {
+        if (empty($sp[1])) {
             $timezones[$continent] = $timezone;
         } else {
             $area = $sp[1];
-            if(empty($timezones[$continent])) {
+            if (empty($timezones[$continent])) {
                 $timezones[$continent] = array();
             }
             $timezones[$continent][$timezone] = $area;
@@ -629,31 +502,31 @@ function get_timezone_list()
 function month_name($month)
 {
     $month = ($month - 1) % 12 + 1;
-    switch($month) {
-    case 1:
-        return __('January');
-    case 2:
-        return __('February');
-    case 3:
-        return __('March');
-    case 4:    
-        return __('April');
-    case 5:    
-        return __('May');
-    case 6:
-        return __('June');
-    case 7:
-        return __('July');
-    case 8:
-        return __('August');
-    case 9:
-        return __('September');
-    case 10:
-        return __('October');
-    case 11:
-        return __('November');
-    case 12:
-        return __('December');
+    switch ($month) {
+        case 1:
+            return __('January');
+        case 2:
+            return __('February');
+        case 3:
+            return __('March');
+        case 4:
+            return __('April');
+        case 5:
+            return __('May');
+        case 6:
+            return __('June');
+        case 7:
+            return __('July');
+        case 8:
+            return __('August');
+        case 9:
+            return __('September');
+        case 10:
+            return __('October');
+        case 11:
+            return __('November');
+        case 12:
+            return __('December');
     }
     return ''; // This can't happen
 }
@@ -666,21 +539,21 @@ function day_name($day)
 {
     $day = $day % 7;
 
-    switch($day) {
-    case 0:
-        return __('Sunday');
-    case 1:
-        return __('Monday');
-    case 2:
-        return __('Tuesday');
-    case 3:    
-        return __('Wednesday');
-    case 4:
-        return __('Thursday');
-    case 5:    
-        return __('Friday');
-    case 6:
-        return __('Saturday');
+    switch ($day) {
+        case 0:
+            return __('Sunday');
+        case 1:
+            return __('Monday');
+        case 2:
+            return __('Tuesday');
+        case 3:
+            return __('Wednesday');
+        case 4:
+            return __('Thursday');
+        case 5:
+            return __('Friday');
+        case 6:
+            return __('Saturday');
     }
     return ''; // This can't happen
 }
@@ -693,21 +566,21 @@ function short_day_name($day)
 {
     $day = $day % 7;
 
-    switch($day) {
-    case 0:
-        return __('Sun');
-    case 1:
-        return __('Mon');
-    case 2:
-        return __('Tue');
-    case 3:    
-        return __('Wed');
-    case 4:
-        return __('Thu');
-    case 5:    
-        return __('Fri');
-    case 6:
-        return __('Sat');
+    switch ($day) {
+        case 0:
+            return __('Sun');
+        case 1:
+            return __('Mon');
+        case 2:
+            return __('Tue');
+        case 3:
+            return __('Wed');
+        case 4:
+            return __('Thu');
+        case 5:
+            return __('Fri');
+        case 6:
+            return __('Sat');
     }
     return ''; // This can't happen
 }
@@ -720,70 +593,33 @@ function short_month_name($month)
 {
     $month = ($month - 1) % 12 + 1;
 
-    switch($month) {
-    case 1:
-        return __('Jan');
-    case 2:
-        return __('Feb');
-    case 3:
-        return __('Mar');
-    case 4:
-        return __('Apr');
-    case 5:
-        return __('May');
-    case 6:
-        return __('Jun');
-    case 7:
-        return __('Jul');
-    case 8:
-        return __('Aug');
-    case 9:
-        return __('Sep');
-    case 10:
-        return __('Oct');
-    case 11:
-        return __('Nov');
-    case 12:
-        return __('Dec');
+    switch ($month) {
+        case 1:
+            return __('Jan');
+        case 2:
+            return __('Feb');
+        case 3:
+            return __('Mar');
+        case 4:
+            return __('Apr');
+        case 5:
+            return __('May');
+        case 6:
+            return __('Jun');
+        case 7:
+            return __('Jul');
+        case 8:
+            return __('Aug');
+        case 9:
+            return __('Sep');
+        case 10:
+            return __('Oct');
+        case 11:
+            return __('Nov');
+        case 12:
+            return __('Dec');
     }
     return ''; // This can't happen
-}
-
-// $element: { name, text, type, value(s) }
-function create_config_input($element, $default = false)
-{
-    $name = $element[0];
-    $text = $element[1];
-    $type = $element[2];
-    $value = null;
-    if(isset($element[3])) {
-        $value = $element[3];
-    }
-
-    switch($type) {
-    case PHPC_CHECK:
-        if($default == false) {
-            $default = $value;
-        }
-        $input = create_checkbox($name, '1', $default, $text);
-        break;
-    case PHPC_TEXT:
-        if($default == false) {
-            $default = $value;
-        }
-        $input = create_text($name, $default);
-        break;
-    case PHPC_DROPDOWN:
-        $input = create_select($name, $value, $default);
-        break;
-    case PHPC_MULTI_DROPDOWN:
-        $input = create_multi_select($name, $value, $default);
-        break;
-    default:
-        soft_error(__('Unsupported config type') . ": $type");
-        $input = "";
-    }
-    return $input;
 }
 
 function print_update_form()
@@ -828,26 +664,26 @@ function is_today(\DateTimeInterface $date)
  * @param $day
  * @param $year
  */
-function normalize_date(&$month, &$day, &$year) 
+function normalize_date(&$month, &$day, &$year)
 {
-    if($month < 1) {
+    if ($month < 1) {
         $month = 12;
         $year--;
-    } elseif($month > 12) {
+    } elseif ($month > 12) {
         $month = 1;
         $year++;
     }
-    if($day <= 0) {
+    if ($day <= 0) {
         $month--;
-        if($month < 1) {
+        if ($month < 1) {
             $month += 12;
             $year--;
         }
         $day += days_in_month($month, $year);
-    } elseif($day > days_in_month($month, $year)) {
+    } elseif ($day > days_in_month($month, $year)) {
         $day -= days_in_month($month, $year);
         $month++;
-        if($month > 12) {
+        if ($month > 12) {
             $month -= 12;
             $year++;
         }
@@ -858,7 +694,7 @@ function normalize_date(&$month, &$day, &$year)
  * @param \DateTimeInterface $date
  * @return string
  */
-function sqlDate(\DateTimeInterface $date) 
+function sqlDate(\DateTimeInterface $date)
 {
     $utcDate = new \DateTime($date->format('Y-m-d H:i:s'), $date->getTimezone());
     $utcDate->setTimezone(new \DateTimeZone('UTC'));
@@ -869,7 +705,7 @@ function sqlDate(\DateTimeInterface $date)
  * @param string $dateStr
  * @return \DateTime
  */
-function fromSqlDate($dateStr) 
+function fromSqlDate($dateStr)
 {
     $date = \DateTime::createFromFormat('Y-m-d H:i:s', $dateStr, new \DateTimeZone('UTC'));
     $date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
@@ -880,7 +716,7 @@ function fromSqlDate($dateStr)
  * @param string $dateStr
  * @return \DateTimeImmutable
  */
-function fromSqlDateImmutable($dateStr) 
+function fromSqlDateImmutable($dateStr)
 {
     $date = fromSqlDate($dateStr);
     return new \DateTimeImmutable($date->format('c'));
@@ -890,7 +726,7 @@ function fromSqlDateImmutable($dateStr)
  * @param string $timestamp
  * @return \DateTime
  */
-function fromTimestamp($timestamp) 
+function fromTimestamp($timestamp)
 {
     $date = \DateTime::createFromFormat('U', $timestamp, new \DateTimeZone('UTC'));
     $date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
@@ -901,7 +737,7 @@ function fromTimestamp($timestamp)
  * @param string $timestamp
  * @return \DateTimeImmutable
  */
-function fromTimestampImmutable($timestamp) 
+function fromTimestampImmutable($timestamp)
 {
     $date = fromTimestamp($timestamp);
     return new \DateTimeImmutable($date->format('c'));
@@ -913,7 +749,7 @@ function fromTimestampImmutable($timestamp)
  * @param int $year
  * @return \DateTime
  */
-function _create_datetime($month, $day, $year) 
+function _create_datetime($month, $day, $year)
 {
     return new \DateTime(sprintf("%04d-%02d-%02d", $year, $month, $day));
 }
@@ -924,7 +760,7 @@ function _create_datetime($month, $day, $year)
  * @param int $year
  * @return \DateTime
  */
-function create_datetime($month, $day, $year) 
+function create_datetime($month, $day, $year)
 {
     normalize_date($month, $day, $year);
     return _create_datetime($month, $day, $year);
@@ -937,7 +773,7 @@ function create_datetime($month, $day, $year)
  * @param \DateTimeInterface $to
  * @return array
  */
-function get_occurrences_by_day(Calendar $calendar, User $user, \DateTimeInterface $from, \DateTimeInterface $to) 
+function get_occurrences_by_day(Calendar $calendar, User $user, \DateTimeInterface $from, \DateTimeInterface $to)
 {
     $all_occurrences = $calendar->getOccurrencesByDateRange($from, $to);
     $occurrences_by_day = array();
