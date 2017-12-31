@@ -44,7 +44,7 @@ if (file_exists(PHPC_CONFIG_FILE)) {
         $db = new Database($config);
         $have_calendar = sizeof($db->getCalendars()) > 0;
 
-        $existing_version = $db->get_config('version');
+        $existing_version = $db->getConfig('version');
 
         if ($have_calendar) {
             if ($existing_version > PHPC_DB_VERSION) {
@@ -52,7 +52,7 @@ if (file_exists(PHPC_CONFIG_FILE)) {
                 exit;
             } elseif ($existing_version == PHPC_DB_VERSION) {
                 echo '<p>The calendar has already been installed. <a href="index.php">Installed calendar</a></p>';
-                echo '<p>If you want to install again, manually delete config.yml</p>';
+                echo '<p>If you want to install again, manually delete config.php</p>';
                 exit;
             }
         }
@@ -224,7 +224,7 @@ function install_base()
 
     create_tables($db);
 
-    $db->set_config('version', PHPC_DB_VERSION);
+    $db->setConfig('version', PHPC_DB_VERSION);
 
     echo "<p>Config file created at \"". realpath(PHPC_CONFIG_FILE) ."\"</p>"
         ."<p>Calendars database created</p>\n"
@@ -270,13 +270,13 @@ function add_calendar($config)
     // Make the database connection.
     $db = new Database($config);
 
-    $db->create_calendar();
+    $db->createCalendar();
 
     echo "<h3>Final Step</h3>\n";
     
     echo "<p>Saved default configuration</p>\n";
 
-    $db->create_user($_POST['admin_user'], $_POST['admin_pass'], true);
+    $db->createUser($_POST['admin_user'], $_POST['admin_pass'], true);
     
     echo "<p>Admin account created.</p>";
     echo "<p>Now you should delete install.php file from root directory (for security reasons).</p>";

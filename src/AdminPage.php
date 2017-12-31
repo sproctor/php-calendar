@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 class AdminPage extends Page
 {
     /**
-     * Display event form or submit event
+     * Display admin page and process forms
      *
      * @param  Context $context
      * @return Response
@@ -34,7 +34,7 @@ class AdminPage extends Page
         return new Response(
             $context->twig->render(
                 "admin.html.twig",
-                array('calendars' => $context->db->getCalendars())
+                array()
             )
         );
     }

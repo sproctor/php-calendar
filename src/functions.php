@@ -217,25 +217,25 @@ function get_languages()
     static $langs = null;
 
     $translation_path = realpath(__DIR__.'/../translations');
-    if(!empty($langs)) {
+    if (!empty($langs)) {
         return $langs;
     }
 
     // create links for each existing language translation
     $handle = opendir($translation_path);
 
-    if(!$handle) {
+    if (!$handle) {
         soft_error("Error reading locale directory.");
     }
 
-    $langs = array('en');
-    while(($filename = readdir($handle)) !== false) {
+    $langs = array('en' => 'en');
+    while (($filename = readdir($handle)) !== false) {
         $pathname = "$translation_path/$filename";
-        if(strncmp($filename, ".", 1) == 0 || !is_dir($pathname)) {
+        if (strncmp($filename, ".", 1) == 0 || !is_dir($pathname)) {
             continue;
         }
-        if(file_exists("$pathname/LC_MESSAGES/messages.mo")) {
-            $langs[] = $filename;
+        if (file_exists("$pathname/LC_MESSAGES/messages.mo")) {
+            $langs[$filename] = $filename;
         }
     }
 
@@ -398,7 +398,7 @@ function action_event_url(Context $context, $action, $eid)
  * @param string  $eid
  * @return string
  */
-function action_occurrence_url(Context $context, $action, $oid) 
+function action_occurrence_url(Context $context, $action, $oid)
 {
     return action_url($context, $action, array("oid" => $oid));
 }
@@ -409,10 +409,11 @@ function action_occurrence_url(Context $context, $action, $oid)
  * @param string[] $parameters
  * @return string
  */
-function action_url(Context $context, $action, $parameters = array()) 
+function action_url(Context $context, $action, $parameters = array())
 {
+    $parameters['phpcid'] = $context->calendar->getCid();
     $url = "{$context->script}?action={$action}";
-    foreach($parameters as $key => $value) {
+    foreach ($parameters as $key => $value) {
         $url .= "&$key=$value";
     }
     return $url;
@@ -597,90 +598,6 @@ function create_sequence($start, $end, $interval = 1, $display = null)
     return $arr;
 }
 
-function get_config_options()
-{
-    static $options = null;
-
-    if($options === null) {
-        $options = init_config_options();
-    }
-    return $options;
-}
-
-function init_config_options() 
-{
-    $languages = array("" => __("Default"));
-    foreach(get_languages() as $language) {
-        $languages[$language] = $language;
-    }
-    // name, text, type, value(s)
-    return array( 
-    array('week_start', __('Week Start'), PHPC_DROPDOWN,
-                array(
-                    0 => __('Sunday'),
-                    1 => __('Monday'),
-                    6 => __('Saturday')
-                     ), 0),
-    array('hours_24', __('24 Hour Time'), PHPC_CHECK),
-    array('title', __('Calendar Title'), PHPC_TEXT),
-    array('subject_max', __('Maximum Subject Length'), PHPC_TEXT, 50),
-    array('events_max', __('Events Display Daily Maximum'), PHPC_TEXT, 8),
-    array('anon_permission', __('Public Permissions'), PHPC_DROPDOWN,
-                array(
-                    __('Cannot read nor write events'),
-                    __('Can read but not write events'),
-                    __('Can create but not modify events'),
-                    __('Can create and modify events')
-                     )
-                 ),
-    array('timezone', __('Default Timezone'), PHPC_MULTI_DROPDOWN, get_timezone_list()),
-    array('language', __('Default Language'), PHPC_DROPDOWN,
-                $languages),
-    array('date_format', __('Date Format'), PHPC_DROPDOWN,
-                    get_date_format_list()),
-    array('theme', __('Theme'), PHPC_DROPDOWN,
-                    get_theme_list()),
-    );
-}
-
-/**
- * @return string[]
- */
-function get_theme_list() 
-{
-    $themes = [
-    'black-tie',
-    'blitzer',
-    'cupertino',
-    'dark-hive',
-    'dot-luv',
-    'eggplant',
-    'excite-bike',
-    'flick',
-    'hot-sneaks',
-    'humanity',
-    'le-frog',
-    'mint-choc',
-    'overcast',
-    'pepper-grinder',
-    'redmond',
-    'smoothness',
-    'south-street',
-    'start',
-    'sunny',
-    'swanky-purse',
-    'trontastic',
-    'ui-darkness',
-    'ui-lightness',
-    'vader'];
-
-    $theme_list = [null => __('Default')];
-    foreach($themes as $theme) {
-        $theme_list[$theme] = $theme;
-    }
-    return $theme_list;    
-}
-
 /**
  * @return string[]
  */
@@ -702,16 +619,6 @@ function get_timezone_list()
         }
     }
     return $timezones;
-}
-
-/**
- * @return string[]
- */
-function get_date_format_list()
-{
-    return [__("Month Day Year"),
-    __("Year Month Day"),
-    __("Day Month Year")];
 }
 
 // takes a number of the month, returns the name

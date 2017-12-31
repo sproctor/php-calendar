@@ -588,7 +588,7 @@ class Database
      * @param int $cid
      * @return bool
      */
-    function delete_calendar($cid)
+    public function deleteCalendar($cid)
     {
         $events = $this->prefix . 'events';
         $occurrences = $this->prefix . 'occurrences';
@@ -598,7 +598,7 @@ class Database
             . "USING `$occurrences` INNER JOIN `$events`\n"
             . "WHERE `$occurrences`.`eid`=`$events`.`eid` AND `$events`.`cid`=:cid";
 
-        $sth = $this->dbh->query($query);
+        $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
         $sth->execute();
 
@@ -765,7 +765,7 @@ class Database
      * @param string $name
      * @return bool|string
      */
-    function get_config($name)
+    public function getConfig($name)
     {
         if (!isset($this->config)) {
             $query = "SELECT `name`, `value` FROM `" . $this->prefix . "config`";
@@ -787,7 +787,7 @@ class Database
      * @param string $name
      * @param string $value
      */
-    function set_config($name, $value)
+    public function setConfig($name, $value)
     {
         $query = "REPLACE INTO `" . $this->prefix . "config`\n"
             . "(`name`, `value`) VALUES\n"
@@ -856,9 +856,9 @@ class Database
 
     /**
      * @param string $username
-     * @return bool|User
+     * @return null|User
      */
-    function get_user_by_name($username)
+    public function getUserByName($username)
     {
         $query = "SELECT {$this->user_fields}\n"
             . "FROM " . $this->prefix . "users\n"
@@ -871,15 +871,15 @@ class Database
         if ($result) {
             return User::createFromMap($this, $result);
         } else {
-            return false;
+            return null;
         }
     }
 
     /**
      * @param int $uid
-     * @return bool|User
+     * @return null|User
      */
-    function get_user($uid)
+    public function getUser($uid)
     {
         $query = "SELECT {$this->user_fields}\n"
             . "FROM " . $this->prefix . "users\n"
@@ -893,7 +893,7 @@ class Database
         if ($result) {
             return User::createFromMap($this, $result);
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -903,7 +903,7 @@ class Database
      * @param bool   $make_admin
      * @return string
      */
-    function create_user($username, $password, $make_admin)
+    public function createUser($username, $password, $make_admin)
     {
         $admin = $make_admin ? 1 : 0;
         $query = "INSERT into `" . $this->prefix . "users`\n"
@@ -919,7 +919,7 @@ class Database
     /**
      * @return string
      */
-    function create_calendar()
+    public function createCalendar()
     {
         $query = "INSERT INTO " . $this->prefix . "calendars\n"
             . "(`cid`) VALUE (DEFAULT)";
@@ -934,15 +934,19 @@ class Database
      * @param string $name
      * @param string $value
      */
-    function set_calendar_config($cid, $name, $value)
+    public function setCalendarConfig($cid, $name, $value)
     {
+        if (empty($value)) {
+            $value = '0';
+        }
+        echo "<pre>$name $value</pre>";
         $query = "UPDATE `" . $this->prefix . "calendars`\n"
-            . "SET :name=:value\n"
+            . "SET `$name`=:value\n"
             . "WHERE `cid`=:cid";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
-        $sth->bindValue(':name', $name);
+        //$sth->bindValue(':name', $name);
         $sth->bindValue(':value', $value);
         $sth->execute();
     }
@@ -951,7 +955,7 @@ class Database
      * @param int    $uid
      * @param string $password
      */
-    function set_password($uid, $password)
+    public function setPassword($uid, $password)
     {
         $query = "UPDATE `" . $this->prefix . "users`\n"
             . "SET `password`=:password\n"
@@ -1378,7 +1382,7 @@ class Database
     /**
      * @return string[]
      */
-    function update()
+    public function update()
     {
         $updates = [];
 
@@ -1386,7 +1390,7 @@ class Database
             $updates[] = $table->update($this->dbh);
         }
 
-        $this->set_config("version", PHPC_DB_VERSION);
+        $this->setConfig("version", PHPC_DB_VERSION);
 
         return $updates;
     }
@@ -1395,7 +1399,7 @@ class Database
      * @param bool $drop
      * @return string[]
      */
-    function create($drop = false)
+    public function create($drop = false)
     {
         $updates = [];
 
@@ -1403,7 +1407,7 @@ class Database
             $updates[] = $table->create($this->dbh, $drop);
         }
 
-        $this->set_config("version", PHPC_DB_VERSION);
+        $this->setConfig("version", PHPC_DB_VERSION);
 
         return $updates;
     }

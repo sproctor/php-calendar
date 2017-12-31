@@ -93,7 +93,7 @@ class Context
         $this->db = new Database($this->config);
 
         include_once __DIR__ . '/schema.php';
-        if ($this->db->get_config('version') < PHPC_DB_VERSION) {
+        if ($this->db->getConfig('version') < PHPC_DB_VERSION) {
             if ($request->get('update') !== null) {
                 $this->db->update();
                 if (!$this->db->update()) {
@@ -179,6 +179,7 @@ class Context
         
         $this->twig->addGlobal('context', $this);
         $this->twig->addGlobal('calendar', $this->calendar);
+        $this->twig->addGlobal('calendars', $this->db->getCalendars());
         $this->twig->addGlobal('user', $this->user);
         $this->twig->addGlobal('script', $this->script);
         $this->twig->addGlobal('embed', $this->request->get("content") == "embed");
@@ -358,7 +359,7 @@ class Context
             if ($this->user->defaultCid() !== false) {
                 $default_cid = $this->user->defaultCid();
             } else {
-                $default_cid = $this->db->get_config('default_cid');
+                $default_cid = $this->db->getConfig('default_cid');
             }
             if (!empty($calendars[$default_cid])) {
                 return $default_cid;
@@ -498,7 +499,7 @@ class Context
                 $data = (array) $decoded_array["data"];
 
                 $uid = $data["uid"];
-                $user = $this->db->get_user($uid);
+                $user = $this->db->getUser($uid);
                 $this->user = $user;
             } catch (SignatureInvalidException $e) {
                 // TODO: log this event
@@ -514,7 +515,7 @@ class Context
      */
     public function loginUser($username, $password)
     {
-        $user = $this->db->get_user_by_name($username);
+        $user = $this->db->getUserByName($username);
         //echo "<pre>"; var_dump($user); echo "</pre>";
         if (!$user) {
             return false;
@@ -524,7 +525,7 @@ class Context
 
         // migrate old passwords
         if ($password_hash[0] != '$' && md5($password) == $password_hash) {
-            $this->db->set_password($user->getUid(), $password);
+            $this->db->setPassword($user->getUid(), $password);
         } else { // otherwise use the normal password verifier
             if (!password_verify($password, $password_hash)) {
                 return false;
@@ -576,6 +577,10 @@ class Context
                 return new LogoutPage;
             case 'admin':
                 return new AdminPage;
+            case 'calendar_create':
+                return new CreateCalendarPage;
+            case 'calendar_delete':
+                return new CalendarDeletePage;
             default:
                 throw new \Exception(__('Invalid action'));
         }

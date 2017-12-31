@@ -1,0 +1,9 @@
+{% extends "index.html.twig" %}
+
+{% block body %}
+  <h3>{{ "Create Calendar"|trans }}</h3>
+  {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit" class="btn btn-primary">{{ "Create Calendar"|trans }}</button>
+  {{ form_end(form) }}
+{% endblock %}
