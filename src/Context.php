@@ -197,6 +197,7 @@ class Context
         $this->twig->addFunction(new \Twig_SimpleFunction('_p', '\PhpCalendar\__p'));
         $this->twig->addFunction(new \Twig_SimpleFunction('day_name', '\PhpCalendar\day_name'));
         $this->twig->addFunction(new \Twig_SimpleFunction('short_day_name', '\PhpCalendar\short_day_name'));
+        $this->twig->addFunction(new \Twig_SimpleFunction('month_name', '\PhpCalendar\month_name'));
         $this->twig->addFunction(new \Twig_SimpleFunction('short_month_name', '\PhpCalendar\short_month_name'));
         $this->twig->addFunction(new \Twig_SimpleFunction('index_of_date', '\PhpCalendar\index_of_date'));
         $this->twig->addFunction(
