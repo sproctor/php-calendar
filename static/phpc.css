@@ -98,7 +98,7 @@ div.phpc-main {
   margin: 0 .25em;
 }
 
-.phpc-desc p {
+p.phpc-desc {
   padding: .5em;
   text-align: justify;
 }

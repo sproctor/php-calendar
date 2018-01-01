@@ -93,7 +93,7 @@ function display_day()
 		$html_body->add(tag('tr',
 					$html_subject,
 					tag('td', $event->get_time_span_string()),
-					tag('td', $event->get_desc())));
+					tag('td', attributes('class="phpc-desc"'), $event->get_desc())));
 	}
 
 	$html_table->add($html_body);

@@ -1,6 +1,10 @@
 NEWS
 -----
 
+2.0.10 (6 April 2017):
+	- Update jquery/jquery ui versions
+	- Use markdown to format event descriptions
+
 2.0.9 (5 January 2015):
 	- A few minor attempts at improving security.
 	- Fixed search and day displays for timezones other than the server.

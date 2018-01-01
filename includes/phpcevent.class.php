@@ -122,7 +122,7 @@ class PhpcEvent {
      */
 	function get_desc()
 	{
-		return parse_desc($this->desc);
+		return $this->desc;
 	}
 
     /**

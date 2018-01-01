@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright 2017 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -701,7 +701,7 @@ function init_config_options() {
  * @return array
  */
 function get_theme_list() {
-	$themes = array(
+	$themes = array('base',
 			'black-tie',
 			'blitzer',
 			'cupertino',
@@ -769,7 +769,7 @@ function get_date_format_list()
  * @return Html
  */
 function display_phpc() {
-	global $phpc_messages, $phpc_redirect, $phpc_script, $phpc_prefix;
+	global $phpc_messages, $phpc_redirect, $phpc_script, $phpc_prefix, $phpc_home_url, $phpc_cal, $phpcdb;
 
 	$navbar = false;
 
@@ -785,13 +785,24 @@ function display_phpc() {
 			// If we're redirecting, the messages might not get
 			//   seen, so don't clear them
 			if(empty($phpc_redirect))
-				$_SESSION["{$phpc_prefix}messages"] = NULL;
+				$_SESSION[$phpc_prefix . 'messages'] = null;
 		} else {
 			$messages = '';
 		}
 
-		return tag('', $navbar, $messages,
-				$content, footer());
+		$list = array();
+		foreach($phpcdb->get_calendars() as $calendar) {
+			$list[$phpc_home_url . '?phpcid=' . $calendar->get_cid()] = $calendar->get_title();
+		}
+
+		return tag('div', attributes('class="php-calendar ui-widget"'),
+			userMenu(),
+			tag('br', attrs('style="clear:both;"')),
+			tag('h1', attrs('class="ui-widget-header"'),
+			create_dropdown_list(tag('a', attrs("href='$phpc_home_url?phpcid={$phpc_cal->get_cid()}'",
+			'class="phpc-dropdown-list-title"'),
+			$phpc_cal->get_title()), $list)),
+			$navbar, $messages, $content, footer());
 	} catch(PermissionException $e) {
 		$results = tag('');
 		// TODO: make navbar show if there is an error in do_action()
@@ -904,10 +915,10 @@ function get_header_tags($path)
 		
 	$theme = $phpc_cal->theme;
 	if(empty($theme))
-		$theme = 'smoothness';
-    $jquery_version = "1.12.4";
-    $jqueryui_version = "1.12.1";
-	$jpicker_version = "1.1.6";
+		$theme = 'base';
+	$jquery_version = "3.2.1";
+	$jqueryui_version = "1.12.1";
+	$showdown_version = "1.8.2";
 
 	return array(
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
@@ -916,22 +927,15 @@ function get_header_tags($path)
 					"href=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/themes/$theme/jquery-ui$jq_min.css\"")),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
 					"href=\"$path/jquery-ui-timepicker.css\"")),
-			tag("script", attrs('type="text/javascript"',
-					"src=\"//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
-			tag("script", attrs('type="text/javascript"',
-					"src=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
-			tag('script', attrs('type="text/javascript"'),
-					"var imagePath='$path/images/'"),
-			tag('script', attrs('type="text/javascript"',
-					"src=\"$path/phpc.js\""), ''),
-			tag("script", attrs('type="text/javascript"',
-					"src=\"$path/jquery.ui.timepicker.js\""), ''),
-			tag("script", attributes('type="text/javascript"',
-					"src=\"$path/jquery.hoverIntent.minified.js\""), ''),
-			tag("script", attrs('type="text/javascript"',
-					"src=\"$path/jpicker-$jpicker_version$jq_min.js\""), ''),
+			tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
+			tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
+			tag('script', attrs("src=\"$path/phpc.js\""), ''),
+			tag("script", attrs("src=\"$path/jquery.ui.timepicker.js\""), ''),
+			tag("script", attrs("src=\"$path/jquery.hoverIntent.minified.js\""), ''),
+			tag("script", attrs("src=\"$path/spectrum.js\""), ''),
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',
-					"href=\"$path/jPicker-$jpicker_version$jq_min.css\"")),
+					"href=\"$path/spectrum.css\"")),
+			tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/showdown/$showdown_version/showdown.min.js\""), ''),
 		  );
 }
 
