@@ -17,6 +17,7 @@
 
 namespace PhpCalendar;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -32,35 +33,33 @@ class AdminPage extends Page
      */
     public function action(Context $context)
     {
-        $import_form = $this->getImportForm($context);
-        $import_form->handleRequest($context->request);
-        if ($import_form->isSubmitted() && $import_form->isValid()) {
-            // $this->processImportForm($context, $import_form->getData());
+        $calendar_form = (new CalendarForm())->getForm($context, $context->calendar->getCid());
+        $calendar_form->handleRequest($context->request);
+        if ($calendar_form->isSubmitted() && $calendar_form->isValid()) {
+            return $this->processCalendarForm($context, $calendar_form->getData());
         }
 
         return new Response(
             $context->twig->render(
                 "admin.html.twig",
-                array('import_form' => $import_form->createView())
+                array('calendar_form' => $calendar_form->createView())
             )
         );
     }
 
-    /**
+        /**
      * @param Context $context
-     * @return Form
+     * @param array $data
+     * @return Response
      */
-    private function getImportForm(Context $context)
+    private function processCalendarForm(Context $context, $data)
     {
-        $builder = $context->getFormFactory()->createBuilder();
+        foreach ($data as $key => $value) {
+            $context->db->setCalendarConfig($context->calendar->getCid(), $key, $value);
+        }
 
-        $builder->add('host', TextType::class, array('label' => __('MySQL Host Name'), 'data' => 'localhost'))
-        ->add('dbname', TextType::class, array('label' => __('MySQL Database Name'), 'data' => 'calendar'))
-        ->add('port', IntegerType::class, array('label' => __('MySQL Port Number'), 'required' => false)) // TODO add message: __('Leave blank for default')
-        ->add('username', TextType::class, array('label' => __('MySQL User Name')))
-        ->add('passwd', PasswordType::class, array('label' => __('MySQL User Password')))
-        ->add('prefix', TextType::class, array('label' => __('PHP-Calendar Table Prefix'), 'data' => 'phpc_'));
+        $context->addMessage(__('Calendar updated.'));
 
-        return $builder->getForm();
+        return new RedirectResponse(action_url($context, 'admin', array(), 'calendar'));
     }
 }

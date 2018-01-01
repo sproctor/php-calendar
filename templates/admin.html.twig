@@ -5,7 +5,7 @@
   {% if user.isAdmin() %}
     <li class="nav-item"><a class="nav-link active" id="calendars-tab" data-toggle="tab" href="#calendars" role="tab" aria-controls="calendars">{{ "Calendars"|trans }}</a></li>
     <li class="nav-item"><a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users">{{ "Users"|trans }}</a></li>
-    <li class="nav-item"><a class="nav-link" id="import-tab" data-toggle="tab" href="#import" role="tab" aria-controls="import">{{ "Import"|trans }}</a></li>
+    <li class="nav-item"><a class="nav-link" id="calendar-tab" data-toggle="tab" href="#calendar" role="tab" aria-controls="calendar">{{ "Calendar Settings"|trans }}</a></li>
   {% endif %}
   {% if calendar.canAdmin(user) %}
       
@@ -73,11 +73,12 @@
       </table>
     </div>
 
-    <div role="tabpanel" class="tab-pane fade" id="import" role="tabpanel" aria-labelledby="import-tab">
-      <h3>{{ "Import Calendar"|trans }}</h3>
-      {{ form_start(import_form) }}
-        {{ form_widget(import_form) }}
-      {{ form_end(import_form) }}
+    <div role="tabpanel" class="tab-pane fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
+      <h3>{{ "Calendar Settings"|trans }}</h3>
+      {{ form_start(calendar_form) }}
+        {{ form_widget(calendar_form) }}
+        <button type="submit" class="btn btn-primary">{{ "Update Calendar"|trans }}</button>
+      {{ form_end(calendar_form) }}
     </div>
   </div>
   

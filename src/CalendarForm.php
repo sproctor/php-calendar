@@ -33,7 +33,8 @@ class CalendarForm
     public function getForm(Context $context, $cid = null)
     {
         $builder = $context->getFormFactory()->createBuilder();
-        $builder->add(
+        $builder->add('title', TextType::class, array('label' => __('Calendar Title')))
+        ->add(
             'week_start',
             ChoiceType::class,
             array(
@@ -46,7 +47,6 @@ class CalendarForm
             )
         )
         ->add('hours_24', CheckboxType::class, array('label' => __('24 Hour Time'), 'required' => false))
-        ->add('title', TextType::class, array('label' => __('Calendar Title')))
         ->add('subject_max', IntegerType::class, array('label' => __('Maximum Subject Length'), 'data' => 50))
         ->add('events_max', IntegerType::class, array('label' => __('Events Display Daily Maximum'), 'data' => 8))
         ->add(
@@ -83,6 +83,18 @@ class CalendarForm
             SubmitType::class,
             array('label' => $cid === null ? __('Create Calendar') : __('Update Calendar'))
         );*/
+        if ($cid !== null) {
+            $calendar = $context->db->getCalendar($cid);
+            $builder->get('title')->setData($calendar->getTitle());
+            $builder->get('week_start')->setData($calendar->getWeekStart());
+            $builder->get('hours_24')->setData($calendar->is24Hour());
+            $builder->get('subject_max')->setData($calendar->getSubjectMax());
+            $builder->get('events_max')->setData($calendar->getMaxDisplayEvents());
+            $builder->get('anon_permission')->setData($calendar->getAnonPermission());
+            $builder->get('timezone')->setData($calendar->getTimezone());
+            $builder->get('language')->setData($calendar->getLanguage());
+            $builder->get('date_format')->setData($calendar->getDateFormat());
+        }
 
         return $builder->getForm();
     }

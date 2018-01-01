@@ -278,4 +278,11 @@ class Calendar
     {
         return $this->hours_24;
     }
+
+    /**
+     * @return int
+     */
+    public function getAnonPermission() {
+        return $this->anon_permission;
+    }
 }

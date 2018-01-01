@@ -173,7 +173,7 @@ class Database
      * @return null|Event
      * @throws \Exception
      */
-    function getEvent($eid)
+    public function getEvent($eid)
     {
         $events_table = $this->prefix . 'events';
         $users_table = $this->prefix . 'users';
@@ -542,9 +542,9 @@ class Database
      * @param int $eid
      * @return bool
      */
-    function delete_event($eid)
+    public function deleteEvent($eid)
     {
-        $this->delete_occurrences($eid);
+        $this->deleteOccurrences($eid);
 
         $query = 'DELETE FROM `' . $this->prefix . "events`\n"
             . "WHERE `eid` = :eid";
@@ -556,7 +556,11 @@ class Database
         return $sth->rowCount() > 0;
     }
 
-    function delete_occurrences($eid)
+    /**
+     * @param int $eid
+     * @return bool
+     */
+    public function deleteOccurrences($eid)
     {
         $query = 'DELETE FROM `' . $this->prefix . "occurrences`\n"
             . "WHERE `eid` = :eid";
@@ -728,7 +732,7 @@ class Database
      * @return Calendar[]
      * @throws \Exception
      */
-    function getCalendars()
+    public function getCalendars()
     {
         if (!empty($this->calendars)) {
             return $this->calendars;
@@ -754,7 +758,7 @@ class Database
      * @param int $cid
      * @return null|Calendar
      */
-    function getCalendar($cid)
+    public function getCalendar($cid)
     {
         $calendars = $this->getCalendars();
 
@@ -1040,7 +1044,7 @@ class Database
      * @param int|null $catid
      * @return int
      */
-    function createEvent($cid, $uid, $subject, $description, $catid)
+    public function createEvent($cid, $uid, $subject, $description, $catid)
     {
         $query = "INSERT INTO `" . $this->prefix . "events`\n"
             . "(`cid`, `owner`, `subject`, `description`, "
