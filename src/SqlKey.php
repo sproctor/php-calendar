@@ -20,17 +20,17 @@ namespace PhpCalendar;
 class SqlKey
 {
     /**
-     * @var string 
+     * @var string $name
      */
-    var $name;
+    public $name;
     /**
-     * @var bool 
+     * @var bool $non_unique
      */
-    var $non_unique;
+    public $non_unique;
     /**
-     * @var string 
+     * @var string $columns
      */
-    var $columns;
+    public $columns;
 
     /**
      * SqlKey constructor.
@@ -39,7 +39,7 @@ class SqlKey
      * @param bool   $non_unique
      * @param string $columns
      */
-    function __construct($name, $non_unique, $columns) 
+    public function __construct($name, $non_unique, $columns)
     {
         $this->name = $name;
         $this->non_unique = $non_unique;
@@ -49,9 +49,9 @@ class SqlKey
     /**
      * @return string
      */
-    function get_create_query() 
+    public function getCreateQuery()
     {
-        if($this->name == "PRIMARY") {
+        if ($this->name == "PRIMARY") {
             return "PRIMARY KEY ({$this->columns})";
         }
 
@@ -61,15 +61,13 @@ class SqlKey
     /**
      * @return string
      */
-    function get_update_query() 
+    public function getUpdateQuery()
     {
-        if($this->name == "PRIMARY") {
+        if ($this->name == "PRIMARY") {
             return "DROP PRIMARY KEY, ADD PRIMARY KEY ({$this->columns})";
         }
         return "DROP KEY `{$this->name}`, ADD "
-        . ($this->non_unique ? "" : "UNIQUE ") . 
+        . ($this->non_unique ? "" : "UNIQUE ") .
         "KEY `{$this->name}` ({$this->columns});";
     }
 }
-
-?>

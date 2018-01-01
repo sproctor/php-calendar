@@ -260,7 +260,7 @@ class Calendar
      */
     public function getOccurrencesByDateRange(\DateTimeInterface $from, \DateTimeInterface $to)
     {
-        return $this->db->get_occurrences_by_date_range($this->cid, $from, $to);
+        return $this->db->getOccurrencesByDateRange($this->cid, $from, $to);
     }
 
     /**

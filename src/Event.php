@@ -65,8 +65,8 @@ class Event
         $this->text_color = $event['text_color'];
         $this->catid = $event['catid'];
         $this->gid = $event['gid'];
-        $this->ctime = fromTimestampImmutable($event['ctime']);
-        $this->mtime = empty($event['mtime']) ? null : fromTimestampImmutable($event['mtime']);
+        $this->ctime = datetime_from_timestamp($event['ctime']);
+        $this->mtime = empty($event['mtime']) ? null : datetime_from_timestamp($event['mtime']);
         $this->cal = $db->getCalendar($this->cid);
     }
 

@@ -138,7 +138,7 @@ function phpc_groups_table($prefix)
     return $table;
 }
 
-function phpc_occurrences_table($prefix) 
+function phpc_occurrences_table($prefix)
 {
     $table = new SqlTable($prefix . 'occurrences');
 
@@ -154,7 +154,7 @@ function phpc_occurrences_table($prefix)
     return $table;
 }
 
-function phpc_permissions_table($prefix) 
+function phpc_permissions_table($prefix)
 {
     $table = new SqlTable($prefix . 'permissions');
 
@@ -171,7 +171,7 @@ function phpc_permissions_table($prefix)
     return $table;
 }
 
-function phpc_users_table($prefix) 
+function phpc_users_table($prefix)
 {
     $table = new SqlTable($prefix . 'users');
 
@@ -192,7 +192,7 @@ function phpc_users_table($prefix)
     return $table;
 }
 
-function phpc_user_groups_table($prefix) 
+function phpc_user_groups_table($prefix)
 {
     $table = new SqlTable($prefix . 'user_groups');
 
@@ -202,7 +202,7 @@ function phpc_user_groups_table($prefix)
     return $table;
 }
 
-function phpc_fields_table($prefix) 
+function phpc_fields_table($prefix)
 {
     $table = new SqlTable($prefix . 'fields');
 
@@ -215,7 +215,7 @@ function phpc_fields_table($prefix)
     return $table;
 }
 
-function phpc_event_fields_table($prefix) 
+function phpc_event_fields_table($prefix)
 {
     $table = new SqlTable($prefix . 'event_fields');
 

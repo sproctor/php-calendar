@@ -19,6 +19,7 @@ namespace PhpCalendar;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
+
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
@@ -27,6 +28,7 @@ use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
@@ -92,17 +94,24 @@ class Context
         $this->config = $this->loadConfig(PHPC_CONFIG_FILE);
         $this->db = new Database($this->config);
 
+        $appVariableReflection = new \ReflectionClass('\Symfony\Bridge\Twig\AppVariable');
+        $vendorTwigBridgeDir = dirname($appVariableReflection->getFileName());
+        $this->twig = new \Twig_Environment(
+            new \Twig_Loader_Filesystem(
+                array(
+                realpath(__DIR__ . '/../templates'),
+                $vendorTwigBridgeDir.'/Resources/views/Form')
+            )
+            //, array('cache' => __DIR__ . '/cache',)
+        );
+
         include_once __DIR__ . '/schema.php';
         if ($this->db->getConfig('version') < PHPC_DB_VERSION) {
-            if ($request->get('update') !== null) {
-                $this->db->update();
-                if (!$this->db->update()) {
-                    $this->addMessage(__('Already up to date.'));
-                }
-                return redirect($this, $this->script);
-            } else {
-                return print_update_form();
-            }
+            return;
+        }
+
+        if ($this->db->getConfig('version') > PHPC_DB_VERSION) {
+            throw new InvalidConfigException(__('Database version is newer than software version.'));
         }
 
         // Validate user
@@ -141,18 +150,6 @@ class Context
 
     private function initTwig()
     {
-        
-        $appVariableReflection = new \ReflectionClass('\Symfony\Bridge\Twig\AppVariable');
-        $vendorTwigBridgeDir = dirname($appVariableReflection->getFileName());
-        $this->twig = new \Twig_Environment(
-            new \Twig_Loader_Filesystem(
-                array(
-                realpath(__DIR__ . '/../templates'),
-                $vendorTwigBridgeDir.'/Resources/views/Form')
-            )
-            //, array('cache' => __DIR__ . '/cache',)
-        );
-
         $csrfGenerator = new UriSafeTokenGenerator();
         $csrfStorage = new SessionTokenStorage($this->session);
         $csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
@@ -470,6 +467,9 @@ class Context
 
     public function getLang()
     {
+        if (empty($this->lang)) {
+            return 'en';
+        }
         return $this->lang;
     }
 
@@ -562,6 +562,9 @@ class Context
 
     public function getPage()
     {
+        if ($this->db->getConfig('version') < PHPC_DB_VERSION) {
+            return new UpdatePage;
+        }
         switch ($this->getAction()) {
             case 'event_form':
                 return new EventFormPage;
@@ -575,12 +578,18 @@ class Context
                 return new LoginPage;
             case 'logout':
                 return new LogoutPage;
+            case 'event_delete':
+                return new EventDeletePage;
             case 'admin':
                 return new AdminPage;
             case 'calendar_create':
                 return new CreateCalendarPage;
             case 'calendar_delete':
                 return new CalendarDeletePage;
+            case 'default_calendar':
+                return new DefaultCalendarPage;
+            case 'update':
+                return new UpdatePage;
             default:
                 throw new \Exception(__('Invalid action'));
         }

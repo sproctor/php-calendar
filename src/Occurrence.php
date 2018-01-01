@@ -35,8 +35,8 @@ class Occurrence extends Event
         parent::__construct($db, $row);
 
         $this->oid = intval($row['oid']);
-        $this->start = fromSqlDateImmutable($row['start']);
-        $this->end = fromSqlDateImmutable($row['end']);
+        $this->start = datetime_from_sql_date($row['start']);
+        $this->end = datetime_from_sql_date($row['end']);
         $this->time_type = intval($row['time_type']);
     }
 

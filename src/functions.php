@@ -140,16 +140,6 @@ function format_time(\DateTimeInterface $date, $hour24)
     }
 }
 
-// parses a description and adds the appropriate mark-up
-/**
- * @param string $text
- * @return string
- */
-function parse_desc($text)
-{
-    return \Parsedown::instance()->parse($text);
-}
-
 /**
  * @param int $year
  * @return int
@@ -376,17 +366,29 @@ function action_occurrence_url(Context $context, $action, $oid)
 }
 
 /**
- * @param Context  $context
- * @param string   $action
+ * @param Context $context
+ * @param string|null $action
  * @param string[] $parameters
+ * @param string|null $hash
  * @return string
  */
-function action_url(Context $context, $action, $parameters = array())
+function action_url(Context $context, $action = null, $parameters = array(), $hash = null)
 {
-    $parameters['phpcid'] = $context->calendar->getCid();
-    $url = "{$context->script}?action={$action}";
+    if (!empty($context->calendar)) {
+        $parameters['phpcid'] = $context->calendar->getCid();
+    }
+    $url = $context->script;
+    $first = true;
+    if ($action !== null) {
+        $url .= "?action={$action}";
+        $first = false;
+    }
     foreach ($parameters as $key => $value) {
-        $url .= "&$key=$value";
+        $url .= ($first ? '?' : '&')."$key=$value";
+        $first = false;
+    }
+    if ($hash !== null) {
+        $url .= '#'.$hash;
     }
     return $url;
 }
@@ -469,29 +471,6 @@ function create_dropdown($title, $values)
         $output .= "        <a class=\"dropdown-item\" href=\"$key\">$value</a>\n";
     }
     return $output . "    </div></div>";
-}
-
-/**
- * @return string[]
- */
-function get_timezone_list()
-{
-    $timezones = array();
-    $timezones[__("Default")] = "";
-    foreach (timezone_identifiers_list() as $timezone) {
-        $sp = explode("/", $timezone, 2);
-        $continent = $sp[0];
-        if (empty($sp[1])) {
-            $timezones[$continent] = $timezone;
-        } else {
-            $area = $sp[1];
-            if (empty($timezones[$continent])) {
-                $timezones[$continent] = array();
-            }
-            $timezones[$continent][$timezone] = $area;
-        }
-    }
-    return $timezones;
 }
 
 // takes a number of the month, returns the name
@@ -622,23 +601,6 @@ function short_month_name($month)
     return ''; // This can't happen
 }
 
-function print_update_form()
-{
-    global $script;
-
-    echo "<!DOCTYPE html>
-<html>
-  <head>
-    <title>PHP-Calendar Update</title>
-  </head>
-  <body>
-    <h2>PHP-Calendar Updater</h2>
-    <p>Your PHP-Calendar database needs to be updated. You should make a backup of your existing database before running the updater.
-    <p><a href=\"$script?update=1\">Update now</a>
-  </body>
-</html>";
-}
-
 /**
  * @param \DateTimeInterface $date
  * @return bool|string
@@ -694,7 +656,7 @@ function normalize_date(&$month, &$day, &$year)
  * @param \DateTimeInterface $date
  * @return string
  */
-function sqlDate(\DateTimeInterface $date)
+function datetime_to_sql_date(\DateTimeInterface $date)
 {
     $utcDate = new \DateTime($date->format('Y-m-d H:i:s'), $date->getTimezone());
     $utcDate->setTimezone(new \DateTimeZone('UTC'));
@@ -702,45 +664,26 @@ function sqlDate(\DateTimeInterface $date)
 }
 
 /**
- * @param string $dateStr
+ * @param string $str
  * @return \DateTime
  */
-function fromSqlDate($dateStr)
+function datetime_from_sql_date($str)
 {
-    $date = \DateTime::createFromFormat('Y-m-d H:i:s', $dateStr, new \DateTimeZone('UTC'));
-    $date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
-    return $date;
-}
-
-/**
- * @param string $dateStr
- * @return \DateTimeImmutable
- */
-function fromSqlDateImmutable($dateStr)
-{
-    $date = fromSqlDate($dateStr);
-    return new \DateTimeImmutable($date->format('c'));
-}
-
-/**
- * @param string $timestamp
- * @return \DateTime
- */
-function fromTimestamp($timestamp)
-{
-    $date = \DateTime::createFromFormat('U', $timestamp, new \DateTimeZone('UTC'));
+    $date = \DateTime::createFromFormat('Y-m-d H:i:s', $str, new \DateTimeZone('UTC'));
     $date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
     return $date;
 }
 
 /**
  * @param string $timestamp
- * @return \DateTimeImmutable
+ * @return \DateTime
  */
-function fromTimestampImmutable($timestamp)
+function datetime_from_timestamp($timestamp)
 {
-    $date = fromTimestamp($timestamp);
-    return new \DateTimeImmutable($date->format('c'));
+
+    $date = \DateTime::createFromFormat('U', $timestamp);
+    $date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+    return $date;
 }
 
 /**
@@ -784,7 +727,6 @@ function get_occurrences_by_day(Calendar $calendar, User $user, \DateTimeInterfa
         }
 
         $end = $occurrence->getEnd();
-
         $start = $occurrence->getStart();
 
         if ($start > $from) {

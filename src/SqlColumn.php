@@ -20,13 +20,13 @@ namespace PhpCalendar;
 class SqlColumn
 {
     /**
-     * @var string 
+     * @var string $name
      */
-    var $name;
+    public $name;
     /**
-     * @var string 
+     * @var string $type
      */
-    var $type;
+    public $type;
 
     /**
      * SqlColumn constructor.
@@ -34,7 +34,7 @@ class SqlColumn
      * @param string $name
      * @param string $type
      */
-    function __construct($name, $type) 
+    public function __construct($name, $type)
     {
         $this->name = $name;
         $this->type = $type;
@@ -43,7 +43,7 @@ class SqlColumn
     /**
      * @return string
      */
-    function get_create_query() 
+    public function getCreateQuery()
     {
         return "`{$this->name}` {$this->type}";
     }
@@ -51,7 +51,7 @@ class SqlColumn
     /**
      * @return string
      */
-    function get_add_query() 
+    public function getAddQuery()
     {
         return "ADD `{$this->name}` {$this->type}";
     }
@@ -59,10 +59,8 @@ class SqlColumn
     /**
      * @return string
      */
-    function get_update_query() 
+    public function getUpdateQuery()
     {
         return "MODIFY `{$this->name}` {$this->type}";
     }
 }
-
-?>

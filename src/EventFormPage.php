@@ -230,14 +230,14 @@ class EventFormPage extends Page
             $occurrences = 0;
             
             if ($data['repeats'] == '0') {
-                $context->db->create_occurrence($eid, $data['time_type'], $data['start'], $data['end']);
+                $context->db->createOccurrence($eid, $data['time_type'], $data['start'], $data['end']);
             } else {
                 $interval = new \DateInterval('P'.$data['frequency'].$data['repeats']);
                 
                 echo "days between: " . days_between($data['start'], $data['until']);
 
                 while ($occurrences <= 730 && days_between($data['start'], $data['until']) >= 0) {
-                    $oid = $context->db->create_occurrence($eid, $data['time_type'], $data['start'], $data['end']);
+                    $oid = $context->db->createOccurrence($eid, $data['time_type'], $data['start'], $data['end']);
                     $occurrences++;
         
                     $data['start']->add($interval);

@@ -5,9 +5,9 @@ namespace PhpCalendar;
 class InvalidInputException extends \UnexpectedValueException
 {
     /**
-     * @var string 
+     * @var string $target
      */
-    var $target;
+    private $target;
 
     /**
      * InvalidInputException constructor.
@@ -15,7 +15,7 @@ class InvalidInputException extends \UnexpectedValueException
      * @param string $msg
      * @param string $target
      */
-    function __construct($msg, $target = null) 
+    public function __construct($msg, $target = null)
     {
         parent::__construct($msg);
         $this->target = $target;

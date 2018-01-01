@@ -30,6 +30,11 @@
               <a class="btn btn-primary" href="{{ script }}?action=calendar_delete&amp;cid={{ calendar.getCid() }}"
                 data-toggle="confirmation" data-title="{{ "Confirmation Required"|trans }}" data-button-text="{{ "Delete"|trans }}"
                 data-content="{{ "Permanently delete this calendar?"|trans }}"><i class="fas fa-trash"></i> {{ "Delete"|trans }}</a>
+              {% if calendar.getCid == context.db.getConfig('default_cid') %}
+                <span>{{ "Default Calendar"|trans }}</span>
+              {% else %}
+                <a href="{{ action_url(context, 'default_calendar', {'cid': calendar.getCid}) }}" class="btn btn-primary">{{ "Make Default"|trans }}</a>
+              {% endif %}
             </td>
           </tr>
         {% endfor %}
@@ -38,8 +43,42 @@
       <a class="btn btn-primary" href="{{ script }}?action=calendar_create"><i class="fas fa-plus-square"></i> {{ "Create Calendar"|trans }}</a>
     </div>
 
-    <div role="tabpanel" class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">users info</div>
-    <div role="tabpanel" class="tab-pane fade" id="import" role="tabpanel" aria-labelledby="import-tab">import info</div>
+    <div role="tabpanel" class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+      <h3>{{ "Users"|trans }}</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">{{ "Username"|trans }}</th>
+            <th scope="col">{{ "Groups"|trans }}</th>
+            <th scope="col">{{ "Edit Groups"|trans }}</th>
+            <th scope="col">{{ "Action"|trans }}</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for user in context.db.getUsers %}
+          <tr>
+            <td>{{ user.getUsername }}</td>
+            <td>{{ user.getGroups|join(', ') }}</td>
+            <td><a href="{{ action_url(context, 'user_groups', {'uid': user.getUid}) }}">{{ "Edit Groups"|trans }}</a></td>
+            <td>
+              {% if user.isDisabled %}
+                <a href="{{ action_url(context, 'user_enable', {'uid': user.getUid}) }}">{{ "Enable User"|trans }}</a>
+              {% else %}
+                <a href="{{ action_url(context, 'user_disable', {'uid': user.getUid}) }}">{{ "Disable User"|trans }}</a>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div role="tabpanel" class="tab-pane fade" id="import" role="tabpanel" aria-labelledby="import-tab">
+      <h3>{{ "Import Calendar"|trans }}</h3>
+      {{ form_start(import_form) }}
+        {{ form_widget(import_form) }}
+      {{ form_end(import_form) }}
+    </div>
   </div>
   
 

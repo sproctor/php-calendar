@@ -79,17 +79,17 @@ class Database
      * @return Occurrence[]
      * @throws \Exception
      */
-    public function get_occurrences_by_date_range($cid, \DateTimeInterface $from, \DateTimeInterface $to)
+    public function getOccurrencesByDateRange($cid, \DateTimeInterface $from, \DateTimeInterface $to)
     {
         $events_table = $this->prefix . "events";
         $occurrences_table = $this->prefix . "occurrences";
         $users_table = $this->prefix . 'users';
         $cats_table = $this->prefix . 'categories';
 
-        $from_datetime = sqlDate($from);
+        $from_datetime = datetime_to_sql_date($from);
         $from_date = $from->format('Y-m-d');
 
-        $to_datetime = sqlDate($to);
+        $to_datetime = datetime_to_sql_date($to);
         $to_date = $from->format('Y-m-d');
 
         $query = "SELECT {$this->occurrence_columns}, `username`, `name`, `bg_color`, `text_color`\n"
@@ -816,7 +816,7 @@ class Database
     /**
      * @return User[]
      */
-    function get_users()
+    public function getUsers()
     {
         $query = "SELECT * FROM `" . $this->prefix . "users`";
 
@@ -1066,12 +1066,12 @@ class Database
      * @param \DateTimeInterface $end
      * @return string
      */
-    function create_occurrence($eid, $time_type, \DateTimeInterface $start, \DateTimeInterface $end)
+    public function createOccurrence($eid, $time_type, \DateTimeInterface $start, \DateTimeInterface $end)
     {
         // Stored as UTC
         if ($time_type == 0) {
-            $start_str = sqlDate($start);
-            $end_str = sqlDate($end);
+            $start_str = datetime_to_sql_date($start);
+            $end_str = datetime_to_sql_date($end);
         } else {
             // ignore the time for full day events
             $start_str = $start->format("Y-m-d");
@@ -1106,13 +1106,12 @@ class Database
      * @param \DateTimeInterface $end
      * @return bool
      */
-    function modify_occurrence($oid, $time_type, \DateTimeInterface $start, \DateTimeInterface $end)
+    public function modifyOccurrence($oid, $time_type, \DateTimeInterface $start, \DateTimeInterface $end)
     {
         // Stored as UTC
         if ($time_type == 0) {
-
-            $start_str = sqlDate($start);
-            $end_str = sqlDate($start);
+            $start_str = datetime_to_sql_date($start);
+            $end_str = datetime_to_sql_date($start);
         } else {
             // ignore the time for full day events
             $start_str = $start->format("Y-m-d");
