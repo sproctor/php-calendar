@@ -139,12 +139,12 @@ abstract class FormQuestion extends FormPart
         $cell = tag('td');
 
         if ($this->subject !== false)
-            $tag->add(tag('th', $this->subject));
+            $tag->add(tag('th', tag('label', attributes("for=\"{$this->qid}\""), $this->subject)));
         else
             $cell->add(attrs("colspan=\"2\""));
 
         if ($this->description !== false)
-            $cell->add(tag('p', attrs('class="form-question-description"'),
+            $cell->add(tag('label', attrs("for=\"{$this->qid}\"", 'class="form-question-description"'),
                 $this->description));
 
         $cell->add($this->get_specific_html($parent, $defaults));
@@ -232,6 +232,7 @@ class FormLongFreeQuestion extends FormAtomicQuestion
 
         $tag = tag('textarea', attrs("rows=\"{$this->rows}\"",
             "name=\"{$this->qid}\"",
+	    "id=\"{$this->qid}\"",
             "cols=\"{$this->cols}\""), $text);
         return tag('div', attrs("class=\"form-textarea\""), $tag);
     }
@@ -283,7 +284,7 @@ class FormDateQuestion extends FormAtomicQuestion
         }
 
         return tag('div', attrs("class=\"{$this->class}\""),
-            __("Date") . " ($date_string): ",
+            tag('label', attrs("for=\"{$this->qid}-date\""), __("Date") . " ($date_string): "),
             form_date_input($this->qid, $defaults,
                 $dateFormat));
     }
@@ -358,10 +359,10 @@ class FormDateTimeQuestion extends FormAtomicQuestion
                 soft_error("Unrecognized date format.");
         }
 
-        return array(__("Date") . " ($date_string): ",
+        return array(tag('label', attrs("for=\"{$this->qid}-date\""), __("Date") . " ($date_string): "),
             form_date_input($this->qid, $defaults,
                 $dateFormat),
-            " " . __('Time') . ": ",
+            " ", tag('label', attrs("for=\"{$this->qid}-time\""), __('Time') . ": "),
             form_time_input($this->qid, $defaults,
                 $this->hour24));
     }
@@ -431,13 +432,13 @@ abstract class FormCompoundQuestion extends FormQuestion
 
 class FormCheckBoxQuestion extends FormAtomicQuestion
 {
-    var $value;
-    var $desc;
+    var $checkbox_description;
 
     function __construct($qid, $subject = false, $description = false)
     {
-        parent::__construct($qid, $subject, $description);
+        parent::__construct($qid, $subject, false);
         $this->class .= " form-checkbox-question";
+	$this->checkbox_description = $description;
     }
 
     protected function get_specific_html($parent, $defaults)
@@ -452,10 +453,10 @@ class FormCheckBoxQuestion extends FormAtomicQuestion
             $attrs->add("checked=\"checked\"");
 
         $tag = tag('div', tag('input', $attrs));
-        if (!empty($this->desc))
+        if (!empty($this->checkbox_description))
             $tag->add(tag('label', attrs("for=\"{$this->qid}\"",
                 'class="form-question-description"'),
-                $this->desc));
+                $this->checkbox_description));
 
         return $tag;
     }
