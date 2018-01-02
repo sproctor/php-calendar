@@ -100,8 +100,10 @@ if(empty($_POST['action'])) {
 	if(empty($_POST['version'])) {
 		get_upgrade_version();
 	} else {
-
-		if($_POST['version'] == "2.0beta11") {
+		if ($_POST['version'] == "2.0rc2") {
+			upgrade_20rc2();
+			echo "<p>Update complete.</p>";
+		} elseif ($_POST['version'] == "2.0beta11") {
 			upgrade_20beta11();
 			echo "<p>Update complete.</p>";
 		} elseif($_POST['version'] == "2.0beta10") {
@@ -156,7 +158,8 @@ function get_upgrade_version() {
 	echo '<option value="1.1">version 1.1</option>';
 	echo '<option value="2.0beta9">version 2.0-beta4 to beta9</option>';
 	echo '<option value="2.0beta10">version 2.0-beta10</option>';
-	echo '<option value="2.0beta11">version 2.0-beta11 to rc2</option>';
+	echo '<option value="2.0beta11">version 2.0-beta11 to rc1</option>';
+	echo '<option value="2.0rc2">version 2.0-rc2</option>';
 	echo '</select><span style="display: inline-block; width:50px;"></span>';
 	echo '<input type="submit" value="Submit">';
 }
@@ -173,6 +176,12 @@ function upgrade_20_form() {
 function upgrade_20_action() {
 	global $phpc_config_file, $dbh;
 
+	$query = "ALTER TABLE `" . SQL_PREFIX . "users`\n"
+		."ADD `password_editable` tinyint(1) NOT NULL DEFAULT '1',\n"
+		."ADD `timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+		."ADD `language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL\n";
+	$dbh->query($query)
+		or db_error($dbh, 'Error adding elements to users table.', $query);
 
 	$query = "ALTER TABLE `" . SQL_PREFIX . "occurrences`\n"
 		."ADD `start_ts` timestamp NULL default NULL,\n"
@@ -258,6 +267,17 @@ function upgrade_20beta11() {
 			"`gid` int(11),\n"
 			."`uid` int(11)\n");
 	create_version_table();
+	upgrade_20rc2();
+}
+
+function upgrade_20rc2()
+{
+	global $dbh;
+
+	$query = "ALTER TABLE `" . SQL_PREFIX . "users`\n"
+		."ADD `gid` int(11)\n";
+	$dbh->query($query)
+		or db_error($dbh, 'Error adding elements to users table.', $query);
 }
 
 function add_categories_gid() {
