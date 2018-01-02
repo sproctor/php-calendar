@@ -79,9 +79,9 @@ function login_form()
 				tag('tr', $submit_data)),
 			tag('tbody',
 				tag('tr',
-					tag('th', __('Username')),
+					tag('th', tag('label', attributes('for="username"'), __('Username'))),
 					tag('td', create_text('username'))),
 				tag('tr',
-					tag('th', __('Password')),
+					tag('th', tag('label', attributes('for="password"'), __('Password'))),
 					tag('td', create_password('password'))))));
 }

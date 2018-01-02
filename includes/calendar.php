@@ -483,16 +483,17 @@ function create_submit($value)
 				'type="submit"'));
 }
 
-// creates a text entry for a form
-// returns tag data for the entry
 /**
+ * creates a text entry for a form
+ * returns tag data for the entry
+ *
  * @param string $name
  * @param mixed $value
  * @return Html
  */
 function create_text($name, $value = false)
 {
-	$attributes = attributes("name=\"$name\"", 'type="text"');
+	$attributes = attributes("name=\"$name\"", "id=\"$name\"", 'type="text"');
 	if($value !== false) {
 		$attributes->add("value=\"$value\"");
 	}
@@ -507,7 +508,7 @@ function create_text($name, $value = false)
  */
 function create_password($name)
 {
-	return tag('input', attributes("name=\"$name\"", 'type="password"'));
+	return tag('input', attributes("name=\"$name\"", "id=\"$name\"", 'type="password"'));
 }
 
 // creates a checkbox for a form
