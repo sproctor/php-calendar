@@ -19,7 +19,6 @@ namespace PhpCalendar;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
-
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
@@ -47,7 +46,7 @@ class Context
      * @var User $user
      */
     public $user;
-    private $session;
+    public $session;
     private $formFactory;
     /**
      * @var Request $request
@@ -60,10 +59,6 @@ class Context
      */
     public $db;
     public $token;
-    public $script;
-    public $url_path;
-    public $host_name;
-    public $proto;
     /**
      * @var  \Twig_Environment
      */
@@ -75,9 +70,9 @@ class Context
     public function __construct(Request $request)
     {
 
-        ini_set('arg_separator.output', '&amp;');
-        mb_internal_encoding('UTF-8');
-        mb_http_output('pass');
+        //ini_set('arg_separator.output', '&amp;');
+        //mb_internal_encoding('UTF-8');
+        //mb_http_output('pass');
 
         if (defined('PHPC_DEBUG')) {
             error_reporting(E_ALL);
@@ -90,7 +85,6 @@ class Context
         $this->session = new Session();
         $this->session->start();
 
-        $this->initVars();
         $this->config = $this->loadConfig(PHPC_CONFIG_FILE);
         $this->db = new Database($this->config);
 
@@ -101,8 +95,11 @@ class Context
                 array(
                 realpath(__DIR__ . '/../templates'),
                 $vendorTwigBridgeDir.'/Resources/views/Form')
+            ),
+            array(
+                //'cache' => __DIR__ . '/cache',
+                'debug' => true
             )
-            //, array('cache' => __DIR__ . '/cache',)
         );
 
         include_once __DIR__ . '/schema.php';
@@ -117,7 +114,7 @@ class Context
         // Validate user
         $this->readLoginToken();
         if (!isset($this->user)) {
-            $this->user = User::createAnonymous($this->db, $this->request);
+            $this->user = User::createAnonymous($this);
         }
 
         $this->initCurrentCalendar();
@@ -167,6 +164,7 @@ class Context
         );
         //$this->twig->addExtension(new TranslationExtension());
         $this->twig->addExtension(new FormExtension());
+        $this->twig->addExtension(new \Twig_Extension_Debug());
 
         $this->formFactory = Forms::createFormFactoryBuilder()
             ->addExtension(new HttpFoundationExtension())
@@ -178,7 +176,7 @@ class Context
         $this->twig->addGlobal('calendar', $this->calendar);
         $this->twig->addGlobal('calendars', $this->db->getCalendars());
         $this->twig->addGlobal('user', $this->user);
-        $this->twig->addGlobal('script', $this->script);
+        $this->twig->addGlobal('script', $this->request->getScriptName());
         $this->twig->addGlobal('embed', $this->request->get("content") == "embed");
         $this->twig->addGlobal('messages', $this->getMessages());
         //'theme' => $context->getCalendar()->get_theme(),
@@ -236,7 +234,7 @@ class Context
             'action_occurrence_url',
             '\PhpCalendar\action_occurrence_url'
         ));
-        $this->twig->addFunction(new \Twig_SimpleFunction('change_lang_url', '\PhpCalendar\change_lang_url'));
+        $this->twig->addFunction(new \Twig_SimpleFunction('append_parameter_url', '\PhpCalendar\append_parameter_url'));
         $this->twig->addFunction(
             new \Twig_SimpleFunction(
                 'day',
@@ -286,22 +284,6 @@ class Context
     public function getAction()
     {
         return $this->request->get('action', 'display_month');
-    }
-
-    private function initVars()
-    {
-        $this->script = htmlentities($_SERVER['SCRIPT_NAME']);
-        $this->url_path = dirname($_SERVER['SCRIPT_NAME']);
-        $port = empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] == 80 ? ""
-        : ":{$_SERVER["SERVER_PORT"]}";
-        $this->host_name = isset($_SERVER['HOST_NAME']) ? $_SERVER['HOST_NAME'] :
-        (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] . $port : "localhost");
-        $this->proto = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'
-        || isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443
-        || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
-        || isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on'
-        ?  "https"
-        : "http";
     }
 
     private function initCurrentCalendar()
@@ -446,7 +428,7 @@ class Context
     private function initLang(Request $request)
     {
         // setup translation stuff
-        $lang = $request->get('lang', $this->user->getLanguage());
+        $lang = $this->user->getLanguage();
         if (empty($lang)) {
             $lang = $this->calendar->getLanguage();
             if (empty($lang)) {
@@ -476,18 +458,6 @@ class Context
     public function getFormFactory()
     {
         return $this->formFactory;
-    }
-
-    /**
-     * @param string $page
-     * @return RedirectResponse
-     */
-    public function redirect($page)
-    {
-        $dir = $page{0} == '/' ?  '' : dirname($this->script) . '/';
-        $url = $this->proto . '://'. $this->host_name . $dir . $page;
-
-        return new RedirectResponse($url);
     }
 
     private function readLoginToken()
@@ -546,8 +516,9 @@ class Context
         $issuedAt = time();
         // expire credentials in 30 days.
         $expires = $issuedAt + 30 * 24 * 60 * 60;
+        $protocol = $this->request->isSecure() ? 'https' : 'http';
         $token = array(
-            "iss" => $this->proto . "://" . $this->host_name,
+            "iss" => $protocol . "://" . $this->request->getHost(),
             "iat" => $issuedAt,
             "exp" => $expires,
             "data" => array("uid" => $user->getUid())

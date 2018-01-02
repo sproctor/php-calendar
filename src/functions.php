@@ -21,6 +21,7 @@
 
 namespace PhpCalendar;
 
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 
 define('PHPC_CONFIG_FILE', realpath(__DIR__.'/../config.php'));
@@ -178,30 +179,15 @@ function get_languages()
 {
     static $langs = null;
 
-    $translation_path = realpath(__DIR__.'/../translations');
-    if (!empty($langs)) {
-        return $langs;
-    }
+    if (empty($langs)) {
+        $langs = array();
+        $finder = new Finder();
 
-    // create links for each existing language translation
-    $handle = opendir($translation_path);
-
-    if (!$handle) {
-        soft_error("Error reading locale directory.");
-    }
-
-    $langs = array('en' => 'en');
-    while (($filename = readdir($handle)) !== false) {
-        $pathname = "$translation_path/$filename";
-        if (strncmp($filename, ".", 1) == 0 || !is_dir($pathname)) {
-            continue;
-        }
-        if (file_exists("$pathname/LC_MESSAGES/messages.mo")) {
-            $langs[$filename] = $filename;
+        foreach ($finder->name('*.mo')->in(__DIR__.'/../translations')->files() as $file) {
+            $name = $file->getBasename('.mo');
+            $langs[$name] = $name;
         }
     }
-
-    closedir($handle);
 
     return $langs;
 }
@@ -377,7 +363,7 @@ function action_url(Context $context, $action = null, $parameters = array(), $ha
     if (!empty($context->calendar)) {
         $parameters['phpcid'] = $context->calendar->getCid();
     }
-    $url = $context->script;
+    $url = $context->request->getScriptName();
     $first = true;
     if ($action !== null) {
         $url .= "?action={$action}";
@@ -397,50 +383,15 @@ function action_url(Context $context, $action = null, $parameters = array(), $ha
  * @param Request $request
  * @return string
  */
-function change_lang_url(Request $request, $lang)
+function append_parameter_url(Request $request, $parameter)
 {
     $uri = $request->getRequestUri();
     if (strpos($uri, "?") !== false) {
-        $uri .= 'amp;';
+        $uri .= '&';
     } else {
         $uri .= '?';
     }
-    return $uri . $lang;
-}
-
-/**
- * @param Context       $context
- * @param string        $text
- * @param string        $action
- * @param string[]|null $args
- * @param string|null   $classes
- * @param string|null   $id
- * @return string
- */
-function create_action_link(Context $context, $text, $action, $args = null, $classes = null, $id = null)
-{
-    if (!$args) {
-        $args = array();
-    }
-    if (!array_key_exists("phpcid", $args)) {
-        $args["phpcid"] = htmlentities($context->getCalendar()->cid);
-    }
-
-    $url = $context->script . '?action=' . htmlentities($action);
-    foreach ($args as $key => $value) {
-        if (empty($value)) {
-            continue;
-        }
-        if (is_array($value)) {
-            foreach ($value as $v) {
-                $url .= "&amp;" . htmlentities("{$key}[]=$v");
-            }
-        } else {
-            $url .= "&amp;" . htmlentities("$key=$value");
-        }
-    }
-
-    return "<a href=\"$url\"" . ($classes ? " class=\"$classes\"" : '') . ($id ? " id=\"$id\"" :  '') . ">$text</a>";
+    return $uri.$parameter;
 }
 
 // takes a menu $html and appends an entry
@@ -574,9 +525,9 @@ function short_month_name($month)
 
     switch ($month) {
         case 1:
-            return __('Jan');
+            return __('month.jan');
         case 2:
-            return __('Feb');
+            return __('month.feb');
         case 3:
             return __('Mar');
         case 4:

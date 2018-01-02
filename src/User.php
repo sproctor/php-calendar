@@ -96,20 +96,19 @@ class User
     }
 
     /**
-     * @param Database $db
-     * @param Request  $request
+     * @param Context $context
      * @return User
      */
-    public static function createAnonymous(Database $db, Request $request)
+    public static function createAnonymous(Context $context)
     {
-        $user = new User($db);
+        $user = new User($context->db);
 
         $user->uid = 0;
         $user->username = 'anonymous';
         $user->admin = false;
         $user->password_editable = false;
-        $user->timezone = User::getAnonymousTimezone($request);
-        $user->language = User::getAnonymousLanguage($request);
+        $user->timezone = User::getAnonymousTimezone($context);
+        $user->language = User::getAnonymousLanguage($context);
         $user->disabled = false;
 
         return $user;
@@ -190,12 +189,12 @@ class User
     }
 
     /**
-     * @param Request $request
+     * @param Context $context
      * @return string|null
      */
-    private static function getAnonymousTimezone(Request $request)
+    private static function getAnonymousTimezone(Context $context)
     {
-        $tz = $request->get('tz');
+        $tz = $context->request->get('tz');
         // If we have a timezone, make sure it's valid
         if (in_array($tz, timezone_identifiers_list())) {
             return $tz;
@@ -205,11 +204,19 @@ class User
     }
     
     /**
-     * @param Request $request
+     * @param Context $context
      * @return string|null
      */
-    private static function getAnonymousLanguage(Request $request)
+    private static function getAnonymousLanguage(Context $context)
     {
-        return $request->get('lang');
+        if ($context->request->get('lang') !== null) {
+            $lang = $context->request->get('lang');
+            $context->session->set('_locale', $lang);
+            return $lang;
+        } // else
+        if ($context->session->get('_locale') !== null) {
+            return $context->session->get('_locale');
+        } // else
+        return null;
     }
 }

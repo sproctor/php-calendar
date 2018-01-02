@@ -17,7 +17,7 @@
 
 namespace PhpCalendar;
 
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class LogoutPage extends Page
 {
@@ -29,6 +29,6 @@ class LogoutPage extends Page
     public function action(Context $context)
     {
         setcookie('identity', "", time() - 3600);
-        return redirect($context, $context->script);
+        return new RedirectResponse(action_url($context));
     }
 }

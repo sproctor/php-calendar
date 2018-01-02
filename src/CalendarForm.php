@@ -28,9 +28,11 @@ use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 class CalendarForm
 {
     /**
+     * @param Context $context
+     * @param Calendar|null $calendar
      * @return Form
     */
-    public function getForm(Context $context, $cid = null)
+    public function getForm(Context $context, $calendar = null)
     {
         $builder = $context->getFormFactory()->createBuilder();
         $builder->add('title', TextType::class, array('label' => __('Calendar Title')))
@@ -83,8 +85,8 @@ class CalendarForm
             SubmitType::class,
             array('label' => $cid === null ? __('Create Calendar') : __('Update Calendar'))
         );*/
-        if ($cid !== null) {
-            $calendar = $context->db->getCalendar($cid);
+        if ($calendar !== null) {
+            // TODO: add hidden cid if we want to work on other calendars
             $builder->get('title')->setData($calendar->getTitle());
             $builder->get('week_start')->setData($calendar->getWeekStart());
             $builder->get('hours_24')->setData($calendar->is24Hour());

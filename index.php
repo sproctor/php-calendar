@@ -37,12 +37,13 @@ $request = Request::createFromGlobals();
 try {
     $context = new Context($request);
     
+    $translator = new Translator($context->getLang(), new MessageSelector());
+    $translator->addLoader('mo', new MoFileLoader());
     if ($context->getLang() != 'en') {
-        $translator = new Translator($context->getLang(), new MessageSelector());
-        $translator->addLoader('mo', new MoFileLoader());
-        $translator->addResource('mo', __DIR__ . "locale/" . $context->getLang()
-            . "/LC_MESSAGES/messages.mo", $context->getLang());
+        $translator->addResource('mo', __DIR__ . "/translations/" . $context->getLang()
+            . ".mo", $context->getLang());
     }
+    $translator->addResource('mo', __DIR__ . "/translations/en.mo", "en");
     
     $page = $context->getPage();
     $response = $page->action($context);

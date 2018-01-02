@@ -5,7 +5,10 @@
   {% if user.isAdmin() %}
     <li class="nav-item"><a class="nav-link active" id="calendars-tab" data-toggle="tab" href="#calendars" role="tab" aria-controls="calendars">{{ "Calendars"|trans }}</a></li>
     <li class="nav-item"><a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users">{{ "Users"|trans }}</a></li>
+  {% endif %}
+  {% if calendar.canAdmin(user) %}
     <li class="nav-item"><a class="nav-link" id="calendar-tab" data-toggle="tab" href="#calendar" role="tab" aria-controls="calendar">{{ "Calendar Settings"|trans }}</a></li>
+    <li class="nav-item"><a class="nav-link" id="calendar-users-tab" data-toggle="tab" href="#calendar-users" role="tab" aria-controls="calendar-users">{{ "Calendar Users"|trans }}</a></li>
   {% endif %}
   {% if calendar.canAdmin(user) %}
       
@@ -79,6 +82,28 @@
         {{ form_widget(calendar_form) }}
         <button type="submit" class="btn btn-primary">{{ "Update Calendar"|trans }}</button>
       {{ form_end(calendar_form) }}
+    </div>
+
+    <div role="tabpanel" class="tab-pane fade" id="calendar-users" role="tabpanel" aria-labelledby="calendar-users-tab">
+      <h3>{{ "User Permissions For Calendar"|trans }}</h3>
+      {{ form_start(user_form) }}
+        {% for user_field in user_form.children %}
+          {% if user_field.vars.name != '_token' %}
+            <div class="form-group">
+            {{ form_label(user_field) }}
+            {% for perm in user_field.children %}
+              <div class="form-check form-check-inline">
+                {{ form_label(perm) }}
+                {{ form_widget(perm) }}
+                {{ form_errors(perm) }}
+              </div>
+            {% endfor %}
+            {{ form_errors(user_field) }}
+            </div>
+          {% endif %}
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">{{ "Update Permissions"|trans }}</button>
+      {{ form_end(user_form) }}
     </div>
   </div>
   

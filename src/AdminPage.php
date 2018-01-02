@@ -19,9 +19,9 @@ namespace PhpCalendar;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class AdminPage extends Page
 {
@@ -33,21 +33,50 @@ class AdminPage extends Page
      */
     public function action(Context $context)
     {
-        $calendar_form = (new CalendarForm())->getForm($context, $context->calendar->getCid());
+        $calendar_form = (new CalendarForm())->getForm($context, $context->calendar);
         $calendar_form->handleRequest($context->request);
         if ($calendar_form->isSubmitted() && $calendar_form->isValid()) {
             return $this->processCalendarForm($context, $calendar_form->getData());
         }
 
+        $user_form = $this->createUserForm($context, $context->calendar);
+        $user_form->handleRequest($context->request);
+        if ($user_form->isSubmitted() && $user_form->isValid()) {
+            //return $this->processCalendarForm($context, $calendar_form->getData());
+        }
+
         return new Response(
             $context->twig->render(
                 "admin.html.twig",
-                array('calendar_form' => $calendar_form->createView())
+                array('calendar_form' => $calendar_form->createView(), 'user_form' => $user_form->createView())
             )
         );
     }
 
-        /**
+    /**
+     * @param Context $context
+     * @param Calendar $calendar
+     * @return Form
+     */
+    private function createUserForm(Context $context, Calendar $calendar)
+    {
+        $builder = $context->getFormFactory()->createBuilder();
+
+        foreach ($context->db->getUsersWithPermissions($calendar->getCid()) as $user) {
+            $uid = $user['uid'];
+            $builder->add(
+                $builder->create("uid$uid", FormType::class, array('inherit_data' => true, 'label' => $user['username']))
+                ->add('read', CheckboxType::class, array('label' => __('read'), 'data' => $user['read'], 'label_attr' => array('class' => 'checkbox-inline')))
+                ->add('write', CheckboxType::class, array('label' => __('write'), 'data' => $user['write'], 'label_attr' => array('class' => 'checkbox-inline')))
+                ->add('modify', CheckboxType::class, array('label' => __('modify'), 'data' => $user['modify']))
+                ->add('admin', CheckboxType::class, array('label' => __('admin'), 'data' => $user['admin']))
+            );
+        }
+
+        return $builder->getForm();
+    }
+
+    /**
      * @param Context $context
      * @param array $data
      * @return Response

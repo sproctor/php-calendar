@@ -39,56 +39,6 @@ function cadmin()
     );
 }
 
-function config_form() 
-{
-    global $phpc_cal, $phpc_script, $vars;
-
-        $tbody = tag('tbody');
-
-    foreach(get_config_options() as $element) {
-            $name = $element[0];
-            $text = $element[1];
-        $default = $phpc_cal->$name;
-        $input = create_config_input($element, $default);
-
-            $tbody->add(
-                tag(
-                    'tr',
-                    tag('th', $text),
-                    tag('td', $input)
-                )
-            );
-    }
-
-    $hidden_div = tag(
-        'div',
-        create_hidden('action', 'cadmin_submit')
-    );
-    if(isset($vars['phpcid'])) {
-        $hidden_div->add(create_hidden('phpcid', $vars['phpcid']));
-    }
-        
-    return tag(
-        'div', attrs('id="phpc-config"'),
-        tag(
-            'form', attrs("action=\"$phpc_script\"", 'method="post"'),
-            $hidden_div,
-            tag(
-                'table', attrs('class="phpc-container form ui-widget"'),
-                tag(
-                    'tfoot',
-                    tag(
-                        'tr',
-                        tag('td', ''),
-                        tag('td', create_submit(__('Submit'))),
-                        $tbody
-                    )
-                )
-            )
-        )
-    );
-}
-
 function user_list()
 {
     global $phpc_script, $phpcid, $phpcdb, $vars;

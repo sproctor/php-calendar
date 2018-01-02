@@ -51,7 +51,7 @@
 						<a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-language"></i> {{ "Language"|trans }} ({{ context.getLang() }})</a>
 						<div class="dropdown-menu" aria-labelledby="langDropdown">
 							{% for lang in languages %}
-								<a class="dropdown-item" href="{{ change_lang_url(context.request, lang) }}">{{ lang }}</a>
+								<a class="dropdown-item" href="{{ append_parameter_url(context.request, "lang=" ~ lang) }}">{{ lang }}</a>
 							{% endfor %}
 						</div>
 					</li>

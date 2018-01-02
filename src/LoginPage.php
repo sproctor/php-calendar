@@ -36,11 +36,11 @@ class LoginPage extends Page
                 $password = $_REQUEST['password'];
 
                 if ($context->loginUser($username, $password)) {
-                    $url = $context->script;
+                    $url = $context->request->getScriptName();
                     if (!empty($_REQUEST['lasturl'])) {
                         $url .= '?' . urldecode($_REQUEST['lasturl']);
                     }
-                    return $context->redirect($url);
+                    return new RedirectResponse($url);
                 } else {
                     $context->addMessage(__("Invalid login credentials."));
                 }

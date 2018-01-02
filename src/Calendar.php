@@ -282,7 +282,8 @@ class Calendar
     /**
      * @return int
      */
-    public function getAnonPermission() {
+    public function getAnonPermission()
+    {
         return $this->anon_permission;
     }
 }

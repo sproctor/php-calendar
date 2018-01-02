@@ -159,7 +159,7 @@ class Database
         $from_stamp = mktime(0, 0, 0, $month, $day, $year);
         $to_stamp = mktime(23, 59, 59, $month, $day, $year);
 
-        return $this->get_occurrences_by_date_range(
+        return $this->getOccurrencesByDateRange(
             $cid,
             new \DateTime("$year-$month-$day 00:00:00"),
             (new \DateTime("$year-$month-$day 00:00:00"))->add(new \DateInterval("P1D"))
@@ -835,9 +835,9 @@ class Database
 
     /**
      * @param int $cid
-     * @return string[][]
+     * @return array[]
      */
-    function get_users_with_permissions($cid)
+    public function getUsersWithPermissions($cid)
     {
         $permissions_table = $this->prefix . "permissions";
 

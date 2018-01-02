@@ -39,12 +39,12 @@ class MonthPage extends Page
 
         $months = array();
         for ($i = 1; $i <= 12; $i++) {
-            $months["{$context->script}?action=display_month&amp;phpcid=$cid&amp;month=$i&amp;year=$year"] =
+            $months[$context->request->getScriptName()."?action=display_month&amp;phpcid=$cid&amp;month=$i&amp;year=$year"] =
             month_name($i);
         }
         $years = array();
         for ($i = $year - 5; $i <= $year + 5; $i++) {
-            $years["{$context->script}?action=display_month&amp;phpcid=$cid&amp;month=$month&amp;year=$i"] = $i;
+            $years[$context->request->getScriptName()."?action=display_month&amp;phpcid=$cid&amp;month=$month&amp;year=$i"] = $i;
         }
         $next_month = $month + 1;
         $next_year = $year;
