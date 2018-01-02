@@ -1,6 +1,15 @@
 NEWS
 -----
 
+2.0.12 (2 January 2018):
+	- Fixed additional issues with the updater
+	- Minor changes to forms
+
+2.0.11 (1 January 2018):
+	- Switched colorpicker to spectrum.js
+	- Updated jQuery to 3.2.1 and jQuery UI to 1.12.1
+	- Fixed issues with the updater
+
 2.0.10 (6 April 2017):
 	- Update jquery/jquery ui versions
 	- Use markdown to format event descriptions
@@ -8,8 +17,8 @@ NEWS
 2.0.9 (5 January 2015):
 	- A few minor attempts at improving security.
 	- Fixed search and day displays for timezones other than the server.
-    - Added labels to installer to make fields easier to select.
-    - Fixed installer for PHP 5.5.
+	- Added labels to installer to make fields easier to select.
+	- Fixed installer for PHP 5.5.
 
 2.0.8 (1 July 2014):
 	- Fixed problems published by siph0n. shoutz: smitz
