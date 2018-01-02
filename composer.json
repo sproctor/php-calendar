@@ -30,6 +30,9 @@
         "symfony/translation": "3.4.*",
         "symfony/finder": "3.4.*"
     },
+    "suggest": {
+        "ext-intl": "Allows internationalization"
+    },
     "autoload": {
         "psr-4": {
             "PhpCalendar\\": "src/"

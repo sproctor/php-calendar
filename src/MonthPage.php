@@ -40,7 +40,7 @@ class MonthPage extends Page
         $months = array();
         for ($i = 1; $i <= 12; $i++) {
             $months[$context->request->getScriptName()."?action=display_month&amp;phpcid=$cid&amp;month=$i&amp;year=$year"] =
-            month_name($i);
+            month_name(new \DateTime(sprintf("%04d-%02d", $year, $i)));
         }
         $years = array();
         for ($i = $year - 5; $i <= $year + 5; $i++) {
@@ -74,7 +74,7 @@ class MonthPage extends Page
         $template_variables['prev_year'] = $prev_year;
         $template_variables['next_month'] = $next_month;
         $template_variables['next_year'] = $next_year;
-        $template_variables['month_name'] = month_name($month);
+        $template_variables['date'] = new \DateTime(sprintf("%04d-%02d", $year, $month));
         $template_variables['months'] = $months;
         $template_variables['year'] = $year;
         $template_variables['years'] = $years;

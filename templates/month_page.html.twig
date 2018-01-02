@@ -2,7 +2,7 @@
 
 {% block navigation %}
 <a class="nav-link" href="{{ script }}?action=display_month&amp;phpcid={{ cid }}&amp;month={{ prev_month }}&amp;year={{ prev_year }}"><i class="fas fa-angle-left fa-lg"></i></a>
-{{ dropdown(month_name, months) }}
+{{ dropdown(date|month_name, months) }}
 {{ dropdown(year, years) }}
 <a class="nav-link" href="{{ script }}?action=display_month&amp;phpcid={{ cid }}&amp;month={{ next_month }}&amp;year={{ next_year }}"><i class="fas fa-angle-right fa-lg"></i></a>
 {% endblock %}
@@ -10,5 +10,6 @@
 {% block content %}
     {% for week_of_month in 1..weeks %}
         {% include('week.html.twig') %}
+        {% set start_date = add_days(start_date, 7) %}
     {% endfor %}
 {% endblock %}

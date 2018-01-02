@@ -23,6 +23,7 @@ namespace PhpCalendar;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Intl\Intl;
 
 define('PHPC_CONFIG_FILE', realpath(__DIR__.'/../config.php'));
 define('PHPC_VERSION', '2.1.0');
@@ -30,30 +31,13 @@ define('PHPC_DEBUG', 1);
 
 function __($msg)
 {
-    global $translator;
+    global $context;
 
-    if (empty($translator)) {
+    if (empty($context->translator)) {
         return $msg;
     }
 
-    return $translator->trans($msg);
-}
-
-function __p($context, $msg)
-{
-    global $translator;
-
-    if (empty($translator)) {
-        return $msg;
-    }
-
-    $id = $context . "\04" . $msg;
-    $result = $translator->trans($context . "\04" . $msg);
-    if ($result == $id) {
-        return $msg;
-    } else {
-        return $result;
-    }
+    return $context->translator->trans($msg);
 }
 
 function minute_pad($minute)
@@ -175,21 +159,22 @@ function days_between(\DateTimeInterface $date1, \DateTimeInterface $date2)
 /**
  * @return string[]
  */
-function get_languages()
+function get_language_mappings()
 {
-    static $langs = null;
+    static $mappings = null;
 
-    if (empty($langs)) {
-        $langs = array();
+    if (empty($mappings)) {
+        $mappings = array();
         $finder = new Finder();
 
         foreach ($finder->name('*.mo')->in(__DIR__.'/../translations')->files() as $file) {
-            $name = $file->getBasename('.mo');
-            $langs[$name] = $name;
+            $code = $file->getBasename('.mo');
+            $lang = Intl::getLanguageBundle()->getLanguageName($code);
+            $mappings[$lang] = $code;
         }
     }
 
-    return $langs;
+    return $mappings;
 }
 
 // returns the number of days in the week before the 
@@ -262,56 +247,41 @@ function weeks_in_year($year, $week_start)
 }
 
 /**
+ * return the week number for $date in the current locale
+ * 
  * @param \DateTimeInterface $date
- * @param int $week_start
- * @return int[]
+ * @return int
  */
-// return the week number corresponding to the $day.
-function week_of_year(\DateTimeInterface $date, $week_start)
+function week_of_year(\DateTimeInterface $date)
 {
-    $day = $date->format('d');
-    $month = $date->format('m');
-    $year = $date->format('Y');
-    
-    // week_start = 1 uses ISO 8601 and contains the Jan 4th,
-    //   Most other places the first week contains Jan 1st
-    //   There are a few outliers that start weeks on Monday and use
-    //   Jan 1st for the first week. We'll ignore them for now.
-    if ($week_start == 1) {
-        $year_contains = 4;
-    } else {
-        $year_contains = 1;
-    }
-    
-    // if the week is in December and contains Jan $year_contains, it's a week
-    // from next year
-    if ($month == 12 && $day - 24 >= $year_contains) {
-        $year++;
-        $month = 1;
-        $day -= 31;
-    }
-    
-    // $day is the first day of the week relative to the current month,
-    // so it can be negative. If it's in the previous year, we want to use
-    // that negative value, unless the week is also in the previous year,
-    // then we want to switch to using that year.
-    if ($day < 1 && $month == 1 && $day > $year_contains - 7) {
-        $day_of_year = $day - 1;
-    } else {
-        $day_of_year = $date->format('z');
-        $year = $date->format('Y');
-    }
+    $formatter = new \IntlDateFormatter(
+        \Locale::getDefault(),
+        \IntlDateFormatter::NONE,
+        \IntlDateFormatter::NONE,
+        null,
+        null,
+        "w" // short month format
+    );
+    return $formatter->format($date);
+}
 
-    /* Days in the week before Jan 1. */
-    $days_before_year = day_of_week(1, $year_contains, $year, $week_start);
-
-    // Days left in the week
-    $days_left = 8 - day_of_week_date($date, $week_start) - $year_contains;
-
-    /* find the number of weeks by adding the days in the week before
-    * the start of the year, days up to $day, and the days left in
-    * this week, then divide by 7 */
-    return [intval(($days_before_year + $day_of_year + $days_left) / 7), $year];
+/**
+ * return the year of week of year for $date in the current locale
+ * 
+ * @param \DateTimeInterface $date
+ * @return int
+ */
+function year_of_week_of_year(\DateTimeInterface $date)
+{
+    $formatter = new \IntlDateFormatter(
+        \Locale::getDefault(),
+        \IntlDateFormatter::NONE,
+        \IntlDateFormatter::NONE,
+        null,
+        null,
+        "Y" // short month format
+    );
+    return $formatter->format($date);
 }
 
 /**
@@ -424,139 +394,81 @@ function create_dropdown($title, $values)
     return $output . "    </div></div>";
 }
 
-// takes a number of the month, returns the name
 /**
- * @param int $month
+ * Takes a date, returns the full month name
+ * 
+ * @param \DateTimeInterface $date
  * @return string
  */
-function month_name($month)
+function month_name(\DateTimeInterface $date)
 {
-    $month = ($month - 1) % 12 + 1;
-    switch ($month) {
-        case 1:
-            return __('January');
-        case 2:
-            return __('February');
-        case 3:
-            return __('March');
-        case 4:
-            return __('April');
-        case 5:
-            return __('May');
-        case 6:
-            return __('June');
-        case 7:
-            return __('July');
-        case 8:
-            return __('August');
-        case 9:
-            return __('September');
-        case 10:
-            return __('October');
-        case 11:
-            return __('November');
-        case 12:
-            return __('December');
-    }
-    return ''; // This can't happen
-}
-
-/**
- * @param int $day
- * @return string
- */
-function day_name($day)
-{
-    $day = $day % 7;
-
-    switch ($day) {
-        case 0:
-            return __('Sunday');
-        case 1:
-            return __('Monday');
-        case 2:
-            return __('Tuesday');
-        case 3:
-            return __('Wednesday');
-        case 4:
-            return __('Thursday');
-        case 5:
-            return __('Friday');
-        case 6:
-            return __('Saturday');
-    }
-    return ''; // This can't happen
-}
-
-/**
- * @param int $day
- * @return string
- */
-function short_day_name($day)
-{
-    $day = $day % 7;
-
-    switch ($day) {
-        case 0:
-            return __('Sun');
-        case 1:
-            return __('Mon');
-        case 2:
-            return __('Tue');
-        case 3:
-            return __('Wed');
-        case 4:
-            return __('Thu');
-        case 5:
-            return __('Fri');
-        case 6:
-            return __('Sat');
-    }
-    return ''; // This can't happen
-}
-
-/**
- * @param int $month
- * @return string
- */
-function short_month_name($month)
-{
-    $month = ($month - 1) % 12 + 1;
-
-    switch ($month) {
-        case 1:
-            return __('month.jan');
-        case 2:
-            return __('month.feb');
-        case 3:
-            return __('Mar');
-        case 4:
-            return __('Apr');
-        case 5:
-            return __('May');
-        case 6:
-            return __('Jun');
-        case 7:
-            return __('Jul');
-        case 8:
-            return __('Aug');
-        case 9:
-            return __('Sep');
-        case 10:
-            return __('Oct');
-        case 11:
-            return __('Nov');
-        case 12:
-            return __('Dec');
-    }
-    return ''; // This can't happen
+    $formatter = new \IntlDateFormatter(
+        \Locale::getDefault(),
+        \IntlDateFormatter::NONE,
+        \IntlDateFormatter::NONE,
+        null,
+        null,
+        "MMMM" // short month format
+    );
+    return $formatter->format($date);
 }
 
 /**
  * @param \DateTimeInterface $date
- * @return bool|string
+ * @return string
  */
-function index_of_date(\DateTimeInterface $date)
+function day_name(\DateTimeInterface $date)
+{
+    $formatter = new \IntlDateFormatter(
+        \Locale::getDefault(),
+        \IntlDateFormatter::NONE,
+        \IntlDateFormatter::NONE,
+        null,
+        null,
+        "EEEE" // short month format
+    );
+    return $formatter->format($date);
+}
+
+/**
+ * @param \DateTimeInterface $date
+ * @return string
+ */
+function short_day_name(\DateTimeInterface $date)
+{
+    $formatter = new \IntlDateFormatter(
+        \Locale::getDefault(),
+        \IntlDateFormatter::NONE,
+        \IntlDateFormatter::NONE,
+        null,
+        null,
+        "E" // short month format
+    );
+    return $formatter->format($date);
+}
+
+/**
+ * @param \DateTimeInterface $date
+ * @return string
+ */
+function short_month_name(\DateTimeInterface $date)
+{
+    $formatter = new \IntlDateFormatter(
+        \Locale::getDefault(),
+        \IntlDateFormatter::NONE,
+        \IntlDateFormatter::NONE,
+        null,
+        null,
+        "MMM" // short month format
+    );
+    return $formatter->format($date);
+}
+
+/**
+ * @param \DateTimeInterface $date
+ * @return string
+ */
+function date_index(\DateTimeInterface $date)
 {
     return $date->format('Y-m-d');
 }

@@ -36,22 +36,22 @@
 		<div class="collapse navbar-collapse" id="phpc-navbar">
 			<ul class="navbar-nav">
 				{% if calendar.canWrite(user) %}
-					{{ menu_item(context, "event_form", "Create Event"|trans) }}
+					{{ menu_item(context, "event_form", "create-event-menu-link"|trans) }}
 				{% endif %}
-				{{ menu_item(context, "search", "Search"|trans) }}
-				{{ menu_item(context, "display_month", "View Month"|trans) }}
+				{{ menu_item(context, "search", "search-menu-link"|trans) }}
+				{{ menu_item(context, "display_month", "view-month-menu-link"|trans) }}
 				{% if action == "display_event" %}
-					{{ menu_item(context, "display_day", "View date"|trans) }}
+					{{ menu_item(context, "display_day", "view-date-menu-link"|trans) }}
 				{% endif %}
 				{% if user.isAdmin() or calendar.canAdmin(user) %}
-					{{ menu_item(context, "admin", "Admin"|trans) }}
+					{{ menu_item(context, "admin", "admin-menu-link"|trans) }}
 				{% endif %}
 				{% if not user.isUser() %}
 					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-language"></i> {{ "Language"|trans }} ({{ context.getLang() }})</a>
+						<a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-language"></i> {{ "language-menu-selector"|trans({'%locale%': locale}) }}</a>
 						<div class="dropdown-menu" aria-labelledby="langDropdown">
-							{% for lang in languages %}
-								<a class="dropdown-item" href="{{ append_parameter_url(context.request, "lang=" ~ lang) }}">{{ lang }}</a>
+							{% for lang,code in languages %}
+								<a class="dropdown-item" href="{{ append_parameter_url(context.request, "lang=" ~ code) }}">{{ lang }}</a>
 							{% endfor %}
 						</div>
 					</li>

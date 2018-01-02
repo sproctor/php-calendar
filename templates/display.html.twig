@@ -17,9 +17,10 @@
     </colgroup>
     <thead class="thead-light">
         <tr>
-            <th scope="col">{{ _p('Week', 'W') }}</th>
+            <th scope="col">{{ "week.first_letter"|trans }}</th>
             {% for i in range(0, 6) %}
-            <th scope="col">{{ short_day_name(i + week_start) }}</th>
+                {% set week_date = add_days(start_date, i) %}
+                <th scope="col">{{ start_date|day_abbr }}</th>
             {% endfor %}
         </tr>
     </thead>

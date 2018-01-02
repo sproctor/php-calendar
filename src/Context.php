@@ -26,6 +26,7 @@ use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,7 +34,9 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
 use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\MessageSelector;
+use Symfony\Component\Translation\Loader\MoFileLoader;
 use Symfony\Component\Validator\Validation;
 
 class Context
@@ -53,12 +56,11 @@ class Context
      */
     public $request;
     public $config;
-    private $lang;
     /**
      * @var Database $db
      */
     public $db;
-    public $token;
+    public $translator;
     /**
      * @var  \Twig_Environment
      */
@@ -120,7 +122,7 @@ class Context
         $this->initCurrentCalendar();
 
         $this->initTimezone();
-        $this->initLang($request);
+        $this->initLocale($request);
 
         $this->initTwig();
     }
@@ -162,9 +164,10 @@ class Context
                 )
             )
         );
-        //$this->twig->addExtension(new TranslationExtension());
+        $this->twig->addExtension(new TranslationExtension($this->translator));
         $this->twig->addExtension(new FormExtension());
         $this->twig->addExtension(new \Twig_Extension_Debug());
+        $this->twig->addExtension(new \Twig_Extensions_Extension_Intl());
 
         $this->formFactory = Forms::createFormFactoryBuilder()
             ->addExtension(new HttpFoundationExtension())
@@ -173,6 +176,7 @@ class Context
             ->getFormFactory();
         
         $this->twig->addGlobal('context', $this);
+        $this->twig->addGlobal('locale', \Locale::getDefault());
         $this->twig->addGlobal('calendar', $this->calendar);
         $this->twig->addGlobal('calendars', $this->db->getCalendars());
         $this->twig->addGlobal('user', $this->user);
@@ -182,36 +186,37 @@ class Context
         //'theme' => $context->getCalendar()->get_theme(),
         $this->twig->addGlobal('minified', defined('PHPC_DEBUG') ? '' : '.min');
         $this->twig->addGlobal('query_string', $this->request->getQueryString());
-        $this->twig->addGlobal('languages', get_languages());
+        $this->twig->addGlobal('languages', get_language_mappings());
 
         $this->twig->addFunction(new \Twig_SimpleFunction(
             'dropdown',
             '\PhpCalendar\create_dropdown',
             array('is_safe' => array('html'))
         ));
-        $this->twig->addFilter(new \Twig_SimpleFilter('trans', '\PhpCalendar\__'));
-        $this->twig->addFunction(new \Twig_SimpleFunction('_p', '\PhpCalendar\__p'));
-        $this->twig->addFunction(new \Twig_SimpleFunction('day_name', '\PhpCalendar\day_name'));
-        $this->twig->addFunction(new \Twig_SimpleFunction('short_day_name', '\PhpCalendar\short_day_name'));
-        $this->twig->addFunction(new \Twig_SimpleFunction('month_name', '\PhpCalendar\month_name'));
-        $this->twig->addFunction(new \Twig_SimpleFunction('short_month_name', '\PhpCalendar\short_month_name'));
-        $this->twig->addFunction(new \Twig_SimpleFunction('index_of_date', '\PhpCalendar\index_of_date'));
-        $this->twig->addFunction(
-            new \Twig_SimpleFunction(
+        
+        $this->twig->addFilter(new \Twig_SimpleFilter('day_name', '\PhpCalendar\day_name'));
+        $this->twig->addFilter(new \Twig_SimpleFilter('day_abbr', '\PhpCalendar\short_day_name'));
+        $this->twig->addFilter(new \Twig_SimpleFilter('month_name', '\PhpCalendar\month_name'));
+        $this->twig->addFilter(new \Twig_SimpleFilter('month_abbr', '\PhpCalendar\short_month_name'));
+        $this->twig->addFilter(new \Twig_SimpleFilter('date_index', '\PhpCalendar\date_index'));
+        $this->twig->addFilter(
+            new \Twig_SimpleFilter(
                 'week_link',
-                function (Context $context, \DateTimeInterface $date) {
-                    list($week, $year) = week_of_year($date, $context->calendar->getWeekStart());
+                function (\DateTimeInterface $date, Context $context) {
+                    $week = week_of_year($date);
+                    $year = year_of_week_of_year($date);
                     $url = action_url($context, 'display_week', ['week' => $week, 'year' => $year]);
                     return "<a href=\"$url\">$week</a>";
-                }
+                },
+                array('is_safe' => array('html'))
             )
         );
         $this->twig->addFunction(
             new \Twig_SimpleFunction(
                 'add_days',
-                function (\DateTime $date, $days) {
-                    $date->add(new \DateInterval("P{$days}D"));
-                    return $date;
+                function (\DateTimeInterface $date, $days) {
+                    $next_date = new \DateTime('@'.$date->getTimestamp());
+                    return $next_date->add(new \DateInterval("P{$days}D"));
                 }
             )
         );
@@ -263,7 +268,7 @@ class Context
             new \Twig_SimpleFunction(
                 'occurrences_for_date',
                 function ($occurrences, \DateTimeInterface $date) {
-                    $key = index_of_date($date);
+                    $key = date_index($date);
                     if (array_key_exists($key, $occurrences)) {
                         return $occurrences[index_of_date($date)];
                     }
@@ -425,7 +430,7 @@ class Context
         }
     }
 
-    private function initLang(Request $request)
+    private function initLocale(Request $request)
     {
         // setup translation stuff
         $lang = $this->user->getLanguage();
@@ -444,15 +449,14 @@ class Context
             $lang = 'en';
         }
 
-        $this->lang = $lang;
-    }
+        \Locale::setDefault($lang);
 
-    public function getLang()
-    {
-        if (empty($this->lang)) {
-            return 'en';
+        $this->translator = new Translator($lang, new MessageSelector());
+        $this->translator->addLoader('mo', new MoFileLoader());
+        if ($lang != 'en') {
+            $this->translator->addResource('mo', __DIR__ . "/../translations/$lang.mo", $lang);
         }
-        return $this->lang;
+        $this->translator->addResource('mo', __DIR__ . "/../translations/en.mo", "en");
     }
 
     public function getFormFactory()
