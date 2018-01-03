@@ -600,7 +600,7 @@ function get_occurrences_by_day(Calendar $calendar, User $user, \DateTimeInterfa
 
         // put the event in every day until the end
         for ($date = $start->add($diff); $date < $to && $date <= $end; $date = $date->add(new \DateInterval("P1D"))) {
-            $key = index_of_date($date);
+            $key = date_index($date);
             if (!isset($occurrences_by_day[$key])) {
                 $occurrences_by_day[$key] = array();
             }

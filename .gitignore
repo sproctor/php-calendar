@@ -1,5 +1,4 @@
 config.php
 *.swp
-*.mo
 /vendor/
 /.vscode

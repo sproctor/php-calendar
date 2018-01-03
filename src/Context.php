@@ -270,7 +270,7 @@ class Context
                 function ($occurrences, \DateTimeInterface $date) {
                     $key = date_index($date);
                     if (array_key_exists($key, $occurrences)) {
-                        return $occurrences[index_of_date($date)];
+                        return $occurrences[date_index($date)];
                     }
                     return null;
                 }
