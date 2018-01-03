@@ -15,16 +15,16 @@ msgstr "Search"
 #. create event link in main navbar
 #: 
 msgid "create-event-menu-link"
-msgstr "Create Event"
+msgstr "Create event"
 
 #. view month link in main navbar
 #: 
 msgid "view-month-menu-link"
-msgstr "View Month"
+msgstr "View month"
 
 #: 
 msgid "view-date-menu-link"
-msgstr "View Date"
+msgstr "View date"
 
 #: 
 msgid "admin-menu-link"
@@ -38,4 +38,30 @@ msgstr "Language (%locale%)"
 #: 
 msgid "first-letter-of-Week"
 msgstr "W"
+
+#: 
+msgid "settings-menu-link"
+msgstr "Settings"
+
+#: 
+msgid "log-out-menu-link"
+msgstr "Log out"
+
+#: 
+msgid "log-in-menu-link"
+msgstr "Log in"
+
+#: 
+msgid "view-additional-events-link"
+msgstr "View additional events"
+
+#. include %author% for the name of the author
+#: 
+msgid "by-author"
+msgstr "by %author%"
+
+#. use %datetime% to add the date and time that something happened
+#: 
+msgid "on-date-time"
+msgstr "on %datetime%"
 
