@@ -167,8 +167,8 @@ function get_language_mappings()
         $mappings = array();
         $finder = new Finder();
 
-        foreach ($finder->name('*.mo')->in(__DIR__.'/../translations')->files() as $file) {
-            $code = $file->getBasename('.mo');
+        foreach ($finder->name('*.po')->in(__DIR__.'/../translations')->files() as $file) {
+            $code = $file->getBasename('.po');
             $lang = Intl::getLanguageBundle()->getLanguageName($code);
             $mappings[$lang] = $code;
         }
