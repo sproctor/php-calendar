@@ -39,3 +39,109 @@ msgstr "La langue (%locale%)"
 msgid "first-letter-of-Week"
 msgstr "S"
 
+#: 
+msgid "settings-menu-link"
+msgstr ""
+
+#: 
+msgid "log-out-menu-link"
+msgstr ""
+
+#: 
+msgid "log-in-menu-link"
+msgstr ""
+
+#: 
+msgid "view-additional-events-link"
+msgstr ""
+
+#. include %author% for the name of the author
+#: 
+msgid "by-author"
+msgstr ""
+
+#. use %datetime% to add the date and time that something happened
+#: 
+msgid "on-date-time"
+msgstr ""
+
+#. use %modified% for the modified date and time
+#: 
+msgid "last-modified"
+msgstr ""
+
+#. use %category% for the event's category name
+#: 
+msgid "category-declaration"
+msgstr ""
+
+#: 
+msgid "modify-menu-link"
+msgstr ""
+
+#: 
+msgid "add-occurrence-menu-link"
+msgstr ""
+
+#: 
+msgid "delete-button"
+msgstr ""
+
+#: 
+msgid "delete-menu-link"
+msgstr ""
+
+#: 
+msgid "permanently-delete-event-question"
+msgstr ""
+
+#: 
+msgid "fields-title"
+msgstr ""
+
+#: 
+msgid "description-title"
+msgstr ""
+
+#: 
+msgid "occurrences-title"
+msgstr ""
+
+#. use %start% for the beginning datetime and %end% for the ending datetime
+#: 
+msgid "date-time-range"
+msgstr ""
+
+#: 
+msgid "time-range"
+msgstr ""
+
+#: 
+msgid "to-be-announced-abbr"
+msgstr ""
+
+#. %date% for date, %time% for time. %time% could be the translated to-be-announced-abbr
+#: 
+msgid "date-time-custom"
+msgstr ""
+
+#: 
+msgid "edit-link"
+msgstr ""
+
+#: 
+msgid "remove-button"
+msgstr ""
+
+#: 
+msgid "remove-link"
+msgstr ""
+
+#: 
+msgid "permanently-remove-occurrence-question"
+msgstr ""
+
+#: 
+msgid "default-language-label"
+msgstr ""
+
