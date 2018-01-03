@@ -36,7 +36,7 @@ use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\MessageSelector;
-use Symfony\Component\Translation\Loader\MoFileLoader;
+use Symfony\Component\Translation\Loader\PoFileLoader;
 use Symfony\Component\Validator\Validation;
 
 class Context
@@ -452,11 +452,11 @@ class Context
         \Locale::setDefault($lang);
 
         $this->translator = new Translator($lang, new MessageSelector());
-        $this->translator->addLoader('mo', new MoFileLoader());
+        $this->translator->addLoader('po', new PoFileLoader());
         if ($lang != 'en') {
-            $this->translator->addResource('mo', __DIR__ . "/../translations/$lang.mo", $lang);
+            $this->translator->addResource('po', __DIR__ . "/../translations/$lang.po", $lang);
         }
-        $this->translator->addResource('mo', __DIR__ . "/../translations/en.mo", "en");
+        $this->translator->addResource('po', __DIR__ . "/../translations/en.po", "en");
     }
 
     public function getFormFactory()

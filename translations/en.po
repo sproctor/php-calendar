@@ -1,0 +1,41 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: PHP-Calendar\n"
+"Language: en\n"
+
+#. Search link in main navbar
+#: 
+msgid "search-menu-link"
+msgstr "Search"
+
+#. create event link in main navbar
+#: 
+msgid "create-event-menu-link"
+msgstr "Create Event"
+
+#. view month link in main navbar
+#: 
+msgid "view-month-menu-link"
+msgstr "View Month"
+
+#: 
+msgid "view-date-menu-link"
+msgstr "View Date"
+
+#: 
+msgid "admin-menu-link"
+msgstr "Admin"
+
+#. label for dropdown to pick language/locale.  %locale% is the users current locale abbreviation, such as 'fr' or 'fr_CA'
+#: 
+msgid "language-menu-selector"
+msgstr "Language (%locale%)"
+
+#: 
+msgid "first-letter-of-Week"
+msgstr "W"
+
