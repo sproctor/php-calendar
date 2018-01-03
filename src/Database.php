@@ -943,7 +943,7 @@ class Database
         if (empty($value)) {
             $value = '0';
         }
-        echo "<pre>$name $value</pre>";
+        
         $query = "UPDATE `" . $this->prefix . "calendars`\n"
             . "SET `$name`=:value\n"
             . "WHERE `cid`=:cid";

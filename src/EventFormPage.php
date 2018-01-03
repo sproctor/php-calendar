@@ -59,7 +59,7 @@ class EventFormPage extends Page
         }
         
         // else
-        return new Response($context->twig->render("event_create.html.twig", array('form' => $form->createView())));
+        return new Response($context->twig->render("event_form.html.twig", array('form' => $form->createView())));
     }
 
     /**
@@ -81,7 +81,7 @@ class EventFormPage extends Page
         $builder->add(
             'subject',
             TextType::class,
-            array('attr' => array('autocomplete' => 'off', 'maxlength' => $context->calendar->getSubjectMax()),
+            array('attr' => array('autocomplete' => 'off', 'maxlength' => $context->calendar->getMaxSubjectLength()),
                 'label' => _('Subject'), 'constraints' => new Assert\NotBlank())
         )
         ->add('description', TextareaType::class, array('required' => false))
@@ -128,7 +128,7 @@ class EventFormPage extends Page
         if ($context->request->get('eid') !== null) {
             $eid = $context->request->get('eid');
             $event = $context->db->getEvent($eid);
-            $occs = $context->db->get_occurrences_by_eid($eid);
+            $occs = $event->getOccurrences();
             $occurrence = $occs[0];
             $builder->add(
                 'modify',
@@ -140,9 +140,17 @@ class EventFormPage extends Page
             $builder->get('description')->setData($event->getDescription());
             $builder->get('start')->setData($occurrence->getStart());
             $builder->get('end')->setData($occurrence->getEnd());
-            $builder->add('save', SubmitType::class, array('label' => __('Modify Event')));
+            $builder->add(
+                'save',
+                SubmitType::class,
+                array('label' => __('Modify Event'), 'attr' => array('class' => 'btn btn-primary'))
+            );
         } else {
-            $builder->add('save', SubmitType::class, array('label' => __('Create Event')));
+            $builder->add(
+                'save',
+                SubmitType::class,
+                array('label' => __('Create Event'), 'attr' => array('class' => 'btn btn-primary'))
+            );
         }
 
         /*
@@ -212,7 +220,7 @@ class EventFormPage extends Page
                 $catid
             );
             if ($modify_occur) {
-                $context->db->delete_occurrences($eid);
+                $context->db->deleteOccurrences($eid);
             }
         }
     

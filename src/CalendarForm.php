@@ -57,7 +57,11 @@ class CalendarForm
                 'preferred_choices' => array('America/New_York')
             )
         )
-        ->add('locale', ChoiceType::class, array('label' => __('default-language-label'), 'choices' => get_languages()));
+        ->add(
+            'language',
+            ChoiceType::class,
+            array('label' => __('default-language-label'), 'choices' => get_language_mappings(), 'data' => 'en')
+        );
         /*->add(
             'submit',
             SubmitType::class,
@@ -66,11 +70,11 @@ class CalendarForm
         if ($calendar !== null) {
             // TODO: add hidden cid if we want to work on other calendars
             $builder->get('title')->setData($calendar->getTitle());
-            $builder->get('subject_max')->setData($calendar->getSubjectMax());
+            $builder->get('subject_max')->setData($calendar->getMaxSubjectLength());
             $builder->get('events_max')->setData($calendar->getMaxDisplayEvents());
             $builder->get('anon_permission')->setData($calendar->getAnonPermission());
             $builder->get('timezone')->setData($calendar->getTimezone());
-            $builder->get('locale')->setData($calendar->getLocale());
+            $builder->get('language')->setData($calendar->getLocale());
         }
 
         return $builder->getForm();

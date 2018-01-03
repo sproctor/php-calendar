@@ -430,6 +430,14 @@ class Context
         }
     }
 
+    /**
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return create_datetime($this->getMonth(), $this->getDay(), $this->getYear());
+    }
+
     private function initLocale(Request $request)
     {
         // setup translation stuff
@@ -457,6 +465,7 @@ class Context
             $this->translator->addResource('mo', __DIR__ . "/../translations/$lang.mo", $lang);
         }
         $this->translator->addResource('mo', __DIR__ . "/../translations/en.mo", "en");
+        $this->translator->setFallbackLocales(array('en'));
     }
 
     public function getFormFactory()

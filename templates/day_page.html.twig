@@ -3,7 +3,7 @@
 {% block body %}
   <h3>
     <a href="{{ action_date_url(context, 'display_day', yesterday) }}"><i class="fas fa-angle-left"></i></a>
-    {{ context.getDay }} {{ month_name(context.getMonth) }} {{ context.getYear }}
+    {{ context.getDate|localizeddate('long', 'none') }}
     <a href="{{ action_date_url(context, 'display_day', tomorrow) }}"><i class="fas fa-angle-right"></i></a>
   </h3>
   {% if occurrences|length > 0 %}
@@ -23,17 +23,17 @@
         <tr>
           <td>{% if occurrence.canModify(user) %}<div class="form-check form-check-inline">
             {% set can_modify = true %}
-            <input name="eid[]" type="checkbox" class="form-check-input" id="eid_{{ occurrence.getEid() }}">
+            <input name="eid[]" type="checkbox" class="form-check-input" id="eid_{{ occurrence.getEid }}">
             <label class="form-check-label" for="eid_{{ occurrence.getEid }}">
             {% endif %}<a href="{{ action_event_url(context, 'display_event', occurrence.getEid) }}">{{ occurrence.getSubject }}</a>
             {% if occurrence.canModify(user) %}
             </label></div> <a href="{{ action_event_url(context, 'event_form', occurrence.getEid) }}">{{ "(Modify)"|trans }}</a>
             {% endif %}
           </td>
-          {% set textcolor = occurrence.getTextColor() %}
-          {% set bgcolor = occurrence.getBgColor() %}
-          <td>{{ occurrence.getTimeString() }}</td>
-          <td>{{ occurrence.getDescription() }}</td>
+          {% set textcolor = occurrence.getTextColor %}
+          {% set bgcolor = occurrence.getBgColor %}
+          <td>{{ occurrence.getTimeString }}</td>
+          <td>{{ occurrence.getDescription }}</td>
         </tr>
       {% endif %}
       {% endfor %}

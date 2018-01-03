@@ -330,7 +330,7 @@ function month_name(\DateTimeInterface $date)
         \IntlDateFormatter::NONE,
         null,
         null,
-        "MMMM" // short month format
+        "MMMM" // full month format
     );
     return $formatter->format($date);
 }
