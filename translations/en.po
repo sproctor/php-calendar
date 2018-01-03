@@ -112,3 +112,36 @@ msgstr "Occurrences"
 msgid "date-time-range"
 msgstr "%start% to %end%"
 
+#: 
+msgid "time-range"
+msgstr "%start% - %end%"
+
+#: 
+msgid "to-be-announced-abbr"
+msgstr "TBA"
+
+#. %date% for date, %time% for time. %time% could be the translated to-be-announced-abbr
+#: 
+msgid "date-time-custom"
+msgstr "%date% at %time%"
+
+#: 
+msgid "edit-link"
+msgstr "Edit"
+
+#: 
+msgid "remove-button"
+msgstr "Remove"
+
+#: 
+msgid "remove-link"
+msgstr "Remove"
+
+#: 
+msgid "permanently-remove-occurrence-question"
+msgstr "Permanently remove the occurrence?"
+
+#: 
+msgid "default-language-label"
+msgstr "Default language"
+
