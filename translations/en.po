@@ -65,3 +65,50 @@ msgstr "by %author%"
 msgid "on-date-time"
 msgstr "on %datetime%"
 
+#. use %modified% for the modified date and time
+#: 
+msgid "last-modified"
+msgstr "modified %modified%"
+
+#. use %category% for the event's category name
+#: 
+msgid "category-declaration"
+msgstr "Category: %category%"
+
+#: 
+msgid "modify-menu-link"
+msgstr "Modify"
+
+#: 
+msgid "add-occurrence-menu-link"
+msgstr "Add Occurrence"
+
+#: 
+msgid "delete-button"
+msgstr "Delete"
+
+#: 
+msgid "delete-menu-link"
+msgstr "Delete"
+
+#: 
+msgid "permanently-delete-event-question"
+msgstr "Permanently delete the event?"
+
+#: 
+msgid "fields-title"
+msgstr "Fields"
+
+#: 
+msgid "description-title"
+msgstr "Description"
+
+#: 
+msgid "occurrences-title"
+msgstr "Occurrences"
+
+#. use %start% for the beginning datetime and %end% for the ending datetime
+#: 
+msgid "date-time-range"
+msgstr "%start% to %end%"
+
