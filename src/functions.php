@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2017 Sean Proctor
+ * Copyright 2018 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,16 @@ define('PHPC_CONFIG_FILE', realpath(__DIR__.'/../config.php'));
 define('PHPC_VERSION', '2.1.0');
 define('PHPC_DEBUG', 1);
 
-function __($msg)
+/**
+ * Translates the given message, replacing parameters in it
+ *
+ * @param string $id
+ * @param string[] $parameters
+ * @param string|null $domain
+ * @param string|null $locale
+ * @return string
+ */
+function __($msg, $parameters = array(), $domain = null, $locale = null)
 {
     global $context;
 
@@ -37,92 +46,7 @@ function __($msg)
         return $msg;
     }
 
-    return $context->translator->trans($msg);
-}
-
-function minute_pad($minute)
-{
-    return sprintf('%02d', $minute);
-}
-
-function escape_entities($string)
-{
-    return htmlspecialchars($string, ENT_NOQUOTES, "UTF-8");
-}
-
-/**
- * @param bool $val
- * @return string
- */
-function asbool($val)
-{
-    return $val ? "1" : "0";
-}
-
-/**
- * @param \DateTimeInterface $date
- * @param int                $date_format
- * @param bool               $hours24
- * @return string
- */
-function format_datetime(\DateTimeInterface $date, $date_format, $hours24)
-{
-    return format_date($date, $date_format) . ' '
-    . __('at') . ' ' . format_time($date, $hours24);
-}
-
-/**
- * @param \DateTimeInterface $date
- * @param int                $date_format
- * @return string
- */
-function format_date(\DateTimeInterface $date, $date_format)
-{
-    $month = short_month_name($date->format('n'));
-    $day = $date->format('j');
-    $year = $date->format('Y');
-    
-    switch ($date_format) {
-        default:
-        case 0:
-            return "$month $day, $year";
-        case 1:
-            return "$year $month $day";
-        case 2:
-            return "$day $month $year";
-    }
-}
-
-/**
- * @param \DateTimeInterface $date
- * @param int                $date_format
- * @return string
- */
-function format_date_short(\DateTimeInterface $date, $date_format)
-{
-    switch ($date_format) {
-        default:
-        case 0: // Month Day Year
-            return $date->format('n\/j\/Y');
-        case 1: // Year Month Day
-            return $date->format('Y\-n\-j');
-        case 2: // Day Month Year
-            return $date->format('j\-n\-Y');
-    }
-}
-
-/**
- * @param \DateTimeInterface $date
- * @param bool               $hour24
- * @return string
- */
-function format_time(\DateTimeInterface $date, $hour24)
-{
-    if ($hour24) {
-        return $date->format('G\:i');
-    } else {
-        return $date->format('g\:i\ A');
-    }
+    return $context->translator->trans($msg, $parameters, $domain, $locale);
 }
 
 /**
@@ -167,8 +91,8 @@ function get_language_mappings()
         $mappings = array();
         $finder = new Finder();
 
-        foreach ($finder->name('*.po')->in(__DIR__.'/../translations')->files() as $file) {
-            $code = $file->getBasename('.po');
+        foreach ($finder->name('*.mo')->in(__DIR__.'/../translations')->files() as $file) {
+            $code = $file->getBasename('.mo');
             $lang = Intl::getLanguageBundle()->getLanguageName($code);
             $mappings[$lang] = $code;
         }
@@ -177,31 +101,43 @@ function get_language_mappings()
     return $mappings;
 }
 
-// returns the number of days in the week before the 
-//  taking into account whether we start on sunday or monday
 /**
+ * Returns the number of days in the week before the
+ * taking into account whether we start on sunday or monday
+ *
  * @param int $month
  * @param int $day
  * @param int $year
- * @param int $week_start
  * @return int
  */
-function day_of_week($month, $day, $year, $week_start)
+function day_of_week($month, $day, $year)
 {
-    return day_of_week_date(_create_datetime($month, $day, $year), $week_start);
+    return day_of_week_date(_create_datetime($month, $day, $year));
 }
 
-// returns the number of days in the week before the 
-//  taking into account whether we start on sunday or monday
-function day_of_week_date(\DateTimeInterface $date, $week_start)
-{
-    $days = intval($date->format('w'));
-
-    return ($days + 7 - $week_start) % 7;
-}
-
-// returns the number of days in $month
 /**
+ *  returns the number of days in the week before the
+ *  taking into account whether we start on sunday or monday
+ *
+ * @param \DateTimeInterface $date
+ * @return int
+ */
+function day_of_week_date(\DateTimeInterface $date)
+{
+    $formatter = new \IntlDateFormatter(
+        \Locale::getDefault(),
+        \IntlDateFormatter::NONE,
+        \IntlDateFormatter::NONE,
+        null,
+        null,
+        "c" // short month format
+    );
+    return intval($formatter->format($date));
+}
+
+/**
+ * Returns the number of days in $month
+ *
  * @param int $month
  * @param int $year
  * @return int
@@ -211,20 +147,20 @@ function days_in_month($month, $year)
     return intval(_create_datetime($month, 1, $year)->format('t'));
 }
 
-//returns the number of weeks in $month
 /**
+ * returns the number of weeks in $month
+ *
  * @param int $month
  * @param int $year
- * @param int $week_start
  * @return number
  */
-function weeks_in_month($month, $year, $week_start)
+function weeks_in_month($month, $year)
 {
     $days = days_in_month($month, $year);
 
     // days not in this month in the partial weeks
-    $days_before_month = day_of_week($month, 1, $year, $week_start);
-    $days_after_month = 6 - day_of_week($month, $days, $year, $week_start);
+    $days_before_month = day_of_week($month, 1, $year);
+    $days_after_month = 6 - day_of_week($month, $days, $year);
 
     // add up the days in the month and the outliers in the partial weeks
     // divide by 7 for the weeks in the month
@@ -232,23 +168,8 @@ function weeks_in_month($month, $year, $week_start)
 }
 
 /**
- * @param int $year
- * @param int $week_start
- * @return int
- */
-function weeks_in_year($year, $week_start)
-{
-    // This is true for ISO, not US
-    if ($week_start == 1) {
-        return _create_datetime(12, 28, $year)->format("W");
-    }
-    // else
-    return intval((day_of_week(1, 1, $year, $week_start) + days_in_year($year)) / 7);
-}
-
-/**
  * return the week number for $date in the current locale
- * 
+ *
  * @param \DateTimeInterface $date
  * @return int
  */
@@ -267,7 +188,7 @@ function week_of_year(\DateTimeInterface $date)
 
 /**
  * return the year of week of year for $date in the current locale
- * 
+ *
  * @param \DateTimeInterface $date
  * @return int
  */
@@ -364,8 +285,9 @@ function append_parameter_url(Request $request, $parameter)
     return $uri.$parameter;
 }
 
-// takes a menu $html and appends an entry
 /**
+ * Takes a menu $html and appends an entry
+ *
  * @param Context $context
  * @param string  $action
  * @param string  $text
@@ -380,8 +302,8 @@ function menu_item(Context $context, $action, $text)
 
 /**
  * @param string   $title
- * @param string[] $values // Array of URL => title
- * @return string // dropdown box that will change the page to the URL from $values when an element is selected
+ * @param string[] $values Array of URL => title
+ * @return string          Dropdown box that will change the page to the URL from $values when an element is selected
  */
 function create_dropdown($title, $values)
 {
@@ -396,7 +318,7 @@ function create_dropdown($title, $values)
 
 /**
  * Takes a date, returns the full month name
- * 
+ *
  * @param \DateTimeInterface $date
  * @return string
  */
@@ -570,48 +492,4 @@ function create_datetime($month, $day, $year)
 {
     normalize_date($month, $day, $year);
     return _create_datetime($month, $day, $year);
-}
-
-/**
- * @param Calendar           $calendar
- * @param User               $user
- * @param \DateTimeInterface $from
- * @param \DateTimeInterface $to
- * @return array
- */
-function get_occurrences_by_day(Calendar $calendar, User $user, \DateTimeInterface $from, \DateTimeInterface $to)
-{
-    $all_occurrences = $calendar->getOccurrencesByDateRange($from, $to);
-    $occurrences_by_day = array();
-
-    foreach ($all_occurrences as $occurrence) {
-        if (!$occurrence->canRead($user)) {
-            continue;
-        }
-
-        $end = $occurrence->getEnd();
-        $start = $occurrence->getStart();
-
-        if ($start > $from) {
-            $diff = new \DateInterval("P0D");
-        } else { // the event started before the range we're showing
-            $diff = $from->diff($start);
-        }
-
-        // put the event in every day until the end
-        for ($date = $start->add($diff); $date < $to && $date <= $end; $date = $date->add(new \DateInterval("P1D"))) {
-            $key = date_index($date);
-            if (!isset($occurrences_by_day[$key])) {
-                $occurrences_by_day[$key] = array();
-            }
-            if (sizeof($occurrences_by_day[$key]) == $calendar->getMaxDisplayEvents()) {
-                $occurrences_by_day[$key][] = null;
-            }
-            if (sizeof($occurrences_by_day[$key]) > $calendar->getMaxDisplayEvents()) {
-                continue;
-            }
-            $occurrences_by_day[$key][] = $occurrence;
-        }
-    }
-    return $occurrences_by_day;
 }

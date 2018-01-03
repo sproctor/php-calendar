@@ -512,7 +512,7 @@ class Database
      * @param int $eid
      * @return Occurrence[]
      */
-    function get_occurrences_by_eid($eid)
+    public function getOccurrences($eid)
     {
         $events_table = $this->prefix . "events";
         $occurrences_table = $this->prefix . "occurrences";
@@ -531,11 +531,11 @@ class Database
         $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
         $sth->execute();
 
-        $events = array();
+        $occurrences = array();
         while ($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
-            $events[] = new Occurrence($this, $row);
+            $occurrences[] = new Occurrence($this, $row);
         }
-        return $events;
+        return $occurrences;
     }
 
     /**
@@ -1414,4 +1414,13 @@ class Database
 
         return $updates;
     }
+}
+
+/**
+ * @param bool $val
+ * @return string
+ */
+function asbool($val)
+{
+    return $val ? "1" : "0";
 }

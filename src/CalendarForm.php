@@ -36,19 +36,6 @@ class CalendarForm
     {
         $builder = $context->getFormFactory()->createBuilder();
         $builder->add('title', TextType::class, array('label' => __('Calendar Title')))
-        ->add(
-            'week_start',
-            ChoiceType::class,
-            array(
-                'choices' => array(
-                    __('Sunday') => 0,
-                    __('Monday') => 1,
-                    __('Saturday') => 6
-                ),
-                'label' => __('Week Start')
-            )
-        )
-        ->add('hours_24', CheckboxType::class, array('label' => __('24 Hour Time'), 'required' => false))
         ->add('subject_max', IntegerType::class, array('label' => __('Maximum Subject Length'), 'data' => 50))
         ->add('events_max', IntegerType::class, array('label' => __('Events Display Daily Maximum'), 'data' => 8))
         ->add(
@@ -70,16 +57,7 @@ class CalendarForm
                 'preferred_choices' => array('America/New_York')
             )
         )
-        ->add('language', ChoiceType::class, array('label' => __('Default Language'), 'choices' => get_languages()))
-        ->add(
-            'date_format',
-            ChoiceType::class,
-            array('label' => __('Date Format'), 'choices' => array(
-                __("Month Day Year") => 0,
-                __("Year Month Day") => 1,
-                __("Day Month Year") => 2
-            ))
-        );
+        ->add('locale', ChoiceType::class, array('label' => __('default-language-label'), 'choices' => get_languages()));
         /*->add(
             'submit',
             SubmitType::class,
@@ -88,14 +66,11 @@ class CalendarForm
         if ($calendar !== null) {
             // TODO: add hidden cid if we want to work on other calendars
             $builder->get('title')->setData($calendar->getTitle());
-            $builder->get('week_start')->setData($calendar->getWeekStart());
-            $builder->get('hours_24')->setData($calendar->is24Hour());
             $builder->get('subject_max')->setData($calendar->getSubjectMax());
             $builder->get('events_max')->setData($calendar->getMaxDisplayEvents());
             $builder->get('anon_permission')->setData($calendar->getAnonPermission());
             $builder->get('timezone')->setData($calendar->getTimezone());
-            $builder->get('language')->setData($calendar->getLanguage());
-            $builder->get('date_format')->setData($calendar->getDateFormat());
+            $builder->get('locale')->setData($calendar->getLocale());
         }
 
         return $builder->getForm();

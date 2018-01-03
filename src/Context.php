@@ -36,7 +36,7 @@ use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\MessageSelector;
-use Symfony\Component\Translation\Loader\PoFileLoader;
+use Symfony\Component\Translation\Loader\MoFileLoader;
 use Symfony\Component\Validator\Validation;
 
 class Context
@@ -337,7 +337,7 @@ class Context
         
         $calendars = $this->db->getCalendars();
         if (empty($calendars)) {
-            throw new \Exception(escape_entities("There are no calendars."));
+            throw new \Exception("There are no calendars.");
             // TODO: create a page to fix this
         } else {
             if ($this->user->defaultCid() !== false) {
@@ -433,9 +433,9 @@ class Context
     private function initLocale(Request $request)
     {
         // setup translation stuff
-        $lang = $this->user->getLanguage();
+        $lang = $this->user->getLocale();
         if (empty($lang)) {
-            $lang = $this->calendar->getLanguage();
+            $lang = $this->calendar->getLocale();
             if (empty($lang)) {
                 $lang = substr($request->getLocale(), 0, 2);
                 if (empty($lang)) {
@@ -452,11 +452,11 @@ class Context
         \Locale::setDefault($lang);
 
         $this->translator = new Translator($lang, new MessageSelector());
-        $this->translator->addLoader('po', new PoFileLoader());
+        $this->translator->addLoader('mo', new MoFileLoader());
         if ($lang != 'en') {
-            $this->translator->addResource('po', __DIR__ . "/../translations/$lang.po", $lang);
+            $this->translator->addResource('mo', __DIR__ . "/../translations/$lang.mo", $lang);
         }
-        $this->translator->addResource('po', __DIR__ . "/../translations/en.po", "en");
+        $this->translator->addResource('mo', __DIR__ . "/../translations/en.mo", "en");
     }
 
     public function getFormFactory()

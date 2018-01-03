@@ -41,58 +41,28 @@ class Occurrence extends Event
     }
 
     /**
-     * formats the time according to type
-     *
-     * @return NULL|string
-     */
-    public function getTimeString()
-    {
-        switch ($this->time_type) {
-            default:
-                return format_time($this->start, $this->cal->is24Hour());
-            case 1: // FULL DAY
-            case 3: // None
-                return null;
-            case 2:
-                return __('TBA');
-        }
-    }
-
-    /**
+     * Formats the start and end time according to time_type and locale
      * @return null|string
      */
     public function getTimespanString()
     {
         switch ($this->time_type) {
             default:
-                $hour24 = $this->cal->is24hour();
-                $str = format_time($this->start, $hour24);
-                if ($this->start != $this->end) {
-                    $str .= ' ' . __('to') . ' ' . format_time($this->end, $hour24);
-                }
-                return $str;
+                $formatter = new \IntlDateFormatter(
+                    \Locale::getDefault(),
+                    \IntlDateFormatter::NONE,
+                    \IntlDateFormatter::SHORT
+                );
+                return __(
+                    'time-range',
+                    array('%start%' => $formatter->format($this->start), '%end%' => $formatter->format($this->end))
+                );
             case 1: // FULL DAY
             case 3: // None
                 return null;
             case 2:
-                return __('TBA');
+                return __('to-be-announced-abbr');
         }
-    }
-
-    /**
-     * takes start and end dates and returns a nice display
-     *
-     * @return string
-     */
-    public function getDateString()
-    {
-        $str = format_date($this->start, $this->cal->getDateFormat());
-
-        if (days_between($this->start, $this->end) > 0) {
-            $str .= ' - ' . format_date($this->end, $this->cal->getDateFormat());
-        }
-
-        return $str;
     }
     
     /**
@@ -100,19 +70,31 @@ class Occurrence extends Event
      */
     public function getDatetimeString()
     {
-        if (days_between($this->start, $this->end) == 0) {
+        if ($this->time_type != 0 || days_between($this->start, $this->end) == 0) {
             // normal behaviour
-            $str = $this->getDateString();
+            $formatter = new \IntlDateFormatter(
+                \Locale::getDefault(),
+                \IntlDateFormatter::MEDIUM,
+                \IntlDateFormatter::NONE
+            );
             $event_time = $this->getTimespanString();
-            if (!empty($event_time)) {
-                $str .= ' ' . __('at') . " $event_time";
+            $date = $formatter->format($this->start);
+            if ($event_time != null) {
+                $str = __('date-time-custom', array('%date%' => $date, '%time' => $event_time));
+            } else {
+                $str = $date;
             }
         } else {
             // format on multiple days
-            $str = ' ' . __('From') . ' '
-            . format_datetime($this->start, $this->cal->getDateFormat(), $this->cal->is24Hour()) . ' '
-            . __('to') . ' '
-            . format_datetime($this->end, $this->cal->getDateFormat(), $this->cal->is24Hour());
+            $formatter = new \IntlDateFormatter(
+                \Locale::getDefault(),
+                \IntlDateFormatter::MEDIUM,
+                \IntlDateFormatter::SHORT
+            );
+            $str = __(
+                'date-time-range',
+                array('%start%' => $formatter->format($this->start), '%end%' => $formatter->format($this->end))
+            );
         }
         return $str;
     }

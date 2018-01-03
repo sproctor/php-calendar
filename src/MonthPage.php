@@ -59,13 +59,12 @@ class MonthPage extends Page
             $prev_year--;
         }
 
-        $week_start = $context->calendar->getWeekStart();
-        $weeks = weeks_in_month($month, $year, $week_start);
+        $weeks = weeks_in_month($month, $year);
 
-        $first_day = 1 - day_of_week($month, 1, $year, $week_start);
+        $first_day = 2 - day_of_week($month, 1, $year);
         $from_date = create_datetime($month, $first_day, $year);
 
-        $last_day = $weeks * 7 - day_of_week($month, 1, $year, $week_start);
+        $last_day = $weeks * 7 - day_of_week($month, 1, $year);
         $to_date = create_datetime($month, $last_day + 1, $year);
 
         $template_variables = array();
@@ -78,13 +77,11 @@ class MonthPage extends Page
         $template_variables['months'] = $months;
         $template_variables['year'] = $year;
         $template_variables['years'] = $years;
-        $template_variables['week_start'] = $week_start;
         $template_variables['weeks'] = $weeks;
-        $template_variables['occurrences'] = get_occurrences_by_day(
-            $context->calendar,
-            $context->user,
+        $template_variables['occurrences'] = $context->calendar->getOccurrencesByDay(
             $from_date,
-            $to_date
+            $to_date,
+            $context->user
         );
         $template_variables['start_date'] = $from_date;
         return new Response($context->twig->render("month_page.html.twig", $template_variables));

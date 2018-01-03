@@ -100,4 +100,17 @@ function display_week()
     );
 }
 
-?>
+/**
+ * @param int $year
+ * @param int $week_start
+ * @return int
+ */
+function weeks_in_year($year, $week_start)
+{
+    // This is true for ISO, not US
+    if ($week_start == 1) {
+        return _create_datetime(12, 28, $year)->format("W");
+    }
+    // else
+    return intval((day_of_week(1, 1, $year, $week_start) + days_in_year($year)) / 7);
+}

@@ -50,9 +50,6 @@ function phpc_calendars_table($prefix)
     $table = new SqlTable($prefix . 'calendars');
 
     $table->addColumn('cid', "int(11) unsigned NOT NULL auto_increment");
-    $table->addColumn('hours_24', "tinyint(1) NOT NULL DEFAULT '0'");
-    $table->addColumn('date_format', "tinyint(1) NOT NULL DEFAULT '0'");
-    $table->addColumn('week_start', "tinyint(1) NOT NULL DEFAULT '0'");
     $table->addColumn('subject_max', "smallint(5) unsigned NOT NULL DEFAULT '50'");
     $table->addColumn('events_max', "tinyint(4) unsigned NOT NULL DEFAULT '8'");
     $table->addColumn('title', "varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'PHP-Calendar'");

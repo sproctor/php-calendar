@@ -59,11 +59,11 @@
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i> {{ user.getUsername() }}</a>
 					<div class="dropdown-menu" aria-labelledby="userDropdown">
-						<a class="dropdown-item" href="{{ action_url(context, "user_settings") }}"><i class="fas fa-cog"></i> {{ "Settings"|trans }}</a>
+						<a class="dropdown-item" href="{{ action_url(context, "user_settings") }}"><i class="fas fa-cog"></i> {{ "settings-menu-link"|trans }}</a>
 						{% if user.isUser() %}
-						<a class="dropdown-item" href="{{ action_url(context, "logout") }}&amp;lasturl={{ query_string|url_encode }}"><i class="fas fa-sign-out-alt"></i> {{ "Log out"|trans }}</a>
+						<a class="dropdown-item" href="{{ action_url(context, "logout") }}&amp;lasturl={{ query_string|url_encode }}"><i class="fas fa-sign-out-alt"></i> {{ "log-out-menu-link"|trans }}</a>
 						{% else %}
-						<a class="dropdown-item" href="{{ action_url(context, "login") }}&amp;lasturl={{ query_string|url_encode }}"><i class="fas fa-sign-in-alt"></i> {{ "Log in"|trans }}</a>
+						<a class="dropdown-item" href="{{ action_url(context, "login") }}&amp;lasturl={{ query_string|url_encode }}"><i class="fas fa-sign-in-alt"></i> {{ "log-in-menu-link"|trans }}</a>
 						{% endif %}
 					</div>
 				</li>

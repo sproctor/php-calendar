@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2017 Sean Proctor
+ * Copyright 2018 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,11 @@ class Calendar
     private $title;
     private $user_perms = array();
     private $categories;
-    private $hours_24;
-    private $date_format;
-    private $week_start;
     private $subject_max;
     private $events_max;
     private $anon_permission;
     private $timezone;
-    private $language;
+    private $locale;
     private $theme;
     private $groups;
     private $fields;
@@ -41,21 +38,18 @@ class Calendar
         $this->db = $db;
     }
 
-    public static function createFromMap(Database $db, $result)
+    public static function createFromMap(Database $db, $map)
     {
         $calendar = new Calendar($db);
 
-        $calendar->cid = intval($result['cid']);
-        $calendar->title = $result['title'];
-        $calendar->hours_24 = boolval($result['hours_24']);
-        $calendar->date_format = intval($result['date_format']);
-        $calendar->week_start = intval($result['week_start']);
-        $calendar->subject_max = intval($result['subject_max']);
-        $calendar->events_max = intval($result['events_max']);
-        $calendar->anon_permission = $result['anon_permission'];
-        $calendar->timezone = $result['timezone'];
-        $calendar->language = $result['language'];
-        $calendar->theme = $result['theme'];
+        $calendar->cid = intval($map['cid']);
+        $calendar->title = $map['title'];
+        $calendar->subject_max = intval($map['subject_max']);
+        $calendar->events_max = intval($map['events_max']);
+        $calendar->anon_permission = $map['anon_permission'];
+        $calendar->timezone = $map['timezone'];
+        $calendar->locale = $map['language'];
+        $calendar->theme = $map['theme'];
 
         return $calendar;
     }
@@ -69,7 +63,7 @@ class Calendar
             return __('(No title)');
         }
 
-        return htmlspecialchars($this->title);
+        return $this->title;
     }
 
     /**
@@ -91,25 +85,17 @@ class Calendar
     /**
      * @return string|null
      */
-    public function getLanguage()
+    public function getLocale()
     {
-        return $this->language;
+        return $this->locale;
     }
 
     /**
      * @return int
      */
-    public function getSubjectMax()
+    public function getMaxSubjectLength()
     {
         return $this->subject_max;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWeekStart()
-    {
-        return $this->week_start;
     }
 
     /**
@@ -117,7 +103,7 @@ class Calendar
      * @param string $perm
      * @return bool
      */
-    public function getUserPerm($uid, $perm)
+    public function getUserPermission($uid, $perm)
     {
         if (!isset($this->user_perms[$uid])) {
             $this->user_perms[$uid] = $this->db->get_permissions($this->cid, $uid);
@@ -266,24 +252,51 @@ class Calendar
     /**
      * @return int
      */
-    public function getDateFormat()
-    {
-        return $this->date_format;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function is24Hour()
-    {
-        return $this->hours_24;
-    }
-
-    /**
-     * @return int
-     */
     public function getAnonPermission()
     {
         return $this->anon_permission;
+    }
+
+    /**
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
+     * @param User               $user
+     * @return array
+     */
+    public function getOccurrencesByDay(\DateTimeInterface $from, \DateTimeInterface $to, User $user)
+    {
+        $all_occurrences = $this->getOccurrencesByDateRange($from, $to);
+        $occurrences_by_day = array();
+
+        foreach ($all_occurrences as $occurrence) {
+            if (!$occurrence->canRead($user)) {
+                continue;
+            }
+
+            $end = $occurrence->getEnd();
+            $start = $occurrence->getStart();
+
+            if ($start > $from) {
+                $diff = new \DateInterval("P0D");
+            } else { // the event started before the range we're showing
+                $diff = $from->diff($start);
+            }
+
+            // put the event in every day until the end
+            for ($date = $start->add($diff); $date < $to && $date <= $end; $date = $date->add(new \DateInterval("P1D"))) {
+                $key = date_index($date);
+                if (!isset($occurrences_by_day[$key])) {
+                    $occurrences_by_day[$key] = array();
+                }
+                if (sizeof($occurrences_by_day[$key]) == $this->getMaxDisplayEvents()) {
+                    $occurrences_by_day[$key][] = null;
+                }
+                if (sizeof($occurrences_by_day[$key]) > $this->getMaxDisplayEvents()) {
+                    continue;
+                }
+                $occurrences_by_day[$key][] = $occurrence;
+            }
+        }
+        return $occurrences_by_day;
     }
 }

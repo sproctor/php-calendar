@@ -25,7 +25,6 @@ namespace PhpCalendar;
 class Event
 {
     private $eid;
-    private $cid;
     private $owner_uid;
     private $author;
     private $subject;
@@ -37,7 +36,7 @@ class Event
     private $gid;
     private $ctime;
     private $mtime;
-    protected $cal;
+    protected $calendar;
     private $fields;
     private $db;
 
@@ -49,7 +48,6 @@ class Event
     {
         $this->db = $db;
         $this->eid = intval($event['eid']);
-        $this->cid = $event['cid'];
         $this->owner_uid = $event['owner'];
         if (empty($event['owner'])) {
             $this->author = __('anonymous');
@@ -67,7 +65,7 @@ class Event
         $this->gid = $event['gid'];
         $this->ctime = datetime_from_timestamp($event['ctime']);
         $this->mtime = empty($event['mtime']) ? null : datetime_from_timestamp($event['mtime']);
-        $this->cal = $db->getCalendar($this->cid);
+        $this->calendar = $db->getCalendar($event['cid']);
     }
 
     /**
@@ -103,7 +101,7 @@ class Event
      */
     public function getOwner()
     {
-        return $this->db->get_user($this->owner);
+        return $this->db->get_user($this->owner_uid);
     }
 
     /**
@@ -127,7 +125,7 @@ class Event
      */
     public function getOccurrences()
     {
-        return $this->db->get_occurrences_by_eid($this->eid);
+        return $this->db->getOccurrences($this->eid);
     }
 
     /**
@@ -135,7 +133,7 @@ class Event
      */
     public function getCalendar()
     {
-        return $this->db->getCalendar($this->cid);
+        return $this->calendar;
     }
 
     /**
@@ -143,10 +141,7 @@ class Event
      */
     public function getTextColor()
     {
-        if (empty($this->text_color)) {
-            return null;
-        }
-        return htmlspecialchars($this->text_color, ENT_COMPAT, "UTF-8");
+        return $this->text_color;
     }
 
     /**
@@ -154,9 +149,6 @@ class Event
      */
     public function getBgColor()
     {
-        if (empty($this->bg_color)) {
-            return null;
-        }
         return $this->bg_color;
     }
 
@@ -188,8 +180,8 @@ class Event
      */
     public function canModify(User $user)
     {
-        return $this->cal->canAdmin($user) || $this->isOwner($user)
-        || ($this->cal->canModify($user));
+        return $this->calendar->canAdmin($user) || $this->isOwner($user)
+            || ($this->calendar->canModify($user));
     }
 
     /**
@@ -201,36 +193,8 @@ class Event
     public function canRead(User $user)
     {
         $visible_category = empty($this->gid) || !isset($this->catid)
-        || $this->db->is_cat_visible($user->getUID(), $this->catid);
-        return $this->cal->canRead($user) && $visible_category;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCtimeString()
-    {
-        return format_datetime(
-            $this->ctime,
-            $this->cal->getDateFormat(),
-            $this->cal->is24Hour()
-        );
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getMtimeString()
-    {
-        if (empty($this->mtime)) {
-            return null;
-        }
-            
-        return format_datetime(
-            $this->mtime,
-            $this->cal->getDateFormat(),
-            $this->cal->is24Hour()
-        );
+            || $this->db->is_cat_visible($user->getUid(), $this->catid);
+        return $this->calendar->canRead($user) && $visible_category;
     }
 
     /**
@@ -243,5 +207,21 @@ class Event
         }
 
         return $this->fields;
+    }
+
+    /**
+     * @return \DateTimeInterface
+     */
+    public function getCreated()
+    {
+        return $this->ctime;
+    }
+
+    /**
+     * @return \DateTimeInterface
+     */
+    public function getModified()
+    {
+        return $this->mtime;
     }
 }

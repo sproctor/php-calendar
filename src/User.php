@@ -52,7 +52,7 @@ class User
     /**
      * @var string|null $language
      */
-    private $language;
+    private $locale;
     private $groups;
     /**
      * @var bool $disabled
@@ -89,7 +89,7 @@ class User
         $user->password_editable = $map['password_editable'];
         $user->default_cid = $map['default_cid'];
         $user->timezone = $map['timezone'];
-        $user->language = $map['language'];
+        $user->locale = $map['language'];
         $user->disabled = $map['disabled'];
 
         return $user;
@@ -108,7 +108,7 @@ class User
         $user->admin = false;
         $user->password_editable = false;
         $user->timezone = User::getAnonymousTimezone($context);
-        $user->language = User::getAnonymousLanguage($context);
+        $user->locale = User::getAnonymousLocale($context);
         $user->disabled = false;
 
         return $user;
@@ -154,9 +154,9 @@ class User
         return $this->timezone;
     }
 
-    public function getLanguage()
+    public function getLocale()
     {
-        return $this->language;
+        return $this->locale;
     }
     
     public function getGroups()
@@ -207,7 +207,7 @@ class User
      * @param Context $context
      * @return string|null
      */
-    private static function getAnonymousLanguage(Context $context)
+    private static function getAnonymousLocale(Context $context)
     {
         if ($context->request->get('lang') !== null) {
             $lang = $context->request->get('lang');

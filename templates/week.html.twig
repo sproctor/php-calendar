@@ -8,7 +8,7 @@
 	    <div>
 		    <a class="phpc-day-number" href="{{ action_date_url(context, 'display_day', cur_date) }}">{% if (not is_date_in_month(context, cur_date) and day_of_week == 0) or day(cur_date) == 1 %}{{ cur_date|month_abbr }}{% endif %} {{ day(cur_date) }}</a>
 		    {% if can_write(user, calendar) %}
-		    <a href="{{ action_date_url(context, 'event_form', cur_date) }}" class="phpc-add" title="{{ "Create Event"|trans }}"><i class="fas fa-plus"></i></a>
+		    <a href="{{ action_date_url(context, 'event_form', cur_date) }}" class="phpc-add" title="{{ "create-event-menu-link"|trans }}"><i class="fas fa-plus"></i></a>
 		    {% endif %}
 	    </div>
 	    {% set days_occurrences = occurrences_for_date(occurrences, cur_date) %}
@@ -16,7 +16,7 @@
 		    <div class="occurrence-list list-group">
 		    {% for occurrence in days_occurrences %}
 			    {% if occurrence is null %}
-					<a href="{{ action_date_url(context, 'display_day', cur_date) }}" class="list-group-item">{{ "View Additional Events"|trans }}</a>
+					<a href="{{ action_date_url(context, 'display_day', cur_date) }}" class="list-group-item">{{ "view-additional-events-link"|trans }}</a>
 			    {% else %}
 				    {% set textcolor = occurrence.getTextColor() %}
 				    {% set bgcolor = occurrence.getBgColor() %}
@@ -24,7 +24,7 @@
 						style="{% if not textcolor is null %}color: {{ textcolor }} !important; {% endif %}{% if not bgcolor is null %}background: {{ bgcolor }} !important;{% endif %}"
 						data-toggle="popover" data-trigger="hover" data-html=true data-placement="auto"
 						title="{{ occurrence.getSubject() }}" 
-						data-content="{{ "by"|trans }} {{ occurrence.getAuthor() }}{{ "\n\n" }}{{ occurrence.getDescription() }}">
+						data-content="{{ "by-author"|trans({'author': occurrence.getAuthor()}) }}{{ "\n\n" }}{{ occurrence.getDescription() }}">
 				    {% set time = occurrence.getTimeString() %}
 				    {% if not time is null %}
 					    {% if occurrence.getStart() >= cur_date %}
