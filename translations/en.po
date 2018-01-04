@@ -38,7 +38,7 @@ msgstr "Language (%locale%)"
 
 #: 
 msgid "week-number-abbr"
-msgstr "Wk #"
+msgstr "Wk"
 
 #: 
 msgid "settings-menu-link"
