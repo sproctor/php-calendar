@@ -37,8 +37,8 @@ msgid "language-menu-selector"
 msgstr "Language (%locale%)"
 
 #: 
-msgid "first-letter-of-Week"
-msgstr "W"
+msgid "week-number-abbr"
+msgstr "Wk #"
 
 #: 
 msgid "settings-menu-link"
@@ -82,7 +82,7 @@ msgstr "Modify"
 
 #: 
 msgid "add-occurrence-menu-link"
-msgstr "Add Occurrence"
+msgstr "Add occurrence"
 
 #: 
 msgid "delete-button"
