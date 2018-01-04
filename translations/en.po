@@ -6,6 +6,7 @@ msgstr ""
 "X-Generator: POEditor.com\n"
 "Project-Id-Version: PHP-Calendar\n"
 "Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Search link in main navbar
 #: 
@@ -243,4 +244,148 @@ msgstr "There is no %name% with that value."
 #: 
 msgid "default-calendar-changed-notification"
 msgstr "The default calendar has been changed to \"%title%\"."
+
+#: 
+msgid "calendar"
+msgstr "calendar"
+
+#: 
+msgid "group"
+msgstr "group"
+
+#: 
+msgid "field"
+msgstr "field"
+
+#: 
+msgid "anonymous-username"
+msgstr "anonymous"
+
+#: 
+msgid "nonexistent-subject"
+msgstr "(No subject)"
+
+#: 
+msgid "no-event-specified-error"
+msgstr "No event specified."
+
+#: 
+msgid "removed-event-notice"
+msgid_plural "removed-events-notice"
+msgstr[0] "Removed event \"%subject%\"."
+msgstr[1] "Removed events \"%subject%\"."
+
+#: 
+msgid "from-label"
+msgstr "From"
+
+#: 
+msgid "to-label"
+msgstr "To"
+
+#: 
+msgid "time-type-label"
+msgstr "Time type"
+
+#: 
+msgid "normal-label"
+msgstr "Normal"
+
+#: 
+msgid "full-day-label"
+msgstr "Full day"
+
+#: 
+msgid "to-be-announced-label"
+msgstr "To be announced"
+
+#: 
+msgid "repeats-label"
+msgstr "Repeats"
+
+#: 
+msgid "never-label"
+msgstr "never"
+
+#: 
+msgid "daily-label"
+msgstr "daily"
+
+#: 
+msgid "weekly-label"
+msgstr "weekly"
+
+#: 
+msgid "monthly-label"
+msgstr "monthly"
+
+#: 
+msgid "yearly-label"
+msgstr "yearly"
+
+#: 
+msgid "until-label"
+msgstr "Until"
+
+#: 
+msgid "change-event-date-time-label"
+msgstr "Modify event date and time"
+
+#: 
+msgid "modify-event-button"
+msgstr "Modify event"
+
+#: 
+msgid "create-event-button"
+msgstr "Create event"
+
+#: 
+msgid "end-before-start-date-time-error"
+msgstr "The end date and time cannot be before the start date and time."
+
+#: 
+msgid "modified-event-notification"
+msgstr "Event has been updated."
+
+#: 
+msgid "created-event-notification"
+msgstr "Event has been created."
+
+#: 
+msgid "event"
+msgstr "event"
+
+#: 
+msgid "no-password-specified-notification"
+msgstr "No password was specified."
+
+#: 
+msgid "invalid-login-credentials-notification"
+msgstr "Invalid login credentials."
+
+#. use %type% for the type of object created and %name% for the name of the specific object
+#: 
+msgid "created-type-notification"
+msgstr "Created %type% \"%name%\"."
+
+#: 
+msgid "database-table"
+msgstr "table"
+
+#: 
+msgid "database-column"
+msgstr "column"
+
+#. use %type% for the type of object created and %name% for the name of the specific object
+#: 
+msgid "updated-type-notification"
+msgstr "Updated %type% \"%name%\"."
+
+#: 
+msgid "database-key"
+msgstr "key"
+
+#: 
+msgid "already-updated-notification"
+msgstr "There was nothing to update."
 
