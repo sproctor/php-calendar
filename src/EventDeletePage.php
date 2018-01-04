@@ -31,7 +31,7 @@ class EventDeletePage
     public function action(Context $context)
     {
         if (empty($context->request->get("eid"))) {
-            throw new InvalidInputException(__('No event selected.'));
+            throw new InvalidInputException(__('no-event-specified-error'));
         }
 
         if (is_array($context->request->get("eid"))) {
@@ -48,24 +48,20 @@ class EventDeletePage
                 continue;
             }
             if (!$event->canModify($context->user)) {
-                throw new PermissionException(__('You do not have permission to remove event').": $eid");
+                throw new PermissionException();
             }
-            if (!$context->db->deleteEvent($eid)) {
-                throw new \Exception(__('Could not delete event').": $eid");
-            }
-            $removed_events[] = $eid;
+            $context->db->deleteEvent($eid);
+            $removed_events[] = $event->getSubject();
         }
 
         if (sizeof($removed_events) > 0) {
-            if (sizeof($removed_events) == 1) {
-                $text = __("Removed event");
-            } else {
-                $text = __("Removed events");
-            }
-            $text .= ': ' . implode(', ', $removed_events);
-            $context->addMessage($text);
+            $context->addMessage(transchoice(
+                'removed-event-notification|removed-events-notification',
+                sizeof($removed_events),
+                ['%subject%' => implode(', ', $removed_events)]
+            ));
         }
         
-        return new RedirectResponse(action_url(context));
+        return new RedirectResponse(action_url($context));
     }
 }

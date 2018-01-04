@@ -50,9 +50,7 @@ class Event
         $this->eid = intval($event['eid']);
         $this->owner_uid = $event['owner'];
         if (empty($event['owner'])) {
-            $this->author = __('anonymous');
-        } elseif (empty($event['username'])) {
-            $this->author = __('unknown');
+            $this->author = __('anonymous-username');
         } else {
             $this->author = $event['username'];
         }
@@ -82,7 +80,7 @@ class Event
     public function getSubject()
     {
         if (empty($this->subject)) {
-            return __('(No subject)');
+            return __('nonexistent-subject');
         }
 
         return $this->subject;

@@ -33,17 +33,17 @@ class EventPage extends Page
      */
     public function action(Context $context)
     {
-        if ($context->request->get('eid') !== null) {
-            $event = $context->db->getEvent($context->request->get('eid'));
-            if (!$event) {
-                throw new InvalidInputException(__('There is no event with that EID.'));
-            }
-        } else {
-            throw new InvalidInputException(__("Invalid arguments."));
+        if ($context->request->get('eid') === null) {
+            throw new InvalidInputException(__("no-event-specified-error"));
+        }
+
+        $event = $context->db->getEvent($context->request->get('eid'));
+        if ($event == null) {
+            throw new InvalidInputException(__('nonexistent-value-error', ['%name%' => __('event')]));
         }
 
         if (!$event->canRead($context->user)) {
-            throw new InvalidInputException(__("You do not have permission to read this event."));
+            throw new InvalidInputException();
         }
 
         return new Response($context->twig->render('event_page.html.twig', array('event' => $event)));

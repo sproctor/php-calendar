@@ -32,10 +32,11 @@ class LoginPage extends Page
         if (isset($_REQUEST['username'])) {
             $username = $_REQUEST['username'];
             if (empty($_REQUEST['password'])) {
-                $context->addMessage(__("No password specified."));
+                $context->addMessage(__("no-password-specified-notification"));
             } else {
                 $password = $_REQUEST['password'];
 
+                // TODO: split notices for bad password and nonexistent user
                 if ($context->loginUser($username, $password)) {
                     $url = $context->request->getScriptName();
                     if (!empty($_REQUEST['lasturl'])) {
@@ -43,7 +44,7 @@ class LoginPage extends Page
                     }
                     return new RedirectResponse($url);
                 } else {
-                    $context->addMessage(__("Invalid login credentials."));
+                    $context->addMessage(__("invalid-login-credentials-notification"));
                 }
             }
         }

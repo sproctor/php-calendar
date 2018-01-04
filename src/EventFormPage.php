@@ -48,7 +48,7 @@ class EventFormPage extends Page
     public function action(Context $context)
     {
         if (!$context->calendar->canWrite($context->user)) {
-            throw new PermissionException(__('You do not have permission to create events on this calendar.'));
+            throw new PermissionException();
         }
 
         $form = $this->eventForm($context);
@@ -88,41 +88,41 @@ class EventFormPage extends Page
         ->add(
             'start',
             DateTimeType::class,
-            array('label' => __('From'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
+            array('label' => __('from-label'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
                 'data' => $default_date->setTime(17, 0))
         )
         ->add(
             'end',
             DateTimeType::class,
-            array('label' => __('To'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
+            array('label' => __('to-label'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
                 'data' => (clone $default_date)->setTime(18, 0))
         )
         ->add(
             'time_type',
             ChoiceType::class,
-            array('label' => __('Time Type'),
+            array('label' => __('time-type-label'),
                 'choices' => array(
-                    __('Normal') => 0,
-                    __('Full Day') => 1,
-                    __('To Be Announced') => 2))
+                    __('normal-label') => 0,
+                    __('full-day-label') => 1,
+                    __('to-be-announced-label') => 2))
         )
         ->add(
             'repeats',
             ChoiceType::class,
-            array('label' => __('Repeats'),
+            array('label' => __('repeats-label'),
                 'choices' => array(
-                    __('Never') => '0',
-                    __('Daily') => 'D',
-                    __('Weekly') => 'W',
-                    __('Monthly') => 'M',
-                    __('Yearly') => 'Y'))
+                    __('never-label') => '0',
+                    __('daily-label') => 'D',
+                    __('weekly-label') => 'W',
+                    __('monthly-label') => 'M',
+                    __('yearly-label') => 'Y'))
         )
         ->add(
             'frequency',
             IntegerType::class,
             array('constraints' => new Assert\GreaterThan(0), 'data' => 1)
         )
-        ->add('until', DateType::class, array('label' => __('Until'), 'widget' => 'single_text'));
+        ->add('until', DateType::class, array('label' => __('until-label'), 'widget' => 'single_text'));
 
         //echo "<pre>"; var_dump($context->request); echo "</pre>";
         if ($context->request->get('eid') !== null) {
@@ -133,7 +133,7 @@ class EventFormPage extends Page
             $builder->add(
                 'modify',
                 CheckboxType::class,
-                array('label' => __('Change the event date and time'), 'required' => false)
+                array('label' => __('change-event-date-time-label'), 'required' => false)
             );
             $builder->add('eid', HiddenType::class, array('data' => $eid));
             $builder->get('subject')->setData($event->getRawSubject());
@@ -143,13 +143,13 @@ class EventFormPage extends Page
             $builder->add(
                 'save',
                 SubmitType::class,
-                array('label' => __('Modify Event'), 'attr' => array('class' => 'btn btn-primary'))
+                array('label' => __('modify-event-button'), 'attr' => array('class' => 'btn btn-primary'))
             );
         } else {
             $builder->add(
                 'save',
                 SubmitType::class,
-                array('label' => __('Create Event'), 'attr' => array('class' => 'btn btn-primary'))
+                array('label' => __('create-event-button'), 'attr' => array('class' => 'btn btn-primary'))
             );
         }
 
@@ -174,7 +174,7 @@ class EventFormPage extends Page
                 if (!empty($data) && !empty($data['save']) && (empty($data['eid']) || $data['modify'])) {
                     if ($data['end']->getTimestamp() < $data['start']->getTimestamp()) {
                         $form->get('end')->addError(
-                            new FormError(__('The end date/time cannot be before the start date/time.'))
+                            new FormError(__('end-before-start-date-time-error'))
                         );
                     }
                 }
@@ -196,7 +196,7 @@ class EventFormPage extends Page
         $modify_occur = !isset($data['eid']) || !empty($data['modify']);
     
         if (!$context->calendar->canWrite($context->user)) {
-            permission_error(__('You do not have permission to write to this calendar.'));
+            permission_error();
         }
     
         $catid = empty($data['catid']) ? null : $data['catid'];
@@ -253,8 +253,7 @@ class EventFormPage extends Page
                 }
             }
         }
-    
-        $context->addMessage(($modify ? __("Modified event") : __("Created event")).": $eid");
+        $context->addMessage(__($modify ? "modified-event-notification" : "created-event-notification"));
         return new RedirectResponse(action_event_url($context, 'display_event', $eid));
     }
 }

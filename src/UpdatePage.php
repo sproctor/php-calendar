@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2017 Sean Proctor
+ * Copyright Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ class UpdatePage extends Page
      */
     public function action(Context $context)
     {
-        if ($context->db->getConfig('version') == PHPC_DB_VERSION) {
-            throw new PermissionException("No need to update database.");
+        if ($context->db->getConfig('version') == PHPC_DB_VERSION && !$context->user->isAdmin()) {
+            throw new PermissionException();
         }
         if ($context->getAction() != 'update') {
             return new Response($context->twig->render("update_page.html.twig", array('script' => $context->script)));
@@ -39,7 +39,7 @@ class UpdatePage extends Page
         
         $context->db->update();
         if (!$context->db->update()) {
-            $context->addMessage(__('Already up to date.'));
+            $context->addMessage(__('already-updated-notification'));
         }
         return new RedirectResponse(action_url($context));
     }

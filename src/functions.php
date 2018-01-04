@@ -32,21 +32,42 @@ define('PHPC_DEBUG', 1);
 /**
  * Translates the given message, replacing parameters in it
  *
- * @param string $id
- * @param string[] $parameters
+ * @param string      $id
+ * @param string[]    $parameters
  * @param string|null $domain
  * @param string|null $locale
  * @return string
  */
-function __($msg, $parameters = array(), $domain = null, $locale = null)
+function __($id, $parameters = array(), $domain = null, $locale = null)
 {
     global $context;
 
     if (empty($context->translator)) {
-        return $msg;
+        return $id;
     }
 
-    return $context->translator->trans($msg, $parameters, $domain, $locale);
+    return $context->translator->trans($id, $parameters, $domain, $locale);
+}
+
+/**
+ * Translates the given message, replacing parameters in it
+ *
+ * @param string      $id
+ * @param int         $number
+ * @param string[]    $parameters
+ * @param string|null $domain
+ * @param string|null $locale
+ * @return string
+ */
+function transchoice($id, $number, $parameters = array(), $domain = null, $locale = null)
+{
+    global $context;
+
+    if (empty($context->translator)) {
+        return $id;
+    }
+
+    return $context->translator->trans($id, $number, $parameters, $domain, $locale);
 }
 
 /**

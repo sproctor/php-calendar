@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2013 Sean Proctor
+ * Copyright Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ class SqlTable
         $stmt = $dbh->query("SHOW TABLES LIKE '{$this->name}'");
         if ($stmt->rowCount() == 0) {
             $this->create($dbh);
-            return [__("Created table") . ": {$this->name}"];
+            return [__("created-type-notification", ['%type%' => __('database-table'), '%name%' =>$this->name])];
         } else {
             $column_messages = $this->updateColumns($dbh);
             $key_messages = $this->updateKeys($dbh);
@@ -151,14 +151,17 @@ class SqlTable
                 if ($type != $column->type) {
                     $query = "ALTER TABLE `{$this->name}`\n"
                     .$column->getUpdateQuery();
-                    $updates[] = __('Updating column: ') . $this->name . '.' . $column->name;
                     //var_dump($existing_column);
                     //echo "existing type: $type\nnew type: {$column->type}\n";
                     //echo $query, "\n";
                     $result = $dbh->query($query);
                     if (!$result) {
-                        throw new \Exception("error in query: $query");
+                        throw new FailedActionException("error in query: $query");
                     }
+                    $updates[] = __(
+                        'updated-type-notification',
+                        ['%type%' => __('database-column'), '%name%' => $this->name . '.' . $column->name]
+                    );
                 }
             } else {
                 $query = "ALTER TABLE `{$this->name}`\n"
@@ -166,9 +169,12 @@ class SqlTable
                 //echo $query, "\n";
                 $result = $dbh->query($query);
                 if (!$result) {
-                    throw new \Exception("error in query: $query");
+                    throw new FailedActionException("error in query: $query");
                 }
-                $updates[] = __('Added column: ') . $this->name . '.' . $column->name;
+                $updates[] = __(
+                    'created-type-notification',
+                    ['%type%' => __('database-column'), '%name%' => $this->name . '.' . $column->name]
+                );
             }
         }
         //echo "</pre>";
@@ -213,11 +219,15 @@ class SqlTable
                     //echo "existing columns: $existing_columns\n";
                     //echo "new columns: {$key->columns}\n";
                     //echo "running query: $query\n";
-                    $updates[] = __("Updating key: ") . $this->name . '.' . $key->name;
+                    
                     $result = $dbh->query($query);
                     if (!$result) {
                         throw new \Exception("error in query: $query");
                     }
+                    $updates[] = __(
+                        "updated-type-notification",
+                        ['%type%' => __('database-key'), '%name%' => $this->name . '.' . $key->name]
+                    );
                 }
             } else {
                 $query = "ALTER TABLE `{$this->name}`\n"
@@ -227,7 +237,10 @@ class SqlTable
                 if (!$result) {
                     throw new \Exception("error in query: $query");
                 }
-                $updates[] = __('Added column: ') . $this->name . '.' . $key->name;
+                $updates[] = __(
+                    'created-type-notification',
+                    ['%type%' => __('database-column'), '%name%' => $this->name . '.' . $key->name]
+                );
             }
         }
         //echo "</pre>";
