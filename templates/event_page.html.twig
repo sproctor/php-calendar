@@ -46,7 +46,7 @@
 				  <a href="{{ action_occurrence_url(context, 'occur_form', occurrence.getOid) }}">{{ "edit-link"|trans }}</a>
 				  <a href="{{ action_occurrence_url(context, 'occurrence_delete', occurrence.getOid) }}"
             data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}" data-button-text="{{ "remove-button"|trans }}"
-            data-content="{{ "permanently-remove-occurrence-question"|trans }}">{{ "remove-link"|trans }}</a>
+            data-content="{{ "permanently-remove-occurrence-question"|trans }}">{{ "remove-button"|trans }}</a>
         {% endif %}
 			</li>
 		{% endfor %}

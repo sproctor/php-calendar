@@ -2,18 +2,17 @@
 
 {% block body %}
         <form action="{{ script }}" method="post">
-            <h2>{{ "Log in"|trans }}</h2>
-            <div>{{ "You must have cookies enabled to login."|trans }}</div>
+            <h2>{{ "log-in-label"|trans }}</h2>
             <div class="form-group">
-                <label for="username">{{ "Username"|trans }}: </label>
+                <label for="username">{{ "username-label"|trans }}</label>
                 <input type="text" class="form-control" name="username" id="username">
             </div>
             <div class="form-group">
-                <label for="password">{{ "Password"|trans }}: </label>
+                <label for="password">{{ "password-label"|trans }}</label>
                 <input type="password" class="form-control" name="password" id="password">
             </div>
             {% if lasturl is defined %}<input type="hidden" name="lasturl" value="{{ lasturl }}">{% endif %}
             <input type="hidden" name="action" value="login">
-            <button type="submit" class="btn btn-primary">{{ 'Log In'|trans }}</button>
+            <button type="submit" class="btn btn-primary">{{ 'log-in-button'|trans }}</button>
         </form>
 {% endblock %}

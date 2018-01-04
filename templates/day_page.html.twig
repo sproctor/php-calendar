@@ -12,9 +12,9 @@
     <table class="table">
       <thead>
         <tr>
-          <th>{{ "Title"|trans }}</th>
-          <th>{{ "Time"|trans }}</th>
-          <th>{{ "Description"|trans }}</th>
+          <th>{{ "title-label"|trans }}</th>
+          <th>{{ "time-label"|trans }}</th>
+          <th>{{ "description-label"|trans }}</th>
         </tr>
       </thead>
       <tbody>
@@ -27,7 +27,7 @@
             <label class="form-check-label" for="eid_{{ occurrence.getEid }}">
             {% endif %}<a href="{{ action_event_url(context, 'display_event', occurrence.getEid) }}">{{ occurrence.getSubject }}</a>
             {% if occurrence.canModify(user) %}
-            </label></div> <a href="{{ action_event_url(context, 'event_form', occurrence.getEid) }}">{{ "(Modify)"|trans }}</a>
+            </label></div> <a href="{{ action_event_url(context, 'event_form', occurrence.getEid) }}">{{ "modify-label"|trans }}</a>
             {% endif %}
           </td>
           {% set textcolor = occurrence.getTextColor %}
@@ -40,11 +40,11 @@
       </tbody>
     </table>
     {% if can_modify %}
-      <button type="submit" class="btn btn-primary" data-toggle="confirmation" data-title="{{ "Confirmation Required"|trans }}" data-button-text="{{ "Delete Events"|trans }}"
-              data-content="{{ "Permanently delete the selected events?"|trans }}">{{ "Delete Selected Events"|trans }}</button>
+      <button type="submit" class="btn btn-primary" data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}" data-button-text="{{ "delete-events-button"|trans }}"
+              data-content="{{ "permanently-delete-selected-events-question"|trans }}">{{ "delete-events-button"|trans }}</button>
     {% endif %}
     </form>
   {% else %}
-    <h3>{{ "No events on this day."|trans }}</h3>
+    <h3>{{ "no-events-message"|trans }}</h3>
   {% endif %}
 {% endblock %}

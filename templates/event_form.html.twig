@@ -4,7 +4,7 @@
   {{ form_start(form) }}
     {{ form_row(form.subject) }}
     <div class="form-group">
-      <label class="form-control-label" for="form_description">{{ "Description"|trans }} <a href="http://commonmark.org/help/" target="_blank">({{ "syntax"|trans }})</a></label>
+      <label class="form-control-label" for="form_description">{{ "description-label"|trans }} <a href="http://commonmark.org/help/" target="_blank">({{ "syntax"|trans }})</a></label>
       {{ form_errors(form.description) }}
       {{ form_widget(form.description) }}
     </div>
@@ -53,22 +53,22 @@
           $repeat_data.find("input").prop('disabled', true);
           return;
         case 'D':
-          label = "{{ "Repeat every how many days?"|trans }}";
+          unit = "{{ "days"|trans }}";
 					break;
 				case 'W':
-					label = "{{" Repeat every how many weeks?"|trans }}";
+					unit = "{{ "weeks"|trans }}";
           break;
         case 'M':
-					label = "{{" Repeat every how many months?"|trans }}";
+					unit = "{{ "months"|trans }}";
           break;
         case 'Y':
-					label = "{{" Repeat every how many years?"|trans }}";
+					label = "{{ "years"|trans }}";
           break;
         default:
           // invalid option
       }
       $repeat_data.show();
-      $('label[for="form_frequency"]').html(label);
+      $('label[for="form_frequency"]').html({{ "repeat-every-unit-question"|trans({"%unit%": unit}) }});
       $repeat_data.find("input").prop('disabled', false);
     });
   </script>
