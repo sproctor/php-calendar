@@ -37,175 +37,172 @@ msgid "language-menu-selector"
 msgstr "Langue (%locale%)"
 
 #: 
-msgid "first-letter-of-Week"
-msgstr "S"
+#, fuzzy
+msgid "week-number-abbr"
+msgstr "sem."
 
 #: 
 msgid "settings-menu-link"
-msgstr ""
+msgstr "Paramètres"
 
 #: 
 msgid "log-out-menu-link"
-msgstr ""
+msgstr "Connectez - Out"
 
 #: 
 msgid "log-in-menu-link"
-msgstr ""
+msgstr "S'identifier"
 
 #: 
 msgid "view-additional-events-link"
-msgstr ""
+msgstr "Voir d'autres événements"
 
 #. include %author% for the name of the author
 #: 
 msgid "by-author"
-msgstr ""
+msgstr "par %author%"
 
 #. use %datetime% to add the date and time that something happened
 #: 
 msgid "on-date-time"
-msgstr ""
+msgstr "le %datetime%"
 
 #. use %modified% for the modified date and time
 #: 
 msgid "last-modified"
-msgstr ""
+msgstr "modifié le %modified%"
 
 #. use %category% for the event's category name
 #: 
 msgid "category-declaration"
-msgstr ""
+msgstr "Catégorie: %category%"
 
 #: 
 msgid "modify-menu-link"
-msgstr ""
+msgstr "Modifier"
 
 #: 
 msgid "add-occurrence-menu-link"
-msgstr ""
+msgstr "Ajouter une occurrence"
 
 #: 
 msgid "delete-button"
-msgstr ""
+msgstr "Effacer"
 
 #: 
 msgid "delete-menu-link"
-msgstr ""
+msgstr "Effacer"
 
 #: 
 msgid "permanently-delete-event-question"
-msgstr ""
+msgstr "Supprimer définitivement l'événement?"
 
 #: 
 msgid "fields-title"
-msgstr ""
+msgstr "Champs"
 
 #: 
 msgid "description-title"
-msgstr ""
+msgstr "Description"
 
 #: 
 msgid "occurrences-title"
-msgstr ""
+msgstr "Occurrences"
 
 #. use %start% for the beginning datetime and %end% for the ending datetime
 #: 
 msgid "date-time-range"
-msgstr ""
+msgstr "%start% à %end%"
 
 #: 
 msgid "time-range"
-msgstr ""
+msgstr "%start% - %end%"
 
 #: 
 msgid "to-be-announced-abbr"
-msgstr ""
+msgstr "ind."
 
 #. %date% for date, %time% for time. %time% could be the translated to-be-announced-abbr
 #: 
 msgid "date-time-custom"
-msgstr ""
+msgstr "%date% à %time%"
 
 #: 
 msgid "edit-link"
-msgstr ""
+msgstr "Modifier"
 
 #: 
 msgid "remove-button"
-msgstr ""
-
-#: 
-msgid "remove-link"
-msgstr ""
+msgstr "Retirer"
 
 #: 
 msgid "permanently-remove-occurrence-question"
-msgstr ""
+msgstr "Supprimer définitivement l'occurrence?"
 
 #: 
 msgid "default-language-label"
-msgstr ""
+msgstr "Langage par défaut"
 
 #: 
 msgid "read-label"
-msgstr ""
+msgstr "lis"
 
 #: 
 msgid "write-label"
-msgstr ""
+msgstr "écrire"
 
 #: 
 msgid "modify-label"
-msgstr ""
+msgstr "modifier"
 
 #: 
 msgid "admin-label"
-msgstr ""
+msgstr "admin"
 
 #: 
 msgid "calendar-updated-notification"
-msgstr ""
+msgstr "Calendrier mis à jour."
 
 #: 
 msgid "calendar-no-title"
-msgstr ""
+msgstr "(Sans titre)"
 
 #: 
 msgid "no-calendar-specified-error"
-msgstr ""
+msgstr "Aucun calendrier n'a été spécifié."
 
 #: 
 msgid "invalid-calendar-id-error"
-msgstr ""
+msgstr "Aucun calendrier n'existe avec cet identifiant."
 
 #: 
 msgid "permission-error"
-msgstr ""
+msgstr "Vous n'avez pas la permission de le faire."
 
 #. use %title% for title of calendar
 #: 
 msgid "removed-calendar-notification"
-msgstr ""
+msgstr "Le calendrier de \"%title%\" a été supprimé"
 
 #: 
 msgid "failed-action-error"
-msgstr ""
+msgstr "L'action que vous avez essayée a échoué."
 
 #: 
 msgid "calendar-title-label"
-msgstr ""
+msgstr "Titre du calendrier"
 
 #: 
 msgid "max-subject-length-label"
-msgstr ""
+msgstr "Longueur maximale du sujet"
 
 #: 
 msgid "max-events-display-label"
-msgstr ""
+msgstr "Nombre maximal d'événements à afficher par jour"
 
 #: 
 msgid "public-permissions-label"
-msgstr ""
+msgstr "Autorisations publiques"
 
 #: 
 msgid "no-read-no-write-events-label"
@@ -387,5 +384,141 @@ msgstr ""
 
 #: 
 msgid "already-updated-notification"
+msgstr ""
+
+#: 
+msgid "calendars-label"
+msgstr ""
+
+#: 
+msgid "users-label"
+msgstr ""
+
+#: 
+msgid "calendar-settings-label"
+msgstr ""
+
+#: 
+msgid "calendar-users-label"
+msgstr ""
+
+#: 
+msgid "calendar-label"
+msgstr ""
+
+#: 
+msgid "actions-label"
+msgstr ""
+
+#: 
+msgid "settings-button"
+msgstr ""
+
+#: 
+msgid "confirmation-required-dialog-title"
+msgstr ""
+
+#: 
+msgid "permanently-delete-calendar-question"
+msgstr ""
+
+#: 
+msgid "default-calendar-label"
+msgstr ""
+
+#: 
+msgid "make-default-button"
+msgstr ""
+
+#: 
+msgid "create-calendar-button"
+msgstr ""
+
+#: 
+msgid "username-label"
+msgstr ""
+
+#: 
+msgid "groups-label"
+msgstr ""
+
+#: 
+msgid "enable-user-label"
+msgstr ""
+
+#: 
+msgid "disable-user-label"
+msgstr ""
+
+#: 
+msgid "update-calendar-button"
+msgstr ""
+
+#: 
+msgid "user-permissions-label"
+msgstr ""
+
+#: 
+msgid "update-permissions-button"
+msgstr ""
+
+#: 
+msgid "create-calendar-label"
+msgstr ""
+
+#: 
+msgid "title-label"
+msgstr ""
+
+#: 
+msgid "time-label"
+msgstr ""
+
+#: 
+msgid "description-label"
+msgstr ""
+
+#: 
+msgid "delete-events-button"
+msgstr ""
+
+#: 
+msgid "permanently-delete-selected-events-question"
+msgstr ""
+
+#: 
+msgid "no-events-message"
+msgstr ""
+
+#: 
+msgid "repeat-every-unit-question"
+msgstr ""
+
+#: 
+msgid "days"
+msgstr ""
+
+#: 
+msgid "weeks"
+msgstr ""
+
+#: 
+msgid "months"
+msgstr ""
+
+#: 
+msgid "years"
+msgstr ""
+
+#: 
+msgid "log-in-label"
+msgstr ""
+
+#: 
+msgid "password-label"
+msgstr ""
+
+#: 
+msgid "log-in-button"
 msgstr ""
 
