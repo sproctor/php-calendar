@@ -145,3 +145,102 @@ msgstr "Permanently remove the occurrence?"
 msgid "default-language-label"
 msgstr "Default language"
 
+#: 
+msgid "read-label"
+msgstr "read"
+
+#: 
+msgid "write-label"
+msgstr "write"
+
+#: 
+msgid "modify-label"
+msgstr "modify"
+
+#: 
+msgid "admin-label"
+msgstr "admin"
+
+#: 
+msgid "calendar-updated-notification"
+msgstr "Calendar updated."
+
+#: 
+msgid "calendar-no-title"
+msgstr "(No title)"
+
+#: 
+msgid "no-calendar-specified-error"
+msgstr "No calendar was specified."
+
+#: 
+msgid "invalid-calendar-id-error"
+msgstr "No calendar exists with that id."
+
+#: 
+msgid "permission-error"
+msgstr "You do not have permission to do that."
+
+#. use %title% for title of calendar
+#: 
+msgid "removed-calendar-notification"
+msgstr "Calendar \"%title%\" was removed."
+
+#: 
+msgid "failed-action-error"
+msgstr "The action you tried has failed."
+
+#: 
+msgid "calendar-title-label"
+msgstr "Calendar title"
+
+#: 
+msgid "max-subject-length-label"
+msgstr "Maximum subject length"
+
+#: 
+msgid "max-events-display-label"
+msgstr "Maximum events to display per day"
+
+#: 
+msgid "public-permissions-label"
+msgstr "Public permissions"
+
+#: 
+msgid "no-read-no-write-events-label"
+msgstr "Cannot read nor write events"
+
+#: 
+msgid "read-no-write-events-label"
+msgstr "Can read but not write events"
+
+#: 
+msgid "read-create-no-modify-events-label"
+msgstr "Can read and create but not modify events"
+
+#: 
+msgid "read-create-modify-events-label"
+msgstr "Can read, create, and modify events"
+
+#: 
+msgid "default-timezone-label"
+msgstr "Default timezone"
+
+#: 
+msgid "invalid-action-error"
+msgstr "Invalid action."
+
+#: 
+msgid "calendar-created-notice"
+msgstr "A new calendar has been created."
+
+#. use %name% for type of value that doesn't exist
+#: 
+msgid "nonexistent-value-error"
+msgstr "There is no %name% with that value."
+
+#. use %title% for title of the calendar
+#: 
+msgid "default-calendar-changed-notification"
+msgstr "The default calendar has been changed to \"%title%\"."
+
