@@ -6,6 +6,7 @@ msgstr ""
 "X-Generator: POEditor.com\n"
 "Project-Id-Version: PHP-Calendar\n"
 "Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. Search link in main navbar
 #: 
@@ -33,7 +34,7 @@ msgstr "Admin"
 #. label for dropdown to pick language/locale.  %locale% is the users current locale abbreviation, such as 'fr' or 'fr_CA'
 #: 
 msgid "language-menu-selector"
-msgstr "La langue (%locale%)"
+msgstr "Langue (%locale%)"
 
 #: 
 msgid "first-letter-of-Week"
@@ -143,5 +144,248 @@ msgstr ""
 
 #: 
 msgid "default-language-label"
+msgstr ""
+
+#: 
+msgid "read-label"
+msgstr ""
+
+#: 
+msgid "write-label"
+msgstr ""
+
+#: 
+msgid "modify-label"
+msgstr ""
+
+#: 
+msgid "admin-label"
+msgstr ""
+
+#: 
+msgid "calendar-updated-notification"
+msgstr ""
+
+#: 
+msgid "calendar-no-title"
+msgstr ""
+
+#: 
+msgid "no-calendar-specified-error"
+msgstr ""
+
+#: 
+msgid "invalid-calendar-id-error"
+msgstr ""
+
+#: 
+msgid "permission-error"
+msgstr ""
+
+#. use %title% for title of calendar
+#: 
+msgid "removed-calendar-notification"
+msgstr ""
+
+#: 
+msgid "failed-action-error"
+msgstr ""
+
+#: 
+msgid "calendar-title-label"
+msgstr ""
+
+#: 
+msgid "max-subject-length-label"
+msgstr ""
+
+#: 
+msgid "max-events-display-label"
+msgstr ""
+
+#: 
+msgid "public-permissions-label"
+msgstr ""
+
+#: 
+msgid "no-read-no-write-events-label"
+msgstr ""
+
+#: 
+msgid "read-no-write-events-label"
+msgstr ""
+
+#: 
+msgid "read-create-no-modify-events-label"
+msgstr ""
+
+#: 
+msgid "read-create-modify-events-label"
+msgstr ""
+
+#: 
+msgid "default-timezone-label"
+msgstr ""
+
+#: 
+msgid "invalid-action-error"
+msgstr ""
+
+#: 
+msgid "calendar-created-notice"
+msgstr ""
+
+#. use %name% for type of value that doesn't exist
+#: 
+msgid "nonexistent-value-error"
+msgstr ""
+
+#. use %title% for title of the calendar
+#: 
+msgid "default-calendar-changed-notification"
+msgstr ""
+
+#: 
+msgid "calendar"
+msgstr ""
+
+#: 
+msgid "group"
+msgstr ""
+
+#: 
+msgid "field"
+msgstr ""
+
+#: 
+msgid "anonymous-username"
+msgstr ""
+
+#: 
+msgid "nonexistent-subject"
+msgstr ""
+
+#: 
+msgid "no-event-specified-error"
+msgstr ""
+
+#: 
+msgid "removed-event-notice"
+msgid_plural "removed-events-notice"
+msgstr[0] ""
+msgstr[1] ""
+
+#: 
+msgid "from-label"
+msgstr ""
+
+#: 
+msgid "to-label"
+msgstr ""
+
+#: 
+msgid "time-type-label"
+msgstr ""
+
+#: 
+msgid "normal-label"
+msgstr ""
+
+#: 
+msgid "full-day-label"
+msgstr ""
+
+#: 
+msgid "to-be-announced-label"
+msgstr ""
+
+#: 
+msgid "repeats-label"
+msgstr ""
+
+#: 
+msgid "never-label"
+msgstr ""
+
+#: 
+msgid "daily-label"
+msgstr ""
+
+#: 
+msgid "weekly-label"
+msgstr ""
+
+#: 
+msgid "monthly-label"
+msgstr ""
+
+#: 
+msgid "yearly-label"
+msgstr ""
+
+#: 
+msgid "until-label"
+msgstr ""
+
+#: 
+msgid "change-event-date-time-label"
+msgstr ""
+
+#: 
+msgid "modify-event-button"
+msgstr ""
+
+#: 
+msgid "create-event-button"
+msgstr ""
+
+#: 
+msgid "end-before-start-date-time-error"
+msgstr ""
+
+#: 
+msgid "modified-event-notification"
+msgstr ""
+
+#: 
+msgid "created-event-notification"
+msgstr ""
+
+#: 
+msgid "event"
+msgstr ""
+
+#: 
+msgid "no-password-specified-notification"
+msgstr ""
+
+#: 
+msgid "invalid-login-credentials-notification"
+msgstr ""
+
+#. use %type% for the type of object created and %name% for the name of the specific object
+#: 
+msgid "created-type-notification"
+msgstr ""
+
+#: 
+msgid "database-table"
+msgstr ""
+
+#: 
+msgid "database-column"
+msgstr ""
+
+#. use %type% for the type of object created and %name% for the name of the specific object
+#: 
+msgid "updated-type-notification"
+msgstr ""
+
+#: 
+msgid "database-key"
+msgstr ""
+
+#: 
+msgid "already-updated-notification"
 msgstr ""
 
