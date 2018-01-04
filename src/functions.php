@@ -93,7 +93,7 @@ function get_language_mappings()
 
         foreach ($finder->name('*.mo')->in(__DIR__.'/../translations')->files() as $file) {
             $code = $file->getBasename('.mo');
-            $lang = Intl::getLanguageBundle()->getLanguageName($code);
+            $lang = Intl::getLanguageBundle()->getLanguageName($code, null, $code);
             $mappings[$lang] = $code;
         }
     }

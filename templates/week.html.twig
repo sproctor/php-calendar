@@ -24,7 +24,7 @@
 						style="{% if not textcolor is null %}color: {{ textcolor }} !important; {% endif %}{% if not bgcolor is null %}background: {{ bgcolor }} !important;{% endif %}"
 						data-toggle="popover" data-trigger="hover" data-html=true data-placement="auto"
 						title="{{ occurrence.getSubject() }}" 
-						data-content="{{ "by-author"|trans({'author': occurrence.getAuthor()}) }}{{ "\n\n" }}{{ occurrence.getDescription() }}">
+						data-content="{{ "by-author"|trans({'%author%': occurrence.getAuthor}) }}{{ "\n\n" }}{{ occurrence.getDescription() }}">
 				    {% set time = occurrence.getTimeString() %}
 				    {% if not time is null %}
 					    {% if occurrence.getStart() >= cur_date %}

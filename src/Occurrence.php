@@ -80,7 +80,7 @@ class Occurrence extends Event
             $event_time = $this->getTimespanString();
             $date = $formatter->format($this->start);
             if ($event_time != null) {
-                $str = __('date-time-custom', array('%date%' => $date, '%time' => $event_time));
+                $str = __('date-time-custom', array('%date%' => $date, '%time%' => $event_time));
             } else {
                 $str = $date;
             }

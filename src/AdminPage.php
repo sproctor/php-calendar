@@ -66,10 +66,10 @@ class AdminPage extends Page
             $uid = $user['uid'];
             $builder->add(
                 $builder->create("uid$uid", FormType::class, array('inherit_data' => true, 'label' => $user['username']))
-                ->add('read', CheckboxType::class, array('label' => __('read'), 'data' => $user['read'], 'label_attr' => array('class' => 'checkbox-inline')))
-                ->add('write', CheckboxType::class, array('label' => __('write'), 'data' => $user['write'], 'label_attr' => array('class' => 'checkbox-inline')))
-                ->add('modify', CheckboxType::class, array('label' => __('modify'), 'data' => $user['modify']))
-                ->add('admin', CheckboxType::class, array('label' => __('admin'), 'data' => $user['admin']))
+                ->add('read', CheckboxType::class, array('label' => __('read-label'), 'data' => $user['read'], 'label_attr' => array('class' => 'checkbox-inline')))
+                ->add('write', CheckboxType::class, array('label' => __('write-label'), 'data' => $user['write'], 'label_attr' => array('class' => 'checkbox-inline')))
+                ->add('modify', CheckboxType::class, array('label' => __('modify-label'), 'data' => $user['modify']))
+                ->add('admin', CheckboxType::class, array('label' => __('admin-label'), 'data' => $user['admin']))
             );
         }
 
@@ -87,7 +87,7 @@ class AdminPage extends Page
             $context->db->setCalendarConfig($context->calendar->getCid(), $key, $value);
         }
 
-        $context->addMessage(__('Calendar updated.'));
+        $context->addMessage(__('calendar-updated-notification'));
 
         return new RedirectResponse(action_url($context, 'admin', array(), 'calendar'));
     }

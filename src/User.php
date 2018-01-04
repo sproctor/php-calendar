@@ -162,7 +162,7 @@ class User
     public function getGroups()
     {
         if (!isset($this->groups)) {
-            $this->groups = $this->db->get_user_groups($this->uid);
+            $this->groups = $this->db->getGroupsForUser($this->uid);
         }
 
         return $this->groups;

@@ -4,9 +4,9 @@
 <h3>{{ event.getSubject() }}</h3>
 
 <div class="phpc-event-header">
-	<div>{{ "by-author"|trans({'%author%': event.getAuthor}) }} {{ "on-date-time"|trans({'%datetime%': event.getCreate|localizeddate('medium', 'short', locale)}) }}</div>
+	<div>{{ "by-author"|trans({'%author%': event.getAuthor}) }} {{ "on-date-time"|trans({'%datetime%': event.getCreated|localizeddate('medium', 'short', locale)}) }}</div>
   {% set modified = event.getModified %}
-  {% if modified is defined %}
+  {% if modified is not null %}
     <div>{{ "last-modified"|trans({'%modified%': modified|localizeddate('medium', 'short', locale)}) }}</div>
   {% endif %}
   {% set category = event.getCategory() %}

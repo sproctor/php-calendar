@@ -37,7 +37,7 @@ try {
     $context->getPage()->action($context)->send();
 } catch (PermissionException $e) {
     $context->addMessage($e->getMessage());
-    (new RedirectResponse($context->user->isUser() ? $context->script : "{$context->script}?action=login"))->send();
+    (new RedirectResponse($request->getScriptName().($context->user->isUser() ? '' : '?action=login')))->send();
 } catch (InvalidConfigException $e) {
     (new RedirectResponse("/install.php"))->send();
 } catch (InvalidInputException $e) {

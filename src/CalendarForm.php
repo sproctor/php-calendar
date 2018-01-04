@@ -35,24 +35,24 @@ class CalendarForm
     public function getForm(Context $context, $calendar = null)
     {
         $builder = $context->getFormFactory()->createBuilder();
-        $builder->add('title', TextType::class, array('label' => __('Calendar Title')))
-        ->add('subject_max', IntegerType::class, array('label' => __('Maximum Subject Length'), 'data' => 50))
-        ->add('events_max', IntegerType::class, array('label' => __('Events Display Daily Maximum'), 'data' => 8))
+        $builder->add('title', TextType::class, array('label' => __('calendar-title-label')))
+        ->add('subject_max', IntegerType::class, array('label' => __('max-subject-length-label'), 'data' => 50))
+        ->add('events_max', IntegerType::class, array('label' => __('max-events-display-label'), 'data' => 8))
         ->add(
             'anon_permission',
             ChoiceType::class,
-            array('label' => __('Public Permissions'), 'choices' => array(
-                __('Cannot read nor write events') => 0,
-                __('Can read but not write events') => 1,
-                __('Can create but not modify events') => 2,
-                __('Can create and modify events') => 3
+            array('label' => __('public-permissions-label'), 'choices' => array(
+                __('no-read-no-write-events-label') => 0,
+                __('read-no-write-events-label') => 1,
+                __('read-create-no-modify-events-label') => 2,
+                __('read-create-modify-events-label') => 3
             ))
         )
         ->add(
             'timezone',
             TimezoneType::class,
             array(
-                'label' => __('Default Timezone'),
+                'label' => __('default-timezone-label'),
                 'data' => $context->user->getTimezone(),
                 'preferred_choices' => array('America/New_York')
             )

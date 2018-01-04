@@ -31,7 +31,7 @@ class CreateCalendarPage extends Page
     public function action(Context $context)
     {
         if (!$context->user->isAdmin()) {
-                throw new PermissionException(__('Only admins can create calendars.'));
+                throw new PermissionException();
         }
 
         $form = (new CalendarForm)->getForm($context);
@@ -59,7 +59,7 @@ class CreateCalendarPage extends Page
             $context->db->setCalendarConfig($cid, $key, $value);
         }
 
-        $context->addMessage(__('Calendar created.'));
+        $context->addMessage(__('calendar-created-notice'));
 
         return new RedirectResponse(action_url($context, 'admin'));
     }

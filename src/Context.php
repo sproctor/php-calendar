@@ -110,7 +110,7 @@ class Context
         }
 
         if ($this->db->getConfig('version') > PHPC_DB_VERSION) {
-            throw new InvalidConfigException(__('Database version is newer than software version.'));
+            throw new InvalidConfigException();
         }
 
         // Validate user
@@ -294,24 +294,21 @@ class Context
     private function initCurrentCalendar()
     {
         // Find current calendar
-        $current_cid = $this->getCurrentCID();
+        $current_cid = $this->getCurrentCid();
 
         $this->calendar = $this->db->getCalendar($current_cid);
-        if (empty($this->calendar)) {
-            throw new \Exception(__("Bad calendar ID."));
-        }
     }
 
     /**
      * @return int
      * @throws \Exception
      */
-    private function getCurrentCID()
+    private function getCurrentCid()
     {
         $phpcid = $this->request->get('phpcid');
         if (isset($phpcid)) {
             if (!is_numeric($phpcid)) {
-                throw new InvalidInputException(__("Invalid calendar ID."));
+                throw new InvalidInputException(__('invalid-calendar-id-error'));
             }
             return $phpcid;
         }
@@ -322,14 +319,6 @@ class Context
                 $eid = $eid[0];
             }
             $event = $this->db->getEvent($eid);
-            if ($event != null) {
-                return $event->getCalendar()->getCid();
-            }
-        }
-        
-        $oid = $this->request->get('oid');
-        if (isset($oid)) {
-            $event = $this->db->getEventByOid($_REQUEST['oid']);
             if ($event != null) {
                 return $event->getCalendar()->getCid();
             }
@@ -387,8 +376,9 @@ class Context
      */
     public function getYear()
     {
-        if (is_numeric($this->request->get('year'))) {
-            return $this->request->get('year');
+        $year = $this->request->get('year');
+        if (is_numeric($year)) {
+            return $year;
         } else {
             return date('Y');
         }
@@ -400,10 +390,7 @@ class Context
     public function getMonth()
     {
         $month = $this->request->get('month');
-        if (is_numeric($month)) {
-            if ($month < 1 || $month > 12) {
-                throw new InvalidInputException(__("Month is out of range."));
-            }
+        if (is_numeric($month) && $month > 0 && $month <= 12) {
             return $month;
         } else {
             return date('n');
@@ -416,10 +403,7 @@ class Context
     public function getDay()
     {
         $day = $this->request->get('day');
-        if (is_numeric($day)) {
-            if ($day < 1 || $day > days_in_month($this->getMonth(), $this->getYear())) {
-                throw new InvalidInputException(__('Day is out of range.'));
-            }
+        if (is_numeric($day) && $day > 0 && $day <= days_in_month($this->getMonth(), $this->getYear())) {
             return $day;
         } else {
             if ($this->getMonth() == date('n') && $this->getYear() == date('Y')) {
@@ -575,7 +559,7 @@ class Context
             case 'update':
                 return new UpdatePage;
             default:
-                throw new \Exception(__('Invalid action'));
+                throw new InvalidInputException(__('invalid-action-error'));
         }
     }
 }

@@ -30,13 +30,15 @@ class DefaultCalendarPage extends Page
     public function action(Context $context)
     {
         if (!$context->user->isAdmin()) {
-            throw new PermissionException(__('You do not have the privilege of changing the default calendar.'));
+            throw new PermissionException();
         }
         if (empty($context->request->get("cid"))) {
-            $context->addMessage(__('No calendar selected.'));
+            $context->addMessage(__('no-calendar-specified'));
         } else {
-            $context->db->setConfig('default_cid', $context->request->get('cid'));
-            $context->addMessage(__('Default calendar set to: ').$context->request->get('cid'));
+            $calendar = $context->db->getCalendar($context->request->get('cid'));
+
+            $context->db->setConfig('default_cid', $calendar->getCid());
+            $context->addMessage(__('default-calendar-changed-notification', ['%title%' => $calendar->getCid()]));
         }
 
         return new RedirectResponse(action_url($context, 'admin', array(), "calendars"));

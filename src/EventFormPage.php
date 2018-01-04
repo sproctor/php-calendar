@@ -204,7 +204,7 @@ class EventFormPage extends Page
         if (!isset($data['eid'])) {
             $modify = false;
             $eid = $context->db->createEvent(
-                $context->calendar->getCID(),
+                $context->calendar->getCid(),
                 $context->user->getUid(),
                 $data["subject"],
                 (string) $data["description"],

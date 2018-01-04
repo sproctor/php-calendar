@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016 Sean Proctor
+ * Copyright 2018 Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,15 +69,14 @@ class Database
             . "`password_editable`, `default_cid`, `timezone`, `language`, `disabled`";
     }
 
-    // returns all the events for a particular day
-    // $from and $to are timestamps only significant to the date.
-    // an event that happens later in the day of $to is included
     /**
+     * Returns all the events for a particular date range
+     * $from and $to are only significant to the date.
+     * an event that happens later in the day of $to is included
      * @param int                $cid
      * @param \DateTimeInterface $from
      * @param \DateTimeInterface $to
      * @return Occurrence[]
-     * @throws \Exception
      */
     public function getOccurrencesByDateRange($cid, \DateTimeInterface $from, \DateTimeInterface $to)
     {
@@ -111,14 +110,14 @@ class Database
         return $arr;
     }
 
-    /* if category is visible to user id */
     /**
+     * Returns if category is visible to user id
+     *
      * @param User $user
      * @param int  $catId
      * @return bool
-     * @throws \Exception
      */
-    function is_cat_visible(User $user, $catId)
+    public function isCategoryVisible(User $user, $catId)
     {
         $users_table = $this->prefix . 'users';
         $user_groups_table = $this->prefix . 'user_groups';
@@ -145,9 +144,9 @@ class Database
         return $results->num_rows > 0;
     }
 
-    // returns all the events for a particular day
-
     /**
+     * Returns all the events for a particular day
+     *
      * @param int $cid
      * @param int $year
      * @param int $month
@@ -166,9 +165,9 @@ class Database
         );
     }
 
-    // returns the event that corresponds to eid
-
     /**
+     * Returns the event that corresponds to eid
+     *
      * @param int $eid
      * @return null|Event
      * @throws \Exception
@@ -196,41 +195,14 @@ class Database
         return new Event($this, $result);
     }
 
-    // returns the event that corresponds to oid
-
     /**
-     * @param int $oid
-     * @return mixed
-     */
-    function get_event_by_oid($oid)
-    {
-        $events_table = $this->prefix . 'events';
-        $occurrences_table = $this->prefix . 'occurrences';
-        $users_table = $this->prefix . 'users';
-        $cats_table = $this->prefix . 'categories';
-
-        $query = "SELECT {$this->event_columns}, `username`, `name`, `bg_color`, `text_color`\n"
-            . "FROM `$events_table`\n"
-            . "LEFT JOIN `$occurrences_table` USING (`eid`)\n"
-            . "LEFT JOIN `$users_table` ON `uid`=`owner`\n"
-            . "LEFT JOIN `$cats_table` USING (`catid`)\n"
-            . "WHERE `oid`=:oid\n";
-
-        $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':oid', $oid, \PDO::PARAM_INT);
-        $sth->execute();
-
-        return $sth->fetch(\PDO::FETCH_ASSOC);
-    }
-
-    // returns the category that corresponds to $catid
-
-    /**
+     * Returns the category that corresponds to $catid
+     *
      * @param int $catid
-     * @return mixed
+     * @return string[]
      * @throws \Exception
      */
-    function get_category($catid)
+    public function getCategory($catid)
     {
         $cats_table = $this->prefix . 'categories';
         $groups_table = $this->prefix . 'groups';
@@ -247,8 +219,11 @@ class Database
         $sth->bindValue(':catid', $catid);
         $sth->execute();
 
-        return $sth->fetch(\PDO::FETCH_ASSOC)
-            or soft_error(__("Category doesn't exist with catid") . ": $catid");
+        $result = $sth->fetch(\PDO::FETCH_ASSOC);
+        if (!$result) {
+            throw new \UnexpectedValueException(__("nonexistent-value-error", ['%name%' => __('category')]));
+        }
+        return $result;
     }
 
     /**
@@ -256,7 +231,7 @@ class Database
      * @return mixed
      * @throws \Exception
      */
-    function get_group($gid)
+    public function getGroup($gid)
     {
         $groups_table = $this->prefix . 'groups';
 
@@ -268,15 +243,18 @@ class Database
         $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
         $sth->execute();
 
-        return $sth->fetch(\PDO::FETCH_ASSOC)
-            or soft_error(__("Group doesn't exist with gid") . ": $gid");
+        $result = $sth->fetch(\PDO::FETCH_ASSOC);
+        if (!$result) {
+            throw new \UnexpectedValueException(__("nonexistent-value-error", ['%name%' => __('group')]));
+        }
+        return $result;
     }
 
     /**
      * @param int $cid
      * @return string[][]
      */
-    function get_groups($cid)
+    public function getGroupsForCalendar($cid)
     {
         $groups_table = $this->prefix . 'groups';
 
@@ -299,7 +277,7 @@ class Database
      * @param int $uid
      * @return string[][]
      */
-    function get_user_groups($uid)
+    public function getGroupsForUser($uid)
     {
         $groups_table = $this->prefix . 'groups';
         $user_groups_table = $this->prefix . 'user_groups';
@@ -326,7 +304,7 @@ class Database
      * @param int $cid
      * @return string[][]
      */
-    function get_categories($cid)
+    public function getCategoriesForCalendar($cid)
     {
         $cats_table = $this->prefix . 'categories';
         $groups_table = $this->prefix . 'groups';
@@ -352,9 +330,9 @@ class Database
     }
 
     /**
-     * @return string[][]
+     * @return array[]
      */
-    function get_global_categories()
+    public function getGlobalCategories()
     {
         $cats_table = $this->prefix . 'categories';
         $groups_table = $this->prefix . 'groups';
@@ -383,9 +361,9 @@ class Database
     /**
      * @param int $uid
      * @param int $cid
-     * @return string[][]
+     * @return array[]
      */
-    function get_visible_categories($uid, $cid)
+    public function getVisibleCategories($uid, $cid)
     {
         $cats_table = $this->prefix . 'categories';
         $user_groups_table = $this->prefix . 'user_groups';
@@ -409,7 +387,11 @@ class Database
         return $arr;
     }
 
-    function get_field($fid)
+    /**
+     * @param int $fid
+     * @return string[]
+     */
+    public function getField($fid)
     {
         $fields_table = $this->prefix . 'fields';
 
@@ -422,18 +404,20 @@ class Database
         $sth->bindValue(':fid', $fid, \PDO::PARAM_INT);
         $sth->execute();
 
-        return $sth->fetch(\PDO::FETCH_ASSOC)
-            or soft_error(__("Field doesn't exist with 'fid'") . ": $fid");
+        $result = $sth->fetch(\PDO::FETCH_ASSOC);
+        if (!$result) {
+            throw new \UnexpectedValueException(__('nonexistent-value-error', ['%name%' => __('field')]));
+        }
     }
 
-    // returns the event that corresponds to $oid
-
     /**
+     * Returns the event that corresponds to $oid
+     *
      * @param int $oid
-     * @return Occurrence
+     * @return Occurrence|null
      * @throws \Exception
      */
-    function get_occurrence_by_oid($oid)
+    public function getOccurrence($oid)
     {
         $events_table = $this->prefix . 'events';
         $occurrences_table = $this->prefix . 'occurrences';
@@ -465,7 +449,7 @@ class Database
      * @param int $cid
      * @return array[]
      */
-    function get_fields($cid)
+    public function getFields($cid)
     {
         $fields_table = $this->prefix . 'fields';
 
@@ -489,7 +473,7 @@ class Database
      * @param int $eid
      * @return string[][]
      */
-    function get_event_fields($eid)
+    public function getEventFields($eid)
     {
         $event_fields_table = $this->prefix . 'event_fields';
         $query = "SELECT `fid`, `value`\n"
@@ -540,7 +524,6 @@ class Database
 
     /**
      * @param int $eid
-     * @return bool
      */
     public function deleteEvent($eid)
     {
@@ -553,7 +536,9 @@ class Database
         $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
         $sth->execute();
 
-        return $sth->rowCount() > 0;
+        if ($sth->rowCount() == 0) {
+            throw new FailedActionException();
+        }
     }
 
     /**
@@ -569,14 +554,13 @@ class Database
         $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
         $sth->execute();
 
-        return $sth->rowCount();
+        return $sth->rowCount() > 0;
     }
 
     /**
      * @param int $oid
-     * @return bool
      */
-    function delete_occurrence($oid)
+    public function deleteOccurrence($oid)
     {
         $query = 'DELETE FROM `' . $this->prefix . "occurrences`\n"
             . "WHERE `oid` = :oid";
@@ -585,12 +569,13 @@ class Database
         $sth->bindValue(':oid', $oid, \PDO::PARAM_INT);
         $sth->execute();
 
-        return $sth->rowCount() > 0;
+        if ($sth->rowCount() == 0) {
+            throw new FailedActionException();
+        }
     }
 
     /**
      * @param int $cid
-     * @return bool
      */
     public function deleteCalendar($cid)
     {
@@ -614,14 +599,15 @@ class Database
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
         $sth->execute();
 
-        return $sth->rowCount() > 0;
+        if ($sth->rowCount() == 0) {
+            throw new FailedActionException();
+        }
     }
 
     /**
      * @param int $catid
-     * @return bool
      */
-    function delete_category($catid)
+    public function deleteCategory($catid)
     {
 
         $query = 'DELETE FROM `' . $this->prefix . "categories`\n"
@@ -631,14 +617,15 @@ class Database
         $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
         $sth->execute();
 
-        return $sth->rowCount() > 0;
+        if ($sth->rowCount() == 0) {
+            throw new FailedActionException();
+        }
     }
 
     /**
      * @param int $gid
-     * @return bool
      */
-    function delete_group($gid)
+    public function deleteGroup($gid)
     {
 
         $query = 'DELETE FROM `' . $this->prefix . "groups`\n"
@@ -648,14 +635,15 @@ class Database
         $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
         $sth->execute();
 
-        return $sth->rowCount() > 0;
+        if ($sth->rowCount() == 0) {
+            throw new FailedActionException();
+        }
     }
 
     /**
      * @param int $fid
-     * @return bool
      */
-    function delete_field($fid)
+    public function deleteField($fid)
     {
 
         $query = 'DELETE FROM `' . $this->prefix . "fields`\n"
@@ -665,14 +653,15 @@ class Database
         $sth->bindValue(':fid', $fid, \PDO::PARAM_INT);
         $sth->execute();
 
-        return $sth->rowCount() > 0;
+        if ($sth->rowCount() > 0) {
+            throw new FailedActionException();
+        }
     }
 
     /**
      * @param int $uid
-     * @return bool
      */
-    function disable_user($uid)
+    public function disableUser($uid)
     {
 
         $query = 'UPDATE `' . $this->prefix . "users`\n"
@@ -683,10 +672,15 @@ class Database
         $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
         $sth->execute();
 
-        return $sth->rowCount() > 0;
+        if ($sth->rowCount() == 0) {
+            throw new FailedActionException();
+        }
     }
 
-    function enable_user($uid)
+    /**
+     * @param int $uid
+     */
+    public function enableUser($uid)
     {
 
         $query = 'UPDATE `' . $this->prefix . "users`\n"
@@ -697,7 +691,9 @@ class Database
         $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
         $sth->execute();
 
-        return $sth->rowCount() > 0;
+        if ($sth->rowCount() == 0) {
+            throw new FailedActionException();
+        }
     }
 
     /**
@@ -706,7 +702,7 @@ class Database
      * @return string[]
      * @throws \Exception
      */
-    public function get_permissions($cid, $uid)
+    public function getPermissions($cid, $uid)
     {
         static $perms = array();
 
@@ -756,18 +752,20 @@ class Database
 
     /**
      * @param int $cid
-     * @return null|Calendar
+     * @return Calendar
      */
     public function getCalendar($cid)
     {
-        $calendars = $this->getCalendars();
-
-        return $calendars[$cid];
+        $calendar = $this->getCalendars()[$cid];
+        if ($calendar == null) {
+            throw new InvalidInputException(__('invalid-calendar-id-error'));
+        }
+        return $calendar;
     }
 
     /**
      * @param string $name
-     * @return bool|string
+     * @return null|string
      */
     public function getConfig($name)
     {
@@ -784,7 +782,7 @@ class Database
             return $this->config[$name];
         }
         // otherwise
-        return false;
+        return null;
     }
 
     /**
@@ -798,14 +796,14 @@ class Database
             . "(:name, :value)";
 
         $sth = $this->dbh->prepare($query);
-        $sth->execute(array(':name' => $name, ':value' => $value));
+        $sth->execute([':name' => $name, ':value' => $value]);
     }
 
     /**
      * @param int $uid
      * @param int $cid
      */
-    function set_user_default_cid($uid, $cid)
+    public function setUserDefaultCid($uid, $cid)
     {
         $query = "UPDATE `" . $this->prefix . "users`\n"
             . "SET `default_cid`=:cid\n"
@@ -869,7 +867,7 @@ class Database
             . "WHERE username=:username";
 
         $sth = $this->dbh->prepare($query);
-        $sth->execute(array(':username' => $username));
+        $sth->execute([':username' => $username]);
 
         $result = $sth->fetch(\PDO::FETCH_ASSOC);
         if ($result) {
@@ -915,7 +913,7 @@ class Database
             . "(:username, :password, $admin)";
 
         $sth = $this->dbh->prepare($query);
-        $sth->execute(array(':username' => $username, ':password' => password_hash($password, PASSWORD_DEFAULT)));
+        $sth->execute([':username' => $username, ':password' => password_hash($password, PASSWORD_DEFAULT)]);
 
         return $this->dbh->lastInsertId();
     }
@@ -975,7 +973,7 @@ class Database
      * @param int    $uid
      * @param string $timezone
      */
-    function set_timezone($uid, $timezone)
+    public function setTimezone($uid, $timezone)
     {
         $query = "UPDATE `" . $this->prefix . "users`\n"
             . "SET `timezone`=:timezone\n"
@@ -983,14 +981,15 @@ class Database
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
-        $sth->execute(array(':timezone' => $timezone));
+        $sth->bindValue(':timezone', $timezone);
+        $sth->execute();
     }
 
     /**
      * @param int    $uid
      * @param string $language
      */
-    function set_language($uid, $language)
+    public function setLanguage($uid, $language)
     {
         $query = "UPDATE `" . $this->prefix . "users`\n"
             . "SET `language`=:language\n"
@@ -998,14 +997,15 @@ class Database
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
-        $sth->execute(array(':language' => $language));
+        $sth->bindValue(':language', $language);
+        $sth->execute();
     }
 
     /**
      * @param int $uid
      * @param int $gid
      */
-    function user_add_group($uid, $gid)
+    public function userAddGroup($uid, $gid)
     {
         $user_groups_table = $this->prefix . 'user_groups';
 
@@ -1023,7 +1023,7 @@ class Database
      * @param int $uid
      * @param int $gid
      */
-    function user_remove_group($uid, $gid)
+    public function userRemoveGroup($uid, $gid)
     {
         $user_groups_table = $this->prefix . 'user_groups';
 
@@ -1041,7 +1041,7 @@ class Database
      * @param int      $uid
      * @param string   $subject
      * @param string   $description
-     * @param int|null $catid
+     * @param int      $catid
      * @return int
      */
     public function createEvent($cid, $uid, $subject, $description, $catid)
@@ -1092,7 +1092,12 @@ class Database
         return $this->dbh->lastInsertId();
     }
 
-    function add_event_field($eid, $fid, $value)
+    /**
+     * @param int    $eid
+     * @param int    $fid
+     * @param string $value
+     */
+    public function addEventField($eid, $fid, $value)
     {
         $query = "INSERT INTO `{$this->prefix}event_fields`\n"
             . "SET `eid`=:eid, `fid`=:fid, `value`=:value";
@@ -1100,7 +1105,8 @@ class Database
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
         $sth->bindValue(':fid', $fid, \PDO::PARAM_INT);
-        $sth->execute(array(':value' => $value));
+        $sth->bindValue(':value', $value);
+        $sth->execute();
     }
 
     /**
@@ -1139,9 +1145,8 @@ class Database
      * @param string   $subject
      * @param string   $description
      * @param bool|int $catid
-     * @return bool
      */
-    function modifyEvent($eid, $subject, $description, $catid = false)
+    public function modifyEvent($eid, $subject, $description, $catid = false)
     {
 
         $query = "UPDATE `{$this->prefix}events`\n"
@@ -1161,7 +1166,9 @@ class Database
         $sth->bindValue(':description', $description);
         $sth->execute();
 
-        return $sth->rowCount() > 0;
+        if ($sth->rowCount() == 0) {
+            throw new FailedActionException();
+        }
     }
 
     /**
@@ -1169,10 +1176,10 @@ class Database
      * @param string   $name
      * @param string   $text_color
      * @param string   $bg_color
-     * @param bool|int $gid
+     * @param int      $gid
      * @return string
      */
-    function create_category($cid, $name, $text_color, $bg_color, $gid = false)
+    public function createCategory($cid, $name, $text_color, $bg_color, $gid)
     {
         $query = "INSERT INTO `{$this->prefix}categories`\n"
             . "SET `cid`=:cid, `name`=:name, `text_color`=:text_color, `bg_color`=:bg_color\n";
@@ -1185,19 +1192,27 @@ class Database
         if ($gid !== false) {
             $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
         }
-        $sth->execute(array(':name' => $name, ':text_color' => $text_color, ':bg_color' => $bg_color));
+        $sth->bindValue(':name', $name);
+        $sth->bindValue(':text_color', $text_color);
+        $sth->bindValue(':bg_color', $bg_color);
+        $sth->execute();
 
         return $this->dbh->lastInsertId();
     }
 
-    function create_group($cid, $name)
+    /**
+     * @param int    $cid
+     * @param string $name
+     */
+    public function createGroup($cid, $name)
     {
         $query = "INSERT INTO `{$this->prefix}groups`\n"
             . "SET `cid`=:cid, `name`=:name";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
-        $sth->execute(array(':name' => $name));
+        $sth->bindValue(':name', $name);
+        $sth->execute();
 
         return $this->dbh->lastInsertId();
     }
@@ -1209,7 +1224,7 @@ class Database
      * @param string $format
      * @return string
      */
-    function create_field($cid, $name, $required, $format)
+    public function createField($cid, $name, $required, $format)
     {
         if ($format === false) {
             $format_str = 'NULL';
@@ -1226,7 +1241,8 @@ class Database
         if ($format !== false) {
             $sth->bindValue(':format', $format);
         }
-        $sth->execute(array(':name' => $name));
+        $sth->bindValue(':name', $name);
+        $sth->execute();
 
         return $this->dbh->lastInsertId();
     }
@@ -1237,9 +1253,8 @@ class Database
      * @param string $text_color
      * @param string $bg_color
      * @param int    $gid
-     * @return bool
      */
-    function modify_category($catid, $name, $text_color, $bg_color, $gid)
+    public function modifyCategory($catid, $name, $text_color, $bg_color, $gid)
     {
         $query = "UPDATE `{$this->prefix}categories`\n"
             . "SET `name`=:name, `text_color`=:text_color, `bg_color`=:bg_color, `gid`=:gid\n"
@@ -1248,17 +1263,21 @@ class Database
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
         $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
-        $sth->execute(array(':name' => $name, ':text_color' => $text_color, ':bg_color' => $bg_color));
+        $sth->bindValue(':name', $name);
+        $sth->bindValue(':text_color', $text_color);
+        $sth->bindValue(':bg_color', $bg_color);
+        $sth->execute();
 
-        return $sth->rowCount() > 0;
+        if ($sth->rowCount() == 0) {
+            throw new FailedActionException();
+        }
     }
 
     /**
      * @param int    $gid
      * @param string $name
-     * @return bool
      */
-    function modify_group($gid, $name)
+    public function modifyGroup($gid, $name)
     {
         $query = "UPDATE `{$this->prefix}groups`\n"
             . "SET `name`=:name\n"
@@ -1266,9 +1285,12 @@ class Database
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
-        $sth->execute(array(':name' => $name));
+        $sth->bindValue(':name', $name);
+        $sth->execute();
 
-        return $sth->rowCount() > 0;
+        if ($sth->rowCount() > 0) {
+            throw new FailedActionException();
+        }
     }
 
     /**
@@ -1276,9 +1298,8 @@ class Database
      * @param string      $name
      * @param bool        $required
      * @param bool|string $format
-     * @return bool
      */
-    function modify_field($fid, $name, $required, $format)
+    public function modifyField($fid, $name, $required, $format)
     {
         if ($format === false) {
             $format_val = 'NULL';
@@ -1296,9 +1317,12 @@ class Database
         if ($format !== false) {
             $sth->bindValue(':format', $format);
         }
-        $sth->execute(array(':name' => $name));
+        $sth->bindValue(':name', $name);
+        $sth->execute();
 
-        return $sth->rowCount() > 0;
+        if ($sth->rowCount() == 0) {
+            throw new FailedActionException();
+        }
     }
 
     /**
@@ -1312,7 +1336,7 @@ class Database
      * @param  string             $order
      * @return Occurrence[]
      */
-    function search($cid, $keywords, \DateTimeInterface $start, \DateTimeInterface $end, $sort, $order)
+    public function search($cid, $keywords, \DateTimeInterface $start, \DateTimeInterface $end, $sort, $order)
     {
         $events_table = $this->prefix . 'events';
         $occurrences_table = $this->prefix . 'occurrences';
@@ -1364,7 +1388,7 @@ class Database
      * @param int    $uid
      * @param bool[] $perms
      */
-    function update_permissions($cid, $uid, $perms)
+    public function updatePermissions($cid, $uid, $perms)
     {
         $stmts = array();
         foreach ($perms as $name => $value) {

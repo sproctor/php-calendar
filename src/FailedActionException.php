@@ -2,12 +2,12 @@
 
 namespace PhpCalendar;
 
-class PermissionException extends \Exception
+class FailedActionException extends \Exception
 {
     public function __construct($message = null)
     {
         if ($message == null) {
-            $message = __('permission-error');
+            $message = __('failed-action-error');
         }
         parent::__construct();
     }

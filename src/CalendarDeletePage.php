@@ -33,25 +33,22 @@ class CalendarDeletePage
         $cid = $context->request->get('cid');
 
         if ($cid === null) {
-            throw new InvalidInputException(__('No calendar specified to delete.'));
+            throw new InvalidInputException(__('no-calendar-specified-error'));
         }
 
         $calendar = $context->db->getCalendar($cid);
 
         if (empty($calendar)) {
-            throw new InvalidInputException(__("Calendar does not exist") . ": $cid");
+            throw new InvalidInputException(__('invalid-calendar-id-error'));
         }
 
         if (!$calendar->canAdmin($context->user)) {
-            soft_error(__("You do not have permission to remove calendar") . ": $cid");
+            throw new PermissionException();
         }
 
-        if ($context->db->deleteCalendar($cid)) {
-            $context->addMessage(__("Removed calendar") . ": $cid");
-        } else {
-            $context->add(__("Could not remove calendar") . ": $cid");
-        }
-
+        $context->db->deleteCalendar($cid);
+        $context->addMessage(__("removed-calendar-notification", array('%title%' => $calendar->getTitle())));
+        
         return new RedirectResponse(action_url($context, 'admin'));
     }
 }

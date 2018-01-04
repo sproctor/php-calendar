@@ -137,7 +137,7 @@ class Event
     }
 
     /**
-     * @return NULL|string
+     * @return null|string
      */
     public function getTextColor()
     {
@@ -203,7 +203,7 @@ class Event
     public function getFields()
     {
         if (!isset($this->fields)) {
-            $this->fields = $this->db->get_event_fields($this->eid);
+            $this->fields = $this->db->getEventFields($this->eid);
         }
 
         return $this->fields;

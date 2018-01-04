@@ -60,7 +60,7 @@ class Calendar
     public function getTitle()
     {
         if (empty($this->title)) {
-            return __('(No title)');
+            return __('calendar-no-title');
         }
 
         return $this->title;
