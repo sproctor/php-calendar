@@ -1353,7 +1353,6 @@ class Database
         if ($start) {
             //$start_str = sqlDate($start);
             $start_date = $start->format('Y-m-d');
-            //$where .= "AND IF(`time_type`=0, `end` <= DATETIME('$start_str'), DATE(`start`) <= DATE('$start_date'))\n";
             // Search doesn't have a field for time
             $where .= "AND DATE(`start`) <= DATE('$start_date')\n";
         }
