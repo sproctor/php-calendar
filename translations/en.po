@@ -135,10 +135,6 @@ msgid "remove-button"
 msgstr "Remove"
 
 #: 
-msgid "remove-link"
-msgstr "Remove"
-
-#: 
 msgid "permanently-remove-occurrence-question"
 msgstr "Permanently remove the occurrence?"
 
@@ -388,4 +384,140 @@ msgstr "key"
 #: 
 msgid "already-updated-notification"
 msgstr "There was nothing to update."
+
+#: 
+msgid "calendars-label"
+msgstr "Calendars"
+
+#: 
+msgid "users-label"
+msgstr "Users"
+
+#: 
+msgid "calendar-settings-label"
+msgstr "Calendar settings"
+
+#: 
+msgid "calendar-users-label"
+msgstr "Calendar users"
+
+#: 
+msgid "calendar-label"
+msgstr "Calendar"
+
+#: 
+msgid "actions-label"
+msgstr "Actions"
+
+#: 
+msgid "settings-button"
+msgstr "Settings"
+
+#: 
+msgid "confirmation-required-dialog-title"
+msgstr "Confirmation required"
+
+#: 
+msgid "permanently-delete-calendar-question"
+msgstr "Permanently delete the calendar?"
+
+#: 
+msgid "default-calendar-label"
+msgstr "Default calendar"
+
+#: 
+msgid "make-default-button"
+msgstr "Make default"
+
+#: 
+msgid "create-calendar-button"
+msgstr "Create calendar"
+
+#: 
+msgid "username-label"
+msgstr "Username"
+
+#: 
+msgid "groups-label"
+msgstr "Groups"
+
+#: 
+msgid "enable-user-label"
+msgstr "Enable user"
+
+#: 
+msgid "disable-user-label"
+msgstr "Disable user"
+
+#: 
+msgid "update-calendar-button"
+msgstr "Update calendar"
+
+#: 
+msgid "user-permissions-label"
+msgstr "User permissions"
+
+#: 
+msgid "update-permissions-button"
+msgstr "Update permissions"
+
+#: 
+msgid "create-calendar-label"
+msgstr "Create calendar"
+
+#: 
+msgid "title-label"
+msgstr "Title"
+
+#: 
+msgid "time-label"
+msgstr "Time"
+
+#: 
+msgid "description-label"
+msgstr "Description"
+
+#: 
+msgid "delete-events-button"
+msgstr "Delete events"
+
+#: 
+msgid "permanently-delete-selected-events-question"
+msgstr "Permanently delete the selected events?"
+
+#: 
+msgid "no-events-message"
+msgstr "No events selected."
+
+#: 
+msgid "repeat-every-unit-question"
+msgstr "Repeat every how many %units%?"
+
+#: 
+msgid "days"
+msgstr "days"
+
+#: 
+msgid "weeks"
+msgstr "weeks"
+
+#: 
+msgid "months"
+msgstr "months"
+
+#: 
+msgid "years"
+msgstr "years"
+
+#: 
+msgid "log-in-label"
+msgstr "Log in"
+
+#: 
+msgid "password-label"
+msgstr "Password"
+
+#: 
+msgid "log-in-button"
+msgstr "Log in"
 
