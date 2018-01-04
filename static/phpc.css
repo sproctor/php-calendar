@@ -40,8 +40,13 @@ col.wnumber {
   height: 8rem;
 }
 
+.phpc-month-view th {
+  white-space: nowrap;
+}
+
 .phpc-day-number {
   padding: .25rem;
+  white-space: nowrap;
 }
 
 .occurrence-list {
