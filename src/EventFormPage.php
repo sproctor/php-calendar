@@ -254,7 +254,7 @@ class EventFormPage extends Page
             }
         }
         $context->addMessage(__($modify ? "modified-event-notification" : "created-event-notification"));
-        return new RedirectResponse(action_event_url($context, 'display_event', $eid));
+        return new RedirectResponse($context->createEventUrl('display_event', $eid));
     }
 }
 

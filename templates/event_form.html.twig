@@ -68,7 +68,7 @@
           // invalid option
       }
       $repeat_data.show();
-      $('label[for="form_frequency"]').html({{ "repeat-every-unit-question"|trans({"%unit%": unit}) }});
+      $('label[for="form_frequency"]').html("{{ "repeat-every-unit-question"|trans({"%unit%": unit}) }}");
       $repeat_data.find("input").prop('disabled', false);
     });
   </script>

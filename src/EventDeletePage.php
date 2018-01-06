@@ -62,6 +62,6 @@ class EventDeletePage
             ));
         }
         
-        return new RedirectResponse(action_url($context));
+        return new RedirectResponse($context->createUrl());
     }
 }

@@ -49,6 +49,6 @@ class CalendarDeletePage
         $context->db->deleteCalendar($cid);
         $context->addMessage(__("removed-calendar-notification", array('%title%' => $calendar->getTitle())));
         
-        return new RedirectResponse(action_url($context, 'admin'));
+        return new RedirectResponse($context->createUrl('admin'));
     }
 }

@@ -227,71 +227,6 @@ function year_of_week_of_year(\DateTimeInterface $date)
 }
 
 /**
- * @param Context            $context
- * @param string             $action
- * @param \DateTimeInterface $date
- * @return string
- */
-function action_date_url(Context $context, $action, \DateTimeInterface $date)
-{
-    return action_url(
-        $context,
-        $action,
-        ['year' => $date->format('Y'), 'month' => $date->format('n'), 'day' => $date->format('j')]
-    );
-}
-
-/**
- * @param Context $context
- * @param string  $action
- * @param string  $eid
- * @return string
- */
-function action_event_url(Context $context, $action, $eid)
-{
-    return action_url($context, $action, array("eid" => $eid));
-}
-
-/**
- * @param Context $context
- * @param string  $action
- * @param string  $eid
- * @return string
- */
-function action_occurrence_url(Context $context, $action, $oid)
-{
-    return action_url($context, $action, array("oid" => $oid));
-}
-
-/**
- * @param Context $context
- * @param string|null $action
- * @param string[] $parameters
- * @param string|null $hash
- * @return string
- */
-function action_url(Context $context, $action = null, $parameters = array(), $hash = null)
-{
-    if (!empty($context->calendar)) {
-        $parameters['phpcid'] = $context->calendar->getCid();
-    }
-    $url = $context->request->getScriptName();
-    $first = true;
-    if ($action !== null) {
-        $url .= "?action={$action}";
-        $first = false;
-    }
-    foreach ($parameters as $key => $value) {
-        $url .= ($first ? '?' : '&')."$key=$value";
-        $first = false;
-    }
-    if ($hash !== null) {
-        $url .= '#'.$hash;
-    }
-    return $url;
-}
-
-/**
  * @param Request $request
  * @return string
  */
@@ -316,7 +251,7 @@ function append_parameter_url(Request $request, $parameter)
  */
 function menu_item(Context $context, $action, $text)
 {
-    $url = htmlentities(action_url($context, $action));
+    $url = htmlentities($context->createUrl($action));
     $active = $context->getAction() == $action ? " active" : "";
     return "<li class=\"nav-item$active\"><a class=\"nav-link\" href=\"$url\">$text</a></li>";
 }
@@ -332,7 +267,7 @@ function create_dropdown($title, $values)
     ."    <a class=\"nav-link dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">$title</a>\n"
     ."    <div class=\"dropdown-menu\">\n";
     foreach ($values as $key => $value) {
-        $output .= "        <a class=\"dropdown-item\" href=\"$key\">$value</a>\n";
+        $output .= "        <a class=\"dropdown-item\" href=\"$value\">$key</a>\n";
     }
     return $output . "    </div></div>";
 }
@@ -435,11 +370,13 @@ function is_today(\DateTimeInterface $date)
 function normalize_date(&$month, &$day, &$year)
 {
     if ($month < 1) {
-        $month = 12;
+        $month += 12;
         $year--;
+        normalize_date($month, $day, $year);
     } elseif ($month > 12) {
-        $month = 1;
+        $month -= 12;
         $year++;
+        normalize_date($month, $day, $year);
     }
     if ($day <= 0) {
         $month--;
@@ -448,6 +385,7 @@ function normalize_date(&$month, &$day, &$year)
             $year--;
         }
         $day += days_in_month($month, $year);
+        normalize_date($month, $day, $year);
     } elseif ($day > days_in_month($month, $year)) {
         $day -= days_in_month($month, $year);
         $month++;
@@ -455,6 +393,7 @@ function normalize_date(&$month, &$day, &$year)
             $month -= 12;
             $year++;
         }
+        normalize_date($month, $day, $year);
     }
 }
 

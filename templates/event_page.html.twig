@@ -16,9 +16,9 @@
 </div>
 
 <nav class="nav nav-pills">
-  <a class="nav-item nav-link" href="{{ action_event_url(context, 'event_form', event.getEid) }}">{{ "modify-menu-link"|trans }}</a>
-  <a class="nav-item nav-link" href="{{ action_event_url(context, 'occur_form', event.getEid) }}">{{ "add-occurrence-menu-link"|trans }}</a>
-  <a class="nav-item nav-link" href="{{ action_event_url(context, 'event_delete', event.getEid) }}"
+  <a class="nav-item nav-link" href="{{ context.createEventUrl('event_form', event.getEid) }}">{{ "modify-menu-link"|trans }}</a>
+  <a class="nav-item nav-link" href="{{ context.createEventUrl('occur_form', event.getEid) }}">{{ "add-occurrence-menu-link"|trans }}</a>
+  <a class="nav-item nav-link" href="{{ context.createEventUrl('event_delete', event.getEid) }}"
     data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}" data-button-text="{{ "delete-button"|trans }}"
     data-content="{{ "permanetly-delete-event-question"|trans }}">{{ "delete-menu-link"|trans }}</a>
 </nav>
@@ -43,8 +43,8 @@
 	  {% for occurrence in event.getOccurrences() %}
 			<li class="list-group-item">{{ occurrence.getDatetimeString }}
 			  {% if event.canModify(user) %}
-				  <a href="{{ action_occurrence_url(context, 'occur_form', occurrence.getOid) }}">{{ "edit-link"|trans }}</a>
-				  <a href="{{ action_occurrence_url(context, 'occurrence_delete', occurrence.getOid) }}"
+				  <a href="{{ context.createOccurrenceUrl('occur_form', occurrence.getOid) }}">{{ "edit-link"|trans }}</a>
+				  <a href="{{ context.createOccurrenceUrl('occurrence_delete', occurrence.getOid) }}"
             data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}" data-button-text="{{ "remove-button"|trans }}"
             data-content="{{ "permanently-remove-occurrence-question"|trans }}">{{ "remove-button"|trans }}</a>
         {% endif %}

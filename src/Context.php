@@ -205,7 +205,7 @@ class Context
                 function (\DateTimeInterface $date, Context $context) {
                     $week = week_of_year($date);
                     $year = year_of_week_of_year($date);
-                    $url = action_url($context, 'display_week', ['week' => $week, 'year' => $year]);
+                    $url = $this->createUrl('display_week', ['week' => $week, 'year' => $year]);
                     return "<a href=\"$url\">$week</a>";
                 },
                 array('is_safe' => array('html'))
@@ -232,13 +232,6 @@ class Context
             )
         );
         $this->twig->addFunction(new \Twig_SimpleFunction('is_today', '\PhpCalendar\is_today'));
-        $this->twig->addFunction(new \Twig_SimpleFunction('action_date_url', '\PhpCalendar\action_date_url'));
-        $this->twig->addFunction(new \Twig_SimpleFunction('action_url', '\PhpCalendar\action_url'));
-        $this->twig->addFunction(new \Twig_SimpleFunction('action_event_url', '\PhpCalendar\action_event_url'));
-        $this->twig->addFunction(new \Twig_SimpleFunction(
-            'action_occurrence_url',
-            '\PhpCalendar\action_occurrence_url'
-        ));
         $this->twig->addFunction(new \Twig_SimpleFunction('append_parameter_url', '\PhpCalendar\append_parameter_url'));
         $this->twig->addFunction(
             new \Twig_SimpleFunction(
@@ -542,6 +535,8 @@ class Context
                 return new MonthPage;
             case 'display_day':
                 return new DayPage;
+            case 'display_week':
+                return new WeekPage;
             case 'login':
                 return new LoginPage;
             case 'logout':
@@ -561,5 +556,65 @@ class Context
             default:
                 throw new InvalidInputException(__('invalid-action-error'));
         }
+    }
+
+    /**
+     * @param string             $action
+     * @param \DateTimeInterface $date
+     * @return string
+     */
+    public function createDateUrl($action, \DateTimeInterface $date)
+    {
+        return $this->createUrl(
+            $action,
+            ['year' => $date->format('Y'), 'month' => $date->format('n'), 'day' => $date->format('j')]
+        );
+    }
+
+    /**
+     * @param string  $action
+     * @param string  $eid
+     * @return string
+     */
+    public function createEventUrl($action, $eid)
+    {
+        return $this->createUrl($action, array("eid" => $eid));
+    }
+
+    /**
+     * @param string  $action
+     * @param string  $eid
+     * @return string
+     */
+    public function createOccurrenceUrl($action, $oid)
+    {
+        return $this->createUrl($action, array("oid" => $oid));
+    }
+
+    /**
+     * @param string|null $action
+     * @param string[] $parameters
+     * @param string|null $hash
+     * @return string
+     */
+    public function createUrl($action = null, $parameters = array(), $hash = null)
+    {
+        if (!empty($this->calendar)) {
+            $parameters['phpcid'] = $this->calendar->getCid();
+        }
+        $url = $this->request->getScriptName();
+        $first = true;
+        if ($action !== null) {
+            $url .= "?action={$action}";
+            $first = false;
+        }
+        foreach ($parameters as $key => $value) {
+            $url .= ($first ? '?' : '&')."$key=$value";
+            $first = false;
+        }
+        if ($hash !== null) {
+            $url .= '#'.$hash;
+        }
+        return $url;
     }
 }
