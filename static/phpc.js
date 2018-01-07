@@ -30,8 +30,43 @@ $(document).ready(function(){
   // Summary init
   $('[data-toggle="popover"]').popover();
 
-  // Enable confirmation dialogues
-  $('[data-toggle=confirmation]').click(function(e) {
+  // Enable confirmation dialogues for links
+  $('button[data-toggle=confirmation]').click(function(e) {
+    var title = $(this).attr('data-title');
+    var content = $(this).attr('data-content');
+    var okButtonTxt = $(this).attr('data-button-text');
+    var confirmModal = 
+      $('<div class="modal fade">' +    
+          '<div class="modal-dialog" role="document">' +
+            '<div class="modal-content">' +
+              '<div class="modal-header">' +
+                '<h5 class="modal-title">' + title + '</h5>' +
+                '<button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
+                  '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+              '</div>' +
+              '<div class="modal-body">' +
+                '<p>' + content + '</p>' +
+              '</div>' +
+              '<div class="modal-footer">' +
+                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>' + 
+                '<button id="confirmation-button" type="button" class="btn btn-primary">' + okButtonTxt + '</a>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>');
+    confirmModal.modal();
+    form = $(this).parents('form');
+    confirmModal.on('shown.bs.modal', function() {
+      $("#confirmation-button").click(function() {
+        $(form).submit();
+      });
+    });
+    e.preventDefault();
+  });
+
+  // Enable confirmation dialogues for links
+  $('a[data-toggle=confirmation]').click(function(e) {
     var title = $(this).attr('data-title');
     var href = $(this).attr('href');
     var content = $(this).attr('data-content');
