@@ -41,6 +41,6 @@ class UpdatePage extends Page
         if (!$context->db->update()) {
             $context->addMessage(__('already-updated-notification'));
         }
-        return new RedirectResponse(action_url($context));
+        return new RedirectResponse($context->createUrl());
     }
 }

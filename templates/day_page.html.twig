@@ -2,9 +2,9 @@
 
 {% block body %}
   <h3>
-    <a href="{{ action_date_url(context, 'display_day', yesterday) }}"><i class="fas fa-angle-left"></i></a>
+    <a href="{{ context.createDateUrl('display_day', yesterday) }}"><i class="fas fa-angle-left"></i></a>
     {{ context.getDate|localizeddate('long', 'none') }}
-    <a href="{{ action_date_url(context, 'display_day', tomorrow) }}"><i class="fas fa-angle-right"></i></a>
+    <a href="{{ context.createDateUrl('display_day', tomorrow) }}"><i class="fas fa-angle-right"></i></a>
   </h3>
   {% if occurrences|length > 0 %}
     <form>
@@ -25,9 +25,9 @@
             {% set can_modify = true %}
             <input name="eid[]" type="checkbox" class="form-check-input" id="eid_{{ occurrence.getEid }}">
             <label class="form-check-label" for="eid_{{ occurrence.getEid }}">
-            {% endif %}<a href="{{ action_event_url(context, 'display_event', occurrence.getEid) }}">{{ occurrence.getSubject }}</a>
+            {% endif %}<a href="{{ context.createEventUrl('display_event', occurrence.getEid) }}">{{ occurrence.getSubject }}</a>
             {% if occurrence.canModify(user) %}
-            </label></div> <a href="{{ action_event_url(context, 'event_form', occurrence.getEid) }}">{{ "modify-label"|trans }}</a>
+            </label></div> <a href="{{ context.createEventUrl('event_form', occurrence.getEid) }}">{{ "modify-label"|trans }}</a>
             {% endif %}
           </td>
           {% set textcolor = occurrence.getTextColor %}

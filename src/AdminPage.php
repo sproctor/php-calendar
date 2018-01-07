@@ -89,6 +89,6 @@ class AdminPage extends Page
 
         $context->addMessage(__('calendar-updated-notification'));
 
-        return new RedirectResponse(action_url($context, 'admin', array(), 'calendar'));
+        return new RedirectResponse($context->createUrl('admin', array(), 'calendar'));
     }
 }

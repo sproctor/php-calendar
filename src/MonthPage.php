@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016 Sean Proctor
+ * Copyright Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,18 +33,17 @@ class MonthPage extends Page
      */
     public function action(Context $context)
     {
-        $cid = $context->calendar->getCid();
         $month = $context->getMonth();
         $year = $context->getYear();
-
+        
         $months = array();
         for ($i = 1; $i <= 12; $i++) {
-            $months[$context->request->getScriptName()."?action=display_month&amp;phpcid=$cid&amp;month=$i&amp;year=$year"] =
-            month_name(new \DateTime(sprintf("%04d-%02d", $year, $i)));
+            $months[month_name(new \DateTime(sprintf("%04d-%02d", $year, $i)))] =
+                $context->createUrl('display_month', ['year' => $year, 'month' => $i]);
         }
         $years = array();
         for ($i = $year - 5; $i <= $year + 5; $i++) {
-            $years[$context->request->getScriptName()."?action=display_month&amp;phpcid=$cid&amp;month=$month&amp;year=$i"] = $i;
+            $years[$i] = $context->createUrl('display_month', ['month' => $month, 'year' => $i]);
         }
         $next_month = $month + 1;
         $next_year = $year;
@@ -68,12 +67,11 @@ class MonthPage extends Page
         $to_date = create_datetime($month, $last_day + 1, $year);
 
         $template_variables = array();
-        $template_variables['cid'] = $cid;
-        $template_variables['prev_month'] = $prev_month;
-        $template_variables['prev_year'] = $prev_year;
-        $template_variables['next_month'] = $next_month;
-        $template_variables['next_year'] = $next_year;
-        $template_variables['date'] = new \DateTime(sprintf("%04d-%02d", $year, $month));
+        $template_variables['prev_month_url'] =
+            $context->createUrl('display_month', ['year' => $prev_year, 'month' => $prev_month]);
+        $template_variables['next_month_url'] =
+            $context->createUrl('display_month', ['year' => $next_year, 'month' => $next_month]);
+        $template_variables['date'] = $context->getDate();
         $template_variables['months'] = $months;
         $template_variables['year'] = $year;
         $template_variables['years'] = $years;
