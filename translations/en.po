@@ -266,7 +266,7 @@ msgstr "No event specified."
 
 #. %subject% for "subject" in singular or "subject1", "subject2", "subject3" in plural
 #: 
-msgid "{1} removed-event-notification|]1,Inf] removed-events-notification"
+msgid "removed-events-notification"
 msgstr "{1} Removed event %subject%.|]1,Inf] Removed events %subject%."
 
 #: 
