@@ -229,7 +229,7 @@ msgid "invalid-action-error"
 msgstr ""
 
 #: 
-msgid "calendar-created-notice"
+msgid "calendar-created-notification"
 msgstr ""
 
 #. use %name% for type of value that doesn't exist
@@ -267,7 +267,7 @@ msgid "no-event-specified-error"
 msgstr ""
 
 #: 
-msgid "removed-event-notice"
+msgid "removed-event-noticification"
 msgid_plural "removed-events-notice"
 msgstr[0] ""
 msgstr[1] ""
@@ -520,5 +520,14 @@ msgstr ""
 
 #: 
 msgid "log-in-button"
+msgstr ""
+
+#: 
+msgid "week"
+msgstr ""
+
+#. %week% for week and %year% for year
+#: 
+msgid "week-of-year-title"
 msgstr ""
 
