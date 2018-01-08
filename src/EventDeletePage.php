@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ class EventDeletePage
 
         if (sizeof($removed_events) > 0) {
             $context->addMessage(transchoice(
-                '{1} removed-event-notification|]1,Inf] removed-events-notification',
+                'removed-events-notification',
                 sizeof($removed_events),
                 ['%subject%' => '"'.implode('", "', $removed_events).'"']
             ));
