@@ -268,8 +268,8 @@ msgstr "No event specified."
 
 #: 
 #, fuzzy
-msgid "removed-event-noticification"
-msgid_plural "removed-events-notice"
+msgid "removed-event-notification"
+msgid_plural "removed-events-notification"
 msgstr[0] "Removed event \"%subject%\"."
 msgstr[1] "Removed events \"%subject%\"."
 
