@@ -227,7 +227,6 @@ msgid "invalid-action-error"
 msgstr "Invalid action."
 
 #: 
-#, fuzzy
 msgid "calendar-created-notification"
 msgstr "A new calendar has been created."
 
@@ -267,8 +266,7 @@ msgstr "No event specified."
 
 #. %subject% for "subject" in singular or "subject1", "subject2", "subject3" in plural
 #: 
-#, fuzzy
-msgid "{1} removed-event-notification|]1,inf] removed-events-notification"
+msgid "{1} removed-event-notification|]1,Inf] removed-events-notification"
 msgstr "{1} Removed event %subject%.|]1,inf] Removed events %subject%."
 
 #: 
