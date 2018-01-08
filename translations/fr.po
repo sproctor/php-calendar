@@ -6,7 +6,6 @@ msgstr ""
 "X-Generator: POEditor.com\n"
 "Project-Id-Version: PHP-Calendar\n"
 "Language: fr\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. Search link in main navbar
 #: 
@@ -266,11 +265,10 @@ msgstr ""
 msgid "no-event-specified-error"
 msgstr ""
 
+#. %subject% for "subject" in singular or "subject1", "subject2", "subject3" in plural
 #: 
-msgid "removed-event-noticification"
-msgid_plural "removed-events-notice"
-msgstr[0] ""
-msgstr[1] ""
+msgid "{1} removed-event-notification|]1,Inf] removed-events-notification"
+msgstr ""
 
 #: 
 msgid "from-label"
