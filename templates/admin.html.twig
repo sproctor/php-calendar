@@ -43,7 +43,7 @@
         {% endfor %}
         </tbody>
       </table>
-      <a class="btn btn-primary" href="{{ script }}?action=calendar_create"><i class="fas fa-plus-square"></i> {{ "create-calendar-button"|trans }}</a>
+      <a class="btn btn-primary" href="{{ context.createUrl('create_calendar') }}"><i class="fas fa-plus-square"></i> {{ "create-calendar-button"|trans }}</a>
     </div>
 
     <div role="tabpanel" class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
@@ -73,6 +73,7 @@
         {% endfor %}
         </tbody>
       </table>
+      <a class="btn btn-primary" href="{{ context.createUrl('create_user') }}"><i class="fas fa-plus-square"></i> {{ "create-user-button"|trans }}</a>
     </div>
 
     <div role="tabpanel" class="tab-pane fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
@@ -92,9 +93,7 @@
             {{ form_label(user_field) }}
             {% for perm in user_field.children %}
               <div class="form-check form-check-inline">
-                {{ form_label(perm) }}
-                {{ form_widget(perm) }}
-                {{ form_errors(perm) }}
+                {{ form_row(perm) }}
               </div>
             {% endfor %}
             {{ form_errors(user_field) }}
@@ -108,7 +107,6 @@
   
 
   <script>
-    console.log("hash " + window.location.hash);
     $('.nav-tabs a[href="' + window.location.hash + '"]').tab('show');
   </script>
 {% endblock %}

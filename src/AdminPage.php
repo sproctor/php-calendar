@@ -42,7 +42,7 @@ class AdminPage extends Page
         $user_form = $this->createUserForm($context, $context->calendar);
         $user_form->handleRequest($context->request);
         if ($user_form->isSubmitted() && $user_form->isValid()) {
-            //return $this->processCalendarForm($context, $calendar_form->getData());
+            return $this->processUserForm($context, $user_form->getData());
         }
 
         return new Response(
@@ -62,14 +62,18 @@ class AdminPage extends Page
     {
         $builder = $context->getFormFactory()->createBuilder();
 
-        foreach ($context->db->getUsersWithPermissions($calendar->getCid()) as $user) {
+        foreach ($context->db->getUsersPermissions($calendar->getCid()) as $user) {
             $uid = $user['uid'];
+            /*$data = [
+                'read' => $user['read'],
+                'write' => $user['write'],
+                'modify' => $user['modify'],
+                'admin' => $user['admin']
+            ];*/
             $builder->add(
-                $builder->create("uid$uid", FormType::class, array('inherit_data' => true, 'label' => $user['username']))
-                ->add('read', CheckboxType::class, array('label' => __('read-label'), 'data' => $user['read'], 'label_attr' => array('class' => 'checkbox-inline')))
-                ->add('write', CheckboxType::class, array('label' => __('write-label'), 'data' => $user['write'], 'label_attr' => array('class' => 'checkbox-inline')))
-                ->add('modify', CheckboxType::class, array('label' => __('modify-label'), 'data' => $user['modify']))
-                ->add('admin', CheckboxType::class, array('label' => __('admin-label'), 'data' => $user['admin']))
+                "user_$uid",
+                UserPermissionsType::class,
+                ['data' => $user, 'label' => $context->db->getUser($uid)->getUsername()]
             );
         }
 
@@ -90,5 +94,21 @@ class AdminPage extends Page
         $context->addMessage(__('calendar-updated-notification'));
 
         return new RedirectResponse($context->createUrl('admin', array(), 'calendar'));
+    }
+
+    /**
+     * @param Context $context
+     * @param array $data
+     * @return Response
+     */
+    private function processUserForm(Context $context, $data)
+    {
+        foreach ($data as $user) {
+            $context->db->updatePermissions($context->calendar->getCid(), $user['uid'], $user);
+        }
+
+        $context->addMessage(__('users-updated-notification'));
+
+        return new RedirectResponse($context->createUrl('admin', array(), 'calendar-users'));
     }
 }

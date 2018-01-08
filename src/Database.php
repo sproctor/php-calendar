@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2018 Sean Proctor
+ * Copyright Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ class Database
         // TODO: Make these const
         $this->event_columns = "`{$this->prefix}categories`.`gid`, `{$this->prefix}events`.`subject`, "
             . "`{$this->prefix}events`.`description`, `{$this->prefix}events`.`owner`, `{$this->prefix}events`.`eid`, "
-            . "`{$this->prefix}events`.`cid`, `{$this->prefix}events`.`readonly`, `{$this->prefix}events`.`catid`, "
+            . "`{$this->prefix}events`.`cid`, `{$this->prefix}events`.`catid`, "
             . "UNIX_TIMESTAMP(`ctime`) AS `ctime`, UNIX_TIMESTAMP(`mtime`) AS `mtime`";
 
         $this->occurrence_columns = $this->event_columns . ", `time_type`, `oid`, `start`, `end`";
@@ -251,8 +251,28 @@ class Database
     }
 
     /**
+     * @return array[]
+     */
+    public function getGroups()
+    {
+        $groups_table = $this->prefix . 'groups';
+
+        $query = "SELECT `gid`, `name`, `cid`\n"
+            . "FROM `$groups_table`";
+
+        $sth = $this->dbh->prepare($query);
+        $sth->execute();
+
+        $groups = array();
+        while ($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
+            $groups[] = $row;
+        }
+        return $groups;
+    }
+
+    /**
      * @param int $cid
-     * @return string[][]
+     * @return array[]
      */
     public function getGroupsForCalendar($cid)
     {
@@ -835,15 +855,12 @@ class Database
      * @param int $cid
      * @return array[]
      */
-    public function getUsersWithPermissions($cid)
+    public function getUsersPermissions($cid)
     {
         $permissions_table = $this->prefix . "permissions";
 
-        $query = "SELECT *, `permissions`.`admin` AS `calendar_admin`\n"
-            . "FROM `" . $this->prefix . "users`\n"
-            . "LEFT JOIN (SELECT * FROM `$permissions_table`\n"
-            . "	WHERE `cid`=:cid) AS `permissions`\n"
-            . "USING (`uid`)\n";
+        $query = "SELECT * FROM `$permissions_table`\n"
+            . "	WHERE `cid`=:cid";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
@@ -851,6 +868,13 @@ class Database
 
         $users = array();
         while ($user = $sth->fetch(\PDO::FETCH_ASSOC)) {
+            foreach ($user as $key => $val) {
+                if ($key == 'uid') {
+                    $user[$key] = $val;
+                } else {
+                    $user[$key] = (bool) $val;
+                }
+            }
             $users[] = $user;
         }
         return $users;
@@ -1047,10 +1071,8 @@ class Database
     public function createEvent($cid, $uid, $subject, $description, $catid)
     {
         $query = "INSERT INTO `" . $this->prefix . "events`\n"
-            . "(`cid`, `owner`, `subject`, `description`, "
-            . "`readonly`, `catid`)\n"
-            . "VALUES (:cid, :uid, :subject, :description, "
-            . "0, :catid)";
+            . "(`cid`, `owner`, `subject`, `description`, `catid`)\n"
+            . "VALUES (:cid, :uid, :subject, :description, :catid)";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
@@ -1390,8 +1412,8 @@ class Database
     public function updatePermissions($cid, $uid, $perms)
     {
         $stmts = array();
-        foreach ($perms as $name => $value) {
-            $stmts[] = "`$name`=" . asbool($value);
+        foreach (['read', 'write', 'modify', 'admin'] as $name) {
+            $stmts[] = "`$name`=" . asbool($perms[$name]);
         }
         $perm_str = implode(', ', $stmts);
 

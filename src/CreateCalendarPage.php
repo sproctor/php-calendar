@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2017 Sean Proctor
+ * Copyright Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class CreateCalendarPage extends Page
 {
     /**
-     * Display event form or submit event
+     * Display calendar form or submit calendar
      *
      * @param  Context $context
      * @return Response
@@ -61,6 +61,6 @@ class CreateCalendarPage extends Page
 
         $context->addMessage(__('calendar-created-notification'));
 
-        return new RedirectResponse(action_url($context, 'admin'));
+        return new RedirectResponse($context->createUrl('admin'));
     }
 }

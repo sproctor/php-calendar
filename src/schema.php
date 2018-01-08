@@ -112,7 +112,6 @@ function phpc_events_table($prefix)
     $table->addColumn('owner', "int(11) unsigned NOT NULL DEFAULT '0'");
     $table->addColumn('subject', "varchar(255) COLLATE utf8_unicode_ci NOT NULL");
     $table->addColumn('description', "text COLLATE utf8_unicode_ci NOT NULL");
-    $table->addColumn('readonly', "tinyint(1) NOT NULL DEFAULT '0'");
     $table->addColumn('catid', "int(11) unsigned");
     $table->addColumn('ctime', "timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP");
     $table->addColumn('mtime', "timestamp NULL");
@@ -159,7 +158,6 @@ function phpc_permissions_table($prefix)
     $table->addColumn('uid', 'int(11) unsigned NOT NULL');
     $table->addColumn('read', 'tinyint(1) NOT NULL');
     $table->addColumn('write', 'tinyint(1) NOT NULL');
-    $table->addColumn('readonly', 'tinyint(1) NOT NULL');
     $table->addColumn('modify', 'tinyint(1) NOT NULL');
     $table->addColumn('admin', 'tinyint(1) NOT NULL');
 

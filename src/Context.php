@@ -567,6 +567,8 @@ class Context
                 return new CalendarDeletePage;
             case 'default_calendar':
                 return new DefaultCalendarPage;
+            case 'create_user':
+                return new CreateUserPage;
             case 'update':
                 return new UpdatePage;
             default:
