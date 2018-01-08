@@ -20,7 +20,7 @@
   <a class="nav-item nav-link" href="{{ context.createEventUrl('occur_form', event.getEid) }}">{{ "add-occurrence-menu-link"|trans }}</a>
   <a class="nav-item nav-link" href="{{ context.createEventUrl('event_delete', event.getEid) }}"
     data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}" data-button-text="{{ "delete-button"|trans }}"
-    data-content="{{ "permanetly-delete-event-question"|trans }}">{{ "delete-menu-link"|trans }}</a>
+    data-content="{{ "permanently-delete-event-question"|trans }}">{{ "delete-menu-link"|trans }}</a>
 </nav>
 
 {% set fields = event.getFields %}

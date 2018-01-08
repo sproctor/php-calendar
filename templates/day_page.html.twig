@@ -7,7 +7,7 @@
     <a href="{{ context.createDateUrl('display_day', tomorrow) }}"><i class="fas fa-angle-right"></i></a>
   </h3>
   {% if occurrences|length > 0 %}
-    <form>
+    <form name="form" action="{{ context.createUrl('event_delete') }}" method="post">
     {% set can_modify = false %}
     <table class="table">
       <thead>
@@ -23,7 +23,7 @@
         <tr>
           <td>{% if occurrence.canModify(user) %}<div class="form-check form-check-inline">
             {% set can_modify = true %}
-            <input name="eid[]" type="checkbox" class="form-check-input" id="eid_{{ occurrence.getEid }}">
+            <input name="eid[]" type="checkbox" class="form-check-input" id="eid_{{ occurrence.getEid }}" value="{{ occurrence.getEid }}">
             <label class="form-check-label" for="eid_{{ occurrence.getEid }}">
             {% endif %}<a href="{{ context.createEventUrl('display_event', occurrence.getEid) }}">{{ occurrence.getSubject }}</a>
             {% if occurrence.canModify(user) %}

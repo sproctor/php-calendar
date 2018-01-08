@@ -36,6 +36,7 @@ use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\MessageSelector;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Symfony\Component\Translation\Loader\MoFileLoader;
 use Symfony\Component\Validator\Validation;
 
@@ -418,31 +419,46 @@ class Context
     private function initLocale(Request $request)
     {
         // setup translation stuff
-        $lang = $this->user->getLocale();
-        if (empty($lang)) {
-            $lang = $this->calendar->getLocale();
-            if (empty($lang)) {
-                $lang = substr($request->getLocale(), 0, 2);
-                if (empty($lang)) {
-                    $lang = 'en';
+        $locale = $this->user->getLocale();
+        if (empty($locale)) {
+            $locale = $this->calendar->getLocale();
+            if (empty($locale)) {
+                // TODO search through valid locales for a match
+                $locale = $request->getLocale();
+                if (empty($locale)) {
+                    $locale = 'en';
                 }
             }
         }
 
-        // Require a 2 letter language
-        if (!preg_match('/^\w+$/', $lang, $matches)) {
-            $lang = 'en';
+        // default to 'en' on invalid locale
+        if (1 !== preg_match('/^[a-z0-9@_\\.\\-]*$/i', $locale)) {
+            $locale = 'en';
         }
 
-        \Locale::setDefault($lang);
+        \Locale::setDefault($locale);
 
-        $this->translator = new Translator($lang, new MessageSelector());
+        $this->translator = new Translator($locale, new MessageSelector());
         $this->translator->addLoader('mo', new MoFileLoader());
-        if ($lang != 'en') {
-            $this->translator->addResource('mo', __DIR__ . "/../translations/$lang.mo", $lang);
+        if ($locale != 'en') {
+            $this->addLocale($locale);
         }
-        $this->translator->addResource('mo', __DIR__ . "/../translations/en.mo", "en");
+        $this->addLocale('en');
         $this->translator->setFallbackLocales(array('en'));
+    }
+
+    /**
+     * Loads a new locale
+     *
+     * @param string $locale
+     */
+    private function addLocale($locale)
+    {
+        try {
+            $this->translator->addResource('mo', __DIR__ . "/../translations/$locale.mo", $locale);
+        } catch (NotFoundResourceException $e) {
+            $this->addMessage("Could not find a translation for locale \"$locale\".");
+        }
     }
 
     public function getFormFactory()

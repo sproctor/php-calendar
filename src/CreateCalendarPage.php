@@ -59,7 +59,7 @@ class CreateCalendarPage extends Page
             $context->db->setCalendarConfig($cid, $key, $value);
         }
 
-        $context->addMessage(__('calendar-created-notice'));
+        $context->addMessage(__('calendar-created-notification'));
 
         return new RedirectResponse(action_url($context, 'admin'));
     }

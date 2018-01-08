@@ -67,7 +67,7 @@ function transchoice($id, $number, $parameters = array(), $domain = null, $local
         return $id;
     }
 
-    return $context->translator->trans($id, $number, $parameters, $domain, $locale);
+    return $context->translator->transChoice($id, $number, $parameters, $domain, $locale);
 }
 
 /**

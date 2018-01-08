@@ -56,9 +56,9 @@ class EventDeletePage
 
         if (sizeof($removed_events) > 0) {
             $context->addMessage(transchoice(
-                'removed-event-notification|removed-events-notification',
+                '{1} removed-event-notification|]1,Inf] removed-events-notification',
                 sizeof($removed_events),
-                ['%subject%' => implode(', ', $removed_events)]
+                ['%subject%' => '"'.implode('", "', $removed_events).'"']
             ));
         }
         
