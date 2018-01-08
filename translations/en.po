@@ -6,7 +6,6 @@ msgstr ""
 "X-Generator: POEditor.com\n"
 "Project-Id-Version: PHP-Calendar\n"
 "Language: en\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Search link in main navbar
 #: 
@@ -266,12 +265,11 @@ msgstr "(No subject)"
 msgid "no-event-specified-error"
 msgstr "No event specified."
 
+#. %subject% for "subject" in singular or "subject1", "subject2", "subject3" in plural
 #: 
 #, fuzzy
-msgid "removed-event-notification"
-msgid_plural "removed-events-notification"
-msgstr[0] "Removed event \"%subject%\"."
-msgstr[1] "Removed events \"%subject%\"."
+msgid "{1} removed-event-notification|]1,inf] removed-events-notification"
+msgstr "{1} Removed event %subject%.|]1,inf] Removed events %subject%."
 
 #: 
 msgid "from-label"
