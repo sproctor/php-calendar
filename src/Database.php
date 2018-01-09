@@ -1350,15 +1350,15 @@ class Database
     /**
      * $sort and $order must be checked
      *
-     * @param  int                $cid
-     * @param  string[]           $keywords
-     * @param  \DateTimeInterface $start
-     * @param  \DateTimeInterface $end
-     * @param  string             $sort
-     * @param  string             $order
+     * @param  int                     $cid
+     * @param  string[]                $keywords
+     * @param  \DateTimeInterface|null $start
+     * @param  \DateTimeInterface|null $end
+     * @param  string                  $sort
+     * @param  string                  $order
      * @return Occurrence[]
      */
-    public function search($cid, $keywords, \DateTimeInterface $start, \DateTimeInterface $end, $sort, $order)
+    public function search($cid, $keywords, $start, $end, $sort, $order)
     {
         $events_table = $this->prefix . 'events';
         $occurrences_table = $this->prefix . 'occurrences';
@@ -1367,8 +1367,8 @@ class Database
 
         $words = array();
         foreach ($keywords as $unsafe_keyword) {
-            $keyword = $this->dbh->quote($unsafe_keyword);
-            $words[] = "(`subject` LIKE '%$keyword%' OR `description` LIKE '%$keyword%')\n";
+            $keyword = $this->dbh->quote("%$unsafe_keyword%");
+            $words[] = "(`subject` LIKE $keyword OR `description` LIKE $keyword)\n";
         }
         $where = implode(' AND ', $words);
 

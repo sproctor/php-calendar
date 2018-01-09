@@ -571,6 +571,8 @@ class Context
                 return new CreateUserPage;
             case 'update':
                 return new UpdatePage;
+            case 'search':
+                return new SearchPage;
             default:
                 throw new InvalidInputException(__('invalid-action-error'));
         }
