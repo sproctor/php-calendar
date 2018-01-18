@@ -1,14 +1,7 @@
 {% extends "index.html.twig" %}
 
 {% block body %}
-    <h3>{{ "search-label"|trans }}</h3>
-    {{ form_start(form, {'attr': {'class': 'form-inline'}}) }}
-        {{ form_widget(form) }}
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-		    <i class="fas fa-search"></i> {{ "search-button"|trans }}
-	    </button>
-    {{ form_end(form) }}
-
+    <h3>{{ "search-results-label"|trans }}</h3>
     {% if results %}
         <table>
             <thead>

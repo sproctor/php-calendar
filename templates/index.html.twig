@@ -74,12 +74,14 @@
 					</div>
 				</li>
 			</ul>
-			<form class="form-inline my-2 my-lg-0" action="{{ context.createUrl('search') }}" method="post">
-    			<input class="form-control mr-sm-2" name="query" type="search" placeholder="{{ "search-label"|trans }}"
-					aria-label="{{ "search-label"|trans }}">
-      			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-				  <i class="fas fa-search"></i> {{ "search-button"|trans }}
-				</button>
+			<form class="form-inline" action="{{ context.createUrl('search') }}" method="post">
+				<div class="search-wrapper">
+					<label class="search-label" for="search-input"><i class="fas fa-search"></i></label>
+    				<input class="search-input" name="query" type="search"
+						placeholder="{{ "search-label"|trans }}" aria-label="{{ "search-label"|trans }}">
+					<button class="search-button" title="{{ "search-label"|trans }}" type="submit">
+						<i class="fas fa-arrow-right"></i>
+					</button>
     		</form>
 		</div>
 	</nav>

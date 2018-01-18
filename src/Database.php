@@ -1351,21 +1351,28 @@ class Database
      * $sort and $order must be checked
      *
      * @param  int                     $cid
-     * @param  string[]                $keywords
+     * @param  string                  $query
      * @param  \DateTimeInterface|null $start
      * @param  \DateTimeInterface|null $end
-     * @param  string                  $sort
-     * @param  string                  $order
+     * @param  string|null             $sort
+     * @param  string|null             $order
      * @return Occurrence[]
      */
-    public function search($cid, $keywords, $start, $end, $sort, $order)
+    public function search($cid, $query, $start = null, $end = null, $sort = null, $order = null)
     {
+        if ($sort == null) {
+            $sort = 'subject';
+        }
+        if ($order == null) {
+            $order = 'ASC';
+        }
         $events_table = $this->prefix . 'events';
         $occurrences_table = $this->prefix . 'occurrences';
         $users_table = $this->prefix . 'users';
         $cats_table = $this->prefix . 'categories';
 
         $words = array();
+        $keywords = explode(" ", $query);
         foreach ($keywords as $unsafe_keyword) {
             $keyword = $this->dbh->quote("%$unsafe_keyword%");
             $words[] = "(`subject` LIKE $keyword OR `description` LIKE $keyword)\n";

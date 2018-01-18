@@ -35,17 +35,20 @@ class SearchPage extends Page
      */
     public function action(Context $context)
     {
-        $form = $this->createSearchForm($context);
-
+        /*$form = $this->createSearchForm($context);
         $form->handleRequest($context->request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $results = $this->processForm($context, $form->getData());
+            $results = $this->processForm($context, $form->getData());*/
+        if ($context->request->get('query') != null) {
+            $results = $context->db->search($context->calendar->getCid(), $context->request->get('query'));
+        } else {
+            $results = null;
         }
         
         // else
         return new Response($context->twig->render(
             "search.html.twig",
-            ['form' => $form->createView(), 'results' => $results]
+            [/*'form' => $form->createView(),*/ 'results' => $results]
         ));
     }
 
@@ -54,8 +57,8 @@ class SearchPage extends Page
         $builder = $context->getFormFactory()->createBuilder();
         $builder
             ->add('query', SearchType::class)
-            ->add('start', DateType::class, ['label' => __('from-label'), 'required' => false])
-            ->add('end', DateType::class, ['label' => __('to-label'), 'required' => false])
+            ->add('start', DateType::class, ['label' => __('from-label'), 'required' => false, 'widget' => 'single_text'])
+            ->add('end', DateType::class, ['label' => __('to-label'), 'required' => false, 'widget' => 'single_text'])
             ->add(
                 'sort_by',
                 ChoiceType::class,
@@ -92,11 +95,9 @@ class SearchPage extends Page
 
     private function processForm(Context $context, $data)
     {
-        $keywords = explode(" ", $data['query']);
-
         $occurrences = $context->db->search(
             $context->calendar->getCid(),
-            $keywords,
+            $$data['query'],
             $data['start'],
             $data['end'],
             $data['sort_by'],
