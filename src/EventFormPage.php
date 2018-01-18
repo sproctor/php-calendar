@@ -81,8 +81,15 @@ class EventFormPage extends Page
         $builder->add(
             'subject',
             TextType::class,
-            array('attr' => array('autocomplete' => 'off', 'maxlength' => $context->calendar->getMaxSubjectLength()),
-                'label' => _('Subject'), 'constraints' => new Assert\NotBlank())
+            [
+                'label' => _('Subject'),
+                'constraints' => new Assert\NotBlank(),
+                'attr' => [
+                    'autocomplete' => 'off',
+                    'maxlength' => $context->calendar->getMaxSubjectLength(),
+                    'autofocus' => ''
+                ]
+            ]
         )
         ->add('description', TextareaType::class, array('required' => false))
         ->add(

@@ -283,7 +283,8 @@ class Calendar
             }
 
             // put the event in every day until the end
-            for ($date = $start->add($diff); $date < $to && $date <= $end; $date = $date->add(new \DateInterval("P1D"))) {
+            for ($date = $start->add($diff); $date < $to && $date <= $end;
+                    $date = $date->add(new \DateInterval("P1D"))) {
                 $key = date_index($date);
                 if (!isset($occurrences_by_day[$key])) {
                     $occurrences_by_day[$key] = array();

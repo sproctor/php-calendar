@@ -409,10 +409,16 @@ class Context
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
     public function getDate()
     {
+        if ($this->request->get('eid') != null) {
+            $occurrences = $this->db->getOccurrences($this->request->get('eid'));
+            if (sizeof($occurrences) > 0) {
+                return $occurrences[0]->getStart();
+            }
+        }
         return create_datetime($this->getMonth(), $this->getDay(), $this->getYear());
     }
 
@@ -579,12 +585,15 @@ class Context
     }
 
     /**
-     * @param string             $action
-     * @param \DateTimeInterface $date
+     * @param string                  $action
+     * @param \DateTimeInterface|null $date
      * @return string
      */
-    public function createDateUrl($action, \DateTimeInterface $date)
+    public function createDateUrl($action, \DateTimeInterface $date = null)
     {
+        if ($date == null) {
+            $date = $this->getDate();
+        }
         return $this->createUrl(
             $action,
             ['year' => $date->format('Y'), 'month' => $date->format('n'), 'day' => $date->format('j')]

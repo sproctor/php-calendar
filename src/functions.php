@@ -244,15 +244,19 @@ function append_parameter_url(Request $request, $parameter)
 /**
  * Takes a menu $html and appends an entry
  *
- * @param Context $context
- * @param string  $action
- * @param string  $text
+ * @param Context     $context
+ * @param string      $action
+ * @param string      $text
+ * @param string|null $icon
  * @return string
  */
-function menu_item(Context $context, $action, $text)
+function menu_item(Context $context, $action, $text, $icon = null)
 {
-    $url = htmlentities($context->createUrl($action));
+    $url = htmlentities($context->createDateUrl($action));
     $active = $context->getAction() == $action ? " active" : "";
+    if ($icon != null) {
+        $text = "<i class=\"fas fa-$icon\"></i> $text";
+    }
     return "<li class=\"nav-item$active\"><a class=\"nav-link\" href=\"$url\">$text</a></li>";
 }
 
@@ -263,13 +267,14 @@ function menu_item(Context $context, $action, $text)
  */
 function create_dropdown($title, $values)
 {
-    $output = "<div class=\"nav-item dropdown\">\n"
-    ."    <a class=\"nav-link dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">$title</a>\n"
-    ."    <div class=\"dropdown-menu\">\n";
+    $output = "<div class=\"nav-item dropdown\">"
+    ."<a class=\"nav-link dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\" role=\"button\""
+    ." aria-haspopup=\"true\" aria-expanded=\"false\">$title</a>"
+    ."<div class=\"dropdown-menu\">";
     foreach ($values as $key => $value) {
-        $output .= "        <a class=\"dropdown-item\" href=\"$value\">$key</a>\n";
+        $output .= "<a class=\"dropdown-item\" href=\"$value\">$key</a>";
     }
-    return $output . "    </div></div>";
+    return $output . "</div></div>";
 }
 
 /**
