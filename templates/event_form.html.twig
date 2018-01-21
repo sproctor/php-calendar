@@ -17,22 +17,30 @@
       {{ form_row(form.time_type) }}
       {{ form_row(form.repeats) }}
       <div id="repeat_data">
-      {% if form.frequency is defined %}
         {{ form_row(form.frequency) }}
         {{ form_row(form.until) }}
-      {% endif %}
       </div>
+    </div>
+    {{ form_row(form.delay_publish)}}
+    <div id="publish_data">
+      {{ form_row(form.publish_datetime) }}
     </div>
   {{ form_end(form) }}
 
   <script>
     {% if form.eid is defined %}
       // show hide time stuff with modify checkbox
-      $('#time_data').toggle(this.checked);
+      $('#time_data').toggle($('#form_modify').checked);
       $('#form_modify').click(function() {
         $('#time_data').toggle(this.checked);
       });
     {% endif %}
+
+    // show/hide publish date with checkbox
+    $('#publish_data').toggle($('#form_delay_publish').prop('checked') != false);
+    $('#form_delay_publish').click(function() {
+      $('#publish_data').toggle(this.checked);
+    });
 
     var $repeat_selector = $('#form_repeats');
     var $repeat_data = $('#repeat_data');

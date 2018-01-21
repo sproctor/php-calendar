@@ -61,7 +61,7 @@ class Database
         $this->event_columns = "`{$this->prefix}categories`.`gid`, `{$this->prefix}events`.`subject`, "
             . "`{$this->prefix}events`.`description`, `{$this->prefix}events`.`owner`, `{$this->prefix}events`.`eid`, "
             . "`{$this->prefix}events`.`cid`, `{$this->prefix}events`.`catid`, "
-            . "UNIX_TIMESTAMP(`ctime`) AS `ctime`, UNIX_TIMESTAMP(`mtime`) AS `mtime`";
+            . "UNIX_TIMESTAMP(`ctime`) AS `ctime`, UNIX_TIMESTAMP(`mtime`) AS `mtime`, UNIX_TIMESTAMP(`pubtime`) AS `pubtime`";
 
         $this->occurrence_columns = $this->event_columns . ", `time_type`, `oid`, `start`, `end`";
 
@@ -1071,14 +1071,16 @@ class Database
      * @param int      $uid
      * @param string   $subject
      * @param string   $description
-     * @param int      $catid
+     * @param int|null $catid
+     * @param \DateTimeInterface|null $publish_date
      * @return int
      */
-    public function createEvent($cid, $uid, $subject, $description, $catid)
+    public function createEvent($cid, $uid, $subject, $description, $catid, $publish_date)
     {
+        $pub_str = datetime_to_sql_date($publish_date);
         $query = "INSERT INTO `" . $this->prefix . "events`\n"
-            . "(`cid`, `owner`, `subject`, `description`, `catid`)\n"
-            . "VALUES (:cid, :uid, :subject, :description, :catid)";
+            . "(`cid`, `owner`, `subject`, `description`, `catid`, `pubtime`)\n"
+            . "VALUES (:cid, :uid, :subject, :description, :catid, '$pub_str')";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
@@ -1172,23 +1174,25 @@ class Database
      * @param int      $eid
      * @param string   $subject
      * @param string   $description
-     * @param bool|int $catid
+     * @param null|int $catid
+     * @param \DateTimeInterface|null $publish_date
      * @throws FailedActionException
      */
-    public function modifyEvent($eid, $subject, $description, $catid = false)
+    public function modifyEvent($eid, $subject, $description, $catid, $publish_date)
     {
-
+        $pub_str = datetime_to_sql_date($publish_date);
         $query = "UPDATE `{$this->prefix}events`\n"
             . "SET\n"
             . "`subject`=:subject,\n"
             . "`description`=:description,\n"
             . "`mtime`=NOW(),\n"
-            . "`catid`=" . ($catid !== false ? ":catid" : "NULL") . "\n"
+            . "`catid`=" . ($catid !== null ? ":catid" : "NULL") . ",\n"
+            . "`pubtime`='$pub_str'\n"
             . "WHERE `eid`=:eid";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
-        if ($catid !== false) {
+        if ($catid !== null) {
             $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
         }
         $sth->bindValue(':subject', $subject);
@@ -1487,4 +1491,15 @@ class Database
 function asbool($val)
 {
     return $val ? "1" : "0";
+}
+
+/**
+ * @param \DateTimeInterface $date
+ * @return string
+ */
+function datetime_to_sql_date(\DateTimeInterface $date)
+{
+    $utcDate = new \DateTime($date->format('Y-m-d H:i:s'), $date->getTimezone());
+    $utcDate->setTimezone(new \DateTimeZone('UTC'));
+    return $utcDate->format('Y-m-d H:i:s');
 }

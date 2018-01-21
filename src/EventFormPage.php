@@ -128,7 +128,14 @@ class EventFormPage extends Page
             IntegerType::class,
             array('constraints' => new Assert\GreaterThan(0), 'data' => 1)
         )
-        ->add('until', DateType::class, array('label' => __('until-label'), 'widget' => 'single_text'));
+        ->add('until', DateType::class, array('label' => __('until-label'), 'widget' => 'single_text'))
+        ->add('delay_publish', CheckboxType::class, array('label' => __('delay-publish-label'), 'required' => false))
+        ->add(
+            'publish_datetime',
+            DateTimeType::class,
+            array('label' => __('publish-date-time-label'), 'date_widget' => 'single_text',
+                'time_widget' => 'single_text')
+        );
 
         //echo "<pre>"; var_dump($context->request); echo "</pre>";
         if ($context->request->get('eid') !== null) {
@@ -151,6 +158,8 @@ class EventFormPage extends Page
                 SubmitType::class,
                 array('label' => __('modify-event-button'), 'attr' => array('class' => 'btn btn-primary'))
             );
+            $builder->get('delay_publish')->setData($occurrence->getPublishDate() != null);
+            $builder->get('publish_datetime')->setData($occurrence->getPublishDate());
         } else {
             $builder->add(
                 'save',
@@ -210,6 +219,12 @@ class EventFormPage extends Page
     
         $catid = empty($data['catid']) ? null : $data['catid'];
     
+        if ($data['delay_publish']) {
+            $publish_date = $data['publish_datetime'];
+        } else {
+            $publish_date = null;
+        }
+
         if (!isset($data['eid'])) {
             $modify = false;
             $eid = $context->db->createEvent(
@@ -217,7 +232,8 @@ class EventFormPage extends Page
                 $context->user->getUid(),
                 $data["subject"],
                 (string) $data["description"],
-                $catid
+                $catid,
+                $publish_date
             );
         } else {
             $modify = true;
@@ -225,8 +241,9 @@ class EventFormPage extends Page
             $context->db->modifyEvent(
                 $eid,
                 $data['subject'],
-                $data['description'],
-                $catid
+                (string) $data['description'],
+                $catid,
+                $publish_date
             );
             if ($modify_occur) {
                 $context->db->deleteOccurrences($eid);

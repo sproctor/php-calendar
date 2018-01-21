@@ -40,8 +40,11 @@ class UpdatePage extends Page
         }
         
         $context->db->update();
-        if (!$context->db->update()) {
-            $context->addMessage(__('already-updated-notification'));
+        $updates = $context->db->update();
+        if (sizeof($updates) > 0) {
+            $context->addMessage(__('db-updated-notification'));
+        } else {
+            $context->addMessage(__('db-already-updated-notification'));
         }
         return new RedirectResponse($context->createUrl());
     }

@@ -90,7 +90,10 @@ class AdminPage extends Page
             $context->db->setCalendarConfig($context->calendar->getCid(), $key, $value);
         }
 
-        $context->addMessage(__('calendar-updated-notification'));
+        $context->addMessage(__(
+            'updated-type-notification',
+            ['%type%' => __('calendar'), '%name' => $context->calendar->getTitle()]
+        ));
 
         return new RedirectResponse($context->createUrl('admin', array(), 'calendar'));
     }

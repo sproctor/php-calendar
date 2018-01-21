@@ -36,6 +36,7 @@ class Event
     private $gid;
     private $ctime;
     private $mtime;
+    private $pubtime;
     protected $calendar;
     private $fields;
     private $db;
@@ -63,6 +64,7 @@ class Event
         $this->gid = $event['gid'];
         $this->ctime = datetime_from_timestamp($event['ctime']);
         $this->mtime = empty($event['mtime']) ? null : datetime_from_timestamp($event['mtime']);
+        $this->pubtime = empty($event['pubtime']) ? null : datetime_from_timestamp($event['pubtime']);
         $this->calendar = $db->getCalendar($event['cid']);
     }
 
@@ -192,7 +194,7 @@ class Event
     {
         $visible_category = empty($this->gid) || !isset($this->catid)
             || $this->db->isCategoryVisible($user, $this->catid);
-        return $this->calendar->canRead($user) && $visible_category;
+        return ($this->isPublished() || $this->isOwner($user)) && $this->calendar->canRead($user) && $visible_category;
     }
 
     /**
@@ -221,5 +223,21 @@ class Event
     public function getModified()
     {
         return $this->mtime;
+    }
+
+    /**
+     * @return \DateTimeInterface|null
+     */
+    public function getPublishDate()
+    {
+        return $this->pubtime;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPublished()
+    {
+        return $this->pubtime == null || $this->pubtime <= new \DateTime();
     }
 }

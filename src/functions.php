@@ -403,17 +403,6 @@ function normalize_date(&$month, &$day, &$year)
 }
 
 /**
- * @param \DateTimeInterface $date
- * @return string
- */
-function datetime_to_sql_date(\DateTimeInterface $date)
-{
-    $utcDate = new \DateTime($date->format('Y-m-d H:i:s'), $date->getTimezone());
-    $utcDate->setTimezone(new \DateTimeZone('UTC'));
-    return $utcDate->format('Y-m-d H:i:s');
-}
-
-/**
  * @param string $str
  * @return \DateTime
  */

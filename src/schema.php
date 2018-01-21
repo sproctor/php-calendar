@@ -115,6 +115,7 @@ function phpc_events_table($prefix)
     $table->addColumn('catid', "int(11) unsigned");
     $table->addColumn('ctime', "timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP");
     $table->addColumn('mtime', "timestamp NULL");
+    $table->addColumn('pubtime', "timestamp NULL");
 
     $table->addKey('PRIMARY', 0, '`eid`');
 
