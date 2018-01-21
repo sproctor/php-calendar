@@ -30,6 +30,8 @@ class EventPage extends Page
      *
      * @param  Context $context
      * @return Response
+     * @throws PermissionException
+     * @throws \Exception
      */
     public function action(Context $context)
     {
@@ -43,9 +45,9 @@ class EventPage extends Page
         }
 
         if (!$event->canRead($context->user)) {
-            throw new InvalidInputException();
+            throw new PermissionException();
         }
 
-        return new Response($context->twig->render('event_page.html.twig', array('event' => $event)));
+        return new Response($context->render('event_page.html.twig', array('event' => $event)));
     }
 }

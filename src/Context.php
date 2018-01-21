@@ -27,8 +27,7 @@ use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
@@ -51,6 +50,9 @@ class Context
      */
     public $user;
     public $session;
+    /**
+     * @var FormFactoryInterface $formFactory
+     */
     private $formFactory;
     /**
      * @var Request $request
@@ -61,14 +63,22 @@ class Context
      * @var Database $db
      */
     public $db;
+    /**
+     * @var Translator $translator
+     */
     public $translator;
     /**
      * @var  \Twig_Environment
      */
-    public $twig;
+    private $twig;
 
     /**
      * Context constructor.
+     *
+     * @param Request $request
+     *
+     * @throws \ReflectionException
+     * @throws \Exception
      */
     public function __construct(Request $request)
     {
@@ -203,7 +213,7 @@ class Context
         $this->twig->addFilter(
             new \Twig_SimpleFilter(
                 'week_link',
-                function (\DateTimeInterface $date, Context $context) {
+                function (\DateTimeInterface $date) {
                     $week = week_of_year($date);
                     $year = year_of_week_of_year($date);
                     $url = $this->createUrl('display_week', ['week' => $week, 'year' => $year]);
@@ -225,7 +235,6 @@ class Context
             new \Twig_SimpleFunction(
                 'is_date_in_month',
                 function (Context $context, \DateTimeInterface $date) {
-                    $currentDate = new \DateTime();
                     return $context->getAction() == 'display_month'
                     && $date->format('m') == $context->getMonth()
                     && $date->format('Y') == $context->getYear();
@@ -285,6 +294,9 @@ class Context
         return $this->request->get('action', 'display_month');
     }
 
+    /**
+     * @throws \Exception
+     */
     private function initCurrentCalendar()
     {
         // Find current calendar
@@ -467,6 +479,9 @@ class Context
         }
     }
 
+    /**
+     * @return FormFactoryInterface
+     */
     public function getFormFactory()
     {
         return $this->formFactory;
@@ -476,7 +491,7 @@ class Context
     {
         if (isset($_COOKIE["identity"])) {
             try {
-                $decoded = \Firebase\JWT\JWT::decode($_COOKIE["identity"], $this->config["token_key"], array('HS256'));
+                $decoded = JWT::decode($_COOKIE["identity"], $this->config["token_key"], array('HS256'));
                 $decoded_array = (array) $decoded;
                 $data = (array) $decoded_array["data"];
 
@@ -535,7 +550,7 @@ class Context
             "exp" => $expires,
             "data" => array("uid" => $user->getUid())
         );
-        $jwt = \Firebase\JWT\JWT::encode($token, $this->config['token_key']);
+        $jwt = JWT::encode($token, $this->config['token_key']);
 
         // TODO: Add a remember me checkbox to the login form, and have the
         //    cookies expire at the end of the session if it's not checked
@@ -612,7 +627,7 @@ class Context
 
     /**
      * @param string  $action
-     * @param string  $eid
+     * @param string  $oid
      * @return string
      */
     public function createOccurrenceUrl($action, $oid)
@@ -645,5 +660,18 @@ class Context
             $url .= '#'.$hash;
         }
         return $url;
+    }
+
+    /**
+     * Render the template
+     *
+     * @param string $name
+     * @param array  $variables
+     * @return string
+     * @throws \Exception
+     */
+    public function render($name, $variables = array())
+    {
+        return $this->twig->render($name, $variables);
     }
 }

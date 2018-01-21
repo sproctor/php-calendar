@@ -27,6 +27,8 @@ class UpdatePage extends Page
      *
      * @param  Context $context
      * @return Response
+     * @throws PermissionException
+     * @throws \Exception
      */
     public function action(Context $context)
     {
@@ -34,7 +36,7 @@ class UpdatePage extends Page
             throw new PermissionException();
         }
         if ($context->getAction() != 'update') {
-            return new Response($context->twig->render("update_page.html.twig", array('script' => $context->script)));
+            return new Response($context->render("update_page.html.twig"));
         }
         
         $context->db->update();

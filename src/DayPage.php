@@ -29,6 +29,7 @@ class DayPage extends Page
     /**
      * @param Context $context
      * @return Response
+     * @throws \Exception
      */
     public function action(Context $context)
     {
@@ -42,7 +43,7 @@ class DayPage extends Page
         $today = (new \DateTime())->setDate($context->getYear(), $context->getMonth(), $context->getDay());
         $yesterday = (clone $today)->sub(new \DateInterval("P1D"));
         $tomorrow = $today->add(new \DateInterval("P1D"));
-        return new Response($context->twig->render(
+        return new Response($context->render(
             "day_page.html.twig",
             array('occurrences' => $occurrences, 'yesterday' => $yesterday, 'tomorrow' => $tomorrow)
         ));

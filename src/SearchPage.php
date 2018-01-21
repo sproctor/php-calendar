@@ -32,6 +32,7 @@ class SearchPage extends Page
      *
      * @param  Context $context
      * @return Response
+     * @throws \Exception
      */
     public function action(Context $context)
     {
@@ -46,7 +47,7 @@ class SearchPage extends Page
         }
         
         // else
-        return new Response($context->twig->render(
+        return new Response($context->render(
             "search.html.twig",
             [/*'form' => $form->createView(),*/ 'results' => $results]
         ));

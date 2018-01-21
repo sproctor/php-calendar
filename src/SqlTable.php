@@ -59,6 +59,7 @@ class SqlTable
     /**
      * @param \PDO $dbh
      * @param bool $drop
+     * @throws \Exception
      */
     public function create(\PDO $dbh, $drop = false)
     {
@@ -93,6 +94,7 @@ class SqlTable
     /**
      * @param \PDO $dbh
      * @return string[]
+     * @throws \Exception
      */
     public function update(\PDO $dbh)
     {
@@ -111,6 +113,7 @@ class SqlTable
     /**
      * @param \PDO $dbh
      * @return string[]
+     * @throws FailedActionException
      */
     public function updateColumns(\PDO $dbh)
     {
@@ -184,6 +187,7 @@ class SqlTable
     /**
      * @param \PDO $dbh
      * @return string[]
+     * @throws \Exception
      */
     public function updateKeys(\PDO $dbh)
     {

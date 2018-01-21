@@ -30,6 +30,7 @@ class MonthPage extends Page
      *
      * @param  Context $context
      * @return Response
+     * @throws \Exception
      */
     public function action(Context $context)
     {
@@ -82,6 +83,6 @@ class MonthPage extends Page
             $context->user
         );
         $template_variables['start_date'] = $from_date;
-        return new Response($context->twig->render("month_page.html.twig", $template_variables));
+        return new Response($context->render("month_page.html.twig", $template_variables));
     }
 }

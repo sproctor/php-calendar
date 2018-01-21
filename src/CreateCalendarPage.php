@@ -27,6 +27,8 @@ class CreateCalendarPage extends Page
      *
      * @param  Context $context
      * @return Response
+     * @throws PermissionException
+     * @throws \Exception
      */
     public function action(Context $context)
     {
@@ -42,7 +44,7 @@ class CreateCalendarPage extends Page
         }
         
         // else
-        return new Response($context->twig->render("calendar_create.html.twig", array('form' => $form->createView())));
+        return new Response($context->render("calendar_create.html.twig", array('form' => $form->createView())));
     }
 
     /**

@@ -18,6 +18,8 @@
 namespace PhpCalendar;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
+
 
 class CalendarDeletePage
 {
@@ -27,6 +29,8 @@ class CalendarDeletePage
      *
      * @param  Context $context
      * @return Response
+     * @throws PermissionException
+     * @throws FailedActionException
      */
     public function action(Context $context)
     {

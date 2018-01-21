@@ -123,7 +123,7 @@ class Database
         $user_groups_table = $this->prefix . 'user_groups';
         $cats_table = $this->prefix . 'categories';
 
-        if ($user->is_admin()) {
+        if ($user->isAdmin()) {
             return true;
         }
 
@@ -170,7 +170,6 @@ class Database
      *
      * @param int $eid
      * @return null|Event
-     * @throws \Exception
      */
     public function getEvent($eid)
     {
@@ -428,6 +427,7 @@ class Database
         if (!$result) {
             throw new \UnexpectedValueException(__('nonexistent-value-error', ['%name%' => __('field')]));
         }
+        return $result;
     }
 
     /**
@@ -544,6 +544,7 @@ class Database
 
     /**
      * @param int $eid
+     * @throws FailedActionException
      */
     public function deleteEvent($eid)
     {
@@ -579,6 +580,7 @@ class Database
 
     /**
      * @param int $oid
+     * @throws FailedActionException
      */
     public function deleteOccurrence($oid)
     {
@@ -596,6 +598,7 @@ class Database
 
     /**
      * @param int $cid
+     * @throws FailedActionException
      */
     public function deleteCalendar($cid)
     {
@@ -626,6 +629,7 @@ class Database
 
     /**
      * @param int $catid
+     * @throws FailedActionException
      */
     public function deleteCategory($catid)
     {
@@ -644,6 +648,7 @@ class Database
 
     /**
      * @param int $gid
+     * @throws FailedActionException
      */
     public function deleteGroup($gid)
     {
@@ -662,6 +667,7 @@ class Database
 
     /**
      * @param int $fid
+     * @throws FailedActionException
      */
     public function deleteField($fid)
     {
@@ -680,6 +686,7 @@ class Database
 
     /**
      * @param int $uid
+     * @throws FailedActionException
      */
     public function disableUser($uid)
     {
@@ -699,6 +706,7 @@ class Database
 
     /**
      * @param int $uid
+     * @throws FailedActionException
      */
     public function enableUser($uid)
     {
@@ -720,7 +728,6 @@ class Database
      * @param int $cid
      * @param int $uid
      * @return string[]
-     * @throws \Exception
      */
     public function getPermissions($cid, $uid)
     {
@@ -746,7 +753,6 @@ class Database
 
     /**
      * @return Calendar[]
-     * @throws \Exception
      */
     public function getCalendars()
     {
@@ -1167,6 +1173,7 @@ class Database
      * @param string   $subject
      * @param string   $description
      * @param bool|int $catid
+     * @throws FailedActionException
      */
     public function modifyEvent($eid, $subject, $description, $catid = false)
     {
@@ -1275,6 +1282,7 @@ class Database
      * @param string $text_color
      * @param string $bg_color
      * @param int    $gid
+     * @throws FailedActionException
      */
     public function modifyCategory($catid, $name, $text_color, $bg_color, $gid)
     {
@@ -1298,6 +1306,7 @@ class Database
     /**
      * @param int    $gid
      * @param string $name
+     * @throws FailedActionException
      */
     public function modifyGroup($gid, $name)
     {
@@ -1320,6 +1329,7 @@ class Database
      * @param string      $name
      * @param bool        $required
      * @param bool|string $format
+     * @throws FailedActionException
      */
     public function modifyField($fid, $name, $required, $format)
     {
@@ -1436,6 +1446,7 @@ class Database
 
     /**
      * @return string[]
+     * @throws \Exception
      */
     public function update()
     {
@@ -1453,6 +1464,7 @@ class Database
     /**
      * @param bool $drop
      * @return string[]
+     * @throws \Exception
      */
     public function create($drop = false)
     {

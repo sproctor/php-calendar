@@ -22,6 +22,7 @@ abstract class Page
     /**
      * @param Context $context
      * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
     abstract public function action(Context $context);
 }

@@ -30,10 +30,10 @@ class WeekPage extends Page
      *
      * @param  Context $context
      * @return Response
+     * @throws \Exception
      */
     public function action(Context $context)
     {
-        $cid = $context->calendar->getCid();
         $week = $context->request->get('week');
         if ($week == null) {
             $week = week_of_year($context->getDate());
@@ -63,6 +63,6 @@ class WeekPage extends Page
             $context->user
         );
         $template_variables['start_date'] = $from_date;
-        return new Response($context->twig->render("week_page.html.twig", $template_variables));
+        return new Response($context->render("week_page.html.twig", $template_variables));
     }
 }

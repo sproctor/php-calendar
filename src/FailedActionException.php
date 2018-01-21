@@ -9,6 +9,6 @@ class FailedActionException extends \Exception
         if ($message == null) {
             $message = __('failed-action-error');
         }
-        parent::__construct();
+        parent::__construct($message);
     }
 }

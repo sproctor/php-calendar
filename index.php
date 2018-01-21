@@ -42,7 +42,7 @@ try {
     (new RedirectResponse("/install.php"))->send();
 } catch (InvalidInputException $e) {
     if ($context !== null) {
-        (new Response($context->twig->render('error.html.twig', array('message' => $e->getMessage()))))->send();
+        (new Response($context->render('error.html.twig', array('message' => $e->getMessage()))))->send();
     } else {
         throw $e;
     }

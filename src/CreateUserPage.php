@@ -35,6 +35,8 @@ class CreateUserPage extends Page
      *
      * @param  Context $context
      * @return Response
+     * @throws PermissionException
+     * @throws \Exception
      */
     public function action(Context $context)
     {
@@ -50,7 +52,7 @@ class CreateUserPage extends Page
         }
         
         // else
-        return new Response($context->twig->render("user_create.html.twig", array('form' => $form->createView())));
+        return new Response($context->render("user_create.html.twig", array('form' => $form->createView())));
     }
 
     /**

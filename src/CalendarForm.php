@@ -17,11 +17,9 @@
 
 namespace PhpCalendar;
 
-use Symfony\Component\Form;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
  
@@ -30,7 +28,7 @@ class CalendarForm
     /**
      * @param Context $context
      * @param Calendar|null $calendar
-     * @return Form
+     * @return FormInterface
     */
     public function getForm(Context $context, $calendar = null)
     {

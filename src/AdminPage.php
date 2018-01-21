@@ -19,9 +19,7 @@ namespace PhpCalendar;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormInterface;
 
 class AdminPage extends Page
 {
@@ -30,6 +28,7 @@ class AdminPage extends Page
      *
      * @param  Context $context
      * @return Response
+     * @throws \Exception
      */
     public function action(Context $context)
     {
@@ -46,7 +45,7 @@ class AdminPage extends Page
         }
 
         return new Response(
-            $context->twig->render(
+            $context->render(
                 "admin.html.twig",
                 array('calendar_form' => $calendar_form->createView(), 'user_form' => $user_form->createView())
             )
@@ -56,7 +55,7 @@ class AdminPage extends Page
     /**
      * @param Context $context
      * @param Calendar $calendar
-     * @return Form
+     * @return FormInterface
      */
     private function createUserForm(Context $context, Calendar $calendar)
     {

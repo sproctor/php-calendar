@@ -18,6 +18,8 @@
 namespace PhpCalendar;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
+
 
 class DefaultCalendarPage extends Page
 {
@@ -26,6 +28,7 @@ class DefaultCalendarPage extends Page
      *
      * @param  Context $context
      * @return Response
+     * @throws PermissionException
      */
     public function action(Context $context)
     {
@@ -41,6 +44,6 @@ class DefaultCalendarPage extends Page
             $context->addMessage(__('default-calendar-changed-notification', ['%title%' => $calendar->getCid()]));
         }
 
-        return new RedirectResponse($calendar->createUrl('admin', array(), "calendars"));
+        return new RedirectResponse($context->createUrl('admin', array(), "calendars"));
     }
 }

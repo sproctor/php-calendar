@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2017 Sean Proctor
+ * Copyright Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ class Event
      */
     public function getOwner()
     {
-        return $this->db->get_user($this->owner_uid);
+        return $this->db->getUser($this->owner_uid);
     }
 
     /**
@@ -191,7 +191,7 @@ class Event
     public function canRead(User $user)
     {
         $visible_category = empty($this->gid) || !isset($this->catid)
-            || $this->db->is_cat_visible($user->getUid(), $this->catid);
+            || $this->db->isCategoryVisible($user, $this->catid);
         return $this->calendar->canRead($user) && $visible_category;
     }
 

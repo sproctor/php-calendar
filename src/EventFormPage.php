@@ -20,11 +20,9 @@ namespace PhpCalendar;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -34,7 +32,6 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class EventFormPage extends Page
@@ -44,6 +41,8 @@ class EventFormPage extends Page
      *
      * @param  Context $context
      * @return Response
+     * @throws PermissionException
+     * @throws \Exception
      */
     public function action(Context $context)
     {
@@ -59,12 +58,12 @@ class EventFormPage extends Page
         }
         
         // else
-        return new Response($context->twig->render("event_form.html.twig", array('form' => $form->createView())));
+        return new Response($context->render("event_form.html.twig", array('form' => $form->createView())));
     }
 
     /**
      * @param Context $context
-     * @return Form
+     * @return FormInterface
      */
     private function eventForm(Context $context)
     {
@@ -195,6 +194,9 @@ class EventFormPage extends Page
      * @param Context $context
      * @param array   $data
      * @return Response
+     * @throws PermissionException
+     * @throws FailedActionException
+     * @throws \Exception
      */
     private function processForm(Context $context, $data)
     {
@@ -203,7 +205,7 @@ class EventFormPage extends Page
         $modify_occur = !isset($data['eid']) || !empty($data['modify']);
     
         if (!$context->calendar->canWrite($context->user)) {
-            permission_error();
+            throw new PermissionException();
         }
     
         $catid = empty($data['catid']) ? null : $data['catid'];
@@ -252,7 +254,7 @@ class EventFormPage extends Page
                 echo "days between: " . days_between($data['start'], $data['until']);
 
                 while ($occurrences <= 730 && days_between($data['start'], $data['until']) >= 0) {
-                    $oid = $context->db->createOccurrence($eid, $data['time_type'], $data['start'], $data['end']);
+                    $context->db->createOccurrence($eid, $data['time_type'], $data['start'], $data['end']);
                     $occurrences++;
         
                     $data['start']->add($interval);
@@ -265,6 +267,7 @@ class EventFormPage extends Page
     }
 }
 
+/*
 function display_form()
 {
 
@@ -388,3 +391,4 @@ function add_repeat_defaults($occs, &$defaults)
         $defaults['every-year'] = 1;
     }
 }
+*/

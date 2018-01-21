@@ -2,3 +2,4 @@ config.php
 *.swp
 /vendor/
 /.vscode
+/.idea

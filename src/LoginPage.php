@@ -25,6 +25,7 @@ class LoginPage extends Page
     /**
      * @param Context $context
      * @return Response
+     * @throws \Exception
      */
     public function action(Context $context)
     {
@@ -48,6 +49,6 @@ class LoginPage extends Page
                 }
             }
         }
-        return new Response($context->twig->render("login.html.twig"));
+        return new Response($context->render("login.html.twig"));
     }
 }

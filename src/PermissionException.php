@@ -19,11 +19,11 @@ namespace PhpCalendar;
 
 class PermissionException extends \Exception
 {
-    public function __construct($message = null)
+    public function __construct($msg = null)
     {
-        if ($message == null) {
-            $message = __('permission-error');
+        if ($msg == null) {
+            $msg = __('permission-error');
         }
-        parent::__construct();
+        parent::__construct($msg);
     }
 }

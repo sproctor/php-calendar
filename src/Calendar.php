@@ -106,7 +106,7 @@ class Calendar
     public function getUserPermission($uid, $perm)
     {
         if (!isset($this->user_perms[$uid])) {
-            $this->user_perms[$uid] = $this->db->get_permissions($this->cid, $uid);
+            $this->user_perms[$uid] = $this->db->getPermissions($this->cid, $uid);
         }
 
         return !empty($this->user_perms[$uid][$perm]);
@@ -126,7 +126,7 @@ class Calendar
             return false;
         }
 
-        return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'read');
+        return $this->canAdmin($user) || $this->getUserPermission($user->getUID(), 'read');
     }
 
     /**
@@ -143,7 +143,7 @@ class Calendar
             return false;
         }
 
-        return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'write');
+        return $this->canAdmin($user) || $this->getUserPermission($user->getUID(), 'write');
     }
 
     /**
@@ -156,7 +156,7 @@ class Calendar
             return false;
         }
 
-        return $user->isAdmin() || $this->getUserPerm($user->getUID(), 'admin');
+        return $user->isAdmin() || $this->getUserPermission($user->getUID(), 'admin');
     }
 
     /**
@@ -173,7 +173,7 @@ class Calendar
             return false;
         }
 
-        return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'modify');
+        return $this->canAdmin($user) || $this->getUserPermission($user->getUID(), 'modify');
     }
 
     /**
@@ -186,7 +186,7 @@ class Calendar
             return false;
         }
 
-        return $this->canAdmin($user) || $this->getUserPerm($user->getUID(), 'readonly');
+        return $this->canAdmin($user) || $this->getUserPermission($user->getUID(), 'readonly');
     }
 
     /**
@@ -198,11 +198,12 @@ class Calendar
     }
 
     /**
+     * @param int $uid
      * @return array
      */
     public function getVisibleCategories($uid)
     {
-        return $this->db->get_visible_categories($uid, $this->cid);
+        return $this->db->getVisibleCategories($uid, $this->cid);
     }
     
     /**
@@ -211,7 +212,7 @@ class Calendar
     public function getCategories()
     {
         if (!isset($this->categories)) {
-            $this->categories = $this->db->get_categories($this->cid);
+            $this->categories = $this->db->getCategoriesForCalendar($this->cid);
         }
         return $this->categories;
     }
@@ -222,7 +223,7 @@ class Calendar
     public function getGroups()
     {
         if (!isset($this->groups)) {
-            $this->groups = $this->db->get_groups($this->cid);
+            $this->groups = $this->db->getGroupsForCalendar($this->cid);
         }
         return $this->groups;
     }
@@ -234,7 +235,7 @@ class Calendar
     public function getField($fid)
     {
         if (!isset($this->fields)) {
-            $this->fields = $this->db->get_fields($this->cid);
+            $this->fields = $this->db->getFields($this->cid);
         }
         return $this->fields[$fid];
     }

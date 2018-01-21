@@ -18,6 +18,7 @@
 namespace PhpCalendar;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class LogoutPage extends Page
 {
