@@ -158,10 +158,6 @@ msgid "admin-label"
 msgstr "admin"
 
 #: 
-msgid "calendar-updated-notification"
-msgstr "Calendar updated."
-
-#: 
 msgid "calendar-no-title"
 msgstr "(No title)"
 
@@ -380,7 +376,8 @@ msgid "database-key"
 msgstr "key"
 
 #: 
-msgid "already-updated-notification"
+#, fuzzy
+msgid "db-already-updated-notification"
 msgstr "There was nothing to update."
 
 #: 
@@ -527,4 +524,52 @@ msgstr "week"
 #: 
 msgid "week-of-year-title"
 msgstr "Week %week% of %year%"
+
+#: 
+msgid "edit-groups-label"
+msgstr "Edit groups"
+
+#: 
+msgid "create-user-button"
+msgstr "Create user"
+
+#: 
+msgid "create-user-label"
+msgstr "Create user"
+
+#: 
+msgid "password-mismatch-error"
+msgstr "The passwords you provided did not match."
+
+#: 
+msgid "repeat-password-label"
+msgstr "Repeat password"
+
+#: 
+msgid "make-admin-label"
+msgstr "Make admin"
+
+#: 
+msgid "user-exists-error"
+msgstr "A user with that username already exists"
+
+#: 
+msgid "search-label"
+msgstr "Search"
+
+#: 
+msgid "sort-by-label"
+msgstr "Sort by"
+
+#: 
+msgid "db-updated-notification"
+msgstr "The database has been updated."
+
+#: 
+msgid "publish-date-time-label"
+msgstr "Publish on date/time"
+
+#: 
+msgid "delay-publish-label"
+msgstr "Publish later"
 
