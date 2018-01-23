@@ -92,7 +92,7 @@ class AdminPage extends Page
 
         $context->addMessage(__(
             'updated-type-notification',
-            ['%type%' => __('calendar'), '%name' => $context->calendar->getTitle()]
+            ['%type%' => __('calendar'), '%name%' => $context->calendar->getTitle()]
         ));
 
         return new RedirectResponse($context->createUrl('admin', array(), 'calendar'));

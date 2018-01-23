@@ -36,7 +36,7 @@ class UpdatePage extends Page
             throw new PermissionException();
         }
         if ($context->getAction() != 'update') {
-            return new Response($context->render("update_page.html.twig"));
+            return new Response($context->render("update_page.html.twig", ['context' => $context]));
         }
         
         $context->db->update();

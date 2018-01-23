@@ -21,7 +21,7 @@
 
 namespace PhpCalendar;
 
-define('PHPC_DB_VERSION', 2);
+define('PHPC_DB_VERSION', 3);
 
 /**
  * @param string $prefix

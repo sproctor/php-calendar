@@ -77,6 +77,9 @@ class EventFormPage extends Page
                 $context->request->get('day', 1)
             );
         }
+	$default_date->setTime(17, 0);
+	$end_datetime = clone $default_date;
+	$end_datetime->setTime(18, 0);
         $builder->add(
             'subject',
             TextType::class,
@@ -95,13 +98,13 @@ class EventFormPage extends Page
             'start',
             DateTimeType::class,
             array('label' => __('from-label'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
-                'data' => $default_date->setTime(17, 0))
+                'data' => $default_date)
         )
         ->add(
             'end',
             DateTimeType::class,
             array('label' => __('to-label'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
-                'data' => (clone $default_date)->setTime(18, 0))
+                'data' => $end_datetime)
         )
         ->add(
             'time_type',

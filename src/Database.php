@@ -1494,11 +1494,14 @@ function asbool($val)
 }
 
 /**
- * @param \DateTimeInterface $date
+ * @param \DateTimeInterface|null $date
  * @return string
  */
-function datetime_to_sql_date(\DateTimeInterface $date)
+function datetime_to_sql_date($date)
 {
+    if ($date == null) {
+        return 'NULL';
+    }
     $utcDate = new \DateTime($date->format('Y-m-d H:i:s'), $date->getTimezone());
     $utcDate->setTimezone(new \DateTimeZone('UTC'));
     return $utcDate->format('Y-m-d H:i:s');
