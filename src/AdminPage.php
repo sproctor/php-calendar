@@ -59,7 +59,7 @@ class AdminPage extends Page
      */
     private function createUserForm(Context $context, Calendar $calendar)
     {
-        $builder = $context->getFormFactory()->createBuilder();
+        $builder = $context->getFormFactory()->createNamedBuilder('user_form');
 
         foreach ($context->db->getUsersPermissions($calendar->getCid()) as $user) {
             $uid = $user['uid'];

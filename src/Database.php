@@ -1180,14 +1180,15 @@ class Database
      */
     public function modifyEvent($eid, $subject, $description, $catid, $publish_date)
     {
-        $pub_str = datetime_to_sql_date($publish_date);
+        $publish_date->setTimezone('UTC');
+        $pub_ts = $publish_date->getTimestamp();
         $query = "UPDATE `{$this->prefix}events`\n"
             . "SET\n"
             . "`subject`=:subject,\n"
             . "`description`=:description,\n"
             . "`mtime`=NOW(),\n"
             . "`catid`=" . ($catid !== null ? ":catid" : "NULL") . ",\n"
-            . "`pubtime`='$pub_str'\n"
+            . "`pubtime`=:pubtime\n"
             . "WHERE `eid`=:eid";
 
         $sth = $this->dbh->prepare($query);
@@ -1197,6 +1198,7 @@ class Database
         }
         $sth->bindValue(':subject', $subject);
         $sth->bindValue(':description', $description);
+        $sth->bindValue(':pubtime', $pub_ts, \PDO::PARAM_INT);
         $sth->execute();
 
         if ($sth->rowCount() == 0) {

@@ -15,7 +15,7 @@
   {% endif %}
   </ul>
   <div class="tab-content">
-    <div role="tabpanel" class="tab-pane fade show active" id="calendars" role="tabpanel" aria-labelledby="calendars-tab">
+    <div class="tab-pane fade show active" id="calendars" role="tabpanel" aria-labelledby="calendars-tab">
       <h3>{{ "calendars-label"|trans }}</h3>
       <table class="table">
         <thead>
@@ -29,7 +29,7 @@
           <tr>
             <td>{{ calendar.getTitle() }}</td>
             <td>
-              <a class="btn btn-primary" href="{{ script }}?action=admin&amp;phpcid={{ calendar.getCid() }}#calendar_settings"><i class="fas fa-wrench"></i> {{ "settings-button"|trans }}</a>
+              <a class="btn btn-primary settings-button" href="{{ script }}?action=admin&amp;phpcid={{ calendar.getCid }}#calendar"><i class="fas fa-wrench"></i> {{ "settings-button"|trans }}</a>
               <a class="btn btn-primary" href="{{ script }}?action=calendar_delete&amp;cid={{ calendar.getCid() }}"
                 data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}" data-button-text="{{ "delete-button"|trans }}"
                 data-content="{{ "permanently-delete-calendar-question"|trans }}"><i class="fas fa-trash"></i> {{ "delete-button"|trans }}</a>
@@ -46,7 +46,7 @@
       <a class="btn btn-primary" href="{{ context.createUrl('create_calendar') }}"><i class="fas fa-plus-square"></i> {{ "create-calendar-button"|trans }}</a>
     </div>
 
-    <div role="tabpanel" class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+    <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
       <h3>{{ "users-label"|trans }}</h3>
       <table class="table">
         <thead>
@@ -76,7 +76,7 @@
       <a class="btn btn-primary" href="{{ context.createUrl('create_user') }}"><i class="fas fa-plus-square"></i> {{ "create-user-button"|trans }}</a>
     </div>
 
-    <div role="tabpanel" class="tab-pane fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
+    <div class="tab-pane fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
       <h3>{{ "calendar-settings-label"|trans }}</h3>
       {{ form_start(calendar_form) }}
         {{ form_widget(calendar_form) }}
@@ -84,7 +84,7 @@
       {{ form_end(calendar_form) }}
     </div>
 
-    <div role="tabpanel" class="tab-pane fade" id="calendar-users" role="tabpanel" aria-labelledby="calendar-users-tab">
+    <div class="tab-pane fade" id="calendar-users" role="tabpanel" aria-labelledby="calendar-users-tab">
       <h3>{{ "user-permissions-label"|trans }}</h3>
       {{ form_start(user_form) }}
         {% for user_field in user_form.children %}
@@ -108,5 +108,9 @@
 
   <script>
     $('.nav-tabs a[href="' + window.location.hash + '"]').tab('show');
+    $('.settings-button').click(function() {
+      window.location = $(this).attr('href');
+      window.location.reload();
+    });
   </script>
 {% endblock %}

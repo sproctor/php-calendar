@@ -1,23 +1,16 @@
 <!doctype html>
-<html lang="{{ context.getLang() }}">
+<html lang="{{ locale }}">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>{{ title }}</title>
+	<title>{{ calendar.getTitle }}</title>
 	<link rel="icon" href="static/office-calendar.png">
 	<link rel="stylesheet" href="static/phpc.css">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
-		integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
-	<script defer src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-		crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-		crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"
-		integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4"
-		crossorigin="anonymous"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.min.js"
 		integrity="sha256-ltAts6+/XysEs9E5RF/t0H+0eD3ET6NpbqzshWkqeic=" crossorigin="anonymous"></script>
 	<script src="static/phpc.js"></script>
@@ -77,11 +70,12 @@
 			<form class="form-inline" action="{{ context.createUrl('search') }}" method="post">
 				<div class="search-wrapper">
 					<label class="search-label" for="search-input"><i class="fas fa-search"></i></label>
-    				<input class="search-input" name="query" type="search"
+    				<input id="search-input" class="search-input" name="query" type="search"
 						placeholder="{{ "search-label"|trans }}" aria-label="{{ "search-label"|trans }}">
 					<button class="search-button" title="{{ "search-label"|trans }}" type="submit">
 						<i class="fas fa-arrow-right"></i>
 					</button>
+				</div>
     		</form>
 		</div>
 	</nav>

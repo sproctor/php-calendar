@@ -32,7 +32,7 @@ class CalendarForm
     */
     public function getForm(Context $context, $calendar = null)
     {
-        $builder = $context->getFormFactory()->createBuilder();
+        $builder = $context->getFormFactory()->createNamedBuilder('calendar_form');
         $builder->add('title', TextType::class, array('label' => __('calendar-title-label')))
         ->add('subject_max', IntegerType::class, array('label' => __('max-subject-length-label'), 'data' => 50))
         ->add('events_max', IntegerType::class, array('label' => __('max-events-display-label'), 'data' => 8))
