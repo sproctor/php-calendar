@@ -72,7 +72,9 @@ class CalendarForm
             $builder->get('events_max')->setData($calendar->getMaxDisplayEvents());
             $builder->get('anon_permission')->setData($calendar->getAnonPermission());
             $builder->get('timezone')->setData($calendar->getTimezone());
-            $builder->get('language')->setData($calendar->getLocale());
+            if ($calendar->getLocale() != null) {
+                $builder->get('language')->setData($calendar->getLocale());
+            }
         }
 
         return $builder->getForm();
