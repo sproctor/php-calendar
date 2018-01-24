@@ -1077,10 +1077,11 @@ class Database
      */
     public function createEvent($cid, $uid, $subject, $description, $catid, $publish_date)
     {
-        $pub_str = datetime_to_sql_date($publish_date);
+        $publish_date->setTimezone(new \DateTimeZone('UTC'));
+        $pub_ts = $publish_date->getTimestamp();
         $query = "INSERT INTO `" . $this->prefix . "events`\n"
             . "(`cid`, `owner`, `subject`, `description`, `catid`, `pubtime`)\n"
-            . "VALUES (:cid, :uid, :subject, :description, :catid, '$pub_str')";
+            . "VALUES (:cid, :uid, :subject, :description, :catid, :pubtime)";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
@@ -1088,6 +1089,7 @@ class Database
         $sth->bindValue(':subject', $subject);
         $sth->bindValue(':description', $description);
         $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
+        $sth->bindValue(':pubtime', $pub_ts, \PDO::PARAM_INT);
         $sth->execute();
 
         return intval($this->dbh->lastInsertId());
@@ -1180,7 +1182,7 @@ class Database
      */
     public function modifyEvent($eid, $subject, $description, $catid, $publish_date)
     {
-        $publish_date->setTimezone('UTC');
+        $publish_date->setTimezone(new \DateTimeZone('UTC'));
         $pub_ts = $publish_date->getTimestamp();
         $query = "UPDATE `{$this->prefix}events`\n"
             . "SET\n"
