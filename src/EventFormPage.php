@@ -77,9 +77,9 @@ class EventFormPage extends Page
                 $context->request->get('day', 1)
             );
         }
-	$default_date->setTime(17, 0);
-	$end_datetime = clone $default_date;
-	$end_datetime->setTime(18, 0);
+        $default_date->setTime(17, 0);
+        $end_datetime = clone $default_date;
+        $end_datetime->setTime(18, 0);
         $builder->add(
             'subject',
             TextType::class,
@@ -136,8 +136,8 @@ class EventFormPage extends Page
         ->add(
             'publish_datetime',
             DateTimeType::class,
-            array('label' => __('publish-date-time-label'), 'date_widget' => 'single_text',
-                'time_widget' => 'single_text')
+            ['label' => __('publish-date-time-label'), 'date_widget' => 'single_text',
+                'time_widget' => 'single_text', 'required' => false]
         );
 
         //echo "<pre>"; var_dump($context->request); echo "</pre>";

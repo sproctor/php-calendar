@@ -1077,11 +1077,15 @@ class Database
      */
     public function createEvent($cid, $uid, $subject, $description, $catid, $publish_date)
     {
-        $publish_date->setTimezone(new \DateTimeZone('UTC'));
-        $pub_ts = $publish_date->getTimestamp();
+        if ($publish_date !== null) {
+            $publish_date->setTimezone(new \DateTimeZone('UTC'));
+            $pub_str = "FROM_UNIXTIME(" . $publish_date->getTimestamp() . ')';
+        } else {
+            $pub_str = 'NULL';
+        }
         $query = "INSERT INTO `" . $this->prefix . "events`\n"
             . "(`cid`, `owner`, `subject`, `description`, `catid`, `pubtime`)\n"
-            . "VALUES (:cid, :uid, :subject, :description, :catid, :pubtime)";
+            . "VALUES (:cid, :uid, :subject, :description, :catid, $pub_str)";
 
         $sth = $this->dbh->prepare($query);
         $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
@@ -1089,7 +1093,6 @@ class Database
         $sth->bindValue(':subject', $subject);
         $sth->bindValue(':description', $description);
         $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
-        $sth->bindValue(':pubtime', $pub_ts, \PDO::PARAM_INT);
         $sth->execute();
 
         return intval($this->dbh->lastInsertId());
@@ -1182,15 +1185,19 @@ class Database
      */
     public function modifyEvent($eid, $subject, $description, $catid, $publish_date)
     {
-        $publish_date->setTimezone(new \DateTimeZone('UTC'));
-        $pub_ts = $publish_date->getTimestamp();
+        if ($publish_date !== null) {
+            $publish_date->setTimezone(new \DateTimeZone('UTC'));
+            $pub_str = "FROM_UNIXTIME(" . $publish_date->getTimestamp() . ')';
+        } else {
+            $pub_str = 'NULL';
+        }
         $query = "UPDATE `{$this->prefix}events`\n"
             . "SET\n"
             . "`subject`=:subject,\n"
             . "`description`=:description,\n"
             . "`mtime`=NOW(),\n"
             . "`catid`=" . ($catid !== null ? ":catid" : "NULL") . ",\n"
-            . "`pubtime`=:pubtime\n"
+            . "`pubtime`=$pub_str\n"
             . "WHERE `eid`=:eid";
 
         $sth = $this->dbh->prepare($query);
@@ -1200,7 +1207,6 @@ class Database
         }
         $sth->bindValue(':subject', $subject);
         $sth->bindValue(':description', $description);
-        $sth->bindValue(':pubtime', $pub_ts, \PDO::PARAM_INT);
         $sth->execute();
 
         if ($sth->rowCount() == 0) {
