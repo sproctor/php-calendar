@@ -97,14 +97,24 @@ class EventFormPage extends Page
         ->add(
             'start',
             DateTimeType::class,
-            array('label' => __('from-label'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
-                'data' => $default_date)
+            ['label' => __('from-label'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
+                'data' => $default_date, 'required' => false]
         )
         ->add(
             'end',
             DateTimeType::class,
-            array('label' => __('to-label'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
-                'data' => $end_datetime)
+            ['label' => __('to-label'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
+                'data' => $end_datetime, 'required' => false]
+        )
+        ->add(
+            'start_date',
+            DateType::class,
+            ['label' => __('from-label'), 'widget' => 'single_text', 'data' => $default_date, 'required' => false]
+        )
+        ->add(
+            'end_date',
+            DateType::class,
+            ['label' => __('to-label'), 'widget' => 'single_text', 'data' => $end_datetime, 'required' => false]
         )
         ->add(
             'time_type',
@@ -190,8 +200,17 @@ class EventFormPage extends Page
                 $form = $event->getForm();
                 $data = $form->getData();
                 if (!empty($data) && !empty($data['save']) && (empty($data['eid']) || $data['modify'])) {
-                    if ($data['end']->getTimestamp() < $data['start']->getTimestamp()) {
-                        $form->get('end')->addError(
+                    if ($data['time_type'] == 0) {
+                        $start = $data['start'];
+                        $end = $data['end'];
+                        $error_element = 'end';
+                    } else {
+                        $start = $data['start_date'];
+                        $end = $data['end_date'];
+                        $error_element = 'end_date';
+                    }
+                    if ($end->getTimestamp() < $start->getTimestamp()) {
+                        $form->get($error_element)->addError(
                             new FormError(__('end-before-start-date-time-error'))
                         );
                     }
@@ -265,20 +284,27 @@ class EventFormPage extends Page
     
         if ($modify_occur) {
             $occurrences = 0;
-            
+
+            if ($data['time_type'] == 0) {
+                $start = $data['start'];
+                $end = $data['end'];
+            } else {
+                $start = $data['start_date'];
+                $end = $data['end_date'];
+            }
             if ($data['repeats'] == '0') {
-                $context->db->createOccurrence($eid, $data['time_type'], $data['start'], $data['end']);
+                $context->db->createOccurrence($eid, $data['time_type'], $start, $data['end']);
             } else {
                 $interval = new \DateInterval('P'.$data['frequency'].$data['repeats']);
                 
-                echo "days between: " . days_between($data['start'], $data['until']);
+                echo "days between: " . days_between($start, $data['until']);
 
-                while ($occurrences <= 730 && days_between($data['start'], $data['until']) >= 0) {
-                    $context->db->createOccurrence($eid, $data['time_type'], $data['start'], $data['end']);
+                while ($occurrences <= 730 && days_between($start, $data['until']) >= 0) {
+                    $context->db->createOccurrence($eid, $data['time_type'], $start, $end);
                     $occurrences++;
         
-                    $data['start']->add($interval);
-                    $data['end']->add($interval);
+                    $start->add($interval);
+                    $end->add($interval);
                 }
             }
         }

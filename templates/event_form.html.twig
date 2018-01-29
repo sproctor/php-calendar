@@ -12,9 +12,25 @@
       {{ form_row(form.modify) }}
     {% endif %}
     <div id="time_data">
-      {{ form_row(form.start) }}
-      {{ form_row(form.end) }}
       {{ form_row(form.time_type) }}
+      {{ form_label(form.start) }}
+      <div class="form-datetime">
+        {{ form_widget(form.start) }}
+        {{ form_errors(form.start) }}
+      </div>
+      <div class="form-date">
+        {{ form_widget(form.start_date) }}
+        {{ form_errors(form.start_date) }}
+      </div>
+      {{ form_label(form.end) }}
+      <div class="form-datetime">
+          {{ form_widget(form.end) }}
+          {{ form_errors(form.end) }}
+      </div>
+      <div class="form-date">
+          {{ form_widget(form.end_date) }}
+          {{ form_errors(form.end_date) }}
+      </div>
       {{ form_row(form.repeats) }}
       <div id="repeat_data">
         {{ form_row(form.frequency) }}
@@ -28,6 +44,24 @@
   {{ form_end(form) }}
 
   <script>
+    var $type_selector = $('#form_time_type');
+    function updateToFrom() {
+        if ($type_selector.val() === '0') {
+            $('.form-datetime').show();
+            $('.form-datetime select').prop('disabled', false);
+            $('.form-date').hide();
+            $('.form-date select').prop('disabled', true);
+        } else {
+            $('.form-datetime').hide();
+            $('.form-datetime select').prop('disabled', true);
+            $('.form-date').show();
+            $('.form-date select').prop('disabled', false);
+        }
+    }
+    updateToFrom();
+    $type_selector.change(function() {
+        updateToFrom();
+    });
     {% if form.eid is defined %}
       // show hide time stuff with modify checkbox
       $('#time_data').toggle($('#form_modify').checked);
@@ -44,7 +78,7 @@
 
     var $repeat_selector = $('#form_repeats');
     var $repeat_data = $('#repeat_data');
-    if ($repeat_selector.val() == '0') {
+    if ($repeat_selector.val() === '0') {
       $repeat_data.hide();
       $repeat_data.find("input").prop('disabled', true);
     } else {
