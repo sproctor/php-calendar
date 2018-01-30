@@ -99,6 +99,23 @@ class Occurrence extends Event
         return $str;
     }
 
+    public function getTimeString()
+    {
+        switch ($this->time_type) {
+            default:
+                $formatter = new \IntlDateFormatter(
+                    \Locale::getDefault(),
+                    \IntlDateFormatter::NONE,
+                    \IntlDateFormatter::SHORT
+                );
+                return $formatter->format($this->start);
+            case 1: // FULL DAY
+            case 3: // None
+                return null;
+            case 2:
+                return __('to-be-announced-abbr');
+        }
+    }
     /**
      * @return int
      */

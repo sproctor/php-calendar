@@ -20,10 +20,10 @@
 			    {% else %}
 				    {% set textcolor = occurrence.getTextColor() %}
 				    {% set bgcolor = occurrence.getBgColor() %}
-				    <a class="phpc-occurrence list-group-item" href="{{ context.createEventUrl('display_event', occurrence.getEID()) }}"
+				    <a class="phpc-occurrence list-group-item" href="{{ context.createEventUrl('display_event', occurrence.getEID) }}"
 						style="{% if not textcolor is null %}color: {{ textcolor }} !important; {% endif %}{% if not bgcolor is null %}background: {{ bgcolor }} !important;{% endif %}"
 						data-toggle="popover" data-trigger="hover" data-html=true data-placement="auto"
-						title="{{ occurrence.getSubject() }}" 
+						title="{{ occurrence.getSubject }}"
 						data-content="{{ "by-author"|trans({'%author%': occurrence.getAuthor}) }}{{ "\n\n" }}{{ occurrence.getDescription() }}">
 				    {% set time = occurrence.getTimeString() %}
 				    {% if not time is null %}
