@@ -358,17 +358,17 @@ function check_config()
 function report_config()
 {
 	echo '<p>Your configuration file could not be written to. This file '
-		.'probably does not yet exist. If that is the case, youneed to '
+		.'probably does not yet exist. If that is the case, you need to '
 		.'create it. You need to make sure this script can write to '
 		.'it. We suggest logging in with a shell and typing:</p>
-		<p><pre>
+		<pre>
 		touch config.php
 		chmod 666 config.php
-		</pre></p>
+		</pre>
 		<p>or if you only have ftp access, upload a blank file named '
 		.'config.php to your php-calendar directory then use the chmod '
 		.'command to change the permissions of config.php to 666.</p>
-		<input type="submit" value="Retry"/>';
+		<p><input type="submit" value="Retry"/></p>';
 }
 
 function get_server_setup()
