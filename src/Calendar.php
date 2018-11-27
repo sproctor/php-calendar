@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2018 Sean Proctor
+ * Copyright Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,37 @@ namespace PhpCalendar;
 
 class Calendar
 {
+    /**
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
     private $cid;
+
+    /**
+     * @ORM\Column(type="string", length=250)
+     */
     private $title;
+
     private $user_perms = array();
     private $categories;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
     private $subject_max;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
     private $events_max;
+
+    // TODO: See https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/cookbook/mysql-enums.html
     private $anon_permission;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
     private $timezone;
     private $locale;
     private $theme;

@@ -45,28 +45,39 @@ class Context
      * @var Calendar $calendar
      */
     public $calendar;
+
     /**
      * @var User $user
      */
     public $user;
+
+    /**
+     * @var Session $session
+     */
     public $session;
+
     /**
      * @var FormFactoryInterface $formFactory
      */
     private $formFactory;
+
     /**
      * @var Request $request
      */
     public $request;
+
     public $config;
+
     /**
-     * @var Database $db
+     * @var EntityManager $entityManager
      */
-    public $db;
+    public $entityManager;
+
     /**
      * @var Translator $translator
      */
     public $translator;
+
     /**
      * @var  \Twig_Environment
      */
@@ -99,7 +110,17 @@ class Context
         $this->session->start();
 
         $this->config = $this->loadConfig(PHPC_CONFIG_FILE);
-        $this->db = new Database($this->config);
+
+        // Initialize DB
+        $db_config = new \Doctrine\DBAL\Configuration();
+        $connectionParams = array(
+            'dbname' => $config["sql_database"],
+            'user' => $config["sql_user"],
+            'password' => $config["sql_passwd"],
+            'host' => $config["sql_host"],
+            'driver' => 'pdo_mysql',
+        );
+        $this->entityManager = new Database($this->config);
 
         $appVariableReflection = new \ReflectionClass('\Symfony\Bridge\Twig\AppVariable');
         $vendorTwigBridgeDir = dirname($appVariableReflection->getFileName());
@@ -115,6 +136,7 @@ class Context
             )
         );
 
+        /* Replace this with Doctrine Migrations
         include_once __DIR__ . '/schema.php';
         if ($this->db->getConfig('version') < PHPC_DB_VERSION) {
             return;
@@ -123,6 +145,7 @@ class Context
         if ($this->db->getConfig('version') > PHPC_DB_VERSION) {
             throw new InvalidConfigException();
         }
+        */
 
         // Validate user
         $this->readLoginToken();

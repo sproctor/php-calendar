@@ -15,25 +15,18 @@
  * limitations under the License.
  */
 
-if(!defined('IN_PHPC')) {
-       die("Hacking attempt");
-}
-
 require_once "$phpc_includes_path/form.php";
 
-function category_form() 
+function category_form()
 {
     global $phpc_script, $vars, $phpcdb, $phpcid;
 
         $form = new Form($phpc_script, __('Category Form'));
         $form->add_part(
-            new FormFreeQuestion(
-                'name', __('Name'),
-                false, 32, true
-            )
+            new FormFreeQuestion('name', __('Name'), false, 32, true)
         );
 
-    if(isset($vars['cid'])) {
+    if (isset($vars['cid'])) {
         $form->add_hidden('cid', $vars['cid']);
         $cid = $vars['cid'];
     } else {
@@ -49,13 +42,13 @@ function category_form()
         __('Accessible to group')
     );
     $group_question->add_option('', __('Any'));
-    foreach($phpcdb->get_groups($cid) as $group) {
+    foreach ($phpcdb->get_groups($cid) as $group) {
         $group_question->add_option($group['gid'], $group['name']);
     }
     $form->add_part($group_question);
     $form->add_part(new FormSubmitButton(__("Submit Category")));
 
-    if(isset($vars['catid'])) {
+    if (isset($vars['catid'])) {
         $form->add_hidden('catid', $vars['catid']);
         $category = $phpcdb->get_category($vars['catid']);
         $defaults = array(
@@ -72,5 +65,3 @@ function category_form()
     }
         return $form->get_form($defaults);
 }
-
-?>
