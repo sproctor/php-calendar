@@ -17,6 +17,7 @@
 
 namespace PhpCalendar;
 
+use Doctrine\ORM\EntityManager;
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
 use Symfony\Bridge\Twig\Extension\FormExtension;
@@ -91,7 +92,7 @@ class Context
      * @throws \ReflectionException
      * @throws \Exception
      */
-    public function __construct(Request $request)
+    public function __construct(Request $request, EntityManager $entityManager)
     {
 
         //ini_set('arg_separator.output', '&amp;');
@@ -109,18 +110,7 @@ class Context
         $this->session = new Session();
         $this->session->start();
 
-        $this->config = $this->loadConfig(PHPC_CONFIG_FILE);
-
-        // Initialize DB
-        $db_config = new \Doctrine\DBAL\Configuration();
-        $connectionParams = array(
-            'dbname' => $config["sql_database"],
-            'user' => $config["sql_user"],
-            'password' => $config["sql_passwd"],
-            'host' => $config["sql_host"],
-            'driver' => 'pdo_mysql',
-        );
-        $this->entityManager = new Database($this->config);
+        $this->entityManager = $entityManager;
 
         $appVariableReflection = new \ReflectionClass('\Symfony\Bridge\Twig\AppVariable');
         $vendorTwigBridgeDir = dirname($appVariableReflection->getFileName());
@@ -159,26 +149,6 @@ class Context
         $this->initLocale($request);
 
         $this->initTwig();
-    }
-
-    /**
-     * @param string $filename
-     * @return string[]
-     */
-    private function loadConfig($filename)
-    {
-        // Run the installer if we have no config file
-        // This doesn't work when embedded from outside
-        if (!file_exists($filename)) {
-            throw new InvalidConfigException();
-        }
-        $config = include $filename;
-
-        if (!isset($config["sql_host"])) {
-            throw new InvalidConfigException();
-        }
-
-        return $config;
     }
 
     private function initTwig()
@@ -347,13 +317,14 @@ class Context
             if (is_array($eid)) {
                 $eid = $eid[0];
             }
-            $event = $this->db->getEvent($eid);
+            $event = $this->entityManager->find('Event', $eid);
             if ($event != null) {
                 return $event->getCalendar()->getCid();
             }
         }
         
-        $calendars = $this->db->getCalendars();
+        $calendars = $this->entityManager->getRepository('Calendar')->findAll();
+
         if (empty($calendars)) {
             throw new \Exception("There are no calendars.");
             // TODO: create a page to fix this

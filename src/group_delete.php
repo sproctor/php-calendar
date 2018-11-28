@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 
-if (!defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
 
 function group_delete()
 {
@@ -25,7 +22,7 @@ function group_delete()
 
     $html = tag('div', attributes('class="phpc-container"'));
 
-    if(empty($vars["gid"])) {
+    if (empty($vars["gid"])) {
         return message_redirect(
             __('No group selected.'),
             "$phpc_script?action=cadmin&phpcid=$phpcid"
@@ -43,22 +40,22 @@ function group_delete()
         $groups[] = $phpcdb->get_group($id);
     }
 
-    foreach($groups as $group) {
-        if((empty($group['cid']) && !is_admin()) 
+    foreach ($groups as $group) {
+        if ((empty($group['cid']) && !is_admin())
             || !$phpcdb->get_calendar($group['cid'])        ->can_admin()
         ) {
             $html->add(tag('p', __("You do not have permission to delete group: ") . $group['gid']));
             continue;
         }
 
-        if($phpcdb->delete_group($group['gid'])) {
+        if ($phpcdb->delete_group($group['gid'])) {
             $html->add(
                 tag(
                     'p', __("Removed group: ")
                     . $group['gid']
                 )
             );
-        } else {        
+        } else {
             $html->add(
                 tag(
                     'p', __("Could not remove group: ")
@@ -68,7 +65,5 @@ function group_delete()
         }
     }
 
-        return message_redirect($html, "$phpc_script?action=cadmin&phpcid=$phpcid");
+    return message_redirect($html, "$phpc_script?action=cadmin&phpcid=$phpcid");
 }
-
-?>

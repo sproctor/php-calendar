@@ -15,30 +15,27 @@
  * limitations under the License.
  */
 
-if(!defined('IN_PHPC')) {
-    die("Hacking attempt");
-}
 
-require_once "$phpc_includes_path/form.php";
+// require_once "$phpc_includes_path/form.php";
 
-function occur_form() 
+function occur_form()
 {
     global $vars;
 
-    if(empty($vars["submit_form"])) {
+    if (empty($vars["submit_form"])) {
         return display_form();
     }
 
     // else
     try {
-        return process_form();
-    } catch(Exception $e) {
+        return process_occur_form();
+    } catch (Exception $e) {
         message($e->getMessage());
-        return display_form();
+        return display_occur_form();
     }
 }
 
-function display_form() 
+function display_occur_form()
 {
     global $phpc_script, $phpc_year, $phpc_month, $phpc_day, $vars, $phpcdb,
            $phpc_cal, $phpc_token;
@@ -70,11 +67,11 @@ function display_form()
 
     $form->add_part($when_group);
 
-    if(isset($vars['phpcid'])) {
+    if (isset($vars['phpcid'])) {
         $form->add_hidden('phpcid', $vars['phpcid']);
     }
 
-    if(isset($vars['oid'])) {
+    if (isset($vars['oid'])) {
         $form->add_hidden('oid', $vars['oid']);
 
         $occ = $phpcdb->get_occurrence_by_oid($vars['oid']);
@@ -91,11 +88,11 @@ function display_form()
             $datefmt
         );
         $start_time = $occ->get_start_time();
-        if($start_time == null) {
+        if ($start_time == null) {
             $start_time = format_time_string(17, 0, $hour24);
         }
         $end_time = $occ->get_end_time();
-        if($end_time == null) {
+        if ($end_time == null) {
             $end_time = format_time_string(18, 0, $hour24);
         }
         $defaults = array(
@@ -105,18 +102,17 @@ function display_form()
         'end-time' => $end_time,
         );
 
-        switch($occ->get_time_type()) {
-        case 0:
-            $defaults['time-type'] = 'normal';
-            break;
-        case 1:
-            $defaults['time-type'] = 'full';
-            break;
-        case 2:
-            $defaults['time-type'] = 'tba';
-            break;
+        switch ($occ->get_time_type()) {
+            case 0:
+                $defaults['time-type'] = 'normal';
+                break;
+            case 1:
+                $defaults['time-type'] = 'full';
+                break;
+            case 2:
+                $defaults['time-type'] = 'tba';
+                break;
         }
-
     } else {
         $form->add_hidden('eid', $vars['eid']);
         $defaults = array(
@@ -138,48 +134,48 @@ function display_form()
     return $form->get_form($defaults);
 }
 
-function process_form()
+function process_occur_form()
 {
     global $vars, $phpcdb, $phpc_cal, $phpcid, $phpc_script;
 
-    if(!isset($vars['eid']) && !isset($vars['oid'])) {
+    if (!isset($vars['eid']) && !isset($vars['oid'])) {
         soft_error(__("Cannot create occurrence."));
     }
 
     $start_ts = get_timestamp("start");
     $end_ts = get_timestamp("end");
 
-    switch($vars["time-type"]) {
-    case 'normal':
-        $time_type = 0;
-        break;
+    switch ($vars["time-type"]) {
+        case 'normal':
+            $time_type = 0;
+            break;
 
-    case 'full':
-        $time_type = 1;
-        break;
+        case 'full':
+            $time_type = 1;
+            break;
 
-    case 'tba':
-        $time_type = 2;
-        break;
+        case 'tba':
+            $time_type = 2;
+            break;
 
-    default:
-        soft_error(__("Unrecognized Time Type."));
+        default:
+            soft_error(__("Unrecognized Time Type."));
     }
 
     $duration = $end_ts - $start_ts;
-    if($duration < 0) {
+    if ($duration < 0) {
         soft_error(__("An event cannot have an end earlier than its start."));
     }
 
     verify_token();
 
-    if(!$phpc_cal->can_write()) {
+    if (!$phpc_cal->can_write()) {
         permission_error(__('You do not have permission to write to this calendar.'));
     }
 
-    if(!isset($vars['oid'])) {
+    if (!isset($vars['oid'])) {
         $modify = false;
-        if(!isset($vars["eid"])) {
+        if (!isset($vars["eid"])) {
             soft_error(__("EID not set."));
         }
         $oid = $phpcdb->create_occurrence(
@@ -195,8 +191,8 @@ function process_form()
         );
     }
         
-    if($oid != 0) {
-        if($modify) {
+    if ($oid != 0) {
+        if ($modify) {
             $message = __("Modified occurence: ");
         } else {
             $message = __("Created occurence: ");
@@ -219,5 +215,3 @@ function process_form()
         );
     }
 }
-
-?>

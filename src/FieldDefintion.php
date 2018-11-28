@@ -21,34 +21,36 @@ namespace PhpCalendar;
  * Field represents an user defined field for an event.
  *
  * @author Sean Proctor <sproctor@gmail.com>
+ * @Entity
+ * @Table("field_definitions")
  */
-class Field
+class FieldDefinition
 {
     /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @Column(type="integer")
+     * @Id
+     * @GeneratedValue(strategy="AUTO")
      */
     private $fid;
 
     /**
      * @ManyToOne(targetEntity="Calendar")
-     * @JoinColumn(name="did", referencedColumnName="did")
+     * @JoinColumn(name="cid", referencedColumnName="cid")
      */
     private $calendar;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @Column(type="string", length=255)
      */
     private $name;
     
     /**
-     * @ORM\Column(type="boolean")
+     * @Column(type="boolean")
      */
     private $is_required;
 
     /**
-     * @ORM\Column(type="text")
+     * @Column(type="text")
      */
     private $format;
 }

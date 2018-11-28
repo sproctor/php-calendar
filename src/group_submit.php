@@ -15,26 +15,22 @@
  * limitations under the License.
  */
 
-if (!defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
-
 function group_submit()
 {
     global $vars, $phpcdb, $phpc_script, $phpc_cal;
 
-    if(!isset($vars['gid'])) {
+    if (!isset($vars['gid'])) {
         $modify = false;
 
-        if(!isset($vars['cid'])) {
+        if (!isset($vars['cid'])) {
             $cid = null;
-            if(!is_admin()) {
+            if (!is_admin()) {
                 permission_error(__('You do not have permission to add a global group.'));
             }
-        } else { 
+        } else {
             $cid = $vars['cid'];
             $calendar = $phpcdb->get_calendar($cid);
-            if(!$calendar->can_admin()) {
+            if (!$calendar->can_admin()) {
                 permission_error(__('You do not have permission to add a group to this calendar.'));
             }
         }
@@ -45,8 +41,8 @@ function group_submit()
         $gid = $vars['gid'];
         $group = $phpcdb->get_group($gid);
 
-        if(!(empty($group['cid']) && is_admin() 
-            || $phpcdb->get_calendar($group["cid"])        ->can_admin())
+        if (!(empty($group['cid']) && is_admin()
+            || $phpcdb->get_calendar($group["cid"])->can_admin())
         ) {
             soft_error(__("You do not have permission to modify this group."));
         }
@@ -56,14 +52,14 @@ function group_submit()
 
     $page = "$phpc_script?action=cadmin&phpcid=".$vars['cid'];
 
-    if($modify) {
+    if ($modify) {
         return message_redirect(
             __("Modified group: ") . $gid,
             $page
         );
     }
 
-    if($gid > 0) {
+    if ($gid > 0) {
         return message_redirect(
             __("Created group: ") . $gid,
             $page
@@ -71,8 +67,8 @@ function group_submit()
     }
 
     return tag(
-        'div', attributes('class="phpc-error"'),
+        'div',
+        attributes('class="phpc-error"'),
         __('Error submitting group.')
     );
 }
-?>

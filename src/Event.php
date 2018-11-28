@@ -21,52 +21,72 @@ namespace PhpCalendar;
  * Event represents an event that may have multiple occurrences.
  *
  * @author Sean Proctor <sproctor@gmail.com>
+ * @Entity
+ * @Table("events")
  */
 class Event
 {
+    /**
+     * @Column(type="integer")
+     * @Id
+     * @GeneratedValue(strategy="AUTO")
+     */
     private $eid;
-    private $owner_uid;
-    private $author;
-    private $subject;
-    private $desc;
-    private $category;
-    private $bg_color;
-    private $text_color;
-    private $catid;
-    private $gid;
-    private $ctime;
-    private $mtime;
-    private $pubtime;
-    protected $calendar;
-    private $fields;
-    private $db;
 
     /**
-     * @param Database $db
-     * @param string[] $event
+     * @ManyToOne(targetEntity="User")
+     * @JoinColumn(name="owner_uid", referencedColumnName="uid")
      */
-    public function __construct(Database $db, $event)
-    {
-        $this->db = $db;
-        $this->eid = intval($event['eid']);
-        $this->owner_uid = $event['owner'];
-        if (empty($event['owner'])) {
-            $this->author = __('anonymous-username');
-        } else {
-            $this->author = $event['username'];
-        }
-        $this->subject = $event['subject'];
-        $this->desc = $event['description'];
-        $this->category = $event['name'];
-        $this->bg_color = $event['bg_color'];
-        $this->text_color = $event['text_color'];
-        $this->catid = $event['catid'];
-        $this->gid = $event['gid'];
-        $this->ctime = datetime_from_timestamp($event['ctime']);
-        $this->mtime = empty($event['mtime']) ? null : datetime_from_timestamp($event['mtime']);
-        $this->pubtime = empty($event['pubtime']) ? null : datetime_from_timestamp($event['pubtime']);
-        $this->calendar = $db->getCalendar($event['cid']);
-    }
+    private $owner;
+
+    /**
+     * @ManyToOne(targetEntity="User")
+     * @JoinColumn(name="author_uid", referencedColumnName="uid")
+     */
+    private $author;
+
+    /**
+     * @Column(type="string", length=255)
+     */
+    private $subject;
+
+    /**
+     * @OColumn(type="text")
+     */
+    private $description;
+
+    /**
+     * @ManyToOne(targetEntity="Category")
+     * @JoinColumn(name="catid", referencedColumnName="catid")
+     */
+    private $category;
+
+    /**
+     * @Column(type="datetime")
+     */
+    private $ctime;
+
+    /**
+     * @Column(type="datetime")
+     */
+    private $mtime;
+
+    /**
+     * @Column(type="datetime")
+     */
+    private $pubtime;
+
+    /**
+     * @ManyToOne(targetEntity="Calendar")
+     * @JoinColumn(name="cid", referencedColumnName="cid")
+     */
+    private $calendar;
+
+    /**
+     * One Event can have many Fields.
+     * @OneToMany(targetEntity="Field", mappedBy="eid")
+     */
+    private $fields;
 
     /**
      * @return string

@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 
-if (!defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
-
 function user_settings()
 {
     global $vars, $phpcdb, $phpc_user;
@@ -36,7 +32,7 @@ function user_settings()
 
     $forms[] = config_form();
 
-    if(is_user() && $phpc_user->is_password_editable()) {
+    if (is_user() && $phpc_user->is_password_editable()) {
         $forms[] = password_form();
         $index->add(
             tag(
@@ -104,7 +100,7 @@ function config_form()
     );
 
     $languages = array("" => __("Default"));
-    foreach(get_languages() as $lang) {
+    foreach (get_languages() as $lang) {
         $languages[$lang] = $lang;
     }
     $lang_input = create_select(
@@ -113,11 +109,12 @@ function config_form()
     );
 
     $calendars = array("" => __("None"));
-    foreach($phpcdb->get_calendars() as $calendar) {
+    foreach ($phpcdb->get_calendars() as $calendar) {
         $calendars[$calendar->get_cid()] = $calendar->get_title();
     }
     $default_input = create_select(
-        'default_cid', $calendars,
+        'default_cid',
+        $calendars,
         $phpc_user->get_default_cid()
     );
 
@@ -165,4 +162,3 @@ function config_form()
 
     return tag('div', attrs('id="phpc-config"'), $form);
 }
-?>

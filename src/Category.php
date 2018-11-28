@@ -17,12 +17,16 @@
 
 namespace PhpCalendar;
 
+/**
+ * @Entity
+ * @Table("categories")
+ */
 class Category
 {
     /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @Column(type="integer")
+     * @Id
+     * @GeneratedValue(strategy="AUTO")
      */
     private $catid;
 
@@ -33,18 +37,12 @@ class Category
     private $calendar;
 
     /**
-     * @ManyToOne(targetEntity="Group")
-     * @JoinColumn(name="gid", referencedColumnName="gid")
-     */
-    private $group;
-
-    /**
-     * @ORM\Column(type="string", length=255)
+     * @Column(type="string", length=255)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @Column(type="string", length=255)
      */
     private $color;
 }

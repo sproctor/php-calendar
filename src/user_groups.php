@@ -15,44 +15,39 @@
  * limitations under the License.
  */
 
-if(!defined('IN_PHPC')) {
-       die("Hacking attempt");
-}
-
-function user_groups() 
+function user_groups()
 {
     global $vars, $phpc_cal;
 
-    if(!$phpc_cal->can_admin()) {
+    if (!$phpc_cal->can_admin()) {
             return tag('div', __('Permission denied'));
     }
 
-    if(!empty($vars['submit_form'])) {
+    if (!empty($vars['submit_form'])) {
         process_form();
     }
 
     return display_form();
-
 }
 
-function display_form() 
+function display_form()
 {
     global $phpc_script, $phpc_token, $phpcdb, $vars, $phpc_cal, $phpcid;
 
     $groups = array();
-    foreach($phpc_cal->get_groups() as $group) {
+    foreach ($phpc_cal->get_groups() as $group) {
         $groups[$group['gid']] = $group['name'];
     }
 
     $size = sizeof($groups);
-    if($size > 6) {
+    if ($size > 6) {
         $size = 6;
     }
 
     $user = $phpcdb->get_user($vars["uid"]);
 
     $user_groups = array();
-    foreach($user->get_groups() as $group) {
+    foreach ($user->get_groups() as $group) {
         $user_groups[] = $group['gid'];
     }
 
@@ -98,19 +93,19 @@ function process_form()
 
     $user = $phpcdb->get_user($vars["uid"]);
     // Remove existing groups for this calendar
-    foreach($user->get_groups() as $group) {
-        if($group["cid"] == $phpcid) {
+    foreach ($user->get_groups() as $group) {
+        if ($group["cid"] == $phpcid) {
             $phpcdb->user_remove_group($vars["uid"], $group["gid"]);
         }
     }
     
     $valid_groups = array();
-    foreach($phpc_cal->get_groups() as $group) {
+    foreach ($phpc_cal->get_groups() as $group) {
         $valid_groups[] = $group["gid"];
     }
-    if(!empty($vars["groups"])) {
-        foreach($vars["groups"] as $gid) {
-            if(!in_array($gid, $valid_groups)) {
+    if (!empty($vars["groups"])) {
+        foreach ($vars["groups"] as $gid) {
+            if (!in_array($gid, $valid_groups)) {
                 soft_error("Invalid gid");
             }
 
@@ -120,5 +115,3 @@ function process_form()
 
         return message(__('Groups updated.'));
 }
-
-?>

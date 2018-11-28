@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Copyright 2013 Sean Proctor
  *
@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 
-if (!defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
 
 function user_settings_submit()
 {
@@ -27,7 +24,7 @@ function user_settings_submit()
     verify_token();
 
     // If we have a timezone, make sure it's valid
-    if(!empty($vars["timezone"]) && !in_array($vars['timezone'], timezone_identifiers_list())) {
+    if (!empty($vars["timezone"]) && !in_array($vars['timezone'], timezone_identifiers_list())) {
         soft_error(__("Invalid timezone."));
     }
 
@@ -35,18 +32,18 @@ function user_settings_submit()
     $expiration_time = time() + 20 * 365 * 24 * 60 * 60;
     // One hour in the past
     $past_time = time() - 3600;
-    if(!empty($vars["timezone"])) {
+    if (!empty($vars["timezone"])) {
         setcookie("{$phpc_prefix}tz", $vars['timezone'], $expiration_time);
     } else {
         setcookie("{$phpc_prefix}tz", '', $past_time);
     }
-    if(!empty($vars["language"])) {
+    if (!empty($vars["language"])) {
         setcookie("{$phpc_prefix}lang", $vars['language'], $expiration_time);
     } else {
         setcookie("{$phpc_prefix}lang", '', $past_time);
     }
 
-    if(is_user()) {
+    if (is_user()) {
         $uid = $phpc_user->get_uid();
         $phpcdb->set_user_default_cid($uid, $vars['default_cid']);
         $phpcdb->set_timezone($uid, $vars['timezone']);
@@ -60,5 +57,3 @@ function user_settings_submit()
             "$phpc_script?action=user_settings&phpcid=$phpcid"
         );
 }
-
-?>

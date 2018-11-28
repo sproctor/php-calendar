@@ -17,7 +17,7 @@
         "php": ">=7.1.0",
         "zendframework/zend-config": "~2.6",
         "firebase/php-jwt": "~5.0",
-        "doctrine/orm": "2.6.*",
+        "doctrine/orm": "^2.6.2",
         "symfony/http-foundation": "3.4.*",
         "symfony/form": "3.4.*",
         "twig/twig": "^2.0",

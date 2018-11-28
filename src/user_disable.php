@@ -15,22 +15,18 @@
  * limitations under the License.
  */
 
-if (!defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
-
 function user_disable()
 {
     global $vars, $phpcid, $phpcdb, $phpc_script;
 
     $html = tag('div', attributes('class="phpc-container"'));
 
-    if(!is_admin()) {
+    if (!is_admin()) {
         $html->add(tag('p', __('You must be an admin to disable users.')));
         return $html;
     }
 
-    if(empty($vars["uid"])) {
+    if (empty($vars["uid"])) {
         $html->add(tag('p', __('No user selected.')));
         return $html;
     }
@@ -41,15 +37,13 @@ function user_disable()
         $ids = array($vars["uid"]);
     }
 
-    foreach($ids as $id) {
-        if($phpcdb->disable_user($id)) {
+    foreach ($ids as $id) {
+        if ($phpcdb->disable_user($id)) {
             $html->add(tag('p', __("Disabled user: $id")));
-        } else {        
+        } else {
             $html->add(tag('p', __("Could not disable user: $id")));
         }
     }
 
         return message_redirect($html, "$phpc_script?action=admin&phpcid=$phpcid");
 }
-
-?>

@@ -19,6 +19,8 @@ namespace PhpCalendar;
 
 require_once 'vendor/autoload.php';
 
+require_once 'bootstrap.php';
+
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -32,7 +34,7 @@ ini_set('display_errors', '1');
 $request = Request::createFromGlobals();
 
 try {
-    $context = new Context($request);
+    $context = new Context($request, $entityManager);
     
     $context->getPage()->action($context)->send();
 } catch (PermissionException $e) {

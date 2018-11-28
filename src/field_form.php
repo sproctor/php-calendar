@@ -15,20 +15,16 @@
  * limitations under the License.
  */
 
-if(!defined('IN_PHPC')) {
-       die("Hacking attempt");
-}
+// require_once "$phpc_includes_path/form.php";
 
-require_once "$phpc_includes_path/form.php";
-
-function field_form() 
+function field_form()
 {
     global $phpc_script, $vars, $phpcdb, $phpcid;
 
         $form = new Form($phpc_script, __('Field Form'));
         $form->add_part(new FormFreeQuestion('name', __('Name'), false, 32, true));
 
-    if(isset($vars['cid'])) {
+    if (isset($vars['cid'])) {
         $form->add_hidden('cid', $vars['cid']);
         $cid = $vars['cid'];
     } else {
@@ -41,7 +37,7 @@ function field_form()
         $form->add_part(new FormFreeQuestion('format', __('Format')));
     $form->add_part(new FormSubmitButton(__("Submit Field")));
 
-    if(isset($vars['fid'])) {
+    if (isset($vars['fid'])) {
         $form->add_hidden('fid', $vars['fid']);
         $field = $phpcdb->get_field($vars['fid']);
         $defaults = array(
@@ -54,5 +50,3 @@ function field_form()
     }
         return $form->get_form($defaults);
 }
-
-?>

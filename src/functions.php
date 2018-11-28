@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Intl;
 
 define('PHPC_CONFIG_FILE', realpath(__DIR__.'/../config.php'));
-define('PHPC_VERSION', '2.1.0');
+define('PHPC_VERSION', '3.0.0');
 define('PHPC_DEBUG', 1);
 
 /**

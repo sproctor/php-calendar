@@ -17,81 +17,63 @@
 
 namespace PhpCalendar;
 
+/**
+ * @Entity
+ * @Table("users")
+ */
 class User
 {
     /**
-     * @var int $uid
+     * @Column(type="integer")
+     * @Id
+     * @GeneratedValue(strategy="AUTO")
      */
     private $uid;
+
     /**
-     * @var string $username
+     * @Column(type="string", length=255)
      */
     private $username;
+
     /**
-     * @var string $hash
+     * @Column(type="string", length=255)
      */
     private $hash;
+
     /**
-     * @var string $admin
+     * @Column(type="boolean")
      */
-    private $admin;
+    private $is_admin;
+
     /**
-     * @var bool $password_editable
+     * @Column(type="boolean")
      */
-    private $password_editable;
+    private $password_is_editable;
+
     /**
-     * @var int $default_cid
+     * @ManyToOne(targetEntity="Calendar")
+     * @JoinColumn(name="default_cid", referencedColumnName="cid")
      */
-    private $default_cid;
+    private $default_calendar;
+
     /**
-     * @var string|null $timezone
+     * @ORM\Column(type="string", length=255)
      */
     private $timezone;
+
     /**
-     * @var string|null $language
+     * @Column(type="string", length=255)
      */
     private $locale;
+
+    // TODO: implement
     private $groups;
-    /**
-     * @var bool $disabled
-     */
-    private $disabled;
-    /**
-     * @var Database $db
-     */
-    private $db;
 
     /**
-     * User constructor.
-     *
-     * @param Database $db
+     * @Column(type="boolean")
      */
-    private function __construct(Database $db)
-    {
-        $this->db = $db;
-    }
+    private $is_disabled;
 
-    /**
-     * @param Database $db
-     * @param $map
-     * @return User
-     */
-    public static function createFromMap(Database $db, $map)
-    {
-        $user = new User($db);
-
-        $user->uid = $map['uid'];
-        $user->username = $map['username'];
-        $user->hash = $map['password'];
-        $user->admin = $map['admin'];
-        $user->password_editable = $map['password_editable'];
-        $user->default_cid = $map['default_cid'];
-        $user->timezone = $map['timezone'];
-        $user->locale = $map['language'];
-        $user->disabled = $map['disabled'];
-
-        return $user;
-    }
 
     /**
      * @param Context $context
@@ -99,7 +81,7 @@ class User
      */
     public static function createAnonymous(Context $context)
     {
-        $user = new User($context->db);
+        $user = new User();
 
         $user->uid = 0;
         $user->username = 'anonymous';
@@ -141,7 +123,7 @@ class User
      */
     public function hasEditablePassword()
     {
-        return $this->password_editable;
+        return $this->password_is_editable;
     }
 
     /**
@@ -168,22 +150,22 @@ class User
 
     public function isDisabled()
     {
-        return $this->disabled;
+        return $this->is_disabled;
     }
 
     public function isAdmin()
     {
-        return $this->admin;
+        return $this->is_admin;
     }
 
-    public function defaultCid()
+    public function defaultCalendar()
     {
-        return $this->default_cid;
+        return $this->default_calendar;
     }
 
-    public function isUser()
+    public function isAnonymous()
     {
-        return $this->uid > 0;
+        return $this->uid == 0;
     }
 
     /**

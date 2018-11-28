@@ -17,17 +17,21 @@
 
 namespace PhpCalendar;
 
+/**
+ * @Entity
+ * @Table("calendars")
+ */
 class Calendar
 {
     /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @Column(type="integer")
+     * @Id
+     * @GeneratedValue(strategy="AUTO")
      */
     private $cid;
 
     /**
-     * @ORM\Column(type="string", length=250)
+     * @Column(type="string", length=255)
      */
     private $title;
 
@@ -35,12 +39,12 @@ class Calendar
     private $categories;
 
     /**
-     * @ORM\Column(type="integer")
+     * @Column(type="integer")
      */
     private $subject_max;
 
     /**
-     * @ORM\Column(type="integer")
+     * @Column(type="integer")
      */
     private $events_max;
 
@@ -48,44 +52,33 @@ class Calendar
     private $anon_permission;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @Column(type="string", length=255)
      */
     private $timezone;
+
+    /**
+     * @Column(type="string", length=255)
+     */
     private $locale;
+
+    /**
+     * @Column(type="string", length=255)
+     */
     private $theme;
+
     private $groups;
     private $fields;
-    private $db;
-
-    private function __construct(Database $db)
-    {
-        $this->db = $db;
-    }
-
-    public static function createFromMap(Database $db, $map)
-    {
-        $calendar = new Calendar($db);
-
-        $calendar->cid = intval($map['cid']);
-        $calendar->title = $map['title'];
-        $calendar->subject_max = intval($map['subject_max']);
-        $calendar->events_max = intval($map['events_max']);
-        $calendar->anon_permission = $map['anon_permission'];
-        $calendar->timezone = $map['timezone'];
-        $calendar->locale = $map['language'];
-        $calendar->theme = $map['theme'];
-
-        return $calendar;
-    }
 
     /**
      * @return string
      */
     public function getTitle()
     {
+        /* TODO: require title on creation/modification
         if (empty($this->title)) {
             return __('calendar-no-title');
         }
+        */
 
         return $this->title;
     }

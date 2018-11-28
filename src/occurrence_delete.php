@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 
-if (!defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
 
 function occurrence_delete()
 {
@@ -25,7 +22,7 @@ function occurrence_delete()
 
     $html = tag('div', attributes('class="phpc-container"'));
 
-    if(empty($vars["oid"])) {
+    if (empty($vars["oid"])) {
         $message = __('No occurrence selected.');
         $html->add(tag('p', $message));
         return $html;
@@ -41,12 +38,12 @@ function occurrence_delete()
     $unremoved_occurs = array();
     $permission_denied = array();
 
-    foreach($oids as $oid) {
+    foreach ($oids as $oid) {
         $occur = $phpcdb->get_occurrence_by_oid($oid);
-        if(!$occur->can_modify()) {
+        if (!$occur->can_modify()) {
             $permission_denied[] = $oid;
         } else {
-            if($phpcdb->delete_occurrence($oid)) {
+            if ($phpcdb->delete_occurrence($oid)) {
                 $removed_occurs[] = $oid;
                 // TODO: Verify that the event still has occurences.
                 $eid = $occur->get_eid();
@@ -56,8 +53,8 @@ function occurrence_delete()
         }
     }
 
-    if(sizeof($removed_occurs) > 0) {
-        if(sizeof($removed_occurs) == 1) {
+    if (sizeof($removed_occurs) > 0) {
+        if (sizeof($removed_occurs) == 1) {
             $text = __("Removed occurrence");
         } else {
             $text = __("Removed occurrences");
@@ -66,8 +63,8 @@ function occurrence_delete()
         $html->add(tag('p', $text));
     }
 
-    if(sizeof($unremoved_occurs) > 0) {
-        if(sizeof($unremoved_occurs) == 1) {
+    if (sizeof($unremoved_occurs) > 0) {
+        if (sizeof($unremoved_occurs) == 1) {
             $text = __("Could not remove occurrence");
         } else {
             $text = __("Could not remove occurrences");
@@ -76,8 +73,8 @@ function occurrence_delete()
         $html->add(tag('p', $text));
     }
 
-    if(sizeof($permission_denied) > 0) {
-        if(sizeof($permission_denied) == 1) {
+    if (sizeof($permission_denied) > 0) {
+        if (sizeof($permission_denied) == 1) {
             $text = __("You do not have permission to remove the occurrence.");
         } else {
             $text = __("You do not have permission to remove occurrences.");
@@ -91,5 +88,3 @@ function occurrence_delete()
             "$phpc_script?action=display_event&phpcid=$phpcid&eid=$eid"
         );
 }
-
-?>

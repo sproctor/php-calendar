@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-require_once "$phpc_includes_path/form.php";
+//require_once "$phpc_includes_path/form.php";
 
 function category_form()
 {
@@ -52,16 +52,17 @@ function category_form()
         $form->add_hidden('catid', $vars['catid']);
         $category = $phpcdb->get_category($vars['catid']);
         $defaults = array(
-        'name' => htmlspecialchars($category['name']),
-        'text-color' => htmlspecialchars($category['text_color']),
-        'bg-color' => htmlspecialchars($category['bg_color']),
-        'gid' => htmlspecialchars($category['gid']),
+            'name' => htmlspecialchars($category['name']),
+            'text-color' => htmlspecialchars($category['text_color']),
+            'bg-color' => htmlspecialchars($category['bg_color']),
+            'gid' => htmlspecialchars($category['gid']),
         );
     } else {
         $defaults = array(
-        'text-color' => '#000000',
-        'bg-color' => '#ffffff',
+            'text-color' => '#000000',
+            'bg-color' => '#ffffff',
         );
     }
-        return $form->get_form($defaults);
+    
+    return $form->get_form($defaults);
 }

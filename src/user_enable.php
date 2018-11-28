@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 
-if (!defined('IN_PHPC') ) {
-       die("Hacking attempt");
-}
 
 function user_enable()
 {
@@ -25,12 +22,12 @@ function user_enable()
 
     $html = tag('div', attributes('class="phpc-container"'));
 
-    if(!is_admin()) {
+    if (!is_admin()) {
         $html->add(tag('p', __('You must be an admin to enable users.')));
         return $html;
     }
 
-    if(empty($vars["uid"])) {
+    if (empty($vars["uid"])) {
         $html->add(tag('p', __('No user selected.')));
         return $html;
     }
@@ -41,15 +38,13 @@ function user_enable()
         $ids = array($vars["uid"]);
     }
 
-    foreach($ids as $id) {
-        if($phpcdb->enable_user($id)) {
+    foreach ($ids as $id) {
+        if ($phpcdb->enable_user($id)) {
             $html->add(tag('p', __("Enabled user: $id")));
-        } else {        
+        } else {
             $html->add(tag('p', __("Could not enable user: $id")));
         }
     }
 
         return message_redirect($html, "$phpc_script?action=admin&phpcid=$phpcid");
 }
-
-?>
