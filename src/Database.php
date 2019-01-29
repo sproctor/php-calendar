@@ -550,7 +550,7 @@ class Database
     {
         $this->deleteOccurrences($eid);
 
-        $query = 'DELETE FROM `' . $this->prefix . "events`\n"
+        $query = "DELETE FROM `" . $this->prefix . "events`\n"
             . "WHERE `eid` = :eid";
 
         $sth = $this->dbh->prepare($query);
@@ -568,7 +568,7 @@ class Database
      */
     public function deleteOccurrences($eid)
     {
-        $query = 'DELETE FROM `' . $this->prefix . "occurrences`\n"
+        $query = "DELETE FROM `" . $this->prefix . "occurrences`\n"
             . "WHERE `eid` = :eid";
 
         $sth = $this->dbh->prepare($query);

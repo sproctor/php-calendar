@@ -19,33 +19,32 @@ namespace PhpCalendar;
 
 require_once 'vendor/autoload.php';
 
-require_once 'bootstrap.php';
-
-use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-
-// TODO: Make this conditional
-Debug::enable();
-error_reporting(-1);
-ini_set('display_errors', '1');
+use Symfony\Component\HttpFoundation\Session\Session;
 
 $request = Request::createFromGlobals();
+$session = new Session();
+$session->start();
 
 try {
-    $context = new Context($request, $entityManager);
-    
+    require_once 'bootstrap.php';
+    $context = new Context($request, $session, $entityManager);
+} catch (InvalidConfigException $e) {
+    (new Installer)->run()->send();
+    exit;
+}
+
+try {
     $context->getPage()->action($context)->send();
+} catch (NoCalendarsException $e) {
+    (new CreateCalendarPage)->action($context)->send();
 } catch (PermissionException $e) {
     $context->addMessage($e->getMessage());
     (new RedirectResponse($context->createUrl($context->user->isUser() ? null : 'login')))->send();
-} catch (InvalidConfigException $e) {
-    (new RedirectResponse("/install.php"))->send();
 } catch (InvalidInputException $e) {
-    if ($context !== null) {
-        (new Response($context->render('error.html.twig', array('message' => $e->getMessage()))))->send();
-    } else {
-        throw $e;
-    }
+    (new Response($context->render('error.html.twig', array('message' => $e->getMessage()))))->send();
 }
+
+$context->flush();

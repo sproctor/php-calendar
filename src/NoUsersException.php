@@ -17,6 +17,6 @@
 
 namespace PhpCalendar;
 
-class InvalidConfigException extends \Exception
+class NoUsersException extends \Exception
 {
 }

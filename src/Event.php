@@ -22,7 +22,7 @@ namespace PhpCalendar;
  *
  * @author Sean Proctor <sproctor@gmail.com>
  * @Entity
- * @Table("events")
+ * @Table(name="events")
  */
 class Event
 {
@@ -51,9 +51,15 @@ class Event
     private $subject;
 
     /**
-     * @OColumn(type="text")
+     * @Column(type="text")
      */
     private $description;
+
+    /**
+     * @OneToMany(targetEntity="Occurrence", mappedBy="event")
+     * @var Occurrence[] An ArrayCollection of Occurrence objects.
+     */
+    private $occurrences;
 
     /**
      * @ManyToOne(targetEntity="Category")
@@ -89,6 +95,32 @@ class Event
     private $fields;
 
     /**
+     * @param Calendar      $calendar
+     * @param User          $user
+     * @param string        $subject
+     * @param string        $description
+     * @param Category|null $catid
+     * @param \DateTimeInterface|null $publish_date
+     * @return int
+     */
+    public function __construct(
+        Calendar $calendar,
+        User $user,
+        string $subject,
+        string $description,
+        Category $category,
+        DateTimeInterface $publish_date
+    ) {
+        $this->calendar = $calendar;
+        $this->owner = $user;
+        $this->author = $author;
+        $this->subject = $subject;
+        $this->description = $description;
+        $this->category = $category;
+        $this->pubtime = $publish_date;
+    }
+
+    /**
      * @return string
      */
     public function getRawSubject()
@@ -121,7 +153,7 @@ class Event
      */
     public function getOwner()
     {
-        return $this->db->getUser($this->owner_uid);
+        return $this->owner;
     }
 
     /**
@@ -129,7 +161,7 @@ class Event
      */
     public function getDescription()
     {
-        return $this->desc;
+        return $this->description;
     }
 
     /**

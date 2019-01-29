@@ -2,24 +2,30 @@
 // bootstrap.php
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Debug\Debug;
 
 require_once "vendor/autoload.php";
 
+// TODO: Change this for production
+$isDevMode = true;
+if ($isDevMode) {
+    Debug::enable();
+    error_reporting(-1);
+    ini_set('display_errors', '1');
+}
+
+// Verify our config file exists and is valid
 if (!file_exists(PHPC_CONFIG_FILE)) {
     throw new InvalidConfigException();
 }
 $config = include PHPC_CONFIG_FILE;
-
 if (!isset($config["sql_host"])) {
     throw new InvalidConfigException();
 }
 
-// Create a simple "default" Doctrine ORM configuration for Annotations
-$isDevMode = true;
+// Create a Doctrine ORM configuration for Annotations
 $db_config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/src"), $isDevMode);
-// or if you prefer yaml or XML
-//$config = Setup::createXMLMetadataConfiguration(array(__DIR__."/config/xml"), $isDevMode);
-//$config = Setup::createYAMLMetadataConfiguration(array(__DIR__."/config/yaml"), $isDevMode);
+$db_config->addEntityNamespace('PHPC', 'PhpCalendar');
 
 // database configuration parameters
 $conn = array(

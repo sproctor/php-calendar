@@ -43,9 +43,9 @@ use Symfony\Component\Validator\Validation;
 class Context
 {
     /**
-     * @var Calendar $calendar
+     *  @var Calendar $calendar
      */
-    public $calendar;
+    private $calendar;
 
     /**
      * @var User $user
@@ -67,8 +67,6 @@ class Context
      */
     public $request;
 
-    public $config;
-
     /**
      * @var EntityManager $entityManager
      */
@@ -88,28 +86,16 @@ class Context
      * Context constructor.
      *
      * @param Request $request
+     * @param Session $session
+     * @param EntityManager|null $entityManager
      *
      * @throws \ReflectionException
      * @throws \Exception
      */
-    public function __construct(Request $request, EntityManager $entityManager)
+    public function __construct(Request $request, Session $session, $entityManager)
     {
-
-        //ini_set('arg_separator.output', '&amp;');
-        //mb_internal_encoding('UTF-8');
-        //mb_http_output('pass');
-
-        if (defined('PHPC_DEBUG')) {
-            error_reporting(E_ALL);
-            ini_set('display_errors', 1);
-            ini_set('html_errors', 1);
-        }
-
         $this->request = $request;
-
-        $this->session = new Session();
-        $this->session->start();
-
+        $this->session = $session;
         $this->entityManager = $entityManager;
 
         $appVariableReflection = new \ReflectionClass('\Symfony\Bridge\Twig\AppVariable');
@@ -142,8 +128,6 @@ class Context
         if (!isset($this->user)) {
             $this->user = User::createAnonymous($this);
         }
-
-        $this->initCurrentCalendar();
 
         $this->initTimezone();
         $this->initLocale($request);
@@ -181,9 +165,11 @@ class Context
         
         $this->twig->addGlobal('context', $this);
         $this->twig->addGlobal('locale', \Locale::getDefault());
-        $this->twig->addGlobal('calendar', $this->calendar);
-        $this->twig->addGlobal('calendars', $this->db->getCalendars());
-        $this->twig->addGlobal('user', $this->user);
+        if ($this->entityManager != null) {
+            $this->twig->addGlobal('calendar', $this->calendar);
+            $this->twig->addGlobal('calendars', $this->findAllCalendars());
+            $this->twig->addGlobal('user', $this->user);
+        }
         $this->twig->addGlobal('script', $this->request->getScriptName());
         $this->twig->addGlobal('embed', $this->request->get("content") == "embed");
         $this->twig->addGlobal('messages', $this->getMessages());
@@ -288,28 +274,33 @@ class Context
     }
 
     /**
-     * @throws \Exception
+     * @param string $key
+     * @return string
      */
-    private function initCurrentCalendar()
+    public function getConfig(string $key)
     {
-        // Find current calendar
-        $current_cid = $this->getCurrentCid();
+        $config = $this->entityManager->find('PHPC:Config', $key);
 
-        $this->calendar = $this->db->getCalendar($current_cid);
+        return empty($config) ? null : $config->getValue();
     }
 
     /**
-     * @return int
+     * @return Calendar
      * @throws \Exception
      */
-    private function getCurrentCid()
+    public function getCalendar()
     {
+        if ($this->calendar != null) {
+            return $this->calendar;
+        }
+
         $phpcid = $this->request->get('phpcid');
         if (isset($phpcid)) {
             if (!is_numeric($phpcid)) {
                 throw new InvalidInputException(__('invalid-calendar-id-error'));
             }
-            return $phpcid;
+            $this->calendar = $this->findCalendar($phpcid);
+            return $this->calendar;
         }
         
         $eid = $this->request->get('eid');
@@ -317,28 +308,43 @@ class Context
             if (is_array($eid)) {
                 $eid = $eid[0];
             }
-            $event = $this->entityManager->find('Event', $eid);
+            $event = $this->findEvent($eid);
             if ($event != null) {
-                return $event->getCalendar()->getCid();
+                $this->calendar = $event->getCalendar();
+                return $this->calendar;
             }
         }
         
-        $calendars = $this->entityManager->getRepository('Calendar')->findAll();
+        $default_calendar = $this->user->defaultCalendar();
+        if (!empty($default_calendar)) {
+            $this->calendar = $default_calendar;
+            return $this->calendar;
+        }
 
+        $this->calendar = $this->getDefaultCalendar();
+        return $this->calendar;
+    }
+
+    /**
+     * @return Calendar
+     */
+    private function getDefaultCalendar()
+    {
+        // Return default calendar if set
+        $default_cid = $this->getConfig('default_cid');
+        if ($default_cid != null) {
+            $calendar = $this->findCalendar($default_cid);
+            if ($calendar != null) {
+                return $calendar;
+            }
+        }
+        
+        // Otherwise return the first calendar
+        $calendars = $this->findAllCalendars();
         if (empty($calendars)) {
-            throw new \Exception("There are no calendars.");
-            // TODO: create a page to fix this
+            throw new NoCalendarsException();
         } else {
-            if ($this->user->defaultCid() !== false) {
-                $default_cid = $this->user->defaultCid();
-            } else {
-                $default_cid = $this->db->getConfig('default_cid');
-            }
-            if (!empty($calendars[$default_cid])) {
-                return $default_cid;
-            } else {
-                return reset($calendars)->getCid();
-            }
+            return $calendars[0];
         }
     }
 
@@ -346,13 +352,48 @@ class Context
     {
         // Set timezone
         $tz = $this->user->getTimezone();
-        if (empty($tz)) {
+        if (empty($tz) && $this->calendar != null) {
             $tz = $this->calendar->getTimezone();
         }
 
         if (!empty($tz)) {
             date_default_timezone_set($tz);
         }
+    }
+
+    /**
+     * @return Calendar[]
+     */
+    public function findAllCalendars()
+    {
+        return $this->entityManager->getRepository('PHPC:Calendar')->findAll();
+    }
+
+    /**
+     * @param int $cid
+     * @return Calendar
+     */
+    public function findCalendar(int $cid)
+    {
+        return $this->entityManager->find('PHPC:Calendar', $cid);
+    }
+
+    /**
+     * @param int $eid
+     * @return Event
+     */
+    public function findEvent(int $eid)
+    {
+        return $this->entityManager->find('PHPC:Event', $eid);
+    }
+
+    public function findOccurrences(\DateTimeInterface $from, \DateTimeInterface $to)
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+
+        //$qb->select('e')
+            //->from('Event', 'e')
+            //->where('e.
     }
 
     /**
@@ -433,7 +474,9 @@ class Context
         // setup translation stuff
         $locale = $this->user->getLocale();
         if (empty($locale)) {
-            $locale = $this->calendar->getLocale();
+            if ($this->calendar != null) {
+                $locale = $this->calendar->getLocale();
+            }
             if (empty($locale)) {
                 // TODO search through valid locales for a match
                 $locale = $request->getLocale();
@@ -481,17 +524,18 @@ class Context
         return $this->formFactory;
     }
 
+    /**
+     * @return int
+     */
     private function readLoginToken()
     {
         if (isset($_COOKIE["identity"])) {
             try {
-                $decoded = JWT::decode($_COOKIE["identity"], $this->config["token_key"], array('HS256'));
+                $decoded = JWT::decode($_COOKIE["identity"], $this->getConfig("token_key"), array('HS256'));
                 $decoded_array = (array) $decoded;
                 $data = (array) $decoded_array["data"];
 
-                $uid = $data["uid"];
-                $user = $this->db->getUser($uid);
-                $this->user = $user;
+                return $data["uid"];
             } catch (SignatureInvalidException $e) {
                 // TODO: log this event
                 setcookie('identity', "", time() - 3600);
@@ -544,7 +588,7 @@ class Context
             "exp" => $expires,
             "data" => array("uid" => $user->getUid())
         );
-        $jwt = JWT::encode($token, $this->config['token_key']);
+        $jwt = JWT::encode($token, $this->getConfig('token_key'));
 
         // TODO: Add a remember me checkbox to the login form, and have the
         //    cookies expire at the end of the session if it's not checked
@@ -554,9 +598,11 @@ class Context
 
     public function getPage()
     {
-        if ($this->db->getConfig('version') < PHPC_DB_VERSION) {
+        /* FIXME: update this section for doctrine
+        if ($this->getConfig('version') < PHPC_DB_VERSION) {
             return new UpdatePage;
         }
+        */
         switch ($this->getAction()) {
             case 'event_form':
                 return new EventFormPage;
@@ -667,5 +713,15 @@ class Context
     public function render($name, $variables = array())
     {
         return $this->twig->render($name, $variables);
+    }
+
+    public function persist($entity)
+    {
+        $this->entityManager->persist($entity);
+    }
+
+    public function flush()
+    {
+        $this->entityManager->flush();
     }
 }

@@ -33,6 +33,11 @@ class Calendar
     /**
      * @Column(type="string", length=255)
      */
+    private $name;
+
+    /**
+     * @Column(type="string", length=255)
+     */
     private $title;
 
     private $user_perms = array();

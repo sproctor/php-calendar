@@ -17,6 +17,32 @@
 
 namespace PhpCalendar;
 
-class InvalidConfigException extends \Exception
+/**
+ * Configuration entity
+ *
+ * @Entity
+ * @Table(name="config")
+ */
+class Config
 {
+    /**
+     * @Column(type="string")
+     * @Id
+     */
+    private $key;
+
+    /**
+     * @Column(type="string")
+     */
+    private $value;
+
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    public function setValue(string $value)
+    {
+        $this->value = $value;
+    }
 }

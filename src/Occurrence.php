@@ -17,27 +17,53 @@
 
 namespace PhpCalendar;
 
-class Occurrence extends Event
+/**
+ * @Entity @Table(name="occurrences")
+ */
+class Occurrence
 {
+    /**
+     * @Column(type="integer")
+     * @Id
+     * @GeneratedValue(strategy="AUTO")
+     */
     private $oid;
+
+    /**
+     * @ManyToOne(targetEntity="Event", inversedBy="occurrences")
+     * @JoinColumn(name="eid", referencedColumnName="eid")
+     */
+    private $event;
+
+    /**
+     * @Column(type="datetime")
+     */
     private $start;
+
+    /**
+     * @Column(type="datetime")
+     */
     private $end;
+
+    /**
+     * @Column(type="integer")
+     */
     private $time_type;
 
     /**
      * Occurrence constructor.
      *
-     * @param Database $db
-     * @param string[] $row
+     * @param Event                 $event
+     * @param \DateTimeInterface    $start
+     * @param \DateTimeInterface    $end
+     * @param int                   $time_type
      */
-    public function __construct(Database $db, $row)
+    public function __construct(Event $event, \DateTimeInterface $start, \DateTimeInterface $end, int $time_type)
     {
-        parent::__construct($db, $row);
-
-        $this->oid = intval($row['oid']);
-        $this->start = datetime_from_sql_date($row['start']);
-        $this->end = datetime_from_sql_date($row['end']);
-        $this->time_type = intval($row['time_type']);
+        $this->event = $event;
+        $this->start = $start;
+        $this->end = $end;
+        $this->time_type = $time_type;
     }
 
     /**
@@ -146,5 +172,22 @@ class Occurrence extends Event
     public function getEnd()
     {
         return $this->end;
+    }
+
+    /**
+     * @param EntityManager $entityManager
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
+     */
+    public static function findOccurrences(
+        EntityManager $entityManager,
+        \DateTimeInterface $from,
+        \DateTimeInterface $to
+    ) {
+        $qb = $entityManager->createQueryBuilder();
+
+        //$qb->select('e')
+            //->from('Event', 'e')
+            //->where('e.
     }
 }

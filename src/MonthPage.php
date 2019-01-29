@@ -77,7 +77,7 @@ class MonthPage extends Page
         $template_variables['year'] = $year;
         $template_variables['years'] = $years;
         $template_variables['weeks'] = $weeks;
-        $template_variables['occurrences'] = $context->calendar->getOccurrencesByDay(
+        $template_variables['occurrences'] = $context->getCalendar()->getOccurrencesByDay(
             $from_date,
             $to_date,
             $context->user
