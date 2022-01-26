@@ -33,7 +33,7 @@ $default_calendar_id = 1;
  * to the location where the support files for the callendar are located.
  */
 $phpc_root_path = dirname(__FILE__);
-$phpc_includes_path = "$phpc_root_path/includes";
+$phpc_includes_path = "$phpc_root_path/src";
 $phpc_config_file = "$phpc_root_path/config.php";
 $phpc_locale_path = "$phpc_root_path/locale";
 $phpc_script = htmlentities($_SERVER['PHP_SELF']);

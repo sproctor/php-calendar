@@ -60,7 +60,7 @@ function redirect($page) {
 
 	$phpc_redirect = true;
 
-	if($page{0} == "/") {
+	if($page[0] == "/") {
 		$dir = '';
 	} else {
 		$dir = dirname($phpc_script) . "/";
