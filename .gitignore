@@ -3,3 +3,4 @@ config.php
 /vendor/
 /.vscode
 /.idea
+/.vagrant
