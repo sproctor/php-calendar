@@ -15,8 +15,12 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace PhpCalendar\Pages;
 
+use Exception;
+use PhpCalendar\Context;
+use PhpCalendar\Entity\Calendar;
+use PhpCalendar\PermissionException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -25,14 +29,14 @@ class InstallPage extends Page
     /**
      * Update the database
      *
-     * @param  Context|null $context
+     * @param  Context $context
      * @return Response
      * @throws PermissionException
-     * @throws \Exception
+     * @throws Exception
      */
-    public function action(Context $context)
+    public function action(Context $context): Response
     {
-        if (empty($context->getCalendars())) {
+        if (empty($context->findAllCalendars())) {
             // TODO: make calendar
             $context->persist(new Calendar);
             $context->addMessage(__('calendar-created'));

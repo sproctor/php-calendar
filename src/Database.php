@@ -17,10 +17,13 @@
 
 namespace PhpCalendar;
 
+use DateTimeInterface;
+use PDO;
+
 class Database
 {
     /**
-     * @var \PDO
+     * @var PDO
      */
     private $dbh;
     /**
@@ -44,7 +47,7 @@ class Database
      *
      * @param string[] $config
      */
-    public function __construct($config)
+    public function __construct(array $config)
     {
         $dsn = "mysql:dbname={$config["sql_database"]};host={$config["sql_host"]};charset=utf8";
         if (isset($config["sql_port"])) {
@@ -54,8 +57,8 @@ class Database
         $this->prefix = $config["sql_prefix"];
 
         // Make the database connection.
-        $this->dbh = new \PDO($dsn, $config["sql_user"], $config["sql_passwd"]);
-        $this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->dbh = new PDO($dsn, $config["sql_user"], $config["sql_passwd"]);
+        $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // TODO: Make these const
         $this->event_columns = "`{$this->prefix}categories`.`gid`, `{$this->prefix}events`.`subject`, "
@@ -73,12 +76,12 @@ class Database
      * Returns all the events for a particular date range
      * $from and $to are only significant to the date.
      * an event that happens later in the day of $to is included
-     * @param int                $cid
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
+     * @param int $cid
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
      * @return Occurrence[]
      */
-    public function getOccurrencesByDateRange($cid, \DateTimeInterface $from, \DateTimeInterface $to)
+    public function getOccurrencesByDateRange(int $cid, DateTimeInterface $from, DateTimeInterface $to): array
     {
         $events_table = $this->prefix . "events";
         $occurrences_table = $this->prefix . "occurrences";
@@ -104,7 +107,7 @@ class Database
         $sth = $this->dbh->prepare($query);
         $sth->execute();
         $arr = array();
-        while ($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $arr[] = new Occurrence($this, $row);
         }
         return $arr;
@@ -133,10 +136,10 @@ class Database
             . "WHERE c.`catid`=:catid AND u.`uid`={$user->get_uid()}";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':catid', $catId, \PDO::PARAM_INT);
+        $sth->bindValue(':catid', $catId, PDO::PARAM_INT);
         $sth->execute();
 
-        $results = $sth->fetch(\PDO::FETCH_ASSOC);
+        $results = $sth->fetch(PDO::FETCH_ASSOC);
         if (!$results) {
             return false;
         }
@@ -184,10 +187,10 @@ class Database
             . "WHERE `eid`=:eid\n";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+        $sth->bindValue(':eid', $eid, PDO::PARAM_INT);
         $sth->execute();
 
-        $result = $sth->fetch(\PDO::FETCH_ASSOC);
+        $result = $sth->fetch(PDO::FETCH_ASSOC);
         if (!$result) {
             return null;
         }
@@ -218,7 +221,7 @@ class Database
         $sth->bindValue(':catid', $catid);
         $sth->execute();
 
-        $result = $sth->fetch(\PDO::FETCH_ASSOC);
+        $result = $sth->fetch(PDO::FETCH_ASSOC);
         if (!$result) {
             throw new \UnexpectedValueException(__("nonexistent-value-error", ['%name%' => __('category')]));
         }
@@ -239,10 +242,10 @@ class Database
             . "WHERE `gid`=:gid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
+        $sth->bindValue(':gid', $gid, PDO::PARAM_INT);
         $sth->execute();
 
-        $result = $sth->fetch(\PDO::FETCH_ASSOC);
+        $result = $sth->fetch(PDO::FETCH_ASSOC);
         if (!$result) {
             throw new \UnexpectedValueException(__("nonexistent-value-error", ['%name%' => __('group')]));
         }
@@ -263,7 +266,7 @@ class Database
         $sth->execute();
 
         $groups = array();
-        while ($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $groups[] = $row;
         }
         return $groups;
@@ -282,11 +285,11 @@ class Database
             . "WHERE `cid`=:cid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
         $groups = array();
-        while ($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $groups[] = $row;
         }
         return $groups;
@@ -307,11 +310,11 @@ class Database
             . "WHERE `uid`=:uid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->execute();
 
         $groups = array();
-        while ($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $groups[] = $row;
         }
         return $groups;
@@ -337,11 +340,11 @@ class Database
             . "WHERE `$cats_table`.`cid`=:cid\n";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
         $arr = array();
-        while ($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
             $arr[] = $result;
         }
 
@@ -368,7 +371,7 @@ class Database
         $sth->execute();
 
         $arr = array();
-        while ($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
             $arr[] = $result;
         }
 
@@ -394,12 +397,12 @@ class Database
             . "WHERE (`uid` IS NULL OR `uid`=:uid) AND (`cid` IS NULL OR `cid`=:cid)\n";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
         $arr = array();
-        while ($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
             $arr[] = $result;
         }
 
@@ -420,10 +423,10 @@ class Database
             . "WHERE `fid` = :fid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':fid', $fid, \PDO::PARAM_INT);
+        $sth->bindValue(':fid', $fid, PDO::PARAM_INT);
         $sth->execute();
 
-        $result = $sth->fetch(\PDO::FETCH_ASSOC);
+        $result = $sth->fetch(PDO::FETCH_ASSOC);
         if (!$result) {
             throw new \UnexpectedValueException(__('nonexistent-value-error', ['%name%' => __('field')]));
         }
@@ -452,10 +455,10 @@ class Database
             . "WHERE `oid` = :oid\n";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':oid', $oid, \PDO::PARAM_INT);
+        $sth->bindValue(':oid', $oid, PDO::PARAM_INT);
         $sth->execute();
 
-        $result = $sth->fetch(\PDO::FETCH_ASSOC);
+        $result = $sth->fetch(PDO::FETCH_ASSOC);
         if (empty($result)) {
             return null;
         }
@@ -478,11 +481,11 @@ class Database
             . "WHERE `$fields_table`.`cid` IS NULL OR `$fields_table`.`cid` = :cid\n";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
         $arr = array();
-        while ($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
             $arr[$result['fid']] = $result;
         }
 
@@ -501,11 +504,11 @@ class Database
             . "WHERE `eid`=:eid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+        $sth->bindValue(':eid', $eid, PDO::PARAM_INT);
         $sth->execute();
 
         $arr = array();
-        while ($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
             $arr[] = $result;
         }
 
@@ -532,11 +535,11 @@ class Database
             . "	ORDER BY `start`, `oid`";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+        $sth->bindValue(':eid', $eid, PDO::PARAM_INT);
         $sth->execute();
 
         $occurrences = array();
-        while ($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $occurrences[] = new Occurrence($this, $row);
         }
         return $occurrences;
@@ -554,7 +557,7 @@ class Database
             . "WHERE `eid` = :eid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+        $sth->bindValue(':eid', $eid, PDO::PARAM_INT);
         $sth->execute();
 
         if ($sth->rowCount() == 0) {
@@ -572,7 +575,7 @@ class Database
             . "WHERE `eid` = :eid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+        $sth->bindValue(':eid', $eid, PDO::PARAM_INT);
         $sth->execute();
 
         return $sth->rowCount() > 0;
@@ -588,7 +591,7 @@ class Database
             . "WHERE `oid` = :oid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':oid', $oid, \PDO::PARAM_INT);
+        $sth->bindValue(':oid', $oid, PDO::PARAM_INT);
         $sth->execute();
 
         if ($sth->rowCount() == 0) {
@@ -611,7 +614,7 @@ class Database
             . "WHERE `$occurrences`.`eid`=`$events`.`eid` AND `$events`.`cid`=:cid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
         // Delete calendar config
@@ -619,7 +622,7 @@ class Database
             . "WHERE `cid`=:cid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
         if ($sth->rowCount() == 0) {
@@ -638,7 +641,7 @@ class Database
             . "WHERE `catid` = :catid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
+        $sth->bindValue(':catid', $catid, PDO::PARAM_INT);
         $sth->execute();
 
         if ($sth->rowCount() == 0) {
@@ -657,7 +660,7 @@ class Database
             . "WHERE `gid` = :gid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
+        $sth->bindValue(':gid', $gid, PDO::PARAM_INT);
         $sth->execute();
 
         if ($sth->rowCount() == 0) {
@@ -676,7 +679,7 @@ class Database
             . "WHERE `fid` = :fid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':fid', $fid, \PDO::PARAM_INT);
+        $sth->bindValue(':fid', $fid, PDO::PARAM_INT);
         $sth->execute();
 
         if ($sth->rowCount() > 0) {
@@ -696,7 +699,7 @@ class Database
             . "WHERE `uid`=:uid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->execute();
 
         if ($sth->rowCount() == 0) {
@@ -716,7 +719,7 @@ class Database
             . "WHERE `uid`=:uid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->execute();
 
         if ($sth->rowCount() == 0) {
@@ -741,11 +744,11 @@ class Database
             $query = "SELECT * FROM " . $this->prefix . "permissions WHERE `cid`=:cid AND `uid`=:uid";
 
             $sth = $this->dbh->prepare($query);
-            $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
-            $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+            $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
+            $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
             $sth->execute();
 
-            $perms[$cid][$uid] = $sth->fetch(\PDO::FETCH_ASSOC);
+            $perms[$cid][$uid] = $sth->fetch(PDO::FETCH_ASSOC);
         }
 
         return $perms[$cid][$uid];
@@ -767,7 +770,7 @@ class Database
         $sth = $this->dbh->query($query);
 
         $this->calendars = array();
-        while ($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
             $cid = $result["cid"];
             //assert(empty($this->calendars[$cid]));
             $this->calendars[$cid] = Calendar::createFromMap($this, $result);
@@ -800,7 +803,7 @@ class Database
             $sth = $this->dbh->query($query);
 
             $this->config = array();
-            while ($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
+            while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
                 $this->config[$result['name']] = $result['value'];
             }
         }
@@ -836,8 +839,8 @@ class Database
             . "WHERE `uid`=:uid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->execute();
     }
 
@@ -851,7 +854,7 @@ class Database
         $sth = $this->dbh->query($query);
 
         $users = array();
-        while ($user = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($user = $sth->fetch(PDO::FETCH_ASSOC)) {
             $users[] = User::createFromMap($this, $user);
         }
         return $users;
@@ -869,11 +872,11 @@ class Database
             . "	WHERE `cid`=:cid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
         $users = array();
-        while ($user = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($user = $sth->fetch(PDO::FETCH_ASSOC)) {
             foreach ($user as $key => $val) {
                 if ($key == 'uid') {
                     $user[$key] = $val;
@@ -899,7 +902,7 @@ class Database
         $sth = $this->dbh->prepare($query);
         $sth->execute([':username' => $username]);
 
-        $result = $sth->fetch(\PDO::FETCH_ASSOC);
+        $result = $sth->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             return User::createFromMap($this, $result);
         } else {
@@ -918,10 +921,10 @@ class Database
             . "WHERE `uid`=:uid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->execute();
 
-        $result = $sth->fetch(\PDO::FETCH_ASSOC);
+        $result = $sth->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             return User::createFromMap($this, $result);
         } else {
@@ -977,7 +980,7 @@ class Database
             . "WHERE `cid`=:cid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         //$sth->bindValue(':name', $name);
         $sth->bindValue(':value', $value);
         $sth->execute();
@@ -994,7 +997,7 @@ class Database
             . "WHERE `uid`=:uid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->bindValue(':password', password_hash($password, PASSWORD_DEFAULT));
         $sth->execute();
     }
@@ -1010,7 +1013,7 @@ class Database
             . "WHERE `uid`=:uid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->bindValue(':timezone', $timezone);
         $sth->execute();
     }
@@ -1026,7 +1029,7 @@ class Database
             . "WHERE `uid`=:uid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->bindValue(':language', $language);
         $sth->execute();
     }
@@ -1044,8 +1047,8 @@ class Database
             . "(:gid, :uid)";
 
         $sth = $this->dbh->query($query);
-        $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':gid', $gid, PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->execute();
     }
 
@@ -1061,8 +1064,8 @@ class Database
             . "WHERE `uid` :uid AND `gid`=:gid";
 
         $sth = $this->dbh->query($query);
-        $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':gid', $gid, PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->execute();
     }
 
@@ -1072,7 +1075,7 @@ class Database
      * @param string   $subject
      * @param string   $description
      * @param int|null $catid
-     * @param \DateTimeInterface|null $publish_date
+     * @param DateTimeInterface|null $publish_date
      * @return int
      */
     public function createEvent($cid, $uid, $subject, $description, $catid, $publish_date)
@@ -1088,11 +1091,11 @@ class Database
             . "VALUES (:cid, :uid, :subject, :description, :catid, $pub_str)";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->bindValue(':subject', $subject);
         $sth->bindValue(':description', $description);
-        $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
+        $sth->bindValue(':catid', $catid, PDO::PARAM_INT);
         $sth->execute();
 
         return intval($this->dbh->lastInsertId());
@@ -1101,11 +1104,11 @@ class Database
     /**
      * @param int                $eid
      * @param int                $time_type
-     * @param \DateTimeInterface $start
-     * @param \DateTimeInterface $end
+     * @param DateTimeInterface $start
+     * @param DateTimeInterface $end
      * @return string
      */
-    public function createOccurrence($eid, $time_type, \DateTimeInterface $start, \DateTimeInterface $end)
+    public function createOccurrence($eid, $time_type, DateTimeInterface $start, DateTimeInterface $end)
     {
         // Stored as UTC
         if ($time_type == 0) {
@@ -1120,8 +1123,8 @@ class Database
         $query = "INSERT INTO `{$this->prefix}occurrences`\n"
             . "SET `eid`=:eid, `time_type`=:time_type, `start`='$start_str', `end`='$end_str'";
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
-        $sth->bindValue(':time_type', $time_type, \PDO::PARAM_INT);
+        $sth->bindValue(':eid', $eid, PDO::PARAM_INT);
+        $sth->bindValue(':time_type', $time_type, PDO::PARAM_INT);
         $sth->execute();
 
         return $this->dbh->lastInsertId();
@@ -1138,8 +1141,8 @@ class Database
             . "SET `eid`=:eid, `fid`=:fid, `value`=:value";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
-        $sth->bindValue(':fid', $fid, \PDO::PARAM_INT);
+        $sth->bindValue(':eid', $eid, PDO::PARAM_INT);
+        $sth->bindValue(':fid', $fid, PDO::PARAM_INT);
         $sth->bindValue(':value', $value);
         $sth->execute();
     }
@@ -1147,11 +1150,11 @@ class Database
     /**
      * @param int                $oid
      * @param int                $time_type
-     * @param \DateTimeInterface $start
-     * @param \DateTimeInterface $end
+     * @param DateTimeInterface $start
+     * @param DateTimeInterface $end
      * @return bool
      */
-    public function modifyOccurrence($oid, $time_type, \DateTimeInterface $start, \DateTimeInterface $end)
+    public function modifyOccurrence($oid, $time_type, DateTimeInterface $start, DateTimeInterface $end)
     {
         // Stored as UTC
         if ($time_type == 0) {
@@ -1168,8 +1171,8 @@ class Database
             . "WHERE `oid`=:oid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':time_type', $time_type, \PDO::PARAM_INT);
-        $sth->bindValue(':oid', $oid, \PDO::PARAM_INT);
+        $sth->bindValue(':time_type', $time_type, PDO::PARAM_INT);
+        $sth->bindValue(':oid', $oid, PDO::PARAM_INT);
         $sth->execute();
 
         return $sth->rowCount() > 0;
@@ -1180,7 +1183,7 @@ class Database
      * @param string   $subject
      * @param string   $description
      * @param null|int $catid
-     * @param \DateTimeInterface|null $publish_date
+     * @param DateTimeInterface|null $publish_date
      * @throws FailedActionException
      */
     public function modifyEvent($eid, $subject, $description, $catid, $publish_date)
@@ -1201,9 +1204,9 @@ class Database
             . "WHERE `eid`=:eid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':eid', $eid, \PDO::PARAM_INT);
+        $sth->bindValue(':eid', $eid, PDO::PARAM_INT);
         if ($catid !== null) {
-            $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
+            $sth->bindValue(':catid', $catid, PDO::PARAM_INT);
         }
         $sth->bindValue(':subject', $subject);
         $sth->bindValue(':description', $description);
@@ -1231,9 +1234,9 @@ class Database
         }
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         if ($gid !== false) {
-            $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
+            $sth->bindValue(':gid', $gid, PDO::PARAM_INT);
         }
         $sth->bindValue(':name', $name);
         $sth->bindValue(':text_color', $text_color);
@@ -1253,7 +1256,7 @@ class Database
             . "SET `cid`=:cid, `name`=:name";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->bindValue(':name', $name);
         $sth->execute();
 
@@ -1279,8 +1282,8 @@ class Database
             . "`cid`=:cid, `name`=:name, `required`=:required, `format`=$format_str";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
-        $sth->bindValue(':required', asbool($required), \PDO::PARAM_BOOL);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
+        $sth->bindValue(':required', asbool($required), PDO::PARAM_BOOL);
         if ($format !== false) {
             $sth->bindValue(':format', $format);
         }
@@ -1305,8 +1308,8 @@ class Database
             . "WHERE `catid`=:catid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
-        $sth->bindValue(':catid', $catid, \PDO::PARAM_INT);
+        $sth->bindValue(':gid', $gid, PDO::PARAM_INT);
+        $sth->bindValue(':catid', $catid, PDO::PARAM_INT);
         $sth->bindValue(':name', $name);
         $sth->bindValue(':text_color', $text_color);
         $sth->bindValue(':bg_color', $bg_color);
@@ -1329,7 +1332,7 @@ class Database
             . "WHERE `gid`=:gid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':gid', $gid, \PDO::PARAM_INT);
+        $sth->bindValue(':gid', $gid, PDO::PARAM_INT);
         $sth->bindValue(':name', $name);
         $sth->execute();
 
@@ -1358,8 +1361,8 @@ class Database
             . "WHERE `fid`=:fid";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':fid', $fid, \PDO::PARAM_INT);
-        $sth->bindValue(':required', asbool($required), \PDO::PARAM_BOOL);
+        $sth->bindValue(':fid', $fid, PDO::PARAM_INT);
+        $sth->bindValue(':required', asbool($required), PDO::PARAM_BOOL);
         if ($format !== false) {
             $sth->bindValue(':format', $format);
         }
@@ -1376,8 +1379,8 @@ class Database
      *
      * @param  int                     $cid
      * @param  string                  $query
-     * @param  \DateTimeInterface|null $start
-     * @param  \DateTimeInterface|null $end
+     * @param  DateTimeInterface|null $start
+     * @param  DateTimeInterface|null $end
      * @param  string|null             $sort
      * @param  string|null             $order
      * @return Occurrence[]
@@ -1425,11 +1428,11 @@ class Database
             . "ORDER BY `$sort` $order";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
         $occurrences = array();
-        while ($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $occurrences[] = new Occurrence($this, $row);
         }
         return $occurrences;
@@ -1453,8 +1456,8 @@ class Database
             . "ON DUPLICATE KEY UPDATE $perm_str";
 
         $sth = $this->dbh->prepare($query);
-        $sth->bindValue(':cid', $cid, \PDO::PARAM_INT);
-        $sth->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
+        $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->execute();
     }
 
@@ -1504,7 +1507,7 @@ function asbool($val)
 }
 
 /**
- * @param \DateTimeInterface|null $date
+ * @param DateTimeInterface|null $date
  * @return string
  */
 function datetime_to_sql_date($date)

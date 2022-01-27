@@ -20,6 +20,7 @@ namespace PhpCalendar;
 use Doctrine\ORM\EntityManager;
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
+use PhpCalendar\Entity\Calendar;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
@@ -364,7 +365,7 @@ class Context
     /**
      * @return Calendar[]
      */
-    public function findAllCalendars()
+    public function findAllCalendars(): array
     {
         return $this->entityManager->getRepository('PHPC:Calendar')->findAll();
     }

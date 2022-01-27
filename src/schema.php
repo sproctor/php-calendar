@@ -27,7 +27,7 @@ define('PHPC_DB_VERSION', 3);
  * @param string $prefix
  * @return SqlTable[]
  */
-function phpc_table_schemas($prefix)
+function phpc_table_schemas(string $prefix): array
 {
     return array
     ( phpc_calendars_table($prefix)
@@ -45,7 +45,7 @@ function phpc_table_schemas($prefix)
     );
 }
 
-function phpc_calendars_table($prefix)
+function phpc_calendars_table(string $prefix): SqlTable
 {
     $table = new SqlTable($prefix . 'calendars');
 
@@ -63,7 +63,7 @@ function phpc_calendars_table($prefix)
     return $table;
 }
 
-function phpc_calendar_fields_table($prefix)
+function phpc_calendar_fields_table(string $prefix): SqlTable
 {
     $table = new SqlTable($prefix . 'calendar_fields');
 
@@ -73,7 +73,7 @@ function phpc_calendar_fields_table($prefix)
     return $table;
 }
 
-function phpc_categories_table($prefix)
+function phpc_categories_table(string $prefix): SqlTable
 {
     $table = new SqlTable($prefix . 'categories');
 
@@ -91,7 +91,7 @@ function phpc_categories_table($prefix)
     return $table;
 }
 
-function phpc_config_table($prefix)
+function phpc_config_table(string $prefix): SqlTable
 {
     $table = new SqlTable($prefix . 'config');
     
@@ -103,7 +103,7 @@ function phpc_config_table($prefix)
     return $table;
 }
 
-function phpc_events_table($prefix)
+function phpc_events_table(string $prefix): SqlTable
 {
     $table = new SqlTable($prefix . 'events');
 
@@ -122,7 +122,7 @@ function phpc_events_table($prefix)
     return $table;
 }
 
-function phpc_groups_table($prefix)
+function phpc_groups_table(string $prefix): SqlTable
 {
     $table = new SqlTable($prefix . 'groups');
 
@@ -135,7 +135,7 @@ function phpc_groups_table($prefix)
     return $table;
 }
 
-function phpc_occurrences_table($prefix)
+function phpc_occurrences_table(string $prefix): SqlTable
 {
     $table = new SqlTable($prefix . 'occurrences');
 
@@ -151,7 +151,7 @@ function phpc_occurrences_table($prefix)
     return $table;
 }
 
-function phpc_permissions_table($prefix)
+function phpc_permissions_table(string $prefix): SqlTable
 {
     $table = new SqlTable($prefix . 'permissions');
 
@@ -167,7 +167,7 @@ function phpc_permissions_table($prefix)
     return $table;
 }
 
-function phpc_users_table($prefix)
+function phpc_users_table(string $prefix): SqlTable
 {
     $table = new SqlTable($prefix . 'users');
 
@@ -188,7 +188,7 @@ function phpc_users_table($prefix)
     return $table;
 }
 
-function phpc_user_groups_table($prefix)
+function phpc_user_groups_table(string $prefix): SqlTable
 {
     $table = new SqlTable($prefix . 'user_groups');
 
@@ -198,7 +198,7 @@ function phpc_user_groups_table($prefix)
     return $table;
 }
 
-function phpc_fields_table($prefix)
+function phpc_fields_table(string $prefix): SqlTable
 {
     $table = new SqlTable($prefix . 'fields');
 
@@ -211,7 +211,7 @@ function phpc_fields_table($prefix)
     return $table;
 }
 
-function phpc_event_fields_table($prefix)
+function phpc_event_fields_table(string $prefix): SqlTable
 {
     $table = new SqlTable($prefix . 'event_fields');
 

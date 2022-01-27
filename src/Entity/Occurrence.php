@@ -15,7 +15,12 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace PhpCalendar\Entity;
+
+use DateTimeImmutable;
+use DateTimeInterface;
+use IntlDateFormatter;
+use Locale;
 
 /**
  * @Entity @Table(name="occurrences")
@@ -54,11 +59,11 @@ class Occurrence
      * Occurrence constructor.
      *
      * @param Event                 $event
-     * @param \DateTimeInterface    $start
-     * @param \DateTimeInterface    $end
+     * @param DateTimeInterface    $start
+     * @param DateTimeInterface    $end
      * @param int                   $time_type
      */
-    public function __construct(Event $event, \DateTimeInterface $start, \DateTimeInterface $end, int $time_type)
+    public function __construct(Event $event, DateTimeInterface $start, DateTimeInterface $end, int $time_type)
     {
         $this->event = $event;
         $this->start = $start;
@@ -70,14 +75,14 @@ class Occurrence
      * Formats the start and end time according to time_type and locale
      * @return null|string
      */
-    public function getTimespanString()
+    public function getTimespanString(): ?string
     {
         switch ($this->time_type) {
             default:
-                $formatter = new \IntlDateFormatter(
-                    \Locale::getDefault(),
-                    \IntlDateFormatter::NONE,
-                    \IntlDateFormatter::SHORT
+                $formatter = new IntlDateFormatter(
+                    Locale::getDefault(),
+                    IntlDateFormatter::NONE,
+                    IntlDateFormatter::SHORT
                 );
                 return __(
                     'time-range',
@@ -94,14 +99,14 @@ class Occurrence
     /**
      * @return string
      */
-    public function getDatetimeString()
+    public function getDatetimeString(): string
     {
         if ($this->time_type != 0 || days_between($this->start, $this->end) == 0) {
             // normal behaviour
-            $formatter = new \IntlDateFormatter(
-                \Locale::getDefault(),
-                \IntlDateFormatter::MEDIUM,
-                \IntlDateFormatter::NONE
+            $formatter = new IntlDateFormatter(
+                Locale::getDefault(),
+                IntlDateFormatter::MEDIUM,
+                IntlDateFormatter::NONE
             );
             $event_time = $this->getTimespanString();
             $date = $formatter->format($this->start);
@@ -112,10 +117,10 @@ class Occurrence
             }
         } else {
             // format on multiple days
-            $formatter = new \IntlDateFormatter(
-                \Locale::getDefault(),
-                \IntlDateFormatter::MEDIUM,
-                \IntlDateFormatter::SHORT
+            $formatter = new IntlDateFormatter(
+                Locale::getDefault(),
+                IntlDateFormatter::MEDIUM,
+                IntlDateFormatter::SHORT
             );
             $str = __(
                 'date-time-range',
@@ -129,10 +134,10 @@ class Occurrence
     {
         switch ($this->time_type) {
             default:
-                $formatter = new \IntlDateFormatter(
-                    \Locale::getDefault(),
-                    \IntlDateFormatter::NONE,
-                    \IntlDateFormatter::SHORT
+                $formatter = new IntlDateFormatter(
+                    Locale::getDefault(),
+                    IntlDateFormatter::NONE,
+                    IntlDateFormatter::SHORT
                 );
                 return $formatter->format($this->start);
             case 1: // FULL DAY
@@ -145,7 +150,7 @@ class Occurrence
     /**
      * @return int
      */
-    public function getOid()
+    public function getOid(): int
     {
         return $this->oid;
     }
@@ -153,36 +158,36 @@ class Occurrence
     /**
      * @return int
      */
-    public function getTimeType()
+    public function getTimeType(): int
     {
         return $this->time_type;
     }
 
     /**
-     * @return \DateTimeImmutable
+     * @return DateTimeInterface
      */
-    public function getStart()
+    public function getStart(): DateTimeInterface
     {
         return $this->start;
     }
 
     /**
-     * @return \DateTimeImmutable
+     * @return DateTimeInterface
      */
-    public function getEnd()
+    public function getEnd(): DateTimeInterface
     {
         return $this->end;
     }
 
     /**
      * @param EntityManager $entityManager
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
      */
     public static function findOccurrences(
         EntityManager $entityManager,
-        \DateTimeInterface $from,
-        \DateTimeInterface $to
+        DateTimeInterface $from,
+        DateTimeInterface $to
     ) {
         $qb = $entityManager->createQueryBuilder();
 

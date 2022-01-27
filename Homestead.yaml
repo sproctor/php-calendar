@@ -1,0 +1,21 @@
+ip: 192.168.10.10
+memory: 2048
+cpus: 2
+provider: virtualbox
+authorize: ~/.ssh/id_rsa.pub
+keys:
+    - ~/.ssh/id_rsa
+folders:
+    - map: ./
+      to: /home/vagrant/code
+sites:
+    - map: php-calendar.local
+      to: /home/vagrant/code/public
+databases:
+    - homestead
+features:
+    - mariadb: false
+    - ohmyzsh: false
+    - webdriver: false
+name: php-calendar
+hostname: php-calendar

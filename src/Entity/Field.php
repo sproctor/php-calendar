@@ -18,7 +18,7 @@
 namespace PhpCalendar;
 
 /**
- * Field represents an user defined field for an event.
+ * User defined field on an actual event.
  *
  * @author Sean Proctor <sproctor@gmail.com>
  * @Entity

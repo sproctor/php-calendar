@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace PhpCalendar\Entity;
 
 /**
  * Event represents an event that may have multiple occurrences.

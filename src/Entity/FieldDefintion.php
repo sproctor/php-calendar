@@ -17,12 +17,40 @@
 
 namespace PhpCalendar;
 
-abstract class Page
+/**
+ * Defintion for event fields.
+ *
+ * @author Sean Proctor <sproctor@gmail.com>
+ * @Entity
+ * @Table("field_definitions")
+ */
+class FieldDefinition
 {
     /**
-     * @param Context $context
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws \Exception
+     * @Column(type="integer")
+     * @Id
+     * @GeneratedValue(strategy="AUTO")
      */
-    abstract public function action(Context $context);
+    private $fid;
+
+    /**
+     * @ManyToOne(targetEntity="Calendar")
+     * @JoinColumn(name="cid", referencedColumnName="cid")
+     */
+    private $calendar;
+
+    /**
+     * @Column(type="string", length=255)
+     */
+    private $name;
+    
+    /**
+     * @Column(type="boolean")
+     */
+    private $is_required;
+
+    /**
+     * @Column(type="text")
+     */
+    private $format;
 }
