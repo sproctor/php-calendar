@@ -1,6 +1,11 @@
 NEWS
 -----
 
+2.0.13 (28 January 2022):
+	- Fixed compatability with PHP 8
+	- Only show readable calendars in the calendar list
+	- Fix week number issues
+
 2.0.12 (2 January 2018):
 	- Fixed additional issues with the updater
 	- Minor changes to forms
