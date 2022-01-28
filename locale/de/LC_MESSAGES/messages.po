@@ -1,1478 +1,1472 @@
 # PHP-Calendar.
-# Copyright (C) 2022 Sean Proctor
+# Copyright (C) 2014 Sean Proctor
 # This file is distributed under the same license as the PHP-Calendar package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 # Translators:
-# Sean Proctor <sproctor@gmail.com>, 2022
-# 
-#, fuzzy
+# Jack_Miller <fabian.capta@gmail.com>, 2014
+# Jack_Miller <fabian.capta@gmail.com>, 2014
+# JAIME GÓMEZ OBREGÓN <jaime@iteisa.com>, 2006
+# Stefan Schumacher <stefan@duckflight.de>, 2013
+# Till <therootuser2@freenet.de>, 2014
+# 0cff5cc4def3d75681bb40e8e06675f5_417bc8e <8b1bef1ed20efdf0fabadfaace2f36eb_87774>, 2013
+# 0cff5cc4def3d75681bb40e8e06675f5_417bc8e <8b1bef1ed20efdf0fabadfaace2f36eb_87774>, 2013
+# 0cff5cc4def3d75681bb40e8e06675f5_417bc8e <8b1bef1ed20efdf0fabadfaace2f36eb_87774>, 2013
 msgid ""
 msgstr ""
-"Project-Id-Version: PHP-Calendar 2.0.13\n"
+"Project-Id-Version: php-calendar\n"
 "Report-Msgid-Bugs-To: sproctor@gmail.com\n"
-"POT-Creation-Date: 2022-01-28 09:19-0500\n"
-"PO-Revision-Date: 2022-01-28 14:23+0000\n"
-"Last-Translator: Sean Proctor <sproctor@gmail.com>, 2022\n"
-"Language-Team: German (https://www.transifex.com/sproctor/teams/14496/de/)\n"
+"POT-Creation-Date: 2014-02-18 09:54-0500\n"
+"PO-Revision-Date: 2022-01-28 15:21+0000\n"
+"Last-Translator: Transifex Bot <>\n"
+"Language-Team: German (http://www.transifex.com/sproctor/php-calendar/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/admin.php:31 src/cadmin.php:30
+#: includes/admin.php:28 includes/cadmin.php:26
 msgid "You must be logged in as an admin."
 msgstr "Sie müssen als Administrator angemeldet sein. "
 
-#: src/admin.php:36
+#: includes/admin.php:33
 msgid "Calendars"
 msgstr "Kalender"
 
-#: src/admin.php:38 src/cadmin.php:37
+#: includes/admin.php:35 includes/cadmin.php:33
 msgid "Users"
 msgstr "Benutzer"
 
-#: src/admin.php:40
+#: includes/admin.php:37
 msgid "Import"
 msgstr "Import"
 
-#: src/admin.php:42 src/translate.php:41
+#: includes/admin.php:39 includes/translate.php:38
 msgid "Translate"
 msgstr "Übersetze"
 
-#: src/admin.php:45
+#: includes/admin.php:42
 msgid "Version"
 msgstr "Version"
 
-#: src/admin.php:61
+#: includes/admin.php:55
 msgid "Calendar"
 msgstr "Kalender"
 
-#: src/admin.php:62 src/admin.php:100
+#: includes/admin.php:56 includes/admin.php:91
 msgid "Action"
 msgstr "Aktion"
 
-#: src/admin.php:69 src/cadmin.php:161 src/cadmin.php:208
-#: src/display_event.php:205
+#: includes/admin.php:63 includes/cadmin.php:156 includes/cadmin.php:202
+#: includes/display_event.php:193
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: src/admin.php:71 src/admin.php:112 src/cadmin.php:166 src/cadmin.php:212
-#: src/display_event.php:85 src/display_event.php:178
+#: includes/admin.php:65 includes/admin.php:101 includes/cadmin.php:161
+#: includes/cadmin.php:206 includes/display_event.php:78
+#: includes/display_event.php:166
 msgid "Delete"
 msgstr "Löschen"
 
-#: src/admin.php:76 src/calendar_form.php:92
+#: includes/admin.php:70 includes/calendar_form.php:85
 msgid "Create Calendar"
-msgstr "Erstelle Kalender"
+msgstr "Kalender erstellen"
 
-#: src/admin.php:80
+#: includes/admin.php:74
 msgid "Calendar List"
 msgstr "Kalenderliste"
 
-#: src/admin.php:97 src/login.php:82
+#: includes/admin.php:88 includes/login.php:77
 msgid "Username"
 msgstr "Benutzername"
 
-#: src/admin.php:98 src/cadmin.php:41 src/cadmin.php:135
-#: src/user_create.php:79
+#: includes/admin.php:89 includes/cadmin.php:37 includes/cadmin.php:130
+#: includes/user_create.php:73
 msgid "Groups"
 msgstr "Gruppen"
 
-#: src/admin.php:99 src/admin.php:110 src/cadmin.php:109 src/cadmin.php:136
+#: includes/admin.php:90 includes/admin.php:100 includes/cadmin.php:104
+#: includes/cadmin.php:131
 msgid "Edit Groups"
-msgstr "Gruppen editieren"
+msgstr "Gruppen bearbeiten"
 
-#: src/admin.php:117 src/user_create.php:57
+#: includes/admin.php:106 includes/user_create.php:51
 msgid "Create User"
-msgstr "Erstelle Benutzer"
+msgstr "Benutzer erstellen"
 
-#: src/admin.php:121
+#: includes/admin.php:110
 msgid "User List"
 msgstr "Benutzerliste"
 
-#: src/admin.php:135
+#: includes/admin.php:121
 msgid "Import Form"
 msgstr "Import-Formular"
 
-#: src/admin.php:136
+#: includes/admin.php:122
 msgid "MySQL Host Name"
 msgstr "MySQL-Hostname"
 
-#: src/admin.php:137
+#: includes/admin.php:123
 msgid "MySQL Database Name"
 msgstr "MySQL-Datenbankname"
 
-#: src/admin.php:138
+#: includes/admin.php:124
 msgid "MySQL Port Number"
 msgstr "MySQL-Portnummer"
 
-#: src/admin.php:138
+#: includes/admin.php:124
 msgid "Leave blank for default"
 msgstr "Leer lassen für Voreinstellung"
 
-#: src/admin.php:139
+#: includes/admin.php:125
 msgid "MySQL User Name"
 msgstr "MySQL-Benutzername"
 
-#: src/admin.php:140
+#: includes/admin.php:126
 msgid "MySQL User Password"
 msgstr "MySQL-Benutzerpasswort"
 
-#: src/admin.php:143
+#: includes/admin.php:129
 msgid "PHP-Calendar Table Prefix"
 msgstr "Tabellenpräfix für PHP-Calendar"
 
-#: src/admin.php:148
+#: includes/admin.php:134
 msgid "Import Calendar"
-msgstr "Importiere Kalender"
+msgstr "Kalender importieren"
 
-#: src/admin.php:167
+#: includes/admin.php:150
 msgid ""
 "This script needs read access to your calendar directory in order to write "
 "the translation files. Alternatively, you could run translate.php from the "
 "command line or use msgfmt or any other gettext tool that can generate .mo "
 "files from .po files."
-msgstr ""
-"Das Script benötigt Lese-Rechte um auf dein Kalender Verzeichnis und die "
-"Übersetzungsdatein zugreifen zu können. Alternativ kannst du auch "
-"translate.php aus der Kommandozeile heraus ausführen, msgfmt nutzen oder "
-"irgend ein anderes gettext tool welches .mo Datein aus .po Datein erstellen "
-"kann."
+msgstr "Dieses Script benötigt Lese-Rechte auf das Kalenderverzeichnis um die Übersetzungsdateien schreiben zu können. Alternativ könnten Sie translate.php aus der Kommandozeile heraus ausführen, msgfmt nutzen oder irgendein anderes gettext-Tool, welches .mo Datein aus .po Datein erstellen kann."
 
-#: src/admin.php:170
+#: includes/admin.php:153
 msgid "Generate Translations"
-msgstr "Erstelle Übersetzung"
+msgstr "Übersetzungen generieren"
 
-#: src/cadmin.php:35
+#: includes/cadmin.php:31
 msgid "Calendar Configuration"
-msgstr "Kalender Konfiguration"
+msgstr "Kalenderkonfiguration"
 
-#: src/cadmin.php:39
+#: includes/cadmin.php:35
 msgid "Categories"
 msgstr "Kategorien"
 
-#: src/cadmin.php:73
+#: includes/cadmin.php:68
 msgid "Options"
 msgstr "Einstellungen"
 
-#: src/cadmin.php:77 src/cadmin.php:126 src/calendar_form.php:99
-#: src/settings.php:65 src/settings.php:108 src/user_create.php:64
-#: src/user_groups.php:76
+#: includes/cadmin.php:72 includes/cadmin.php:121
+#: includes/calendar_form.php:92 includes/settings.php:58
+#: includes/settings.php:98 includes/user_create.php:58
+#: includes/user_groups.php:70
 msgid "Submit"
 msgstr "Speichern"
 
-#: src/cadmin.php:103 src/cadmin.php:130
+#: includes/cadmin.php:98 includes/cadmin.php:125
 msgid "Read"
 msgstr "Lesen"
 
-#: src/cadmin.php:104 src/cadmin.php:131
+#: includes/cadmin.php:99 includes/cadmin.php:126
 msgid "Write"
 msgstr "Schreiben"
 
-#: src/cadmin.php:105 src/event_form.php:117
+#: includes/cadmin.php:100 includes/event_form.php:110
 msgid "Read-only"
-msgstr "Nur Lesen"
+msgstr "Schreibgeschützt"
 
-#: src/cadmin.php:106 src/cadmin.php:133 src/display_day.php:88
-#: src/display_event.php:83 src/display_event.php:174
+#: includes/cadmin.php:101 includes/cadmin.php:128 includes/display_day.php:89
+#: includes/display_event.php:76 includes/display_event.php:162
 msgid "Modify"
 msgstr "Ändern"
 
-#: src/cadmin.php:107 src/cadmin.php:134 src/calendar.php:646
-#: src/user_create.php:77
+#: includes/cadmin.php:102 includes/cadmin.php:129 includes/calendar.php:496
+#: includes/user_create.php:71
 msgid "Admin"
 msgstr "Admin"
 
-#: src/cadmin.php:122
+#: includes/cadmin.php:117
 msgid "User Permissions"
 msgstr "Benutzerberechtigungen "
 
-#: src/cadmin.php:129 src/user_create.php:67
+#: includes/cadmin.php:124 includes/user_create.php:61
 msgid "User Name"
 msgstr "Benutzername"
 
-#: src/cadmin.php:132
+#: includes/cadmin.php:127
 msgid "Can Create Read-Only"
-msgstr "Kann Nur Lesen erstellen "
+msgstr "Kann schreibgeschützte Termine erstellen "
 
-#: src/cadmin.php:151 src/cadmin.php:203
+#: includes/cadmin.php:146 includes/cadmin.php:197
 msgid "No Name"
 msgstr "Kein Name"
 
-#: src/cadmin.php:154 src/category_form.php:47 src/event_form.php:120
+#: includes/cadmin.php:149 includes/category_form.php:44
+#: includes/event_form.php:113
 msgid "None"
-msgstr "Nichts"
+msgstr "Keine"
 
-#: src/cadmin.php:173
+#: includes/cadmin.php:168
 msgid "Create category"
-msgstr "Erstelle Kategorie"
+msgstr "Kategorie erstellen"
 
-#: src/cadmin.php:176
+#: includes/cadmin.php:171
 msgid "Calendar Categories"
 msgstr "Kalenderkategorien"
 
-#: src/cadmin.php:179 src/cadmin.php:224 src/category_form.php:31
-#: src/group_form.php:31
+#: includes/cadmin.php:174 includes/cadmin.php:218
+#: includes/category_form.php:28 includes/group_form.php:28
 msgid "Name"
 msgstr "Name"
 
-#: src/cadmin.php:180 src/category_form.php:43
+#: includes/cadmin.php:175 includes/category_form.php:40
 msgid "Text Color"
 msgstr "Textfarbe"
 
-#: src/cadmin.php:181 src/category_form.php:44
+#: includes/cadmin.php:176 includes/category_form.php:41
 msgid "Background Color"
 msgstr "Hintergrundfarbe"
 
-#: src/cadmin.php:182
+#: includes/cadmin.php:177
 msgid "Visible to User Group"
 msgstr "Sichtbar für Benutzergruppe"
 
-#: src/cadmin.php:183 src/cadmin.php:225
+#: includes/cadmin.php:178 includes/cadmin.php:219
 msgid "Actions"
 msgstr "Aktionen"
 
-#: src/cadmin.php:218
+#: includes/cadmin.php:212
 msgid "Create group"
 msgstr "Gruppe erstellen"
 
-#: src/cadmin.php:221
+#: includes/cadmin.php:215
 msgid "Calendar Groups"
 msgstr "Kalendergruppen"
 
-#: src/cadmin_submit.php:29 src/calendar_form.php:30 src/user_create.php:29
-#: src/user_groups.php:29 src/user_permissions_submit.php:30
+#: includes/cadmin_submit.php:26 includes/calendar_form.php:26
+#: includes/user_create.php:26 includes/user_groups.php:26
+#: includes/user_permissions_submit.php:27
 msgid "Permission denied"
 msgstr "Keine Berechtigung"
 
-#: src/cadmin_submit.php:42
+#: includes/cadmin_submit.php:39
 msgid " was not set."
-msgstr "wurde nicht gesetzt. "
+msgstr " wurde nicht gesetzt. "
 
-#: src/cadmin_submit.php:49
+#: includes/cadmin_submit.php:46
 msgid "Updated options"
-msgstr "Einstellungen geändert"
+msgstr "Einstellungen aktualisiert"
 
-#: src/calendar.php:147 src/settings.php:114
+#: includes/calendar.php:118 includes/settings.php:104
 msgid "Language"
 msgstr "Sprache"
 
-#: src/calendar.php:148 src/settings.php:111
+#: includes/calendar.php:119 includes/settings.php:101
 msgid "Timezone"
 msgstr "Zeitzone"
 
-#: src/calendar.php:590
+#: includes/calendar.php:443
 msgid "Welcome"
 msgstr "Willkommen"
 
-#: src/calendar.php:597 src/settings.php:35 src/settings.php:101
+#: includes/calendar.php:450 includes/settings.php:31 includes/settings.php:91
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/calendar.php:600
+#: includes/calendar.php:453
 msgid "Log out"
 msgstr "Logout"
 
-#: src/calendar.php:604 src/login.php:62 src/login.php:73
+#: includes/calendar.php:457 includes/login.php:57 includes/login.php:68
 msgid "Log in"
 msgstr "Login"
 
-#: src/calendar.php:625
+#: includes/calendar.php:475
 msgid "Add Event"
 msgstr "Termin hinzufügen"
 
-#: src/calendar.php:629 src/search.php:110 src/search.php:125
+#: includes/calendar.php:479 includes/search.php:106 includes/search.php:121
 msgid "Search"
 msgstr "Suchen"
 
-#: src/calendar.php:633
+#: includes/calendar.php:483
 msgid "View Month"
 msgstr "Monat anzeigen"
 
-#: src/calendar.php:638
+#: includes/calendar.php:488
 msgid "View date"
 msgstr "Datum anzeigen"
 
-#: src/calendar.php:642
+#: includes/calendar.php:492
 msgid "Calendar Admin"
 msgstr "Kalender-Admin"
 
-#: src/calendar.php:690 src/calendar.php:754 src/calendar.php:766
-#: src/settings.php:91
+#: includes/calendar.php:527 includes/calendar.php:588
+#: includes/calendar.php:597 includes/settings.php:81
 msgid "Default"
-msgstr "Voreinstellungen"
+msgstr "Voreinstellung"
 
-#: src/calendar.php:696
+#: includes/calendar.php:533
 msgid "Week Start"
-msgstr "Wochenbeginn"
+msgstr "Erster Tag der Woche"
 
-#: src/calendar.php:698 src/globals.php:38
+#: includes/calendar.php:535 includes/globals.php:38
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: src/calendar.php:699 src/globals.php:39
+#: includes/calendar.php:536 includes/globals.php:39
 msgid "Monday"
 msgstr "Montag"
 
-#: src/calendar.php:700 src/globals.php:44
+#: includes/calendar.php:537 includes/globals.php:44
 msgid "Saturday"
 msgstr "Samstag"
 
-#: src/calendar.php:702
+#: includes/calendar.php:539
 msgid "24 Hour Time"
 msgstr "24-Stunden-Anzeige"
 
-#: src/calendar.php:703
+#: includes/calendar.php:540
 msgid "Calendar Title"
 msgstr "Kalendertitel"
 
-#: src/calendar.php:704
+#: includes/calendar.php:541
 msgid "Maximum Subject Length"
 msgstr "Maximale Betrefflänge"
 
-#: src/calendar.php:705
+#: includes/calendar.php:542
 msgid "Events Display Daily Maximum"
-msgstr "Termine zeigen tägliches Maximum"
+msgstr "Maximale Anzahl anzuzeigender Termine pro Tag"
 
-#: src/calendar.php:706
+#: includes/calendar.php:543
 msgid "Public Permissions"
 msgstr "Öffentliche Berechtigungen "
 
-#: src/calendar.php:708
+#: includes/calendar.php:545
 msgid "Cannot read nor write events"
 msgstr "Kann weder Termine lesen noch schreiben "
 
-#: src/calendar.php:709
+#: includes/calendar.php:546
 msgid "Can read but not write events"
 msgstr "Kann Termine lesen, aber nicht schreiben"
 
-#: src/calendar.php:710
+#: includes/calendar.php:547
 msgid "Can create but not modify events"
 msgstr "Kann Termine erstellen, aber nicht ändern"
 
-#: src/calendar.php:711
+#: includes/calendar.php:548
 msgid "Can create and modify events"
 msgstr "Kann Termine erstellen und ändern"
 
-#: src/calendar.php:714
+#: includes/calendar.php:551
 msgid "Default Timezone"
 msgstr "Voreingestellte Zeitzone"
 
-#: src/calendar.php:715
+#: includes/calendar.php:552
 msgid "Default Language"
 msgstr "Voreingestellte Sprache"
 
-#: src/calendar.php:717
+#: includes/calendar.php:554
 msgid "Date Format"
 msgstr "Datumsformat"
 
-#: src/calendar.php:719
+#: includes/calendar.php:556
 msgid "Theme"
 msgstr "Theme"
 
-#: src/calendar.php:787
+#: includes/calendar.php:615
 msgid "Month Day Year"
 msgstr "Monat Tag Jahr"
 
-#: src/calendar.php:788
+#: includes/calendar.php:616
 msgid "Year Month Day"
 msgstr "Jahr Monat Tag"
 
-#: src/calendar.php:789
+#: includes/calendar.php:617
 msgid "Day Month Year"
 msgstr "Tag Monat Jahr"
 
-#: src/calendar.php:837
+#: includes/calendar.php:649
 msgid "You do not have permission to do that: "
 msgstr "Sie haben keine Berechtigung dazu: "
 
-#: src/calendar.php:850 src/util.php:229
+#: includes/calendar.php:662 includes/util.php:156
 msgid "Error"
 msgstr "Fehler"
 
-#: src/calendar.php:852 src/util.php:233
+#: includes/calendar.php:664 includes/util.php:160
 msgid "Backtrace"
 msgstr "Rückverfolgung"
 
-#: src/calendar.php:868
+#: includes/calendar.php:676
 msgid "Invalid action"
 msgstr "Ungültige Aktion"
 
-#: src/calendar.php:925
+#: includes/calendar.php:721
 msgid "Secret token mismatch. Possible request forgery attempt."
 msgstr "Unstimmigkeit der geheimen Token. Möglicher Betrugsversuch."
 
-#: src/calendar.php:1009
+#: includes/calendar.php:800
 msgid "Unsupported config type"
 msgstr "Nicht unterstützter Konfigurationstyp"
 
-#: src/calendar.php:1030
+#: includes/calendar.php:810
 #, php-format
 msgid "Required field \"%s\" was not set."
 msgstr "Das benötigte Feld \"%s\" wurde nicht gesetzt."
 
-#: src/calendar.php:1036
+#: includes/calendar.php:819
 #, php-format
 msgid "Malformed \"%s\" time: \"%s\""
-msgstr ""
+msgstr "Ungültige \"%s\" Zeit: \"%s\""
 
-#: src/calendar.php:1051
+#: includes/calendar.php:834
 msgid "Unrecognized period: "
 msgstr "Unbekannter Zeitraum: "
 
-#: src/calendar.php:1059
+#: includes/calendar.php:842
 #, php-format
 msgid "Malformed \"%s\" date: \"%s\""
-msgstr ""
+msgstr "Ungültiges \"%s\" Datum: \"%s\""
 
-#: src/calendar.php:1080
+#: includes/calendar.php:863
 msgid "Invalid date_format."
-msgstr "Ungültiges date_format"
+msgstr "Ungültiges date_format."
 
-#: src/calendar_delete.php:32
+#: includes/calendar_delete.php:29
 msgid "No calendar selected."
 msgstr "Kein Kalender ausgewählt."
 
-#: src/calendar_delete.php:40 src/setup.php:95
-msgid "Invalid calendar ID."
-msgstr ""
-
-#: src/calendar_delete.php:43
-msgid "Confirm you want to delete calendar:"
-msgstr ""
-
-#: src/calendar_delete.php:44 src/category_delete.php:54
-#: src/event_delete.php:51 src/group_delete.php:54
-#: src/occurrence_delete.php:53 src/user_delete.php:55
-msgid "Confirm"
-msgstr "Bestätige"
-
-#: src/calendar_delete.php:47 src/category_delete.php:57
-#: src/event_delete.php:54 src/group_delete.php:57
-#: src/occurrence_delete.php:56 src/user_delete.php:58
-msgid "Deny"
-msgstr "Abbrechen"
-
-#: src/calendar_delete.php:53
-msgid "You do not have permission to remove calendar"
-msgstr "Sie haben keine Berechtigung, um den Kalender zu entfernen "
-
-#: src/calendar_delete.php:58
-msgid "Removed calendar"
-msgstr "Kalender wurde entfernt"
-
-#: src/calendar_delete.php:60
-msgid "Could not remove calendar"
-msgstr "Der Kalender konnte nicht entfernt werden"
-
-#: src/calendar_form.php:68
-msgid "Calendar created."
-msgstr "Der Kalender wurde erstellt."
-
-#: src/category_delete.php:32
-msgid "No category selected."
-msgstr "Keine Kategorie ausgewählt."
-
-#: src/category_delete.php:52 src/event_delete.php:49 src/group_delete.php:52
-#: src/occurrence_delete.php:51 src/user_delete.php:53
+#: includes/calendar_delete.php:45 includes/category_delete.php:49
+#: includes/event_delete.php:46 includes/group_delete.php:49
+#: includes/occurrence_delete.php:48 includes/user_delete.php:50
 msgid "Confirm you want to delete:"
 msgstr "Bestätige die Löschung von:"
 
-#: src/category_delete.php:66
+#: includes/calendar_delete.php:47 includes/category_delete.php:51
+#: includes/event_delete.php:48 includes/group_delete.php:51
+#: includes/occurrence_delete.php:50 includes/user_delete.php:52
+msgid "Confirm"
+msgstr "Bestätigen"
+
+#: includes/calendar_delete.php:50 includes/category_delete.php:54
+#: includes/event_delete.php:51 includes/group_delete.php:54
+#: includes/occurrence_delete.php:53 includes/user_delete.php:55
+msgid "Deny"
+msgstr "Abbrechen"
+
+#: includes/calendar_delete.php:58
+msgid "You do not have permission to remove calendar"
+msgstr "Ihre Berechtigungen reichen nicht aus um den Kalender zu löschen "
+
+#: includes/calendar_delete.php:63
+msgid "Removed calendar"
+msgstr "Kalender gelöscht"
+
+#: includes/calendar_delete.php:65
+msgid "Could not remove calendar"
+msgstr "Der Kalender konnte nicht entfernt werden"
+
+#: includes/calendar_form.php:64
+msgid "Calendar created."
+msgstr "Der Kalender wurde erstellt."
+
+#: includes/category_delete.php:29
+msgid "No category selected."
+msgstr "Keine Kategorie ausgewählt."
+
+#: includes/category_delete.php:63
 msgid "You do not have permission to delete category: "
-msgstr "Sie haben keine Berechtigung, um die Kategorie zu löschen:"
+msgstr "Ihre Berechtigungen reichen nicht aus um die Kategorie zu löschen: "
 
-#: src/category_delete.php:71
+#: includes/category_delete.php:68
 msgid "Removed category: "
-msgstr "Entfernte Kategorie:"
+msgstr "Kategorie wurde gelöscht: "
 
-#: src/category_delete.php:74
+#: includes/category_delete.php:71
 msgid "Could not remove category: "
-msgstr "Die Kategorie konnte nicht entfernt werden:"
+msgstr "Die Kategorie konnte nicht gelöscht werden:"
 
-#: src/category_form.php:30
+#: includes/category_form.php:27
 msgid "Category Form"
 msgstr "Kategorieformular "
 
-#: src/category_form.php:46
+#: includes/category_form.php:43
 msgid "Visible to groups"
 msgstr "Sichtbar für Gruppen "
 
-#: src/category_form.php:52
+#: includes/category_form.php:49
 msgid "Submit Category"
-msgstr "Kategorie Speichern"
+msgstr "Kategorie speichern"
 
-#: src/category_submit.php:36
+#: includes/category_submit.php:33
 msgid "Color not specified."
 msgstr "Farbe nicht angegeben. "
 
-#: src/category_submit.php:50 src/category_submit.php:53
-msgid "Invalid color: "
-msgstr ""
+#: includes/category_submit.php:47
+msgid "Invalid color."
+msgstr "Ungültige Farbe."
 
-#: src/category_submit.php:62
+#: includes/category_submit.php:55
 msgid "You do not have permission to add categories to all calendars."
-msgstr ""
-"Sie haben keine Berechtigung um Kategorien zu allen Kalendern hinzufügen. "
+msgstr "Ihre Berechtigungen reichen nicht aus um Kategorien zu allen Kalendern hinzufügen. "
 
-#: src/category_submit.php:67
+#: includes/category_submit.php:60
 msgid "You do not have permission to add categories to this calendar."
-msgstr ""
-"Sie haben keine Berechtigung um Kategorien zu diesem Kalender hinzuzufügen. "
+msgstr "Ihre Berechtigungen reichen nicht aus um Kategorien zu diesem Kalender hinzuzufügen. "
 
-#: src/category_submit.php:80
+#: includes/category_submit.php:73
 msgid "You do not have permission to modify this category."
-msgstr "Sie haben keine Berechtigung diese Kategorie zu ändern. "
+msgstr "Ihre Berechtigungen reichen nicht aus um diese Kategorie zu ändern. "
 
-#: src/category_submit.php:89
+#: includes/category_submit.php:82
 msgid "Modified category: "
-msgstr "Geänderte Kategorie:"
+msgstr "Kategorie geändert: "
 
-#: src/category_submit.php:93
+#: includes/category_submit.php:86
 msgid "Created category: "
-msgstr "Erstellte Kategorie:"
+msgstr "Kategorie erstellt: "
 
-#: src/category_submit.php:97
+#: includes/category_submit.php:90
 msgid "Error submitting category."
 msgstr "Fehler beim Übertragen der Kategorie."
 
-#: src/display_day.php:44
+#: includes/display_day.php:45
 msgid "Title"
 msgstr "Titel"
 
-#: src/display_day.php:45 src/form.php:365
+#: includes/display_day.php:46 includes/form.php:431
 msgid "Time"
 msgstr "Zeit"
 
-#: src/display_day.php:46 src/display_event.php:134 src/display_event.php:183
-#: src/event_form.php:51 src/search.php:94
+#: includes/display_day.php:47 includes/display_event.php:127
+#: includes/display_event.php:171 includes/event_form.php:44
+#: includes/search.php:92
 msgid "Description"
 msgstr "Beschreibung"
 
-#: src/display_day.php:57
+#: includes/display_day.php:58
 msgid "Delete Selected"
-msgstr "Ausgewähltes löschen"
+msgstr "Ausgewählte löschen"
 
-#: src/display_day.php:110
+#: includes/display_day.php:111
 msgid "No events on this day."
 msgstr "Keine Termine an diesem Tag."
 
-#: src/display_event.php:44
+#: includes/display_event.php:41
 msgid "Invalid arguments."
 msgstr "Ungültige Argumente. "
 
-#: src/display_event.php:60 src/display_event.php:154
+#: includes/display_event.php:53 includes/display_event.php:142
 msgid "You do not have permission to read this event."
-msgstr "Sie haben keine Berechtigung, dieses Ereignis zu lesen."
+msgstr "Ihre Berechtigungen reichen nicht aus um diesen Termin zu lesen."
 
-#: src/display_event.php:64 src/display_event.php:158
-#: src/display_event.php:233
+#: includes/display_event.php:57 includes/display_event.php:146
+#: includes/display_event.php:218
 msgid "by"
 msgstr "von"
 
-#: src/display_event.php:69 src/display_event.php:168
-#: src/display_event.php:241 src/event_form.php:119
+#: includes/display_event.php:62 includes/display_event.php:156
+#: includes/display_event.php:226 includes/event_form.php:112
 msgid "Category"
 msgstr "Kategorie"
 
-#: src/display_event.php:73 src/event_form.php:53 src/occur_form.php:48
+#: includes/display_event.php:66 includes/event_form.php:46
+#: includes/occur_form.php:42
 msgid "When"
 msgstr "Wann"
 
-#: src/display_event.php:75 src/display_event.php:161
+#: includes/display_event.php:68 includes/display_event.php:149
 msgid "Created at: "
-msgstr "Erzeugt am:"
+msgstr "Erzeugt am: "
 
-#: src/display_event.php:77 src/display_event.php:163
+#: includes/display_event.php:70 includes/display_event.php:151
 msgid "Last modified at: "
-msgstr "Zuletzt geändert am:"
+msgstr "Zuletzt geändert am: "
 
-#: src/display_event.php:87
+#: includes/display_event.php:80
 msgid "Modify Occurrence"
-msgstr "Vorkommnis ändern "
+msgstr "Wiederholung ändern "
 
-#: src/display_event.php:89
+#: includes/display_event.php:82
 msgid "Remove Occurrence"
-msgstr "Entferne Vorkommnis"
+msgstr "Entferne Wiederholung"
 
-#: src/display_event.php:108
+#: includes/display_event.php:101
 msgid "Previous occurrence on"
-msgstr "Letztes Vorkommnis am"
+msgstr "Letzte Wiederholung am"
 
-#: src/display_event.php:118
+#: includes/display_event.php:111
 msgid "Next occurrence on"
-msgstr "Nächstes Vorkommnis am"
+msgstr "Nächste Wiederholung am"
 
-#: src/display_event.php:124
+#: includes/display_event.php:117
 msgid "View All Occurrences"
-msgstr "Alle Vorkommnisse ansehen "
+msgstr "Alle Wiederholungen ansehen "
 
-#: src/display_event.php:176
+#: includes/display_event.php:164
 msgid "Add Occurrence"
-msgstr "Füge Vorkommnis hinzu"
+msgstr "Wiederholung hinzufügen"
 
-#: src/display_event.php:199 src/occurrence_delete.php:48
-#: src/phpcoccurrence.class.php:249 src/phpcoccurrence.class.php:258
-#: src/phpcoccurrence.class.php:260 src/util.php:152
+#: includes/display_event.php:187 includes/occurrence_delete.php:45
+#: includes/phpcoccurrence.class.php:244 includes/phpcoccurrence.class.php:253
+#: includes/phpcoccurrence.class.php:255
 msgid "at"
-msgstr "in"
+msgstr "um"
 
-#: src/display_event.php:206
+#: includes/display_event.php:194
 msgid "Remove"
-msgstr "Entferne"
+msgstr "Löschen"
 
-#: src/display_event.php:213
+#: includes/display_event.php:201
 msgid "Occurrences"
-msgstr "Vorkommnisse"
+msgstr "Wiederholungen"
 
-#: src/display_event.php:243
+#: includes/display_event.php:228
 msgid "from"
 msgstr "von"
 
-#: src/display_month.php:35 src/display_week.php:35
+#: includes/display_month.php:32 includes/display_week.php:32
 msgctxt "Week"
 msgid "W"
-msgstr ""
+msgstr "W"
 
-#: src/display_month.php:251 src/display_week.php:236
+#: includes/display_month.php:231 includes/display_week.php:215
 msgid "View Additional Events"
-msgstr "Siehe zusätzliche Termine"
+msgstr "Weitere Termine anzeigen"
 
-#: src/display_month.php:265 src/display_week.php:250
+#: includes/display_month.php:245 includes/display_week.php:229
 msgid "continued"
 msgstr "fortgesetzt"
 
-#: src/display_week.php:42
+#: includes/display_week.php:39
 msgid "Invalid date."
-msgstr "Fehlerhaftes Datum."
+msgstr "Ungültiges Datum."
 
-#: src/event_delete.php:32
+#: includes/event_delete.php:29
 msgid "No event selected."
 msgstr "Kein Termin ausgewählt."
 
-#: src/event_delete.php:78
+#: includes/event_delete.php:75
 msgid "Removed event"
-msgstr "Entfernter Termin"
+msgstr "Termin gelöscht"
 
-#: src/event_delete.php:80
+#: includes/event_delete.php:77
 msgid "Removed events"
-msgstr "Entfernte Termine"
+msgstr "Termine gelöscht"
 
-#: src/event_delete.php:87
+#: includes/event_delete.php:84
 msgid "Could not remove event"
-msgstr "Der Termin konnte nicht entfernt werden"
+msgstr "Der Termin konnte nicht gelöscht werden"
 
-#: src/event_delete.php:89
+#: includes/event_delete.php:86
 msgid "Could not remove events"
-msgstr "Die Termine konnten nicht entfernt werden"
+msgstr "Die Termine konnten nicht gelöscht werden"
 
-#: src/event_delete.php:96
+#: includes/event_delete.php:93
 msgid "You do not have permission to remove event"
-msgstr "Sie haben keine Berechtigung die Veranstaltung zu entfernen "
+msgstr "Ihre Berechtigungen reichen nicht aus um den Termin zu entfernen"
 
-#: src/event_delete.php:98
+#: includes/event_delete.php:95
 msgid "You do not have permission to remove events"
-msgstr "Sie haben keine Berechtigung die Veranstaltungen zu entfernen "
+msgstr "Ihre Berechtigungen reichen nicht aus um die Termine zu entfernen "
 
-#: src/event_form.php:47
+#: includes/event_form.php:40
 msgid "Event Form"
 msgstr "Terminformular"
 
-#: src/event_form.php:48 src/globals.php:70 src/search.php:92
+#: includes/event_form.php:41 includes/globals.php:70 includes/search.php:90
 msgid "Subject"
 msgstr "Betreff"
 
-#: src/event_form.php:57
+#: includes/event_form.php:50
 msgid "Change the event date and time"
-msgstr "Ändere Datum und Zeit des Termins"
+msgstr "Datum und Zeit des Termins ändern"
 
-#: src/event_form.php:60 src/occur_form.php:50
-#: src/phpcoccurrence.class.php:257 src/search.php:115
+#: includes/event_form.php:53 includes/occur_form.php:44
+#: includes/phpcoccurrence.class.php:252 includes/search.php:111
 msgid "From"
 msgstr "Von"
 
-#: src/event_form.php:61 src/occur_form.php:51 src/search.php:117
+#: includes/event_form.php:54 includes/occur_form.php:45
+#: includes/search.php:113
 msgid "To"
 msgstr "Bis"
 
-#: src/event_form.php:64 src/occur_form.php:54
+#: includes/event_form.php:57 includes/occur_form.php:48
 msgid "Time Type"
-msgstr "Art der Zeit"
+msgstr "Art des Termins"
 
-#: src/event_form.php:65 src/occur_form.php:55
+#: includes/event_form.php:58 includes/occur_form.php:49
 msgid "Normal"
 msgstr "Normaler Termin"
 
-#: src/event_form.php:66 src/occur_form.php:56
+#: includes/event_form.php:59 includes/occur_form.php:50
 msgid "Full Day"
 msgstr "Ganztägiger Termin"
 
-#: src/event_form.php:67 src/occur_form.php:57
+#: includes/event_form.php:60 includes/occur_form.php:51
 msgid "To Be Announced"
-msgstr "Wird noch bekannt gegeben"
+msgstr "Zeitpunkt wird noch bekannt gegeben"
 
-#: src/event_form.php:73
+#: includes/event_form.php:66
 msgid "Repeats"
 msgstr "Wiederholungen"
 
-#: src/event_form.php:75
+#: includes/event_form.php:68
 msgid "Never"
 msgstr "Niemals"
 
-#: src/event_form.php:77
+#: includes/event_form.php:70
 msgid "Daily"
 msgstr "Täglich"
 
-#: src/event_form.php:79
+#: includes/event_form.php:72
 msgid "Weekly"
 msgstr "Wöchentlich"
 
-#: src/event_form.php:81
+#: includes/event_form.php:74
 msgid "Monthly"
 msgstr "Monatlich"
 
-#: src/event_form.php:83
+#: includes/event_form.php:76
 msgid "Yearly"
 msgstr "Jährlich"
 
-#: src/event_form.php:85 src/event_form.php:92 src/event_form.php:99
-#: src/event_form.php:106
+#: includes/event_form.php:78 includes/event_form.php:85
+#: includes/event_form.php:92 includes/event_form.php:99
 msgid "Every"
-msgstr "Anzahl"
+msgstr "Rhythmus"
 
-#: src/event_form.php:86
+#: includes/event_form.php:79
 msgid "Repeat every how many days?"
-msgstr "Wie viele Tage wiederholen?"
+msgstr "Alle _ Tage wiederholen "
 
-#: src/event_form.php:89 src/event_form.php:97 src/event_form.php:104
-#: src/event_form.php:111
+#: includes/event_form.php:82 includes/event_form.php:90
+#: includes/event_form.php:97 includes/event_form.php:104
 msgid "Until"
-msgstr ""
-"\t\n"
-"Bis"
+msgstr "Bis"
 
-#: src/event_form.php:93
+#: includes/event_form.php:86
 msgid "Repeat every how many weeks?"
-msgstr "Wie viele Wochen wiederholen?"
+msgstr "Alle _ Wochen wiederholen"
 
-#: src/event_form.php:100
+#: includes/event_form.php:93
 msgid "Repeat every how many months?"
-msgstr "Wie viele Monate wiederholen?"
+msgstr "Alle _ Monate wiederholen"
 
-#: src/event_form.php:107
+#: includes/event_form.php:100
 msgid "Repeat every how many years?"
-msgstr "Wie viele Jahre wiederholen?"
+msgstr "Alle _ Jahre wiederholen"
 
-#: src/event_form.php:136
+#: includes/event_form.php:129
 msgid "Submit Event"
-msgstr "Sende Termin"
+msgstr "Termin speichern"
 
-#: src/event_form.php:315 src/occur_form.php:146
+#: includes/event_form.php:296 includes/occur_form.php:134
 msgid "Unrecognized Time Type."
 msgstr "Unbekannter Zeittyp. "
 
-#: src/event_form.php:320 src/occur_form.php:151
+#: includes/event_form.php:301 includes/occur_form.php:139
 msgid "An event cannot have an end earlier than its start."
 msgstr "Ein Termin kann nicht vor dem Anfang enden. "
 
-#: src/event_form.php:328 src/occur_form.php:156
+#: includes/event_form.php:309 includes/occur_form.php:144
 msgid "You do not have permission to write to this calendar."
-msgstr "Sie haben keine Berechtigung, um in diesen Kalender zu schreiben."
+msgstr "Ihre Berechtigungen reichen nicht aus um in diesen Kalender zu schreiben."
 
-#: src/event_form.php:361
+#: includes/event_form.php:342
 msgid "Required field \"every-day\" is not set."
-msgstr "Pflichtfeld \"Jeden-Tag\" ist nicht gesetzt."
+msgstr "Pflichtfeld \"Rhythmus\" ist nicht gesetzt."
 
-#: src/event_form.php:364
+#: includes/event_form.php:345
 msgid "every-day must be greater than 1"
-msgstr "jeder Tag muss größer als 1 sein"
+msgstr "Rhythmus muss größer als 1 sein"
 
-#: src/event_form.php:380
+#: includes/event_form.php:361
 msgid "Required field \"every-week\" is not set."
-msgstr "Pflichtfeld \"jeder-Woche\" ist nicht gesetzt."
+msgstr "Pflichtfeld \"Rhythmus\" ist nicht gesetzt."
 
-#: src/event_form.php:382
+#: includes/event_form.php:363
 msgid "every-week must be greater than 1"
-msgstr "jede Woche muss größer als 1 sein."
+msgstr "Rhythmus muss größer als 1 sein."
 
-#: src/event_form.php:399
+#: includes/event_form.php:380
 msgid "Required field \"every-month\" is not set."
-msgstr "Pflichtfeld \"jeden Monat\" ist nicht gesetzt."
+msgstr "Pflichtfeld \"Rhythmus\" ist nicht gesetzt."
 
-#: src/event_form.php:401 src/event_form.php:420
+#: includes/event_form.php:382 includes/event_form.php:401
 msgid "every-month must be greater than 1"
-msgstr "jeder Monat muss größer als 1 sein"
+msgstr "Rhythmus muss größer als 1 sein"
 
-#: src/event_form.php:418
+#: includes/event_form.php:399
 msgid "Required field \"every-year\" is not set."
-msgstr "Pflichtfeld \"jedes Jahr\" ist nicht gesetzt."
+msgstr "Pflichtfeld \"Rhythmus\" ist nicht gesetzt."
 
-#: src/event_form.php:436
+#: includes/event_form.php:417
 msgid "Invalid event type."
-msgstr "Ungültiger Veranstaltungstyp. "
+msgstr "Ungültiger Termintyp. "
 
-#: src/event_form.php:442
+#: includes/event_form.php:423
 msgid "Modified event: "
-msgstr "Geänderte Veranstaltung:"
+msgstr "Termin geändert: "
 
-#: src/event_form.php:444
+#: includes/event_form.php:425
 msgid "Created event: "
-msgstr "Erstellte Veranstaltung:"
+msgstr "Termin erstellt: "
 
-#: src/event_form.php:451
+#: includes/event_form.php:432
 msgid "Error submitting event."
 msgstr "Fehler beim Übertragen des Termins."
 
-#: src/form.php:287 src/form.php:362
+#: includes/form.php:32
+msgid "required"
+msgstr "erforderlich"
+
+#: includes/form.php:102
+msgid "Cannot add a non-form element to a form."
+msgstr "Es kann kein Nicht-Formular-Element zu einem Formular hinzugefügt werden. "
+
+#: includes/form.php:428
 msgid "Date"
 msgstr "Datum"
 
-#: src/globals.php:23
+#: includes/globals.php:23
 msgid "January"
 msgstr "Januar"
 
-#: src/globals.php:24
+#: includes/globals.php:24
 msgid "February"
 msgstr "Februar"
 
-#: src/globals.php:25
+#: includes/globals.php:25
 msgid "March"
 msgstr "März"
 
-#: src/globals.php:26
+#: includes/globals.php:26
 msgid "April"
 msgstr "April"
 
-#: src/globals.php:27 src/globals.php:52
+#: includes/globals.php:27 includes/globals.php:52
 msgid "May"
 msgstr "Mai"
 
-#: src/globals.php:28
+#: includes/globals.php:28
 msgid "June"
 msgstr "Juni"
 
-#: src/globals.php:29
+#: includes/globals.php:29
 msgid "July"
 msgstr "Juli"
 
-#: src/globals.php:30
+#: includes/globals.php:30
 msgid "August"
 msgstr "August"
 
-#: src/globals.php:31
+#: includes/globals.php:31
 msgid "September"
 msgstr "September"
 
-#: src/globals.php:32
+#: includes/globals.php:32
 msgid "October"
 msgstr "Oktober"
 
-#: src/globals.php:33
+#: includes/globals.php:33
 msgid "November"
 msgstr "November"
 
-#: src/globals.php:34
+#: includes/globals.php:34
 msgid "December"
 msgstr "Dezember"
 
-#: src/globals.php:40
+#: includes/globals.php:40
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: src/globals.php:41
+#: includes/globals.php:41
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: src/globals.php:42
+#: includes/globals.php:42
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: src/globals.php:43
+#: includes/globals.php:43
 msgid "Friday"
 msgstr "Freitag"
 
-#: src/globals.php:48
+#: includes/globals.php:48
 msgid "Jan"
 msgstr "Jan"
 
-#: src/globals.php:49
+#: includes/globals.php:49
 msgid "Feb"
 msgstr "Feb"
 
-#: src/globals.php:50
+#: includes/globals.php:50
 msgid "Mar"
 msgstr "Mär"
 
-#: src/globals.php:51
+#: includes/globals.php:51
 msgid "Apr"
 msgstr "Apr"
 
-#: src/globals.php:53
+#: includes/globals.php:53
 msgid "Jun"
 msgstr "Jun"
 
-#: src/globals.php:54
+#: includes/globals.php:54
 msgid "Jul"
 msgstr "Jul"
 
-#: src/globals.php:55
+#: includes/globals.php:55
 msgid "Aug"
 msgstr "Aug"
 
-#: src/globals.php:56
+#: includes/globals.php:56
 msgid "Sep"
 msgstr "Sep"
 
-#: src/globals.php:57
+#: includes/globals.php:57
 msgid "Oct"
 msgstr "Okt"
 
-#: src/globals.php:58
+#: includes/globals.php:58
 msgid "Nov"
 msgstr "Nov"
 
-#: src/globals.php:59
+#: includes/globals.php:59
 msgid "Dec"
 msgstr "Dez"
 
-#: src/globals.php:69
+#: includes/globals.php:69
 msgid "Start Date"
 msgstr "Anfangsdatum"
 
-#: src/globals.php:74
+#: includes/globals.php:74
 msgid "Ascending"
 msgstr "Aufsteigend"
 
-#: src/globals.php:75
+#: includes/globals.php:75
 msgid "Descending"
 msgstr "Absteigend"
 
-#: src/group_delete.php:32
+#: includes/group_delete.php:29
 msgid "No group selected."
 msgstr "Keine Gruppe ausgewählt."
 
-#: src/group_delete.php:66
+#: includes/group_delete.php:63
 msgid "You do not have permission to delete group: "
-msgstr "Sie haben keine Berechtigung um die Gruppe zu löschen:"
+msgstr "Ihre Berechtigungen reichen nicht aus um die Gruppe zu löschen: "
 
-#: src/group_delete.php:71
+#: includes/group_delete.php:68
 msgid "Removed group: "
-msgstr "Entfernte Gruppe:"
+msgstr "Gruppe gelöscht: "
 
-#: src/group_delete.php:74
+#: includes/group_delete.php:71
 msgid "Could not remove group: "
-msgstr "Die Gruppe konnte nicht entfernt werden:"
+msgstr "Die Gruppe konnte nicht gelöscht werden:"
 
-#: src/group_form.php:30
+#: includes/group_form.php:27
 msgid "Group Form"
 msgstr "Gruppenformular"
 
-#: src/group_form.php:37
+#: includes/group_form.php:34
 msgid "Submit Group"
-msgstr "Gruppe Speichern"
+msgstr "Gruppe speichern"
 
-#: src/group_submit.php:35
+#: includes/group_submit.php:32
 msgid "You do not have permission to add a global group."
-msgstr "Sie haben keine Berechtigung, eine globale Gruppe hinzuzufügen."
+msgstr "Ihre Berechtigungen reichen nicht aus um eine globale Gruppe hinzuzufügen."
 
-#: src/group_submit.php:40
+#: includes/group_submit.php:37
 msgid "You do not have permission to add a group to this calendar."
-msgstr ""
-"Sie haben keine Berechtigung, um eine Gruppe zu diesem Kalender "
-"hinzuzufügen."
+msgstr "Ihre Berechtigungen reichen nicht aus um eine Gruppe zu diesem Kalender hinzuzufügen."
 
-#: src/group_submit.php:52
+#: includes/group_submit.php:49
 msgid "You do not have permission to modify this group."
-msgstr "Sie haben keine Berechtigung, diese Gruppe zu ändern. "
+msgstr "Ihre Berechtigungen reichen nicht aus um diese Gruppe zu ändern. "
 
-#: src/group_submit.php:60
+#: includes/group_submit.php:57
 msgid "Modified group: "
-msgstr "Geänderte Gruppe:"
+msgstr "Gruppe geändert: "
 
-#: src/group_submit.php:64
+#: includes/group_submit.php:61
 msgid "Created group: "
-msgstr "Erstellte Gruppe:"
+msgstr "Gruppe erstellt: "
 
-#: src/group_submit.php:68
+#: includes/group_submit.php:65
 msgid "Error submitting group."
 msgstr "Fehler beim Übertragen der Gruppe."
 
-#: src/import.php:29 src/translate.php:31
+#: includes/import.php:26 includes/translate.php:28
 msgid "Need to be admin"
-msgstr "Nur als Admin"
+msgstr "Adminrechte erforderlich"
 
-#: src/import.php:72
+#: includes/import.php:69
 msgid "Error selecting events in import"
 msgstr "Fehler beim Auswählen der Termine während des Imports"
 
-#: src/import.php:157
+#: includes/import.php:154
 #, php-format
 msgid "Created %s events with %s occurences"
 msgstr "%s Termine mit %s Wiederholungen erzeugt."
 
-#: src/login.php:42
+#: includes/login.php:39
 msgid "Logged in."
 msgstr "Eingeloggt."
 
-#: src/login.php:45
+#: includes/login.php:42
 msgid "Sorry, Invalid Login"
 msgstr "Sorry, ungültiger Login"
 
-#: src/login.php:77
+#: includes/login.php:72
 msgid "You must have cookies enabled to login."
 msgstr "Cookies müssen aktiviert sein um sich einzulogen."
 
-#: src/login.php:85 src/settings.php:43 src/user_create.php:70
+#: includes/login.php:80 includes/settings.php:39 includes/user_create.php:64
 msgid "Password"
 msgstr "Passwort"
 
-#: src/logout.php:32
+#: includes/logout.php:29
 msgid "Loggin out..."
 msgstr "Ausloggen..."
 
-#: src/occur_form.php:46
+#: includes/occur_form.php:40
 msgid "Occurrence Form"
 msgstr "Wiederholungsformular"
 
-#: src/occur_form.php:117
+#: includes/occur_form.php:105
 msgid "Submit Occurrence"
 msgstr "Wiederholungen senden"
 
-#: src/occur_form.php:127
+#: includes/occur_form.php:115
 msgid "Cannot create occurrence."
 msgstr "Wiederholungen können nicht erstellt werden."
 
-#: src/occur_form.php:161
+#: includes/occur_form.php:149
 msgid "EID not set."
 msgstr "EID wurde nicht gesetzt."
 
-#: src/occur_form.php:173
+#: includes/occur_form.php:161
 msgid "Modified occurence: "
-msgstr "Geänderte Wiederholungen:"
+msgstr "Wiederholung geändert:"
 
-#: src/occur_form.php:175
+#: includes/occur_form.php:163
 msgid "Created occurence: "
-msgstr "Erstellte Wiederholungen:"
+msgstr "Wiederholung erstellt: "
 
-#: src/occur_form.php:182
+#: includes/occur_form.php:170
 msgid "Error submitting occurrence."
 msgstr "Fehler bei der Übertragung der Wiederholungen."
 
-#: src/occurrence_delete.php:32
+#: includes/occurrence_delete.php:29
 msgid "No occurrence selected."
 msgstr "Keine Wiederholung ausgewählt."
 
-#: src/occurrence_delete.php:82
+#: includes/occurrence_delete.php:79
 msgid "Removed occurrence"
-msgstr "Wiederholung entfernt"
+msgstr "Wiederholung gelöscht"
 
-#: src/occurrence_delete.php:84
+#: includes/occurrence_delete.php:81
 msgid "Removed occurrences"
-msgstr "Wiederholung entfernt"
+msgstr "Wiederholung gelöscht"
 
-#: src/occurrence_delete.php:91
+#: includes/occurrence_delete.php:88
 msgid "Could not remove occurrence"
-msgstr "Wiederholung konnten nicht entfernt werden"
+msgstr "Wiederholung konnte nicht gelöscht werden"
 
-#: src/occurrence_delete.php:93
+#: includes/occurrence_delete.php:90
 msgid "Could not remove occurrences"
-msgstr "Wiederholungen konnten nicht entfernt werden"
+msgstr "Wiederholungen konnten nicht gelöscht werden"
 
-#: src/occurrence_delete.php:100
+#: includes/occurrence_delete.php:97
 msgid "You do not have permission to remove the occurrence."
-msgstr "Sie haben keine Berechtigung, um die Wiederholung zu entfernen. "
+msgstr "Ihre Berechtigungen reichen nicht aus um die Wiederholung zu entfernen. "
 
-#: src/occurrence_delete.php:102
+#: includes/occurrence_delete.php:99
 msgid "You do not have permission to remove occurrences."
-msgstr "Sie haben keine Berechtigung, die Wiederholungen zu entfernen. "
+msgstr "Ihre Berechtigungen reichen nicht aus um Wiederholungen zu entfernen. "
 
-#: src/password_submit.php:31
+#: includes/password_submit.php:27
 msgid "You must be logged in."
 msgstr "Sie müssen eingeloggt sein."
 
-#: src/password_submit.php:37
+#: includes/password_submit.php:33
 msgid "You do not have permission to change your password."
-msgstr "Sie haben keine Berechtigung, um Ihr Passwort zu ändern."
+msgstr "Ihre Berechtigungen reichen nicht aus um Ihr Passwort zu ändern."
 
-#: src/password_submit.php:40
+#: includes/password_submit.php:36
 msgid "You must specify your old password."
 msgstr "Sie müssen Ihr altes Passwort eingeben."
 
-#: src/password_submit.php:46
+#: includes/password_submit.php:42
 msgid "The password you entered did not match your old password."
 msgstr "Das eingegebene Passwort stimmt nicht mit dem alten Passwort überein."
 
-#: src/password_submit.php:50 src/user_create.php:96
+#: includes/password_submit.php:46 includes/user_create.php:90
 msgid "You must specify a password"
-msgstr "Sie müssen ein Kennwort eingeben"
+msgstr "Sie müssen ein Passwort eingeben"
 
-#: src/password_submit.php:55 src/user_create.php:101
+#: includes/password_submit.php:51 includes/user_create.php:95
 msgid "Your passwords did not match"
 msgstr "Ihre Passwörter stimmen nicht überein"
 
-#: src/password_submit.php:62
+#: includes/password_submit.php:58
 msgid "Password updated."
 msgstr "Das Passwort wurde aktualisiert."
 
-#: src/phpccalendar.class.php:73
+#: includes/phpccalendar.class.php:51
 msgid "(No title)"
 msgstr "(Kein Titel)"
 
-#: src/phpcdatabase.class.php:122
+#: includes/phpcdatabase.class.php:93
 msgid "Error in get_occurrences_by_date_range"
 msgstr "Fehler in get_occurrences_by_date_range"
 
-#: src/phpcdatabase.class.php:192
+#: includes/phpcdatabase.class.php:145
 msgid "Error in get_event_by_eid"
 msgstr "Fehler in get_event_by_eid"
 
-#: src/phpcdatabase.class.php:196
+#: includes/phpcdatabase.class.php:149
 msgid "Event doesn't exist"
 msgstr "Der Termin existiert nicht"
 
-#: src/phpcdatabase.class.php:223
+#: includes/phpcdatabase.class.php:171
 msgid "Error in get_event_by_oid"
 msgstr "Fehler in get_event_by_oid"
 
-#: src/phpcdatabase.class.php:227 src/phpcdatabase.class.php:424
+#: includes/phpcdatabase.class.php:175 includes/phpcdatabase.class.php:340
 msgid "Event doesn't exist with oid"
 msgstr "Der Termin existiert nicht mit oid"
 
-#: src/phpcdatabase.class.php:252
+#: includes/phpcdatabase.class.php:195
 msgid "Error in get_category"
 msgstr "Fehler in get_category"
 
-#: src/phpcdatabase.class.php:255
+#: includes/phpcdatabase.class.php:198
 msgid "Category doesn't exist with catid"
 msgstr "Die Kategorie existiert nicht mit catid"
 
-#: src/phpcdatabase.class.php:273
+#: includes/phpcdatabase.class.php:212
 msgid "Error in get_group"
 msgstr "Fehler in get_group"
 
-#: src/phpcdatabase.class.php:276
+#: includes/phpcdatabase.class.php:215
 msgid "Group doesn't exist with gid"
 msgstr "Die Gruppe existiert nicht mit gid"
 
-#: src/phpcdatabase.class.php:296
+#: includes/phpcdatabase.class.php:231
 msgid "Error in get_groups"
 msgstr "Fehler in get_groups"
 
-#: src/phpcdatabase.class.php:319
+#: includes/phpcdatabase.class.php:250
 msgid "Error in get_user_groups"
 msgstr "Fehler in get_user_groups"
 
-#: src/phpcdatabase.class.php:353
+#: includes/phpcdatabase.class.php:279
 msgid "Error in get_categories"
 msgstr "Fehler in get_categories"
 
-#: src/phpcdatabase.class.php:387
+#: includes/phpcdatabase.class.php:308
 msgid "Error in get_visible_categories"
 msgstr "Fehler in get_visible_categories"
 
-#: src/phpcdatabase.class.php:420
+#: includes/phpcdatabase.class.php:336
 msgid "Error in get_occurrence_by_oid"
 msgstr "Fehler in get_occurrence_by_oid"
 
-#: src/phpcdatabase.class.php:450
+#: includes/phpcdatabase.class.php:362
 msgid "Error in get_occurrences_by_eid"
 msgstr "Fehler in get_occurrences_by_eid"
 
-#: src/phpcdatabase.class.php:471 src/phpcdatabase.class.php:491
+#: includes/phpcdatabase.class.php:379 includes/phpcdatabase.class.php:395
 msgid "Error while removing an event."
-msgstr "Fehler beim Entfernen eines Termins."
+msgstr "Fehler beim Löschen eines Termins."
 
-#: src/phpcdatabase.class.php:507
+#: includes/phpcdatabase.class.php:407
 msgid "Error while removing an occurrence."
-msgstr "Fehler beim Entfernen einer Wiederholung."
+msgstr "Fehler beim Löschen einer Wiederholung."
 
-#: src/phpcdatabase.class.php:524 src/phpcdatabase.class.php:577
+#: includes/phpcdatabase.class.php:420 includes/phpcdatabase.class.php:461
 msgid "Error while removing a calendar"
-msgstr "Fehler beim Entfernen eines Kalenders"
+msgstr "Fehler beim Löschen eines Kalenders"
 
-#: src/phpcdatabase.class.php:541
+#: includes/phpcdatabase.class.php:433
 msgid "Error while removing category."
-msgstr "Fehler beim Entfernen der Kategorie."
+msgstr "Fehler beim Löschen der Kategorie."
 
-#: src/phpcdatabase.class.php:558
+#: includes/phpcdatabase.class.php:446
 msgid "Error while removing group."
-msgstr "Fehler beim Entfernen der Gruppe."
+msgstr "Fehler beim Löschen der Gruppe."
 
-#: src/phpcdatabase.class.php:582
+#: includes/phpcdatabase.class.php:466
 msgid "Error while removing "
-msgstr "Fehler beim Entfernen"
+msgstr "Fehler beim Löschen"
 
-#: src/phpcdatabase.class.php:606
+#: includes/phpcdatabase.class.php:485
 msgid "Could not read permissions."
 msgstr "DIe Berechtigungen konnten nicht gelesen werden."
 
-#: src/phpcdatabase.class.php:624
+#: includes/phpcdatabase.class.php:500
 msgid "Could not get calendars."
 msgstr "Die Kalender konnten nicht geladen werden."
 
-#: src/phpcdatabase.class.php:670 src/phpcdatabase.class.php:694
+#: includes/phpcdatabase.class.php:529 includes/phpcdatabase.class.php:549
 msgid "Could not get user."
 msgstr "Der Benutzer konnte nicht geladen werden."
 
-#: src/phpcdatabase.class.php:714 src/phpcdatabase.class.php:734
+#: includes/phpcdatabase.class.php:565 includes/phpcdatabase.class.php:581
 msgid "Error getting user."
 msgstr "Fehler beim Laden des Benutzers."
 
-#: src/phpcdatabase.class.php:755
+#: includes/phpcdatabase.class.php:597
 msgid "Error creating user."
 msgstr "Fehler beim Erstellen des Benutzers."
 
-#: src/phpcdatabase.class.php:769
+#: includes/phpcdatabase.class.php:608 includes/phpcdatabase.class.php:620
 msgid "Error reading options"
 msgstr "Fehler beim Lesen der Optionen"
 
-#: src/phpcdatabase.class.php:786
-msgid "Error updating option"
-msgstr ""
+#: includes/phpcdatabase.class.php:631
+msgid "Error creating options"
+msgstr "Fehler beim Erstellen der Optionen"
 
-#: src/phpcdatabase.class.php:802
-msgid "Error creating option"
-msgstr ""
-
-#: src/phpcdatabase.class.php:816
+#: includes/phpcdatabase.class.php:641
 msgid "Error updating password."
 msgstr "Fehler bei der Aktualisierung des Passworts."
 
-#: src/phpcdatabase.class.php:831
+#: includes/phpcdatabase.class.php:652
 msgid "Error updating timezone."
 msgstr "Fehler bei der Aktualisierung der Zeitzone."
 
-#: src/phpcdatabase.class.php:846
+#: includes/phpcdatabase.class.php:663
 msgid "Error updating language."
 msgstr "Fehler bei der Aktualisierung der Sprache."
 
-#: src/phpcdatabase.class.php:862
+#: includes/phpcdatabase.class.php:675
 msgid "Error adding group to user."
-msgstr "Fehler beim hinzufügen der Gruppe des Users"
+msgstr "Fehler beim hinzufügen der Gruppe des Benutzers."
 
-#: src/phpcdatabase.class.php:877
+#: includes/phpcdatabase.class.php:686
 msgid "Error removing group from user."
 msgstr "Fehler beim entfernen des Users aus der Gruppe."
 
-#: src/phpcdatabase.class.php:906
+#: includes/phpcdatabase.class.php:706
 msgid "Error creating event."
 msgstr "Fehler beim Erstellen des Termins."
 
-#: src/phpcdatabase.class.php:940
+#: includes/phpcdatabase.class.php:733
 msgid "Error creating occurrence."
 msgstr "Fehler beim Erstellen der Wiederholung."
 
-#: src/phpcdatabase.class.php:976
+#: includes/phpcdatabase.class.php:758
 msgid "Error modifying occurrence."
 msgstr "Fehler beim Ändern der Wiederholung."
 
-#: src/phpcdatabase.class.php:1006
+#: includes/phpcdatabase.class.php:780
 msgid "Error modifying event."
-msgstr "Fehler beim Ändern der Veranstaltung."
+msgstr "Fehler beim Ändern des Termins."
 
-#: src/phpcdatabase.class.php:1028
+#: includes/phpcdatabase.class.php:794
 msgid "Error creating category."
 msgstr "Fehler beim Erstellen der Kategorie."
 
-#: src/phpcdatabase.class.php:1046
+#: includes/phpcdatabase.class.php:807
 msgid "Error creating group."
 msgstr "Fehler beim Erstellen der Gruppe."
 
-#: src/phpcdatabase.class.php:1070
+#: includes/phpcdatabase.class.php:823
 msgid "Error modifying category."
 msgstr "Fehler beim Ändern der Kategorie."
 
-#: src/phpcdatabase.class.php:1088
+#: includes/phpcdatabase.class.php:836
 msgid "Error modifying group."
 msgstr "Fehler beim Ändern der Gruppe."
 
-#: src/phpcdatabase.class.php:1134
+#: includes/phpcdatabase.class.php:871
 msgid "Error during searching"
 msgstr "Fehler während der Suche"
 
-#: src/phpcdatabase.class.php:1165
+#: includes/phpcdatabase.class.php:897
 msgid "Error updating user permissions."
 msgstr "Fehler beim Aktualisieren der Benutzerrechte. "
 
-#: src/phpcdatabase.class.php:1179
+#: includes/phpcdatabase.class.php:906
 msgid "Error getting login token."
 msgstr "Fehler beim Login-Token."
 
-#: src/phpcdatabase.class.php:1199
+#: includes/phpcdatabase.class.php:921
 msgid "Error adding login token."
-msgstr "Fehler beim Hinzufügen Benutzernamentoken. "
+msgstr "Fehler beim Hinzufügen des Logintokens."
 
-#: src/phpcdatabase.class.php:1214
+#: includes/phpcdatabase.class.php:931
 msgid "Error updating login token."
-msgstr "Fehler beim Aktualisieren der Login -Token. "
+msgstr "Fehler beim Aktualisieren der Logintoken."
 
-#: src/phpcdatabase.class.php:1226
+#: includes/phpcdatabase.class.php:940
 msgid "Error removing login tokens."
-msgstr "Fehler beim Entfernen der Login-Token."
+msgstr "Fehler beim Löschen der Logintoken."
 
-#: src/phpcdatabase.class.php:1235
+#: includes/phpcdatabase.class.php:949
 msgid "Error cleaning login tokens."
-msgstr "Fehler bei der Reinigung des Login Token."
+msgstr "Fehler bei der Reinigung der Logintoken."
 
-#: src/phpcdatabase.class.php:1251
+#: includes/phpcdatabase.class.php:959
 msgid "SQL query"
-msgstr "SQL Abfrage"
+msgstr "SQL-Abfrage"
 
-#: src/phpcevent.class.php:60
+#: includes/phpcevent.class.php:43
 msgid "anonymous"
 msgstr "anonym"
 
-#: src/phpcevent.class.php:62
+#: includes/phpcevent.class.php:45
 msgid "unknown"
 msgstr "unbekannt"
 
-#: src/phpcevent.class.php:91
+#: includes/phpcevent.class.php:72
 msgid "(No subject)"
 msgstr "(kein Betreff)"
 
-#: src/phpcoccurrence.class.php:55 src/phpcoccurrence.class.php:76
+#: includes/phpcoccurrence.class.php:53 includes/phpcoccurrence.class.php:76
 msgid "DB returned an invalid date."
-msgstr "DB kehrte ein ungültiges Datum."
+msgstr "DB gab ein ungültiges Datum zurück."
 
-#: src/phpcoccurrence.class.php:103 src/phpcoccurrence.class.php:118
+#: includes/phpcoccurrence.class.php:105 includes/phpcoccurrence.class.php:121
 msgid "TBA"
 msgstr "TBA"
 
-#: src/phpcoccurrence.class.php:113 src/phpcoccurrence.class.php:259
+#: includes/phpcoccurrence.class.php:116 includes/phpcoccurrence.class.php:254
 msgid "to"
-msgstr "in"
+msgstr "bis"
 
-#: src/search.php:46
+#: includes/search.php:43
 msgid "Invalid sort option"
-msgstr "Ungültige Sortieren Option"
+msgstr "Ungültige Sortierungsoption"
 
-#: src/search.php:52
+#: includes/search.php:49
 msgid "Invalid order option"
-msgstr "Ungültige Bestelloption "
+msgstr "Ungültige Reihenfolge "
 
-#: src/search.php:85
+#: includes/search.php:83
 msgid "No events matched your search criteria."
-msgstr "Keine Veranstaltungen zu Ihrer Suche gefunden."
+msgstr "Keine Termine zu Ihrer Suche gefunden."
 
-#: src/search.php:89
+#: includes/search.php:87
 msgid "Search Results"
 msgstr "Suchergebnisse"
 
-#: src/search.php:93
+#: includes/search.php:91
 msgid "Date Time"
 msgstr "Datum Zeit"
 
-#: src/search.php:111
+#: includes/search.php:107
 msgid "Phrase"
-msgstr "Phrase"
+msgstr "Suchbegriff"
 
-#: src/search.php:119
+#: includes/search.php:115
 msgid "Sort By"
 msgstr "Sortieren nach"
 
-#: src/search.php:122
+#: includes/search.php:118
 msgid "Order"
-msgstr "Sortierung"
+msgstr "Reihenfolge"
 
-#: src/settings.php:59
+#: includes/settings.php:52
 msgid "Change Password"
 msgstr "Passwort ändern"
 
-#: src/settings.php:68
+#: includes/settings.php:61
 msgid "Old Password"
 msgstr "Altes Passwort"
 
-#: src/settings.php:71
+#: includes/settings.php:64
 msgid "New Password"
 msgstr "Neues Passwort"
 
-#: src/settings.php:74
+#: includes/settings.php:67
 msgid "Confirm New Password"
 msgstr "Neues Passwort bestätigen"
 
-#: src/settings.php:150
+#: includes/settings.php:139
 msgid "Settings updated."
 msgstr "Einstellungen wurden aktualisiert."
 
-#: src/setup.php:76
+#: includes/setup.php:78
 msgid "Possible hacking attempt on your account."
-msgstr "Möglicher Hackerangriff auf Ihrem Konto."
+msgstr "Möglicher Hackerangriff auf Ihr Konto."
 
-#: src/setup.php:106
-msgid "Could not find a calendar."
-msgstr ""
-
-#: src/setup.php:188
+#: includes/setup.php:187
 msgid "Month is out of range."
 msgstr "Der Monat ist außerhalb des Bereichs."
 
-#: src/setup.php:196
+#: includes/setup.php:195
 msgid "Invalid year"
 msgstr "Ungültiges Jahr "
 
-#: src/translate.php:55
+#: includes/translate.php:52
 #, php-format
 msgid "Translated \"%s\""
 msgstr "\"%s\" übersetzt"
 
-#: src/user_create.php:73
+#: includes/user_create.php:67
 msgid "Confirm Password"
-msgstr "Bestätige Passwort"
+msgstr "Passwort speichern"
 
-#: src/user_create.php:76
+#: includes/user_create.php:70
 msgid "Make Admin"
-msgstr "Erstelle Admin"
+msgstr "Zum Admin machen"
 
-#: src/user_create.php:92
+#: includes/user_create.php:86
 msgid "You must specify a user name"
-msgstr "Sie müssen einen Benutzernamen spezifizieren"
+msgstr "Sie müssen einen Benutzernamen angeben"
 
-#: src/user_create.php:109
+#: includes/user_create.php:103
 msgid "User already exists."
 msgstr "Der Benutzer existiert bereits."
 
-#: src/user_create.php:119
+#: includes/user_create.php:113
 msgid "Added user."
 msgstr "Nutzer hinzugefügt."
 
-#: src/user_delete.php:32
+#: includes/user_delete.php:29
 msgid "You must be an admin to delete users."
 msgstr "Sie müssen Admin sein, um Benutzer zu löschen. "
 
-#: src/user_delete.php:37
+#: includes/user_delete.php:34
 msgid "No user selected."
 msgstr "Kein Benutzer ausgewählt."
 
-#: src/user_groups.php:64
+#: includes/user_groups.php:58
 msgid "Edit User Groups"
-msgstr "Bearbeite Nutzer Gruppen"
+msgstr "Benutzergruppen bearbeiten"
 
-#: src/user_groups.php:105
+#: includes/user_groups.php:99
 msgid "Groups updated."
-msgstr "Gruppen aktualisiert."
+msgstr "Gruppen wurden aktualisiert."
 
-#: src/user_permissions_submit.php:34
+#: includes/user_permissions_submit.php:31
 msgid "No users"
 msgstr "Keine Benutzer"
 
-#: src/user_permissions_submit.php:62
+#: includes/user_permissions_submit.php:59
 msgid "No changes to make."
-msgstr "Keine Änderungen die zu machen sind."
+msgstr "Es sind keine Änderungen vorzunehmen."
 
-#: src/user_permissions_submit.php:64
+#: includes/user_permissions_submit.php:61
 msgid "Updated user(s):"
-msgstr "Aktualisierter Benutzer(r):"
+msgstr "Aktualisierte(r) Benutzer:"
 
-#: src/util.php:93
+#: includes/util.php:75
 msgid "continue"
 msgstr "weiter"
 
-#: src/util.php:230
+#: includes/util.php:157
 msgid "Software Error"
-msgstr "Software Fehler"
+msgstr "Softwarefehler"
 
-#: src/util.php:231
+#: includes/util.php:158
 msgid "Message:"
 msgstr "Nachricht:"

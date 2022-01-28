@@ -1,134 +1,134 @@
 # PHP-Calendar.
-# Copyright (C) 2022 Sean Proctor
+# Copyright (C) 2014 Sean Proctor
 # This file is distributed under the same license as the PHP-Calendar package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 # Translators:
-# Sean Proctor <sproctor@gmail.com>, 2022
-# 
-#, fuzzy
+# d2489f3e06add9f9756e9830a5e3c373_a61fcef <c0c6335df798265bff873ed2a967d33e_103982>, 2013
+# d2489f3e06add9f9756e9830a5e3c373_a61fcef <c0c6335df798265bff873ed2a967d33e_103982>, 2013
 msgid ""
 msgstr ""
-"Project-Id-Version: PHP-Calendar 2.0.13\n"
+"Project-Id-Version: php-calendar\n"
 "Report-Msgid-Bugs-To: sproctor@gmail.com\n"
-"POT-Creation-Date: 2022-01-28 09:19-0500\n"
-"PO-Revision-Date: 2022-01-28 14:23+0000\n"
-"Last-Translator: Sean Proctor <sproctor@gmail.com>, 2022\n"
-"Language-Team: Finnish (https://www.transifex.com/sproctor/teams/14496/fi/)\n"
+"POT-Creation-Date: 2014-02-18 09:54-0500\n"
+"PO-Revision-Date: 2022-01-28 15:21+0000\n"
+"Last-Translator: Transifex Bot <>\n"
+"Language-Team: Finnish (http://www.transifex.com/sproctor/php-calendar/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: fi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/admin.php:31 src/cadmin.php:30
+#: includes/admin.php:28 includes/cadmin.php:26
 msgid "You must be logged in as an admin."
 msgstr "Sinun täytyy olla kirjautuneena järjestelmänvalvojana."
 
-#: src/admin.php:36
+#: includes/admin.php:33
 msgid "Calendars"
-msgstr "Kalenterit"
+msgstr ""
 
-#: src/admin.php:38 src/cadmin.php:37
+#: includes/admin.php:35 includes/cadmin.php:33
 msgid "Users"
-msgstr "Käyttäjät"
+msgstr ""
 
-#: src/admin.php:40
+#: includes/admin.php:37
 msgid "Import"
-msgstr "Tuonti"
+msgstr ""
 
-#: src/admin.php:42 src/translate.php:41
+#: includes/admin.php:39 includes/translate.php:38
 msgid "Translate"
 msgstr "Kääntää"
 
-#: src/admin.php:45
+#: includes/admin.php:42
 msgid "Version"
 msgstr "Versio"
 
-#: src/admin.php:61
+#: includes/admin.php:55
 msgid "Calendar"
 msgstr "Kalenteri"
 
-#: src/admin.php:62 src/admin.php:100
+#: includes/admin.php:56 includes/admin.php:91
 msgid "Action"
 msgstr "Toiminto"
 
-#: src/admin.php:69 src/cadmin.php:161 src/cadmin.php:208
-#: src/display_event.php:205
+#: includes/admin.php:63 includes/cadmin.php:156 includes/cadmin.php:202
+#: includes/display_event.php:193
 msgid "Edit"
 msgstr "Muokkaa"
 
-#: src/admin.php:71 src/admin.php:112 src/cadmin.php:166 src/cadmin.php:212
-#: src/display_event.php:85 src/display_event.php:178
+#: includes/admin.php:65 includes/admin.php:101 includes/cadmin.php:161
+#: includes/cadmin.php:206 includes/display_event.php:78
+#: includes/display_event.php:166
 msgid "Delete"
 msgstr "Poista"
 
-#: src/admin.php:76 src/calendar_form.php:92
+#: includes/admin.php:70 includes/calendar_form.php:85
 msgid "Create Calendar"
 msgstr "Luo Kalenteri"
 
-#: src/admin.php:80
+#: includes/admin.php:74
 msgid "Calendar List"
 msgstr "Kalenteri Lista"
 
-#: src/admin.php:97 src/login.php:82
+#: includes/admin.php:88 includes/login.php:77
 msgid "Username"
 msgstr "käyttäjänimi"
 
-#: src/admin.php:98 src/cadmin.php:41 src/cadmin.php:135
-#: src/user_create.php:79
+#: includes/admin.php:89 includes/cadmin.php:37 includes/cadmin.php:130
+#: includes/user_create.php:73
 msgid "Groups"
-msgstr "Ryhmät"
+msgstr ""
 
-#: src/admin.php:99 src/admin.php:110 src/cadmin.php:109 src/cadmin.php:136
+#: includes/admin.php:90 includes/admin.php:100 includes/cadmin.php:104
+#: includes/cadmin.php:131
 msgid "Edit Groups"
-msgstr "Muokkaa ryhmiä"
+msgstr ""
 
-#: src/admin.php:117 src/user_create.php:57
+#: includes/admin.php:106 includes/user_create.php:51
 msgid "Create User"
 msgstr "Luo Käyttäjä"
 
-#: src/admin.php:121
+#: includes/admin.php:110
 msgid "User List"
 msgstr "Käyttäjälista"
 
-#: src/admin.php:135
+#: includes/admin.php:121
 msgid "Import Form"
 msgstr "Tuo Lomake"
 
-#: src/admin.php:136
+#: includes/admin.php:122
 msgid "MySQL Host Name"
 msgstr "MySQL palvelimen nimi"
 
-#: src/admin.php:137
+#: includes/admin.php:123
 msgid "MySQL Database Name"
 msgstr "MySQL Tietokannan Nimi"
 
-#: src/admin.php:138
+#: includes/admin.php:124
 msgid "MySQL Port Number"
 msgstr "MySQL Porttinumero"
 
-#: src/admin.php:138
+#: includes/admin.php:124
 msgid "Leave blank for default"
 msgstr "Jätä tyhjäksi käyttääksesi vakioarvoa"
 
-#: src/admin.php:139
+#: includes/admin.php:125
 msgid "MySQL User Name"
 msgstr "MySQL Käyttäjänimi"
 
-#: src/admin.php:140
+#: includes/admin.php:126
 msgid "MySQL User Password"
 msgstr "MySQL Käyttäjän Salasana"
 
-#: src/admin.php:143
+#: includes/admin.php:129
 msgid "PHP-Calendar Table Prefix"
 msgstr "PHP-Calendar Taulun Etuliite"
 
-#: src/admin.php:148
+#: includes/admin.php:134
 msgid "Import Calendar"
-msgstr "Tuo kalenteri"
+msgstr ""
 
-#: src/admin.php:167
+#: includes/admin.php:150
 msgid ""
 "This script needs read access to your calendar directory in order to write "
 "the translation files. Alternatively, you could run translate.php from the "
@@ -136,1332 +136,1331 @@ msgid ""
 "files from .po files."
 msgstr ""
 
-#: src/admin.php:170
+#: includes/admin.php:153
 msgid "Generate Translations"
-msgstr "Lio käännös"
+msgstr ""
 
-#: src/cadmin.php:35
+#: includes/cadmin.php:31
 msgid "Calendar Configuration"
-msgstr "Kalenterin asetukset"
+msgstr ""
 
-#: src/cadmin.php:39
+#: includes/cadmin.php:35
 msgid "Categories"
-msgstr "Kategoriat"
+msgstr ""
 
-#: src/cadmin.php:73
+#: includes/cadmin.php:68
 msgid "Options"
-msgstr "Asetukset"
+msgstr "asetukset"
 
-#: src/cadmin.php:77 src/cadmin.php:126 src/calendar_form.php:99
-#: src/settings.php:65 src/settings.php:108 src/user_create.php:64
-#: src/user_groups.php:76
+#: includes/cadmin.php:72 includes/cadmin.php:121
+#: includes/calendar_form.php:92 includes/settings.php:58
+#: includes/settings.php:98 includes/user_create.php:58
+#: includes/user_groups.php:70
 msgid "Submit"
 msgstr "Lähetä"
 
-#: src/cadmin.php:103 src/cadmin.php:130
+#: includes/cadmin.php:98 includes/cadmin.php:125
 msgid "Read"
 msgstr "Lukeminen"
 
-#: src/cadmin.php:104 src/cadmin.php:131
+#: includes/cadmin.php:99 includes/cadmin.php:126
 msgid "Write"
 msgstr "Kirjoitus"
 
-#: src/cadmin.php:105 src/event_form.php:117
+#: includes/cadmin.php:100 includes/event_form.php:110
 msgid "Read-only"
 msgstr "Vain luku"
 
-#: src/cadmin.php:106 src/cadmin.php:133 src/display_day.php:88
-#: src/display_event.php:83 src/display_event.php:174
+#: includes/cadmin.php:101 includes/cadmin.php:128 includes/display_day.php:89
+#: includes/display_event.php:76 includes/display_event.php:162
 msgid "Modify"
 msgstr "Muokkaa"
 
-#: src/cadmin.php:107 src/cadmin.php:134 src/calendar.php:646
-#: src/user_create.php:77
+#: includes/cadmin.php:102 includes/cadmin.php:129 includes/calendar.php:496
+#: includes/user_create.php:71
 msgid "Admin"
 msgstr "Järjestelmänvalvoja"
 
-#: src/cadmin.php:122
+#: includes/cadmin.php:117
 msgid "User Permissions"
 msgstr "Käyttäjäoikeudet"
 
-#: src/cadmin.php:129 src/user_create.php:67
+#: includes/cadmin.php:124 includes/user_create.php:61
 msgid "User Name"
 msgstr "Käyttäjänimi"
 
-#: src/cadmin.php:132
+#: includes/cadmin.php:127
 msgid "Can Create Read-Only"
 msgstr "Voi luoda vain luku muodossa"
 
-#: src/cadmin.php:151 src/cadmin.php:203
+#: includes/cadmin.php:146 includes/cadmin.php:197
 msgid "No Name"
 msgstr "Ei nimeä"
 
-#: src/cadmin.php:154 src/category_form.php:47 src/event_form.php:120
+#: includes/cadmin.php:149 includes/category_form.php:44
+#: includes/event_form.php:113
 msgid "None"
 msgstr "Ei yhtään"
 
-#: src/cadmin.php:173
+#: includes/cadmin.php:168
 msgid "Create category"
 msgstr "Luo kategoria"
 
-#: src/cadmin.php:176
+#: includes/cadmin.php:171
 msgid "Calendar Categories"
 msgstr "Kalenterikategoriat"
 
-#: src/cadmin.php:179 src/cadmin.php:224 src/category_form.php:31
-#: src/group_form.php:31
+#: includes/cadmin.php:174 includes/cadmin.php:218
+#: includes/category_form.php:28 includes/group_form.php:28
 msgid "Name"
 msgstr "Nimi"
 
-#: src/cadmin.php:180 src/category_form.php:43
+#: includes/cadmin.php:175 includes/category_form.php:40
 msgid "Text Color"
 msgstr "Tekstin Väri"
 
-#: src/cadmin.php:181 src/category_form.php:44
+#: includes/cadmin.php:176 includes/category_form.php:41
 msgid "Background Color"
 msgstr "Taustan Väri"
 
-#: src/cadmin.php:182
+#: includes/cadmin.php:177
 msgid "Visible to User Group"
 msgstr "Näkyvillä käyttäjäryhmälle"
 
-#: src/cadmin.php:183 src/cadmin.php:225
+#: includes/cadmin.php:178 includes/cadmin.php:219
 msgid "Actions"
 msgstr "Toiminnot"
 
-#: src/cadmin.php:218
+#: includes/cadmin.php:212
 msgid "Create group"
 msgstr "Luo ryhmä"
 
-#: src/cadmin.php:221
+#: includes/cadmin.php:215
 msgid "Calendar Groups"
 msgstr "Kalenteri Ryhmät"
 
-#: src/cadmin_submit.php:29 src/calendar_form.php:30 src/user_create.php:29
-#: src/user_groups.php:29 src/user_permissions_submit.php:30
+#: includes/cadmin_submit.php:26 includes/calendar_form.php:26
+#: includes/user_create.php:26 includes/user_groups.php:26
+#: includes/user_permissions_submit.php:27
 msgid "Permission denied"
 msgstr "Pääsy kielletty"
 
-#: src/cadmin_submit.php:42
+#: includes/cadmin_submit.php:39
 msgid " was not set."
 msgstr "ei asetettu"
 
-#: src/cadmin_submit.php:49
+#: includes/cadmin_submit.php:46
 msgid "Updated options"
-msgstr "Asetukset päivitetty"
+msgstr "asetuksia muokattu"
 
-#: src/calendar.php:147 src/settings.php:114
+#: includes/calendar.php:118 includes/settings.php:104
 msgid "Language"
 msgstr "Kieli"
 
-#: src/calendar.php:148 src/settings.php:111
+#: includes/calendar.php:119 includes/settings.php:101
 msgid "Timezone"
 msgstr "Aikavyöhyke"
 
-#: src/calendar.php:590
+#: includes/calendar.php:443
 msgid "Welcome"
 msgstr "Tervetuloa"
 
-#: src/calendar.php:597 src/settings.php:35 src/settings.php:101
+#: includes/calendar.php:450 includes/settings.php:31 includes/settings.php:91
 msgid "Settings"
 msgstr "Asetukset"
 
-#: src/calendar.php:600
+#: includes/calendar.php:453
 msgid "Log out"
 msgstr "Kirjaudu ulos"
 
-#: src/calendar.php:604 src/login.php:62 src/login.php:73
+#: includes/calendar.php:457 includes/login.php:57 includes/login.php:68
 msgid "Log in"
 msgstr "Kirjaudu sisään"
 
-#: src/calendar.php:625
+#: includes/calendar.php:475
 msgid "Add Event"
-msgstr "Lisää tapahtuma"
+msgstr "Lisää merkintä"
 
-#: src/calendar.php:629 src/search.php:110 src/search.php:125
+#: includes/calendar.php:479 includes/search.php:106 includes/search.php:121
 msgid "Search"
-msgstr "Etsi"
+msgstr "Hae"
 
-#: src/calendar.php:633
+#: includes/calendar.php:483
 msgid "View Month"
 msgstr "Näytä kuukausi"
 
-#: src/calendar.php:638
+#: includes/calendar.php:488
 msgid "View date"
 msgstr "Katso päivä"
 
-#: src/calendar.php:642
+#: includes/calendar.php:492
 msgid "Calendar Admin"
 msgstr "Kalenterin Järjestelmänvalvoja"
 
-#: src/calendar.php:690 src/calendar.php:754 src/calendar.php:766
-#: src/settings.php:91
+#: includes/calendar.php:527 includes/calendar.php:588
+#: includes/calendar.php:597 includes/settings.php:81
 msgid "Default"
 msgstr "Oletus"
 
-#: src/calendar.php:696
+#: includes/calendar.php:533
 msgid "Week Start"
 msgstr "Viikon aloitus"
 
-#: src/calendar.php:698 src/globals.php:38
+#: includes/calendar.php:535 includes/globals.php:38
 msgid "Sunday"
-msgstr "Sunnuntai"
+msgstr "sunnuntai"
 
-#: src/calendar.php:699 src/globals.php:39
+#: includes/calendar.php:536 includes/globals.php:39
 msgid "Monday"
-msgstr "Maanantai"
+msgstr "maanantai"
 
-#: src/calendar.php:700 src/globals.php:44
+#: includes/calendar.php:537 includes/globals.php:44
 msgid "Saturday"
-msgstr "Lauantai"
+msgstr "lauantai"
 
-#: src/calendar.php:702
+#: includes/calendar.php:539
 msgid "24 Hour Time"
 msgstr "24 tunnin kello"
 
-#: src/calendar.php:703
+#: includes/calendar.php:540
 msgid "Calendar Title"
 msgstr "Kalenterin otsikko"
 
-#: src/calendar.php:704
+#: includes/calendar.php:541
 msgid "Maximum Subject Length"
 msgstr "Aiheen maksimi pituus"
 
-#: src/calendar.php:705
+#: includes/calendar.php:542
 msgid "Events Display Daily Maximum"
 msgstr "Tapahtumien näytön päivittäinen maksimi"
 
-#: src/calendar.php:706
+#: includes/calendar.php:543
 msgid "Public Permissions"
 msgstr "Julkiset oikeudet"
 
-#: src/calendar.php:708
+#: includes/calendar.php:545
 msgid "Cannot read nor write events"
 msgstr "Ei voi lukea tai kirjoittaa tapahtumia"
 
-#: src/calendar.php:709
+#: includes/calendar.php:546
 msgid "Can read but not write events"
 msgstr "Voi lukea mutta ei kirjoittaa tapahtumia"
 
-#: src/calendar.php:710
+#: includes/calendar.php:547
 msgid "Can create but not modify events"
 msgstr "Voi luoda muttei muokata tapahtumia"
 
-#: src/calendar.php:711
+#: includes/calendar.php:548
 msgid "Can create and modify events"
 msgstr "Voi luoda ja muokata tapahtumia"
 
-#: src/calendar.php:714
+#: includes/calendar.php:551
 msgid "Default Timezone"
 msgstr "Oletus aikavyöhyke"
 
-#: src/calendar.php:715
+#: includes/calendar.php:552
 msgid "Default Language"
 msgstr "Oletus kieli"
 
-#: src/calendar.php:717
+#: includes/calendar.php:554
 msgid "Date Format"
 msgstr "Päivämäärän muoto"
 
-#: src/calendar.php:719
+#: includes/calendar.php:556
 msgid "Theme"
 msgstr "Teema"
 
-#: src/calendar.php:787
+#: includes/calendar.php:615
 msgid "Month Day Year"
 msgstr "Kuukausi Päivä Vuosi"
 
-#: src/calendar.php:788
+#: includes/calendar.php:616
 msgid "Year Month Day"
 msgstr "Vuosi Kuukausi Päivä"
 
-#: src/calendar.php:789
+#: includes/calendar.php:617
 msgid "Day Month Year"
 msgstr "Päivä Kuukausi Vuosi"
 
-#: src/calendar.php:837
+#: includes/calendar.php:649
 msgid "You do not have permission to do that: "
 msgstr "Sinulla ei ole oikeuksia tehdä tätä:"
 
-#: src/calendar.php:850 src/util.php:229
+#: includes/calendar.php:662 includes/util.php:156
 msgid "Error"
 msgstr "Virhe"
 
-#: src/calendar.php:852 src/util.php:233
+#: includes/calendar.php:664 includes/util.php:160
 msgid "Backtrace"
 msgstr "Backtrace"
 
-#: src/calendar.php:868
+#: includes/calendar.php:676
 msgid "Invalid action"
-msgstr "Virheellinen toiminto"
+msgstr "jotain meni väärin"
 
-#: src/calendar.php:925
+#: includes/calendar.php:721
 msgid "Secret token mismatch. Possible request forgery attempt."
 msgstr "Secret token mismatch. Mahdollinen pyynnön väärennös yritys."
 
-#: src/calendar.php:1009
+#: includes/calendar.php:800
 msgid "Unsupported config type"
 msgstr "Konfiguraation tyyppiä ei tueta"
 
-#: src/calendar.php:1030
+#: includes/calendar.php:810
 #, php-format
 msgid "Required field \"%s\" was not set."
-msgstr "Täytäthän \"%s\" kentän."
+msgstr ""
 
-#: src/calendar.php:1036
+#: includes/calendar.php:819
 #, php-format
 msgid "Malformed \"%s\" time: \"%s\""
 msgstr ""
 
-#: src/calendar.php:1051
+#: includes/calendar.php:834
 msgid "Unrecognized period: "
 msgstr "Tunnistamaton jakso:"
 
-#: src/calendar.php:1059
+#: includes/calendar.php:842
 #, php-format
 msgid "Malformed \"%s\" date: \"%s\""
 msgstr ""
 
-#: src/calendar.php:1080
+#: includes/calendar.php:863
 msgid "Invalid date_format."
-msgstr "Virheellinen päivämäärä"
+msgstr ""
 
-#: src/calendar_delete.php:32
+#: includes/calendar_delete.php:29
 msgid "No calendar selected."
 msgstr "Ei kalenteria valittuna."
 
-#: src/calendar_delete.php:40 src/setup.php:95
-msgid "Invalid calendar ID."
-msgstr ""
-
-#: src/calendar_delete.php:43
-msgid "Confirm you want to delete calendar:"
-msgstr ""
-
-#: src/calendar_delete.php:44 src/category_delete.php:54
-#: src/event_delete.php:51 src/group_delete.php:54
-#: src/occurrence_delete.php:53 src/user_delete.php:55
-msgid "Confirm"
-msgstr "Vahvista"
-
-#: src/calendar_delete.php:47 src/category_delete.php:57
-#: src/event_delete.php:54 src/group_delete.php:57
-#: src/occurrence_delete.php:56 src/user_delete.php:58
-msgid "Deny"
-msgstr "Kiellä"
-
-#: src/calendar_delete.php:53
-msgid "You do not have permission to remove calendar"
-msgstr "Sinulla ei ole oikeuksia poistaa kalenteria"
-
-#: src/calendar_delete.php:58
-msgid "Removed calendar"
-msgstr "Poistettu kalenteri"
-
-#: src/calendar_delete.php:60
-msgid "Could not remove calendar"
-msgstr "Kalenteria ei voitu poistaa"
-
-#: src/calendar_form.php:68
-msgid "Calendar created."
-msgstr "Kalenteri luotu."
-
-#: src/category_delete.php:32
-msgid "No category selected."
-msgstr "Kategoriaa ei ole valittuna."
-
-#: src/category_delete.php:52 src/event_delete.php:49 src/group_delete.php:52
-#: src/occurrence_delete.php:51 src/user_delete.php:53
+#: includes/calendar_delete.php:45 includes/category_delete.php:49
+#: includes/event_delete.php:46 includes/group_delete.php:49
+#: includes/occurrence_delete.php:48 includes/user_delete.php:50
 msgid "Confirm you want to delete:"
 msgstr "Vahvista poistaminen:"
 
-#: src/category_delete.php:66
+#: includes/calendar_delete.php:47 includes/category_delete.php:51
+#: includes/event_delete.php:48 includes/group_delete.php:51
+#: includes/occurrence_delete.php:50 includes/user_delete.php:52
+msgid "Confirm"
+msgstr "Vahvista"
+
+#: includes/calendar_delete.php:50 includes/category_delete.php:54
+#: includes/event_delete.php:51 includes/group_delete.php:54
+#: includes/occurrence_delete.php:53 includes/user_delete.php:55
+msgid "Deny"
+msgstr "Kiellä"
+
+#: includes/calendar_delete.php:58
+msgid "You do not have permission to remove calendar"
+msgstr "Sinulla ei ole oikeuksia poistaa kalenteria"
+
+#: includes/calendar_delete.php:63
+msgid "Removed calendar"
+msgstr "Poistettu kalenteri"
+
+#: includes/calendar_delete.php:65
+msgid "Could not remove calendar"
+msgstr "Kalenteria ei voitu poistaa"
+
+#: includes/calendar_form.php:64
+msgid "Calendar created."
+msgstr "Kalenteri luotu."
+
+#: includes/category_delete.php:29
+msgid "No category selected."
+msgstr "Kategoriaa ei ole valittuna."
+
+#: includes/category_delete.php:63
 msgid "You do not have permission to delete category: "
 msgstr "Sinulla ei ole oikeuksia poistaa kategoriaa:"
 
-#: src/category_delete.php:71
+#: includes/category_delete.php:68
 msgid "Removed category: "
 msgstr "Poistettu kategoria:"
 
-#: src/category_delete.php:74
+#: includes/category_delete.php:71
 msgid "Could not remove category: "
 msgstr "Kategoriaa ei voitu poistaa:"
 
-#: src/category_form.php:30
+#: includes/category_form.php:27
 msgid "Category Form"
 msgstr "Kategoria Lomake"
 
-#: src/category_form.php:46
+#: includes/category_form.php:43
 msgid "Visible to groups"
 msgstr "Näkyvillä ryhmille"
 
-#: src/category_form.php:52
+#: includes/category_form.php:49
 msgid "Submit Category"
 msgstr ""
 
-#: src/category_submit.php:36
+#: includes/category_submit.php:33
 msgid "Color not specified."
 msgstr "Väriä ei ole määritelty."
 
-#: src/category_submit.php:50 src/category_submit.php:53
-msgid "Invalid color: "
-msgstr ""
+#: includes/category_submit.php:47
+msgid "Invalid color."
+msgstr "virheellinen väri."
 
-#: src/category_submit.php:62
+#: includes/category_submit.php:55
 msgid "You do not have permission to add categories to all calendars."
 msgstr "Sinulla ei ole oikeuksia lisätä kategorioita kaikkiin kalentereihin."
 
-#: src/category_submit.php:67
+#: includes/category_submit.php:60
 msgid "You do not have permission to add categories to this calendar."
 msgstr "Sinulla ei ole oikeuksia lisätä kategorioita tähän kalenteriin."
 
-#: src/category_submit.php:80
+#: includes/category_submit.php:73
 msgid "You do not have permission to modify this category."
 msgstr "Sinulla ei ole oikeuksia muokata tätä kategoriaa"
 
-#: src/category_submit.php:89
+#: includes/category_submit.php:82
 msgid "Modified category: "
 msgstr "Muokattu kategoriaa:"
 
-#: src/category_submit.php:93
+#: includes/category_submit.php:86
 msgid "Created category: "
 msgstr "Luotu kategoria:"
 
-#: src/category_submit.php:97
+#: includes/category_submit.php:90
 msgid "Error submitting category."
 msgstr "Virhe lähetettäessä kategoriaa:"
 
-#: src/display_day.php:44
+#: includes/display_day.php:45
 msgid "Title"
-msgstr "Otsikko"
+msgstr "otsikko"
 
-#: src/display_day.php:45 src/form.php:365
+#: includes/display_day.php:46 includes/form.php:431
 msgid "Time"
-msgstr "Aika"
+msgstr "aika"
 
-#: src/display_day.php:46 src/display_event.php:134 src/display_event.php:183
-#: src/event_form.php:51 src/search.php:94
+#: includes/display_day.php:47 includes/display_event.php:127
+#: includes/display_event.php:171 includes/event_form.php:44
+#: includes/search.php:92
 msgid "Description"
-msgstr "Kuvaus"
+msgstr "Selitys"
 
-#: src/display_day.php:57
+#: includes/display_day.php:58
 msgid "Delete Selected"
-msgstr "Poista Valittu"
+msgstr "Poista valittu"
 
-#: src/display_day.php:110
+#: includes/display_day.php:111
 msgid "No events on this day."
-msgstr "Ei tapahtumia tälle päivälle"
+msgstr "Tällä päivällä ei merkintöjä."
 
-#: src/display_event.php:44
+#: includes/display_event.php:41
 msgid "Invalid arguments."
 msgstr "Virheelliset argumentit."
 
-#: src/display_event.php:60 src/display_event.php:154
+#: includes/display_event.php:53 includes/display_event.php:142
 msgid "You do not have permission to read this event."
 msgstr "Sinulla ei ole oikeuksia lukea tätä tapahtumaa."
 
-#: src/display_event.php:64 src/display_event.php:158
-#: src/display_event.php:233
+#: includes/display_event.php:57 includes/display_event.php:146
+#: includes/display_event.php:218
 msgid "by"
 msgstr ""
 
-#: src/display_event.php:69 src/display_event.php:168
-#: src/display_event.php:241 src/event_form.php:119
+#: includes/display_event.php:62 includes/display_event.php:156
+#: includes/display_event.php:226 includes/event_form.php:112
 msgid "Category"
 msgstr "Kategoria"
 
-#: src/display_event.php:73 src/event_form.php:53 src/occur_form.php:48
+#: includes/display_event.php:66 includes/event_form.php:46
+#: includes/occur_form.php:42
 msgid "When"
 msgstr "Milloin"
 
-#: src/display_event.php:75 src/display_event.php:161
+#: includes/display_event.php:68 includes/display_event.php:149
 msgid "Created at: "
 msgstr "Luotu:"
 
-#: src/display_event.php:77 src/display_event.php:163
+#: includes/display_event.php:70 includes/display_event.php:151
 msgid "Last modified at: "
 msgstr "Viimeksi muokattu:"
 
-#: src/display_event.php:87
+#: includes/display_event.php:80
 msgid "Modify Occurrence"
 msgstr "Muokkaa Toistoa"
 
-#: src/display_event.php:89
+#: includes/display_event.php:82
 msgid "Remove Occurrence"
 msgstr "Poista Toisto"
 
-#: src/display_event.php:108
+#: includes/display_event.php:101
 msgid "Previous occurrence on"
 msgstr "Viime toisto"
 
-#: src/display_event.php:118
+#: includes/display_event.php:111
 msgid "Next occurrence on"
 msgstr "Seuraava toisto"
 
-#: src/display_event.php:124
+#: includes/display_event.php:117
 msgid "View All Occurrences"
 msgstr "Katso kaikki toistot"
 
-#: src/display_event.php:176
+#: includes/display_event.php:164
 msgid "Add Occurrence"
 msgstr "Lisää toistuva"
 
-#: src/display_event.php:199 src/occurrence_delete.php:48
-#: src/phpcoccurrence.class.php:249 src/phpcoccurrence.class.php:258
-#: src/phpcoccurrence.class.php:260 src/util.php:152
+#: includes/display_event.php:187 includes/occurrence_delete.php:45
+#: includes/phpcoccurrence.class.php:244 includes/phpcoccurrence.class.php:253
+#: includes/phpcoccurrence.class.php:255
 msgid "at"
 msgstr "luona"
 
-#: src/display_event.php:206
+#: includes/display_event.php:194
 msgid "Remove"
 msgstr "Poista"
 
-#: src/display_event.php:213
+#: includes/display_event.php:201
 msgid "Occurrences"
 msgstr "Toistot"
 
-#: src/display_event.php:243
+#: includes/display_event.php:228
 msgid "from"
 msgstr "mistä"
 
-#: src/display_month.php:35 src/display_week.php:35
+#: includes/display_month.php:32 includes/display_week.php:32
 msgctxt "Week"
 msgid "W"
-msgstr "Viikko"
+msgstr ""
 
-#: src/display_month.php:251 src/display_week.php:236
+#: includes/display_month.php:231 includes/display_week.php:215
 msgid "View Additional Events"
 msgstr "Katso lisätapahtumia"
 
-#: src/display_month.php:265 src/display_week.php:250
+#: includes/display_month.php:245 includes/display_week.php:229
 msgid "continued"
 msgstr "jatkuu"
 
-#: src/display_week.php:42
+#: includes/display_week.php:39
 msgid "Invalid date."
-msgstr "Virheellinen päivämäärä"
+msgstr ""
 
-#: src/event_delete.php:32
+#: includes/event_delete.php:29
 msgid "No event selected."
 msgstr "Ei tapahtumaa valittuna"
 
-#: src/event_delete.php:78
+#: includes/event_delete.php:75
 msgid "Removed event"
 msgstr "Poistettu tapahtuma"
 
-#: src/event_delete.php:80
+#: includes/event_delete.php:77
 msgid "Removed events"
 msgstr "Poistetut tapahtumat"
 
-#: src/event_delete.php:87
+#: includes/event_delete.php:84
 msgid "Could not remove event"
 msgstr "Tapahtumaa ei voitu poistaa"
 
-#: src/event_delete.php:89
+#: includes/event_delete.php:86
 msgid "Could not remove events"
 msgstr "Tapahtumia ei voitu poistaa"
 
-#: src/event_delete.php:96
+#: includes/event_delete.php:93
 msgid "You do not have permission to remove event"
 msgstr "Sinulla ei ole oikeuksia poistaa tapahtumaa"
 
-#: src/event_delete.php:98
+#: includes/event_delete.php:95
 msgid "You do not have permission to remove events"
 msgstr "Sinulla ei ole oikeuksia poistaa tapahtumia"
 
-#: src/event_form.php:47
+#: includes/event_form.php:40
 msgid "Event Form"
 msgstr "Tapahtuma Lomake"
 
-#: src/event_form.php:48 src/globals.php:70 src/search.php:92
+#: includes/event_form.php:41 includes/globals.php:70 includes/search.php:90
 msgid "Subject"
 msgstr "Otsikko"
 
-#: src/event_form.php:57
+#: includes/event_form.php:50
 msgid "Change the event date and time"
 msgstr "Muuta tapahtuman päivämäärää ja aikaa"
 
-#: src/event_form.php:60 src/occur_form.php:50
-#: src/phpcoccurrence.class.php:257 src/search.php:115
+#: includes/event_form.php:53 includes/occur_form.php:44
+#: includes/phpcoccurrence.class.php:252 includes/search.php:111
 msgid "From"
-msgstr "Keneltä"
+msgstr "Mistä?"
 
-#: src/event_form.php:61 src/occur_form.php:51 src/search.php:117
+#: includes/event_form.php:54 includes/occur_form.php:45
+#: includes/search.php:113
 msgid "To"
-msgstr "Mihin"
+msgstr "Minne?"
 
-#: src/event_form.php:64 src/occur_form.php:54
+#: includes/event_form.php:57 includes/occur_form.php:48
 msgid "Time Type"
 msgstr "Ajan Tyyppi"
 
-#: src/event_form.php:65 src/occur_form.php:55
+#: includes/event_form.php:58 includes/occur_form.php:49
 msgid "Normal"
 msgstr "Normaali"
 
-#: src/event_form.php:66 src/occur_form.php:56
+#: includes/event_form.php:59 includes/occur_form.php:50
 msgid "Full Day"
 msgstr "Koko päivä"
 
-#: src/event_form.php:67 src/occur_form.php:57
+#: includes/event_form.php:60 includes/occur_form.php:51
 msgid "To Be Announced"
 msgstr "Julkaistaan myöhemmin"
 
-#: src/event_form.php:73
+#: includes/event_form.php:66
 msgid "Repeats"
 msgstr "Toistot"
 
-#: src/event_form.php:75
+#: includes/event_form.php:68
 msgid "Never"
 msgstr "Ei koskaan"
 
-#: src/event_form.php:77
+#: includes/event_form.php:70
 msgid "Daily"
 msgstr "Päivittäin"
 
-#: src/event_form.php:79
+#: includes/event_form.php:72
 msgid "Weekly"
 msgstr "Viikottain"
 
-#: src/event_form.php:81
+#: includes/event_form.php:74
 msgid "Monthly"
-msgstr "Kuukausittain"
+msgstr "kuukausittain"
 
-#: src/event_form.php:83
+#: includes/event_form.php:76
 msgid "Yearly"
 msgstr "Vuosittain"
 
-#: src/event_form.php:85 src/event_form.php:92 src/event_form.php:99
-#: src/event_form.php:106
+#: includes/event_form.php:78 includes/event_form.php:85
+#: includes/event_form.php:92 includes/event_form.php:99
 msgid "Every"
 msgstr "Joka"
 
-#: src/event_form.php:86
+#: includes/event_form.php:79
 msgid "Repeat every how many days?"
 msgstr "Kuinka useina päivinä toistetaan?"
 
-#: src/event_form.php:89 src/event_form.php:97 src/event_form.php:104
-#: src/event_form.php:111
+#: includes/event_form.php:82 includes/event_form.php:90
+#: includes/event_form.php:97 includes/event_form.php:104
 msgid "Until"
 msgstr "Kunnes"
 
-#: src/event_form.php:93
+#: includes/event_form.php:86
 msgid "Repeat every how many weeks?"
 msgstr "Kuinka useina viikkoina toistetaan?"
 
-#: src/event_form.php:100
+#: includes/event_form.php:93
 msgid "Repeat every how many months?"
 msgstr "Kuinka useina kuukausina toistetaan?"
 
-#: src/event_form.php:107
+#: includes/event_form.php:100
 msgid "Repeat every how many years?"
 msgstr "Kuinka useina vuosina toistetaan?"
 
-#: src/event_form.php:136
+#: includes/event_form.php:129
 msgid "Submit Event"
-msgstr "Lähetä Tapahtuma"
+msgstr "Lisää merkintä"
 
-#: src/event_form.php:315 src/occur_form.php:146
+#: includes/event_form.php:296 includes/occur_form.php:134
 msgid "Unrecognized Time Type."
 msgstr "Tuntematon Ajan Tyyppi"
 
-#: src/event_form.php:320 src/occur_form.php:151
+#: includes/event_form.php:301 includes/occur_form.php:139
 msgid "An event cannot have an end earlier than its start."
 msgstr "Tapahtuman ei voi pääättiä aikaisemmin kuin se alkaa"
 
-#: src/event_form.php:328 src/occur_form.php:156
+#: includes/event_form.php:309 includes/occur_form.php:144
 msgid "You do not have permission to write to this calendar."
 msgstr "Sinulla ei ole oikeuksia kirjoittaa tähän kalenteriin."
 
-#: src/event_form.php:361
+#: includes/event_form.php:342
 msgid "Required field \"every-day\" is not set."
 msgstr "Pakollinen kenttä \"joka päivä\" ei ole valittu."
 
-#: src/event_form.php:364
+#: includes/event_form.php:345
 msgid "every-day must be greater than 1"
 msgstr "joka päivä pitää olla enemmän kuin 1"
 
-#: src/event_form.php:380
+#: includes/event_form.php:361
 msgid "Required field \"every-week\" is not set."
 msgstr "Pakollinen kenttä \"joka viikko\" ei ole valittu."
 
-#: src/event_form.php:382
+#: includes/event_form.php:363
 msgid "every-week must be greater than 1"
 msgstr "Joka viikko arvon täytyy olla isompi kuin yksi"
 
-#: src/event_form.php:399
+#: includes/event_form.php:380
 msgid "Required field \"every-month\" is not set."
 msgstr "Pakollinen kenttä \"joka kuukausi\" ei ole valittu."
 
-#: src/event_form.php:401 src/event_form.php:420
+#: includes/event_form.php:382 includes/event_form.php:401
 msgid "every-month must be greater than 1"
 msgstr "Joka kuukausi arvon täytyy olla suurempi kuin 1"
 
-#: src/event_form.php:418
+#: includes/event_form.php:399
 msgid "Required field \"every-year\" is not set."
 msgstr "Pakollinen kenttä \"joka vuosi\" ei ole valittu."
 
-#: src/event_form.php:436
+#: includes/event_form.php:417
 msgid "Invalid event type."
 msgstr "Virheellinen tapahtuma tyyppi"
 
-#: src/event_form.php:442
+#: includes/event_form.php:423
 msgid "Modified event: "
 msgstr "Muokattu tapahtuma:"
 
-#: src/event_form.php:444
+#: includes/event_form.php:425
 msgid "Created event: "
 msgstr "Luotu tapahtuma:"
 
-#: src/event_form.php:451
+#: includes/event_form.php:432
 msgid "Error submitting event."
 msgstr "Virhe lähetettäessä tapahtumaa."
 
-#: src/form.php:287 src/form.php:362
+#: includes/form.php:32
+msgid "required"
+msgstr "Vaadittu"
+
+#: includes/form.php:102
+msgid "Cannot add a non-form element to a form."
+msgstr "Lomakkeeseen ei voida lisätä siihen sopimattomia elementtejä"
+
+#: includes/form.php:428
 msgid "Date"
 msgstr "Päivämäärä"
 
-#: src/globals.php:23
+#: includes/globals.php:23
 msgid "January"
-msgstr "Tammikuu"
+msgstr "tammikuu"
 
-#: src/globals.php:24
+#: includes/globals.php:24
 msgid "February"
-msgstr "Helmikuu"
+msgstr "helmikuu"
 
-#: src/globals.php:25
+#: includes/globals.php:25
 msgid "March"
-msgstr "Maaliskuu"
+msgstr "maaliskuu"
 
-#: src/globals.php:26
+#: includes/globals.php:26
 msgid "April"
-msgstr "Huhtikuu"
+msgstr "huhtikuu"
 
-#: src/globals.php:27 src/globals.php:52
+#: includes/globals.php:27 includes/globals.php:52
 msgid "May"
-msgstr "Toukokuu"
+msgstr "toukokuu"
 
-#: src/globals.php:28
+#: includes/globals.php:28
 msgid "June"
-msgstr "Kesäkuu"
+msgstr "kesäkuu"
 
-#: src/globals.php:29
+#: includes/globals.php:29
 msgid "July"
-msgstr "Heinäkuu"
+msgstr "heinäkuu"
 
-#: src/globals.php:30
+#: includes/globals.php:30
 msgid "August"
-msgstr "Elokuu"
+msgstr "elokuu"
 
-#: src/globals.php:31
+#: includes/globals.php:31
 msgid "September"
-msgstr "Syyskuu"
+msgstr "syyskuu"
 
-#: src/globals.php:32
+#: includes/globals.php:32
 msgid "October"
-msgstr "Lokakuu"
+msgstr "Oktober"
 
-#: src/globals.php:33
+#: includes/globals.php:33
 msgid "November"
-msgstr "Marraskuu"
+msgstr "marraskuu"
 
-#: src/globals.php:34
+#: includes/globals.php:34
 msgid "December"
 msgstr "joulukuu"
 
-#: src/globals.php:40
+#: includes/globals.php:40
 msgid "Tuesday"
-msgstr "Tiistai"
+msgstr "tiistai"
 
-#: src/globals.php:41
+#: includes/globals.php:41
 msgid "Wednesday"
-msgstr "Keskiviikko"
+msgstr "keskiviikko"
 
-#: src/globals.php:42
+#: includes/globals.php:42
 msgid "Thursday"
-msgstr "Torstai"
+msgstr "torstai"
 
-#: src/globals.php:43
+#: includes/globals.php:43
 msgid "Friday"
-msgstr "Perjantai"
+msgstr "perjantai"
 
-#: src/globals.php:48
+#: includes/globals.php:48
 msgid "Jan"
 msgstr "Tammi"
 
-#: src/globals.php:49
+#: includes/globals.php:49
 msgid "Feb"
-msgstr "Helmi"
+msgstr "helmi"
 
-#: src/globals.php:50
+#: includes/globals.php:50
 msgid "Mar"
-msgstr "Maalis"
+msgstr "maalis"
 
-#: src/globals.php:51
+#: includes/globals.php:51
 msgid "Apr"
 msgstr "Huhti"
 
-#: src/globals.php:53
+#: includes/globals.php:53
 msgid "Jun"
-msgstr "Touko"
+msgstr "touko"
 
-#: src/globals.php:54
+#: includes/globals.php:54
 msgid "Jul"
-msgstr "Kesä"
+msgstr "kesä"
 
-#: src/globals.php:55
+#: includes/globals.php:55
 msgid "Aug"
-msgstr "Heinä"
+msgstr "heinä"
 
-#: src/globals.php:56
+#: includes/globals.php:56
 msgid "Sep"
-msgstr "Elo"
+msgstr "elo"
 
-#: src/globals.php:57
+#: includes/globals.php:57
 msgid "Oct"
-msgstr "Syys"
+msgstr "syys"
 
-#: src/globals.php:58
+#: includes/globals.php:58
 msgid "Nov"
-msgstr "Loka"
+msgstr "loka"
 
-#: src/globals.php:59
+#: includes/globals.php:59
 msgid "Dec"
-msgstr "Marras"
+msgstr "marras"
 
-#: src/globals.php:69
+#: includes/globals.php:69
 msgid "Start Date"
 msgstr "Aloituspäivä"
 
-#: src/globals.php:74
+#: includes/globals.php:74
 msgid "Ascending"
 msgstr "Nouseva"
 
-#: src/globals.php:75
+#: includes/globals.php:75
 msgid "Descending"
 msgstr "Laskeva"
 
-#: src/group_delete.php:32
+#: includes/group_delete.php:29
 msgid "No group selected."
 msgstr "Ei ryhmää valittuna."
 
-#: src/group_delete.php:66
+#: includes/group_delete.php:63
 msgid "You do not have permission to delete group: "
 msgstr "Sinulla ei ole oikeuksia poistaa ryhmää:"
 
-#: src/group_delete.php:71
+#: includes/group_delete.php:68
 msgid "Removed group: "
 msgstr "Poistettu ryhmä:"
 
-#: src/group_delete.php:74
+#: includes/group_delete.php:71
 msgid "Could not remove group: "
 msgstr "Ei voitu poistaa ryhmää:"
 
-#: src/group_form.php:30
+#: includes/group_form.php:27
 msgid "Group Form"
 msgstr "Ryhmälomake"
 
-#: src/group_form.php:37
+#: includes/group_form.php:34
 msgid "Submit Group"
 msgstr ""
 
-#: src/group_submit.php:35
+#: includes/group_submit.php:32
 msgid "You do not have permission to add a global group."
 msgstr "Sinulla ei ole okeuksia lisätä globaalia ryhmää."
 
-#: src/group_submit.php:40
+#: includes/group_submit.php:37
 msgid "You do not have permission to add a group to this calendar."
 msgstr "Sinulla ei ole oikeuksia lisätä ryhmää tähän kalenteriin."
 
-#: src/group_submit.php:52
+#: includes/group_submit.php:49
 msgid "You do not have permission to modify this group."
 msgstr "Sinulla ei ole oikeuksia muokata tätä ryhmää."
 
-#: src/group_submit.php:60
+#: includes/group_submit.php:57
 msgid "Modified group: "
 msgstr "Muokattu ryhmä:"
 
-#: src/group_submit.php:64
+#: includes/group_submit.php:61
 msgid "Created group: "
 msgstr "Luotu ryhmä:"
 
-#: src/group_submit.php:68
+#: includes/group_submit.php:65
 msgid "Error submitting group."
 msgstr "Virhe lähetettäessä ryhmää"
 
-#: src/import.php:29 src/translate.php:31
+#: includes/import.php:26 includes/translate.php:28
 msgid "Need to be admin"
 msgstr "Sinun täytyy olla järjestelmänvalvoja"
 
-#: src/import.php:72
+#: includes/import.php:69
 msgid "Error selecting events in import"
 msgstr "Virhe valittaessa tapahtumia tuonnin yhteydessä"
 
-#: src/import.php:157
+#: includes/import.php:154
 #, php-format
 msgid "Created %s events with %s occurences"
 msgstr "Luotu %s tapahtumia %s määrällä toistoja"
 
-#: src/login.php:42
+#: includes/login.php:39
 msgid "Logged in."
 msgstr "Kirjauduttu sisään."
 
-#: src/login.php:45
+#: includes/login.php:42
 msgid "Sorry, Invalid Login"
 msgstr "Kirjautuminen epäonnistui"
 
-#: src/login.php:77
+#: includes/login.php:72
 msgid "You must have cookies enabled to login."
 msgstr "Sinun täytyy sallia cookiet kirjautumista varten."
 
-#: src/login.php:85 src/settings.php:43 src/user_create.php:70
+#: includes/login.php:80 includes/settings.php:39 includes/user_create.php:64
 msgid "Password"
-msgstr "Salasana"
+msgstr "salasana"
 
-#: src/logout.php:32
+#: includes/logout.php:29
 msgid "Loggin out..."
 msgstr "Kirjaudutaan ulos..."
 
-#: src/occur_form.php:46
+#: includes/occur_form.php:40
 msgid "Occurrence Form"
 msgstr "Toistot Lomake"
 
-#: src/occur_form.php:117
+#: includes/occur_form.php:105
 msgid "Submit Occurrence"
 msgstr "Lisää toistuva"
 
-#: src/occur_form.php:127
+#: includes/occur_form.php:115
 msgid "Cannot create occurrence."
 msgstr "Ei voi lisätä toistoa."
 
-#: src/occur_form.php:161
+#: includes/occur_form.php:149
 msgid "EID not set."
 msgstr "EID ei ole asetettu"
 
-#: src/occur_form.php:173
+#: includes/occur_form.php:161
 msgid "Modified occurence: "
 msgstr "Muokattu toistoa:"
 
-#: src/occur_form.php:175
+#: includes/occur_form.php:163
 msgid "Created occurence: "
 msgstr "Luotu toisto:"
 
-#: src/occur_form.php:182
+#: includes/occur_form.php:170
 msgid "Error submitting occurrence."
 msgstr "Virhe lähetettäessä toistoa."
 
-#: src/occurrence_delete.php:32
+#: includes/occurrence_delete.php:29
 msgid "No occurrence selected."
 msgstr "Toistoa ei valittu"
 
-#: src/occurrence_delete.php:82
+#: includes/occurrence_delete.php:79
 msgid "Removed occurrence"
 msgstr "Poistettu toisto"
 
-#: src/occurrence_delete.php:84
+#: includes/occurrence_delete.php:81
 msgid "Removed occurrences"
 msgstr "Poistettu toistot"
 
-#: src/occurrence_delete.php:91
+#: includes/occurrence_delete.php:88
 msgid "Could not remove occurrence"
 msgstr "Toistoa ei voitu poistaa"
 
-#: src/occurrence_delete.php:93
+#: includes/occurrence_delete.php:90
 msgid "Could not remove occurrences"
 msgstr "Toistoja ei voitu poistaa"
 
-#: src/occurrence_delete.php:100
+#: includes/occurrence_delete.php:97
 msgid "You do not have permission to remove the occurrence."
 msgstr "Sinulla ei ole oikeuksia poistaa toistoa."
 
-#: src/occurrence_delete.php:102
+#: includes/occurrence_delete.php:99
 msgid "You do not have permission to remove occurrences."
 msgstr "Sinulla ei ole oikeutta poistaa toistoja."
 
-#: src/password_submit.php:31
+#: includes/password_submit.php:27
 msgid "You must be logged in."
 msgstr "Sinun täytyy olla kirjautuneena sisään."
 
-#: src/password_submit.php:37
+#: includes/password_submit.php:33
 msgid "You do not have permission to change your password."
 msgstr "Sinulla ei ole oikeuksia vaihtaa salasanaasi."
 
-#: src/password_submit.php:40
+#: includes/password_submit.php:36
 msgid "You must specify your old password."
 msgstr "Vanha salasana on syötettävä."
 
-#: src/password_submit.php:46
+#: includes/password_submit.php:42
 msgid "The password you entered did not match your old password."
 msgstr "Salasana jonka syötit ei täsmää vanhan salasanasi kanssa."
 
-#: src/password_submit.php:50 src/user_create.php:96
+#: includes/password_submit.php:46 includes/user_create.php:90
 msgid "You must specify a password"
 msgstr "Sinun täytyy syöttää salasana"
 
-#: src/password_submit.php:55 src/user_create.php:101
+#: includes/password_submit.php:51 includes/user_create.php:95
 msgid "Your passwords did not match"
 msgstr "Salasanat eivät täsmää"
 
-#: src/password_submit.php:62
+#: includes/password_submit.php:58
 msgid "Password updated."
 msgstr "Salasana päivitetty"
 
-#: src/phpccalendar.class.php:73
+#: includes/phpccalendar.class.php:51
 msgid "(No title)"
 msgstr "(Ei otsikkoa)"
 
-#: src/phpcdatabase.class.php:122
+#: includes/phpcdatabase.class.php:93
 msgid "Error in get_occurrences_by_date_range"
 msgstr "Virhe get_occurrences_by_date_range arvossa"
 
-#: src/phpcdatabase.class.php:192
+#: includes/phpcdatabase.class.php:145
 msgid "Error in get_event_by_eid"
 msgstr "Virhe get_event_by_eid arvossa"
 
-#: src/phpcdatabase.class.php:196
+#: includes/phpcdatabase.class.php:149
 msgid "Event doesn't exist"
 msgstr "Tapahtumaa ei ole olemassa"
 
-#: src/phpcdatabase.class.php:223
+#: includes/phpcdatabase.class.php:171
 msgid "Error in get_event_by_oid"
 msgstr "Virhe Error in get_event_by_oid arvossa"
 
-#: src/phpcdatabase.class.php:227 src/phpcdatabase.class.php:424
+#: includes/phpcdatabase.class.php:175 includes/phpcdatabase.class.php:340
 msgid "Event doesn't exist with oid"
 msgstr "Tapahtumaa ei ole olemassa vanhassa"
 
-#: src/phpcdatabase.class.php:252
+#: includes/phpcdatabase.class.php:195
 msgid "Error in get_category"
 msgstr "Virhe get_category arvossa"
 
-#: src/phpcdatabase.class.php:255
+#: includes/phpcdatabase.class.php:198
 msgid "Category doesn't exist with catid"
 msgstr "Kategoriaa ei ole olemassa catid arvossa"
 
-#: src/phpcdatabase.class.php:273
+#: includes/phpcdatabase.class.php:212
 msgid "Error in get_group"
 msgstr "Virhe get_group arvossa"
 
-#: src/phpcdatabase.class.php:276
+#: includes/phpcdatabase.class.php:215
 msgid "Group doesn't exist with gid"
 msgstr "Ryhmää ei ole olemassa gid arvolla"
 
-#: src/phpcdatabase.class.php:296
+#: includes/phpcdatabase.class.php:231
 msgid "Error in get_groups"
 msgstr "Virhe get_groups arvossa"
 
-#: src/phpcdatabase.class.php:319
+#: includes/phpcdatabase.class.php:250
 msgid "Error in get_user_groups"
 msgstr "Virhe get_user_groups arvossa"
 
-#: src/phpcdatabase.class.php:353
+#: includes/phpcdatabase.class.php:279
 msgid "Error in get_categories"
 msgstr "Virhe get_categories arvossa"
 
-#: src/phpcdatabase.class.php:387
+#: includes/phpcdatabase.class.php:308
 msgid "Error in get_visible_categories"
 msgstr "Virhe get_visible_categories arvossa"
 
-#: src/phpcdatabase.class.php:420
+#: includes/phpcdatabase.class.php:336
 msgid "Error in get_occurrence_by_oid"
 msgstr "Virhe get_occurence_by_old arvossa"
 
-#: src/phpcdatabase.class.php:450
+#: includes/phpcdatabase.class.php:362
 msgid "Error in get_occurrences_by_eid"
 msgstr "Virhe get_occurences_by_eid arvossa"
 
-#: src/phpcdatabase.class.php:471 src/phpcdatabase.class.php:491
+#: includes/phpcdatabase.class.php:379 includes/phpcdatabase.class.php:395
 msgid "Error while removing an event."
 msgstr "Virhe tapahtuman poistossa"
 
-#: src/phpcdatabase.class.php:507
+#: includes/phpcdatabase.class.php:407
 msgid "Error while removing an occurrence."
 msgstr "Virhe toiston poistossa"
 
-#: src/phpcdatabase.class.php:524 src/phpcdatabase.class.php:577
+#: includes/phpcdatabase.class.php:420 includes/phpcdatabase.class.php:461
 msgid "Error while removing a calendar"
 msgstr "Virhe kalenterin poistossa"
 
-#: src/phpcdatabase.class.php:541
+#: includes/phpcdatabase.class.php:433
 msgid "Error while removing category."
 msgstr "Virhe kategorian poistossa."
 
-#: src/phpcdatabase.class.php:558
+#: includes/phpcdatabase.class.php:446
 msgid "Error while removing group."
 msgstr "Virhe ryhmän poistossa."
 
-#: src/phpcdatabase.class.php:582
+#: includes/phpcdatabase.class.php:466
 msgid "Error while removing "
 msgstr "Virhe poistettaessa"
 
-#: src/phpcdatabase.class.php:606
+#: includes/phpcdatabase.class.php:485
 msgid "Could not read permissions."
 msgstr "Käyttöoikeuksia ei voitu lukea."
 
-#: src/phpcdatabase.class.php:624
+#: includes/phpcdatabase.class.php:500
 msgid "Could not get calendars."
 msgstr "Kalentereita ei voitu hakea."
 
-#: src/phpcdatabase.class.php:670 src/phpcdatabase.class.php:694
+#: includes/phpcdatabase.class.php:529 includes/phpcdatabase.class.php:549
 msgid "Could not get user."
 msgstr "Käyttäjää ei voitu hakea."
 
-#: src/phpcdatabase.class.php:714 src/phpcdatabase.class.php:734
+#: includes/phpcdatabase.class.php:565 includes/phpcdatabase.class.php:581
 msgid "Error getting user."
 msgstr "Käyttäjä haussa tapahtui virhe."
 
-#: src/phpcdatabase.class.php:755
+#: includes/phpcdatabase.class.php:597
 msgid "Error creating user."
 msgstr "Virhe käyttäjän luonnissa."
 
-#: src/phpcdatabase.class.php:769
+#: includes/phpcdatabase.class.php:608 includes/phpcdatabase.class.php:620
 msgid "Error reading options"
 msgstr "Virhe luettaessa asetuksia"
 
-#: src/phpcdatabase.class.php:786
-msgid "Error updating option"
-msgstr ""
+#: includes/phpcdatabase.class.php:631
+msgid "Error creating options"
+msgstr "Virhe luodessa asetuksia"
 
-#: src/phpcdatabase.class.php:802
-msgid "Error creating option"
-msgstr ""
-
-#: src/phpcdatabase.class.php:816
+#: includes/phpcdatabase.class.php:641
 msgid "Error updating password."
 msgstr "Virhe salasanan päivityksessä."
 
-#: src/phpcdatabase.class.php:831
+#: includes/phpcdatabase.class.php:652
 msgid "Error updating timezone."
 msgstr "Virhe aikavyöhykkeen päivityksessä."
 
-#: src/phpcdatabase.class.php:846
+#: includes/phpcdatabase.class.php:663
 msgid "Error updating language."
 msgstr "Virhe kielen päivityksessä."
 
-#: src/phpcdatabase.class.php:862
+#: includes/phpcdatabase.class.php:675
 msgid "Error adding group to user."
 msgstr ""
 
-#: src/phpcdatabase.class.php:877
+#: includes/phpcdatabase.class.php:686
 msgid "Error removing group from user."
 msgstr ""
 
-#: src/phpcdatabase.class.php:906
+#: includes/phpcdatabase.class.php:706
 msgid "Error creating event."
 msgstr "Virhe tapahtuman luonnissa."
 
-#: src/phpcdatabase.class.php:940
+#: includes/phpcdatabase.class.php:733
 msgid "Error creating occurrence."
 msgstr "Virhe toiston luonnissa."
 
-#: src/phpcdatabase.class.php:976
+#: includes/phpcdatabase.class.php:758
 msgid "Error modifying occurrence."
 msgstr "Virhe toiston muokkauksessa."
 
-#: src/phpcdatabase.class.php:1006
+#: includes/phpcdatabase.class.php:780
 msgid "Error modifying event."
 msgstr "Virhe tapahtuman muokkauksessa."
 
-#: src/phpcdatabase.class.php:1028
+#: includes/phpcdatabase.class.php:794
 msgid "Error creating category."
 msgstr "Virhe kategorian luonnissa."
 
-#: src/phpcdatabase.class.php:1046
+#: includes/phpcdatabase.class.php:807
 msgid "Error creating group."
 msgstr "Virhe ryhmän luonnissa."
 
-#: src/phpcdatabase.class.php:1070
+#: includes/phpcdatabase.class.php:823
 msgid "Error modifying category."
 msgstr "Virhe kategorian muokkauksessa."
 
-#: src/phpcdatabase.class.php:1088
+#: includes/phpcdatabase.class.php:836
 msgid "Error modifying group."
 msgstr "Virhe ryhmän muokkauksessa."
 
-#: src/phpcdatabase.class.php:1134
+#: includes/phpcdatabase.class.php:871
 msgid "Error during searching"
 msgstr "Haun aikana tapahtui virhe"
 
-#: src/phpcdatabase.class.php:1165
+#: includes/phpcdatabase.class.php:897
 msgid "Error updating user permissions."
 msgstr "Virhe päivitettäessä käyttöoikeuksia"
 
-#: src/phpcdatabase.class.php:1179
+#: includes/phpcdatabase.class.php:906
 msgid "Error getting login token."
 msgstr "Virhe kirjautumisen yhteydessä (login token)"
 
-#: src/phpcdatabase.class.php:1199
+#: includes/phpcdatabase.class.php:921
 msgid "Error adding login token."
 msgstr "Virhe kirjautumisessa (error adding login token)."
 
-#: src/phpcdatabase.class.php:1214
+#: includes/phpcdatabase.class.php:931
 msgid "Error updating login token."
 msgstr "Virhe (Error updating login token)"
 
-#: src/phpcdatabase.class.php:1226
+#: includes/phpcdatabase.class.php:940
 msgid "Error removing login tokens."
 msgstr "Virhe (Error removing login tokens)"
 
-#: src/phpcdatabase.class.php:1235
+#: includes/phpcdatabase.class.php:949
 msgid "Error cleaning login tokens."
 msgstr "Virhe (error cleaning login tokens)"
 
-#: src/phpcdatabase.class.php:1251
+#: includes/phpcdatabase.class.php:959
 msgid "SQL query"
 msgstr "SQL kysely"
 
-#: src/phpcevent.class.php:60
+#: includes/phpcevent.class.php:43
 msgid "anonymous"
 msgstr "anonyymi"
 
-#: src/phpcevent.class.php:62
+#: includes/phpcevent.class.php:45
 msgid "unknown"
 msgstr "tuntematon"
 
-#: src/phpcevent.class.php:91
+#: includes/phpcevent.class.php:72
 msgid "(No subject)"
 msgstr "(Ei otsikkoa)"
 
-#: src/phpcoccurrence.class.php:55 src/phpcoccurrence.class.php:76
+#: includes/phpcoccurrence.class.php:53 includes/phpcoccurrence.class.php:76
 msgid "DB returned an invalid date."
 msgstr "Tietokanta palautti virheellisen päivän."
 
-#: src/phpcoccurrence.class.php:103 src/phpcoccurrence.class.php:118
+#: includes/phpcoccurrence.class.php:105 includes/phpcoccurrence.class.php:121
 msgid "TBA"
 msgstr "TBA"
 
-#: src/phpcoccurrence.class.php:113 src/phpcoccurrence.class.php:259
+#: includes/phpcoccurrence.class.php:116 includes/phpcoccurrence.class.php:254
 msgid "to"
 msgstr ""
 
-#: src/search.php:46
+#: includes/search.php:43
 msgid "Invalid sort option"
 msgstr "Virheellinen lajitteluvalinta"
 
-#: src/search.php:52
+#: includes/search.php:49
 msgid "Invalid order option"
 msgstr "Virheellinen järjestys valinta"
 
-#: src/search.php:85
+#: includes/search.php:83
 msgid "No events matched your search criteria."
 msgstr "Mikään tapahtumia ei löydetty antamillasi hakuehdoilla."
 
-#: src/search.php:89
+#: includes/search.php:87
 msgid "Search Results"
 msgstr "Haun tulokset"
 
-#: src/search.php:93
+#: includes/search.php:91
 msgid "Date Time"
-msgstr "Päivä Aika"
+msgstr "aloitusaika"
 
-#: src/search.php:111
+#: includes/search.php:107
 msgid "Phrase"
 msgstr "Lause"
 
-#: src/search.php:119
+#: includes/search.php:115
 msgid "Sort By"
 msgstr "Järjestä:"
 
-#: src/search.php:122
+#: includes/search.php:118
 msgid "Order"
 msgstr "järjestys"
 
-#: src/settings.php:59
+#: includes/settings.php:52
 msgid "Change Password"
 msgstr "Vaihda Salasana"
 
-#: src/settings.php:68
+#: includes/settings.php:61
 msgid "Old Password"
 msgstr "Vanha Salasana"
 
-#: src/settings.php:71
+#: includes/settings.php:64
 msgid "New Password"
 msgstr "Uusi Salasana"
 
-#: src/settings.php:74
+#: includes/settings.php:67
 msgid "Confirm New Password"
 msgstr "Vahvista Uusi Salasana"
 
-#: src/settings.php:150
+#: includes/settings.php:139
 msgid "Settings updated."
 msgstr "Asetukset päivitetty."
 
-#: src/setup.php:76
+#: includes/setup.php:78
 msgid "Possible hacking attempt on your account."
 msgstr "Mahdollinen murtoyritys tililläsi."
 
-#: src/setup.php:106
-msgid "Could not find a calendar."
-msgstr ""
-
-#: src/setup.php:188
+#: includes/setup.php:187
 msgid "Month is out of range."
 msgstr "Kuukausi on alueen ulkopuolella."
 
-#: src/setup.php:196
+#: includes/setup.php:195
 msgid "Invalid year"
 msgstr "Virheellinen vuosi"
 
-#: src/translate.php:55
+#: includes/translate.php:52
 #, php-format
 msgid "Translated \"%s\""
 msgstr "Käännetty \"%s\""
 
-#: src/user_create.php:73
+#: includes/user_create.php:67
 msgid "Confirm Password"
 msgstr "Vahvista salasana"
 
-#: src/user_create.php:76
+#: includes/user_create.php:70
 msgid "Make Admin"
 msgstr "Luo Pääkäyttäjä"
 
-#: src/user_create.php:92
+#: includes/user_create.php:86
 msgid "You must specify a user name"
 msgstr "Sinun on syötettävä käyttäjänimi"
 
-#: src/user_create.php:109
+#: includes/user_create.php:103
 msgid "User already exists."
 msgstr "Käyttäjänimi on jo olemassa"
 
-#: src/user_create.php:119
+#: includes/user_create.php:113
 msgid "Added user."
 msgstr ""
 
-#: src/user_delete.php:32
+#: includes/user_delete.php:29
 msgid "You must be an admin to delete users."
 msgstr "Sinun täytyy olla järjestelmänvalvoja poistaaksesi käyttäjiä"
 
-#: src/user_delete.php:37
+#: includes/user_delete.php:34
 msgid "No user selected."
 msgstr "Käyttäjää ei ole valittu"
 
-#: src/user_groups.php:64
+#: includes/user_groups.php:58
 msgid "Edit User Groups"
 msgstr ""
 
-#: src/user_groups.php:105
+#: includes/user_groups.php:99
 msgid "Groups updated."
 msgstr ""
 
-#: src/user_permissions_submit.php:34
+#: includes/user_permissions_submit.php:31
 msgid "No users"
 msgstr "Ei käyttäjiä"
 
-#: src/user_permissions_submit.php:62
+#: includes/user_permissions_submit.php:59
 msgid "No changes to make."
 msgstr "Ei muutoksia tehtäväksi."
 
-#: src/user_permissions_submit.php:64
+#: includes/user_permissions_submit.php:61
 msgid "Updated user(s):"
 msgstr "Päivitetty käyttäjä/käyttäjät:"
 
-#: src/util.php:93
+#: includes/util.php:75
 msgid "continue"
 msgstr "jatka"
 
-#: src/util.php:230
+#: includes/util.php:157
 msgid "Software Error"
 msgstr "Ohjelmistovirhe"
 
-#: src/util.php:231
+#: includes/util.php:158
 msgid "Message:"
 msgstr "Viesti:"

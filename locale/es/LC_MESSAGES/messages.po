@@ -4,15 +4,16 @@
 # 
 # Translators:
 # JAIME GÓMEZ OBREGÓN <jaime@iteisa.com>, 2006
-# jdperea59 <jdperea59@gmail.com>, 2013
+# Jean Paul Cahuana Pinto <cpjeanpaul@gmail.com>, 2019
+# Juan Perea <jdperea59@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: php-calendar\n"
 "Report-Msgid-Bugs-To: sproctor@gmail.com\n"
 "POT-Creation-Date: 2014-02-18 09:54-0500\n"
-"PO-Revision-Date: 2014-02-18 14:58+0000\n"
-"Last-Translator: sproctor <sproctor@gmail.com>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/php-calendar/language/es/)\n"
+"PO-Revision-Date: 2022-01-28 15:21+0000\n"
+"Last-Translator: Transifex Bot <>\n"
+"Language-Team: Spanish (http://www.transifex.com/sproctor/php-calendar/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,19 +22,19 @@ msgstr ""
 
 #: includes/admin.php:28 includes/cadmin.php:26
 msgid "You must be logged in as an admin."
-msgstr "Usted debe iniciar sesión como administrador"
+msgstr "Debes iniciar sesión como administrador"
 
 #: includes/admin.php:33
 msgid "Calendars"
-msgstr ""
+msgstr "Calendarios"
 
 #: includes/admin.php:35 includes/cadmin.php:33
 msgid "Users"
-msgstr ""
+msgstr "Usuaris"
 
 #: includes/admin.php:37
 msgid "Import"
-msgstr ""
+msgstr "Importar"
 
 #: includes/admin.php:39 includes/translate.php:38
 msgid "Translate"
@@ -41,7 +42,7 @@ msgstr "Traducir"
 
 #: includes/admin.php:42
 msgid "Version"
-msgstr "versión"
+msgstr "Versión"
 
 #: includes/admin.php:55
 msgid "Calendar"
@@ -77,12 +78,12 @@ msgstr "Nombre de usuario"
 #: includes/admin.php:89 includes/cadmin.php:37 includes/cadmin.php:130
 #: includes/user_create.php:73
 msgid "Groups"
-msgstr ""
+msgstr "Grupos"
 
 #: includes/admin.php:90 includes/admin.php:100 includes/cadmin.php:104
 #: includes/cadmin.php:131
 msgid "Edit Groups"
-msgstr ""
+msgstr "Editar Grupos"
 
 #: includes/admin.php:106 includes/user_create.php:51
 msgid "Create User"
@@ -94,7 +95,7 @@ msgstr "Lista de Usuarios"
 
 #: includes/admin.php:121
 msgid "Import Form"
-msgstr ""
+msgstr "Importar Desde"
 
 #: includes/admin.php:122
 msgid "MySQL Host Name"
@@ -126,7 +127,7 @@ msgstr ""
 
 #: includes/admin.php:134
 msgid "Import Calendar"
-msgstr ""
+msgstr "Importar Calendario"
 
 #: includes/admin.php:150
 msgid ""
@@ -291,7 +292,7 @@ msgstr "Ver Mes"
 
 #: includes/calendar.php:488
 msgid "View date"
-msgstr "Ver día"
+msgstr "Ver fecha"
 
 #: includes/calendar.php:492
 msgid "Calendar Admin"
@@ -560,25 +561,25 @@ msgstr ""
 #: includes/display_event.php:57 includes/display_event.php:146
 #: includes/display_event.php:218
 msgid "by"
-msgstr ""
+msgstr "por"
 
 #: includes/display_event.php:62 includes/display_event.php:156
 #: includes/display_event.php:226 includes/event_form.php:112
 msgid "Category"
-msgstr ""
+msgstr "Categoría"
 
 #: includes/display_event.php:66 includes/event_form.php:46
 #: includes/occur_form.php:42
 msgid "When"
-msgstr ""
+msgstr "Cuando"
 
 #: includes/display_event.php:68 includes/display_event.php:149
 msgid "Created at: "
-msgstr ""
+msgstr "Creado:"
 
 #: includes/display_event.php:70 includes/display_event.php:151
 msgid "Last modified at: "
-msgstr ""
+msgstr "Última moficación"
 
 #: includes/display_event.php:80
 msgid "Modify Occurrence"
@@ -612,7 +613,7 @@ msgstr "en"
 
 #: includes/display_event.php:194
 msgid "Remove"
-msgstr ""
+msgstr "Eliminar"
 
 #: includes/display_event.php:201
 msgid "Occurrences"
@@ -620,7 +621,7 @@ msgstr ""
 
 #: includes/display_event.php:228
 msgid "from"
-msgstr ""
+msgstr "desde"
 
 #: includes/display_month.php:32 includes/display_week.php:32
 msgctxt "Week"
@@ -629,7 +630,7 @@ msgstr ""
 
 #: includes/display_month.php:231 includes/display_week.php:215
 msgid "View Additional Events"
-msgstr ""
+msgstr "Ver eventos adicionales"
 
 #: includes/display_month.php:245 includes/display_week.php:229
 msgid "continued"
@@ -637,7 +638,7 @@ msgstr ""
 
 #: includes/display_week.php:39
 msgid "Invalid date."
-msgstr ""
+msgstr "Fecha inválida."
 
 #: includes/event_delete.php:29
 msgid "No event selected."
