@@ -27,15 +27,15 @@ msgstr "Sinun täytyy olla kirjautuneena järjestelmänvalvojana."
 
 #: src/admin.php:36
 msgid "Calendars"
-msgstr ""
+msgstr "Kalenterit"
 
 #: src/admin.php:38 src/cadmin.php:37
 msgid "Users"
-msgstr ""
+msgstr "Käyttäjät"
 
 #: src/admin.php:40
 msgid "Import"
-msgstr ""
+msgstr "Tuonti"
 
 #: src/admin.php:42 src/translate.php:41
 msgid "Translate"
@@ -78,11 +78,11 @@ msgstr "käyttäjänimi"
 #: src/admin.php:98 src/cadmin.php:41 src/cadmin.php:135
 #: src/user_create.php:79
 msgid "Groups"
-msgstr ""
+msgstr "Ryhmät"
 
 #: src/admin.php:99 src/admin.php:110 src/cadmin.php:109 src/cadmin.php:136
 msgid "Edit Groups"
-msgstr ""
+msgstr "Muokkaa ryhmiä"
 
 #: src/admin.php:117 src/user_create.php:57
 msgid "Create User"
@@ -126,7 +126,7 @@ msgstr "PHP-Calendar Taulun Etuliite"
 
 #: src/admin.php:148
 msgid "Import Calendar"
-msgstr ""
+msgstr "Tuo kalenteri"
 
 #: src/admin.php:167
 msgid ""
@@ -138,15 +138,15 @@ msgstr ""
 
 #: src/admin.php:170
 msgid "Generate Translations"
-msgstr ""
+msgstr "Lio käännös"
 
 #: src/cadmin.php:35
 msgid "Calendar Configuration"
-msgstr ""
+msgstr "Kalenterin asetukset"
 
 #: src/cadmin.php:39
 msgid "Categories"
-msgstr ""
+msgstr "Kategoriat"
 
 #: src/cadmin.php:73
 msgid "Options"
@@ -406,7 +406,7 @@ msgstr "Konfiguraation tyyppiä ei tueta"
 #: src/calendar.php:1030
 #, php-format
 msgid "Required field \"%s\" was not set."
-msgstr ""
+msgstr "Täytäthän \"%s\" kentän."
 
 #: src/calendar.php:1036
 #, php-format
@@ -424,7 +424,7 @@ msgstr ""
 
 #: src/calendar.php:1080
 msgid "Invalid date_format."
-msgstr ""
+msgstr "Virheellinen päivämäärä"
 
 #: src/calendar_delete.php:32
 msgid "No calendar selected."
@@ -627,7 +627,7 @@ msgstr "mistä"
 #: src/display_month.php:35 src/display_week.php:35
 msgctxt "Week"
 msgid "W"
-msgstr ""
+msgstr "Viikko"
 
 #: src/display_month.php:251 src/display_week.php:236
 msgid "View Additional Events"
@@ -639,7 +639,7 @@ msgstr "jatkuu"
 
 #: src/display_week.php:42
 msgid "Invalid date."
-msgstr ""
+msgstr "Virheellinen päivämäärä"
 
 #: src/event_delete.php:32
 msgid "No event selected."
