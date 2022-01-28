@@ -1,7 +1,7 @@
 title: PHP-Calendar
-description: Open source web-based calendar.
-google_analytics: 
-show_downloads: true
+description: Open source web-based calendar
+google_analytics: UA-7118722-1
+show_downloads: false
 theme: jekyll-theme-slate
 
 gems:
