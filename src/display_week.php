@@ -44,7 +44,13 @@ function display_week()
 	$week_of_year = intval($vars['week']);
 	$year = intval($vars['year']);
 
-	$day_of_year = 1 + ($week_of_year - 1) * 7 - day_of_week(1, 1, $year);
+    $week_of_first = week_of_year(1, 1, $year);
+    if($week_of_first != 1) {
+        $offset = 0;
+    } else {
+        $offset = -1;
+    }
+	$day_of_year = 1 + ($week_of_year + $offset) * 7 - day_of_week(1, 1, $year);
 	$from_stamp = mktime(0, 0, 0, 1, $day_of_year, $year);
 	$start_month = date("n", $from_stamp);
 	$start_year = date("Y", $from_stamp);

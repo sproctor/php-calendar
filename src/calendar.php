@@ -301,6 +301,35 @@ function week_of_year($month, $day, $year)
 	return ($days_before_year + $day_of_year + $days_left) / 7;
 }
 
+function year_of_week_of_year($month, $day, $year) {
+    $timestamp = mktime(0, 0, 0, $month, $day, $year);
+
+    // week_start = 1 uses ISO 8601 and contains the Jan 4th,
+    //   Most other places the first week contains Jan 1st
+    //   There are a few outliers that start weeks on Monday and use
+    //   Jan 1st for the first week. We'll ignore them for now.
+    if(day_of_week_start() == 1) {
+        $year_contains = 4;
+        // if the week is in December and contains Jan 4th, it's a week
+        // from next year
+        if($month == 12 && $day - 24 >= $year_contains) {
+            return $year + 1;
+        }
+    } else {
+        return $year;
+    }
+
+    // $day is the first day of the week relative to the current month,
+    // so it can be negative. If it's in the previous year, we want to use
+    // that negative value, unless the week is also in the previous year,
+    // then we want to switch to using that year.
+    if($day < 1 && $month == 1 && $day > $year_contains - 7) {
+        return $year;
+    } else {
+        return date('Y', $timestamp);
+    }
+}
+
 function create_event_link($text, $action, $eid, $attribs = false)
 {
 	return create_action_link($text, $action, array('eid' => $eid),

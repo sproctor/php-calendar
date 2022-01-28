@@ -159,7 +159,7 @@ function create_week($week_of_month, $month, $year, $days_events)
 		- day_of_week($month, 1, $year);
 	$week_of_year = week_of_year($month, $start_day, $year);
 
-	$args = array('week' => $week_of_year, 'year' => $year);
+	$args = array('week' => $week_of_year, 'year' => year_of_week_of_year($month, $start_day, $year));
     $click = create_action_url('display_week', false, false, false, $args);
 	$week_html = tag('tr', tag('th', attrs('class="ui-state-default"',
 					"onclick=\"window.location.href='$click'\""),
