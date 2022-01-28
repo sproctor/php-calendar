@@ -1,133 +1,134 @@
 # PHP-Calendar.
-# Copyright (C) 2014 Sean Proctor
+# Copyright (C) 2022 Sean Proctor
 # This file is distributed under the same license as the PHP-Calendar package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 # Translators:
-# Balázs Úr <urbalazs@gmail.com>, 2011
+# Sean Proctor <sproctor@gmail.com>, 2022
+# 
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: php-calendar\n"
+"Project-Id-Version: PHP-Calendar 2.0.13\n"
 "Report-Msgid-Bugs-To: sproctor@gmail.com\n"
-"POT-Creation-Date: 2014-02-18 09:54-0500\n"
-"PO-Revision-Date: 2014-02-18 14:58+0000\n"
-"Last-Translator: sproctor <sproctor@gmail.com>\n"
-"Language-Team: Hungarian (http://www.transifex.com/projects/p/php-calendar/language/hu/)\n"
+"POT-Creation-Date: 2022-01-28 09:19-0500\n"
+"PO-Revision-Date: 2022-01-28 14:23+0000\n"
+"Last-Translator: Sean Proctor <sproctor@gmail.com>, 2022\n"
+"Language-Team: Hungarian (https://www.transifex.com/sproctor/teams/14496/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: hu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: includes/admin.php:28 includes/cadmin.php:26
+#: src/admin.php:31 src/cadmin.php:30
 msgid "You must be logged in as an admin."
 msgstr "Rendszergazdaként kell bejelentkeznie."
 
-#: includes/admin.php:33
+#: src/admin.php:36
 msgid "Calendars"
 msgstr ""
 
-#: includes/admin.php:35 includes/cadmin.php:33
+#: src/admin.php:38 src/cadmin.php:37
 msgid "Users"
 msgstr ""
 
-#: includes/admin.php:37
+#: src/admin.php:40
 msgid "Import"
 msgstr ""
 
-#: includes/admin.php:39 includes/translate.php:38
+#: src/admin.php:42 src/translate.php:41
 msgid "Translate"
 msgstr ""
 
-#: includes/admin.php:42
+#: src/admin.php:45
 msgid "Version"
 msgstr ""
 
-#: includes/admin.php:55
+#: src/admin.php:61
 msgid "Calendar"
 msgstr ""
 
-#: includes/admin.php:56 includes/admin.php:91
+#: src/admin.php:62 src/admin.php:100
 msgid "Action"
 msgstr ""
 
-#: includes/admin.php:63 includes/cadmin.php:156 includes/cadmin.php:202
-#: includes/display_event.php:193
+#: src/admin.php:69 src/cadmin.php:161 src/cadmin.php:208
+#: src/display_event.php:205
 msgid "Edit"
 msgstr ""
 
-#: includes/admin.php:65 includes/admin.php:101 includes/cadmin.php:161
-#: includes/cadmin.php:206 includes/display_event.php:78
-#: includes/display_event.php:166
+#: src/admin.php:71 src/admin.php:112 src/cadmin.php:166 src/cadmin.php:212
+#: src/display_event.php:85 src/display_event.php:178
 msgid "Delete"
 msgstr "Törlés"
 
-#: includes/admin.php:70 includes/calendar_form.php:85
+#: src/admin.php:76 src/calendar_form.php:92
 msgid "Create Calendar"
 msgstr "Naptár létrehozása"
 
-#: includes/admin.php:74
+#: src/admin.php:80
 msgid "Calendar List"
 msgstr "Naptárlista"
 
-#: includes/admin.php:88 includes/login.php:77
+#: src/admin.php:97 src/login.php:82
 msgid "Username"
 msgstr "Felhasználónév"
 
-#: includes/admin.php:89 includes/cadmin.php:37 includes/cadmin.php:130
-#: includes/user_create.php:73
+#: src/admin.php:98 src/cadmin.php:41 src/cadmin.php:135
+#: src/user_create.php:79
 msgid "Groups"
 msgstr ""
 
-#: includes/admin.php:90 includes/admin.php:100 includes/cadmin.php:104
-#: includes/cadmin.php:131
+#: src/admin.php:99 src/admin.php:110 src/cadmin.php:109 src/cadmin.php:136
 msgid "Edit Groups"
 msgstr ""
 
-#: includes/admin.php:106 includes/user_create.php:51
+#: src/admin.php:117 src/user_create.php:57
 msgid "Create User"
 msgstr "Felhasználó létrehozása"
 
-#: includes/admin.php:110
+#: src/admin.php:121
 msgid "User List"
 msgstr "Felhasználólista"
 
-#: includes/admin.php:121
+#: src/admin.php:135
 msgid "Import Form"
 msgstr ""
 
-#: includes/admin.php:122
+#: src/admin.php:136
 msgid "MySQL Host Name"
 msgstr ""
 
-#: includes/admin.php:123
+#: src/admin.php:137
 msgid "MySQL Database Name"
 msgstr ""
 
-#: includes/admin.php:124
+#: src/admin.php:138
 msgid "MySQL Port Number"
 msgstr ""
 
-#: includes/admin.php:124
+#: src/admin.php:138
 msgid "Leave blank for default"
 msgstr ""
 
-#: includes/admin.php:125
+#: src/admin.php:139
 msgid "MySQL User Name"
 msgstr ""
 
-#: includes/admin.php:126
+#: src/admin.php:140
 msgid "MySQL User Password"
 msgstr ""
 
-#: includes/admin.php:129
+#: src/admin.php:143
 msgid "PHP-Calendar Table Prefix"
 msgstr ""
 
-#: includes/admin.php:134
+#: src/admin.php:148
 msgid "Import Calendar"
 msgstr ""
 
-#: includes/admin.php:150
+#: src/admin.php:167
 msgid ""
 "This script needs read access to your calendar directory in order to write "
 "the translation files. Alternatively, you could run translate.php from the "
@@ -135,1331 +136,1332 @@ msgid ""
 "files from .po files."
 msgstr ""
 
-#: includes/admin.php:153
+#: src/admin.php:170
 msgid "Generate Translations"
 msgstr ""
 
-#: includes/cadmin.php:31
+#: src/cadmin.php:35
 msgid "Calendar Configuration"
 msgstr ""
 
-#: includes/cadmin.php:35
+#: src/cadmin.php:39
 msgid "Categories"
 msgstr ""
 
-#: includes/cadmin.php:68
+#: src/cadmin.php:73
 msgid "Options"
 msgstr "Beállítások"
 
-#: includes/cadmin.php:72 includes/cadmin.php:121
-#: includes/calendar_form.php:92 includes/settings.php:58
-#: includes/settings.php:98 includes/user_create.php:58
-#: includes/user_groups.php:70
+#: src/cadmin.php:77 src/cadmin.php:126 src/calendar_form.php:99
+#: src/settings.php:65 src/settings.php:108 src/user_create.php:64
+#: src/user_groups.php:76
 msgid "Submit"
 msgstr "Elküldés"
 
-#: includes/cadmin.php:98 includes/cadmin.php:125
+#: src/cadmin.php:103 src/cadmin.php:130
 msgid "Read"
 msgstr "Olvasás"
 
-#: includes/cadmin.php:99 includes/cadmin.php:126
+#: src/cadmin.php:104 src/cadmin.php:131
 msgid "Write"
 msgstr "Írás"
 
-#: includes/cadmin.php:100 includes/event_form.php:110
+#: src/cadmin.php:105 src/event_form.php:117
 msgid "Read-only"
 msgstr "Csak olvasható"
 
-#: includes/cadmin.php:101 includes/cadmin.php:128 includes/display_day.php:89
-#: includes/display_event.php:76 includes/display_event.php:162
+#: src/cadmin.php:106 src/cadmin.php:133 src/display_day.php:88
+#: src/display_event.php:83 src/display_event.php:174
 msgid "Modify"
 msgstr "Módosítás"
 
-#: includes/cadmin.php:102 includes/cadmin.php:129 includes/calendar.php:496
-#: includes/user_create.php:71
+#: src/cadmin.php:107 src/cadmin.php:134 src/calendar.php:646
+#: src/user_create.php:77
 msgid "Admin"
 msgstr "Rendszergazda"
 
-#: includes/cadmin.php:117
+#: src/cadmin.php:122
 msgid "User Permissions"
 msgstr "Felhasználói jogosultságok"
 
-#: includes/cadmin.php:124 includes/user_create.php:61
+#: src/cadmin.php:129 src/user_create.php:67
 msgid "User Name"
 msgstr "Felhasználónév"
 
-#: includes/cadmin.php:127
+#: src/cadmin.php:132
 msgid "Can Create Read-Only"
 msgstr "Létrehozhat csak olvashatót"
 
-#: includes/cadmin.php:146 includes/cadmin.php:197
+#: src/cadmin.php:151 src/cadmin.php:203
 msgid "No Name"
 msgstr "Névtelen"
 
-#: includes/cadmin.php:149 includes/category_form.php:44
-#: includes/event_form.php:113
+#: src/cadmin.php:154 src/category_form.php:47 src/event_form.php:120
 msgid "None"
 msgstr "Nincs"
 
-#: includes/cadmin.php:168
+#: src/cadmin.php:173
 msgid "Create category"
 msgstr "Kategória létrehozása"
 
-#: includes/cadmin.php:171
+#: src/cadmin.php:176
 msgid "Calendar Categories"
 msgstr "Naptárkategóriák"
 
-#: includes/cadmin.php:174 includes/cadmin.php:218
-#: includes/category_form.php:28 includes/group_form.php:28
+#: src/cadmin.php:179 src/cadmin.php:224 src/category_form.php:31
+#: src/group_form.php:31
 msgid "Name"
 msgstr "Név"
 
-#: includes/cadmin.php:175 includes/category_form.php:40
+#: src/cadmin.php:180 src/category_form.php:43
 msgid "Text Color"
 msgstr "Szövegszín"
 
-#: includes/cadmin.php:176 includes/category_form.php:41
+#: src/cadmin.php:181 src/category_form.php:44
 msgid "Background Color"
 msgstr "Háttérszín"
 
-#: includes/cadmin.php:177
+#: src/cadmin.php:182
 msgid "Visible to User Group"
 msgstr ""
 
-#: includes/cadmin.php:178 includes/cadmin.php:219
+#: src/cadmin.php:183 src/cadmin.php:225
 msgid "Actions"
 msgstr ""
 
-#: includes/cadmin.php:212
+#: src/cadmin.php:218
 msgid "Create group"
 msgstr ""
 
-#: includes/cadmin.php:215
+#: src/cadmin.php:221
 msgid "Calendar Groups"
 msgstr ""
 
-#: includes/cadmin_submit.php:26 includes/calendar_form.php:26
-#: includes/user_create.php:26 includes/user_groups.php:26
-#: includes/user_permissions_submit.php:27
+#: src/cadmin_submit.php:29 src/calendar_form.php:30 src/user_create.php:29
+#: src/user_groups.php:29 src/user_permissions_submit.php:30
 msgid "Permission denied"
 msgstr "Hozzáférés megtagadva"
 
-#: includes/cadmin_submit.php:39
+#: src/cadmin_submit.php:42
 msgid " was not set."
 msgstr " nincs beállítva."
 
-#: includes/cadmin_submit.php:46
+#: src/cadmin_submit.php:49
 msgid "Updated options"
 msgstr "Frissített beállítások"
 
-#: includes/calendar.php:118 includes/settings.php:104
+#: src/calendar.php:147 src/settings.php:114
 msgid "Language"
 msgstr ""
 
-#: includes/calendar.php:119 includes/settings.php:101
+#: src/calendar.php:148 src/settings.php:111
 msgid "Timezone"
 msgstr ""
 
-#: includes/calendar.php:443
+#: src/calendar.php:590
 msgid "Welcome"
 msgstr ""
 
-#: includes/calendar.php:450 includes/settings.php:31 includes/settings.php:91
+#: src/calendar.php:597 src/settings.php:35 src/settings.php:101
 msgid "Settings"
 msgstr ""
 
-#: includes/calendar.php:453
+#: src/calendar.php:600
 msgid "Log out"
 msgstr "Kijelentkezés"
 
-#: includes/calendar.php:457 includes/login.php:57 includes/login.php:68
+#: src/calendar.php:604 src/login.php:62 src/login.php:73
 msgid "Log in"
 msgstr "Bejelentkezés"
 
-#: includes/calendar.php:475
+#: src/calendar.php:625
 msgid "Add Event"
 msgstr "Esemény hozzáadása"
 
-#: includes/calendar.php:479 includes/search.php:106 includes/search.php:121
+#: src/calendar.php:629 src/search.php:110 src/search.php:125
 msgid "Search"
 msgstr "Keresés"
 
-#: includes/calendar.php:483
+#: src/calendar.php:633
 msgid "View Month"
 msgstr "Havi nézet"
 
-#: includes/calendar.php:488
+#: src/calendar.php:638
 msgid "View date"
 msgstr "Napi nézet"
 
-#: includes/calendar.php:492
+#: src/calendar.php:642
 msgid "Calendar Admin"
 msgstr "Naptár rendszergazda"
 
-#: includes/calendar.php:527 includes/calendar.php:588
-#: includes/calendar.php:597 includes/settings.php:81
+#: src/calendar.php:690 src/calendar.php:754 src/calendar.php:766
+#: src/settings.php:91
 msgid "Default"
 msgstr ""
 
-#: includes/calendar.php:533
+#: src/calendar.php:696
 msgid "Week Start"
 msgstr "Hét kezdete"
 
-#: includes/calendar.php:535 includes/globals.php:38
+#: src/calendar.php:698 src/globals.php:38
 msgid "Sunday"
 msgstr "Vasárnap"
 
-#: includes/calendar.php:536 includes/globals.php:39
+#: src/calendar.php:699 src/globals.php:39
 msgid "Monday"
 msgstr "Hétfő"
 
-#: includes/calendar.php:537 includes/globals.php:44
+#: src/calendar.php:700 src/globals.php:44
 msgid "Saturday"
 msgstr "Szombat"
 
-#: includes/calendar.php:539
+#: src/calendar.php:702
 msgid "24 Hour Time"
 msgstr "24 órás idő"
 
-#: includes/calendar.php:540
+#: src/calendar.php:703
 msgid "Calendar Title"
 msgstr "Naptár címe"
 
-#: includes/calendar.php:541
+#: src/calendar.php:704
 msgid "Maximum Subject Length"
 msgstr "Maximális tárgyhossz"
 
-#: includes/calendar.php:542
+#: src/calendar.php:705
 msgid "Events Display Daily Maximum"
 msgstr ""
 
-#: includes/calendar.php:543
+#: src/calendar.php:706
 msgid "Public Permissions"
 msgstr "Nyilvános jogosultságok"
 
-#: includes/calendar.php:545
+#: src/calendar.php:708
 msgid "Cannot read nor write events"
 msgstr "Nem olvashat és nem írhat eseményeket"
 
-#: includes/calendar.php:546
+#: src/calendar.php:709
 msgid "Can read but not write events"
 msgstr "Olvashat, de nem írhat eseményeket"
 
-#: includes/calendar.php:547
+#: src/calendar.php:710
 msgid "Can create but not modify events"
 msgstr "Létrehozhat, de nem módosíthat eseményeket"
 
-#: includes/calendar.php:548
+#: src/calendar.php:711
 msgid "Can create and modify events"
 msgstr "Létrehozhat és módosíthat eseményeket"
 
-#: includes/calendar.php:551
+#: src/calendar.php:714
 msgid "Default Timezone"
 msgstr ""
 
-#: includes/calendar.php:552
+#: src/calendar.php:715
 msgid "Default Language"
 msgstr ""
 
-#: includes/calendar.php:554
+#: src/calendar.php:717
 msgid "Date Format"
 msgstr ""
 
-#: includes/calendar.php:556
+#: src/calendar.php:719
 msgid "Theme"
 msgstr ""
 
-#: includes/calendar.php:615
+#: src/calendar.php:787
 msgid "Month Day Year"
 msgstr ""
 
-#: includes/calendar.php:616
+#: src/calendar.php:788
 msgid "Year Month Day"
 msgstr ""
 
-#: includes/calendar.php:617
+#: src/calendar.php:789
 msgid "Day Month Year"
 msgstr ""
 
-#: includes/calendar.php:649
+#: src/calendar.php:837
 msgid "You do not have permission to do that: "
 msgstr "Nincs jogosultsága ezt tenni: "
 
-#: includes/calendar.php:662 includes/util.php:156
+#: src/calendar.php:850 src/util.php:229
 msgid "Error"
 msgstr "Hiba"
 
-#: includes/calendar.php:664 includes/util.php:160
+#: src/calendar.php:852 src/util.php:233
 msgid "Backtrace"
 msgstr "Visszakövetés"
 
-#: includes/calendar.php:676
+#: src/calendar.php:868
 msgid "Invalid action"
 msgstr "Érvénytelen művelet"
 
-#: includes/calendar.php:721
+#: src/calendar.php:925
 msgid "Secret token mismatch. Possible request forgery attempt."
 msgstr ""
 
-#: includes/calendar.php:800
+#: src/calendar.php:1009
 msgid "Unsupported config type"
 msgstr "Nem támogatott beállítótípus"
 
-#: includes/calendar.php:810
+#: src/calendar.php:1030
 #, php-format
 msgid "Required field \"%s\" was not set."
 msgstr ""
 
-#: includes/calendar.php:819
+#: src/calendar.php:1036
 #, php-format
 msgid "Malformed \"%s\" time: \"%s\""
 msgstr ""
 
-#: includes/calendar.php:834
+#: src/calendar.php:1051
 msgid "Unrecognized period: "
 msgstr ""
 
-#: includes/calendar.php:842
+#: src/calendar.php:1059
 #, php-format
 msgid "Malformed \"%s\" date: \"%s\""
 msgstr ""
 
-#: includes/calendar.php:863
+#: src/calendar.php:1080
 msgid "Invalid date_format."
 msgstr ""
 
-#: includes/calendar_delete.php:29
+#: src/calendar_delete.php:32
 msgid "No calendar selected."
 msgstr "Nincs naptár kiválasztva."
 
-#: includes/calendar_delete.php:45 includes/category_delete.php:49
-#: includes/event_delete.php:46 includes/group_delete.php:49
-#: includes/occurrence_delete.php:48 includes/user_delete.php:50
-msgid "Confirm you want to delete:"
-msgstr "Erősítse meg törlési szándékát:"
+#: src/calendar_delete.php:40 src/setup.php:95
+msgid "Invalid calendar ID."
+msgstr ""
 
-#: includes/calendar_delete.php:47 includes/category_delete.php:51
-#: includes/event_delete.php:48 includes/group_delete.php:51
-#: includes/occurrence_delete.php:50 includes/user_delete.php:52
+#: src/calendar_delete.php:43
+msgid "Confirm you want to delete calendar:"
+msgstr ""
+
+#: src/calendar_delete.php:44 src/category_delete.php:54
+#: src/event_delete.php:51 src/group_delete.php:54
+#: src/occurrence_delete.php:53 src/user_delete.php:55
 msgid "Confirm"
 msgstr "Megerősítés"
 
-#: includes/calendar_delete.php:50 includes/category_delete.php:54
-#: includes/event_delete.php:51 includes/group_delete.php:54
-#: includes/occurrence_delete.php:53 includes/user_delete.php:55
+#: src/calendar_delete.php:47 src/category_delete.php:57
+#: src/event_delete.php:54 src/group_delete.php:57
+#: src/occurrence_delete.php:56 src/user_delete.php:58
 msgid "Deny"
 msgstr "Tiltás"
 
-#: includes/calendar_delete.php:58
+#: src/calendar_delete.php:53
 msgid "You do not have permission to remove calendar"
 msgstr ""
 
-#: includes/calendar_delete.php:63
+#: src/calendar_delete.php:58
 msgid "Removed calendar"
 msgstr ""
 
-#: includes/calendar_delete.php:65
+#: src/calendar_delete.php:60
 msgid "Could not remove calendar"
 msgstr ""
 
-#: includes/calendar_form.php:64
+#: src/calendar_form.php:68
 msgid "Calendar created."
 msgstr "Naptár létrehozva."
 
-#: includes/category_delete.php:29
+#: src/category_delete.php:32
 msgid "No category selected."
 msgstr "Nincs kategória kiválasztva."
 
-#: includes/category_delete.php:63
+#: src/category_delete.php:52 src/event_delete.php:49 src/group_delete.php:52
+#: src/occurrence_delete.php:51 src/user_delete.php:53
+msgid "Confirm you want to delete:"
+msgstr "Erősítse meg törlési szándékát:"
+
+#: src/category_delete.php:66
 msgid "You do not have permission to delete category: "
 msgstr "Nincs jogosultsága a kategória törléséhez: "
 
-#: includes/category_delete.php:68
+#: src/category_delete.php:71
 msgid "Removed category: "
 msgstr "Eltávolított kategória: "
 
-#: includes/category_delete.php:71
+#: src/category_delete.php:74
 msgid "Could not remove category: "
 msgstr "Nem távolítható el a kategória: "
 
-#: includes/category_form.php:27
+#: src/category_form.php:30
 msgid "Category Form"
 msgstr "Kategória űrlap"
 
-#: includes/category_form.php:43
+#: src/category_form.php:46
 msgid "Visible to groups"
 msgstr ""
 
-#: includes/category_form.php:49
+#: src/category_form.php:52
 msgid "Submit Category"
 msgstr ""
 
-#: includes/category_submit.php:33
+#: src/category_submit.php:36
 msgid "Color not specified."
 msgstr ""
 
-#: includes/category_submit.php:47
-msgid "Invalid color."
+#: src/category_submit.php:50 src/category_submit.php:53
+msgid "Invalid color: "
 msgstr ""
 
-#: includes/category_submit.php:55
+#: src/category_submit.php:62
 msgid "You do not have permission to add categories to all calendars."
 msgstr "Nincs jogosultsága kategóriák hozzáadására az összes naptárhoz."
 
-#: includes/category_submit.php:60
+#: src/category_submit.php:67
 msgid "You do not have permission to add categories to this calendar."
 msgstr "Nincs jogosultsága kategóriák hozzáadására ehhez a naptárhoz."
 
-#: includes/category_submit.php:73
+#: src/category_submit.php:80
 msgid "You do not have permission to modify this category."
 msgstr ""
 
-#: includes/category_submit.php:82
+#: src/category_submit.php:89
 msgid "Modified category: "
 msgstr "Módosított kategória: "
 
-#: includes/category_submit.php:86
+#: src/category_submit.php:93
 msgid "Created category: "
 msgstr "Létrehozott kategória: "
 
-#: includes/category_submit.php:90
+#: src/category_submit.php:97
 msgid "Error submitting category."
 msgstr "Hiba a kategória elküldésekor."
 
-#: includes/display_day.php:45
+#: src/display_day.php:44
 msgid "Title"
 msgstr "Cím"
 
-#: includes/display_day.php:46 includes/form.php:431
+#: src/display_day.php:45 src/form.php:365
 msgid "Time"
 msgstr "Idő"
 
-#: includes/display_day.php:47 includes/display_event.php:127
-#: includes/display_event.php:171 includes/event_form.php:44
-#: includes/search.php:92
+#: src/display_day.php:46 src/display_event.php:134 src/display_event.php:183
+#: src/event_form.php:51 src/search.php:94
 msgid "Description"
 msgstr "Leírás"
 
-#: includes/display_day.php:58
+#: src/display_day.php:57
 msgid "Delete Selected"
 msgstr "A kijelölt törlése"
 
-#: includes/display_day.php:111
+#: src/display_day.php:110
 msgid "No events on this day."
 msgstr "Nincsenek események ezen a napon."
 
-#: includes/display_event.php:41
+#: src/display_event.php:44
 msgid "Invalid arguments."
 msgstr "Érvénytelen argumentumok."
 
-#: includes/display_event.php:53 includes/display_event.php:142
+#: src/display_event.php:60 src/display_event.php:154
 msgid "You do not have permission to read this event."
 msgstr "Nincs jogosultsága ennek az eseménynek az olvasásához."
 
-#: includes/display_event.php:57 includes/display_event.php:146
-#: includes/display_event.php:218
+#: src/display_event.php:64 src/display_event.php:158
+#: src/display_event.php:233
 msgid "by"
 msgstr ""
 
-#: includes/display_event.php:62 includes/display_event.php:156
-#: includes/display_event.php:226 includes/event_form.php:112
+#: src/display_event.php:69 src/display_event.php:168
+#: src/display_event.php:241 src/event_form.php:119
 msgid "Category"
 msgstr "Kategória"
 
-#: includes/display_event.php:66 includes/event_form.php:46
-#: includes/occur_form.php:42
+#: src/display_event.php:73 src/event_form.php:53 src/occur_form.php:48
 msgid "When"
 msgstr "Ekkor:"
 
-#: includes/display_event.php:68 includes/display_event.php:149
+#: src/display_event.php:75 src/display_event.php:161
 msgid "Created at: "
 msgstr ""
 
-#: includes/display_event.php:70 includes/display_event.php:151
+#: src/display_event.php:77 src/display_event.php:163
 msgid "Last modified at: "
 msgstr ""
 
-#: includes/display_event.php:80
+#: src/display_event.php:87
 msgid "Modify Occurrence"
 msgstr ""
 
-#: includes/display_event.php:82
+#: src/display_event.php:89
 msgid "Remove Occurrence"
 msgstr ""
 
-#: includes/display_event.php:101
+#: src/display_event.php:108
 msgid "Previous occurrence on"
 msgstr ""
 
-#: includes/display_event.php:111
+#: src/display_event.php:118
 msgid "Next occurrence on"
 msgstr ""
 
-#: includes/display_event.php:117
+#: src/display_event.php:124
 msgid "View All Occurrences"
 msgstr "Minden előfordulás megtekintése"
 
-#: includes/display_event.php:164
+#: src/display_event.php:176
 msgid "Add Occurrence"
 msgstr ""
 
-#: includes/display_event.php:187 includes/occurrence_delete.php:45
-#: includes/phpcoccurrence.class.php:244 includes/phpcoccurrence.class.php:253
-#: includes/phpcoccurrence.class.php:255
+#: src/display_event.php:199 src/occurrence_delete.php:48
+#: src/phpcoccurrence.class.php:249 src/phpcoccurrence.class.php:258
+#: src/phpcoccurrence.class.php:260 src/util.php:152
 msgid "at"
 msgstr "ettől:"
 
-#: includes/display_event.php:194
+#: src/display_event.php:206
 msgid "Remove"
 msgstr ""
 
-#: includes/display_event.php:201
+#: src/display_event.php:213
 msgid "Occurrences"
 msgstr ""
 
-#: includes/display_event.php:228
+#: src/display_event.php:243
 msgid "from"
 msgstr ""
 
-#: includes/display_month.php:32 includes/display_week.php:32
+#: src/display_month.php:35 src/display_week.php:35
 msgctxt "Week"
 msgid "W"
 msgstr ""
 
-#: includes/display_month.php:231 includes/display_week.php:215
+#: src/display_month.php:251 src/display_week.php:236
 msgid "View Additional Events"
 msgstr ""
 
-#: includes/display_month.php:245 includes/display_week.php:229
+#: src/display_month.php:265 src/display_week.php:250
 msgid "continued"
 msgstr ""
 
-#: includes/display_week.php:39
+#: src/display_week.php:42
 msgid "Invalid date."
 msgstr ""
 
-#: includes/event_delete.php:29
+#: src/event_delete.php:32
 msgid "No event selected."
 msgstr "Nincs esemény kiválasztva."
 
-#: includes/event_delete.php:75
+#: src/event_delete.php:78
 msgid "Removed event"
 msgstr ""
 
-#: includes/event_delete.php:77
+#: src/event_delete.php:80
 msgid "Removed events"
 msgstr ""
 
-#: includes/event_delete.php:84
+#: src/event_delete.php:87
 msgid "Could not remove event"
 msgstr ""
 
-#: includes/event_delete.php:86
+#: src/event_delete.php:89
 msgid "Could not remove events"
 msgstr ""
 
-#: includes/event_delete.php:93
+#: src/event_delete.php:96
 msgid "You do not have permission to remove event"
 msgstr ""
 
-#: includes/event_delete.php:95
+#: src/event_delete.php:98
 msgid "You do not have permission to remove events"
 msgstr ""
 
-#: includes/event_form.php:40
+#: src/event_form.php:47
 msgid "Event Form"
 msgstr "Esemény űrlap"
 
-#: includes/event_form.php:41 includes/globals.php:70 includes/search.php:90
+#: src/event_form.php:48 src/globals.php:70 src/search.php:92
 msgid "Subject"
 msgstr "Tárgy"
 
-#: includes/event_form.php:50
+#: src/event_form.php:57
 msgid "Change the event date and time"
 msgstr ""
 
-#: includes/event_form.php:53 includes/occur_form.php:44
-#: includes/phpcoccurrence.class.php:252 includes/search.php:111
+#: src/event_form.php:60 src/occur_form.php:50
+#: src/phpcoccurrence.class.php:257 src/search.php:115
 msgid "From"
 msgstr "Ettől"
 
-#: includes/event_form.php:54 includes/occur_form.php:45
-#: includes/search.php:113
+#: src/event_form.php:61 src/occur_form.php:51 src/search.php:117
 msgid "To"
 msgstr "Eddig"
 
-#: includes/event_form.php:57 includes/occur_form.php:48
+#: src/event_form.php:64 src/occur_form.php:54
 msgid "Time Type"
 msgstr "Időtípus"
 
-#: includes/event_form.php:58 includes/occur_form.php:49
+#: src/event_form.php:65 src/occur_form.php:55
 msgid "Normal"
 msgstr "Normál"
 
-#: includes/event_form.php:59 includes/occur_form.php:50
+#: src/event_form.php:66 src/occur_form.php:56
 msgid "Full Day"
 msgstr "Egész nap"
 
-#: includes/event_form.php:60 includes/occur_form.php:51
+#: src/event_form.php:67 src/occur_form.php:57
 msgid "To Be Announced"
 msgstr "Bejelenteni"
 
-#: includes/event_form.php:66
+#: src/event_form.php:73
 msgid "Repeats"
 msgstr "Ismétlődés"
 
-#: includes/event_form.php:68
+#: src/event_form.php:75
 msgid "Never"
 msgstr "Soha"
 
-#: includes/event_form.php:70
+#: src/event_form.php:77
 msgid "Daily"
 msgstr "Naponta"
 
-#: includes/event_form.php:72
+#: src/event_form.php:79
 msgid "Weekly"
 msgstr "Hetente"
 
-#: includes/event_form.php:74
+#: src/event_form.php:81
 msgid "Monthly"
 msgstr "Havonta"
 
-#: includes/event_form.php:76
+#: src/event_form.php:83
 msgid "Yearly"
 msgstr "Évente"
 
-#: includes/event_form.php:78 includes/event_form.php:85
-#: includes/event_form.php:92 includes/event_form.php:99
+#: src/event_form.php:85 src/event_form.php:92 src/event_form.php:99
+#: src/event_form.php:106
 msgid "Every"
 msgstr "Minden"
 
-#: includes/event_form.php:79
+#: src/event_form.php:86
 msgid "Repeat every how many days?"
 msgstr "Minden hányadik napon ismétlődjön?"
 
-#: includes/event_form.php:82 includes/event_form.php:90
-#: includes/event_form.php:97 includes/event_form.php:104
+#: src/event_form.php:89 src/event_form.php:97 src/event_form.php:104
+#: src/event_form.php:111
 msgid "Until"
 msgstr "Eddig"
 
-#: includes/event_form.php:86
+#: src/event_form.php:93
 msgid "Repeat every how many weeks?"
 msgstr "Minden hányadik héten ismétlődjön?"
 
-#: includes/event_form.php:93
+#: src/event_form.php:100
 msgid "Repeat every how many months?"
 msgstr "Minden hányadik hónapban ismétlődjön?"
 
-#: includes/event_form.php:100
+#: src/event_form.php:107
 msgid "Repeat every how many years?"
 msgstr "Minden hányadik évben ismétlődjön?"
 
-#: includes/event_form.php:129
+#: src/event_form.php:136
 msgid "Submit Event"
 msgstr ""
 
-#: includes/event_form.php:296 includes/occur_form.php:134
+#: src/event_form.php:315 src/occur_form.php:146
 msgid "Unrecognized Time Type."
 msgstr "Kategorizálatlan időtípus."
 
-#: includes/event_form.php:301 includes/occur_form.php:139
+#: src/event_form.php:320 src/occur_form.php:151
 msgid "An event cannot have an end earlier than its start."
 msgstr ""
 
-#: includes/event_form.php:309 includes/occur_form.php:144
+#: src/event_form.php:328 src/occur_form.php:156
 msgid "You do not have permission to write to this calendar."
 msgstr "Nincs írási jogosultsága ehhez a naptárhoz."
 
-#: includes/event_form.php:342
+#: src/event_form.php:361
 msgid "Required field \"every-day\" is not set."
 msgstr "A kötelező „every-day” mező nincs beállítva."
 
-#: includes/event_form.php:345
+#: src/event_form.php:364
 msgid "every-day must be greater than 1"
 msgstr "Az every-day értékének nagyobbnak kell lennie 1-nél"
 
-#: includes/event_form.php:361
+#: src/event_form.php:380
 msgid "Required field \"every-week\" is not set."
 msgstr "A kötelező „every-week” mező nincs beállítva."
 
-#: includes/event_form.php:363
+#: src/event_form.php:382
 msgid "every-week must be greater than 1"
 msgstr "Az every-week értékének nagyobbnak kell lennie 1-nél"
 
-#: includes/event_form.php:380
+#: src/event_form.php:399
 msgid "Required field \"every-month\" is not set."
 msgstr "A kötelező „every-month” mező nincs beállítva."
 
-#: includes/event_form.php:382 includes/event_form.php:401
+#: src/event_form.php:401 src/event_form.php:420
 msgid "every-month must be greater than 1"
 msgstr "Az every-month értékének nagyobbnak kell lennie 1-nél"
 
-#: includes/event_form.php:399
+#: src/event_form.php:418
 msgid "Required field \"every-year\" is not set."
 msgstr "A kötelező „every-year” mező nincs beállítva."
 
-#: includes/event_form.php:417
+#: src/event_form.php:436
 msgid "Invalid event type."
 msgstr "Érvénytelen eseménytípus."
 
-#: includes/event_form.php:423
+#: src/event_form.php:442
 msgid "Modified event: "
 msgstr ""
 
-#: includes/event_form.php:425
+#: src/event_form.php:444
 msgid "Created event: "
 msgstr ""
 
-#: includes/event_form.php:432
+#: src/event_form.php:451
 msgid "Error submitting event."
 msgstr "Hiba az esemény elküldésekor."
 
-#: includes/form.php:32
-msgid "required"
-msgstr ""
-
-#: includes/form.php:102
-msgid "Cannot add a non-form element to a form."
-msgstr "Nem adható űrlapelemen kívül más az űrlaphoz."
-
-#: includes/form.php:428
+#: src/form.php:287 src/form.php:362
 msgid "Date"
 msgstr ""
 
-#: includes/globals.php:23
+#: src/globals.php:23
 msgid "January"
 msgstr "Január"
 
-#: includes/globals.php:24
+#: src/globals.php:24
 msgid "February"
 msgstr "Február"
 
-#: includes/globals.php:25
+#: src/globals.php:25
 msgid "March"
 msgstr "Március"
 
-#: includes/globals.php:26
+#: src/globals.php:26
 msgid "April"
 msgstr "Április"
 
-#: includes/globals.php:27 includes/globals.php:52
+#: src/globals.php:27 src/globals.php:52
 msgid "May"
 msgstr "Május"
 
-#: includes/globals.php:28
+#: src/globals.php:28
 msgid "June"
 msgstr "Június"
 
-#: includes/globals.php:29
+#: src/globals.php:29
 msgid "July"
 msgstr "Július"
 
-#: includes/globals.php:30
+#: src/globals.php:30
 msgid "August"
 msgstr "Augusztus"
 
-#: includes/globals.php:31
+#: src/globals.php:31
 msgid "September"
 msgstr "Szeptember"
 
-#: includes/globals.php:32
+#: src/globals.php:32
 msgid "October"
 msgstr "Október"
 
-#: includes/globals.php:33
+#: src/globals.php:33
 msgid "November"
 msgstr "November"
 
-#: includes/globals.php:34
+#: src/globals.php:34
 msgid "December"
 msgstr "December"
 
-#: includes/globals.php:40
+#: src/globals.php:40
 msgid "Tuesday"
 msgstr "Kedd"
 
-#: includes/globals.php:41
+#: src/globals.php:41
 msgid "Wednesday"
 msgstr "Szerda"
 
-#: includes/globals.php:42
+#: src/globals.php:42
 msgid "Thursday"
 msgstr "Csütörtök"
 
-#: includes/globals.php:43
+#: src/globals.php:43
 msgid "Friday"
 msgstr "Péntek"
 
-#: includes/globals.php:48
+#: src/globals.php:48
 msgid "Jan"
 msgstr "Jan"
 
-#: includes/globals.php:49
+#: src/globals.php:49
 msgid "Feb"
 msgstr "Feb"
 
-#: includes/globals.php:50
+#: src/globals.php:50
 msgid "Mar"
 msgstr "Már"
 
-#: includes/globals.php:51
+#: src/globals.php:51
 msgid "Apr"
 msgstr "Ápr"
 
-#: includes/globals.php:53
+#: src/globals.php:53
 msgid "Jun"
 msgstr "Jún"
 
-#: includes/globals.php:54
+#: src/globals.php:54
 msgid "Jul"
 msgstr "Júl"
 
-#: includes/globals.php:55
+#: src/globals.php:55
 msgid "Aug"
 msgstr "Aug"
 
-#: includes/globals.php:56
+#: src/globals.php:56
 msgid "Sep"
 msgstr "Sze"
 
-#: includes/globals.php:57
+#: src/globals.php:57
 msgid "Oct"
 msgstr "Okt"
 
-#: includes/globals.php:58
+#: src/globals.php:58
 msgid "Nov"
 msgstr "Nov"
 
-#: includes/globals.php:59
+#: src/globals.php:59
 msgid "Dec"
 msgstr "Dec"
 
-#: includes/globals.php:69
+#: src/globals.php:69
 msgid "Start Date"
 msgstr "Kezdő dátum"
 
-#: includes/globals.php:74
+#: src/globals.php:74
 msgid "Ascending"
 msgstr "Növekvő"
 
-#: includes/globals.php:75
+#: src/globals.php:75
 msgid "Descending"
 msgstr ""
 
-#: includes/group_delete.php:29
+#: src/group_delete.php:32
 msgid "No group selected."
 msgstr ""
 
-#: includes/group_delete.php:63
+#: src/group_delete.php:66
 msgid "You do not have permission to delete group: "
 msgstr ""
 
-#: includes/group_delete.php:68
+#: src/group_delete.php:71
 msgid "Removed group: "
 msgstr ""
 
-#: includes/group_delete.php:71
+#: src/group_delete.php:74
 msgid "Could not remove group: "
 msgstr ""
 
-#: includes/group_form.php:27
+#: src/group_form.php:30
 msgid "Group Form"
 msgstr ""
 
-#: includes/group_form.php:34
+#: src/group_form.php:37
 msgid "Submit Group"
 msgstr ""
 
-#: includes/group_submit.php:32
+#: src/group_submit.php:35
 msgid "You do not have permission to add a global group."
 msgstr ""
 
-#: includes/group_submit.php:37
+#: src/group_submit.php:40
 msgid "You do not have permission to add a group to this calendar."
 msgstr ""
 
-#: includes/group_submit.php:49
+#: src/group_submit.php:52
 msgid "You do not have permission to modify this group."
 msgstr ""
 
-#: includes/group_submit.php:57
+#: src/group_submit.php:60
 msgid "Modified group: "
 msgstr ""
 
-#: includes/group_submit.php:61
+#: src/group_submit.php:64
 msgid "Created group: "
 msgstr ""
 
-#: includes/group_submit.php:65
+#: src/group_submit.php:68
 msgid "Error submitting group."
 msgstr ""
 
-#: includes/import.php:26 includes/translate.php:28
+#: src/import.php:29 src/translate.php:31
 msgid "Need to be admin"
 msgstr ""
 
-#: includes/import.php:69
+#: src/import.php:72
 msgid "Error selecting events in import"
 msgstr ""
 
-#: includes/import.php:154
+#: src/import.php:157
 #, php-format
 msgid "Created %s events with %s occurences"
 msgstr ""
 
-#: includes/login.php:39
+#: src/login.php:42
 msgid "Logged in."
 msgstr "Bejelentkezve."
 
-#: includes/login.php:42
+#: src/login.php:45
 msgid "Sorry, Invalid Login"
 msgstr "Elnézést, érvénytelen bejelentkezés."
 
-#: includes/login.php:72
+#: src/login.php:77
 msgid "You must have cookies enabled to login."
 msgstr "Engedélyeznie kell a sütiket a belépéshez."
 
-#: includes/login.php:80 includes/settings.php:39 includes/user_create.php:64
+#: src/login.php:85 src/settings.php:43 src/user_create.php:70
 msgid "Password"
 msgstr "Jelszó"
 
-#: includes/logout.php:29
+#: src/logout.php:32
 msgid "Loggin out..."
 msgstr "Kijelentkezés..."
 
-#: includes/occur_form.php:40
+#: src/occur_form.php:46
 msgid "Occurrence Form"
 msgstr ""
 
-#: includes/occur_form.php:105
+#: src/occur_form.php:117
 msgid "Submit Occurrence"
 msgstr ""
 
-#: includes/occur_form.php:115
+#: src/occur_form.php:127
 msgid "Cannot create occurrence."
 msgstr ""
 
-#: includes/occur_form.php:149
+#: src/occur_form.php:161
 msgid "EID not set."
 msgstr ""
 
-#: includes/occur_form.php:161
+#: src/occur_form.php:173
 msgid "Modified occurence: "
 msgstr ""
 
-#: includes/occur_form.php:163
+#: src/occur_form.php:175
 msgid "Created occurence: "
 msgstr ""
 
-#: includes/occur_form.php:170
+#: src/occur_form.php:182
 msgid "Error submitting occurrence."
 msgstr ""
 
-#: includes/occurrence_delete.php:29
+#: src/occurrence_delete.php:32
 msgid "No occurrence selected."
 msgstr ""
 
-#: includes/occurrence_delete.php:79
+#: src/occurrence_delete.php:82
 msgid "Removed occurrence"
 msgstr ""
 
-#: includes/occurrence_delete.php:81
+#: src/occurrence_delete.php:84
 msgid "Removed occurrences"
 msgstr ""
 
-#: includes/occurrence_delete.php:88
+#: src/occurrence_delete.php:91
 msgid "Could not remove occurrence"
 msgstr ""
 
-#: includes/occurrence_delete.php:90
+#: src/occurrence_delete.php:93
 msgid "Could not remove occurrences"
 msgstr ""
 
-#: includes/occurrence_delete.php:97
+#: src/occurrence_delete.php:100
 msgid "You do not have permission to remove the occurrence."
 msgstr ""
 
-#: includes/occurrence_delete.php:99
+#: src/occurrence_delete.php:102
 msgid "You do not have permission to remove occurrences."
 msgstr ""
 
-#: includes/password_submit.php:27
+#: src/password_submit.php:31
 msgid "You must be logged in."
 msgstr ""
 
-#: includes/password_submit.php:33
+#: src/password_submit.php:37
 msgid "You do not have permission to change your password."
 msgstr ""
 
-#: includes/password_submit.php:36
+#: src/password_submit.php:40
 msgid "You must specify your old password."
 msgstr ""
 
-#: includes/password_submit.php:42
+#: src/password_submit.php:46
 msgid "The password you entered did not match your old password."
 msgstr ""
 
-#: includes/password_submit.php:46 includes/user_create.php:90
+#: src/password_submit.php:50 src/user_create.php:96
 msgid "You must specify a password"
 msgstr "Meg kell adnia egy jelszót"
 
-#: includes/password_submit.php:51 includes/user_create.php:95
+#: src/password_submit.php:55 src/user_create.php:101
 msgid "Your passwords did not match"
 msgstr "A jelszavak nem egyeztek"
 
-#: includes/password_submit.php:58
+#: src/password_submit.php:62
 msgid "Password updated."
 msgstr ""
 
-#: includes/phpccalendar.class.php:51
+#: src/phpccalendar.class.php:73
 msgid "(No title)"
 msgstr "(Nincs cím)"
 
-#: includes/phpcdatabase.class.php:93
+#: src/phpcdatabase.class.php:122
 msgid "Error in get_occurrences_by_date_range"
 msgstr "Hiba a get_occurrences_by_date_range függvényben"
 
-#: includes/phpcdatabase.class.php:145
+#: src/phpcdatabase.class.php:192
 msgid "Error in get_event_by_eid"
 msgstr "Hiba a get_event_by_eid függvényben"
 
-#: includes/phpcdatabase.class.php:149
+#: src/phpcdatabase.class.php:196
 msgid "Event doesn't exist"
 msgstr "Az esemény nem létezik"
 
-#: includes/phpcdatabase.class.php:171
+#: src/phpcdatabase.class.php:223
 msgid "Error in get_event_by_oid"
 msgstr ""
 
-#: includes/phpcdatabase.class.php:175 includes/phpcdatabase.class.php:340
+#: src/phpcdatabase.class.php:227 src/phpcdatabase.class.php:424
 msgid "Event doesn't exist with oid"
 msgstr ""
 
-#: includes/phpcdatabase.class.php:195
+#: src/phpcdatabase.class.php:252
 msgid "Error in get_category"
 msgstr "Hiba a get_category függvényben"
 
-#: includes/phpcdatabase.class.php:198
+#: src/phpcdatabase.class.php:255
 msgid "Category doesn't exist with catid"
 msgstr ""
 
-#: includes/phpcdatabase.class.php:212
+#: src/phpcdatabase.class.php:273
 msgid "Error in get_group"
 msgstr ""
 
-#: includes/phpcdatabase.class.php:215
+#: src/phpcdatabase.class.php:276
 msgid "Group doesn't exist with gid"
 msgstr ""
 
-#: includes/phpcdatabase.class.php:231
+#: src/phpcdatabase.class.php:296
 msgid "Error in get_groups"
 msgstr ""
 
-#: includes/phpcdatabase.class.php:250
+#: src/phpcdatabase.class.php:319
 msgid "Error in get_user_groups"
 msgstr ""
 
-#: includes/phpcdatabase.class.php:279
+#: src/phpcdatabase.class.php:353
 msgid "Error in get_categories"
 msgstr "Hiba a get_categories függvényben"
 
-#: includes/phpcdatabase.class.php:308
+#: src/phpcdatabase.class.php:387
 msgid "Error in get_visible_categories"
 msgstr ""
 
-#: includes/phpcdatabase.class.php:336
+#: src/phpcdatabase.class.php:420
 msgid "Error in get_occurrence_by_oid"
 msgstr "Hiba a get_occurrence_by_oid függvényben"
 
-#: includes/phpcdatabase.class.php:362
+#: src/phpcdatabase.class.php:450
 msgid "Error in get_occurrences_by_eid"
 msgstr "Hiba a get_occurrence_by_eid függvényben"
 
-#: includes/phpcdatabase.class.php:379 includes/phpcdatabase.class.php:395
+#: src/phpcdatabase.class.php:471 src/phpcdatabase.class.php:491
 msgid "Error while removing an event."
 msgstr "Hiba történt az esemény eltávolításakor."
 
-#: includes/phpcdatabase.class.php:407
+#: src/phpcdatabase.class.php:507
 msgid "Error while removing an occurrence."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:420 includes/phpcdatabase.class.php:461
+#: src/phpcdatabase.class.php:524 src/phpcdatabase.class.php:577
 msgid "Error while removing a calendar"
 msgstr "Hiba történt a naptár eltávolításakor."
 
-#: includes/phpcdatabase.class.php:433
+#: src/phpcdatabase.class.php:541
 msgid "Error while removing category."
 msgstr "Hiba történt a kategória eltávolításakor."
 
-#: includes/phpcdatabase.class.php:446
+#: src/phpcdatabase.class.php:558
 msgid "Error while removing group."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:466
+#: src/phpcdatabase.class.php:582
 msgid "Error while removing "
 msgstr "Hiba történt az eltávolításkor"
 
-#: includes/phpcdatabase.class.php:485
+#: src/phpcdatabase.class.php:606
 msgid "Could not read permissions."
 msgstr "Nem olvashatók a jogosultságok."
 
-#: includes/phpcdatabase.class.php:500
+#: src/phpcdatabase.class.php:624
 msgid "Could not get calendars."
 msgstr "Nem sikerült elérni a naptárakat."
 
-#: includes/phpcdatabase.class.php:529 includes/phpcdatabase.class.php:549
+#: src/phpcdatabase.class.php:670 src/phpcdatabase.class.php:694
 msgid "Could not get user."
 msgstr "Nem sikerült elérni a felhasználót."
 
-#: includes/phpcdatabase.class.php:565 includes/phpcdatabase.class.php:581
+#: src/phpcdatabase.class.php:714 src/phpcdatabase.class.php:734
 msgid "Error getting user."
 msgstr "Hiba a felhasználó elérésekor."
 
-#: includes/phpcdatabase.class.php:597
+#: src/phpcdatabase.class.php:755
 msgid "Error creating user."
 msgstr "Hiba a felhasználó létrehozásakor."
 
-#: includes/phpcdatabase.class.php:608 includes/phpcdatabase.class.php:620
+#: src/phpcdatabase.class.php:769
 msgid "Error reading options"
 msgstr "Hiba a beállítások olvasásakor"
 
-#: includes/phpcdatabase.class.php:631
-msgid "Error creating options"
-msgstr "Hiba a beállítások létrehozásakor"
+#: src/phpcdatabase.class.php:786
+msgid "Error updating option"
+msgstr ""
 
-#: includes/phpcdatabase.class.php:641
+#: src/phpcdatabase.class.php:802
+msgid "Error creating option"
+msgstr ""
+
+#: src/phpcdatabase.class.php:816
 msgid "Error updating password."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:652
+#: src/phpcdatabase.class.php:831
 msgid "Error updating timezone."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:663
+#: src/phpcdatabase.class.php:846
 msgid "Error updating language."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:675
+#: src/phpcdatabase.class.php:862
 msgid "Error adding group to user."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:686
+#: src/phpcdatabase.class.php:877
 msgid "Error removing group from user."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:706
+#: src/phpcdatabase.class.php:906
 msgid "Error creating event."
 msgstr "Hiba az esemény létrehozásakor."
 
-#: includes/phpcdatabase.class.php:733
+#: src/phpcdatabase.class.php:940
 msgid "Error creating occurrence."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:758
+#: src/phpcdatabase.class.php:976
 msgid "Error modifying occurrence."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:780
+#: src/phpcdatabase.class.php:1006
 msgid "Error modifying event."
 msgstr "Hiba az esemény módosításakor."
 
-#: includes/phpcdatabase.class.php:794
+#: src/phpcdatabase.class.php:1028
 msgid "Error creating category."
 msgstr "Hiba a kategória létrehozásakor."
 
-#: includes/phpcdatabase.class.php:807
+#: src/phpcdatabase.class.php:1046
 msgid "Error creating group."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:823
+#: src/phpcdatabase.class.php:1070
 msgid "Error modifying category."
 msgstr "Hiba a kategória módosításakor."
 
-#: includes/phpcdatabase.class.php:836
+#: src/phpcdatabase.class.php:1088
 msgid "Error modifying group."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:871
+#: src/phpcdatabase.class.php:1134
 msgid "Error during searching"
 msgstr "Hiba a keresés során"
 
-#: includes/phpcdatabase.class.php:897
+#: src/phpcdatabase.class.php:1165
 msgid "Error updating user permissions."
 msgstr "Hiba a felhasználó jogosultságainak frissítésekor."
 
-#: includes/phpcdatabase.class.php:906
+#: src/phpcdatabase.class.php:1179
 msgid "Error getting login token."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:921
+#: src/phpcdatabase.class.php:1199
 msgid "Error adding login token."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:931
+#: src/phpcdatabase.class.php:1214
 msgid "Error updating login token."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:940
+#: src/phpcdatabase.class.php:1226
 msgid "Error removing login tokens."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:949
+#: src/phpcdatabase.class.php:1235
 msgid "Error cleaning login tokens."
 msgstr ""
 
-#: includes/phpcdatabase.class.php:959
+#: src/phpcdatabase.class.php:1251
 msgid "SQL query"
 msgstr "SQL lekérdezés"
 
-#: includes/phpcevent.class.php:43
+#: src/phpcevent.class.php:60
 msgid "anonymous"
 msgstr "névtelen"
 
-#: includes/phpcevent.class.php:45
+#: src/phpcevent.class.php:62
 msgid "unknown"
 msgstr "ismeretlen"
 
-#: includes/phpcevent.class.php:72
+#: src/phpcevent.class.php:91
 msgid "(No subject)"
 msgstr "(Nincs tárgy)"
 
-#: includes/phpcoccurrence.class.php:53 includes/phpcoccurrence.class.php:76
+#: src/phpcoccurrence.class.php:55 src/phpcoccurrence.class.php:76
 msgid "DB returned an invalid date."
 msgstr ""
 
-#: includes/phpcoccurrence.class.php:105 includes/phpcoccurrence.class.php:121
+#: src/phpcoccurrence.class.php:103 src/phpcoccurrence.class.php:118
 msgid "TBA"
 msgstr "TBA"
 
-#: includes/phpcoccurrence.class.php:116 includes/phpcoccurrence.class.php:254
+#: src/phpcoccurrence.class.php:113 src/phpcoccurrence.class.php:259
 msgid "to"
 msgstr "eddig:"
 
-#: includes/search.php:43
+#: src/search.php:46
 msgid "Invalid sort option"
 msgstr "Érvénytelen rendezési beállítás"
 
-#: includes/search.php:49
+#: src/search.php:52
 msgid "Invalid order option"
 msgstr "Érvénytelen sorrend beállítás"
 
-#: includes/search.php:83
+#: src/search.php:85
 msgid "No events matched your search criteria."
 msgstr "A keresési kritériumára nem illeszkedik egyetlen esemény sem."
 
-#: includes/search.php:87
+#: src/search.php:89
 msgid "Search Results"
 msgstr "A keresés eredménye"
 
-#: includes/search.php:91
+#: src/search.php:93
 msgid "Date Time"
 msgstr "Dátum és idő"
 
-#: includes/search.php:107
+#: src/search.php:111
 msgid "Phrase"
 msgstr "Kifejezés"
 
-#: includes/search.php:115
+#: src/search.php:119
 msgid "Sort By"
 msgstr "Rendezés"
 
-#: includes/search.php:118
+#: src/search.php:122
 msgid "Order"
 msgstr "Sorrend"
 
-#: includes/settings.php:52
+#: src/settings.php:59
 msgid "Change Password"
 msgstr ""
 
-#: includes/settings.php:61
+#: src/settings.php:68
 msgid "Old Password"
 msgstr ""
 
-#: includes/settings.php:64
+#: src/settings.php:71
 msgid "New Password"
 msgstr ""
 
-#: includes/settings.php:67
+#: src/settings.php:74
 msgid "Confirm New Password"
 msgstr ""
 
-#: includes/settings.php:139
+#: src/settings.php:150
 msgid "Settings updated."
 msgstr ""
 
-#: includes/setup.php:78
+#: src/setup.php:76
 msgid "Possible hacking attempt on your account."
 msgstr ""
 
-#: includes/setup.php:187
+#: src/setup.php:106
+msgid "Could not find a calendar."
+msgstr ""
+
+#: src/setup.php:188
 msgid "Month is out of range."
 msgstr ""
 
-#: includes/setup.php:195
+#: src/setup.php:196
 msgid "Invalid year"
 msgstr "Érvénytelen év"
 
-#: includes/translate.php:52
+#: src/translate.php:55
 #, php-format
 msgid "Translated \"%s\""
 msgstr ""
 
-#: includes/user_create.php:67
+#: src/user_create.php:73
 msgid "Confirm Password"
 msgstr "Jelszó megerősítése"
 
-#: includes/user_create.php:70
+#: src/user_create.php:76
 msgid "Make Admin"
 msgstr "Rendszergazda létrehozása"
 
-#: includes/user_create.php:86
+#: src/user_create.php:92
 msgid "You must specify a user name"
 msgstr "Meg kell adnia egy felhasználónevet"
 
-#: includes/user_create.php:103
+#: src/user_create.php:109
 msgid "User already exists."
 msgstr "A felhasználó már létezik."
 
-#: includes/user_create.php:113
+#: src/user_create.php:119
 msgid "Added user."
 msgstr ""
 
-#: includes/user_delete.php:29
+#: src/user_delete.php:32
 msgid "You must be an admin to delete users."
 msgstr ""
 
-#: includes/user_delete.php:34
+#: src/user_delete.php:37
 msgid "No user selected."
 msgstr "Nincs felhasználó kiválasztva."
 
-#: includes/user_groups.php:58
+#: src/user_groups.php:64
 msgid "Edit User Groups"
 msgstr ""
 
-#: includes/user_groups.php:99
+#: src/user_groups.php:105
 msgid "Groups updated."
 msgstr ""
 
-#: includes/user_permissions_submit.php:31
+#: src/user_permissions_submit.php:34
 msgid "No users"
 msgstr "Nincsenek felhasználók"
 
-#: includes/user_permissions_submit.php:59
+#: src/user_permissions_submit.php:62
 msgid "No changes to make."
 msgstr "Nincsenek végrehajtható változtatások."
 
-#: includes/user_permissions_submit.php:61
+#: src/user_permissions_submit.php:64
 msgid "Updated user(s):"
 msgstr ""
 
-#: includes/util.php:75
+#: src/util.php:93
 msgid "continue"
 msgstr ""
 
-#: includes/util.php:157
+#: src/util.php:230
 msgid "Software Error"
 msgstr ""
 
-#: includes/util.php:158
+#: src/util.php:231
 msgid "Message:"
 msgstr ""
