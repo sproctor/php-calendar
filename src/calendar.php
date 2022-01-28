@@ -80,16 +80,10 @@ function is_admin() {
  */
 function login_user($username, $password)
 {
-        global $phpcdb;
-
-	// Regenerate the session in case our non-logged in version was
-	//   snooped
-	// TODO: Verify that this is needed, and make sure it's called in setup
-	// 	 so it doesn't create issues for embedded users
-	// session_regenerate_id();
+    global $phpcdb;
 
 	$user = $phpcdb->get_user_by_name($username);
-	if(!$user || $user->password != md5($password))
+	if(!$user || $user->password !== md5($password))
 		return false;
 
 	phpc_do_login($user);
@@ -277,7 +271,7 @@ function week_of_year($month, $day, $year)
 	} else {
 		$year_contains = 1;
 	}
-	
+
 	// $day is the first day of the week relative to the current month,
 	// so it can be negative. If it's in the previous year, we want to use
 	// that negative value, unless the week is also in the previous year,
@@ -595,13 +589,13 @@ function userMenu()
 
 	$welcome = __('Welcome') . '&nbsp;' . $phpc_user->username;
 	$span = tag('span');
-	
+
 	$html = tag('div', attributes('class="phpc-logged ui-widget-content"'),
 			$welcome, $span);
 
 	if($action != 'settings')
 		menu_item_append($span, __('Settings'), 'settings');
-		
+
 	if(is_user()) {
 		menu_item_append($span, __('Log out'), 'logout',
 				array('lasturl' =>
@@ -627,7 +621,7 @@ function navbar()
 
 	$args = array('year' => $year, 'month' => $month, 'day' => $day);
 
-	if($phpc_cal->can_write() && $action != 'add') { 
+	if($phpc_cal->can_write() && $action != 'add') {
 		menu_item_append($html, __('Add Event'), 'event_form', $args);
 	}
 
@@ -698,7 +692,7 @@ function init_config_options() {
 		$languages[$language] = $language;
 	}
 	// name, text, type, value(s)
-	return array( 
+	return array(
 			array('week_start', __('Week Start'), PHPC_DROPDOWN,
 				array(
 					0 => __('Sunday'),
@@ -761,7 +755,7 @@ function get_theme_list() {
 	foreach($themes as $theme) {
 		$theme_list[$theme] = $theme;
 	}
-	return $theme_list;	
+	return $theme_list;
 }
 
 /**
@@ -944,7 +938,7 @@ function get_header_tags($path)
 		$jq_min = '';
 	else
 		$jq_min = '.min';
-		
+
 	$theme = $phpc_cal->theme;
 	if(empty($theme))
 		$theme = 'base';
@@ -1065,7 +1059,7 @@ function get_timestamp($prefix, $hour = 0, $minute = 0, $second = 0)
 		soft_error(sprintf(__("Malformed \"%s\" date: \"%s\""),
 					$prefix, $vars["$prefix-date"]));
 	}
-	
+
 	switch($phpc_cal->date_format) {
 		case 0: // Month Day Year
 			$month = $date_matches[1];
