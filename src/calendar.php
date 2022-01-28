@@ -793,7 +793,9 @@ function display_phpc() {
 
 		$list = array();
 		foreach($phpcdb->get_calendars() as $calendar) {
-			$list[$phpc_home_url . '?phpcid=' . $calendar->get_cid()] = $calendar->get_title();
+            if($calendar->can_read()) {
+                $list[$phpc_home_url . '?phpcid=' . $calendar->get_cid()] = $calendar->get_title();
+            }
 		}
 
 		return tag('div', attributes('class="php-calendar ui-widget"'),
