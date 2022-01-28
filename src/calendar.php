@@ -948,9 +948,9 @@ function get_header_tags($path)
 	$theme = $phpc_cal->theme;
 	if(empty($theme))
 		$theme = 'base';
-	$jquery_version = "3.2.1";
-	$jqueryui_version = "1.12.1";
-	$showdown_version = "1.8.2";
+	$jquery_version = "3.6.0";
+	$jqueryui_version = "1.13.1";
+	$showdown_version = "1.9.1";
 
 	return array(
 			tag('link', attrs('rel="stylesheet"', 'type="text/css"',

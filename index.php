@@ -88,4 +88,3 @@ $html = tag('html', attrs("lang=\"$phpc_lang\""),
 		tag('body', $content));
 
 echo '<!DOCTYPE html>', "\n", $html->toString();
-?>
