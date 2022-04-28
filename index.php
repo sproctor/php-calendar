@@ -30,13 +30,13 @@ $default_calendar_id = 1;
 /*
  * $phpc_root_path gives the location of the base calendar install.
  * if you move this file to a new location, modify $phpc_root_path to point
- * to the location where the support files for the callendar are located.
+ * to the location where the support files for the calendar are located.
  */
 $phpc_root_path = dirname(__FILE__);
 $phpc_includes_path = "$phpc_root_path/src";
 $phpc_config_file = "$phpc_root_path/config.php";
 $phpc_locale_path = "$phpc_root_path/locale";
-$phpc_script = htmlentities($_SERVER['PHP_SELF']);
+$phpc_script = htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8');
 
 $phpc_server = $_SERVER['SERVER_NAME'];
 if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
