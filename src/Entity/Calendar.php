@@ -17,6 +17,7 @@
 
 namespace App\Entity;
 
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -157,13 +158,13 @@ class Calendar
      * @param User $user
      * @return bool
      */
-    public function canWrite(User $user)
+    public function canWrite(User $user): bool
     {
         if ($this->anon_permission >= 2) {
             return true;
         }
 
-        if (!$user->isUser()) {
+        if ($user->isAnonymous()) {
             return false;
         }
 
@@ -174,9 +175,9 @@ class Calendar
      * @param User $user
      * @return bool
      */
-    public function canAdmin(User $user)
+    public function canAdmin(User $user): bool
     {
-        if (!$user->isUser()) {
+        if ($user->isAnonymous()) {
             return false;
         }
 
@@ -187,13 +188,13 @@ class Calendar
      * @param User $user
      * @return bool
      */
-    public function canModify(User $user)
+    public function canModify(User $user): bool
     {
         if ($this->anon_permission >= 3) {
             return true;
         }
 
-        if (!$user->isUser()) {
+        if ($user->isAnonymous()) {
             return false;
         }
 
@@ -204,9 +205,9 @@ class Calendar
      * @param User $user
      * @return bool
      */
-    public function canCreateReadonly(User $user)
+    public function canCreateReadonly(User $user): bool
     {
-        if (!$user->isUser()) {
+        if ($user->isAnonymous()) {
             return false;
         }
 
@@ -216,7 +217,7 @@ class Calendar
     /**
      * @return int
      */
-    public function getMaxDisplayEvents()
+    public function getMaxDisplayEvents(): int
     {
         return $this->events_max;
     }
@@ -225,7 +226,7 @@ class Calendar
      * @param int $uid
      * @return array
      */
-    public function getVisibleCategories($uid)
+    public function getVisibleCategories(int $uid): array
     {
         return $this->db->getVisibleCategories($uid, $this->cid);
     }
@@ -233,7 +234,7 @@ class Calendar
     /**
      * @return array
      */
-    public function getCategories()
+    public function getCategories(): array
     {
         if (!isset($this->categories)) {
             $this->categories = $this->db->getCategoriesForCalendar($this->cid);
@@ -244,7 +245,7 @@ class Calendar
     /**
      * @return array
      */
-    public function getGroups()
+    public function getGroups(): array
     {
         if (!isset($this->groups)) {
             $this->groups = $this->db->getGroupsForCalendar($this->cid);
@@ -256,7 +257,7 @@ class Calendar
      * @param int $fid
      * @return string[]
      */
-    public function getField($fid)
+    public function getField(int $fid): array
     {
         if (!isset($this->fields)) {
             $this->fields = $this->db->getFields($this->cid);
@@ -265,64 +266,12 @@ class Calendar
     }
 
     /**
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     * @return Occurrence[]
-     */
-    public function getOccurrencesByDateRange(\DateTimeInterface $from, \DateTimeInterface $to)
-    {
-        return $this->db->getOccurrencesByDateRange($this->cid, $from, $to);
-    }
-
-    /**
      * @return int
      */
-    public function getAnonPermission()
+    public function getAnonPermission(): int
     {
         return $this->anon_permission;
     }
 
-    /**
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     * @param User               $user
-     * @return array
-     */
-    public function getOccurrencesByDay(\DateTimeInterface $from, \DateTimeInterface $to, User $user)
-    {
-        $all_occurrences = $this->getOccurrencesByDateRange($from, $to);
-        $occurrences_by_day = array();
 
-        foreach ($all_occurrences as $occurrence) {
-            if (!$occurrence->canRead($user)) {
-                continue;
-            }
-
-            $end = $occurrence->getEnd();
-            $start = $occurrence->getStart();
-
-            if ($start > $from) {
-                $diff = new \DateInterval("P0D");
-            } else { // the event started before the range we're showing
-                $diff = $from->diff($start);
-            }
-
-            // put the event in every day until the end
-            for ($date = $start->add($diff); $date < $to && $date <= $end;
-                    $date = $date->add(new \DateInterval("P1D"))) {
-                $key = date_index($date);
-                if (!isset($occurrences_by_day[$key])) {
-                    $occurrences_by_day[$key] = array();
-                }
-                if (sizeof($occurrences_by_day[$key]) == $this->getMaxDisplayEvents()) {
-                    $occurrences_by_day[$key][] = null;
-                }
-                if (sizeof($occurrences_by_day[$key]) > $this->getMaxDisplayEvents()) {
-                    continue;
-                }
-                $occurrences_by_day[$key][] = $occurrence;
-            }
-        }
-        return $occurrences_by_day;
-    }
 }

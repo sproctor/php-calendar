@@ -18,6 +18,7 @@
 namespace App;
 
 use App\Exception\NoCalendarsException;
+use DateTimeInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -29,6 +30,7 @@ use Locale;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
@@ -38,6 +40,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Intl\Intl;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
 use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
@@ -137,42 +140,16 @@ class Context
 
         $this->twig->addGlobal('context', $this);
         $this->twig->addGlobal('locale', \Locale::getDefault());
-        if ($this->entityManager != null) {
-            $this->twig->addGlobal('calendar', $this->getCalendar());
-//            $this->twig->addGlobal('calendars', $this->findAllCalendars());
-            $this->twig->addGlobal('user', $this->user);
-        }
+        $this->twig->addGlobal('user', $this->user);
         $this->twig->addGlobal('script', $this->request->getScriptName());
         $this->twig->addGlobal('embed', $this->request->get("content") == "embed");
 //        $this->twig->addGlobal('messages', $this->getMessages());
         //'theme' => $context->getCalendar()->get_theme(),
         $this->twig->addGlobal('minified', defined('PHPC_DEBUG') ? '' : '.min');
         $this->twig->addGlobal('query_string', $this->request->getQueryString());
-//        $this->twig->addGlobal('languages', get_language_mappings());
+        $this->twig->addGlobal('languages', $this->getLanguageMappings());
 
-        $this->twig->addFunction(new TwigFunction(
-            'dropdown',
-            '\PhpCalendar\create_dropdown',
-            array('is_safe' => array('html'))
-        ));
-
-        $this->twig->addFilter(new TwigFilter('day_name', '\PhpCalendar\day_name'));
-        $this->twig->addFilter(new TwigFilter('day_abbr', '\PhpCalendar\short_day_name'));
-        $this->twig->addFilter(new TwigFilter('month_name', '\PhpCalendar\month_name'));
-        $this->twig->addFilter(new TwigFilter('month_abbr', '\PhpCalendar\short_month_name'));
-        $this->twig->addFilter(new TwigFilter('date_index', '\PhpCalendar\date_index'));
-        $this->twig->addFilter(
-            new TwigFilter(
-                'week_link',
-                function (\DateTimeInterface $date) {
-                    $week = week_of_year($date);
-                    $year = year_of_week_of_year($date);
-                    $url = $this->createUrl('display_week', ['week' => $week, 'year' => $year]);
-                    return "<a href=\"$url\">$week</a>";
-                },
-                array('is_safe' => array('html'))
-            )
-        );
+        $this->twig->addFilter(new TwigFilter('date_index', '\date_index'));
         $this->twig->addFunction(
             new TwigFunction(
                 'add_days',
@@ -182,18 +159,8 @@ class Context
                 }
             )
         );
-        $this->twig->addFunction(
-            new TwigFunction(
-                'is_date_in_month',
-                function (Context $context, \DateTimeInterface $date) {
-                    return $context->getAction() == 'display_month'
-                        && $date->format('m') == $context->getMonth()
-                        && $date->format('Y') == $context->getYear();
-                }
-            )
-        );
-        $this->twig->addFunction(new TwigFunction('is_today', '\PhpCalendar\is_today'));
-        $this->twig->addFunction(new TwigFunction('append_parameter_url', '\PhpCalendar\append_parameter_url'));
+        $this->twig->addFunction(new TwigFunction('is_today', '\is_today'));
+        $this->twig->addFunction(new TwigFunction('append_parameter_url', '\append_parameter_url'));
         $this->twig->addFunction(
             new TwigFunction(
                 'day',
@@ -230,11 +197,11 @@ class Context
                 }
             )
         );
-        $this->twig->addFunction(new TwigFunction(
-            'menu_item',
-            '\PhpCalendar\menu_item',
-            array('is_safe' => array('html'))
-        ));
+//        $this->twig->addFunction(new TwigFunction(
+//            'menu_item',
+//            '\PhpCalendar\menu_item',
+//            array('is_safe' => array('html'))
+//        ));
     }
 
     /**
@@ -492,18 +459,38 @@ class Context
 
     /**
      * @param string $action
-     * @param \DateTimeInterface|null $date
+     * @param DateTimeInterface|null $date
      * @return string
      */
-    public function createDateUrl($action, \DateTimeInterface $date = null)
+    public function createDateUrl(string $action, ?DateTimeInterface $date = null): string
     {
         if ($date == null) {
-            $date = $this->getDate();
+            $date = new \DateTimeImmutable();
         }
         return $this->createUrl(
             $action,
             ['year' => $date->format('Y'), 'month' => $date->format('n'), 'day' => $date->format('j')]
         );
+    }
+
+    private ?array $mappings = null;
+    /**
+     * @return string[]
+     */
+    function getLanguageMappings(): array
+    {
+        if (empty($this->mappings)) {
+            $this->mappings = array();
+            $finder = new Finder();
+
+            foreach ($finder->name('*.mo')->in(__DIR__.'/../translations')->files() as $file) {
+                $code = $file->getBasename('.mo');
+                $lang = Intl::getLanguageBundle()->getLanguageName($code, null, $code);
+                $this->mappings[$lang] = $code;
+            }
+        }
+
+        return $this->mappings;
     }
 
     /**

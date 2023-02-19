@@ -24,7 +24,7 @@ use Locale;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass=OccurrenceRepository::class)
  * @ORM\Table(name="occurrences")
  */
 class Occurrence
@@ -45,17 +45,17 @@ class Occurrence
     /**
      * @ORM\Column(type="datetime")
      */
-    private $start;
+    private DateTimeInterface $start;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $end;
+    private DateTimeInterface $end;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $time_type;
+    private int $time_type;
 
     /**
      * Occurrence constructor.

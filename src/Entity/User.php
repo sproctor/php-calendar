@@ -166,7 +166,7 @@ class User
         return $this->default_calendar;
     }
 
-    public function isAnonymous()
+    public function isAnonymous(): bool
     {
         return $this->uid == 0;
     }

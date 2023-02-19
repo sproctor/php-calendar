@@ -33,16 +33,16 @@
         <div class="collapse navbar-collapse" id="phpc-navbar">
             <ul class="navbar-nav mr-auto">
                 {% if calendar.canWrite(user) %}
-                    {{ menu_item(context, "event_form", "create-event-menu-link"|trans, 'plus') }}
+                    {{ menu_item("event_form", "create-event-menu-link"|trans, 'plus') }}
                 {% endif %}
-                {{ menu_item(context, "display_month", "view-month-menu-link"|trans, 'eye') }}
+                {{ menu_item("display_month", "view-month-menu-link"|trans, 'eye') }}
                 {% if action == "display_event" %}
-                    {{ menu_item(context, "display_day", "view-date-menu-link"|trans, 'eye') }}
+                    {{ menu_item("display_day", "view-date-menu-link"|trans, 'eye') }}
                 {% endif %}
                 {% if user.isAdmin() or calendar.canAdmin(user) %}
-                    {{ menu_item(context, "admin", "admin-menu-link"|trans, 'cog') }}
+                    {{ menu_item("admin", "admin-menu-link"|trans, 'cog') }}
                 {% endif %}
-                {% if not user.isUser() %}
+                {% if user.isAnonymous() %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
@@ -63,7 +63,7 @@
                     <div class="dropdown-menu" aria-labelledby="userDropdown">
                         <a class="dropdown-item" href="{{ context.createUrl("user_settings") }}"><i
                                     class="fas fa-cog"></i> {{ "settings-menu-link"|trans }}</a>
-                        {% if user.isUser() %}
+                        {% if not user.isAnonymous() %}
                             <a class="dropdown-item"
                                href="{{ context.createUrl("logout") }}&amp;lasturl={{ query_string|url_encode }}"><i
                                         class="fas fa-sign-out-alt"></i> {{ "log-out-menu-link"|trans }}</a>
