@@ -15,82 +15,85 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar\Entity;
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Occurrence;
 
 /**
  * Event represents an event that may have multiple occurrences.
  *
  * @author Sean Proctor <sproctor@gmail.com>
- * @Entity
- * @Table(name="events")
+ * @ORM\Entity
+ * @ORM\Table(name="events")
  */
 class Event
 {
     /**
-     * @Column(type="integer")
-     * @Id
-     * @GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $eid;
 
     /**
-     * @ManyToOne(targetEntity="User")
-     * @JoinColumn(name="owner_uid", referencedColumnName="uid")
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="owner_uid", referencedColumnName="uid")
      */
     private $owner;
 
     /**
-     * @ManyToOne(targetEntity="User")
-     * @JoinColumn(name="author_uid", referencedColumnName="uid")
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="author_uid", referencedColumnName="uid")
      */
     private $author;
 
     /**
-     * @Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
     private $subject;
 
     /**
-     * @Column(type="text")
+     * @ORM\Column(type="text")
      */
     private $description;
 
     /**
-     * @OneToMany(targetEntity="Occurrence", mappedBy="event")
+     * @ORM\OneToMany(targetEntity="Occurrence", mappedBy="event")
      * @var Occurrence[] An ArrayCollection of Occurrence objects.
      */
     private $occurrences;
 
     /**
-     * @ManyToOne(targetEntity="Category")
-     * @JoinColumn(name="catid", referencedColumnName="catid")
+     * @ORM\ManyToOne(targetEntity="Category")
+     * @ORM\JoinColumn(name="catid", referencedColumnName="catid")
      */
     private $category;
 
     /**
-     * @Column(type="datetime")
+     * @ORM\Column(type="datetime")
      */
     private $ctime;
 
     /**
-     * @Column(type="datetime")
+     * @ORM\Column(type="datetime")
      */
     private $mtime;
 
     /**
-     * @Column(type="datetime")
+     * @ORM\Column(type="datetime")
      */
     private $pubtime;
 
     /**
-     * @ManyToOne(targetEntity="Calendar")
-     * @JoinColumn(name="cid", referencedColumnName="cid")
+     * @ORM\ManyToOne(targetEntity="Calendar")
+     * @ORM\JoinColumn(name="cid", referencedColumnName="cid")
      */
     private $calendar;
 
     /**
      * One Event can have many Fields.
-     * @OneToMany(targetEntity="Field", mappedBy="eid")
+     * @ORM\OneToMany(targetEntity="Field", mappedBy="eid")
      */
     private $fields;
 

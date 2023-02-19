@@ -1,9 +1,6 @@
-{% extends "index.html.twig" %}
+{% extends "base.html.twig" %}
 
 {% block body %}
   <h3>{{ "create-calendar-label"|trans }}</h3>
-  {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button type="submit" class="btn btn-primary"><i class="fas fa-plus-square"></i> {{ "create-calendar-button"|trans }}</button>
-  {{ form_end(form) }}
+  {{ form(form) }}
 {% endblock %}

@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar\Pages;
+namespace App\Pages;
 
 use Exception;
-use PhpCalendar\Context;
+use App\Context;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class Page

@@ -15,61 +15,58 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar\Entity;
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @Entity
- * @Table("calendars")
+ * @ORM\Entity(repositoryClass=CalendarRepository::class)
+ * @ORM\Table("calendars")
  */
 class Calendar
 {
     /**
-     * @Column(type="integer")
-     * @Id
-     * @GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $cid;
+    private int $cid;
 
     /**
-     * @Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
-    private $name;
-
-    /**
-     * @Column(type="string", length=255)
-     */
-    private $title;
+    private string $title;
 
     private $user_perms = array();
     private $categories;
 
     /**
-     * @Column(type="integer")
+     * @ORM\Column(type="integer")
      */
-    private $subject_max;
+    private int $subject_max = 50;
 
     /**
-     * @Column(type="integer")
+     * @ORM\Column(type="integer")
      */
-    private $events_max;
+    private int $events_max = 5;
 
     // TODO: See https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/cookbook/mysql-enums.html
     private $anon_permission;
 
     /**
-     * @Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
-    private $timezone;
+    private string $timezone = "America/New_York";
 
     /**
-     * @Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
-    private $locale;
+    private string $locale = "en_US";
 
     /**
-     * @Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $theme;
+    private string $theme;
 
     private $groups;
     private $fields;
@@ -86,6 +83,11 @@ class Calendar
         */
 
         return $this->title;
+    }
+
+    public function setTitle(string $title)
+    {
+        $this->title = $title;
     }
 
     /**

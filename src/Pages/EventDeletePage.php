@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace App\Pages;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;

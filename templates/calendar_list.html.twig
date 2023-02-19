@@ -1,0 +1,11 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+<ul>
+    {% for calendar in calendar %}
+        <li>
+            <a href="{{ path('display_month', {cid: calendar.cid}) }}">{{ calendar.title }}</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

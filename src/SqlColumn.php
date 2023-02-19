@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace App;
 
 class SqlColumn
 {

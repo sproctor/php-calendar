@@ -15,43 +15,45 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar\Entity;
+namespace App\Entity;
 
 use DateTimeImmutable;
 use DateTimeInterface;
 use IntlDateFormatter;
 use Locale;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @Entity @Table(name="occurrences")
+ * @ORM\Entity
+ * @ORM\Table(name="occurrences")
  */
 class Occurrence
 {
     /**
-     * @Column(type="integer")
-     * @Id
-     * @GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $oid;
 
     /**
-     * @ManyToOne(targetEntity="Event", inversedBy="occurrences")
-     * @JoinColumn(name="eid", referencedColumnName="eid")
+     * @ORM\ManyToOne(targetEntity="Event", inversedBy="occurrences")
+     * @ORM\JoinColumn(name="eid", referencedColumnName="eid")
      */
     private $event;
 
     /**
-     * @Column(type="datetime")
+     * @ORM\Column(type="datetime")
      */
     private $start;
 
     /**
-     * @Column(type="datetime")
+     * @ORM\Column(type="datetime")
      */
     private $end;
 
     /**
-     * @Column(type="integer")
+     * @ORM\Column(type="integer")
      */
     private $time_type;
 

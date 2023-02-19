@@ -15,24 +15,26 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Configuration entity
  *
- * @Entity
- * @Table(name="config")
+ * @ORM\Entity
+ * @ORM\Table(name="config")
  */
 class Config
 {
     /**
-     * @Column(type="string")
-     * @Id
+     * @ORM\Column(type="string")
+     * @ORM\Id
      */
     private $key;
 
     /**
-     * @Column(type="string")
+     * @ORM\Column(type="string")
      */
     private $value;
 

@@ -15,42 +15,44 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Defintion for event fields.
  *
  * @author Sean Proctor <sproctor@gmail.com>
- * @Entity
- * @Table("field_definitions")
+ * @ORM\Entity
+ * @ORM\Table("field_definitions")
  */
 class FieldDefinition
 {
     /**
-     * @Column(type="integer")
-     * @Id
-     * @GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $fid;
 
     /**
-     * @ManyToOne(targetEntity="Calendar")
-     * @JoinColumn(name="cid", referencedColumnName="cid")
+     * @ORM\ManyToOne(targetEntity="Calendar")
+     * @ORM\JoinColumn(name="cid", referencedColumnName="cid")
      */
     private $calendar;
 
     /**
-     * @Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
     private $name;
     
     /**
-     * @Column(type="boolean")
+     * @ORM\Column(type="boolean")
      */
     private $is_required;
 
     /**
-     * @Column(type="text")
+     * @ORM\Column(type="text")
      */
     private $format;
 }

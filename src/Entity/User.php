@@ -15,44 +15,47 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace App\Entity;
+
+use App\Context;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @Entity
- * @Table("users")
+ * @ORM\Entity
+ * @ORM\Table("users")
  */
 class User
 {
     /**
-     * @Column(type="integer")
-     * @Id
-     * @GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $uid;
 
     /**
-     * @Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
     private $username;
 
     /**
-     * @Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
     private $hash;
 
     /**
-     * @Column(type="boolean")
+     * @ORM\Column(type="boolean")
      */
     private $is_admin;
 
     /**
-     * @Column(type="boolean")
+     * @ORM\Column(type="boolean")
      */
     private $password_is_editable;
 
     /**
-     * @ManyToOne(targetEntity="Calendar")
-     * @JoinColumn(name="default_cid", referencedColumnName="cid")
+     * @ORM\ManyToOne(targetEntity="Calendar")
+     * @ORM\JoinColumn(name="default_cid", referencedColumnName="cid")
      */
     private $default_calendar;
 
@@ -62,7 +65,7 @@ class User
     private $timezone;
 
     /**
-     * @Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
     private $locale;
 
@@ -70,7 +73,7 @@ class User
     private $groups;
 
     /**
-     * @Column(type="boolean")
+     * @ORM\Column(type="boolean")
      */
     private $is_disabled;
 
@@ -79,7 +82,7 @@ class User
      * @param Context $context
      * @return User
      */
-    public static function createAnonymous(Context $context)
+    public static function createAnonymous(Context $context): User
     {
         $user = new User();
 

@@ -1,4 +1,4 @@
-ip: 192.168.10.10
+ip: 192.168.56.56
 memory: 2048
 cpus: 2
 provider: virtualbox
@@ -13,9 +13,10 @@ sites:
       to: /home/vagrant/code/public
 databases:
     - homestead
-features:
-    - mariadb: false
-    - ohmyzsh: false
-    - webdriver: false
+services:
+    - enabled:
+        - "mysql"
+    - disabled:
+        - "postgresql"
 name: php-calendar
 hostname: php-calendar

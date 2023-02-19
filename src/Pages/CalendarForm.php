@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace App\Pages;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

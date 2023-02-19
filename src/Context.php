@@ -15,12 +15,17 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace App;
 
+use App\Exception\NoCalendarsException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
-use PhpCalendar\Entity\Calendar;
+use App\Entity\Calendar;
+use App\Entity\User;
+use Locale;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
@@ -31,87 +36,53 @@ use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
 use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Translation\Translator;
-use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Symfony\Component\Translation\Loader\MoFileLoader;
 use Symfony\Component\Validator\Validation;
+use Twig\Environment;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 class Context
 {
-    /**
-     *  @var Calendar $calendar
-     */
-    private $calendar;
-
-    /**
-     * @var User $user
-     */
-    public $user;
-
-    /**
-     * @var Session $session
-     */
-    public $session;
-
-    /**
-     * @var FormFactoryInterface $formFactory
-     */
-    private $formFactory;
-
-    /**
-     * @var Request $request
-     */
-    public $request;
-
-    /**
-     * @var EntityManager $entityManager
-     */
-    public $entityManager;
-
-    /**
-     * @var Translator $translator
-     */
-    public $translator;
-
-    /**
-     * @var  \Twig_Environment
-     */
-    private $twig;
+    private Calendar $calendar;
+    public User $user;
+    private FormFactoryInterface $formFactory;
+    public Request $request;
+    public Session $session;
+    private RequestStack $requestStack;
+    public EntityManager $entityManager;
+    public Translator $translator;
+    private Environment $twig;
 
     /**
      * Context constructor.
      *
-     * @param Request $request
-     * @param Session $session
-     * @param EntityManager|null $entityManager
+     * @param RequestStack $requestStack
+     * @param EntityManager $entityManager
      *
-     * @throws \ReflectionException
-     * @throws \Exception
+     * @throws Exception
      */
-    public function __construct(Request $request, Session $session, $entityManager)
+    public function __construct(
+        RequestStack           $requestStack,
+        EntityManagerInterface $entityManager,
+        Environment            $twig
+    )
     {
-        $this->request = $request;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->entityManager = $entityManager;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->session = $requestStack->getSession();
 
         $appVariableReflection = new \ReflectionClass('\Symfony\Bridge\Twig\AppVariable');
         $vendorTwigBridgeDir = dirname($appVariableReflection->getFileName());
-        $this->twig = new \Twig_Environment(
-            new \Twig_Loader_Filesystem(
-                array(
-                realpath(__DIR__ . '/../templates'),
-                $vendorTwigBridgeDir.'/Resources/views/Form')
-            ),
-            array(
-                //'cache' => __DIR__ . '/cache',
-                'debug' => true
-            )
-        );
+        $this->twig = $twig;
 
         /* Replace this with Doctrine Migrations
         include_once __DIR__ . '/schema.php';
@@ -131,7 +102,7 @@ class Context
         }
 
         $this->initTimezone();
-        $this->initLocale($request);
+        $this->initLocale();
 
         $this->initTwig();
     }
@@ -139,59 +110,59 @@ class Context
     private function initTwig()
     {
         $csrfGenerator = new UriSafeTokenGenerator();
-        $csrfStorage = new SessionTokenStorage($this->session);
+        $csrfStorage = new SessionTokenStorage($this->requestStack);
         $csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
 
-        $formTheme = 'bootstrap_4_layout.html.twig';
-        $formEngine = new TwigRendererEngine(array($formTheme), $this->twig);
-        $this->twig->addRuntimeLoader(
-            new \Twig_FactoryRuntimeLoader(
-                array(
-                FormRenderer::class => function () use ($formEngine, $csrfManager) {
-                    return new FormRenderer($formEngine, $csrfManager);
-                },
-                )
-            )
-        );
-        $this->twig->addExtension(new TranslationExtension($this->translator));
-        $this->twig->addExtension(new FormExtension());
-        $this->twig->addExtension(new \Twig_Extension_Debug());
-        $this->twig->addExtension(new \Twig_Extensions_Extension_Intl());
+//        $formTheme = 'bootstrap_4_layout.html.twig';
+//        $formEngine = new TwigRendererEngine(array($formTheme), $this->twig);
+//        $this->twig->addRuntimeLoader(
+//            new \Twig_FactoryRuntimeLoader(
+//                array(
+//                    FormRenderer::class => function () use ($formEngine, $csrfManager) {
+//                        return new FormRenderer($formEngine, $csrfManager);
+//                    },
+//                )
+//            )
+//        );
+//        $this->twig->addExtension(new TranslationExtension($this->translator));
+//        $this->twig->addExtension(new FormExtension());
+//        $this->twig->addExtension(new \Twig_Extension_Debug());
+//        $this->twig->addExtension(new \Twig_Extensions_Extension_Intl());
 
         $this->formFactory = Forms::createFormFactoryBuilder()
             ->addExtension(new HttpFoundationExtension())
             ->addExtension(new CsrfExtension($csrfManager))
             ->addExtension(new ValidatorExtension(Validation::createValidator()))
             ->getFormFactory();
-        
+
         $this->twig->addGlobal('context', $this);
         $this->twig->addGlobal('locale', \Locale::getDefault());
         if ($this->entityManager != null) {
-            $this->twig->addGlobal('calendar', $this->calendar);
-            $this->twig->addGlobal('calendars', $this->findAllCalendars());
+            $this->twig->addGlobal('calendar', $this->getCalendar());
+//            $this->twig->addGlobal('calendars', $this->findAllCalendars());
             $this->twig->addGlobal('user', $this->user);
         }
         $this->twig->addGlobal('script', $this->request->getScriptName());
         $this->twig->addGlobal('embed', $this->request->get("content") == "embed");
-        $this->twig->addGlobal('messages', $this->getMessages());
+//        $this->twig->addGlobal('messages', $this->getMessages());
         //'theme' => $context->getCalendar()->get_theme(),
         $this->twig->addGlobal('minified', defined('PHPC_DEBUG') ? '' : '.min');
         $this->twig->addGlobal('query_string', $this->request->getQueryString());
-        $this->twig->addGlobal('languages', get_language_mappings());
+//        $this->twig->addGlobal('languages', get_language_mappings());
 
-        $this->twig->addFunction(new \Twig_SimpleFunction(
+        $this->twig->addFunction(new TwigFunction(
             'dropdown',
             '\PhpCalendar\create_dropdown',
             array('is_safe' => array('html'))
         ));
-        
-        $this->twig->addFilter(new \Twig_SimpleFilter('day_name', '\PhpCalendar\day_name'));
-        $this->twig->addFilter(new \Twig_SimpleFilter('day_abbr', '\PhpCalendar\short_day_name'));
-        $this->twig->addFilter(new \Twig_SimpleFilter('month_name', '\PhpCalendar\month_name'));
-        $this->twig->addFilter(new \Twig_SimpleFilter('month_abbr', '\PhpCalendar\short_month_name'));
-        $this->twig->addFilter(new \Twig_SimpleFilter('date_index', '\PhpCalendar\date_index'));
+
+        $this->twig->addFilter(new TwigFilter('day_name', '\PhpCalendar\day_name'));
+        $this->twig->addFilter(new TwigFilter('day_abbr', '\PhpCalendar\short_day_name'));
+        $this->twig->addFilter(new TwigFilter('month_name', '\PhpCalendar\month_name'));
+        $this->twig->addFilter(new TwigFilter('month_abbr', '\PhpCalendar\short_month_name'));
+        $this->twig->addFilter(new TwigFilter('date_index', '\PhpCalendar\date_index'));
         $this->twig->addFilter(
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'week_link',
                 function (\DateTimeInterface $date) {
                     $week = week_of_year($date);
@@ -203,28 +174,28 @@ class Context
             )
         );
         $this->twig->addFunction(
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'add_days',
                 function (\DateTimeInterface $date, $days) {
-                    $next_date = new \DateTime('@'.$date->getTimestamp());
+                    $next_date = new \DateTime('@' . $date->getTimestamp());
                     return $next_date->add(new \DateInterval("P{$days}D"));
                 }
             )
         );
         $this->twig->addFunction(
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'is_date_in_month',
                 function (Context $context, \DateTimeInterface $date) {
                     return $context->getAction() == 'display_month'
-                    && $date->format('m') == $context->getMonth()
-                    && $date->format('Y') == $context->getYear();
+                        && $date->format('m') == $context->getMonth()
+                        && $date->format('Y') == $context->getYear();
                 }
             )
         );
-        $this->twig->addFunction(new \Twig_SimpleFunction('is_today', '\PhpCalendar\is_today'));
-        $this->twig->addFunction(new \Twig_SimpleFunction('append_parameter_url', '\PhpCalendar\append_parameter_url'));
+        $this->twig->addFunction(new TwigFunction('is_today', '\PhpCalendar\is_today'));
+        $this->twig->addFunction(new TwigFunction('append_parameter_url', '\PhpCalendar\append_parameter_url'));
         $this->twig->addFunction(
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'day',
                 function (\DateTimeInterface $date) {
                     return $date->format('j');
@@ -232,7 +203,7 @@ class Context
             )
         );
         $this->twig->addFunction(
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'month',
                 function (\DateTimeInterface $date) {
                     return $date->format('n');
@@ -240,7 +211,7 @@ class Context
             )
         );
         $this->twig->addFunction(
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'can_write',
                 function (User $user, Calendar $calendar) {
                     return $calendar->canWrite($user);
@@ -248,7 +219,7 @@ class Context
             )
         );
         $this->twig->addFunction(
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'occurrences_for_date',
                 function ($occurrences, \DateTimeInterface $date) {
                     $key = date_index($date);
@@ -259,7 +230,7 @@ class Context
                 }
             )
         );
-        $this->twig->addFunction(new \Twig_SimpleFunction(
+        $this->twig->addFunction(new TwigFunction(
             'menu_item',
             '\PhpCalendar\menu_item',
             array('is_safe' => array('html'))
@@ -269,7 +240,7 @@ class Context
     /**
      * @return string
      */
-    public function getAction()
+    public function getAction(): mixed
     {
         return $this->request->get('action', 'display_month');
     }
@@ -280,18 +251,18 @@ class Context
      */
     public function getConfig(string $key)
     {
-        $config = $this->entityManager->find('PHPC:Config', $key);
+        $config = $this->entityManager->find('App:Config', $key);
 
         return empty($config) ? null : $config->getValue();
     }
 
     /**
-     * @return Calendar
-     * @throws \Exception
+     * @return ?Calendar
+     * @throws Exception
      */
-    public function getCalendar()
+    public function getCalendar(): ?Calendar
     {
-        if ($this->calendar != null) {
+        if (isset($this->calendar)) {
             return $this->calendar;
         }
 
@@ -303,7 +274,7 @@ class Context
             $this->calendar = $this->findCalendar($phpcid);
             return $this->calendar;
         }
-        
+
         $eid = $this->request->get('eid');
         if (isset($eid)) {
             if (is_array($eid)) {
@@ -315,45 +286,23 @@ class Context
                 return $this->calendar;
             }
         }
-        
+
         $default_calendar = $this->user->defaultCalendar();
         if (!empty($default_calendar)) {
             $this->calendar = $default_calendar;
             return $this->calendar;
         }
 
-        $this->calendar = $this->getDefaultCalendar();
-        return $this->calendar;
-    }
-
-    /**
-     * @return Calendar
-     */
-    private function getDefaultCalendar()
-    {
-        // Return default calendar if set
-        $default_cid = $this->getConfig('default_cid');
-        if ($default_cid != null) {
-            $calendar = $this->findCalendar($default_cid);
-            if ($calendar != null) {
-                return $calendar;
-            }
-        }
-        
-        // Otherwise return the first calendar
-        $calendars = $this->findAllCalendars();
-        if (empty($calendars)) {
-            throw new NoCalendarsException();
-        } else {
-            return $calendars[0];
-        }
+        return null;
+//        $this->calendar = $this->getDefaultCalendar();
+//        return $this->calendar;
     }
 
     private function initTimezone()
     {
         // Set timezone
         $tz = $this->user->getTimezone();
-        if (empty($tz) && $this->calendar != null) {
+        if (empty($tz) && isset($this->calendar)) {
             $tz = $this->calendar->getTimezone();
         }
 
@@ -362,122 +311,23 @@ class Context
         }
     }
 
-    /**
-     * @return Calendar[]
-     */
-    public function findAllCalendars(): array
-    {
-        return $this->entityManager->getRepository('PHPC:Calendar')->findAll();
-    }
-
-    /**
-     * @param int $cid
-     * @return Calendar
-     */
-    public function findCalendar(int $cid)
-    {
-        return $this->entityManager->find('PHPC:Calendar', $cid);
-    }
-
-    /**
-     * @param int $eid
-     * @return Event
-     */
-    public function findEvent(int $eid)
-    {
-        return $this->entityManager->find('PHPC:Event', $eid);
-    }
-
     public function findOccurrences(\DateTimeInterface $from, \DateTimeInterface $to)
     {
         $qb = $this->entityManager->createQueryBuilder();
 
         //$qb->select('e')
-            //->from('Event', 'e')
-            //->where('e.
+        //->from('Event', 'e')
+        //->where('e.
     }
 
-    /**
-     * @param string $message
-     */
-    public function addMessage($message)
+    private function initLocale()
     {
-        $this->session->getFlashBag()->add('message', $message);
-    }
+        $request = $this->requestStack->getCurrentRequest();
 
-    /**
-     * @return string[]
-     */
-    public function getMessages()
-    {
-        return $this->session->getFlashBag()->get('message');
-    }
-
-    /**
-     * @return int
-     */
-    public function getYear()
-    {
-        $year = $this->request->get('year');
-        if (is_numeric($year)) {
-            return $year;
-        } else {
-            return date('Y');
-        }
-    }
-
-    /**
-     * @return int
-     */
-    public function getMonth()
-    {
-        $month = $this->request->get('month');
-        if (is_numeric($month) && $month > 0 && $month <= 12) {
-            return $month;
-        } else {
-            return date('n');
-        }
-    }
-
-    /**
-     * @return int
-     */
-    public function getDay()
-    {
-        $day = $this->request->get('day');
-        if (is_numeric($day) && $day > 0 && $day <= days_in_month($this->getMonth(), $this->getYear())) {
-            return $day;
-        } else {
-            if ($this->getMonth() == date('n') && $this->getYear() == date('Y')) {
-                return date('j');
-            } else {
-                return 1;
-            }
-        }
-    }
-
-    /**
-     * @return \DateTimeInterface
-     */
-    public function getDate()
-    {
-        if ($this->request->get('eid') != null) {
-            $occurrences = $this->db->getOccurrences($this->request->get('eid'));
-            if (sizeof($occurrences) > 0) {
-                return $occurrences[0]->getStart();
-            }
-        }
-        return create_datetime($this->getMonth(), $this->getDay(), $this->getYear());
-    }
-
-    private function initLocale(Request $request)
-    {
         // setup translation stuff
         $locale = $this->user->getLocale();
         if (empty($locale)) {
-            if ($this->calendar != null) {
-                $locale = $this->calendar->getLocale();
-            }
+            $locale = $this->getCalendar()?->getLocale();
             if (empty($locale)) {
                 // TODO search through valid locales for a match
                 $locale = $request->getLocale();
@@ -492,9 +342,9 @@ class Context
             $locale = 'en';
         }
 
-        \Locale::setDefault($locale);
+        Locale::setDefault($locale);
 
-        $this->translator = new Translator($locale, new MessageSelector());
+        $this->translator = new Translator($locale);
         $this->translator->addLoader('mo', new MoFileLoader());
         if ($locale != 'en') {
             $this->addLocale($locale);
@@ -533,8 +383,8 @@ class Context
         if (isset($_COOKIE["identity"])) {
             try {
                 $decoded = JWT::decode($_COOKIE["identity"], $this->getConfig("token_key"), array('HS256'));
-                $decoded_array = (array) $decoded;
-                $data = (array) $decoded_array["data"];
+                $decoded_array = (array)$decoded;
+                $data = (array)$decoded_array["data"];
 
                 return $data["uid"];
             } catch (SignatureInvalidException $e) {
@@ -641,7 +491,7 @@ class Context
     }
 
     /**
-     * @param string                  $action
+     * @param string $action
      * @param \DateTimeInterface|null $date
      * @return string
      */
@@ -657,8 +507,8 @@ class Context
     }
 
     /**
-     * @param string  $action
-     * @param string  $eid
+     * @param string $action
+     * @param string $eid
      * @return string
      */
     public function createEventUrl($action, $eid)
@@ -667,8 +517,8 @@ class Context
     }
 
     /**
-     * @param string  $action
-     * @param string  $oid
+     * @param string $action
+     * @param string $oid
      * @return string
      */
     public function createOccurrenceUrl($action, $oid)
@@ -694,26 +544,13 @@ class Context
             $first = false;
         }
         foreach ($parameters as $key => $value) {
-            $url .= ($first ? '?' : '&')."$key=$value";
+            $url .= ($first ? '?' : '&') . "$key=$value";
             $first = false;
         }
         if ($hash !== null) {
-            $url .= '#'.$hash;
+            $url .= '#' . $hash;
         }
         return $url;
-    }
-
-    /**
-     * Render the template
-     *
-     * @param string $name
-     * @param array  $variables
-     * @return string
-     * @throws \Exception
-     */
-    public function render($name, $variables = array())
-    {
-        return $this->twig->render($name, $variables);
     }
 
     public function persist($entity)

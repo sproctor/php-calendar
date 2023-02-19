@@ -15,33 +15,35 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * User defined field on an actual event.
  *
  * @author Sean Proctor <sproctor@gmail.com>
- * @Entity
- * @Table("fields")
+ * @ORM\Entity
+ * @ORM\Table("fields")
  */
 class Field
 {
     /**
-     * @ManyToOne(targetEntity="FieldDefinition")
-     * @JoinColumn(name="fid", referencedColumnName="fid")
-     * @Id
+     * @ORM\ManyToOne(targetEntity="FieldDefinition")
+     * @ORM\JoinColumn(name="fid", referencedColumnName="fid")
+     * @ORM\Id
      */
     private $definition;
 
     /**
-     * @ManyToOne(targetEntity="Event")
-     * @JoinColumn(name="eid", referencedColumnName="eid")
-     * @Id
+     * @ORM\ManyToOne(targetEntity="Event")
+     * @ORM\JoinColumn(name="eid", referencedColumnName="eid")
+     * @ORM\Id
      */
     private $event;
 
     /**
-     * @Column(type="text")
+     * @ORM\Column(type="text")
      */
     private $value;
 }

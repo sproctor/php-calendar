@@ -19,7 +19,7 @@
    This file has the functions for the main displays of the calendar
 */
 
-namespace PhpCalendar;
+namespace App;
 
 use Symfony\Component\HttpFoundation\Response;
 

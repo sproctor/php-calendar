@@ -15,34 +15,36 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @Entity
- * @Table("categories")
+ * @ORM\Entity
+ * @ORM\Table("categories")
  */
 class Category
 {
     /**
-     * @Column(type="integer")
-     * @Id
-     * @GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $catid;
 
     /**
-     * @ManyToOne(targetEntity="Calendar")
-     * @JoinColumn(name="cid", referencedColumnName="cid")
+     * @ORM\ManyToOne(targetEntity="Calendar")
+     * @ORM\JoinColumn(name="cid", referencedColumnName="cid")
      */
     private $calendar;
 
     /**
-     * @Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
-     * @Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
     private $color;
 }
