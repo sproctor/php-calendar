@@ -12,6 +12,8 @@ github_username:  sproctor
 google_analytics: UA-7118722-1
 
 show_excerpts: true
+header_pages:
+  # don't show any
 
 # Build settings
 theme: minima
