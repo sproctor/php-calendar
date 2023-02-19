@@ -1,8 +1,39 @@
-title: PHP-Calendar
-description: Open source web-based calendar
-google_analytics: UA-7118722-1
-show_downloads: false
-theme: jekyll-theme-slate
+title: PHP Calendar
+email: sproctor@gmail.com
+description: >- # this means to ignore newlines until "baseurl:"
+  PHP-Calendar is an open source web calendar. It is intended to provide a simple solution with an
+  intuitive interface. It is targeted to groups and individuals with the need to track events with an
+  emphasis on group collaboration. In that same collaborative spirit, the source for PHP-Calendar is
+  available under the open source Apache 2.0 license to facilitate collaborative development.
+baseurl: ""
+url: "https://www.php-calendar.org/"
 
-gems:
-  - jekyll-mentions
+github_username:  sproctor
+google_analytics: UA-7118722-1
+
+show_excerpts: true
+
+# Build settings
+theme: minima
+plugins:
+  - jekyll-feed
+
+# Exclude from processing.
+# The following items will not be processed, by default.
+# Any item listed under the `exclude:` key here will be automatically added to
+# the internal "default list".
+#
+# Excluded items can be processed by explicitly listing the directories or
+# their entries' file path in the `include:` list.
+#
+# exclude:
+#   - .sass-cache/
+#   - .jekyll-cache/
+#   - gemfiles/
+#   - Gemfile
+#   - Gemfile.lock
+#   - node_modules/
+#   - vendor/bundle/
+#   - vendor/cache/
+#   - vendor/gems/
+#   - vendor/ruby/

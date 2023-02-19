@@ -1,3 +1,6 @@
+---
+layout: home
+---
 ### Intent
 PHP-Calendar is an open source web calendar. It is intended to provide a simple
 solution with an intuitive interface. It is targeted to groups and individuals
