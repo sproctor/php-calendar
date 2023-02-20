@@ -9,8 +9,8 @@ same collaborative spirit, the source for PHP-Calendar is available under the
 open source [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html) to facilitate collaborative development.
 
 ### Demos
-* [Release](http://www.php-calendar.com/php-calendar/) - Demo of the latest stable version
-* [Development](http://www.php-calendar.com/php-calendar-dev/) - Demo of the current development line. It may be broken, but it should show off some of the newest enhancements.
+* [Release](http://www.seanproctor.com/php-calendar-2.0/) - Demo of the latest stable version
+* [Development](http://www.seanproctor.com/php-calendar-dev/) - Demo of the current development line. It may be broken, but it should show off some of the newest enhancements.
 
 ### Documentation
 * [Installation guide](http://github.com/sproctor/php-calendar/wiki/Installation-Guide)
