@@ -19,12 +19,14 @@ namespace App\Entity;
 
 use App\Context;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity
  * @ORM\Table("users")
  */
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Column(type="integer")
@@ -114,9 +116,9 @@ class User
     }
 
     /**
-     * @return string
+     * @see PasswordAuthenticatedUserInterface
      */
-    public function getPasswordHash(): string
+    public function getPassword(): string
     {
         return $this->hash;
     }
@@ -169,6 +171,43 @@ class User
     public function isAnonymous(): bool
     {
         return $this->uid == 0;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = array();
+        // guarantee every user at least has ROLE_USER
+        if (!$this->isAnonymous()) {
+            $roles[] = 'ROLE_USER';
+        }
+        if ($this->isAdmin()) {
+            $roles[] = 'ROLE_ADMIN';
+        }
+
+        return array_unique($roles);
+    }
+
+    /**
+     * Returning a salt is only needed if you are not using a modern
+     * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
+     *
+     * @see UserInterface
+     */
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     /**

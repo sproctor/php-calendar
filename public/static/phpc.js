@@ -96,9 +96,8 @@ $(document).ready(function(){
   });
 
   // Markdown descriptions
-  var md = new Remarkable('commonmark');
-  $('.markdown').html(function() { return md.render($(this).html()) });
-  $('.phpc-occurrence').attr('data-content', function () { return md.render($(this).attr('data-content')) });
+  $('.markdown').html(function() { return marked.parse($(this).html()) });
+  $('.phpc-occurrence').attr('data-content', function () { return marked.parse($(this).attr('data-content')) });
 
   // Make days out of month gray
   $('.phpc-shadow a').addClass('text-secondary');
