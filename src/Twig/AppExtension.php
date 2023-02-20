@@ -109,7 +109,7 @@ class AppExtension extends AbstractExtension
         $url = htmlentities($appContext->createDateUrl($action));
         $active = $appContext->getAction() == $action ? " active" : "";
         if ($icon != null) {
-            $text = "<i class=\"fas fa-$icon\"></i> $text";
+            $text = "<i class=\"bi-$icon\"></i> $text";
         }
         return "<li class=\"nav-item$active\"><a class=\"nav-link\" href=\"$url\">$text</a></li>";
     }

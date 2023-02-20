@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "706e00e7c1ce25dcf1c6f8cda4f6a5b4",
+    "content-hash": "2b6c38203150b1d329e3f17024bc3e58",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2166,85 +2166,6 @@
             "time": "2021-07-14T16:41:46+00:00"
         },
         {
-            "name": "sensio/framework-extra-bundle",
-            "version": "v6.2.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sensiolabs/SensioFrameworkExtraBundle.git",
-                "reference": "dcfac94d6bdcf95c126e8ccac2104917c7c8f135"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sensiolabs/SensioFrameworkExtraBundle/zipball/dcfac94d6bdcf95c126e8ccac2104917c7c8f135",
-                "reference": "dcfac94d6bdcf95c126e8ccac2104917c7c8f135",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/annotations": "^1.0",
-                "php": ">=7.2.5",
-                "symfony/config": "^4.4|^5.0|^6.0",
-                "symfony/dependency-injection": "^4.4|^5.0|^6.0",
-                "symfony/framework-bundle": "^4.4|^5.0|^6.0",
-                "symfony/http-kernel": "^4.4|^5.0|^6.0"
-            },
-            "conflict": {
-                "doctrine/doctrine-cache-bundle": "<1.3.1",
-                "doctrine/persistence": "<1.3"
-            },
-            "require-dev": {
-                "doctrine/dbal": "^2.10|^3.0",
-                "doctrine/doctrine-bundle": "^1.11|^2.0",
-                "doctrine/orm": "^2.5",
-                "symfony/browser-kit": "^4.4|^5.0|^6.0",
-                "symfony/doctrine-bridge": "^4.4|^5.0|^6.0",
-                "symfony/dom-crawler": "^4.4|^5.0|^6.0",
-                "symfony/expression-language": "^4.4|^5.0|^6.0",
-                "symfony/finder": "^4.4|^5.0|^6.0",
-                "symfony/monolog-bridge": "^4.0|^5.0|^6.0",
-                "symfony/monolog-bundle": "^3.2",
-                "symfony/phpunit-bridge": "^4.4.9|^5.0.9|^6.0",
-                "symfony/security-bundle": "^4.4|^5.0|^6.0",
-                "symfony/twig-bundle": "^4.4|^5.0|^6.0",
-                "symfony/yaml": "^4.4|^5.0|^6.0",
-                "twig/twig": "^1.34|^2.4|^3.0"
-            },
-            "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "6.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Sensio\\Bundle\\FrameworkExtraBundle\\": "src/"
-                },
-                "exclude-from-classmap": [
-                    "/tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                }
-            ],
-            "description": "This bundle provides a way to configure your controllers with annotations",
-            "keywords": [
-                "annotations",
-                "controllers"
-            ],
-            "support": {
-                "issues": "https://github.com/sensiolabs/SensioFrameworkExtraBundle/issues",
-                "source": "https://github.com/sensiolabs/SensioFrameworkExtraBundle/tree/v6.2.9"
-            },
-            "abandoned": "Symfony",
-            "time": "2022-11-01T17:17:13+00:00"
-        },
-        {
             "name": "symfony/amqp-messenger",
             "version": "v5.4.19",
             "source": {
@@ -3585,16 +3506,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v2.2.4",
+            "version": "v2.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "52baff1adb29faf443c6710cb775bd88b9627381"
+                "reference": "2ff8465e7172790a47ab3c129f2b514eb2d8a286"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/52baff1adb29faf443c6710cb775bd88b9627381",
-                "reference": "52baff1adb29faf443c6710cb775bd88b9627381",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/2ff8465e7172790a47ab3c129f2b514eb2d8a286",
+                "reference": "2ff8465e7172790a47ab3c129f2b514eb2d8a286",
                 "shasum": ""
             },
             "require": {
@@ -3630,7 +3551,7 @@
             "description": "Composer plugin for Symfony",
             "support": {
                 "issues": "https://github.com/symfony/flex/issues",
-                "source": "https://github.com/symfony/flex/tree/v2.2.4"
+                "source": "https://github.com/symfony/flex/tree/v2.2.5"
             },
             "funding": [
                 {
@@ -3646,7 +3567,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-12-20T07:19:39+00:00"
+            "time": "2023-02-18T08:03:15+00:00"
         },
         {
             "name": "symfony/form",
@@ -7694,119 +7615,6 @@
             "time": "2023-01-01T08:32:19+00:00"
         },
         {
-            "name": "symfony/webapp-meta",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/webapp-meta.git",
-                "reference": "df062f539ed5203b8ba1e5cdd9b1745afa983d69"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/webapp-meta/zipball/df062f539ed5203b8ba1e5cdd9b1745afa983d69",
-                "reference": "df062f539ed5203b8ba1e5cdd9b1745afa983d69",
-                "shasum": ""
-            },
-            "type": "metapackage",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A meta package for the web app pack",
-            "support": {
-                "issues": "https://github.com/symfony/webapp-meta/issues",
-                "source": "https://github.com/symfony/webapp-meta/tree/v1.0.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2021-10-20T16:02:05+00:00"
-        },
-        {
-            "name": "symfony/webpack-encore-bundle",
-            "version": "v1.16.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/webpack-encore-bundle.git",
-                "reference": "1862d71e483769b40278548a30e756ce13ef9d4c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/webpack-encore-bundle/zipball/1862d71e483769b40278548a30e756ce13ef9d4c",
-                "reference": "1862d71e483769b40278548a30e756ce13ef9d4c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1.3",
-                "symfony/asset": "^4.4 || ^5.0 || ^6.0",
-                "symfony/config": "^4.4 || ^5.0 || ^6.0",
-                "symfony/dependency-injection": "^4.4 || ^5.0 || ^6.0",
-                "symfony/deprecation-contracts": "^2.1 || ^3.0",
-                "symfony/http-kernel": "^4.4 || ^5.0 || ^6.0",
-                "symfony/polyfill-php80": "^1.25.0",
-                "symfony/service-contracts": "^1.0 || ^2.0 || ^3.0"
-            },
-            "require-dev": {
-                "symfony/framework-bundle": "^4.4 || ^5.0 || ^6.0",
-                "symfony/phpunit-bridge": "^5.3 || ^6.0",
-                "symfony/twig-bundle": "^4.4 || ^5.0 || ^6.0",
-                "symfony/web-link": "^4.4 || ^5.0 || ^6.0"
-            },
-            "type": "symfony-bundle",
-            "extra": {
-                "thanks": {
-                    "name": "symfony/webpack-encore",
-                    "url": "https://github.com/symfony/webpack-encore"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\WebpackEncoreBundle\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Integration with your Symfony app & Webpack Encore!",
-            "support": {
-                "issues": "https://github.com/symfony/webpack-encore-bundle/issues",
-                "source": "https://github.com/symfony/webpack-encore-bundle/tree/v1.16.1"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2023-01-18T19:37:55+00:00"
-        },
-        {
             "name": "symfony/yaml",
             "version": "v5.4.19",
             "source": {
@@ -8470,5 +8278,5 @@
         "ext-iconv": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.3.0"
 }

@@ -93,7 +93,7 @@ class Event
 
     /**
      * One Event can have many Fields.
-     * @ORM\OneToMany(targetEntity="Field", mappedBy="eid")
+     * @ORM\OneToMany(targetEntity="Field", mappedBy="event")
      */
     private $fields;
 

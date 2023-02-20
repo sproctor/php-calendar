@@ -36,7 +36,7 @@ class Field
     private $definition;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Event")
+     * @ORM\ManyToOne(targetEntity="Event", inversedBy="fields")
      * @ORM\JoinColumn(name="eid", referencedColumnName="eid")
      * @ORM\Id
      */

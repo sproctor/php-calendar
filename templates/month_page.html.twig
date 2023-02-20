@@ -1,10 +1,10 @@
 {% extends "display.html.twig" %}
 
 {% block navigation %}
-<a class="nav-link" href="{{ prev_month_url }}"><i class="fas fa-angle-left fa-lg"></i></a>
+<a class="nav-link" href="{{ prev_month_url }}"><i class="bi-chevron-left"></i></a>
 {{ dropdown(date|month_name, months) }}
 {{ dropdown(year, years) }}
-<a class="nav-link" href="{{ next_month_url }}"><i class="fas fa-angle-right fa-lg"></i></a>
+<a class="nav-link" href="{{ next_month_url }}"><i class="bi-chevron-right"></i></a>
 {% endblock %}
 
 {% block content %}

@@ -31,27 +31,27 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $uid;
+    private int $uid;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $username;
+    private string $username;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $hash;
+    private string $hash;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $is_admin;
+    private bool $is_admin = false;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $password_is_editable;
+    private bool $password_is_editable = true;
 
     /**
      * @ORM\ManyToOne(targetEntity="Calendar")
@@ -62,12 +62,12 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $timezone;
+    private ?string $timezone;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $locale;
+    private ?string $locale;
 
     // TODO: implement
     private $groups;
@@ -75,7 +75,7 @@ class User
     /**
      * @ORM\Column(type="boolean")
      */
-    private $is_disabled;
+    private bool $is_disabled = false;
 
 
     /**
@@ -88,11 +88,11 @@ class User
 
         $user->uid = 0;
         $user->username = 'anonymous';
-        $user->admin = false;
-        $user->password_editable = false;
+        $user->is_admin = false;
+        $user->password_is_editable = false;
         $user->timezone = User::getAnonymousTimezone($context);
         $user->locale = User::getAnonymousLocale($context);
-        $user->disabled = false;
+        $user->is_disabled = false;
 
         return $user;
     }
@@ -100,7 +100,7 @@ class User
     /**
      * @return string
      */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }
@@ -108,7 +108,7 @@ class User
     /**
      * @return int
      */
-    public function getUid()
+    public function getUid(): int
     {
         return $this->uid;
     }
@@ -116,7 +116,7 @@ class User
     /**
      * @return string
      */
-    public function getPasswordHash()
+    public function getPasswordHash(): string
     {
         return $this->hash;
     }
@@ -124,20 +124,20 @@ class User
     /**
      * @return bool
      */
-    public function hasEditablePassword()
+    public function hasEditablePassword(): bool
     {
         return $this->password_is_editable;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getTimezone()
+    public function getTimezone(): ?string
     {
         return $this->timezone;
     }
 
-    public function getLocale()
+    public function getLocale(): ?string
     {
         return $this->locale;
     }
@@ -151,12 +151,12 @@ class User
         return $this->groups;
     }
 
-    public function isDisabled()
+    public function isDisabled(): bool
     {
         return $this->is_disabled;
     }
 
-    public function isAdmin()
+    public function isAdmin(): bool
     {
         return $this->is_admin;
     }
@@ -175,7 +175,7 @@ class User
      * @param Context $context
      * @return string|null
      */
-    private static function getAnonymousTimezone(Context $context)
+    private static function getAnonymousTimezone(Context $context): ?string
     {
         $tz = $context->request->get('tz');
         // If we have a timezone, make sure it's valid
@@ -190,7 +190,7 @@ class User
      * @param Context $context
      * @return string|null
      */
-    private static function getAnonymousLocale(Context $context)
+    private static function getAnonymousLocale(Context $context): ?string
     {
         if ($context->request->get('lang') !== null) {
             $lang = $context->request->get('lang');

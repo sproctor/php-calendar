@@ -113,7 +113,7 @@ class MonthController extends AbstractController
             $this->context->user
         );
         $template_variables['start_date'] = $from_date;
-        return new Response($this->render("month_page.html.twig", $template_variables));
+        return new Response($this->renderView("month_page.html.twig", $template_variables));
     }
 }
 
