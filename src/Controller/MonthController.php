@@ -18,11 +18,14 @@
 namespace App\Controller;
 
 use App\Context;
+use App\Entity\User;
 use App\Repository\CalendarRepository;
 use App\Repository\OccurrenceRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -30,30 +33,31 @@ use Symfony\Component\Routing\Annotation\Route;
  * Controller used to display the month view.
  *
  * @author Sean Proctor <sproctor@gmail.com>
- *
- * @Route("/{cid}/month")
  */
+#[Route("/{cid}/month")]
 class MonthController extends AbstractController
 {
     private Context $context;
+    private LoggerInterface $logger;
 
-    public function __construct(Context $context)
+    public function __construct(Context $context, LoggerInterface $logger)
     {
         $this->context = $context;
+        $this->logger = $logger;
     }
 
-    /**
-     * @Route("/", name="default_month_display")
-     */
+    #[Route("/", name: "default_month_display")]
     public function displayDefaults(
+        Request $request,
         int $cid,
         CalendarRepository $calendarRepository,
         OccurrenceRepository $occurrenceRepository,
     ): Response {
-        return $this->displayMonth($cid, new DateTimeImmutable(), $calendarRepository, $occurrenceRepository);
+        return $this->displayMonth($request, $cid, new DateTimeImmutable(), $calendarRepository, $occurrenceRepository);
     }
 
     private function displayMonth(
+        Request $request,
         int $cid,
         DateTimeInterface $datetime,
         CalendarRepository $calendarRepository,
@@ -95,6 +99,8 @@ class MonthController extends AbstractController
 
         $template_variables = array();
         $template_variables['calendar'] = $calendar;
+        $template_variables['query_string'] = $request->getPathInfo();
+        $this->logger->debug("query string: " . $request->getPathInfo());
         $template_variables['action'] = 'display_month';
         $template_variables['prev_month_url'] =
             $this->context->createUrl('display_month', ['year' => $prev_year, 'month' => $prev_month]);
@@ -120,10 +126,10 @@ class MonthController extends AbstractController
 /**
  * Takes a date, returns the full month name
  *
- * @param \DateTimeInterface $date
+ * @param DateTimeInterface $date
  * @return string
  */
-function month_name(\DateTimeInterface $date): string
+function month_name(DateTimeInterface $date): string
 {
     $formatter = new \IntlDateFormatter(
         \Locale::getDefault(),

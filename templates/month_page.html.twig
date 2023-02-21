@@ -1,5 +1,7 @@
 {% extends "display.html.twig" %}
 
+{% block title %}{{ calendar.getTitle }}{% endblock %}
+
 {% block navigation %}
 <a class="nav-link" href="{{ prev_month_url }}"><i class="bi-chevron-left"></i></a>
 {{ dropdown(date|month_name, months) }}

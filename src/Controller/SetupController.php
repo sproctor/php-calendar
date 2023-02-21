@@ -20,6 +20,7 @@ namespace App\Controller;
 use App\Entity\Calendar;
 use App\Form\Type\CalendarType;
 use App\Repository\CalendarRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
@@ -32,14 +33,9 @@ class SetupController extends AbstractController
     /**
      * @Route("/setup", name="setup")
      */
-    public function setup(Request $request, CalendarRepository $repository, ManagerRegistry $doctrine): Response
+    public function setup(Request $request, CalendarRepository $repository, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $doctrine->getManager();
         $calendars = $repository->findAll();
-
-        $variables = array();
-        $variables['title'] = "Setup";
-        $variables['calendars'] = $calendars;
 
         if (empty($calendars)) {
             $calendar = new Calendar();
@@ -50,8 +46,7 @@ class SetupController extends AbstractController
                 $entityManager->flush();
                 return $this->redirectToRoute('default_month_display', ['cid' => $calendar->getCid()]);
             }
-            $variables['form'] = $form;
-            return $this->renderForm('calendar_create.html.twig', $variables);
+            return $this->renderForm('calendar_create.html.twig', ['form' => $form]);
         }
 
         throw $this->createAccessDeniedException();

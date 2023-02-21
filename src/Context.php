@@ -115,23 +115,6 @@ class Context
         $csrfGenerator = new UriSafeTokenGenerator();
         $csrfStorage = new SessionTokenStorage($this->requestStack);
         $csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
-
-//        $formTheme = 'bootstrap_4_layout.html.twig';
-//        $formEngine = new TwigRendererEngine(array($formTheme), $this->twig);
-//        $this->twig->addRuntimeLoader(
-//            new \Twig_FactoryRuntimeLoader(
-//                array(
-//                    FormRenderer::class => function () use ($formEngine, $csrfManager) {
-//                        return new FormRenderer($formEngine, $csrfManager);
-//                    },
-//                )
-//            )
-//        );
-//        $this->twig->addExtension(new TranslationExtension($this->translator));
-//        $this->twig->addExtension(new FormExtension());
-//        $this->twig->addExtension(new \Twig_Extension_Debug());
-//        $this->twig->addExtension(new \Twig_Extensions_Extension_Intl());
-
         $this->formFactory = Forms::createFormFactoryBuilder()
             ->addExtension(new HttpFoundationExtension())
             ->addExtension(new CsrfExtension($csrfManager))
@@ -146,7 +129,6 @@ class Context
 //        $this->twig->addGlobal('messages', $this->getMessages());
         //'theme' => $context->getCalendar()->get_theme(),
         $this->twig->addGlobal('minified', defined('PHPC_DEBUG') ? '' : '.min');
-        $this->twig->addGlobal('query_string', $this->request->getQueryString());
         $this->twig->addGlobal('languages', $this->getLanguageMappings());
 
         $this->twig->addFilter(new TwigFilter('date_index', '\date_index'));
