@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sean Proctor
+ * Copyright Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,36 +51,4 @@ col.wnumber {
 
 .occurrence-list {
   margin-top: .5rem;
-}
-
-.search-wrapper {
-  display: flex;
-  position: relative;
-  cursor: default;
-}
-
-.search-input {
-  padding-inline-end: 36px;
-  padding-inline-start: 35px;
-}
-
-.search-label {
-  offset-inline-start: 0;
-  position: absolute;
-  width: 35px;
-  height: 100%;
-}
-
-.search-button {
-  width: 36px;
-  height: 100%;
-  position: absolute;
-  offset-inline-end: 0;
-  border: 0;
-  background: none;
-}
-
-.search-button:focus, .search-button:hover {
-  background-color: rgba(12, 12, 13, 0.1);
-  cursor: pointer;
 }

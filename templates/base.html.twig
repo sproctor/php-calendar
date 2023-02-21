@@ -15,76 +15,80 @@
 <body>
 {% if calendar is defined %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        {% if calendars is defined and calendars|length > 1 %}
-            <div class="nav-item dropdown">
-                <button class="btn btn-link navbar-brand dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                   aria-expanded="false">{{ calendar.getTitle }}</button>
-                <div class="dropdown-menu">
-                    {% for cal in calendars %}
-                        <a class="dropdown-item" href="{{ script }}?phpcid={{ cal.getCid }}">{{ cal.getTitle }}</a>
-                    {% endfor %}
+        <div class="container-fluid">
+            {% if calendars is defined and calendars|length > 1 %}
+                <div class="nav-item dropdown">
+                    <button class="btn btn-link navbar-brand dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">{{ calendar.getTitle }}</button>
+                    <div class="dropdown-menu">
+                        {% for cal in calendars %}
+                            <a class="dropdown-item" href="{{ script }}?phpcid={{ cal.getCid }}">{{ cal.getTitle }}</a>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
-        {% endif %}
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#phpc-navbar"
-                aria-controls="phpc-navbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="phpc-navbar">
-            <ul class="navbar-nav mr-auto">
-                {% if calendar.canWrite(user) %}
-                    {{ menu_item("event_form", "create-event-menu-link"|trans, 'plus') }}
-                {% endif %}
-                {{ menu_item("display_month", "view-month-menu-link"|trans, 'eye') }}
-                {% if action == "display_event" %}
-                    {{ menu_item("display_day", "view-date-menu-link"|trans, 'eye') }}
-                {% endif %}
-                {% if user.isAdmin() or calendar.canAdmin(user) %}
-                    {{ menu_item("admin", "admin-menu-link"|trans, 'cog') }}
-                {% endif %}
-                {% if user.isAnonymous() %}
+            {% else %}
+                <a class="navbar-brand" href="#">{{ calendar.getTitle }}</a>
+            {% endif %}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#phpc-navbar"
+                    aria-controls="phpc-navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="phpc-navbar">
+                <ul class="navbar-nav mr-auto">
+                    {% if calendar.canWrite(user) %}
+                        {{ menu_item("event_form", "create-event-menu-link"|trans, 'plus') }}
+                    {% endif %}
+                    {{ menu_item("display_month", "view-month-menu-link"|trans, 'eye') }}
+                    {% if action == "display_event" %}
+                        {{ menu_item("display_day", "view-date-menu-link"|trans, 'eye') }}
+                    {% endif %}
+                    {% if user.isAdmin or calendar.canAdmin(user) %}
+                        {{ menu_item("admin", "admin-menu-link"|trans, 'cog') }}
+                    {% endif %}
+                    {% if user.isAnonymous() %}
+                        <li class="nav-item dropdown">
+                            <button class="btn btn-link nav-link dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"><i class="bi-translate"></i>
+                                {{ "language-menu-selector"|trans({'%locale%': locale}) }}
+                            </button>
+                            <div class="dropdown-menu">
+                                {% for lang,code in languages %}
+                                    <a class="dropdown-item"
+                                       href="{{ append_parameter_url(app.request, "lang=" ~ code) }}">{{ lang }}</a>
+                                {% endfor %}
+                            </div>
+                        </li>
+                    {% endif %}
                     <li class="nav-item dropdown">
                         <button class="btn btn-link nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                aria-expanded="false"><i class="bi-translate"></i>
-                            {{ "language-menu-selector"|trans({'%locale%': locale}) }}
+                                aria-expanded="false"><i class="bi-person"></i> {{ user.getUsername() }}
                         </button>
                         <div class="dropdown-menu">
-                            {% for lang,code in languages %}
+                            <a class="dropdown-item" href="{{ context.createUrl("user_settings") }}"><i
+                                        class="bi-gear"></i> {{ "settings-menu-link"|trans }}</a>
+                            {% if not user.isAnonymous() %}
                                 <a class="dropdown-item"
-                                   href="{{ append_parameter_url(app.request, "lang=" ~ code) }}">{{ lang }}</a>
-                            {% endfor %}
+                                   href="{{ context.createUrl("logout") }}&amp;lasturl={{ query_string|url_encode }}"><i
+                                            class="bi-bow-arrow-right"></i> {{ "log-out-menu-link"|trans }}</a>
+                            {% else %}
+                                <a class="dropdown-item"
+                                   href="{{ context.createUrl("login") }}&amp;lasturl={{ query_string|url_encode }}"><i
+                                            class="bi-box-arrow-in-right"></i> {{ "log-in-menu-link"|trans }}</a>
+                            {% endif %}
                         </div>
                     </li>
-                {% endif %}
-                <li class="nav-item dropdown">
-                    <button class="btn btn-link nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                       aria-expanded="false"><i class="bi-person"></i> {{ user.getUsername() }}
-                    </button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ context.createUrl("user_settings") }}"><i
-                                    class="bi-gear"></i> {{ "settings-menu-link"|trans }}</a>
-                        {% if not user.isAnonymous() %}
-                            <a class="dropdown-item"
-                               href="{{ context.createUrl("logout") }}&amp;lasturl={{ query_string|url_encode }}"><i
-                                        class="bi-bow-arrow-right"></i> {{ "log-out-menu-link"|trans }}</a>
-                        {% else %}
-                            <a class="dropdown-item"
-                               href="{{ context.createUrl("login") }}&amp;lasturl={{ query_string|url_encode }}"><i
-                                        class="bi-box-arrow-in-right"></i> {{ "log-in-menu-link"|trans }}</a>
-                        {% endif %}
+                </ul>
+                <form class="d-flex" role="search" action="{{ context.createUrl('search') }}" method="post">
+                    <div class="input-group">
+                        <input id="search-input" class="form-control" name="query" type="search"
+                               placeholder="{{ "search-label"|trans }}" aria-label="{{ "search-label"|trans }}">
+                        <button class="btn btn-primary" title="{{ "search-label"|trans }}" type="submit">
+                            <i class="bi-search"></i>
+                        </button>
                     </div>
-                </li>
-            </ul>
-            <form class="form-inline" action="{{ context.createUrl('search') }}" method="post">
-                <div class="search-wrapper">
-                    <label class="search-label" for="search-input"><i class="bi-search"></i></label>
-                    <input id="search-input" class="search-input" name="query" type="search"
-                           placeholder="{{ "search-label"|trans }}" aria-label="{{ "search-label"|trans }}">
-                    <button class="search-button" title="{{ "search-label"|trans }}" type="submit">
-                        <i class="bi-arrow-right"></i>
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </nav>
 {% endif %}
