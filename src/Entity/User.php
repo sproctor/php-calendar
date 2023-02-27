@@ -19,6 +19,7 @@ namespace App\Entity;
 
 use App\Context;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -26,6 +27,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Entity
  * @ORM\Table("users")
  */
+#[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
@@ -62,12 +64,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $default_calendar;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $timezone;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $locale;
 
@@ -79,30 +81,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private bool $is_disabled = false;
 
-
-    /**
-     * @param Context $context
-     * @return User
-     */
-    public static function createAnonymous(Context $context): User
-    {
-        $user = new User();
-
-        $user->uid = 0;
-        $user->username = 'anonymous';
-        $user->is_admin = false;
-        $user->password_is_editable = false;
-        $user->timezone = User::getAnonymousTimezone($context);
-        $user->locale = User::getAnonymousLocale($context);
-        $user->is_disabled = false;
-
-        return $user;
-    }
-
     /**
      * @return string
      */
     public function getUsername(): string
+    {
+        return $this->username;
+    }
+
+    /**
+     * The public representation of the user (e.g. a username, an email address, etc.)
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
     {
         return $this->username;
     }
@@ -121,6 +113,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPassword(): string
     {
         return $this->hash;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->hash = $password;
+
+        return $this;
     }
 
     /**
@@ -168,11 +167,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->default_calendar;
     }
 
-    public function isAnonymous(): bool
-    {
-        return $this->uid == 0;
-    }
-
     /**
      * @see UserInterface
      */
@@ -180,7 +174,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = array();
         // guarantee every user at least has ROLE_USER
-        if (!$this->isAnonymous()) {
+        if (!$this->isDisabled()) {
             $roles[] = 'ROLE_USER';
         }
         if ($this->isAdmin()) {
@@ -210,35 +204,84 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    /**
-     * @param Context $context
-     * @return string|null
-     */
-    private static function getAnonymousTimezone(Context $context): ?string
+    public function setUsername(string $username): self
     {
-        $tz = $context->request->get('tz');
-        // If we have a timezone, make sure it's valid
-        if (in_array($tz, timezone_identifiers_list())) {
-            return $tz;
-        }
-    
-        return null;
+        $this->username = $username;
+
+        return $this;
     }
-    
-    /**
-     * @param Context $context
-     * @return string|null
-     */
-    private static function getAnonymousLocale(Context $context): ?string
+
+    public function getHash(): ?string
     {
-        if ($context->request->get('lang') !== null) {
-            $lang = $context->request->get('lang');
-            $context->session->set('_locale', $lang);
-            return $lang;
-        } // else
-        if ($context->session->get('_locale') !== null) {
-            return $context->session->get('_locale');
-        } // else
-        return null;
+        return $this->hash;
+    }
+
+    public function setHash(string $hash): self
+    {
+        $this->hash = $hash;
+
+        return $this;
+    }
+
+    public function isIsAdmin(): ?bool
+    {
+        return $this->is_admin;
+    }
+
+    public function setIsAdmin(bool $is_admin): self
+    {
+        $this->is_admin = $is_admin;
+
+        return $this;
+    }
+
+    public function isPasswordIsEditable(): ?bool
+    {
+        return $this->password_is_editable;
+    }
+
+    public function setPasswordIsEditable(bool $password_is_editable): self
+    {
+        $this->password_is_editable = $password_is_editable;
+
+        return $this;
+    }
+
+    public function setTimezone(?string $timezone): self
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    public function setLocale(?string $locale): self
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
+
+    public function isIsDisabled(): ?bool
+    {
+        return $this->is_disabled;
+    }
+
+    public function setIsDisabled(bool $is_disabled): self
+    {
+        $this->is_disabled = $is_disabled;
+
+        return $this;
+    }
+
+    public function getDefaultCalendar(): ?Calendar
+    {
+        return $this->default_calendar;
+    }
+
+    public function setDefaultCalendar(?Calendar $default_calendar): self
+    {
+        $this->default_calendar = $default_calendar;
+
+        return $this;
     }
 }

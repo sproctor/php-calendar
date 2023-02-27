@@ -47,11 +47,13 @@ class AppExtension extends AbstractExtension
             ),
             new TwigFunction(
                 'is_date_in_month',
-                function (array $twigContext, DateTimeInterface $date) {
-                    $context = $twigContext['context'];
-                    return $context->getAction() == 'display_month'
-                        && intval($date->format('n')) == $twigContext['month']
-                        && intval($date->format('Y')) == $twigContext['year'];
+                function (array $context, DateTimeInterface $date) {
+                    $app = $context['app'];
+                    $request = $app->getRequest();
+                    $active_route = $request->get('_route');
+                    return $active_route == 'display_month'
+                        && intval($date->format('n')) == $context['month']
+                        && intval($date->format('Y')) == $context['year'];
                 },
                 ['needs_context' => true]
             ),
@@ -83,7 +85,8 @@ class AppExtension extends AbstractExtension
                     $context = $twigContext['context'];
                     $week = \week_of_year($date);
                     $year = \year_of_week_of_year($date);
-                    $url = $context->createUrl('display_week', ['week' => $week, 'year' => $year]);
+//                    $url = $context->createUrl('display_week', ['week' => $week, 'year' => $year]);
+                    $url = "";
                     return "<a href=\"$url\">$week</a>";
                 },
                 [
@@ -94,31 +97,18 @@ class AppExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * Takes a menu $html and appends an entry
-     *
-     * @param array $twigContext
-     * @param string $action
-     * @param string $text
-     * @param string|null $icon
-     * @return string
-     */
-    function menuItem(array $twigContext, string $action, string $text, ?string $icon = null): string
+    function menuItem(array $context, string $action, string $text, string $url, ?string $icon = null): string
     {
-        $appContext = $twigContext['context'];
-        $url = htmlentities($appContext->createDateUrl($action));
-        $active = $appContext->getAction() == $action ? " active" : "";
+        $app = $context['app'];
+        $request = $app->getRequest();
+        $active_route = $request->get('_route');
+        $active = $active_route === $action ? " active" : "";
         if ($icon != null) {
             $text = "<i class=\"bi-$icon\"></i> $text";
         }
         return "<li class=\"nav-item$active\"><a class=\"nav-link\" href=\"$url\">$text</a></li>";
     }
 
-    /**
-     * @param Request $request
-     * @param string $parameter
-     * @return string
-     */
     function append_parameter_url(Request $request, string $parameter): string
     {
         $uri = $request->getRequestUri();

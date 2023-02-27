@@ -17,6 +17,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -46,4 +47,40 @@ class Field
      * @ORM\Column(type="text")
      */
     private $value;
+
+    public function getValue(): ?string
+    {
+        return $this->value;
+    }
+
+    public function setValue(string $value): self
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    public function getDefinition(): ?FieldDefinition
+    {
+        return $this->definition;
+    }
+
+    public function setDefinition(?FieldDefinition $definition): self
+    {
+        $this->definition = $definition;
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
+
+        return $this;
+    }
 }

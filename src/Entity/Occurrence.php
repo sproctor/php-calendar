@@ -19,6 +19,7 @@ namespace App\Entity;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use Doctrine\DBAL\Types\Types;
 use IntlDateFormatter;
 use Locale;
 use Doctrine\ORM\Mapping as ORM;
@@ -196,5 +197,38 @@ class Occurrence
         //$qb->select('e')
             //->from('Event', 'e')
             //->where('e.
+    }
+
+    public function setStart(\DateTimeInterface $start): self
+    {
+        $this->start = $start;
+
+        return $this;
+    }
+
+    public function setEnd(\DateTimeInterface $end): self
+    {
+        $this->end = $end;
+
+        return $this;
+    }
+
+    public function setTimeType(int $time_type): self
+    {
+        $this->time_type = $time_type;
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
+
+        return $this;
     }
 }

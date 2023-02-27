@@ -17,6 +17,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -55,4 +56,57 @@ class FieldDefinition
      * @ORM\Column(type="text")
      */
     private $format;
+
+    public function getFid(): ?int
+    {
+        return $this->fid;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function isIsRequired(): ?bool
+    {
+        return $this->is_required;
+    }
+
+    public function setIsRequired(bool $is_required): self
+    {
+        $this->is_required = $is_required;
+
+        return $this;
+    }
+
+    public function getFormat(): ?string
+    {
+        return $this->format;
+    }
+
+    public function setFormat(string $format): self
+    {
+        $this->format = $format;
+
+        return $this;
+    }
+
+    public function getCalendar(): ?Calendar
+    {
+        return $this->calendar;
+    }
+
+    public function setCalendar(?Calendar $calendar): self
+    {
+        $this->calendar = $calendar;
+
+        return $this;
+    }
 }

@@ -41,6 +41,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Intl\Intl;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
 use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
@@ -54,8 +55,7 @@ use Twig\TwigFunction;
 
 class Context
 {
-    private Calendar $calendar;
-    public User $user;
+    private ?User $user;
     private FormFactoryInterface $formFactory;
     public Request $request;
     public Session $session;
@@ -75,7 +75,8 @@ class Context
     public function __construct(
         RequestStack           $requestStack,
         EntityManagerInterface $entityManager,
-        Environment            $twig
+        Environment            $twig,
+        Security               $security,
     )
     {
         $this->requestStack = $requestStack;
@@ -87,6 +88,8 @@ class Context
         $vendorTwigBridgeDir = dirname($appVariableReflection->getFileName());
         $this->twig = $twig;
 
+        $this->user = $security->getUser();
+
         /* Replace this with Doctrine Migrations
         include_once __DIR__ . '/schema.php';
         if ($this->db->getConfig('version') < PHPC_DB_VERSION) {
@@ -97,12 +100,6 @@ class Context
             throw new InvalidConfigException();
         }
         */
-
-        // Validate user
-        $this->readLoginToken();
-        if (!isset($this->user)) {
-            $this->user = User::createAnonymous($this);
-        }
 
         $this->initTimezone();
         $this->initLocale();
@@ -123,7 +120,6 @@ class Context
 
         $this->twig->addGlobal('context', $this);
         $this->twig->addGlobal('locale', \Locale::getDefault());
-        $this->twig->addGlobal('user', $this->user);
         $this->twig->addGlobal('script', $this->request->getScriptName());
         $this->twig->addGlobal('embed', $this->request->get("content") == "embed");
 //        $this->twig->addGlobal('messages', $this->getMessages());
@@ -161,14 +157,6 @@ class Context
         );
         $this->twig->addFunction(
             new TwigFunction(
-                'can_write',
-                function (User $user, Calendar $calendar) {
-                    return $calendar->canWrite($user);
-                }
-            )
-        );
-        $this->twig->addFunction(
-            new TwigFunction(
                 'occurrences_for_date',
                 function ($occurrences, \DateTimeInterface $date) {
                     $key = date_index($date);
@@ -187,14 +175,6 @@ class Context
     }
 
     /**
-     * @return string
-     */
-    public function getAction(): mixed
-    {
-        return $this->request->get('action', 'display_month');
-    }
-
-    /**
      * @param string $key
      * @return string
      */
@@ -205,68 +185,14 @@ class Context
         return empty($config) ? null : $config->getValue();
     }
 
-    /**
-     * @return ?Calendar
-     * @throws Exception
-     */
-    public function getCalendar(): ?Calendar
-    {
-        if (isset($this->calendar)) {
-            return $this->calendar;
-        }
-
-        $phpcid = $this->request->get('phpcid');
-        if (isset($phpcid)) {
-            if (!is_numeric($phpcid)) {
-                throw new InvalidInputException(__('invalid-calendar-id-error'));
-            }
-            $this->calendar = $this->findCalendar($phpcid);
-            return $this->calendar;
-        }
-
-        $eid = $this->request->get('eid');
-        if (isset($eid)) {
-            if (is_array($eid)) {
-                $eid = $eid[0];
-            }
-            $event = $this->findEvent($eid);
-            if ($event != null) {
-                $this->calendar = $event->getCalendar();
-                return $this->calendar;
-            }
-        }
-
-        $default_calendar = $this->user->defaultCalendar();
-        if (!empty($default_calendar)) {
-            $this->calendar = $default_calendar;
-            return $this->calendar;
-        }
-
-        return null;
-//        $this->calendar = $this->getDefaultCalendar();
-//        return $this->calendar;
-    }
-
     private function initTimezone()
     {
         // Set timezone
-        $tz = $this->user->getTimezone();
-        if (empty($tz) && isset($this->calendar)) {
-            $tz = $this->calendar->getTimezone();
-        }
+        $tz = $this->user?->getTimezone();
 
         if (!empty($tz)) {
             date_default_timezone_set($tz);
         }
-    }
-
-    public function findOccurrences(\DateTimeInterface $from, \DateTimeInterface $to)
-    {
-        $qb = $this->entityManager->createQueryBuilder();
-
-        //$qb->select('e')
-        //->from('Event', 'e')
-        //->where('e.
     }
 
     private function initLocale()
@@ -274,15 +200,12 @@ class Context
         $request = $this->requestStack->getCurrentRequest();
 
         // setup translation stuff
-        $locale = $this->user->getLocale();
+        $locale = $this->user?->getLocale();
         if (empty($locale)) {
-            $locale = $this->getCalendar()?->getLocale();
+            // TODO search through valid locales for a match
+            $locale = $request->getLocale();
             if (empty($locale)) {
-                // TODO search through valid locales for a match
-                $locale = $request->getLocale();
-                if (empty($locale)) {
-                    $locale = 'en';
-                }
+                $locale = 'en';
             }
         }
 
@@ -325,121 +248,6 @@ class Context
     }
 
     /**
-     * @return int
-     */
-    private function readLoginToken()
-    {
-        if (isset($_COOKIE["identity"])) {
-            try {
-                $decoded = JWT::decode($_COOKIE["identity"], $this->getConfig("token_key"), array('HS256'));
-                $decoded_array = (array)$decoded;
-                $data = (array)$decoded_array["data"];
-
-                return $data["uid"];
-            } catch (SignatureInvalidException $e) {
-                // TODO: log this event
-                setcookie('identity', "", time() - 3600);
-            }
-        }
-    }
-
-    /**
-     * @param string $username
-     * @param string $password
-     * @return bool
-     */
-    public function loginUser($username, $password)
-    {
-        $user = $this->db->getUserByName($username);
-        //echo "<pre>"; var_dump($user); echo "</pre>";
-        if (!$user) {
-            return false;
-        }
-
-        $password_hash = $user->getPasswordHash();
-
-        // migrate old passwords
-        if ($password_hash[0] != '$' && md5($password) == $password_hash) {
-            $this->db->setPassword($user->getUid(), $password);
-        } else { // otherwise use the normal password verifier
-            if (!password_verify($password, $password_hash)) {
-                return false;
-            }
-        }
-
-        $this->user = $user;
-        $this->setLoginToken($user);
-
-        return true;
-    }
-
-    /**
-     * @param User $user
-     */
-    private function setLoginToken(User $user)
-    {
-        $issuedAt = time();
-        // expire credentials in 30 days.
-        $expires = $issuedAt + 30 * 24 * 60 * 60;
-        $protocol = $this->request->isSecure() ? 'https' : 'http';
-        $token = array(
-            "iss" => $protocol . "://" . $this->request->getHost(),
-            "iat" => $issuedAt,
-            "exp" => $expires,
-            "data" => array("uid" => $user->getUid())
-        );
-        $jwt = JWT::encode($token, $this->getConfig('token_key'));
-
-        // TODO: Add a remember me checkbox to the login form, and have the
-        //    cookies expire at the end of the session if it's not checked
-
-        setcookie('identity', $jwt, $expires);
-    }
-
-    public function getPage()
-    {
-        /* FIXME: update this section for doctrine
-        if ($this->getConfig('version') < PHPC_DB_VERSION) {
-            return new UpdatePage;
-        }
-        */
-        switch ($this->getAction()) {
-            case 'event_form':
-                return new EventFormPage;
-            case 'display_event':
-                return new EventPage;
-            case 'display_month':
-                return new MonthPage;
-            case 'display_day':
-                return new DayPage;
-            case 'display_week':
-                return new WeekPage;
-            case 'login':
-                return new LoginPage;
-            case 'logout':
-                return new LogoutPage;
-            case 'event_delete':
-                return new EventDeletePage;
-            case 'admin':
-                return new AdminPage;
-            case 'calendar_create':
-                return new CreateCalendarPage;
-            case 'calendar_delete':
-                return new CalendarDeletePage;
-            case 'default_calendar':
-                return new DefaultCalendarPage;
-            case 'create_user':
-                return new CreateUserPage;
-            case 'update':
-                return new UpdatePage;
-            case 'search':
-                return new SearchPage;
-            default:
-                throw new InvalidInputException(__('invalid-action-error'));
-        }
-    }
-
-    /**
      * @param string $action
      * @param DateTimeInterface|null $date
      * @return string
@@ -456,6 +264,7 @@ class Context
     }
 
     private ?array $mappings = null;
+
     /**
      * @return string[]
      */
@@ -465,7 +274,7 @@ class Context
             $this->mappings = array();
             $finder = new Finder();
 
-            foreach ($finder->name('*.mo')->in(__DIR__.'/../translations')->files() as $file) {
+            foreach ($finder->name('*.mo')->in(__DIR__ . '/../translations')->files() as $file) {
                 $code = $file->getBasename('.mo');
                 $lang = Intl::getLanguageBundle()->getLanguageName($code, null, $code);
                 $this->mappings[$lang] = $code;

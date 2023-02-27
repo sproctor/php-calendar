@@ -17,6 +17,9 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Occurrence;
 
@@ -121,6 +124,8 @@ class Event
         $this->description = $description;
         $this->category = $category;
         $this->pubtime = $publish_date;
+        $this->occurrences = new ArrayCollection();
+        $this->fields = new ArrayCollection();
     }
 
     /**
@@ -294,5 +299,127 @@ class Event
     public function isPublished()
     {
         return $this->pubtime == null || $this->pubtime <= new \DateTime();
+    }
+
+    public function setSubject(string $subject): self
+    {
+        $this->subject = $subject;
+
+        return $this;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getCtime(): ?\DateTimeInterface
+    {
+        return $this->ctime;
+    }
+
+    public function setCtime(\DateTimeInterface $ctime): self
+    {
+        $this->ctime = $ctime;
+
+        return $this;
+    }
+
+    public function getMtime(): ?\DateTimeInterface
+    {
+        return $this->mtime;
+    }
+
+    public function setMtime(\DateTimeInterface $mtime): self
+    {
+        $this->mtime = $mtime;
+
+        return $this;
+    }
+
+    public function getPubtime(): ?\DateTimeInterface
+    {
+        return $this->pubtime;
+    }
+
+    public function setPubtime(\DateTimeInterface $pubtime): self
+    {
+        $this->pubtime = $pubtime;
+
+        return $this;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    public function setAuthor(?User $author): self
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    public function addOccurrence(Occurrence $occurrence): self
+    {
+        if (!$this->occurrences->contains($occurrence)) {
+            $this->occurrences->add($occurrence);
+            $occurrence->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOccurrence(Occurrence $occurrence): self
+    {
+        if ($this->occurrences->removeElement($occurrence)) {
+            // set the owning side to null (unless already changed)
+            if ($occurrence->getEvent() === $this) {
+                $occurrence->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    public function setCalendar(?Calendar $calendar): self
+    {
+        $this->calendar = $calendar;
+
+        return $this;
+    }
+
+    public function addField(Field $field): self
+    {
+        if (!$this->fields->contains($field)) {
+            $this->fields->add($field);
+            $field->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeField(Field $field): self
+    {
+        if ($this->fields->removeElement($field)) {
+            // set the owning side to null (unless already changed)
+            if ($field->getEvent() === $this) {
+                $field->setEvent(null);
+            }
+        }
+
+        return $this;
     }
 }

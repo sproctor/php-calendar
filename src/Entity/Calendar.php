@@ -38,8 +38,8 @@ class Calendar
      */
     private string $title;
 
-    private $user_perms = array();
-    private $categories;
+    private array $user_perms = array();
+    private array $categories;
 
     /**
      * @ORM\Column(type="integer")
@@ -86,7 +86,7 @@ class Calendar
         return $this->title;
     }
 
-    public function setTitle(string $title)
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
@@ -94,7 +94,7 @@ class Calendar
     /**
      * @return int
      */
-    public function getCid()
+    public function getCid(): int
     {
         return $this->cid;
     }
@@ -130,6 +130,7 @@ class Calendar
      */
     public function getUserPermission($uid, $perm)
     {
+        return false;
         if (!isset($this->user_perms[$uid])) {
             $this->user_perms[$uid] = $this->db->getPermissions($this->cid, $uid);
         }
@@ -154,30 +155,22 @@ class Calendar
         return $this->canAdmin($user) || $this->getUserPermission($user->getUID(), 'read');
     }
 
-    /**
-     * @param User $user
-     * @return bool
-     */
-    public function canWrite(User $user): bool
+    public function canWrite(?User $user): bool
     {
         if ($this->anon_permission >= 2) {
             return true;
         }
 
-        if ($user->isAnonymous()) {
+        if ($user === null) {
             return false;
         }
 
         return $this->canAdmin($user) || $this->getUserPermission($user->getUID(), 'write');
     }
 
-    /**
-     * @param User $user
-     * @return bool
-     */
-    public function canAdmin(User $user): bool
+    public function canAdmin(?User $user): bool
     {
-        if ($user->isAnonymous()) {
+        if ($user === null) {
             return false;
         }
 
@@ -271,6 +264,56 @@ class Calendar
     public function getAnonPermission(): int
     {
         return $this->anon_permission;
+    }
+
+    public function getSubjectMax(): ?int
+    {
+        return $this->subject_max;
+    }
+
+    public function setSubjectMax(int $subject_max): self
+    {
+        $this->subject_max = $subject_max;
+
+        return $this;
+    }
+
+    public function getEventsMax(): ?int
+    {
+        return $this->events_max;
+    }
+
+    public function setEventsMax(int $events_max): self
+    {
+        $this->events_max = $events_max;
+
+        return $this;
+    }
+
+    public function setTimezone(string $timezone): self
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    public function setLocale(string $locale): self
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
+
+    public function getTheme(): ?string
+    {
+        return $this->theme;
+    }
+
+    public function setTheme(?string $theme): self
+    {
+        $this->theme = $theme;
+
+        return $this;
     }
 
 

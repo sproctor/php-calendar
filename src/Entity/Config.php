@@ -47,4 +47,9 @@ class Config
     {
         $this->value = $value;
     }
+
+    public function getKey(): ?string
+    {
+        return $this->key;
+    }
 }

@@ -33,13 +33,7 @@ class OccurrenceRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    /**
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
-     * @param User               $user
-     * @return array
-     */
-    public function findOccurrencesByDay(Calendar $calendar, DateTimeInterface $from, DateTimeInterface $to, User $user): array
+    public function findOccurrencesByDay(Calendar $calendar, DateTimeInterface $from, DateTimeInterface $to, ?User $user): array
     {
         $all_occurrences = $this->findOccurrencesByDateRange($calendar->getCid(), $from, $to);
         $occurrences_by_day = array();
