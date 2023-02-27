@@ -44,21 +44,19 @@ class MonthController extends AbstractController
         $this->logger = $logger;
     }
 
-    #[Route("/", name: "default_month_display")]
+    #[Route("/month", name: "default_month_display")]
     public function defaultRoute(
-        Request $request,
         int $cid,
         CalendarRepository $calendar_repository,
         OccurrenceRepository $occurrence_repository,
     ): Response {
         $calendar = $calendar_repository->find($cid);
         $user = $this->getUser();
-        return $this->displayMonth($request, $calendar, $user, new DateTimeImmutable(), $occurrence_repository);
+        return $this->displayMonth($calendar, $user, new DateTimeImmutable(), $occurrence_repository);
     }
 
     #[Route("/month/{year}/{month}", name: "display_month")]
     public function monthRoute(
-        Request $request,
         int $cid,
         int $year,
         int $month,
@@ -68,11 +66,10 @@ class MonthController extends AbstractController
         $calendar = $calendar_repository->find($cid);
         $user = $this->getUser();
         $date = new DateTimeImmutable(sprintf("%04d-%02d", $year, $month));
-        return $this->displayMonth($request, $calendar, $user, $date, $occurrence_repository);
+        return $this->displayMonth($calendar, $user, $date, $occurrence_repository);
     }
 
     private function displayMonth(
-        Request $request,
         Calendar $calendar,
         ?User $user,
         DateTimeInterface $datetime,
@@ -81,15 +78,6 @@ class MonthController extends AbstractController
         $cid = $calendar->getCid();
         $year = intval($datetime->format('Y'));
         $month = intval($datetime->format('n'));
-        $months = array();
-        for ($i = 1; $i <= 12; $i++) {
-            $months[month_name(new \DateTimeImmutable(sprintf("%04d-%02d", $year, $i)))] =
-                $this->generateUrl('display_month', ['cid' => $cid, 'year' => $year, 'month' => $i]);
-        }
-        $years = array();
-        for ($i = $year - 5; $i <= $year + 5; $i++) {
-            $years[$i] = $this->generateUrl('display_month', ['cid' => $cid, 'month' => $month, 'year' => $i]);
-        }
         $next_month = $month + 1;
         $next_year = $year;
         if ($next_month > 12) {
@@ -111,21 +99,17 @@ class MonthController extends AbstractController
         $last_day = $weeks * 7 - day_of_week($month, 1, $year);
         $to_date = create_datetime($month, $last_day + 1, $year);
 
-        $template_variables = array();
-        $template_variables['calendar'] = $calendar;
-        $template_variables['user'] = $user;
-//        $template_variables['query_string'] = $request->getPathInfo();
-//        $this->logger->debug("query string: " . $request->getPathInfo());
-//        $template_variables['action'] = 'display_month';
+        $template_variables = get_variables_for_calendar(
+            function ($route, $parameters = []) {$this->generateUrl($route, $parameters); },
+            $calendar,
+            $user,
+            $datetime,
+        );
         $template_variables['prev_month_url'] =
             $this->generateUrl('display_month', ['cid' => $cid, 'year' => $prev_year, 'month' => $prev_month]);
         $template_variables['next_month_url'] =
             $this->generateUrl('display_month', ['cid' => $cid, 'year' => $next_year, 'month' => $next_month]);
-        $template_variables['date'] = $datetime;
-        $template_variables['month'] = $month;
-        $template_variables['months'] = $months;
-        $template_variables['year'] = $year;
-        $template_variables['years'] = $years;
+
         $template_variables['weeks'] = $weeks;
         $template_variables['occurrences'] = $occurrence_repository->findOccurrencesByDay(
             $calendar,
@@ -136,23 +120,4 @@ class MonthController extends AbstractController
         $template_variables['start_date'] = $from_date;
         return new Response($this->renderView("month_page.html.twig", $template_variables));
     }
-}
-
-/**
- * Takes a date, returns the full month name
- *
- * @param DateTimeInterface $date
- * @return string
- */
-function month_name(DateTimeInterface $date): string
-{
-    $formatter = new \IntlDateFormatter(
-        \Locale::getDefault(),
-        \IntlDateFormatter::NONE,
-        \IntlDateFormatter::NONE,
-        null,
-        null,
-        "MMMM" // full month format
-    );
-    return $formatter->format($date);
 }

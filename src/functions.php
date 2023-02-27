@@ -1,5 +1,10 @@
 <?php
 
+use App\Entity\Calendar;
+use App\Entity\User;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 /**
  * @param int $year
  * @return int
@@ -74,10 +79,10 @@ function week_of_year(DateTimeInterface $date): int
 /**
  * return the year of week of year for $date in the current locale
  *
- * @param \DateTimeInterface $date
+ * @param DateTimeInterface $date
  * @return int
  */
-function year_of_week_of_year(\DateTimeInterface $date)
+function year_of_week_of_year(DateTimeInterface $date)
 {
     $formatter = new \IntlDateFormatter(
         \Locale::getDefault(),
@@ -92,11 +97,8 @@ function year_of_week_of_year(\DateTimeInterface $date)
 
 /**
  * Takes a date, returns the full month name
- *
- * @param \DateTimeInterface $date
- * @return string
  */
-function month_name(\DateTimeInterface $date)
+function month_name(DateTimeInterface $date): string
 {
     $formatter = new \IntlDateFormatter(
         \Locale::getDefault(),
@@ -125,19 +127,19 @@ function day_of_week(int $month, int $day, int $year): int
 }
 
 /**
- * @param \DateTimeInterface $date
+ * @param DateTimeInterface $date
  * @return string
  */
-function date_index(\DateTimeInterface $date)
+function date_index(DateTimeInterface $date)
 {
     return $date->format('Y-m-d');
 }
 
 /**
- * @param \DateTimeInterface $date
+ * @param DateTimeInterface $date
  * @return boolean
  */
-function is_today(\DateTimeInterface $date)
+function is_today(DateTimeInterface $date)
 {
     return days_between($date, new \DateTime()) == 0;
 }
@@ -239,4 +241,34 @@ function create_datetime(int $month, int $day, int $year): DateTimeImmutable
 {
     normalize_date($month, $day, $year);
     return _create_datetime($month, $day, $year);
+}
+
+function get_variables_for_calendar(
+                      $url_generator,
+    Calendar          $calendar,
+    ?User             $user,
+    DateTimeInterface $datetime,
+): array
+{
+    $cid = $calendar->getCid();
+    $year = intval($datetime->format('Y'));
+    $month = intval($datetime->format('n'));
+    $months = array();
+    for ($i = 1; $i <= 12; $i++) {
+        $months[month_name(new \DateTimeImmutable(sprintf("%04d-%02d", $year, $i)))] =
+            $url_generator('display_month', ['cid' => $cid, 'year' => $year, 'month' => $i]);
+    }
+    $years = array();
+    for ($i = $year - 5; $i <= $year + 5; $i++) {
+        $years[$i] = $url_generator('display_month', ['cid' => $cid, 'month' => $month, 'year' => $i]);
+    }
+    return [
+        'calendar' => $calendar,
+        'user' => $user,
+        'date' => $datetime,
+        'month' => $month,
+        'months' => $months,
+        'year' => $year,
+        'years' => $years,
+    ];
 }

@@ -21,7 +21,6 @@ use DateTimeInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Intl\Intl;
 use Symfony\Component\Intl\Languages;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
@@ -60,11 +59,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction(
                 'is_date_in_month',
                 function (array $context, DateTimeInterface $date) {
-                    $app = $context['app'];
-                    $request = $app->getRequest();
-                    $active_route = $request->get('_route');
-                    return $active_route == 'display_month'
-                        && intval($date->format('n')) == $context['month']
+                    return intval($date->format('n')) == $context['month']
                         && intval($date->format('Y')) == $context['year'];
                 },
                 ['needs_context' => true]
@@ -175,14 +170,15 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
      */
     function createDropdown(string $title, array $values): string
     {
-        $output = "<div class=\"nav-item dropdown\">"
-            . "<a class=\"nav-link dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\" role=\"button\""
-            . " aria-haspopup=\"true\" aria-expanded=\"false\">$title</a>"
-            . "<div class=\"dropdown-menu\">";
+        // TODO: make this a template
+        $output = "<div class=\"dropdown\">"
+            . "<button class=\"btn btn-navlink dropdown-toggle\" data-bs-toggle=\"dropdown\" type=\"button\""
+            . " aria-expanded=\"false\">$title</button>"
+            . "<ul class=\"dropdown-menu\">";
         foreach ($values as $key => $value) {
-            $output .= "<a class=\"dropdown-item\" href=\"$value\">$key</a>";
+            $output .= "<li><a class=\"dropdown-item\" href=\"$value\">$key</a></li>";
         }
-        return $output . "</div></div>";
+        return $output . "</ul></div>";
     }
 
     /**
