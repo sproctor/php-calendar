@@ -39,7 +39,7 @@
                         {{ menu_item("event_form", "create-event-menu-link"|trans, 'plus') }}
                     {% endif %}
                     {{ menu_item("display_month", "view-month-menu-link"|trans, 'eye') }}
-                    {% if action == "display_event" %}
+                    {% if app.current_route == "display_event" %}
                         {{ menu_item("display_day", "view-date-menu-link"|trans, 'eye') }}
                     {% endif %}
                     {% if calendar.canAdmin(user) %}
@@ -50,10 +50,10 @@
                             <button class="btn btn-link nav-link dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false"><i class="bi-translate"></i>
-                                {{ "language-menu-selector"|trans({'%locale%': locale}) }}
+                                {{ "language-menu-selector"|trans }}
                             </button>
                             <div class="dropdown-menu">
-                                {% for lang,code in languages %}
+                                {% for code,lang in languages %}
                                     <a class="dropdown-item"
                                        href="{{ append_parameter_url(app.request, "lang=" ~ code) }}">{{ lang }}</a>
                                 {% endfor %}

@@ -124,9 +124,6 @@
     "psr/log": {
         "version": "1.1.4"
     },
-    "symfony/amqp-messenger": {
-        "version": "v5.4.3"
-    },
     "symfony/asset": {
         "version": "v5.4.3"
     },
@@ -317,6 +314,21 @@
     "symfony/password-hasher": {
         "version": "v5.4.3"
     },
+    "symfony/phpunit-bridge": {
+        "version": "6.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "5.3",
+            "ref": "819d3d2ffa4590eba0b8f4f3e5e89415ee4e45c3"
+        },
+        "files": [
+            ".env.test",
+            "bin/phpunit",
+            "phpunit.xml.dist",
+            "tests/bootstrap.php"
+        ]
+    },
     "symfony/polyfill-intl-grapheme": {
         "version": "v1.24.0"
     },
@@ -332,13 +344,7 @@
     "symfony/polyfill-mbstring": {
         "version": "v1.24.0"
     },
-    "symfony/polyfill-php73": {
-        "version": "v1.24.0"
-    },
     "symfony/polyfill-php80": {
-        "version": "v1.24.0"
-    },
-    "symfony/polyfill-php81": {
         "version": "v1.24.0"
     },
     "symfony/process": {
@@ -351,9 +357,6 @@
         "version": "v5.4.3"
     },
     "symfony/proxy-manager-bridge": {
-        "version": "v5.4.3"
-    },
-    "symfony/redis-messenger": {
         "version": "v5.4.3"
     },
     "symfony/routing": {
@@ -388,9 +391,6 @@
         "version": "v5.4.3"
     },
     "symfony/security-csrf": {
-        "version": "v5.4.3"
-    },
-    "symfony/security-guard": {
         "version": "v5.4.3"
     },
     "symfony/security-http": {

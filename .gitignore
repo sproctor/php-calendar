@@ -15,3 +15,8 @@ config.php
 .idea
 .vagrant
 node_modules
+
+###> symfony/phpunit-bridge ###
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###

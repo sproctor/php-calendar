@@ -18,13 +18,25 @@
 namespace App\Twig;
 
 use DateTimeInterface;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Languages;
 use Twig\Extension\AbstractExtension;
+use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
-class AppExtension extends AbstractExtension
+class AppExtension extends AbstractExtension implements GlobalsInterface
 {
+    private KernelInterface $kernel;
+
+    public function __construct(KernelInterface $kernel)
+    {
+        $this->kernel = $kernel;
+    }
+
     public function getFunctions(): array
     {
         return [
@@ -57,6 +69,30 @@ class AppExtension extends AbstractExtension
                 },
                 ['needs_context' => true]
             ),
+            new TwigFunction(
+                'add_days',
+                function (\DateTimeInterface $date, $days) {
+                    $next_date = new \DateTime('@' . $date->getTimestamp());
+                    return $next_date->add(new \DateInterval("P{$days}D"));
+                }
+            ),
+            new TwigFunction('is_today', '\is_today'),
+            new TwigFunction(
+                'day',
+                function (\DateTimeInterface $date) {
+                    return $date->format('j');
+                }
+            ),
+            new TwigFunction(
+                'occurrences_for_date',
+                function ($occurrences, \DateTimeInterface $date) {
+                    $key = date_index($date);
+                    if (array_key_exists($key, $occurrences)) {
+                        return $occurrences[date_index($date)];
+                    }
+                    return null;
+                }
+            ),
         ];
     }
 
@@ -82,7 +118,7 @@ class AppExtension extends AbstractExtension
             new TwigFilter(
                 'week_link',
                 function (array $twigContext, DateTimeInterface $date) {
-                    $context = $twigContext['context'];
+//                    $context = $twigContext['context'];
                     $week = \week_of_year($date);
                     $year = \year_of_week_of_year($date);
 //                    $url = $context->createUrl('display_week', ['week' => $week, 'year' => $year]);
@@ -95,6 +131,18 @@ class AppExtension extends AbstractExtension
                 ]
             )
         ];
+    }
+
+    public function getGlobals(): array
+    {
+//        $this->twig->addGlobal('context', $this);
+//        $this->twig->addGlobal('locale', \Locale::getDefault());
+//        $this->twig->addGlobal('script', $this->request->getScriptName());
+//        $this->twig->addGlobal('embed', $this->request->get("content") == "embed");
+//        $this->twig->addGlobal('messages', $this->getMessages());
+        //'theme' => $context->getCalendar()->get_theme(),
+//        $this->twig->addGlobal('minified', defined('PHPC_DEBUG') ? '' : '.min');
+        return ['languages' => $this->getLanguageMappings()];
     }
 
     function menuItem(array $context, string $action, string $text, string $url, ?string $icon = null): string
@@ -205,5 +253,22 @@ class AppExtension extends AbstractExtension
             "MMM" // short month format
         );
         return $formatter->format($date);
+    }
+
+    private function getLanguageMappings(): array
+    {
+        if (empty($this->mappings)) {
+            $this->mappings = array();
+            $finder = new Finder();
+
+            foreach ($finder->name('*.yaml')->in($this->kernel->getProjectDir() . '/translations')->files() as $file) {
+                preg_match('/[^.]\.(.+)/', $file->getFilenameWithoutExtension(), $matches);
+                $code = $matches[1];
+                $lang = Languages::getName($code);
+                $this->mappings[$code] = $lang;
+            }
+        }
+
+        return $this->mappings;
     }
 }

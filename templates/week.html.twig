@@ -1,12 +1,12 @@
 <tr>
     <th class="phpc-date" scope="row">
-        {{ start_date|week_link(context) }}
+        {{ start_date|week_link }}
     </th>
 	{% set cur_date = start_date %}
     {% for day_of_week in 0..6 %}
     <td class="phpc-date{% if not is_date_in_month(cur_date) %} phpc-shadow{% endif %}{% if is_today(cur_date) %} phpc-today{% endif %}">
 	    <div>
-		    <a class="phpc-day-number" href="{{ context.createDateUrl('display_day', cur_date) }}">{% if (not is_date_in_month(cur_date) and day_of_week == 0) or day(cur_date) == 1 %}{{ cur_date|month_abbr }}{% endif %} {{ day(cur_date) }}</a>
+		    <a class="phpc-day-number" href="{#  { context.createDateUrl('display_day', cur_date) } #}">{% if (not is_date_in_month(cur_date) and day_of_week == 0) or day(cur_date) == 1 %}{{ cur_date|month_abbr }}{% endif %} {{ day(cur_date) }}</a>
 		    {% if calendar.canWrite(user) %}
 		    <a href="{{ context.createDateUrl('event_form', cur_date) }}" class="phpc-add" title="{{ "create-event-menu-link"|trans }}"><i class="fas fa-plus"></i></a>
 		    {% endif %}

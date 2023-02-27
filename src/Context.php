@@ -265,24 +265,7 @@ class Context
 
     private ?array $mappings = null;
 
-    /**
-     * @return string[]
-     */
-    function getLanguageMappings(): array
-    {
-        if (empty($this->mappings)) {
-            $this->mappings = array();
-            $finder = new Finder();
 
-            foreach ($finder->name('*.mo')->in(__DIR__ . '/../translations')->files() as $file) {
-                $code = $file->getBasename('.mo');
-                $lang = Intl::getLanguageBundle()->getLanguageName($code, null, $code);
-                $this->mappings[$lang] = $code;
-            }
-        }
-
-        return $this->mappings;
-    }
 
     /**
      * @param string $action

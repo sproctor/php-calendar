@@ -17,7 +17,6 @@
 
 namespace App\Controller;
 
-use App\Context;
 use App\Entity\Calendar;
 use App\Entity\User;
 use App\Repository\CalendarRepository;
@@ -29,7 +28,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * Controller used to display the month view.
@@ -39,12 +37,10 @@ use Symfony\Component\Security\Core\Security;
 #[Route("/calendars/{cid}")]
 class MonthController extends AbstractController
 {
-    private Context $context;
     private LoggerInterface $logger;
 
-    public function __construct(Context $context, LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger)
     {
-        $this->context = $context;
         $this->logger = $logger;
     }
 
@@ -118,9 +114,9 @@ class MonthController extends AbstractController
         $template_variables = array();
         $template_variables['calendar'] = $calendar;
         $template_variables['user'] = $user;
-        $template_variables['query_string'] = $request->getPathInfo();
-        $this->logger->debug("query string: " . $request->getPathInfo());
-        $template_variables['action'] = 'display_month';
+//        $template_variables['query_string'] = $request->getPathInfo();
+//        $this->logger->debug("query string: " . $request->getPathInfo());
+//        $template_variables['action'] = 'display_month';
         $template_variables['prev_month_url'] =
             $this->generateUrl('display_month', ['cid' => $cid, 'year' => $prev_year, 'month' => $prev_month]);
         $template_variables['next_month_url'] =
