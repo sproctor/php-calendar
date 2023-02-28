@@ -29,7 +29,7 @@ class LogoutPage extends Page
      */
     public function action(Context $context)
     {
-        setcookie('identity', "", time() - 3600);
+        setcookie('identity', "", ['expires' => time() - 3600]);
         return new RedirectResponse($context->createUrl());
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Entity\Calendar;
 use App\Entity\User;
+use App\Entity\UserPermissions;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -15,8 +16,6 @@ function days_in_year($year)
 }
 
 /**
- * @param DateTimeInterface $date1
- * @param DateTimeInterface $date2
  * @return int
  */
 function days_between(DateTimeInterface $date1, DateTimeInterface $date2)
@@ -38,10 +37,6 @@ function days_between(DateTimeInterface $date1, DateTimeInterface $date2)
 
 /**
  * returns the number of weeks in $month
- *
- * @param int $month
- * @param int $year
- * @return int
  */
 function weeks_in_month(int $month, int $year): int
 {
@@ -58,9 +53,6 @@ function weeks_in_month(int $month, int $year): int
 
 /**
  * return the week number for $date in the current locale
- *
- * @param DateTimeInterface $date
- * @return int
  */
 function week_of_year(DateTimeInterface $date): int
 {
@@ -79,7 +71,6 @@ function week_of_year(DateTimeInterface $date): int
 /**
  * return the year of week of year for $date in the current locale
  *
- * @param DateTimeInterface $date
  * @return int
  */
 function year_of_week_of_year(DateTimeInterface $date)
@@ -115,11 +106,6 @@ function month_name(DateTimeInterface $date): string
  * Returns the number of days in the week before the
  * taking into account whether we start on sunday or monday
  * 1 for Monday, 7 for Sunday
- *
- * @param int $month
- * @param int $day
- * @param int $year
- * @return int
  */
 function day_of_week(int $month, int $day, int $year): int
 {
@@ -127,7 +113,6 @@ function day_of_week(int $month, int $day, int $year): int
 }
 
 /**
- * @param DateTimeInterface $date
  * @return string
  */
 function date_index(DateTimeInterface $date)
@@ -136,7 +121,6 @@ function date_index(DateTimeInterface $date)
 }
 
 /**
- * @param DateTimeInterface $date
  * @return boolean
  */
 function is_today(DateTimeInterface $date)
@@ -160,9 +144,6 @@ function datetime_from_timestamp($timestamp)
  *  returns the number of days in the week before the
  *  taking into account whether we start on sunday or monday
  *  1 for Monday, 7 for Sunday
- *
- * @param DateTimeInterface $date
- * @return int
  */
 function day_of_week_date(DateTimeInterface $date): int
 {
@@ -171,10 +152,6 @@ function day_of_week_date(DateTimeInterface $date): int
 
 /**
  * Returns the number of days in $month
- *
- * @param int $month
- * @param int $year
- * @return int
  */
 function days_in_month(int $month, int $year): int
 {
@@ -183,10 +160,6 @@ function days_in_month(int $month, int $year): int
 
 /**
  * normalize date after month or day were incremented or decremented
- *
- * @param int $month
- * @param int $day
- * @param int $year
  */
 function normalize_date(int &$month, int &$day, int &$year): void
 {
@@ -219,49 +192,62 @@ function normalize_date(int &$month, int &$day, int &$year): void
 }
 
 /** @noinspection PhpDocMissingThrowsInspection */
-/**
- * @param int $month
- * @param int $day
- * @param int $year
- * @return DateTimeImmutable
- */
 function _create_datetime(int $month, int $day, int $year): DateTimeImmutable
 {
     /** @noinspection PhpUnhandledExceptionInspection */
     return new DateTimeImmutable(sprintf("%04d-%02d-%02d", $year, $month, $day));
 }
 
-/**
- * @param int $month
- * @param int $day
- * @param int $year
- * @return DateTimeImmutable
- */
 function create_datetime(int $month, int $day, int $year): DateTimeImmutable
 {
     normalize_date($month, $day, $year);
     return _create_datetime($month, $day, $year);
 }
 
+// TODO: refactor into a service
 function get_variables_for_calendar(
                       $url_generator,
     Calendar          $calendar,
     ?User             $user,
     DateTimeInterface $datetime,
+    ?UserPermissions  $user_permissions,
+    ?UserPermissions  $default_permissions,
 ): array
 {
     $cid = $calendar->getCid();
     $year = intval($datetime->format('Y'));
     $month = intval($datetime->format('n'));
-    $months = array();
+    $months = [];
     for ($i = 1; $i <= 12; $i++) {
         $months[month_name(new \DateTimeImmutable(sprintf("%04d-%02d", $year, $i)))] =
             $url_generator('display_month', ['cid' => $cid, 'year' => $year, 'month' => $i]);
     }
-    $years = array();
+    $years = [];
     for ($i = $year - 5; $i <= $year + 5; $i++) {
         $years[$i] = $url_generator('display_month', ['cid' => $cid, 'month' => $month, 'year' => $i]);
     }
+
+    if ($user_permissions === null) {
+        $user_permissions = new UserPermissions($cid, $user?->getUid());
+    }
+
+    // Combine user and default permissions. give admins full access
+    if ($user?->isAdmin()) {
+        $user_permissions->setRead(true);
+        $user_permissions->setCreate(true);
+        $user_permissions->setUpdate(true);
+        $user_permissions->setModerate(true);
+        $user_permissions->setAdmin(true);
+    } else {
+        if ($default_permissions !== null) {
+            $user_permissions->setRead($user_permissions->canRead() || $default_permissions->canRead());
+            $user_permissions->setCreate($user_permissions->canCreate() || $default_permissions->canCreate());
+            $user_permissions->setUpdate($user_permissions->canUpdate() || $default_permissions->canUpdate());
+            $user_permissions->setModerate($user_permissions->canModerate() || $default_permissions->canModerate());
+            $user_permissions->setAdmin($user_permissions->canAdmin() || $default_permissions->canAdmin());
+        }
+    }
+
     return [
         'calendar' => $calendar,
         'user' => $user,
@@ -270,5 +256,6 @@ function get_variables_for_calendar(
         'months' => $months,
         'year' => $year,
         'years' => $years,
+        'permissions' => $user_permissions,
     ];
 }

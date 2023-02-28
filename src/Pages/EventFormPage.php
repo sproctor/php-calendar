@@ -56,170 +56,16 @@ class EventFormPage extends Page
         if ($form->isSubmitted() && $form->isValid()) {
             return $this->processForm($context, $form->getData());
         }
-        
+
         // else
-        return new Response($context->render("event_form.html.twig", array('form' => $form->createView())));
+        return new Response($context->render("form.html.twig", ['form' => $form->createView()]));
     }
 
     /**
      * @param Context $context
      * @return FormInterface
      */
-    private function eventForm(Context $context)
-    {
-        $builder = $context->getFormFactory()->createBuilder();
 
-        $default_date = new \DateTime();
-        if ($context->request->get('year') !== null && $context->request->get('month') !== null) {
-            $default_date->setDate(
-                $context->request->get('year'),
-                $context->request->get('month'),
-                $context->request->get('day', 1)
-            );
-        }
-        $default_date->setTime(17, 0);
-        $end_datetime = clone $default_date;
-        $end_datetime->setTime(18, 0);
-        $builder->add(
-            'subject',
-            TextType::class,
-            [
-                'label' => _('Subject'),
-                'constraints' => new Assert\NotBlank(),
-                'attr' => [
-                    'autocomplete' => 'off',
-                    'maxlength' => $context->calendar->getMaxSubjectLength(),
-                    'autofocus' => ''
-                ]
-            ]
-        )
-        ->add('description', TextareaType::class, array('required' => false))
-        ->add(
-            'start',
-            DateTimeType::class,
-            ['label' => __('from-label'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
-                'data' => $default_date, 'required' => false]
-        )
-        ->add(
-            'end',
-            DateTimeType::class,
-            ['label' => __('to-label'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
-                'data' => $end_datetime, 'required' => false]
-        )
-        ->add(
-            'start_date',
-            DateType::class,
-            ['label' => __('from-label'), 'widget' => 'single_text', 'data' => $default_date, 'required' => false]
-        )
-        ->add(
-            'end_date',
-            DateType::class,
-            ['label' => __('to-label'), 'widget' => 'single_text', 'data' => $end_datetime, 'required' => false]
-        )
-        ->add(
-            'time_type',
-            ChoiceType::class,
-            array('label' => __('time-type-label'),
-                'choices' => array(
-                    __('normal-label') => 0,
-                    __('full-day-label') => 1,
-                    __('to-be-announced-label') => 2))
-        )
-        ->add(
-            'repeats',
-            ChoiceType::class,
-            array('label' => __('repeats-label'),
-                'choices' => array(
-                    __('never-label') => '0',
-                    __('daily-label') => 'D',
-                    __('weekly-label') => 'W',
-                    __('monthly-label') => 'M',
-                    __('yearly-label') => 'Y'))
-        )
-        ->add(
-            'frequency',
-            IntegerType::class,
-            array('constraints' => new Assert\GreaterThan(0), 'data' => 1)
-        )
-        ->add('until', DateType::class, array('label' => __('until-label'), 'widget' => 'single_text'))
-        ->add('delay_publish', CheckboxType::class, array('label' => __('delay-publish-label'), 'required' => false))
-        ->add(
-            'publish_datetime',
-            DateTimeType::class,
-            ['label' => __('publish-date-time-label'), 'date_widget' => 'single_text',
-                'time_widget' => 'single_text', 'required' => false]
-        );
-
-        //echo "<pre>"; var_dump($context->request); echo "</pre>";
-        if ($context->request->get('eid') !== null) {
-            $eid = $context->request->get('eid');
-            $event = $context->db->getEvent($eid);
-            $occs = $event->getOccurrences();
-            $occurrence = $occs[0];
-            $builder->add(
-                'modify',
-                CheckboxType::class,
-                array('label' => __('change-event-date-time-label'), 'required' => false)
-            );
-            $builder->add('eid', HiddenType::class, array('data' => $eid));
-            $builder->get('subject')->setData($event->getRawSubject());
-            $builder->get('description')->setData($event->getDescription());
-            $builder->get('start')->setData($occurrence->getStart());
-            $builder->get('end')->setData($occurrence->getEnd());
-            $builder->add(
-                'save',
-                SubmitType::class,
-                array('label' => __('modify-event-button'), 'attr' => array('class' => 'btn btn-primary'))
-            );
-            $builder->get('delay_publish')->setData($occurrence->getPublishDate() != null);
-            $builder->get('publish_datetime')->setData($occurrence->getPublishDate());
-        } else {
-            $builder->add(
-                'save',
-                SubmitType::class,
-                array('label' => __('create-event-button'), 'attr' => array('class' => 'btn btn-primary'))
-            );
-        }
-
-        /*
-        $calendar_choices = array();
-        foreach($context->db->getCalendars() as $calendar) {
-        if($calendar->canWrite($context->getUser()))
-        $calendar_choices[$calendar->getTitle()] = $calendar->getCID();
-        }
-        
-        if(sizeof($calendar_choices) > 1) {
-        $builder->add('cid', ChoiceType::class, array('choices' => $calendar_choices));
-        } else {
-        $builder->add('cid', HiddenType::class, array('data' => $context->getCalendar()->getCID()));
-        }*/
-
-        $builder->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) {
-                $form = $event->getForm();
-                $data = $form->getData();
-                if (!empty($data) && !empty($data['save']) && (empty($data['eid']) || $data['modify'])) {
-                    if ($data['time_type'] == 0) {
-                        $start = $data['start'];
-                        $end = $data['end'];
-                        $error_element = 'end';
-                    } else {
-                        $start = $data['start_date'];
-                        $end = $data['end_date'];
-                        $error_element = 'end_date';
-                    }
-                    if ($end->getTimestamp() < $start->getTimestamp()) {
-                        $form->get($error_element)->addError(
-                            new FormError(__('end-before-start-date-time-error'))
-                        );
-                    }
-                }
-            }
-        );
-
-        return $builder->getForm();
-    }
 
     /**
      * @param Context $context
@@ -231,16 +77,17 @@ class EventFormPage extends Page
      */
     private function processForm(Context $context, $data)
     {
+        $eid = null;
         // When modifying events, this is the value of the checkbox that
         //   determines if the date should change
         $modify_occur = !isset($data['eid']) || !empty($data['modify']);
-    
+
         if (!$context->calendar->canWrite($context->user)) {
             throw new PermissionException();
         }
-    
+
         $catid = empty($data['catid']) ? null : $data['catid'];
-    
+
         if ($data['delay_publish']) {
             $publish_date = $data['publish_datetime'];
         } else {
@@ -271,7 +118,7 @@ class EventFormPage extends Page
                 $context->db->deleteOccurrences($eid);
             }
         }
-    
+
         /*foreach($calendar->get_fields() as $field) {
         $fid = $field['fid'];
         if(empty($vars["phpc-field-$fid"])) {
@@ -281,7 +128,7 @@ class EventFormPage extends Page
         }
         $phpcdb->add_event_field($eid, $fid, $vars["phpc-field-$fid"]);
         }*/
-    
+
         if ($modify_occur) {
             $occurrences = 0;
 
@@ -296,13 +143,13 @@ class EventFormPage extends Page
                 $context->db->createOccurrence($eid, $data['time_type'], $start, $data['end']);
             } else {
                 $interval = new \DateInterval('P'.$data['frequency'].$data['repeats']);
-                
+
                 echo "days between: " . days_between($start, $data['until']);
 
                 while ($occurrences <= 730 && days_between($start, $data['until']) >= 0) {
                     $context->db->createOccurrence($eid, $data['time_type'], $start, $end);
                     $occurrences++;
-        
+
                     $start->add($interval);
                     $end->add($interval);
                 }

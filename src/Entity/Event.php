@@ -27,102 +27,63 @@ use App\Entity\Occurrence;
  * Event represents an event that may have multiple occurrences.
  *
  * @author Sean Proctor <sproctor@gmail.com>
- * @ORM\Entity
- * @ORM\Table(name="events")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'events')]
 class Event
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $eid;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(name="owner_uid", referencedColumnName="uid")
-     */
-    private $owner;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(name="author_uid", referencedColumnName="uid")
-     */
+    #[ORM\ManyToOne(targetEntity: 'User')]
+    #[ORM\JoinColumn(name: 'author_uid', referencedColumnName: 'uid')]
     private $author;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $subject;
-
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $description;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Occurrence", mappedBy="event")
      * @var Occurrence[] An ArrayCollection of Occurrence objects.
      */
-    private $occurrences;
+    #[ORM\OneToMany(targetEntity: 'Occurrence', mappedBy: 'event')]
+    private \Doctrine\Common\Collections\ArrayCollection $occurrences;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Category")
-     * @ORM\JoinColumn(name="catid", referencedColumnName="catid")
-     */
-    private $category;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $ctime = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $ctime;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $mtime = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $mtime;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     private $pubtime;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Calendar")
-     * @ORM\JoinColumn(name="cid", referencedColumnName="cid")
-     */
-    private $calendar;
-
-    /**
      * One Event can have many Fields.
-     * @ORM\OneToMany(targetEntity="Field", mappedBy="event")
      */
+    #[ORM\OneToMany(targetEntity: 'Field', mappedBy: 'event')]
     private $fields;
 
     /**
-     * @param Calendar      $calendar
-     * @param User          $user
-     * @param string        $subject
-     * @param string        $description
      * @param Category|null $catid
      * @param \DateTimeInterface|null $publish_date
      * @return int
      */
     public function __construct(
-        Calendar $calendar,
-        User $user,
-        string $subject,
-        string $description,
-        Category $category,
+        #[ORM\ManyToOne(targetEntity: 'Calendar')]
+        #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid')]
+        private Calendar $calendar,
+        #[ORM\ManyToOne(targetEntity: 'User')]
+        #[ORM\JoinColumn(name: 'owner_uid', referencedColumnName: 'uid')]
+        private User $owner,
+        #[ORM\Column(type: 'string', length: 255)]
+        private string $subject,
+        #[ORM\Column(type: 'text')]
+        private string $description,
+        #[ORM\ManyToOne(targetEntity: 'Category')]
+        #[ORM\JoinColumn(name: 'catid', referencedColumnName: 'catid')]
+        private Category $category,
         DateTimeInterface $publish_date
     ) {
-        $this->calendar = $calendar;
-        $this->owner = $user;
         $this->author = $author;
-        $this->subject = $subject;
-        $this->description = $description;
-        $this->category = $category;
         $this->pubtime = $publish_date;
         $this->occurrences = new ArrayCollection();
         $this->fields = new ArrayCollection();
@@ -224,7 +185,6 @@ class Event
     }
 
     /**
-     * @param User $user
      * @return bool
      */
     public function isOwner(User $user)
@@ -235,7 +195,6 @@ class Event
     /**
      * Returns whether or not the current user can modify $event
      *
-     * @param User $user
      * @return bool
      */
     public function canModify(User $user)
@@ -247,7 +206,6 @@ class Event
     /**
      * Returns whether or not the user can read this event
      *
-     * @param User $user
      * @return bool
      */
     public function canRead(User $user)

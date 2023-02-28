@@ -52,7 +52,7 @@ class CreateUserPage extends Page
         }
         
         // else
-        return new Response($context->render("user_create.html.twig", array('form' => $form->createView())));
+        return new Response($context->render("user_create.html.twig", ['form' => $form->createView()]));
     }
 
     /**
@@ -77,29 +77,24 @@ class CreateUserPage extends Page
 
     private function createUserForm(Context $context)
     {
-        $groups = array();
+        $groups = [];
         foreach ($context->db->getGroups() as $group) {
             $groups[$group['name']] = $group['gid'];
         }
 
         $builder = $context->getFormFactory()->createBuilder();
-        $builder->add('username', TextType::class, array('label' => __('username-label')))
+        $builder->add('username', TextType::class, ['label' => __('username-label')])
         ->add(
             'password',
             RepeatedType::class,
-            array(
-                'type' => PasswordType::class,
-                'invalid_message' => __('password-mismatch-error'),
-                'first_options' => ['label' => __('password-label'), 'attr' => ['placeholder' => __('password-label')]],
-                'second_options' =>
-                    ['label' => __('repeat-password-label'), 'attr' => ['placeholder' => __('password-label')]]
-            )
+            ['type' => PasswordType::class, 'invalid_message' => __('password-mismatch-error'), 'first_options' => ['label' => __('password-label'), 'attr' => ['placeholder' => __('password-label')]], 'second_options' =>
+                ['label' => __('repeat-password-label'), 'attr' => ['placeholder' => __('password-label')]]]
         )
-        ->add('make_admin', CheckboxType::class, array('label' => __('make-admin-label'), 'required' => false))
+        ->add('make_admin', CheckboxType::class, ['label' => __('make-admin-label'), 'required' => false])
         ->add(
             'groups',
             ChoiceType::class,
-            array('label' => __('groups-label'), 'choices' => $groups, 'multiple' => true, 'required' => false)
+            ['label' => __('groups-label'), 'choices' => $groups, 'multiple' => true, 'required' => false]
         );
 
         $builder->addEventListener(

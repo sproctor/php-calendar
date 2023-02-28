@@ -1,4 +1,6 @@
-{% extends "base.html.twig" %}
+{% extends "../base.html.twig" %}
+
+{% block title %}{{ event.getSubject }}{% endblock %}
 
 {% block body %}
 <h3>{{ event.getSubject() }}</h3>

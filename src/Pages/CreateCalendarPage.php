@@ -44,7 +44,7 @@ class CreateCalendarPage extends Page
         }
         
         // else
-        return new Response($context->render("calendar_create.html.twig", array('form' => $form->createView())));
+        return new Response($context->render("calendar_create.html.twig", ['form' => $form->createView()]));
     }
 
     /**

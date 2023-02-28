@@ -30,7 +30,6 @@ class InstallPage extends Page
      * Update the database
      *
      * @param  Context $context
-     * @return Response
      * @throws PermissionException
      * @throws Exception
      */

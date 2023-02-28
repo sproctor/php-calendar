@@ -19,34 +19,24 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- * @ORM\Table("categories")
- */
+#[ORM\Entity]
+#[ORM\Table('categories')]
 class Category
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $catid;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Calendar")
-     * @ORM\JoinColumn(name="cid", referencedColumnName="cid")
-     */
-    private $calendar;
+    #[ORM\ManyToOne(targetEntity: 'Calendar')]
+    #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid')]
+    private ?\App\Entity\Calendar $calendar = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $color;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $color = null;
 
     public function getCatid(): ?int
     {

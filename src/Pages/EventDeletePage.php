@@ -40,10 +40,10 @@ class EventDeletePage
         if (is_array($context->request->get("eid"))) {
             $eids = $context->request->get("eid");
         } else {
-            $eids = array($context->request->get("eid"));
+            $eids = [$context->request->get("eid")];
         }
 
-        $removed_events = array();
+        $removed_events = [];
 
         foreach ($eids as $eid) {
             $event = $context->db->getEvent($eid);

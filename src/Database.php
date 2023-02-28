@@ -22,25 +22,19 @@ use PDO;
 
 class Database
 {
-    /**
-     * @var PDO
-     */
-    private $dbh;
+    private \PDO $dbh;
     /**
      * @var Calendar[]
      */
-    private $calendars;
+    private ?array $calendars = null;
     /**
      * @var string[]
      */
-    private $config;
-    private $event_columns;
-    private $occurrence_columns;
-    private $user_fields;
-    /**
-     * @var string
-     */
-    private $prefix;
+    private ?array $config = null;
+    private string $event_columns;
+    private string $occurrence_columns;
+    private string $user_fields;
+    private string $prefix;
 
     /**
      * Database constructor.
@@ -76,9 +70,6 @@ class Database
      * Returns all the events for a particular date range
      * $from and $to are only significant to the date.
      * an event that happens later in the day of $to is included
-     * @param int $cid
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
      * @return Occurrence[]
      */
     public function getOccurrencesByDateRange(int $cid, DateTimeInterface $from, DateTimeInterface $to): array
@@ -106,7 +97,7 @@ class Database
         //echo "<pre>$query</pre>";
         $sth = $this->dbh->prepare($query);
         $sth->execute();
-        $arr = array();
+        $arr = [];
         while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $arr[] = new Occurrence($this, $row);
         }
@@ -265,7 +256,7 @@ class Database
         $sth = $this->dbh->prepare($query);
         $sth->execute();
 
-        $groups = array();
+        $groups = [];
         while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $groups[] = $row;
         }
@@ -288,7 +279,7 @@ class Database
         $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
-        $groups = array();
+        $groups = [];
         while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $groups[] = $row;
         }
@@ -313,7 +304,7 @@ class Database
         $sth->bindValue(':uid', $uid, PDO::PARAM_INT);
         $sth->execute();
 
-        $groups = array();
+        $groups = [];
         while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $groups[] = $row;
         }
@@ -343,7 +334,7 @@ class Database
         $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
-        $arr = array();
+        $arr = [];
         while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
             $arr[] = $result;
         }
@@ -370,7 +361,7 @@ class Database
         $sth = $this->dbh->prepare($query);
         $sth->execute();
 
-        $arr = array();
+        $arr = [];
         while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
             $arr[] = $result;
         }
@@ -401,7 +392,7 @@ class Database
         $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
-        $arr = array();
+        $arr = [];
         while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
             $arr[] = $result;
         }
@@ -484,7 +475,7 @@ class Database
         $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
-        $arr = array();
+        $arr = [];
         while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
             $arr[$result['fid']] = $result;
         }
@@ -507,7 +498,7 @@ class Database
         $sth->bindValue(':eid', $eid, PDO::PARAM_INT);
         $sth->execute();
 
-        $arr = array();
+        $arr = [];
         while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
             $arr[] = $result;
         }
@@ -538,7 +529,7 @@ class Database
         $sth->bindValue(':eid', $eid, PDO::PARAM_INT);
         $sth->execute();
 
-        $occurrences = array();
+        $occurrences = [];
         while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $occurrences[] = new Occurrence($this, $row);
         }
@@ -734,10 +725,10 @@ class Database
      */
     public function getPermissions($cid, $uid)
     {
-        static $perms = array();
+        static $perms = [];
 
         if (empty($perms[$cid])) {
-            $perms[$cid] = array();
+            $perms[$cid] = [];
         }
 
         if (!empty($perms[$cid][$uid])) {
@@ -769,7 +760,7 @@ class Database
 
         $sth = $this->dbh->query($query);
 
-        $this->calendars = array();
+        $this->calendars = [];
         while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
             $cid = $result["cid"];
             //assert(empty($this->calendars[$cid]));
@@ -802,7 +793,7 @@ class Database
             $query = "SELECT `name`, `value` FROM `" . $this->prefix . "config`";
             $sth = $this->dbh->query($query);
 
-            $this->config = array();
+            $this->config = [];
             while ($result = $sth->fetch(PDO::FETCH_ASSOC)) {
                 $this->config[$result['name']] = $result['value'];
             }
@@ -853,7 +844,7 @@ class Database
 
         $sth = $this->dbh->query($query);
 
-        $users = array();
+        $users = [];
         while ($user = $sth->fetch(PDO::FETCH_ASSOC)) {
             $users[] = User::createFromMap($this, $user);
         }
@@ -875,7 +866,7 @@ class Database
         $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
-        $users = array();
+        $users = [];
         while ($user = $sth->fetch(PDO::FETCH_ASSOC)) {
             foreach ($user as $key => $val) {
                 if ($key == 'uid') {
@@ -1104,8 +1095,6 @@ class Database
     /**
      * @param int                $eid
      * @param int                $time_type
-     * @param DateTimeInterface $start
-     * @param DateTimeInterface $end
      * @return string
      */
     public function createOccurrence($eid, $time_type, DateTimeInterface $start, DateTimeInterface $end)
@@ -1150,8 +1139,6 @@ class Database
     /**
      * @param int                $oid
      * @param int                $time_type
-     * @param DateTimeInterface $start
-     * @param DateTimeInterface $end
      * @return bool
      */
     public function modifyOccurrence($oid, $time_type, DateTimeInterface $start, DateTimeInterface $end)
@@ -1345,10 +1332,9 @@ class Database
      * @param int         $fid
      * @param string      $name
      * @param bool        $required
-     * @param bool|string $format
      * @throws FailedActionException
      */
-    public function modifyField($fid, $name, $required, $format)
+    public function modifyField($fid, $name, $required, bool|string $format)
     {
         if ($format === false) {
             $format_val = 'NULL';
@@ -1398,7 +1384,7 @@ class Database
         $users_table = $this->prefix . 'users';
         $cats_table = $this->prefix . 'categories';
 
-        $words = array();
+        $words = [];
         $keywords = explode(" ", $query);
         foreach ($keywords as $unsafe_keyword) {
             $keyword = $this->dbh->quote("%$unsafe_keyword%");
@@ -1431,7 +1417,7 @@ class Database
         $sth->bindValue(':cid', $cid, PDO::PARAM_INT);
         $sth->execute();
 
-        $occurrences = array();
+        $occurrences = [];
         while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $occurrences[] = new Occurrence($this, $row);
         }
@@ -1445,7 +1431,7 @@ class Database
      */
     public function updatePermissions($cid, $uid, $perms)
     {
-        $stmts = array();
+        $stmts = [];
         foreach (['read', 'write', 'modify', 'admin'] as $name) {
             $stmts[] = "`$name`=" . asbool($perms[$name]);
         }

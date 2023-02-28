@@ -7,8 +7,8 @@
     <td class="phpc-date{% if not is_date_in_month(cur_date) %} phpc-shadow{% endif %}{% if is_today(cur_date) %} phpc-today{% endif %}">
 	    <div>
 		    <a class="phpc-day-number" href="{#  { context.createDateUrl('display_day', cur_date) } #}">{% if (not is_date_in_month(cur_date) and day_of_week == 0) or day(cur_date) == 1 %}{{ cur_date|month_abbr }}{% endif %} {{ day(cur_date) }}</a>
-		    {% if calendar.canWrite(user) %}
-		    <a href="{{ context.createDateUrl('event_form', cur_date) }}" class="phpc-add" title="{{ "create-event-menu-link"|trans }}"><i class="fas fa-plus"></i></a>
+		    {% if permissions.canCreate %}
+		    <a href="{{ path('create_event', {cid: calendar.getCid}) }}" class="phpc-add" title="{{ "create-event-menu-link"|trans }}"><i class="bi-plus"></i></a>
 		    {% endif %}
 	    </div>
 	    {% set days_occurrences = occurrences_for_date(occurrences, cur_date) %}
@@ -30,7 +30,7 @@
 					    {% if occurrence.getStart() >= cur_date %}
 						    <span class="badge badge-default">{{ time }}</span>
 					    {% else %}
-						    <i class="fas fa-ellipsis-h"></i>
+						    <i class="bi-three-dots"></i>
 					    {% endif %}
 				    {% endif %}
 				    {{ occurrence.getSubject() }}

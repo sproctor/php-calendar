@@ -24,38 +24,28 @@ use Doctrine\ORM\Mapping as ORM;
  * Defintion for event fields.
  *
  * @author Sean Proctor <sproctor@gmail.com>
- * @ORM\Entity
- * @ORM\Table("field_definitions")
  */
+#[ORM\Entity]
+#[ORM\Table('field_definitions')]
 class FieldDefinition
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $fid;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Calendar")
-     * @ORM\JoinColumn(name="cid", referencedColumnName="cid")
-     */
-    private $calendar;
+    #[ORM\ManyToOne(targetEntity: 'Calendar')]
+    #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid')]
+    private ?\App\Entity\Calendar $calendar = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $name = null;
     
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $is_required;
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $is_required = null;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $format;
+    #[ORM\Column(type: 'text')]
+    private ?string $format = null;
 
     public function getFid(): ?int
     {

@@ -20,30 +20,14 @@ namespace App;
 class SqlKey
 {
     /**
-     * @var string $name
-     */
-    public $name;
-    /**
-     * @var bool $non_unique
-     */
-    public $non_unique;
-    /**
-     * @var string $columns
-     */
-    public $columns;
-
-    /**
      * SqlKey constructor.
      *
      * @param string $name
      * @param bool   $non_unique
      * @param string $columns
      */
-    public function __construct($name, $non_unique, $columns)
+    public function __construct(public $name, public $non_unique, public $columns)
     {
-        $this->name = $name;
-        $this->non_unique = $non_unique;
-        $this->columns = $columns;
     }
 
     /**

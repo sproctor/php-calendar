@@ -21,22 +21,17 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Configuration entity
- *
- * @ORM\Entity
- * @ORM\Table(name="config")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'config')]
 class Config
 {
-    /**
-     * @ORM\Column(type="string")
-     * @ORM\Id
-     */
+    #[ORM\Column(type: 'string')]
+    #[ORM\Id]
     private $key;
 
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $value;
+    #[ORM\Column(type: 'string')]
+    private ?string $value = null;
 
     public function getValue()
     {

@@ -24,8 +24,6 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class Page
 {
     /**
-     * @param Context $context
-     * @return Response
      * @throws Exception
      */
     abstract public function action(Context $context): Response;

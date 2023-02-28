@@ -45,7 +45,7 @@ class DayPage extends Page
         $tomorrow = $today->add(new \DateInterval("P1D"));
         return new Response($context->render(
             "day_page.html.twig",
-            array('occurrences' => $occurrences, 'yesterday' => $yesterday, 'tomorrow' => $tomorrow)
+            ['occurrences' => $occurrences, 'yesterday' => $yesterday, 'tomorrow' => $tomorrow]
         ));
     }
 }

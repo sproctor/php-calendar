@@ -21,6 +21,7 @@ use App\Entity\Calendar;
 use App\Entity\User;
 use App\Repository\CalendarRepository;
 use App\Repository\OccurrenceRepository;
+use App\Repository\UserPermissionsRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Psr\Log\LoggerInterface;
@@ -35,24 +36,24 @@ use Symfony\Component\Routing\Annotation\Route;
  * @author Sean Proctor <sproctor@gmail.com>
  */
 #[Route("/calendars/{cid}")]
-class MonthController extends AbstractController
+class CalendarController extends AbstractController
 {
-    private LoggerInterface $logger;
-
-    public function __construct(LoggerInterface $logger)
+    public function __construct(
+        private LoggerInterface $logger,
+        private CalendarRepository $calendar_repository,
+        private OccurrenceRepository $occurrence_repository,
+        private UserPermissionsRepository $user_permissions_repository,
+    )
     {
-        $this->logger = $logger;
     }
 
     #[Route("/month", name: "default_month_display")]
     public function defaultRoute(
         int $cid,
-        CalendarRepository $calendar_repository,
-        OccurrenceRepository $occurrence_repository,
     ): Response {
-        $calendar = $calendar_repository->find($cid);
+        $calendar = $this->calendar_repository->find($cid);
         $user = $this->getUser();
-        return $this->displayMonth($calendar, $user, new DateTimeImmutable(), $occurrence_repository);
+        return $this->displayMonth($calendar, $user, new DateTimeImmutable());
     }
 
     #[Route("/month/{year}/{month}", name: "display_month")]
@@ -60,20 +61,17 @@ class MonthController extends AbstractController
         int $cid,
         int $year,
         int $month,
-        CalendarRepository $calendar_repository,
-        OccurrenceRepository $occurrence_repository,
     ): Response {
-        $calendar = $calendar_repository->find($cid);
+        $calendar = $this->calendar_repository->find($cid);
         $user = $this->getUser();
         $date = new DateTimeImmutable(sprintf("%04d-%02d", $year, $month));
-        return $this->displayMonth($calendar, $user, $date, $occurrence_repository);
+        return $this->displayMonth($calendar, $user, $date);
     }
 
     private function displayMonth(
         Calendar $calendar,
         ?User $user,
         DateTimeInterface $datetime,
-        OccurrenceRepository $occurrence_repository,
     ): Response {
         $cid = $calendar->getCid();
         $year = intval($datetime->format('Y'));
@@ -99,11 +97,18 @@ class MonthController extends AbstractController
         $last_day = $weeks * 7 - day_of_week($month, 1, $year);
         $to_date = create_datetime($month, $last_day + 1, $year);
 
+        $user_permissions = null;
+        if ($user !== null) {
+            $user_permissions = $this->user_permissions_repository->getUserPermissions($cid, $user->getUid());
+        }
+
         $template_variables = get_variables_for_calendar(
             function ($route, $parameters = []) {$this->generateUrl($route, $parameters); },
             $calendar,
             $user,
             $datetime,
+            $user_permissions,
+            $this->user_permissions_repository->getUserPermissions($cid, null),
         );
         $template_variables['prev_month_url'] =
             $this->generateUrl('display_month', ['cid' => $cid, 'year' => $prev_year, 'month' => $prev_month]);
@@ -111,13 +116,13 @@ class MonthController extends AbstractController
             $this->generateUrl('display_month', ['cid' => $cid, 'year' => $next_year, 'month' => $next_month]);
 
         $template_variables['weeks'] = $weeks;
-        $template_variables['occurrences'] = $occurrence_repository->findOccurrencesByDay(
+        $template_variables['occurrences'] = $this->occurrence_repository->findOccurrencesByDay(
             $calendar,
             $from_date,
             $to_date,
             $user
         );
         $template_variables['start_date'] = $from_date;
-        return new Response($this->renderView("month_page.html.twig", $template_variables));
+        return new Response($this->renderView("calendar/month_view.html.twig", $template_variables));
     }
 }

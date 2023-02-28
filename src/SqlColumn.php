@@ -20,24 +20,13 @@ namespace App;
 class SqlColumn
 {
     /**
-     * @var string $name
-     */
-    public $name;
-    /**
-     * @var string $type
-     */
-    public $type;
-
-    /**
      * SqlColumn constructor.
      *
      * @param string $name
      * @param string $type
      */
-    public function __construct($name, $type)
+    public function __construct(public $name, public $type)
     {
-        $this->name = $name;
-        $this->type = $type;
     }
 
     /**

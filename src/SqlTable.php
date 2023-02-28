@@ -19,10 +19,6 @@ namespace App;
 
 class SqlTable
 {
-    private $columns;
-    private $keys;
-    private $name;
-
     /**
      * SqlTable constructor.
      *
@@ -30,11 +26,8 @@ class SqlTable
      * @param SqlColumn[] $columns
      * @param SqlKey[]    $keys
      */
-    public function __construct($name, $columns = array(), $keys = array())
+    public function __construct(private $name, private $columns = [], private $keys = [])
     {
-        $this->name = $name;
-        $this->columns = $columns;
-        $this->keys = $keys;
     }
 
     /**
@@ -57,7 +50,6 @@ class SqlTable
     }
 
     /**
-     * @param \PDO $dbh
      * @param bool $drop
      * @throws \Exception
      */
@@ -92,7 +84,6 @@ class SqlTable
     }
 
     /**
-     * @param \PDO $dbh
      * @return string[]
      * @throws \Exception
      */
@@ -111,19 +102,18 @@ class SqlTable
     }
 
     /**
-     * @param \PDO $dbh
      * @return string[]
      * @throws FailedActionException
      */
     public function updateColumns(\PDO $dbh)
     {
-        $updates = array();
+        $updates = [];
 
         // Update Columns
         $query = "SHOW FULL COLUMNS FROM {$this->name}";
         $sth = $dbh->query($query);
         //echo "<pre>";
-        $current_columns = array();
+        $current_columns = [];
         while ($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
             $current_columns[$result['Field']] = $result;
             //var_dump($result);
@@ -185,19 +175,18 @@ class SqlTable
     }
 
     /**
-     * @param \PDO $dbh
      * @return string[]
      * @throws \Exception
      */
     public function updateKeys(\PDO $dbh)
     {
-        $updates = array();
+        $updates = [];
 
         // Upate Keys
         $query = "SHOW INDEX FROM {$this->name}";
         $sth = $dbh->query($query);
         //echo "<pre>";
-        $current_keys = array();
+        $current_keys = [];
         while ($result = $sth->fetch(\PDO::FETCH_ASSOC)) {
             $key_name = $result['Key_name'];
             if (isset($current_keys[$key_name])) {
@@ -205,9 +194,7 @@ class SqlTable
                 $key['Columns'] .=
                 ",`{$result['Column_name']}`";
             } else {
-                $key = array('Key_name' => $key_name,
-                'Non_unique' => $result['Non_unique'],
-                'Columns' => "`{$result['Column_name']}`");
+                $key = ['Key_name' => $key_name, 'Non_unique' => $result['Non_unique'], 'Columns' => "`{$result['Column_name']}`"];
             }
             $current_keys[$key_name] = $key;
         }

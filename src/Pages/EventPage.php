@@ -48,6 +48,6 @@ class EventPage extends Page
             throw new PermissionException();
         }
 
-        return new Response($context->render('event_page.html.twig', array('event' => $event)));
+        return new Response($context->render('view.html.twig', ['event' => $event]));
     }
 }

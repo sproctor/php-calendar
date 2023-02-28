@@ -44,6 +44,6 @@ class DefaultCalendarPage extends Page
             $context->addMessage(__('default-calendar-changed-notification', ['%title%' => $calendar->getCid()]));
         }
 
-        return new RedirectResponse($context->createUrl('admin', array(), "calendars"));
+        return new RedirectResponse($context->createUrl('admin', [], "calendars"));
     }
 }

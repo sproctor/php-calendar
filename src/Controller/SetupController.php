@@ -55,17 +55,20 @@ class SetupController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($data['calendar']);
-            $data['user']->setDefaultCalendar($data['calendar']);
+            /* @var User $user */
+            $user = $data['user'];
+            $user->setDefaultCalendar($data['calendar']);
             $hashedPassword = $passwordHasher->hashPassword(
-                $data['user'],
+                $user,
                 $form->get('user')->get('password')->getData()
             );
-            $data['user']->setHash($hashedPassword);
-            $entityManager->persist($data['user']);
+            $user->setHash($hashedPassword);
+            $user->setIsAdmin(true);
+            $entityManager->persist($user);
             $entityManager->flush();
             return $this->redirectToRoute('default_month_display', ['cid' => $data['calendar']->getCid()]);
         }
-        return $this->renderForm('setup.html.twig', ['form' => $form]);
+        return $this->render('setup.html.twig', ['form' => $form]);
 //        }
 
 //        throw $this->createAccessDeniedException();

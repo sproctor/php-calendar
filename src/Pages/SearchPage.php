@@ -98,14 +98,14 @@ class SearchPage extends Page
     {
         $occurrences = $context->db->search(
             $context->calendar->getCid(),
-            $$data['query'],
+            ${$data}['query'],
             $data['start'],
             $data['end'],
             $data['sort_by'],
             $data['order']
         );
 
-        $results = array();
+        $results = [];
         foreach ($occurrences as $occurrence) {
             if (!$occurrence->canRead($context->user)) {
                 continue;

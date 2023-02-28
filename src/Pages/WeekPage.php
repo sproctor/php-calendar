@@ -45,7 +45,7 @@ class WeekPage extends Page
         $to_date = create_datetime(1, $day_of_year + 7, $year);
 
         $prev_date = (clone $from_date)->add(new \DateInterval('P1W'));
-        $template_variables = array();
+        $template_variables = [];
         $template_variables['prev_week_url'] = $context->createUrl(
             'display_week',
             ['week' => week_of_year($prev_date), 'year' => year_of_week_of_year($prev_date)]

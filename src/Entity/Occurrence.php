@@ -24,59 +24,29 @@ use IntlDateFormatter;
 use Locale;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=OccurrenceRepository::class)
- * @ORM\Table(name="occurrences")
- */
+#[ORM\Entity(repositoryClass: OccurrenceRepository::class)]
+#[ORM\Table(name: 'occurrences')]
 class Occurrence
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $oid;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Event", inversedBy="occurrences")
-     * @ORM\JoinColumn(name="eid", referencedColumnName="eid")
-     */
-    private $event;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private DateTimeInterface $start;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private DateTimeInterface $end;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private int $time_type;
-
-    /**
      * Occurrence constructor.
-     *
-     * @param Event                 $event
-     * @param DateTimeInterface    $start
-     * @param DateTimeInterface    $end
-     * @param int                   $time_type
      */
-    public function __construct(Event $event, DateTimeInterface $start, DateTimeInterface $end, int $time_type)
+    public function __construct(#[ORM\ManyToOne(targetEntity: 'Event', inversedBy: 'occurrences')]
+    #[ORM\JoinColumn(name: 'eid', referencedColumnName: 'eid')]
+    private Event $event, #[ORM\Column(type: 'datetime')]
+    private DateTimeInterface $start, #[ORM\Column(type: 'datetime')]
+    private DateTimeInterface $end, #[ORM\Column(type: 'integer')]
+    private int $time_type)
     {
-        $this->event = $event;
-        $this->start = $start;
-        $this->end = $end;
-        $this->time_type = $time_type;
     }
 
     /**
      * Formats the start and end time according to time_type and locale
-     * @return null|string
      */
     public function getTimespanString(): ?string
     {
@@ -89,7 +59,7 @@ class Occurrence
                 );
                 return __(
                     'time-range',
-                    array('%start%' => $formatter->format($this->start), '%end%' => $formatter->format($this->end))
+                    ['%start%' => $formatter->format($this->start), '%end%' => $formatter->format($this->end)]
                 );
             case 1: // FULL DAY
             case 3: // None
@@ -99,9 +69,6 @@ class Occurrence
         }
     }
     
-    /**
-     * @return string
-     */
     public function getDatetimeString(): string
     {
         if ($this->time_type != 0 || days_between($this->start, $this->end) == 0) {
@@ -114,7 +81,7 @@ class Occurrence
             $event_time = $this->getTimespanString();
             $date = $formatter->format($this->start);
             if ($event_time != null) {
-                $str = __('date-time-custom', array('%date%' => $date, '%time%' => $event_time));
+                $str = __('date-time-custom', ['%date%' => $date, '%time%' => $event_time]);
             } else {
                 $str = $date;
             }
@@ -127,7 +94,7 @@ class Occurrence
             );
             $str = __(
                 'date-time-range',
-                array('%start%' => $formatter->format($this->start), '%end%' => $formatter->format($this->end))
+                ['%start%' => $formatter->format($this->start), '%end%' => $formatter->format($this->end)]
             );
         }
         return $str;
@@ -150,33 +117,21 @@ class Occurrence
                 return __('to-be-announced-abbr');
         }
     }
-    /**
-     * @return int
-     */
     public function getOid(): int
     {
         return $this->oid;
     }
 
-    /**
-     * @return int
-     */
     public function getTimeType(): int
     {
         return $this->time_type;
     }
 
-    /**
-     * @return DateTimeInterface
-     */
     public function getStart(): DateTimeInterface
     {
         return $this->start;
     }
 
-    /**
-     * @return DateTimeInterface
-     */
     public function getEnd(): DateTimeInterface
     {
         return $this->end;
@@ -184,8 +139,6 @@ class Occurrence
 
     /**
      * @param EntityManager $entityManager
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
      */
     public static function findOccurrences(
         EntityManager $entityManager,

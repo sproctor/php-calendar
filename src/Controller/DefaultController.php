@@ -30,11 +30,10 @@ use Symfony\Component\Routing\Annotation\Route;
 class DefaultController extends AbstractController
 {
 
-    /**
-     * @Route("/", name="default")
-     */
+    #[Route("/", name: "default")]
     public function index(CalendarRepository $repository): Response
     {
+        $template_variables = [];
         $calendars = $repository->findAll();
 
         $template_variables["calendars"] = $calendars;
@@ -42,7 +41,7 @@ class DefaultController extends AbstractController
         if (empty($calendars)) {
             return $this->redirectToRoute('setup');
         } else {
-            return new Response($this->render("month_page.html.twig", $template_variables));
+            return new Response($this->render("month_view.html.twig", $template_variables));
         }
     }
 }

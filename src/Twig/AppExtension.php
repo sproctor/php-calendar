@@ -29,11 +29,8 @@ use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension implements GlobalsInterface
 {
-    private KernelInterface $kernel;
-
-    public function __construct(KernelInterface $kernel)
+    public function __construct(private KernelInterface $kernel)
     {
-        $this->kernel = $kernel;
     }
 
     public function getFunctions(): array
@@ -58,10 +55,8 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             ),
             new TwigFunction(
                 'is_date_in_month',
-                function (array $context, DateTimeInterface $date) {
-                    return intval($date->format('n')) == $context['month']
-                        && intval($date->format('Y')) == $context['year'];
-                },
+                fn(array $context, DateTimeInterface $date) => intval($date->format('n')) == $context['month']
+                    && intval($date->format('Y')) == $context['year'],
                 ['needs_context' => true]
             ),
             new TwigFunction(
@@ -74,9 +69,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('is_today', '\is_today'),
             new TwigFunction(
                 'day',
-                function (\DateTimeInterface $date) {
-                    return $date->format('j');
-                }
+                fn(\DateTimeInterface $date) => $date->format('j')
             ),
             new TwigFunction(
                 'occurrences_for_date',
@@ -121,7 +114,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                     return "<a href=\"$url\">$week</a>";
                 },
                 [
-                    'is_safe' => array('html'),
+                    'is_safe' => ['html'],
                     'needs_context' => true,
                 ]
             )
@@ -164,7 +157,6 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     }
 
     /**
-     * @param string $title
      * @param string[] $values Array of URL => title
      * @return string          Dropdown box that will change the page to the URL from $values when an element is selected
      */
@@ -183,9 +175,6 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 
     /**
      * Takes a date, returns the full month name
-     *
-     * @param DateTimeInterface $date
-     * @return string
      */
     function monthName(DateTimeInterface $date): string
     {
@@ -200,10 +189,6 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         return $formatter->format($date);
     }
 
-    /**
-     * @param DateTimeInterface $date
-     * @return string
-     */
     function shortDayName(DateTimeInterface $date): string
     {
         $formatter = new \IntlDateFormatter(
@@ -217,10 +202,6 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         return $formatter->format($date);
     }
 
-    /**
-     * @param DateTimeInterface $date
-     * @return string
-     */
     function dayName(DateTimeInterface $date): string
     {
         $formatter = new \IntlDateFormatter(
@@ -235,7 +216,6 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     }
 
     /**
-     * @param DateTimeInterface $date
      * @return string
      */
     function shortMonthName(DateTimeInterface $date)
@@ -254,7 +234,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     private function getLanguageMappings(): array
     {
         if (empty($this->mappings)) {
-            $this->mappings = array();
+            $this->mappings = [];
             $finder = new Finder();
 
             foreach ($finder->name('*.yaml')->in($this->kernel->getProjectDir() . '/translations')->files() as $file) {

@@ -59,34 +59,26 @@ class Context
     private FormFactoryInterface $formFactory;
     public Request $request;
     public Session $session;
-    private RequestStack $requestStack;
-    public EntityManager $entityManager;
     public Translator $translator;
-    private Environment $twig;
 
     /**
      * Context constructor.
      *
-     * @param RequestStack $requestStack
      * @param EntityManager $entityManager
-     *
      * @throws Exception
      */
     public function __construct(
-        RequestStack           $requestStack,
-        EntityManagerInterface $entityManager,
-        Environment            $twig,
+        private RequestStack           $requestStack,
+        public EntityManagerInterface $entityManager,
+        private Environment            $twig,
         Security               $security,
     )
     {
-        $this->requestStack = $requestStack;
-        $this->entityManager = $entityManager;
         $this->request = $requestStack->getCurrentRequest();
         $this->session = $requestStack->getSession();
 
-        $appVariableReflection = new \ReflectionClass('\Symfony\Bridge\Twig\AppVariable');
+        $appVariableReflection = new \ReflectionClass('\\' . \Symfony\Bridge\Twig\AppVariable::class);
         $vendorTwigBridgeDir = dirname($appVariableReflection->getFileName());
-        $this->twig = $twig;
 
         $this->user = $security->getUser();
 
@@ -142,17 +134,13 @@ class Context
         $this->twig->addFunction(
             new TwigFunction(
                 'day',
-                function (\DateTimeInterface $date) {
-                    return $date->format('j');
-                }
+                fn(\DateTimeInterface $date) => $date->format('j')
             )
         );
         $this->twig->addFunction(
             new TwigFunction(
                 'month',
-                function (\DateTimeInterface $date) {
-                    return $date->format('n');
-                }
+                fn(\DateTimeInterface $date) => $date->format('n')
             )
         );
         $this->twig->addFunction(
@@ -175,7 +163,6 @@ class Context
     }
 
     /**
-     * @param string $key
      * @return string
      */
     public function getConfig(string $key)
@@ -222,7 +209,7 @@ class Context
             $this->addLocale($locale);
         }
         $this->addLocale('en');
-        $this->translator->setFallbackLocales(array('en'));
+        $this->translator->setFallbackLocales(['en']);
     }
 
     /**
@@ -234,7 +221,7 @@ class Context
     {
         try {
             $this->translator->addResource('mo', __DIR__ . "/../translations/$locale.mo", $locale);
-        } catch (NotFoundResourceException $e) {
+        } catch (NotFoundResourceException) {
             $this->addMessage("Could not find a translation for locale \"$locale\".");
         }
     }
@@ -247,11 +234,6 @@ class Context
         return $this->formFactory;
     }
 
-    /**
-     * @param string $action
-     * @param DateTimeInterface|null $date
-     * @return string
-     */
     public function createDateUrl(string $action, ?DateTimeInterface $date = null): string
     {
         if ($date == null) {
@@ -274,7 +256,7 @@ class Context
      */
     public function createEventUrl($action, $eid)
     {
-        return $this->createUrl($action, array("eid" => $eid));
+        return $this->createUrl($action, ["eid" => $eid]);
     }
 
     /**
@@ -284,7 +266,7 @@ class Context
      */
     public function createOccurrenceUrl($action, $oid)
     {
-        return $this->createUrl($action, array("oid" => $oid));
+        return $this->createUrl($action, ["oid" => $oid]);
     }
 
     /**
@@ -293,7 +275,7 @@ class Context
      * @param string|null $hash
      * @return string
      */
-    public function createUrl($action = null, $parameters = array(), $hash = null)
+    public function createUrl($action = null, $parameters = [], $hash = null)
     {
         if (!empty($this->calendar)) {
             $parameters['phpcid'] = $this->calendar->getCid();

@@ -23,67 +23,44 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @ORM\Entity
- * @ORM\Table("users")
- */
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
+#[ORM\Entity]
+#[ORM\Table('users')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private int $uid;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private string $username;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private string $hash;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $is_admin = false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $password_is_editable = true;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Calendar")
-     * @ORM\JoinColumn(name="default_cid", referencedColumnName="cid")
-     */
-    private $default_calendar;
+    #[ORM\ManyToOne(targetEntity: 'Calendar')]
+    #[ORM\JoinColumn(name: 'default_cid', referencedColumnName: 'cid')]
+    private ?\App\Entity\Calendar $default_calendar = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $timezone;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $timezone = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $locale;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $locale = null;
 
     // TODO: implement
     private $groups;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private bool $is_disabled = false;
 
-    /**
-     * @return string
-     */
     public function getUsername(): string
     {
         return $this->username;
@@ -99,9 +76,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->username;
     }
 
-    /**
-     * @return int
-     */
     public function getUid(): int
     {
         return $this->uid;
@@ -122,17 +96,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function hasEditablePassword(): bool
     {
         return $this->password_is_editable;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTimezone(): ?string
     {
         return $this->timezone;
@@ -172,7 +140,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = array();
+        $roles = [];
         // guarantee every user at least has ROLE_USER
         if (!$this->isDisabled()) {
             $roles[] = 'ROLE_USER';

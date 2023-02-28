@@ -35,14 +35,14 @@
             </button>
             <div class="collapse navbar-collapse" id="phpc-navbar">
                 <ul class="navbar-nav mr-auto">
-                    {% if calendar.canWrite(user) %}
+                    {% if permissions.canCreate %}
                         {{ menu_item("event_form", "create-event-menu-link"|trans, 'plus') }}
                     {% endif %}
                     {{ menu_item("display_month", "view-month-menu-link"|trans, 'eye') }}
                     {% if app.current_route == "display_event" %}
                         {{ menu_item("display_day", "view-date-menu-link"|trans, 'eye') }}
                     {% endif %}
-                    {% if calendar.canAdmin(user) %}
+                    {% if permissions.canAdmin %}
                         {{ menu_item("admin", "admin-menu-link"|trans, 'cog') }}
                     {% endif %}
                     {% if user is null %}
@@ -77,7 +77,7 @@
                                             class="bi-bow-arrow-right"></i> {{ "log-out-menu-link"|trans }}</a>
                             {% else %}
                                 <a class="dropdown-item"
-                                   href="{{ path("app_login", { target_path: query_string|url_encode }) }}"><i
+                                   href="{{ path("app_login", { target_path: app.current_route|url_encode }) }}"><i
                                             class="bi-box-arrow-in-right"></i> {{ "log-in-menu-link"|trans }}</a>
                             {% endif %}
                         </div>

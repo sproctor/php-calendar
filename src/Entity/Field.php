@@ -24,29 +24,23 @@ use Doctrine\ORM\Mapping as ORM;
  * User defined field on an actual event.
  *
  * @author Sean Proctor <sproctor@gmail.com>
- * @ORM\Entity
- * @ORM\Table("fields")
  */
+#[ORM\Entity]
+#[ORM\Table('fields')]
 class Field
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="FieldDefinition")
-     * @ORM\JoinColumn(name="fid", referencedColumnName="fid")
-     * @ORM\Id
-     */
-    private $definition;
+    #[ORM\ManyToOne(targetEntity: 'FieldDefinition')]
+    #[ORM\JoinColumn(name: 'fid', referencedColumnName: 'fid')]
+    #[ORM\Id]
+    private ?\App\Entity\FieldDefinition $definition = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Event", inversedBy="fields")
-     * @ORM\JoinColumn(name="eid", referencedColumnName="eid")
-     * @ORM\Id
-     */
-    private $event;
+    #[ORM\ManyToOne(targetEntity: 'Event', inversedBy: 'fields')]
+    #[ORM\JoinColumn(name: 'eid', referencedColumnName: 'eid')]
+    #[ORM\Id]
+    private ?\App\Entity\Event $event = null;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $value;
+    #[ORM\Column(type: 'text')]
+    private ?string $value = null;
 
     public function getValue(): ?string
     {

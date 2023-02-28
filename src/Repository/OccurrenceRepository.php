@@ -17,8 +17,6 @@ class OccurrenceRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
      * @return Occurrence[]
      */
     public function findOccurrencesByDateRange(int $cid, DateTimeInterface $from, DateTimeInterface $to): array
@@ -36,7 +34,7 @@ class OccurrenceRepository extends ServiceEntityRepository
     public function findOccurrencesByDay(Calendar $calendar, DateTimeInterface $from, DateTimeInterface $to, ?User $user): array
     {
         $all_occurrences = $this->findOccurrencesByDateRange($calendar->getCid(), $from, $to);
-        $occurrences_by_day = array();
+        $occurrences_by_day = [];
         $max_events = $calendar->getMaxDisplayEvents();
 
         foreach ($all_occurrences as $occurrence) {
@@ -58,7 +56,7 @@ class OccurrenceRepository extends ServiceEntityRepository
                  $date = $date->add(new \DateInterval("P1D"))) {
                 $key = date_index($date);
                 if (!isset($occurrences_by_day[$key])) {
-                    $occurrences_by_day[$key] = array();
+                    $occurrences_by_day[$key] = [];
                 }
                 if (sizeof($occurrences_by_day[$key]) == $max_events) {
                     $occurrences_by_day[$key][] = null;

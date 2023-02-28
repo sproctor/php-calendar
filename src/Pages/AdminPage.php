@@ -47,7 +47,7 @@ class AdminPage extends Page
         return new Response(
             $context->render(
                 "admin.html.twig",
-                array('calendar_form' => $calendar_form->createView(), 'user_form' => $user_form->createView())
+                ['calendar_form' => $calendar_form->createView(), 'user_form' => $user_form->createView()]
             )
         );
     }
@@ -95,7 +95,7 @@ class AdminPage extends Page
             ['%type%' => __('calendar'), '%name%' => $context->calendar->getTitle()]
         ));
 
-        return new RedirectResponse($context->createUrl('admin', array(), 'calendar'));
+        return new RedirectResponse($context->createUrl('admin', [], 'calendar'));
     }
 
     /**
@@ -111,6 +111,6 @@ class AdminPage extends Page
 
         $context->addMessage(__('users-updated-notification'));
 
-        return new RedirectResponse($context->createUrl('admin', array(), 'calendar-users'));
+        return new RedirectResponse($context->createUrl('admin', [], 'calendar-users'));
     }
 }
