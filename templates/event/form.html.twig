@@ -32,9 +32,9 @@
             {{ form_widget(form.end_date) }}
             {{ form_errors(form.end_date) }}
         </div>
-        {{ form_row(form.repeats) }}
+        {{ form_row(form.repeats, {'attr': {'class': 'event-repeats'}}) }}
         <div id="repeat_data">
-            {{ form_row(form.frequency) }}
+            <div class="event-frequency">{{ form_row(form.frequency) }}</div>
             {{ form_row(form.until) }}
         </div>
     </div>
@@ -44,6 +44,9 @@
     </div>
     {{ form_end(form) }}
 
+{% endblock %}
+
+{% block script %}
     <script>
         var $type_selector = $('#form_time_type');
 
@@ -67,20 +70,20 @@
         });
         {% if form.eid is defined %}
         // show hide time stuff with modify checkbox
-        $('#time_data').toggle($('#form_modify').checked);
-        $('#form_modify').click(function () {
+        $('#time_data').toggle($('#event_form_modify').checked);
+        $('#event_form_modify').click(function () {
             $('#time_data').toggle(this.checked);
         });
         {% endif %}
 
         // show/hide publish date with checkbox
-        $('#publish_data').toggle($('#form_delay_publish').prop('checked') != false);
-        $('#form_delay_publish').click(function () {
+        $('#publish_data').toggle($('#event_form_delay_publish').prop('checked') != false);
+        $('#event_form_delay_publish').click(function () {
             $('#publish_data').toggle(this.checked);
         });
 
-        var $repeat_selector = $('#form_repeats');
-        var $repeat_data = $('#repeat_data');
+        const $repeat_selector = $('.event-repeats');
+        const $repeat_data = $('#repeat_data');
         if ($repeat_selector.val() === '0') {
             $repeat_data.hide();
             $repeat_data.find("input").prop('disabled', true);
@@ -101,20 +104,19 @@
                     label = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'days'|trans}) }}";
                     break;
                 case 'W':
-                    unit = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'weeks'|trans}) }}";
+                    label = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'weeks'|trans}) }}";
                     break;
                 case 'M':
-                    unit = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'months'|trans}) }}";
+                    label = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'months'|trans}) }}";
                     break;
                 case 'Y':
-                    unit = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'years'|trans}) }}";
+                    label = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'years'|trans}) }}";
                     break;
                 default:
-                // invalid option
-                    unit = "invalid"
+                    // invalid option
             }
             $repeat_data.show();
-            $('label[for="form_frequency"]').html(label);
+            $('.event-frequency label').html(label);
             $repeat_data.find("input").prop('disabled', false);
         });
     </script>
