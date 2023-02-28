@@ -1,117 +1,121 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-  {{ form_start(form) }}
+    {{ form_start(form) }}
     {{ form_row(form.subject) }}
     <div class="form-group">
-      <label class="form-control-label" for="form_description">{{ "description-label"|trans }} <a href="http://commonmark.org/help/" target="_blank">({{ "syntax"|trans }})</a></label>
-      {{ form_errors(form.description) }}
-      {{ form_widget(form.description) }}
+        <label class="form-control-label" for="form_description">{{ "description-label"|trans }} <a
+                    href="http://commonmark.org/help/" target="_blank">({{ "syntax"|trans }})</a></label>
+        {{ form_errors(form.description) }}
+        {{ form_widget(form.description) }}
     </div>
     {% if form.modify is defined %}
-      {{ form_row(form.modify) }}
+        {{ form_row(form.modify) }}
     {% endif %}
     <div id="time_data">
-      {{ form_row(form.time_type) }}
-      {{ form_label(form.start) }}
-      <div class="form-datetime">
-        {{ form_widget(form.start) }}
-        {{ form_errors(form.start) }}
-      </div>
-      <div class="form-date">
-        {{ form_widget(form.start_date) }}
-        {{ form_errors(form.start_date) }}
-      </div>
-      {{ form_label(form.end) }}
-      <div class="form-datetime">
-          {{ form_widget(form.end) }}
-          {{ form_errors(form.end) }}
-      </div>
-      <div class="form-date">
-          {{ form_widget(form.end_date) }}
-          {{ form_errors(form.end_date) }}
-      </div>
-      {{ form_row(form.repeats) }}
-      <div id="repeat_data">
-        {{ form_row(form.frequency) }}
-        {{ form_row(form.until) }}
-      </div>
+        {{ form_row(form.time_type) }}
+        {{ form_label(form.start) }}
+        <div class="form-datetime">
+            {{ form_widget(form.start) }}
+            {{ form_errors(form.start) }}
+        </div>
+        <div class="form-date">
+            {{ form_widget(form.start_date) }}
+            {{ form_errors(form.start_date) }}
+        </div>
+        {{ form_label(form.end) }}
+        <div class="form-datetime">
+            {{ form_widget(form.end) }}
+            {{ form_errors(form.end) }}
+        </div>
+        <div class="form-date">
+            {{ form_widget(form.end_date) }}
+            {{ form_errors(form.end_date) }}
+        </div>
+        {{ form_row(form.repeats) }}
+        <div id="repeat_data">
+            {{ form_row(form.frequency) }}
+            {{ form_row(form.until) }}
+        </div>
     </div>
-    {{ form_row(form.delay_publish)}}
+    {{ form_row(form.delay_publish) }}
     <div id="publish_data">
-      {{ form_row(form.publish_datetime) }}
+        {{ form_row(form.pubtime) }}
     </div>
-  {{ form_end(form) }}
+    {{ form_end(form) }}
 
-  <script>
-    var $type_selector = $('#form_time_type');
-    function updateToFrom() {
-        if ($type_selector.val() === '0') {
-            $('.form-datetime').show();
-            $('.form-datetime select').prop('disabled', false);
-            $('.form-date').hide();
-            $('.form-date select').prop('disabled', true);
-        } else {
-            $('.form-datetime').hide();
-            $('.form-datetime select').prop('disabled', true);
-            $('.form-date').show();
-            $('.form-date select').prop('disabled', false);
+    <script>
+        var $type_selector = $('#form_time_type');
+
+        function updateToFrom() {
+            if ($type_selector.val() === '0') {
+                $('.form-datetime').show();
+                $('.form-datetime select').prop('disabled', false);
+                $('.form-date').hide();
+                $('.form-date select').prop('disabled', true);
+            } else {
+                $('.form-datetime').hide();
+                $('.form-datetime select').prop('disabled', true);
+                $('.form-date').show();
+                $('.form-date select').prop('disabled', false);
+            }
         }
-    }
-    updateToFrom();
-    $type_selector.change(function() {
+
         updateToFrom();
-    });
-    {% if form.eid is defined %}
-      // show hide time stuff with modify checkbox
-      $('#time_data').toggle($('#form_modify').checked);
-      $('#form_modify').click(function() {
-        $('#time_data').toggle(this.checked);
-      });
-    {% endif %}
+        $type_selector.change(function () {
+            updateToFrom();
+        });
+        {% if form.eid is defined %}
+        // show hide time stuff with modify checkbox
+        $('#time_data').toggle($('#form_modify').checked);
+        $('#form_modify').click(function () {
+            $('#time_data').toggle(this.checked);
+        });
+        {% endif %}
 
-    // show/hide publish date with checkbox
-    $('#publish_data').toggle($('#form_delay_publish').prop('checked') != false);
-    $('#form_delay_publish').click(function() {
-      $('#publish_data').toggle(this.checked);
-    });
+        // show/hide publish date with checkbox
+        $('#publish_data').toggle($('#form_delay_publish').prop('checked') != false);
+        $('#form_delay_publish').click(function () {
+            $('#publish_data').toggle(this.checked);
+        });
 
-    var $repeat_selector = $('#form_repeats');
-    var $repeat_data = $('#repeat_data');
-    if ($repeat_selector.val() === '0') {
-      $repeat_data.hide();
-      $repeat_data.find("input").prop('disabled', true);
-    } else {
-      $repeat_data.show();
-      $repeat_data.find("input").prop('disabled', false);
-    }
-    // When selected ...
-    $repeat_selector.change(function() {
-      console.log('changed...');
-      var label = '';
-      switch($repeat_selector.val()) {
-        case '0':
-          $repeat_data.hide();
-          $repeat_data.find("input").prop('disabled', true);
-          return;
-        case 'D':
-          unit = "{{ "days"|trans }}";
-					break;
-				case 'W':
-					unit = "{{ "weeks"|trans }}";
-          break;
-        case 'M':
-					unit = "{{ "months"|trans }}";
-          break;
-        case 'Y':
-					label = "{{ "years"|trans }}";
-          break;
-        default:
-          // invalid option
-      }
-      $repeat_data.show();
-      $('label[for="form_frequency"]').html("{{ "repeat-every-unit-question"|trans({"%unit%": unit}) }}");
-      $repeat_data.find("input").prop('disabled', false);
-    });
-  </script>
+        var $repeat_selector = $('#form_repeats');
+        var $repeat_data = $('#repeat_data');
+        if ($repeat_selector.val() === '0') {
+            $repeat_data.hide();
+            $repeat_data.find("input").prop('disabled', true);
+        } else {
+            $repeat_data.show();
+            $repeat_data.find("input").prop('disabled', false);
+        }
+        // When selected ...
+        $repeat_selector.change(function () {
+            console.log('changed...');
+            var label = '';
+            switch ($repeat_selector.val()) {
+                case '0':
+                    $repeat_data.hide();
+                    $repeat_data.find("input").prop('disabled', true);
+                    return;
+                case 'D':
+                    label = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'days'|trans}) }}";
+                    break;
+                case 'W':
+                    unit = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'weeks'|trans}) }}";
+                    break;
+                case 'M':
+                    unit = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'months'|trans}) }}";
+                    break;
+                case 'Y':
+                    unit = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'years'|trans}) }}";
+                    break;
+                default:
+                // invalid option
+                    unit = "invalid"
+            }
+            $repeat_data.show();
+            $('label[for="form_frequency"]').html(label);
+            $repeat_data.find("input").prop('disabled', false);
+        });
+    </script>
 {% endblock %}

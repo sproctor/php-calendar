@@ -31,17 +31,22 @@ class Occurrence
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private $oid;
+    private int $oid;
 
     /**
      * Occurrence constructor.
      */
-    public function __construct(#[ORM\ManyToOne(targetEntity: 'Event', inversedBy: 'occurrences')]
-    #[ORM\JoinColumn(name: 'eid', referencedColumnName: 'eid')]
-    private Event $event, #[ORM\Column(type: 'datetime')]
-    private DateTimeInterface $start, #[ORM\Column(type: 'datetime')]
-    private DateTimeInterface $end, #[ORM\Column(type: 'integer')]
-    private int $time_type)
+    public function __construct(
+        #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'occurrences')]
+        #[ORM\JoinColumn(name: 'eid', referencedColumnName: 'eid')]
+        private Event $event,
+        #[ORM\Column(type: 'datetime')]
+        private DateTimeInterface $start,
+        #[ORM\Column(type: 'datetime')]
+        private DateTimeInterface $end,
+        #[ORM\Column(type: 'integer')]
+        private int $time_type
+    )
     {
     }
 

@@ -2,30 +2,42 @@
 
 namespace App\Form;
 
+use App\Entity\Event;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class EventFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $max_subject_length = $options['maxlength'];
+        $default_date = $options['date'];
+        $end_datetime = $options['end'];
+        $modifying = $options['modifying'];
+
         $builder->add(
             'subject',
             TextType::class,
             [
-                'label' => _('Subject'),
-                'constraints' => new Assert\NotBlank(),
+                'label' => new TranslatableMessage('subject-label'),
+                'constraints' => new NotBlank(),
                 'attr' => [
                     'autocomplete' => 'off',
-                    'maxlength' => $context->calendar->getMaxSubjectLength(),
-                    'autofocus' => ''
+                    'maxlength' => $max_subject_length,
+                    'autofocus' => true,
                 ]
             ]
         )
@@ -33,47 +45,139 @@ class EventFormType extends AbstractType
             ->add(
                 'start',
                 DateTimeType::class,
-                ['label' => __('from-label'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
-                    'data' => $default_date, 'required' => false]
+                [
+                    'label' => new TranslatableMessage('from-label'),
+                    'date_widget' => 'single_text',
+                    'time_widget' => 'single_text',
+                    'data' => $default_date,
+                    'required' => false,
+                    'mapped' => false,
+                ]
             )
             ->add(
                 'end',
                 DateTimeType::class,
-                ['label' => __('to-label'), 'date_widget' => 'single_text', 'time_widget' => 'single_text',
-                    'data' => $end_datetime, 'required' => false]
+                [
+                    'label' => new TranslatableMessage('to-label'),
+                    'date_widget' => 'single_text',
+                    'time_widget' => 'single_text',
+                    'data' => $end_datetime,
+                    'required' => false,
+                    'mapped' => false,
+                ]
             )
             ->add(
                 'start_date',
                 DateType::class,
-                ['label' => __('from-label'), 'widget' => 'single_text', 'data' => $default_date, 'required' => false]
+                [
+                    'label' => new TranslatableMessage('from-label'),
+                    'widget' => 'single_text',
+                    'data' => $default_date,
+                    'required' => false,
+                    'mapped' => false,
+                ]
             )
             ->add(
                 'end_date',
                 DateType::class,
-                ['label' => __('to-label'), 'widget' => 'single_text', 'data' => $end_datetime, 'required' => false]
+                [
+                    'label' => new TranslatableMessage('to-label'),
+                    'widget' => 'single_text',
+                    'data' => $end_datetime,
+                    'required' => false,
+                    'mapped' => false,
+                ]
             )
             ->add(
                 'time_type',
                 ChoiceType::class,
-                ['label' => __('time-type-label'), 'choices' => [__('normal-label') => 0, __('full-day-label') => 1, __('to-be-announced-label') => 2]]
+                [
+                    'label' => new TranslatableMessage('time-type-label'),
+                    'choices' => [
+                        'normal-label' => 0,
+                        'full-day-label' => 1,
+                        'to-be-announced-label' => 2,
+                    ],
+                    'choice_label' => function ($choice, $key) {
+                        return new TranslatableMessage($key);
+                    },
+                    'mapped' => false,
+                ]
             )
             ->add(
                 'repeats',
                 ChoiceType::class,
-                ['label' => __('repeats-label'), 'choices' => [__('never-label') => '0', __('daily-label') => 'D', __('weekly-label') => 'W', __('monthly-label') => 'M', __('yearly-label') => 'Y']]
+                [
+                    'label' => new TranslatableMessage('repeats-label'),
+                    'choices' => [
+                        'never-label' => '0',
+                        'daily-label' => 'D',
+                        'weekly-label' => 'W',
+                        'monthly-label' => 'M',
+                        'yearly-label' => 'Y',
+                    ],
+                    'choice_label' => function ($choice, $key) {
+                        return new TranslatableMessage($key);
+                    },
+                    'mapped' => false,
+                ]
             )
             ->add(
                 'frequency',
                 IntegerType::class,
-                ['constraints' => new Assert\GreaterThan(0), 'data' => 1]
+                ['constraints' => new GreaterThan(0), 'data' => 1, 'mapped' => false,]
             )
-            ->add('until', DateType::class, ['label' => __('until-label'), 'widget' => 'single_text'])
-            ->add('delay_publish', CheckboxType::class, ['label' => __('delay-publish-label'), 'required' => false])
             ->add(
-                'publish_datetime',
+                'until',
+                DateType::class,
+                [
+                    'label' => new TranslatableMessage('until-label'),
+                    'widget' => 'single_text',
+                    'mapped' => false,
+                ]
+            )
+            ->add(
+                'delay_publish',
+                CheckboxType::class,
+                [
+                    'label' => new TranslatableMessage('delay-publish-label'),
+                    'required' => false,
+                    'mapped' => false,
+                ]
+            )
+            ->add(
+                'pubtime',
                 DateTimeType::class,
-                ['label' => __('publish-date-time-label'), 'date_widget' => 'single_text',
-                    'time_widget' => 'single_text', 'required' => false]
+                [
+                    'label' => new TranslatableMessage('publish-date-time-label'),
+                    'date_widget' => 'single_text',
+                    'time_widget' => 'single_text',
+                    'required' => false,
+                ]
             );
+        if ($modifying) {
+            $builder->add(
+                'modify',
+                CheckboxType::class,
+                [
+                    'label' => new TranslatableMessage('change-event-date-time-label'),
+                    'required' => false,
+                    'mapped' => false,
+                ]
+            );
+            $builder->add('eid', HiddenType::class);
+        }
+        $builder->add('save', SubmitType::class);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Event::class,
+            'maxlength' => 50,
+            'date' => new \DateTimeImmutable(),
+            'end' => null,
+            'modifying' => false,
+        ]);
     }
 }

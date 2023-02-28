@@ -35,17 +35,15 @@ class Event
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private $eid;
+    private int $eid;
 
-    #[ORM\ManyToOne(targetEntity: 'User')]
-    #[ORM\JoinColumn(name: 'author_uid', referencedColumnName: 'uid')]
-    private $author;
+    // TODO: do we really want author and owner separated?
+//    #[ORM\ManyToOne(targetEntity: User::class)]
+//    #[ORM\JoinColumn(name: 'author_uid', referencedColumnName: 'uid')]
+//    private int $author;
 
-    /**
-     * @var Occurrence[] An ArrayCollection of Occurrence objects.
-     */
-    #[ORM\OneToMany(targetEntity: 'Occurrence', mappedBy: 'event')]
-    private \Doctrine\Common\Collections\ArrayCollection $occurrences;
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Occurrence::class)]
+    private Collection $occurrences;
 
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $ctime = null;
@@ -53,8 +51,8 @@ class Event
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $mtime = null;
 
-    #[ORM\Column(type: 'datetime')]
-    private $pubtime;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $pubtime = null;
 
     /**
      * One Event can have many Fields.
@@ -62,81 +60,45 @@ class Event
     #[ORM\OneToMany(targetEntity: 'Field', mappedBy: 'event')]
     private $fields;
 
-    /**
-     * @param Category|null $catid
-     * @param \DateTimeInterface|null $publish_date
-     * @return int
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $subject;
+
+    #[ORM\Column(type: 'text')]
+    private string $description;
+
+    #[ORM\ManyToOne(targetEntity: 'Category')]
+    #[ORM\JoinColumn(name: 'catid', referencedColumnName: 'catid')]
+    private ?Category $category;
+
     public function __construct(
         #[ORM\ManyToOne(targetEntity: 'Calendar')]
         #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid')]
         private Calendar $calendar,
         #[ORM\ManyToOne(targetEntity: 'User')]
         #[ORM\JoinColumn(name: 'owner_uid', referencedColumnName: 'uid')]
-        private User $owner,
-        #[ORM\Column(type: 'string', length: 255)]
-        private string $subject,
-        #[ORM\Column(type: 'text')]
-        private string $description,
-        #[ORM\ManyToOne(targetEntity: 'Category')]
-        #[ORM\JoinColumn(name: 'catid', referencedColumnName: 'catid')]
-        private Category $category,
-        DateTimeInterface $publish_date
-    ) {
-        $this->author = $author;
-        $this->pubtime = $publish_date;
+        private ?User    $owner,
+    )
+    {
         $this->occurrences = new ArrayCollection();
         $this->fields = new ArrayCollection();
     }
 
-    /**
-     * @return string
-     */
-    public function getRawSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
 
-    /**
-     * @return string
-     */
-    public function getSubject()
-    {
-        if (empty($this->subject)) {
-            return __('nonexistent-subject');
-        }
-
-        return $this->subject;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAuthor()
-    {
-        return $this->author;
-    }
-
-    /**
-     * @return User
-     */
-    public function getOwner()
+    public function getOwner(): User
     {
         return $this->owner;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @return int
-     */
-    public function getEid()
+    public function getEid(): int
     {
         return $this->eid;
     }
@@ -144,23 +106,17 @@ class Event
     /**
      * @return Occurrence[]
      */
-    public function getOccurrences()
+    public function getOccurrences(): Collection
     {
         return $this->db->getOccurrences($this->eid);
     }
 
-    /**
-     * @return Calendar
-     */
-    public function getCalendar()
+    public function getCalendar(): Calendar
     {
         return $this->calendar;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getTextColor()
+    public function getTextColor(): ?string
     {
         return $this->text_color;
     }

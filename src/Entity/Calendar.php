@@ -33,7 +33,6 @@ class Calendar
     #[ORM\Column(type: 'string', length: 255)]
     private string $title;
 
-    private array $user_perms = [];
     private array $categories;
 
     #[ORM\Column(type: 'integer')]
@@ -41,9 +40,6 @@ class Calendar
 
     #[ORM\Column(type: 'integer')]
     private int $events_max = 5;
-
-    // TODO: See https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/cookbook/mysql-enums.html
-    private $anon_permission;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $timezone = "America/New_York";
@@ -121,11 +117,6 @@ class Calendar
         return $this->fields[$fid];
     }
 
-    public function getAnonPermission(): int
-    {
-        return $this->anon_permission;
-    }
-
     public function getSubjectMax(): ?int
     {
         return $this->subject_max;
@@ -175,6 +166,4 @@ class Calendar
 
         return $this;
     }
-
-
 }
