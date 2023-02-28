@@ -17,11 +17,11 @@
 
 namespace App\Entity;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Occurrence;
 
 /**
  * Event represents an event that may have multiple occurrences.
@@ -46,13 +46,13 @@ class Event
     private Collection $occurrences;
 
     #[ORM\Column(type: 'datetime')]
-    private ?\DateTimeInterface $ctime = null;
+    private DateTimeInterface $ctime;
 
     #[ORM\Column(type: 'datetime')]
-    private ?\DateTimeInterface $mtime = null;
+    private DateTimeInterface $mtime;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $pubtime = null;
+    private ?DateTimeInterface $pubtime = null;
 
     /**
      * One Event can have many Fields.
@@ -79,6 +79,8 @@ class Event
         private ?User    $owner,
     )
     {
+        $this->ctime = new DateTimeImmutable();
+        $this->mtime = new DateTimeImmutable();
         $this->occurrences = new ArrayCollection();
         $this->fields = new ArrayCollection();
     }
@@ -121,18 +123,12 @@ class Event
         return $this->text_color;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getBgColor()
+    public function getBgColor(): ?string
     {
         return $this->bg_color;
     }
 
-    /**
-     * @return string
-     */
-    public function getCategory()
+    public function getCategory(): string
     {
         if (empty($this->category)) {
             return $this->category;
@@ -140,20 +136,15 @@ class Event
         return $this->category;
     }
 
-    /**
-     * @return bool
-     */
-    public function isOwner(User $user)
+    public function isOwner(User $user): bool
     {
-        return $user->getUid() == $this->owner_uid;
+        return $user->getUid() == $this->owner?->getUid();
     }
 
     /**
      * Returns whether or not the current user can modify $event
-     *
-     * @return bool
      */
-    public function canModify(User $user)
+    public function canModify(User $user): bool
     {
         return $this->calendar->canAdmin($user) || $this->isOwner($user)
             || ($this->calendar->canModify($user));
@@ -161,20 +152,15 @@ class Event
 
     /**
      * Returns whether or not the user can read this event
-     *
-     * @return bool
      */
-    public function canRead(User $user)
+    public function canRead(User $user): bool
     {
         $visible_category = empty($this->gid) || !isset($this->catid)
             || $this->db->isCategoryVisible($user, $this->catid);
         return ($this->isPublished() || $this->isOwner($user)) && $this->calendar->canRead($user) && $visible_category;
     }
 
-    /**
-     * @return array
-     */
-    public function getFields()
+    public function getFields(): array
     {
         if (!isset($this->fields)) {
             $this->fields = $this->db->getEventFields($this->eid);
@@ -183,36 +169,24 @@ class Event
         return $this->fields;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
-    public function getCreated()
+    public function getCreated(): DateTimeInterface
     {
         return $this->ctime;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
-    public function getModified()
+    public function getModified(): DateTimeInterface
     {
         return $this->mtime;
     }
 
-    /**
-     * @return \DateTimeInterface|null
-     */
-    public function getPublishDate()
+    public function getPublishDate(): ?DateTimeInterface
     {
         return $this->pubtime;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPublished()
+    public function isPublished(): bool
     {
-        return $this->pubtime == null || $this->pubtime <= new \DateTime();
+        return $this->pubtime == null || $this->pubtime <= new DateTimeImmutable();
     }
 
     public function setSubject(string $subject): self
@@ -229,36 +203,36 @@ class Event
         return $this;
     }
 
-    public function getCtime(): ?\DateTimeInterface
+    public function getCtime(): ?DateTimeInterface
     {
         return $this->ctime;
     }
 
-    public function setCtime(\DateTimeInterface $ctime): self
+    public function setCtime(DateTimeInterface $ctime): self
     {
         $this->ctime = $ctime;
 
         return $this;
     }
 
-    public function getMtime(): ?\DateTimeInterface
+    public function getMtime(): ?DateTimeInterface
     {
         return $this->mtime;
     }
 
-    public function setMtime(\DateTimeInterface $mtime): self
+    public function setMtime(DateTimeInterface $mtime): self
     {
         $this->mtime = $mtime;
 
         return $this;
     }
 
-    public function getPubtime(): ?\DateTimeInterface
+    public function getPubtime(): ?DateTimeInterface
     {
         return $this->pubtime;
     }
 
-    public function setPubtime(\DateTimeInterface $pubtime): self
+    public function setPubtime(?DateTimeInterface $pubtime): self
     {
         $this->pubtime = $pubtime;
 
@@ -268,13 +242,6 @@ class Event
     public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
-
-        return $this;
-    }
-
-    public function setAuthor(?User $author): self
-    {
-        $this->author = $author;
 
         return $this;
     }

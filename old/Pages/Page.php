@@ -15,41 +15,16 @@
  * limitations under the License.
  */
 
-namespace App;
+namespace old\Pages;
 
-class SqlColumn
+use Exception;
+use old\Context;
+use Symfony\Component\HttpFoundation\Response;
+
+abstract class Page
 {
     /**
-     * SqlColumn constructor.
-     *
-     * @param string $name
-     * @param string $type
+     * @throws Exception
      */
-    public function __construct(public $name, public $type)
-    {
-    }
-
-    /**
-     * @return string
-     */
-    public function getCreateQuery()
-    {
-        return "`{$this->name}` {$this->type}";
-    }
-
-    /**
-     * @return string
-     */
-    public function getAddQuery()
-    {
-        return "ADD `{$this->name}` {$this->type}";
-    }
-
-    /**
-     * @return string
-     */
-    public function getUpdateQuery()
-    {
-        return "MODIFY `{$this->name}` {$this->type}";
-    }
+    abstract public function action(Context $context): Response;
 }

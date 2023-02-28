@@ -15,14 +15,18 @@
  * limitations under the License.
  */
 
-namespace App\Pages;
+namespace old\Pages;
 
-use Symfony\Component\Form\FormInterface;
+use App\Pages\Calendar;
+use App\Pages\Context;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
- 
+use Symfony\Component\Form\FormInterface;
+use function App\Pages\__;
+use function App\Pages\get_language_mappings;
+
 class CalendarForm
 {
     /**

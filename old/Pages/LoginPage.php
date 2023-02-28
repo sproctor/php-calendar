@@ -15,10 +15,13 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace old\Pages;
 
+use PhpCalendar\Context;
+use PhpCalendar\Page;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use function PhpCalendar\__;
 
 class LoginPage extends Page
 {

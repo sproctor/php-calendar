@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2012 Sean Proctor
+ * Copyright Sean Proctor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,36 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace old\Pages;
 
+use Exception;
+use PhpCalendar\Context;
+use PhpCalendar\Entity\Calendar;
+use PhpCalendar\Pages\Page;
+use PhpCalendar\PermissionException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use function PhpCalendar\Pages\__;
 
-class LogoutPage extends Page
+class InstallPage extends Page
 {
-
     /**
-     * @param Context $context
-     * @return Response
+     * Update the database
+     *
+     * @param  Context $context
+     * @throws PermissionException
+     * @throws Exception
      */
-    public function action(Context $context)
+    public function action(Context $context): Response
     {
-        setcookie('identity', "", ['expires' => time() - 3600]);
+        if (empty($context->findAllCalendars())) {
+            // TODO: make calendar
+            $context->persist(new Calendar);
+            $context->addMessage(__('calendar-created'));
+        }
+
+        return new Response($context->render("install_page.html.twig", ['context' => $context]));
+        
         return new RedirectResponse($context->createUrl());
     }
 }

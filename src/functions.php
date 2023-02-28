@@ -3,22 +3,13 @@
 use App\Entity\Calendar;
 use App\Entity\User;
 use App\Entity\UserPermissions;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-/**
- * @param int $year
- * @return int
- */
-function days_in_year($year)
+function days_in_year(int $year): int
 {
     return 365 + intval(create_datetime(1, 1, $year)->format('L'));
 }
 
-/**
- * @return int
- */
-function days_between(DateTimeInterface $date1, DateTimeInterface $date2)
+function days_between(DateTimeInterface $date1, DateTimeInterface $date2): int
 {
     $year1 = intval($date1->format('Y'));
     $year2 = intval($date2->format('Y'));
@@ -70,10 +61,8 @@ function week_of_year(DateTimeInterface $date): int
 
 /**
  * return the year of week of year for $date in the current locale
- *
- * @return int
  */
-function year_of_week_of_year(DateTimeInterface $date)
+function year_of_week_of_year(DateTimeInterface $date): int
 {
     $formatter = new \IntlDateFormatter(
         \Locale::getDefault(),
@@ -112,30 +101,20 @@ function day_of_week(int $month, int $day, int $year): int
     return day_of_week_date(_create_datetime($month, $day, $year));
 }
 
-/**
- * @return string
- */
-function date_index(DateTimeInterface $date)
+function date_index(DateTimeInterface $date): string
 {
     return $date->format('Y-m-d');
 }
 
-/**
- * @return boolean
- */
-function is_today(DateTimeInterface $date)
+function is_today(DateTimeInterface $date): bool
 {
     return days_between($date, new \DateTime()) == 0;
 }
 
-/**
- * @param string $timestamp
- * @return \DateTime
- */
-function datetime_from_timestamp($timestamp)
+function datetime_from_timestamp(string $timestamp): DateTimeInterface
 {
 
-    $date = \DateTime::createFromFormat('U', $timestamp);
+    $date = \DateTimeImmutable::createFromFormat('U', $timestamp);
     $date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
     return $date;
 }
@@ -191,7 +170,6 @@ function normalize_date(int &$month, int &$day, int &$year): void
     }
 }
 
-/** @noinspection PhpDocMissingThrowsInspection */
 function _create_datetime(int $month, int $day, int $year): DateTimeImmutable
 {
     /** @noinspection PhpUnhandledExceptionInspection */
@@ -219,6 +197,7 @@ function get_variables_for_calendar(
     $month = intval($datetime->format('n'));
     $months = [];
     for ($i = 1; $i <= 12; $i++) {
+        /** @noinspection PhpUnhandledExceptionInspection */
         $months[month_name(new \DateTimeImmutable(sprintf("%04d-%02d", $year, $i)))] =
             $url_generator('display_month', ['cid' => $cid, 'year' => $year, 'month' => $i]);
     }

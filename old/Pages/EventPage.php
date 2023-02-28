@@ -19,9 +19,14 @@
    This file has the functions for the main displays of the calendar
 */
 
-namespace PhpCalendar;
+namespace old\Pages;
 
+use PhpCalendar\Context;
+use PhpCalendar\InvalidInputException;
+use PhpCalendar\Page;
+use PhpCalendar\PermissionException;
 use Symfony\Component\HttpFoundation\Response;
+use function PhpCalendar\__;
 
 class EventPage extends Page
 {

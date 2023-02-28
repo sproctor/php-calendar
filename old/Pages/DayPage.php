@@ -19,8 +19,10 @@
    This file has the functions for the day displays of the calendar
 */
 
-namespace PhpCalendar;
+namespace old\Pages;
 
+use PhpCalendar\Context;
+use PhpCalendar\Page;
 use Symfony\Component\HttpFoundation\Response;
 
 class DayPage extends Page

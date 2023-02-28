@@ -15,10 +15,16 @@
  * limitations under the License.
  */
 
-namespace App\Pages;
+namespace old\Pages;
 
+use App\Pages\Context;
+use App\Pages\FailedActionException;
+use App\Pages\InvalidInputException;
+use App\Pages\PermissionException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use function App\Pages\__;
+use function App\Pages\transchoice;
 
 class EventDeletePage
 {

@@ -15,15 +15,18 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace old\Pages;
 
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
+use PhpCalendar\Context;
+use PhpCalendar\Page;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Response;
+use function PhpCalendar\__;
 
 class SearchPage extends Page
 {

@@ -15,7 +15,10 @@
  * limitations under the License.
  */
 
-namespace App;
+namespace old;
+
+use App\FailedActionException;
+use function App\__;
 
 class SqlTable
 {

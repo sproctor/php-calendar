@@ -15,18 +15,17 @@
  * limitations under the License.
  */
 
-namespace App;
+namespace old;
 
-class SqlKey
+class SqlColumn
 {
     /**
-     * SqlKey constructor.
+     * SqlColumn constructor.
      *
      * @param string $name
-     * @param bool   $non_unique
-     * @param string $columns
+     * @param string $type
      */
-    public function __construct(public $name, public $non_unique, public $columns)
+    public function __construct(public $name, public $type)
     {
     }
 
@@ -35,11 +34,15 @@ class SqlKey
      */
     public function getCreateQuery()
     {
-        if ($this->name == "PRIMARY") {
-            return "PRIMARY KEY ({$this->columns})";
-        }
+        return "`{$this->name}` {$this->type}";
+    }
 
-        return ($this->non_unique ? "" : "UNIQUE ") . "KEY `{$this->name}` ({$this->columns})";
+    /**
+     * @return string
+     */
+    public function getAddQuery()
+    {
+        return "ADD `{$this->name}` {$this->type}";
     }
 
     /**
@@ -47,11 +50,6 @@ class SqlKey
      */
     public function getUpdateQuery()
     {
-        if ($this->name == "PRIMARY") {
-            return "DROP PRIMARY KEY, ADD PRIMARY KEY ({$this->columns})";
-        }
-        return "DROP KEY `{$this->name}`, ADD "
-        . ($this->non_unique ? "" : "UNIQUE ") .
-        "KEY `{$this->name}` ({$this->columns});";
+        return "MODIFY `{$this->name}` {$this->type}";
     }
 }

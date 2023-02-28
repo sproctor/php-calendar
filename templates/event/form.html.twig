@@ -1,11 +1,14 @@
 {% extends "base.html.twig" %}
 
+{% block title %}{{ 'create-event-label'|trans }}{% endblock %}
+
 {% block body %}
+    <h3>{{ 'create-event-label'|trans }}</h3>
     {{ form_start(form) }}
     {{ form_row(form.subject) }}
     <div class="form-group">
         <label class="form-control-label" for="form_description">{{ "description-label"|trans }} <a
-                    href="http://commonmark.org/help/" target="_blank">({{ "syntax"|trans }})</a></label>
+                    href="http://commonmark.org/help/" target="_blank"><i class="bi-info-circle"></i></a></label>
         {{ form_errors(form.description) }}
         {{ form_widget(form.description) }}
     </div>
@@ -48,10 +51,11 @@
 
 {% block script %}
     <script>
-        var $type_selector = $('#form_time_type');
+        const type_selector = $('#event_form_time_type');
 
         function updateToFrom() {
-            if ($type_selector.val() === '0') {
+            console.log("updating from...")
+            if (type_selector.val() === '0') {
                 $('.form-datetime').show();
                 $('.form-datetime select').prop('disabled', false);
                 $('.form-date').hide();
@@ -65,7 +69,7 @@
         }
 
         updateToFrom();
-        $type_selector.change(function () {
+        type_selector.change(function () {
             updateToFrom();
         });
         {% if form.eid is defined %}

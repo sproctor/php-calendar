@@ -29,6 +29,8 @@ use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension implements GlobalsInterface
 {
+    private ?array $mappings = null;
+
     public function __construct(private KernelInterface $kernel)
     {
     }
@@ -233,7 +235,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 
     private function getLanguageMappings(): array
     {
-        if (empty($this->mappings)) {
+        if ($this->mappings === null) {
             $this->mappings = [];
             $finder = new Finder();
 

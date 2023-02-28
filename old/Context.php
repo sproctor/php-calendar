@@ -15,39 +15,31 @@
  * limitations under the License.
  */
 
-namespace App;
+namespace old;
 
-use App\Exception\NoCalendarsException;
+use App\Entity\User;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
-use App\Entity\Calendar;
-use App\Entity\User;
 use Locale;
-use Symfony\Bridge\Twig\Extension\FormExtension;
-use Symfony\Bridge\Twig\Extension\TranslationExtension;
-use Symfony\Bridge\Twig\Form\TwigRendererEngine;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Form\Forms;
-use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Intl\Intl;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
-use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
-use Symfony\Component\Translation\Translator;
+use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
+use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Symfony\Component\Translation\Loader\MoFileLoader;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Validator\Validation;
 use Twig\Environment;
 use Twig\TwigFilter;

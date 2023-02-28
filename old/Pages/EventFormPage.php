@@ -15,24 +15,17 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace old\Pages;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use PhpCalendar\Context;
+use PhpCalendar\Event;
+use PhpCalendar\FailedActionException;
+use PhpCalendar\Page;
+use PhpCalendar\PermissionException;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
+use function PhpCalendar\__;
 
 class EventFormPage extends Page
 {
@@ -161,37 +154,7 @@ class EventFormPage extends Page
 }
 
 /*
-function display_form()
-{
 
-    $categories = new FormDropdownQuestion('catid', __('Category'));
-    $categories->add_option('', __('None'));
-    $have_categories = false;
-    foreach ($phpc_cal->get_visible_categories($phpc_user->get_uid()) as $category) {
-        $categories->add_option($category['catid'], $category['name']);
-        $have_categories = true;
-    }
-    if ($have_categories) {
-        $form->add_part($categories);
-    }
-
-    foreach ($phpc_cal->get_fields() as $field) {
-        $form->add_part(new FormFreeQuestion('phpc-field-'.$field['fid'], $field['name']));
-    }
-
-    if (isset($vars['eid'])) {
-        foreach ($event->get_fields() as $field) {
-            $defaults["phpc-field-{$field['fid']}"] = $field['value'];
-        }
-
-        if (!empty($event->catid)) {
-            $defaults['catid'] = $event->catid;
-        }
-
-        add_repeat_defaults($occs, $defaults);
-    }
-    return $form->get_form($defaults);
-}
 
 function add_repeat_defaults($occs, &$defaults)
 {

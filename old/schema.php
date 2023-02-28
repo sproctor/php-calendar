@@ -21,6 +21,8 @@
 
 namespace App;
 
+use old\SqlTable;
+
 define('PHPC_DB_VERSION', 3);
 
 /**

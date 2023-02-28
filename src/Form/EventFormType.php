@@ -125,7 +125,12 @@ class EventFormType extends AbstractType
             ->add(
                 'frequency',
                 IntegerType::class,
-                ['constraints' => new GreaterThan(0), 'data' => 1, 'mapped' => false,]
+                [
+                    'label' => new TranslatableMessage('frequency-label'),
+                    'constraints' => new GreaterThan(0),
+                    'data' => 1,
+                    'mapped' => false,
+                    ]
             )
             ->add(
                 'until',
@@ -167,7 +172,11 @@ class EventFormType extends AbstractType
             );
             $builder->add('eid', HiddenType::class);
         }
-        $builder->add('save', SubmitType::class);
+        $builder->add(
+            'save',
+            SubmitType::class,
+            ['label' => new TranslatableMessage('save-label')]
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver): void

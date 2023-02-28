@@ -15,11 +15,17 @@
  * limitations under the License.
  */
 
-namespace PhpCalendar;
+namespace old\Pages;
 
+use PhpCalendar\Calendar;
+use PhpCalendar\CalendarForm;
+use PhpCalendar\Context;
+use PhpCalendar\Page;
+use PhpCalendar\UserPermissionsType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\FormInterface;
+use function PhpCalendar\__;
 
 class AdminPage extends Page
 {
