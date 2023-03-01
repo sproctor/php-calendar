@@ -65,6 +65,6 @@ class WeekPage extends Page
             $context->user
         );
         $template_variables['start_date'] = $from_date;
-        return new Response($context->render("week_page.html.twig", $template_variables));
+        return new Response($context->render("week_view.html.twig", $template_variables));
     }
 }

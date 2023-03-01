@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\UserPermissions;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -39,9 +40,31 @@ class UserPermissionsRepository extends ServiceEntityRepository
         }
     }
 
-    public function getUserPermissions(int $cid, ?int $uid): ?UserPermissions
+    public function getUserPermissions(int $cid, ?User $user): UserPermissions
     {
-        return $this->findOneBy(['cid' => $cid, 'uid' => $uid]);
+        $permissions = $this->findOneBy(['cid' => $cid, 'uid' => $user?->getUid()]);
+        if ($user !== null) {
+            $default_permissions = $this->findOneBy(['cid' => $cid, 'uid' => null]);
+            if ($default_permissions !== null) {
+                $permissions->setRead($permissions->canRead() || $default_permissions->canRead());
+                $permissions->setCreate($permissions->canCreate() || $default_permissions->canCreate());
+                $permissions->setUpdate($permissions->canUpdate() || $default_permissions->canUpdate());
+                $permissions->setModerate($permissions->canModerate() || $default_permissions->canModerate());
+                $permissions->setAdmin($permissions->canAdmin() || $default_permissions->canAdmin());
+            }
+        }
+        if ($permissions === null) {
+            $permissions = new UserPermissions($cid, $user?->getUid());
+        }
+        if ($user?->isAdmin()) {
+            $permissions->setRead(true);
+            $permissions->setCreate(true);
+            $permissions->setUpdate(true);
+            $permissions->setModerate(true);
+            $permissions->setAdmin(true);
+        }
+
+        return $permissions;
     }
 
 //    /**

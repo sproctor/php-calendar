@@ -23,6 +23,8 @@ use Doctrine\DBAL\Types\Types;
 use IntlDateFormatter;
 use Locale;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 #[ORM\Entity(repositoryClass: OccurrenceRepository::class)]
 #[ORM\Table(name: 'occurrences')]
@@ -53,7 +55,7 @@ class Occurrence
     /**
      * Formats the start and end time according to time_type and locale
      */
-    public function getTimespanString(): ?string
+    public function getTimespanString(): ?TranslatableInterface
     {
         switch ($this->time_type) {
             default:
@@ -62,7 +64,7 @@ class Occurrence
                     IntlDateFormatter::NONE,
                     IntlDateFormatter::SHORT
                 );
-                return __(
+                return new TranslatableMessage(
                     'time-range',
                     ['%start%' => $formatter->format($this->start), '%end%' => $formatter->format($this->end)]
                 );
@@ -70,25 +72,39 @@ class Occurrence
             case 3: // None
                 return null;
             case 2:
-                return __('to-be-announced-abbr');
+                return new TranslatableMessage('to-be-announced-abbr');
         }
     }
     
-    public function getDatetimeString(): string
+    public function getDatetimeString(): TranslatableInterface
     {
         if ($this->time_type != 0 || days_between($this->start, $this->end) == 0) {
             // normal behaviour
-            $formatter = new IntlDateFormatter(
+            $date_formatter = new IntlDateFormatter(
                 Locale::getDefault(),
                 IntlDateFormatter::MEDIUM,
                 IntlDateFormatter::NONE
             );
-            $event_time = $this->getTimespanString();
-            $date = $formatter->format($this->start);
-            if ($event_time != null) {
-                $str = __('date-time-custom', ['%date%' => $date, '%time%' => $event_time]);
-            } else {
-                $str = $date;
+            $date = $date_formatter->format($this->start);
+            switch ($this->time_type) {
+                case 0:
+                    $time_formatter = new IntlDateFormatter(
+                        Locale::getDefault(),
+                        IntlDateFormatter::NONE,
+                        IntlDateFormatter::SHORT
+                    );
+                    return new TranslatableMessage(
+                        'date-at-time-range',
+                        [
+                            '%date%' => $date,
+                            '%start%' => $time_formatter->format($this->start),
+                            '%end%' => $time_formatter->format($this->end),
+                        ]
+                    );
+                case 2: // TBA
+                    return new TranslatableMessage('date-at-time-to-be-announced-abbr', ['%date%' => $date]);
+                default: // FULL DAY or none
+                    return new TranslatableMessage('passthrough', ['%value%' => $date]);
             }
         } else {
             // format on multiple days
@@ -97,12 +113,11 @@ class Occurrence
                 IntlDateFormatter::MEDIUM,
                 IntlDateFormatter::SHORT
             );
-            $str = __(
+            return new TranslatableMessage(
                 'date-time-range',
                 ['%start%' => $formatter->format($this->start), '%end%' => $formatter->format($this->end)]
             );
         }
-        return $str;
     }
 
     public function getTimeString()
@@ -119,7 +134,7 @@ class Occurrence
             case 3: // None
                 return null;
             case 2:
-                return __('to-be-announced-abbr');
+                return new TranslatableMessage('to-be-announced-abbr');
         }
     }
     public function getOid(): int

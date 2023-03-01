@@ -28,7 +28,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @author Sean Proctor <sproctor@gmail.com>
  */
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: 'App\Repository\EventRepository')]
 #[ORM\Table(name: 'events')]
 class Event
 {
@@ -48,8 +48,8 @@ class Event
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $ctime;
 
-    #[ORM\Column(type: 'datetime')]
-    private DateTimeInterface $mtime;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?DateTimeInterface $mtime;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?DateTimeInterface $pubtime = null;
@@ -57,8 +57,8 @@ class Event
     /**
      * One Event can have many Fields.
      */
-    #[ORM\OneToMany(targetEntity: 'Field', mappedBy: 'event')]
-    private $fields;
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: 'Field')]
+    private Collection $fields;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $subject;
@@ -80,7 +80,6 @@ class Event
     )
     {
         $this->ctime = new DateTimeImmutable();
-        $this->mtime = new DateTimeImmutable();
         $this->occurrences = new ArrayCollection();
         $this->fields = new ArrayCollection();
     }
@@ -110,7 +109,7 @@ class Event
      */
     public function getOccurrences(): Collection
     {
-        return $this->db->getOccurrences($this->eid);
+        return $this->occurrences;
     }
 
     public function getCalendar(): Calendar
@@ -118,54 +117,46 @@ class Event
         return $this->calendar;
     }
 
-    public function getTextColor(): ?string
+    public function getColor(): ?string
     {
-        return $this->text_color;
+        return $this->category?->getColor();
     }
 
-    public function getBgColor(): ?string
-    {
-        return $this->bg_color;
+    public function getTextColor(): ?string {
+        $color = $this->getColor();
+
+        if ($color === null) return null;
+
+        list($r, $g, $b) = sscanf($color, "#%02x%02x%02x");
+        $l = $this->computeLuminosity($r, $g, $b);
+
+        return $l > 0.179 ? '#000000' : '#ffffff';
     }
 
-    public function getCategory(): string
+    private function computeLuminosity(int $r, int $g, int $b): float {
+        return 0.2126 * $this->intermediateLuminosity($r)
+            + 0.7152 * $this->intermediateLuminosity($g)
+            + 0.0722 * $this->intermediateLuminosity($b);
+    }
+
+    private function intermediateLuminosity(int $c): float {
+        $sc = ($c / 255.0);
+        return $sc <= 0.03928 ? $sc / 12.92 : (($sc + 0.055) / 1.055) ^ 2.4;
+    }
+
+    public function getCategory(): ?Category
     {
-        if (empty($this->category)) {
-            return $this->category;
-        }
         return $this->category;
     }
 
-    public function isOwner(User $user): bool
+    public function isOwner(?User $user): bool
     {
-        return $user->getUid() == $this->owner?->getUid();
+        if ($this->owner === null) return true;
+        return $user?->getUid() == $this->owner->getUid();
     }
 
-    /**
-     * Returns whether or not the current user can modify $event
-     */
-    public function canModify(User $user): bool
+    public function getFields(): Collection
     {
-        return $this->calendar->canAdmin($user) || $this->isOwner($user)
-            || ($this->calendar->canModify($user));
-    }
-
-    /**
-     * Returns whether or not the user can read this event
-     */
-    public function canRead(User $user): bool
-    {
-        $visible_category = empty($this->gid) || !isset($this->catid)
-            || $this->db->isCategoryVisible($user, $this->catid);
-        return ($this->isPublished() || $this->isOwner($user)) && $this->calendar->canRead($user) && $visible_category;
-    }
-
-    public function getFields(): array
-    {
-        if (!isset($this->fields)) {
-            $this->fields = $this->db->getEventFields($this->eid);
-        }
-
         return $this->fields;
     }
 
@@ -174,7 +165,7 @@ class Event
         return $this->ctime;
     }
 
-    public function getModified(): DateTimeInterface
+    public function getModified(): ?DateTimeInterface
     {
         return $this->mtime;
     }

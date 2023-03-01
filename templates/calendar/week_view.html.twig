@@ -1,4 +1,6 @@
-{% extends "display.html.twig" %}
+{% extends "calendar/display.html.twig" %}
+
+{% block title %}{{ "week-of-year-title"|trans({'%week%': week, '%year': year}) }}{% endblock %}
 
 {% block navigation %}
 <a class="nav-link" href="{{ prev_week_url }}"><i class="fas fa-angle-left fa-lg"></i></a>

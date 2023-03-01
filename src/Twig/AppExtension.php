@@ -22,6 +22,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Intl\Languages;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
@@ -31,7 +32,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 {
     private ?array $mappings = null;
 
-    public function __construct(private KernelInterface $kernel)
+    public function __construct(private KernelInterface $kernel, private UrlGeneratorInterface $router)
     {
     }
 
@@ -40,15 +41,22 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         return [
             new TwigFunction(
                 'menu_item',
-                [$this, 'menuItem'],
+                function (array $context, string $name, string $text, ?string $icon = null, array $options = []): string
+                {
+                    $app = $context['app'];
+                    $request = $app->getRequest();
+                    $active_route = $request->get('_route');
+                    $active = $active_route === $name ? " active" : "";
+                    if ($icon != null) {
+                        $text = "<i class=\"bi-$icon\"></i> $text";
+                    }
+                    $url = $this->router->generate($name, $options);
+                    return "<li class=\"nav-item$active\"><a class=\"nav-link\" href=\"$url\">$text</a></li>";
+                },
                 [
                     'needs_context' => true,
                     'is_safe' => ['html'],
                 ]
-            ),
-            new TwigFunction(
-                'append_parameter_url',
-                [$this, 'append_parameter_url']
             ),
             new TwigFunction(
                 'dropdown',
@@ -83,6 +91,16 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                     return null;
                 }
             ),
+            new TwigFunction(
+                'week_link',
+                function (int $cid, DateTimeInterface $date) {
+                    $week = \week_of_year($date);
+                    $year = \year_of_week_of_year($date);
+                    $url = $this->router->generate('display_week', ['cid' => $cid, 'week' => $week, 'year' => $year]);
+                    return "<a href=\"$url\">$week</a>";
+                },
+                ['is_safe' => ['html']]
+            ),
         ];
     }
 
@@ -106,56 +124,21 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                 [$this, 'shortDayName']
             ),
             new TwigFilter(
-                'week_link',
-                function (array $twigContext, DateTimeInterface $date) {
-//                    $context = $twigContext['context'];
-                    $week = \week_of_year($date);
-                    $year = \year_of_week_of_year($date);
-//                    $url = $context->createUrl('display_week', ['week' => $week, 'year' => $year]);
-                    $url = "";
-                    return "<a href=\"$url\">$week</a>";
-                },
-                [
-                    'is_safe' => ['html'],
-                    'needs_context' => true,
-                ]
+                'dateparts',
+                function (DateTimeInterface $datetime): array {
+                    return [
+                        'year' => $datetime->format('Y'),
+                        'month' => $datetime->format('m'),
+                        'day' => $datetime->format('d'),
+                    ];
+                }
             )
         ];
     }
 
     public function getGlobals(): array
     {
-//        $this->twig->addGlobal('context', $this);
-//        $this->twig->addGlobal('locale', \Locale::getDefault());
-//        $this->twig->addGlobal('script', $this->request->getScriptName());
-//        $this->twig->addGlobal('embed', $this->request->get("content") == "embed");
-//        $this->twig->addGlobal('messages', $this->getMessages());
-        //'theme' => $context->getCalendar()->get_theme(),
-//        $this->twig->addGlobal('minified', defined('PHPC_DEBUG') ? '' : '.min');
         return ['languages' => $this->getLanguageMappings()];
-    }
-
-    function menuItem(array $context, string $action, string $text, string $url, ?string $icon = null): string
-    {
-        $app = $context['app'];
-        $request = $app->getRequest();
-        $active_route = $request->get('_route');
-        $active = $active_route === $action ? " active" : "";
-        if ($icon != null) {
-            $text = "<i class=\"bi-$icon\"></i> $text";
-        }
-        return "<li class=\"nav-item$active\"><a class=\"nav-link\" href=\"$url\">$text</a></li>";
-    }
-
-    function append_parameter_url(Request $request, string $parameter): string
-    {
-        $uri = $request->getRequestUri();
-        if (str_contains($uri, "?")) {
-            $uri .= '&';
-        } else {
-            $uri .= '?';
-        }
-        return $uri . $parameter;
     }
 
     /**

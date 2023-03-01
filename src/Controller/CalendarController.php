@@ -18,11 +18,13 @@
 namespace App\Controller;
 
 use App\Entity\Calendar;
+use App\Entity\Occurrence;
 use App\Entity\User;
 use App\Entity\UserPermissions;
 use App\Repository\CalendarRepository;
 use App\Repository\OccurrenceRepository;
 use App\Repository\UserPermissionsRepository;
+use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Psr\Log\LoggerInterface;
@@ -48,7 +50,7 @@ class CalendarController extends AbstractController
     {
     }
 
-    #[Route("/view", name: "default_month_display")]
+    #[Route("/", name: "default_view")]
     public function defaultRoute(
         int $cid,
     ): Response
@@ -58,7 +60,7 @@ class CalendarController extends AbstractController
         return $this->displayMonth($calendar, $user, new DateTimeImmutable());
     }
 
-    #[Route("/view/{year}/{month}", name: "display_month")]
+    #[Route("/month/{year}/{month}", name: "month_view")]
     public function monthRoute(
         int $cid,
         int $year,
@@ -69,6 +71,47 @@ class CalendarController extends AbstractController
         $user = $this->getUser();
         $date = new DateTimeImmutable(sprintf("%04d-%02d", $year, $month));
         return $this->displayMonth($calendar, $user, $date);
+    }
+
+    #[Route("/week/{year}/{week}", name: "week_view")]
+    public function weekRoute(
+        int $cid,
+        int $year,
+        int $week,
+    ): Response
+    {
+        $calendar = $this->calendar_repository->find($cid);
+        $user = $this->getUser();
+//        $date = new DateTimeImmutable(sprintf("%04d-%02d", $year, $month));
+//        return $this->displayMonth($calendar, $user, $date);
+        return new Response();
+    }
+
+    #[Route('/day/{year}/{month}/{day}', name: 'day_view')]
+    public function dayRoute(int $cid, int $year, int $month, int $day): Response
+    {
+        $calendar = $this->calendar_repository->find($cid);
+        $user = $this->getUser();
+        $date = new DateTimeImmutable("$year-$month-$day");
+        $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
+        $yesterday = $date->sub(new DateInterval('P1D'));
+        $tomorrow = $date->add(new DateInterval('P1D'));
+        $occurrences = // array_filter(
+            $this->occurrence_repository->findOccurrencesByDate($cid, $year, $month, $day);
+//            fn(Occurrence $occurrence) => $permissions->canRead() || $occurrence->getEvent()->isOwner($user)
+//        );
+
+        return $this->render('calendar/day_view.html.twig',
+            [
+                'calendar' => $calendar,
+                'user' => $user,
+                'today' => $date,
+                'permissions' => $permissions,
+                'yesterday' => $yesterday,
+                'tomorrow' => $tomorrow,
+                'occurrences' => $occurrences,
+            ]
+        );
     }
 
     private function displayMonth(
@@ -116,15 +159,7 @@ class CalendarController extends AbstractController
         $last_day = $weeks * 7 - day_of_week($month, 1, $year);
         $to_date = create_datetime($month, $last_day + 1, $year);
 
-        $user_permissions = null;
-        if ($user !== null) {
-            $user_permissions = $this->user_permissions_repository->getUserPermissions($cid, $user->getUid());
-        }
-        if ($user_permissions === null) {
-            $user_permissions = new UserPermissions($cid, $user?->getUid());
-        }
-        $default_permissions = $this->user_permissions_repository->getUserPermissions($cid, null);
-        $permissions = get_actual_permissions($user_permissions, $default_permissions, $user?->isAdmin() == true);
+        $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
 
         $occurrences = $this->occurrence_repository->findOccurrencesByDay(
             $calendar,

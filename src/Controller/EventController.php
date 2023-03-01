@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Entity\UserPermissions;
 use App\Form\EventFormType;
 use App\Repository\CalendarRepository;
+use App\Repository\EventRepository;
 use App\Repository\UserPermissionsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,20 +25,29 @@ class EventController extends AbstractController
         private EntityManagerInterface    $entity_manager,
         private CalendarRepository        $calendar_repository,
         private UserPermissionsRepository $user_permissions_repository,
+        private EventRepository           $event_repository,
     )
     {
     }
 
-    #[Route('/event/{eid}', name: 'app_event')]
+    #[Route('/event/{eid}', name: 'event_view')]
     public function view(int $eid): Response
     {
-        return $this->render('event/index.html.twig', [
-            'controller_name' => 'EventController',
+        $event = $this->event_repository->find($eid);
+        $calendar = $event->getCalendar();
+        $user = $this->getUser();
+        $permissions = $this->user_permissions_repository->getUserPermissions($calendar->getCid(), $user);
+
+        return $this->render('event/view.html.twig', [
+            'event' => $event,
+            'user' => $user,
+            'permissions' => $permissions,
+            'calendar' => $calendar,
         ]);
     }
 
     #[Route('/calendar/{cid}/event/new', name: 'create_event')]
-    public function create_event(
+    public function createEvent(
         int     $cid,
         Request $request,
     ): Response
@@ -51,6 +61,25 @@ class EventController extends AbstractController
             $user,
             new \DateTimeImmutable(),
             false,
+        );
+    }
+
+    #[Route('/event/{eid}/edit', name: 'modify_event')]
+    public function modifyEvent(
+        int $eid,
+        Request $request,
+    ): Response
+    {
+        $event = $this->event_repository->find($eid);
+        $calendar = $this->calendar_repository->find($event->getEid());
+        $user = $this->getUser();
+        return $this->eventForm(
+            $request,
+            $event,
+            $calendar,
+            $user,
+            new \DateTimeImmutable(),
+            true,
         );
     }
 
@@ -69,17 +98,8 @@ class EventController extends AbstractController
         $end_datetime->setTime(18, 0);
 
         $cid = $calendar->getCid();
-
-        // TODO: factor this out
-        $user_permissions = null;
-        if ($user !== null) {
-            $user_permissions = $this->user_permissions_repository->getUserPermissions($cid, $user->getUid());
-        }
-        if ($user_permissions === null) {
-            $user_permissions = new UserPermissions($cid, $user?->getUid());
-        }
-        $default_permissions = $this->user_permissions_repository->getUserPermissions($cid, null);
-        $permissions = get_actual_permissions($user_permissions, $default_permissions, $user?->isAdmin() == true);
+        
+        $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
 
         $form = $this->createForm(
             EventFormType::class,

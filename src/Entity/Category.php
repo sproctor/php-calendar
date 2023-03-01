@@ -30,7 +30,7 @@ class Category
 
     #[ORM\ManyToOne(targetEntity: 'Calendar')]
     #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid')]
-    private ?\App\Entity\Calendar $calendar = null;
+    private ?Calendar $calendar = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;

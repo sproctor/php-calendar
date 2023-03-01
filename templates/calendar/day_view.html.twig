@@ -1,0 +1,59 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ today|format_datetime('long', 'none') }}{% endblock %}
+
+{% block body %}
+    <h3>
+        <a href="{{ path('day_view', {cid: calendar.cid}|merge(yesterday|dateparts)) }}"><i
+                    class="bi-chevron-left"></i></a>
+        {{ today|format_datetime('long', 'none') }}
+        <a href="{{ path('day_view', {cid: calendar.cid}|merge(tomorrow|dateparts)) }}"><i
+                    class="bi-chevron-right"></i></a>
+    </h3>
+    {% if occurrences|length > 0 %}
+        <form name="form" action="{# {{ context.createUrl('event_delete') }} #}" method="post">
+            {% set can_modify = false %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>{{ "title-label"|trans }}</th>
+                    <th>{{ "time-label"|trans }}</th>
+                    <th>{{ "description-label"|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for occurrence in occurrences %}
+                    <tr>
+                        <td>
+                            {% if permissions.canUpdate or occurrence.event.isOwner(user) %}
+                                <div class="form-check form-check-inline">
+                                    {% set can_modify = true %}
+                                    <input name="eid[]" type="checkbox" class="form-check-input"
+                                           id="eid_{{ occurrence.getEid }}" value="{{ occurrence.event.eid }}">
+                                    <label class="form-check-label" for="eid_{{ occurrence.event.eid }}">
+                                        <a href="{{ path('event_view', {eid: occurrence.event.eid}) }}">{{ occurrence.event.subject }}</a>
+                                    </label></div>
+                                <a href="{{ context.createEventUrl('event_form', occurrence.getEid) }}">{{ "modify-label"|trans }}</a>
+                            {% else %}
+                                <a href="{{ path('event_view', {eid: occurrence.event.eid}) }}">{{ occurrence.event.subject }}</a>
+                            {% endif %}
+                        </td>
+                        {% set textcolor = occurrence.getTextColor %}
+                        {% set bgcolor = occurrence.getBgColor %}
+                        <td>{{ occurrence.getTimeString }}</td>
+                        <td>{{ occurrence.event.description }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% if can_modify %}
+                <button type="submit" class="btn btn-primary" data-toggle="confirmation"
+                        data-title="{{ "confirmation-required-dialog-title"|trans }}"
+                        data-button-text="{{ "delete-events-button"|trans }}"
+                        data-content="{{ "permanently-delete-selected-events-question"|trans }}">{{ "delete-events-button"|trans }}</button>
+            {% endif %}
+        </form>
+    {% else %}
+        <h3>{{ "no-events-message"|trans }}</h3>
+    {% endif %}
+{% endblock %}

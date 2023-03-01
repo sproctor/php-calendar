@@ -181,31 +181,3 @@ function create_datetime(int $month, int $day, int $year): DateTimeImmutable
     normalize_date($month, $day, $year);
     return _create_datetime($month, $day, $year);
 }
-
-function get_actual_permissions(
-    UserPermissions $user_permissions,
-    ?UserPermissions $default_permissions,
-    bool $is_admin,
-): UserPermissions
-{
-    $permissions = clone $user_permissions;
-
-    // Combine user and default permissions. give admins full access
-    if ($is_admin) {
-        $permissions->setRead(true);
-        $permissions->setCreate(true);
-        $permissions->setUpdate(true);
-        $permissions->setModerate(true);
-        $permissions->setAdmin(true);
-    } else {
-        if ($default_permissions !== null) {
-            $permissions->setRead($user_permissions->canRead() || $default_permissions->canRead());
-            $permissions->setCreate($user_permissions->canCreate() || $default_permissions->canCreate());
-            $permissions->setUpdate($user_permissions->canUpdate() || $default_permissions->canUpdate());
-            $permissions->setModerate($user_permissions->canModerate() || $default_permissions->canModerate());
-            $permissions->setAdmin($user_permissions->canAdmin() || $default_permissions->canAdmin());
-        }
-    }
-
-    return $permissions;
-}

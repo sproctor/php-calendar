@@ -69,4 +69,17 @@ class OccurrenceRepository extends ServiceEntityRepository
         }
         return $occurrences_by_day;
     }
+
+    /**
+     * Returns all the events for a particular day
+     *
+     * @return Occurrence[]
+     */
+    public function findOccurrencesByDate(int $cid, int $year, int $month, int $day): array
+    {
+        $from = new \DateTimeImmutable("$year-$month-$day 00:00:00");
+        $to = new \DateTimeImmutable("$year-$month-$day 23:59:59");
+
+        return $this->findOccurrencesByDateRange($cid, $from, $to);
+    }
 }

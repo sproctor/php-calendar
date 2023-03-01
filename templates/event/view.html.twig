@@ -1,58 +1,61 @@
-{% extends "../base.html.twig" %}
+{% extends "base.html.twig" %}
 
-{% block title %}{{ event.getSubject }}{% endblock %}
+{% block title %}{{ event.subject }}{% endblock %}
 
 {% block body %}
-<h3>{{ event.getSubject() }}</h3>
+    <h3>{{ event.subject }}</h3>
 
-<div class="phpc-event-header">
-	<div>{{ "by-author"|trans({'%author%': event.getAuthor}) }} {{ "on-date-time"|trans({'%datetime%': event.getCreated|localizeddate('medium', 'short', locale)}) }}</div>
-  {% set modified = event.getModified %}
-  {% if modified is not null %}
-    <div>{{ "last-modified"|trans({'%modified%': modified|localizeddate('medium', 'short', locale)}) }}</div>
-  {% endif %}
-  {% set category = event.getCategory() %}
-	{%	if category %}
-		<div>{{ "category-declaration"|trans({'%category%': category}) }}</div>
-	{% endif %}
-</div>
-
-<nav class="nav nav-pills">
-  <a class="nav-item nav-link" href="{{ context.createEventUrl('event_form', event.getEid) }}">{{ "modify-menu-link"|trans }}</a>
-  <a class="nav-item nav-link" href="{{ context.createEventUrl('occur_form', event.getEid) }}">{{ "add-occurrence-menu-link"|trans }}</a>
-  <a class="nav-item nav-link" href="{{ context.createEventUrl('event_delete', event.getEid) }}"
-    data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}" data-button-text="{{ "delete-button"|trans }}"
-    data-content="{{ "permanently-delete-event-question"|trans }}">{{ "delete-menu-link"|trans }}</a>
-</nav>
-
-{% set fields = event.getFields %}
-{% if fields %}
-  <h4>{{ "fields-title"|trans }}</h4>
-  {% for field in fields %}
-    {% set def = calendar.getField(field['fid']) %}
-    <div>{{ def['name'] }}: {{ field['value'] }}</div>
-  {% endfor %}
-{% endif %}
-
-<div class="phpc-desc">
-	<h4>{{ "description-title"|trans }}</h4>
-	<div class="border rounded markdown p-3">{{ event.getDescription }}</div>
-</div>
-
-<div class="phpc-occ">
-	<h4>{{ "occurrences-title"|trans }}</h4>
-  <ul class="list-group">
-	  {% for occurrence in event.getOccurrences() %}
-			<li class="list-group-item">{{ occurrence.getDatetimeString }}
-			  {% if event.canModify(user) %}
-				  <a href="{{ context.createOccurrenceUrl('occur_form', occurrence.getOid) }}">{{ "edit-link"|trans }}</a>
-				  <a href="{{ context.createOccurrenceUrl('occurrence_delete', occurrence.getOid) }}"
-            data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}" data-button-text="{{ "remove-button"|trans }}"
-            data-content="{{ "permanently-remove-occurrence-question"|trans }}">{{ "remove-button"|trans }}</a>
+    <div class="phpc-event-header">
+        <div>{{ "by-author"|trans({'%author%': event.owner.username}) }} {{ "on-date-time"|trans({'%datetime%': event.created|format_datetime('medium', 'short')}) }}</div>
+        {% set modified = event.modified %}
+        {% if modified is not null %}
+            <div>{{ "last-modified"|trans({'%modified%': modified|format_datetime('medium', 'short')}) }}</div>
         {% endif %}
-			</li>
-		{% endfor %}
-  </ul>
-</div>
+        {% set category = event.category %}
+        {% if category %}
+            <div>{{ "category-declaration"|trans({'%category%': category}) }}</div>
+        {% endif %}
+    </div>
+
+    <nav class="nav nav-pills">
+        <a class="nav-item nav-link"
+           href="{{ path('modify_event', {eid: event.eid}) }}">{{ "modify-menu-link"|trans }}</a>
+        <a class="nav-item nav-link"
+           href="{# {{ path('occur_form', event.getEid) }} #}">{{ "add-occurrence-menu-link"|trans }}</a>
+        <a class="nav-item nav-link" href="{# {{ context.createEventUrl('event_delete', event.getEid) }} #}"
+           data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}"
+           data-button-text="{{ "delete-button"|trans }}"
+           data-content="{{ "permanently-delete-event-question"|trans }}">{{ "delete-menu-link"|trans }}</a>
+    </nav>
+
+    {% if event.fields is not empty %}
+        <h4>{{ "fields-title"|trans }}</h4>
+        {% for field in event.fields %}
+            {% set def = calendar.getField(field['fid']) %}
+            <div>{{ def['name'] }}: {{ field['value'] }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="phpc-desc">
+        <h4>{{ "description-title"|trans }}</h4>
+        <div class="border rounded markdown p-3">{{ event.getDescription }}</div>
+    </div>
+
+    <div class="phpc-occ">
+        <h4>{{ "occurrences-title"|trans }}</h4>
+        <ul class="list-group">
+            {% for occurrence in event.occurrences %}
+                <li class="list-group-item">{{ occurrence.getDatetimeString|trans }}
+                    {% if event.isOwner(user) or permissions.canUpdate %}
+                        <a href="{# {{ context.createOccurrenceUrl('occur_form', occurrence.getOid) }} #}">{{ "edit-link"|trans }}</a>
+                        <a href="{# {{ context.createOccurrenceUrl('occurrence_delete', occurrence.getOid) }} #}"
+                           data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}"
+                           data-button-text="{{ "remove-button"|trans }}"
+                           data-content="{{ "permanently-remove-occurrence-question"|trans }}">{{ "remove-button"|trans }}</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 
 {% endblock %}

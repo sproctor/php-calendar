@@ -27,7 +27,7 @@
                     </div>
                 </div>
             {% else %}
-                <a class="navbar-brand" href="#">{{ calendar.getTitle }}</a>
+                <a class="navbar-brand" href="#">{{ calendar.title }}</a>
             {% endif %}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#phpc-navbar"
                     aria-controls="phpc-navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,14 +36,16 @@
             <div class="collapse navbar-collapse" id="phpc-navbar">
                 <ul class="navbar-nav mr-auto">
                     {% if permissions.canCreate %}
-                        {{ menu_item("event_form", "create-event-menu-link"|trans, 'plus') }}
+                        {{ menu_item("create_event", "create-event-menu-link"|trans, 'plus', {cid: calendar.cid}) }}
                     {% endif %}
-                    {{ menu_item("display_month", "view-month-menu-link"|trans, 'eye') }}
+                    {% if app.current_route != 'display_month' and month is defined %}
+                        {{ menu_item("display_month", "view-month-menu-link"|trans, 'eye', {cid: calendar.cid, month: month, year: year}) }}
+                    {% endif %}
                     {% if app.current_route == "display_event" %}
                         {{ menu_item("display_day", "view-date-menu-link"|trans, 'eye') }}
                     {% endif %}
                     {% if permissions.canAdmin %}
-                        {{ menu_item("admin", "admin-menu-link"|trans, 'cog') }}
+                    {#  {{ menu_item("admin", "admin-menu-link"|trans, 'cog') }} #}
                     {% endif %}
                     {% if user is null %}
                         <li class="nav-item dropdown">
@@ -52,12 +54,14 @@
                                     aria-expanded="false"><i class="bi-translate"></i>
                                 {{ "language-menu-selector"|trans }}
                             </button>
+                            {# TODO: add _locale to URL route
                             <div class="dropdown-menu">
                                 {% for code,lang in languages %}
                                     <a class="dropdown-item"
                                        href="{{ append_parameter_url(app.request, "lang=" ~ code) }}">{{ lang }}</a>
                                 {% endfor %}
                             </div>
+                            #}
                         </li>
                     {% endif %}
                     <li class="nav-item dropdown">

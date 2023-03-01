@@ -1,13 +1,14 @@
 <tr>
     <th class="phpc-date" scope="row">
-        {{ start_date|week_link }}
+        {{ week_link(calendar.cid, start_date) }}
     </th>
     {% set cur_date = start_date %}
     {% for day_of_week in 0..6 %}
         <td class="phpc-date{% if not is_date_in_month(cur_date) %} phpc-shadow{% endif %}{% if is_today(cur_date) %} phpc-today{% endif %}">
             <div>
                 <a class="phpc-day-number"
-                   href="{#  { context.createDateUrl('display_day', cur_date) } #}">{% if (not is_date_in_month(cur_date) and day_of_week == 0) or day(cur_date) == 1 %}{{ cur_date|month_abbr }}{% endif %} {{ day(cur_date) }}</a>
+                   href="{{ path('display_day', {cid: calendar.cid}|merge(cur_date|dateparts)) }}"
+                >{% if (not is_date_in_month(cur_date) and day_of_week == 0) or day(cur_date) == 1 %}{{ cur_date|month_abbr }}{% endif %} {{ day(cur_date) }}</a>
                 {% if permissions.canCreate %}
                     <a href="{{ path('create_event', {cid: calendar.getCid}) }}" class="phpc-add"
                        title="{{ "create-event-menu-link"|trans }}"><i class="bi-plus"></i></a>
@@ -25,7 +26,7 @@
                             {% set bgcolor = occurrence.bgColor %}
                             {% set event = occurrence.event %}
                             <a class="phpc-occurrence list-group-item"
-                               href="{{ path('app_event', {'eid': event.eid}) }}"
+                               href="{{ path('view_event', {'eid': event.eid}) }}"
                                style="{% if not textcolor is null %}color: {{ textcolor }} !important; {% endif %}{% if not bgcolor is null %}background: {{ bgcolor }} !important;{% endif %}"
                                data-bs-toggle="popover"
                                data-bs-trigger="hover"
