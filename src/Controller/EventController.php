@@ -4,9 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Calendar;
 use App\Entity\Event;
+use App\Entity\Occurrence;
 use App\Entity\User;
+use App\Entity\UserPermissions;
 use App\Form\EventFormType;
 use App\Repository\CalendarRepository;
+use App\Repository\UserPermissionsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +18,16 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class EventController extends AbstractController
 {
+    const MAX_OCCURRENCES = 1000;
+
+    public function __construct(
+        private EntityManagerInterface    $entity_manager,
+        private CalendarRepository        $calendar_repository,
+        private UserPermissionsRepository $user_permissions_repository,
+    )
+    {
+    }
+
     #[Route('/event/{eid}', name: 'app_event')]
     public function view(int $eid): Response
     {
@@ -25,37 +38,48 @@ class EventController extends AbstractController
 
     #[Route('/calendar/{cid}/event/new', name: 'create_event')]
     public function create_event(
-        int $cid,
+        int     $cid,
         Request $request,
-        ?User $user,
-        EntityManagerInterface $entity_manager,
-        CalendarRepository $calendar_repository,
     ): Response
     {
-        $calendar = $calendar_repository->find($cid);
+        $calendar = $this->calendar_repository->find($cid);
+        $user = $this->getUser();
         return $this->eventForm(
             $request,
-            $entity_manager,
             new Event($calendar, $user),
             $calendar,
+            $user,
             new \DateTimeImmutable(),
             false,
         );
     }
 
     private function eventForm(
-        Request $request,
-        EntityManagerInterface $entity_manager,
-        Event $event,
-        Calendar $calendar,
+        Request            $request,
+        Event              $event,
+        Calendar           $calendar,
+        ?User              $user,
         \DateTimeInterface $date,
-        bool $modifying,
+        bool               $modifying,
     ): Response
     {
         $default_date = \DateTime::createFromInterface($date);
         $default_date->setTime(17, 0);
         $end_datetime = clone $default_date;
         $end_datetime->setTime(18, 0);
+
+        $cid = $calendar->getCid();
+
+        // TODO: factor this out
+        $user_permissions = null;
+        if ($user !== null) {
+            $user_permissions = $this->user_permissions_repository->getUserPermissions($cid, $user->getUid());
+        }
+        if ($user_permissions === null) {
+            $user_permissions = new UserPermissions($cid, $user?->getUid());
+        }
+        $default_permissions = $this->user_permissions_repository->getUserPermissions($cid, null);
+        $permissions = get_actual_permissions($user_permissions, $default_permissions, $user?->isAdmin() == true);
 
         $form = $this->createForm(
             EventFormType::class,
@@ -68,10 +92,49 @@ class EventController extends AbstractController
             ]
         );
 
+        // Check constraints
+        //                    if ($end->getTimestamp() < $start->getTimestamp()) {
+//                        $form->get($error_element)->addError(
+//                            new FormError(__('end-before-start-date-time-error'))
+//                        );
+//                    }
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entity_manager->persist($event);
-            $entity_manager->flush();
+            $this->entity_manager->persist($event);
+
+            if (!$modifying || $form->get('modify')->getData()) {
+                $time_type = $form->get('time_type')->getData();
+                if ($time_type === 0) {
+                    $start = $form->get('start')->getData();
+                    $end = $form->get('end')->getData();
+                } else {
+                    $start = $form->get('start_date')->getData();
+                    $end = $form->get('end_date')->getData();
+                }
+
+                $repeats = $form->get('repeats')->getData();
+                if ($repeats === '0') {
+                    $occurrence = new Occurrence($event, $start, $end, $time_type);
+                    $this->entity_manager->persist($occurrence);
+                } else {
+                    $interval = new \DateInterval('P'.$form->get('frequency')->getData().$repeats);
+
+                    $until = $form->get('until')->getData();
+                    echo "days between: " . days_between($start, $until);
+
+                    $occurrence_count = 0;
+                    while ($occurrence_count <= self::MAX_OCCURRENCES && days_between($start, $until) >= 0) {
+                        $occurrence = new Occurrence($event, $start, $end, $time_type);
+                        $occurrence_count++;
+                        $this->entity_manager->persist($occurrence);
+
+                        $start->add($interval);
+                        $end->add($interval);
+                    }
+                }
+            }
+            $this->entity_manager->flush();
         }
         //echo "<pre>"; var_dump($context->request); echo "</pre>";
 //        if ($modifying) {
@@ -92,30 +155,12 @@ class EventController extends AbstractController
         $builder->add('cid', HiddenType::class, array('data' => $context->getCalendar()->getCID()));
         }*/
 
-//        $builder->addEventListener(
-//            FormEvents::POST_SUBMIT,
-//            function (FormEvent $event) {
-//                $form = $event->getForm();
-//                $data = $form->getData();
-//                if (!empty($data) && !empty($data['save']) && (empty($data['eid']) || $data['modify'])) {
-//                    if ($data['time_type'] == 0) {
-//                        $start = $data['start'];
-//                        $end = $data['end'];
-//                        $error_element = 'end';
-//                    } else {
-//                        $start = $data['start_date'];
-//                        $end = $data['end_date'];
-//                        $error_element = 'end_date';
-//                    }
-//                    if ($end->getTimestamp() < $start->getTimestamp()) {
-//                        $form->get($error_element)->addError(
-//                            new FormError(__('end-before-start-date-time-error'))
-//                        );
-//                    }
-//                }
-//            }
-//        );
 
-        return $this->render('event/form.html.twig', ['form' => $form]);
+        return $this->render('event/form.html.twig', [
+            'form' => $form,
+            'calendar' => $calendar,
+            'permissions' => $permissions,
+            'user' => $user,
+        ]);
     }
 }

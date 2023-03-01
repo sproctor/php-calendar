@@ -182,59 +182,30 @@ function create_datetime(int $month, int $day, int $year): DateTimeImmutable
     return _create_datetime($month, $day, $year);
 }
 
-// TODO: refactor into a service
-function get_variables_for_calendar(
-                      $url_generator,
-    Calendar          $calendar,
-    ?User             $user,
-    DateTimeInterface $datetime,
-    ?UserPermissions  $user_permissions,
-    ?UserPermissions  $default_permissions,
-): array
+function get_actual_permissions(
+    UserPermissions $user_permissions,
+    ?UserPermissions $default_permissions,
+    bool $is_admin,
+): UserPermissions
 {
-    $cid = $calendar->getCid();
-    $year = intval($datetime->format('Y'));
-    $month = intval($datetime->format('n'));
-    $months = [];
-    for ($i = 1; $i <= 12; $i++) {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $months[month_name(new \DateTimeImmutable(sprintf("%04d-%02d", $year, $i)))] =
-            $url_generator('display_month', ['cid' => $cid, 'year' => $year, 'month' => $i]);
-    }
-    $years = [];
-    for ($i = $year - 5; $i <= $year + 5; $i++) {
-        $years[$i] = $url_generator('display_month', ['cid' => $cid, 'month' => $month, 'year' => $i]);
-    }
-
-    if ($user_permissions === null) {
-        $user_permissions = new UserPermissions($cid, $user?->getUid());
-    }
+    $permissions = clone $user_permissions;
 
     // Combine user and default permissions. give admins full access
-    if ($user?->isAdmin()) {
-        $user_permissions->setRead(true);
-        $user_permissions->setCreate(true);
-        $user_permissions->setUpdate(true);
-        $user_permissions->setModerate(true);
-        $user_permissions->setAdmin(true);
+    if ($is_admin) {
+        $permissions->setRead(true);
+        $permissions->setCreate(true);
+        $permissions->setUpdate(true);
+        $permissions->setModerate(true);
+        $permissions->setAdmin(true);
     } else {
         if ($default_permissions !== null) {
-            $user_permissions->setRead($user_permissions->canRead() || $default_permissions->canRead());
-            $user_permissions->setCreate($user_permissions->canCreate() || $default_permissions->canCreate());
-            $user_permissions->setUpdate($user_permissions->canUpdate() || $default_permissions->canUpdate());
-            $user_permissions->setModerate($user_permissions->canModerate() || $default_permissions->canModerate());
-            $user_permissions->setAdmin($user_permissions->canAdmin() || $default_permissions->canAdmin());
+            $permissions->setRead($user_permissions->canRead() || $default_permissions->canRead());
+            $permissions->setCreate($user_permissions->canCreate() || $default_permissions->canCreate());
+            $permissions->setUpdate($user_permissions->canUpdate() || $default_permissions->canUpdate());
+            $permissions->setModerate($user_permissions->canModerate() || $default_permissions->canModerate());
+            $permissions->setAdmin($user_permissions->canAdmin() || $default_permissions->canAdmin());
         }
     }
 
-    return [
-        'calendar' => $calendar,
-        'user' => $user,
-        'date' => $datetime,
-        'month' => $month,
-        'months' => $months,
-        'year' => $year,
-        'years' => $years,
-        'permissions' => $user_permissions,
-    ];
+    return $permissions;
 }

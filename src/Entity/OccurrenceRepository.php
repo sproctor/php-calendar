@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Entity\Occurrence;
+use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,6 +40,23 @@ class OccurrenceRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @return Occurrence[]
+     */
+    public static function findOccurrences(
+        EntityManagerInterface $entity_manager,
+        DateTimeInterface $from,
+        DateTimeInterface $to
+    ): array
+    {
+        $qb = $entity_manager->createQueryBuilder();
+
+        //$qb->select('e')
+        //->from('Event', 'e')
+        //->where('e.
+        return [];
     }
 
 //    /**

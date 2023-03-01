@@ -100,8 +100,8 @@ addEventListener("DOMContentLoaded", (event) => {
     $('.markdown').html(function () {
         return marked.parse($(this).html())
     });
-    $('.phpc-occurrence').attr('data-content', function () {
-        return marked.parse($(this).attr('data-content'))
+    $('.phpc-occurrence').attr('data-bs-content', function () {
+        return marked.parse($(this).attr('data-bs-content'))
     });
 
     // Make days out of month gray

@@ -66,7 +66,7 @@
                             {% if user is null %}
                                 {{ "anonymous"|trans }}
                             {% else %}
-                                {{ user.getUsername() }}
+                                {{ user.username }}
                             {% endif %}
                         </button>
                         <div class="dropdown-menu">

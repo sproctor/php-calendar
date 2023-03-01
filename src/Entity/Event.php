@@ -90,7 +90,7 @@ class Event
         return $this->subject;
     }
 
-    public function getOwner(): User
+    public function getOwner(): ?User
     {
         return $this->owner;
     }

@@ -38,7 +38,7 @@ class Occurrence
      */
     public function __construct(
         #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'occurrences')]
-        #[ORM\JoinColumn(name: 'eid', referencedColumnName: 'eid')]
+        #[ORM\JoinColumn(name: 'eid', referencedColumnName: 'eid', onDelete: 'CASCADE')]
         private Event $event,
         #[ORM\Column(type: 'datetime')]
         private DateTimeInterface $start,
@@ -142,21 +142,6 @@ class Occurrence
         return $this->end;
     }
 
-    /**
-     * @param EntityManager $entityManager
-     */
-    public static function findOccurrences(
-        EntityManager $entityManager,
-        DateTimeInterface $from,
-        DateTimeInterface $to
-    ) {
-        $qb = $entityManager->createQueryBuilder();
-
-        //$qb->select('e')
-            //->from('Event', 'e')
-            //->where('e.
-    }
-
     public function setStart(\DateTimeInterface $start): self
     {
         $this->start = $start;
@@ -178,15 +163,23 @@ class Occurrence
         return $this;
     }
 
-    public function getEvent(): ?Event
+    public function getEvent(): Event
     {
         return $this->event;
     }
 
-    public function setEvent(?Event $event): self
+    public function setEvent(Event $event): self
     {
         $this->event = $event;
 
         return $this;
+    }
+
+    public function getTextColor(): ?string {
+        return null;
+    }
+
+    public function getBgColor(): ?string {
+        return null;
     }
 }

@@ -19,6 +19,7 @@ namespace App\Controller;
 
 use App\Entity\Calendar;
 use App\Entity\User;
+use App\Entity\UserPermissions;
 use App\Repository\CalendarRepository;
 use App\Repository\OccurrenceRepository;
 use App\Repository\UserPermissionsRepository;
@@ -35,33 +36,35 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @author Sean Proctor <sproctor@gmail.com>
  */
-#[Route("/calendars/{cid}")]
+#[Route("/calendar/{cid}")]
 class CalendarController extends AbstractController
 {
     public function __construct(
-        private LoggerInterface $logger,
-        private CalendarRepository $calendar_repository,
-        private OccurrenceRepository $occurrence_repository,
+        private LoggerInterface           $logger,
+        private CalendarRepository        $calendar_repository,
+        private OccurrenceRepository      $occurrence_repository,
         private UserPermissionsRepository $user_permissions_repository,
     )
     {
     }
 
-    #[Route("/month", name: "default_month_display")]
+    #[Route("/view", name: "default_month_display")]
     public function defaultRoute(
         int $cid,
-    ): Response {
+    ): Response
+    {
         $calendar = $this->calendar_repository->find($cid);
         $user = $this->getUser();
         return $this->displayMonth($calendar, $user, new DateTimeImmutable());
     }
 
-    #[Route("/month/{year}/{month}", name: "display_month")]
+    #[Route("/view/{year}/{month}", name: "display_month")]
     public function monthRoute(
         int $cid,
         int $year,
         int $month,
-    ): Response {
+    ): Response
+    {
         $calendar = $this->calendar_repository->find($cid);
         $user = $this->getUser();
         $date = new DateTimeImmutable(sprintf("%04d-%02d", $year, $month));
@@ -69,10 +72,11 @@ class CalendarController extends AbstractController
     }
 
     private function displayMonth(
-        Calendar $calendar,
-        ?User $user,
+        Calendar          $calendar,
+        ?User             $user,
         DateTimeInterface $datetime,
-    ): Response {
+    ): Response
+    {
         $cid = $calendar->getCid();
         $year = intval($datetime->format('Y'));
         $month = intval($datetime->format('n'));
@@ -88,6 +92,21 @@ class CalendarController extends AbstractController
             $prev_month += 12;
             $prev_year--;
         }
+        $months = [];
+        for ($i = 1; $i <= 12; $i++) {
+            /** @noinspection PhpUnhandledExceptionInspection */
+            $months[month_name(new \DateTimeImmutable(sprintf("%04d-%02d", $year, $i)))] =
+                $this->generateUrl('display_month', ['cid' => $cid, 'year' => $year, 'month' => $i]);
+        }
+        $years = [];
+        for ($i = $year - 5; $i <= $year + 5; $i++) {
+            $years[$i] = $this->generateUrl('display_month', ['cid' => $cid, 'month' => $month, 'year' => $i]);
+        }
+
+        $prev_month_url =
+            $this->generateUrl('display_month', ['cid' => $cid, 'year' => $prev_year, 'month' => $prev_month]);
+        $next_month_url =
+            $this->generateUrl('display_month', ['cid' => $cid, 'year' => $next_year, 'month' => $next_month]);
 
         $weeks = \weeks_in_month($month, $year);
 
@@ -101,28 +120,35 @@ class CalendarController extends AbstractController
         if ($user !== null) {
             $user_permissions = $this->user_permissions_repository->getUserPermissions($cid, $user->getUid());
         }
+        if ($user_permissions === null) {
+            $user_permissions = new UserPermissions($cid, $user?->getUid());
+        }
+        $default_permissions = $this->user_permissions_repository->getUserPermissions($cid, null);
+        $permissions = get_actual_permissions($user_permissions, $default_permissions, $user?->isAdmin() == true);
 
-        $template_variables = get_variables_for_calendar(
-            function ($route, $parameters = []) {$this->generateUrl($route, $parameters); },
-            $calendar,
-            $user,
-            $datetime,
-            $user_permissions,
-            $this->user_permissions_repository->getUserPermissions($cid, null),
-        );
-        $template_variables['prev_month_url'] =
-            $this->generateUrl('display_month', ['cid' => $cid, 'year' => $prev_year, 'month' => $prev_month]);
-        $template_variables['next_month_url'] =
-            $this->generateUrl('display_month', ['cid' => $cid, 'year' => $next_year, 'month' => $next_month]);
-
-        $template_variables['weeks'] = $weeks;
-        $template_variables['occurrences'] = $this->occurrence_repository->findOccurrencesByDay(
+        $occurrences = $this->occurrence_repository->findOccurrencesByDay(
             $calendar,
             $from_date,
             $to_date,
             $user
         );
-        $template_variables['start_date'] = $from_date;
-        return new Response($this->renderView("calendar/month_view.html.twig", $template_variables));
+
+        return $this->render("calendar/month_view.html.twig",
+            [
+                'calendar' => $calendar,
+                'user' => $user,
+                'date' => $datetime,
+                'month' => $month,
+                'months' => $months,
+                'year' => $year,
+                'years' => $years,
+                'permissions' => $permissions,
+                'prev_month_url' => $prev_month_url,
+                'next_month_url' => $next_month_url,
+                'weeks' => $weeks,
+                'occurrences' => $occurrences,
+                'start_date' => $from_date,
+            ]
+        );
     }
 }
