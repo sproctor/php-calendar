@@ -18,6 +18,7 @@
 namespace App\Twig;
 
 use DateTimeInterface;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -96,11 +97,23 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                 function (int $cid, DateTimeInterface $date) {
                     $week = \week_of_year($date);
                     $year = \year_of_week_of_year($date);
-                    $url = $this->router->generate('display_week', ['cid' => $cid, 'week' => $week, 'year' => $year]);
+                    $url = $this->router->generate('week_view', ['cid' => $cid, 'week' => $week, 'year' => $year]);
                     return "<a href=\"$url\">$week</a>";
                 },
                 ['is_safe' => ['html']]
             ),
+            new TwigFunction(
+                'change_locale',
+                function (array $context, string $locale) {
+                    $app = $context['app'];
+                    /* @var Request $request */
+                    $request = $app->getRequest();
+                    $uri = $request->getRequestUri();
+                    // replaces _locale in "/{_locale}/rest/of/path" with $locale
+                    return "/$locale" . preg_replace('%^/([^/]+)%', '', $uri);
+                },
+                ['needs_context' => true]
+            )
         ];
     }
 
@@ -225,9 +238,10 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             foreach ($finder->name('*.yaml')->in($this->kernel->getProjectDir() . '/translations')->files() as $file) {
                 preg_match('/[^.]\.(.+)/', $file->getFilenameWithoutExtension(), $matches);
                 $code = $matches[1];
-                $lang = Languages::getName($code);
+                $lang = Languages::getName($code, $code);
                 $this->mappings[$code] = $lang;
             }
+            ksort($this->mappings);
         }
 
         return $this->mappings;

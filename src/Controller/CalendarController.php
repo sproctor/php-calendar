@@ -18,9 +18,7 @@
 namespace App\Controller;
 
 use App\Entity\Calendar;
-use App\Entity\Occurrence;
 use App\Entity\User;
-use App\Entity\UserPermissions;
 use App\Repository\CalendarRepository;
 use App\Repository\OccurrenceRepository;
 use App\Repository\UserPermissionsRepository;
@@ -29,7 +27,6 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -38,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @author Sean Proctor <sproctor@gmail.com>
  */
-#[Route("/calendar/{cid}")]
+#[Route("/{_locale}/calendar/{cid}")]
 class CalendarController extends AbstractController
 {
     public function __construct(
@@ -139,17 +136,17 @@ class CalendarController extends AbstractController
         for ($i = 1; $i <= 12; $i++) {
             /** @noinspection PhpUnhandledExceptionInspection */
             $months[month_name(new \DateTimeImmutable(sprintf("%04d-%02d", $year, $i)))] =
-                $this->generateUrl('display_month', ['cid' => $cid, 'year' => $year, 'month' => $i]);
+                $this->generateUrl('month_view', ['cid' => $cid, 'year' => $year, 'month' => $i]);
         }
         $years = [];
         for ($i = $year - 5; $i <= $year + 5; $i++) {
-            $years[$i] = $this->generateUrl('display_month', ['cid' => $cid, 'month' => $month, 'year' => $i]);
+            $years[$i] = $this->generateUrl('month_view', ['cid' => $cid, 'month' => $month, 'year' => $i]);
         }
 
         $prev_month_url =
-            $this->generateUrl('display_month', ['cid' => $cid, 'year' => $prev_year, 'month' => $prev_month]);
+            $this->generateUrl('month_view', ['cid' => $cid, 'year' => $prev_year, 'month' => $prev_month]);
         $next_month_url =
-            $this->generateUrl('display_month', ['cid' => $cid, 'year' => $next_year, 'month' => $next_month]);
+            $this->generateUrl('month_view', ['cid' => $cid, 'year' => $next_year, 'month' => $next_month]);
 
         $weeks = \weeks_in_month($month, $year);
 
