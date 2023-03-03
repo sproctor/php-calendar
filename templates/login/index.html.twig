@@ -14,8 +14,8 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="_password"/>
 
-        {# If you want to control the URL the user is redirected to on success
-        <input type="hidden" name="_target_path" value="/account"/> #}
+        {# If you want to control the URL the user is redirected to on success #}
+        <input type="hidden" name="_target_path" value="{{ target_path }}"/>
 
         <button type="submit">login</button>
     </form>

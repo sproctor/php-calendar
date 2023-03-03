@@ -102,10 +102,10 @@ class CalendarController extends AbstractController
             [
                 'calendar' => $calendar,
                 'user' => $user,
-                'today' => $date,
+                'date' => $date,
                 'permissions' => $permissions,
-                'yesterday' => $yesterday,
-                'tomorrow' => $tomorrow,
+                'prev_date' => $yesterday,
+                'next_date' => $tomorrow,
                 'occurrences' => $occurrences,
             ]
         );
@@ -170,9 +170,7 @@ class CalendarController extends AbstractController
                 'calendar' => $calendar,
                 'user' => $user,
                 'date' => $datetime,
-                'month' => $month,
                 'months' => $months,
-                'year' => $year,
                 'years' => $years,
                 'permissions' => $permissions,
                 'prev_month_url' => $prev_month_url,

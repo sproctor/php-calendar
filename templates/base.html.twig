@@ -38,8 +38,8 @@
                     {% if permissions.canCreate %}
                         {{ menu_item("create_event", "create-event-menu-link"|trans, 'plus', {cid: calendar.cid}) }}
                     {% endif %}
-                    {% if app.current_route != 'month_view' and month is defined %}
-                        {{ menu_item("month_view", "view-month-menu-link"|trans, 'eye', {cid: calendar.cid, month: month, year: year}) }}
+                    {% if app.current_route != 'month_view' and date is defined %}
+                        {{ menu_item("month_view", "view-month-menu-link"|trans, 'eye', {cid: calendar.cid, month: date|month, year: date|year}) }}
                     {% endif %}
                     {% if app.current_route == "display_event" %}
                         {{ menu_item("display_day", "view-date-menu-link"|trans, 'eye') }}
@@ -75,11 +75,11 @@
                             <a class="dropdown-item" href="{# {{ path("user_settings") }} #}"><i
                                         class="bi-gear"></i> {{ "settings-menu-link"|trans }}</a>
                             {% if not user is null %}
-                                <a class="dropdown-item" href="{#  {{ path("app_logout") }} #}"><i
+                                <a class="dropdown-item" href="{{ path("app_logout") }}"><i
                                             class="bi-bow-arrow-right"></i> {{ "log-out-menu-link"|trans }}</a>
                             {% else %}
                                 <a class="dropdown-item"
-                                   href="{{ path("app_login", { target_path: app.current_route|url_encode }) }}"><i
+                                   href="{{ path("app_login", { target_path: app.request.requestUri }) }}"><i
                                             class="bi-box-arrow-in-right"></i> {{ "log-in-menu-link"|trans }}</a>
                             {% endif %}
                         </div>

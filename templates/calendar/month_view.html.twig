@@ -1,11 +1,11 @@
 {% extends "calendar/display.html.twig" %}
 
-{% block title %}{{ calendar.getTitle }}{% endblock %}
+{% block title %}{{ calendar.title }}{% endblock %}
 
 {% block navigation %}
 <a class="nav-link" href="{{ prev_month_url }}"><i class="bi-chevron-left"></i></a>
 {{ dropdown(date|month_name, months) }}
-{{ dropdown(year, years) }}
+{{ dropdown(date|year, years) }}
 <a class="nav-link" href="{{ next_month_url }}"><i class="bi-chevron-right"></i></a>
 {% endblock %}
 

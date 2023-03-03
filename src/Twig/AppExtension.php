@@ -65,23 +65,20 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                 ['is_safe' => ['html']]
             ),
             new TwigFunction(
-                'is_date_in_month',
-                fn(array $context, DateTimeInterface $date) => intval($date->format('n')) == $context['month']
-                    && intval($date->format('Y')) == $context['year'],
+                'in_same_month',
+                fn(array $context, DateTimeInterface $date1, DateTimeInterface $date2) =>
+                    $date1->format('n') === $date2->format('n')
+                    && $date1->format('Y') === $date2->format('Y'),
                 ['needs_context' => true]
             ),
             new TwigFunction(
                 'add_days',
-                function (\DateTimeInterface $date, $days) {
+                function (\DateTimeInterface $date, int $days) {
                     $next_date = new \DateTime('@' . $date->getTimestamp());
                     return $next_date->add(new \DateInterval("P{$days}D"));
                 }
             ),
             new TwigFunction('is_today', '\is_today'),
-            new TwigFunction(
-                'day',
-                fn(\DateTimeInterface $date) => $date->format('j')
-            ),
             new TwigFunction(
                 'occurrences_for_date',
                 function ($occurrences, \DateTimeInterface $date) {
@@ -135,6 +132,18 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFilter(
                 'day_abbr',
                 [$this, 'shortDayName']
+            ),
+            new TwigFilter(
+                'year',
+                fn(DateTimeInterface $datetime): int => intval($datetime->format('Y'))
+            ),
+            new TwigFilter(
+                'month',
+                fn(DateTimeInterface $datetime): int => intval($datetime->format('m'))
+            ),
+            new TwigFilter(
+                'day',
+                fn(\DateTimeInterface $date) => intval($date->format('j'))
             ),
             new TwigFilter(
                 'dateparts',
