@@ -22,11 +22,14 @@ use App\Entity\User;
 use App\Form\CalendarType;
 use App\Form\UserType;
 use App\Repository\CalendarRepository;
+use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -38,9 +41,15 @@ class SetupController extends AbstractController
         CalendarRepository          $repository,
         EntityManagerInterface      $entityManager,
         UserPasswordHasherInterface $passwordHasher,
+        KernelInterface $kernel,
     ): Response
     {
-        $calendars = $repository->findAll();
+        $calendars = null;
+        try {
+            $calendars = $repository->findAll();
+        } catch (ConnectionException) {
+            $application = new Application($kernel);
+        }
 
 //        if (empty($calendars)) {
         $data = [

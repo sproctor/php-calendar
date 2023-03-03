@@ -18,6 +18,7 @@
 namespace App\Controller;
 
 use App\Repository\CalendarRepository;
+use Doctrine\DBAL\Exception\ConnectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,7 +35,11 @@ class DefaultController extends AbstractController
     public function index(CalendarRepository $repository): Response
     {
         $template_variables = [];
-        $calendars = $repository->findAll();
+        try {
+            $calendars = $repository->findAll();
+        } catch (ConnectionException) {
+            return $this->redirectToRoute('setup');
+        }
 
         $template_variables["calendars"] = $calendars;
 
