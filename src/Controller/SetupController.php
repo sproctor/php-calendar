@@ -24,8 +24,9 @@ use App\Form\UserType;
 use App\Repository\CalendarRepository;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,6 +50,10 @@ class SetupController extends AbstractController
             $calendars = $repository->findAll();
         } catch (ConnectionException) {
             $application = new Application($kernel);
+            $application->setAutoExit(false);
+            $input = new ArrayInput([
+                'command' => 'doctrine:database:create',
+            ]);
         }
 
 //        if (empty($calendars)) {
