@@ -52,6 +52,7 @@ class EventFormType extends AbstractType
                     'data' => $default_date,
                     'required' => false,
                     'mapped' => false,
+                    'input' => 'datetime_immutable',
                 ]
             )
             ->add(
@@ -64,6 +65,7 @@ class EventFormType extends AbstractType
                     'data' => $end_datetime,
                     'required' => false,
                     'mapped' => false,
+                    'input' => 'datetime_immutable',
                 ]
             )
             ->add(
@@ -75,6 +77,7 @@ class EventFormType extends AbstractType
                     'data' => $default_date,
                     'required' => false,
                     'mapped' => false,
+                    'input' => 'datetime_immutable',
                 ]
             )
             ->add(
@@ -86,6 +89,7 @@ class EventFormType extends AbstractType
                     'data' => $end_datetime,
                     'required' => false,
                     'mapped' => false,
+                    'input' => 'datetime_immutable',
                 ]
             )
             ->add(
@@ -139,6 +143,7 @@ class EventFormType extends AbstractType
                     'label' => new TranslatableMessage('until-label'),
                     'widget' => 'single_text',
                     'mapped' => false,
+                    'input' => 'datetime_immutable',
                 ]
             )
             ->add(
@@ -158,6 +163,7 @@ class EventFormType extends AbstractType
                     'date_widget' => 'single_text',
                     'time_widget' => 'single_text',
                     'required' => false,
+                    'input' => 'datetime_immutable',
                 ]
             );
         if ($modifying) {
@@ -170,7 +176,6 @@ class EventFormType extends AbstractType
                     'mapped' => false,
                 ]
             );
-            $builder->add('eid', HiddenType::class);
         }
         $builder->add(
             'save',

@@ -11,6 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class OccurrenceRepository extends ServiceEntityRepository
 {
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Occurrence::class);
@@ -27,6 +28,18 @@ class OccurrenceRepository extends ServiceEntityRepository
             ->setParameter("from", $from)
             ->setParameter("to", $to)
             ->setParameter('cid', $cid)
+            ->getQuery();
+        return $query->getResult();
+    }
+
+    /**
+     * @return Occurrence[]
+     */
+    public function findByEid(int $eid): array
+    {
+        $query = $this->createQueryBuilder('o')
+            ->where(":eid = o.eid")
+            ->setParameter("eid", $eid)
             ->getQuery();
         return $query->getResult();
     }
@@ -81,5 +94,18 @@ class OccurrenceRepository extends ServiceEntityRepository
         $to = new \DateTimeImmutable("$year-$month-$day 23:59:59");
 
         return $this->findOccurrencesByDateRange($cid, $from, $to);
+    }
+
+    /**
+     * Remove all occurrence for an event
+     */
+    public function removeByEid(int $eid): void
+    {
+        $query = $this->createQueryBuilder('o')
+            ->delete()
+            ->where(":eid = o.event")
+            ->setParameter("eid", $eid)
+            ->getQuery();
+        $query->execute();
     }
 }

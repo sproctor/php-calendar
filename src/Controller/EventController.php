@@ -24,7 +24,9 @@ use App\Entity\User;
 use App\Form\EventFormType;
 use App\Repository\CalendarRepository;
 use App\Repository\EventRepository;
+use App\Repository\OccurrenceRepository;
 use App\Repository\UserPermissionsRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,6 +43,7 @@ class EventController extends AbstractController
         private CalendarRepository        $calendar_repository,
         private UserPermissionsRepository $user_permissions_repository,
         private EventRepository           $event_repository,
+        private OccurrenceRepository      $occurrence_repository,
     )
     {
     }
@@ -74,7 +77,7 @@ class EventController extends AbstractController
             new Event($calendar, $user),
             $calendar,
             $user,
-            new \DateTimeImmutable(),
+            new DateTimeImmutable(),
             false,
         );
     }
@@ -92,7 +95,7 @@ class EventController extends AbstractController
             $event,
             $event->getCalendar(),
             $user,
-            new \DateTimeImmutable(),
+            new DateTimeImmutable(),
             true,
         );
     }
@@ -109,18 +112,16 @@ class EventController extends AbstractController
     }
 
     private function eventForm(
-        Request            $request,
-        Event              $event,
-        Calendar           $calendar,
-        ?User              $user,
-        \DateTimeInterface $date,
-        bool               $modifying,
+        Request           $request,
+        Event             $event,
+        Calendar          $calendar,
+        ?User             $user,
+        DateTimeImmutable $date,
+        bool              $modifying,
     ): Response
     {
-        $default_date = \DateTime::createFromInterface($date);
-        $default_date->setTime(17, 0);
-        $end_datetime = clone $default_date;
-        $end_datetime->setTime(18, 0);
+        $default_date = $date->setTime(17, 0);
+        $end_datetime = $date->setTime(18, 0);
 
         $cid = $calendar->getCid();
         
@@ -149,7 +150,12 @@ class EventController extends AbstractController
             $this->entity_manager->persist($event);
 
             if (!$modifying || $form->get('modify')->getData()) {
+                if ($modifying) {
+                    $this->occurrence_repository->removeByEid($event->getEid());
+                }
                 $time_type = $form->get('time_type')->getData();
+                /* @var DateTimeImmutable $start */
+                /* @var DateTimeImmutable $end */
                 if ($time_type === 0) {
                     $start = $form->get('start')->getData();
                     $end = $form->get('end')->getData();
@@ -174,8 +180,8 @@ class EventController extends AbstractController
                         $occurrence_count++;
                         $this->entity_manager->persist($occurrence);
 
-                        $start->add($interval);
-                        $end->add($interval);
+                        $start = $start->add($interval);
+                        $end = $end->add($interval);
                     }
                 }
             }

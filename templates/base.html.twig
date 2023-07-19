@@ -27,7 +27,7 @@
                     </div>
                 </div>
             {% else %}
-                <a class="navbar-brand" href="#">{{ calendar.title }}</a>
+                <a class="navbar-brand" href="{{ path('default_view', {cid: calendar.cid}) }}">{{ calendar.title }}</a>
             {% endif %}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#phpc-navbar"
                     aria-controls="phpc-navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@
                     {% if permissions.canCreate %}
                         {{ menu_item("create_event", "create-event-menu-link"|trans, 'plus', {cid: calendar.cid}) }}
                     {% endif %}
-                    {% if app.current_route != 'month_view' and date is defined %}
+                    {% if app.current_route != 'month_view' and app.current_route != 'default_view' and date is defined %}
                         {{ menu_item("month_view", "view-month-menu-link"|trans, 'eye', {cid: calendar.cid, month: date|month, year: date|year}) }}
                     {% endif %}
                     {% if app.current_route == "display_event" %}

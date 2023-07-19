@@ -17,12 +17,12 @@
 
 namespace App\Entity;
 
+use App\Repository\OccurrenceRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use IntlDateFormatter;
 use Locale;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatableInterface;
 
@@ -42,10 +42,10 @@ class Occurrence
         #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'occurrences')]
         #[ORM\JoinColumn(name: 'eid', referencedColumnName: 'eid', onDelete: 'CASCADE')]
         private Event $event,
-        #[ORM\Column(type: 'datetime')]
-        private DateTimeInterface $start,
-        #[ORM\Column(type: 'datetime')]
-        private DateTimeInterface $end,
+        #[ORM\Column(type: 'datetime_immutable')]
+        private DateTimeImmutable $start,
+        #[ORM\Column(type: 'datetime_immutable')]
+        private DateTimeImmutable $end,
         #[ORM\Column(type: 'integer')]
         private int $time_type
     )
@@ -147,24 +147,24 @@ class Occurrence
         return $this->time_type;
     }
 
-    public function getStart(): DateTimeInterface
+    public function getStart(): DateTimeImmutable
     {
         return $this->start;
     }
 
-    public function getEnd(): DateTimeInterface
+    public function getEnd(): DateTimeImmutable
     {
         return $this->end;
     }
 
-    public function setStart(\DateTimeInterface $start): self
+    public function setStart(DateTimeImmutable $start): self
     {
         $this->start = $start;
 
         return $this;
     }
 
-    public function setEnd(\DateTimeInterface $end): self
+    public function setEnd(DateTimeImmutable $end): self
     {
         $this->end = $end;
 

@@ -76,7 +76,7 @@
         type_selector.change(function () {
             updateToFrom();
         });
-        {% if form.eid is defined %}
+        {% if form.modify is defined %}
         // show hide time stuff with modify checkbox
         $('#time_data').toggle($('#event_form_modify').checked);
         $('#event_form_modify').click(function () {

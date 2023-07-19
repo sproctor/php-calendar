@@ -29,11 +29,11 @@
                                 <div class="form-check form-check-inline">
                                     {% set can_modify = true %}
                                     <input name="eid[]" type="checkbox" class="form-check-input"
-                                           id="eid_{{ occurrence.event.id }}" value="{{ occurrence.event.eid }}">
+                                           id="eid_{{ occurrence.event.eid }}" value="{{ occurrence.event.eid }}">
                                     <label class="form-check-label" for="eid_{{ occurrence.event.eid }}">
                                         <a href="{{ path('event_view', {eid: occurrence.event.eid}) }}">{{ occurrence.event.subject }}</a>
                                     </label></div>
-                                <a href="{{ context.createEventUrl('event_form', occurrence.getEid) }}">{{ "modify-label"|trans }}</a>
+                                <a href="{{ path('modify_event', {eid: occurrence.event.eid}) }}">{{ "modify-label"|trans }}</a>
                             {% else %}
                                 <a href="{{ path('event_view', {eid: occurrence.event.eid}) }}">{{ occurrence.event.subject }}</a>
                             {% endif %}
