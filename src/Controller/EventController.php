@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/{_locale}')]
+#[Route('/{_locale}/event')]
 class EventController extends AbstractController
 {
     const MAX_OCCURRENCES = 1000;
@@ -31,7 +31,7 @@ class EventController extends AbstractController
     {
     }
 
-    #[Route('/event/{eid}', name: 'event_view')]
+    #[Route('/{eid}', name: 'event_view')]
     public function view(int $eid): Response
     {
         $event = $this->event_repository->find($eid);
@@ -47,7 +47,7 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/calendar/{cid}/event/new', name: 'create_event')]
+    #[Route('/create/{cid}', name: 'create_event')]
     public function createEvent(
         int     $cid,
         Request $request,
@@ -65,19 +65,18 @@ class EventController extends AbstractController
         );
     }
 
-    #[Route('/event/{eid}/edit', name: 'modify_event')]
+    #[Route('/edit/{eid}', name: 'modify_event')]
     public function modifyEvent(
         int $eid,
         Request $request,
     ): Response
     {
         $event = $this->event_repository->find($eid);
-        $calendar = $this->calendar_repository->find($event->getEid());
         $user = $this->getUser();
         return $this->eventForm(
             $request,
             $event,
-            $calendar,
+            $event->getCalendar(),
             $user,
             new \DateTimeImmutable(),
             true,
@@ -156,6 +155,7 @@ class EventController extends AbstractController
                 }
             }
             $this->entity_manager->flush();
+            return $this->redirectToRoute('event_view', ['eid' => $event->getEid()]);
         }
         //echo "<pre>"; var_dump($context->request); echo "</pre>";
 //        if ($modifying) {
