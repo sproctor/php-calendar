@@ -1,4 +1,19 @@
 <?php
+/*
+ * Copyright Sean Proctor
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 namespace App\Controller;
 
@@ -6,7 +21,6 @@ use App\Entity\Calendar;
 use App\Entity\Event;
 use App\Entity\Occurrence;
 use App\Entity\User;
-use App\Entity\UserPermissions;
 use App\Form\EventFormType;
 use App\Repository\CalendarRepository;
 use App\Repository\EventRepository;
@@ -81,6 +95,17 @@ class EventController extends AbstractController
             new \DateTimeImmutable(),
             true,
         );
+    }
+
+    #[Route('/delete/{eid}', name: 'delete_event')]
+    public function deleteEvent(
+        int $eid,
+    ): Response
+    {
+        $event = $this->event_repository->find($eid);
+        $this->event_repository->remove($event, true);
+        // TODO: create a message to be displayed
+        return $this->redirectToRoute('default_view', ['cid' => $event->getCalendar()->getCid()]);
     }
 
     private function eventForm(
