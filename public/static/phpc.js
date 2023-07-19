@@ -96,6 +96,11 @@ addEventListener("DOMContentLoaded", (event) => {
         e.preventDefault();
     });
 
+    // Silence marked warnings
+    marked.use({
+        mangle: false,
+        headerIds: false
+    });
     // Markdown descriptions
     $('.markdown').html(function () {
         return marked.parse($(this).html())
