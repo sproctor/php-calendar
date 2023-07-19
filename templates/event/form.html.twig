@@ -6,8 +6,8 @@
     <h3>{{ 'create-event-label'|trans }}</h3>
     {{ form_start(form) }}
     {{ form_row(form.subject) }}
-    <div class="form-group">
-        <label class="form-control-label" for="form_description">{{ "description-label"|trans }} <a
+    <div class="mb-3">
+        <label class="form-label" for="form_description">{{ "description-label"|trans }} <a
                     href="http://commonmark.org/help/" target="_blank"><i class="bi-info-circle"></i></a></label>
         {{ form_errors(form.description) }}
         {{ form_widget(form.description) }}
@@ -16,27 +16,31 @@
         {{ form_row(form.modify) }}
     {% endif %}
     <div id="time_data">
-        {{ form_row(form.time_type) }}
-        {{ form_label(form.start) }}
-        <div class="form-datetime">
-            {{ form_widget(form.start) }}
-            {{ form_errors(form.start) }}
+        <div class="mb-3">
+            {{ form_row(form.time_type) }}
+            {{ form_label(form.start) }}
+            <div class="form-datetime">
+                {{ form_widget(form.start) }}
+                {{ form_errors(form.start) }}
+            </div>
+            <div class="form-date">
+                {{ form_widget(form.start_date) }}
+                {{ form_errors(form.start_date) }}
+            </div>
         </div>
-        <div class="form-date">
-            {{ form_widget(form.start_date) }}
-            {{ form_errors(form.start_date) }}
-        </div>
-        {{ form_label(form.end) }}
-        <div class="form-datetime">
-            {{ form_widget(form.end) }}
-            {{ form_errors(form.end) }}
-        </div>
-        <div class="form-date">
-            {{ form_widget(form.end_date) }}
-            {{ form_errors(form.end_date) }}
+        <div class="mb-3">
+            {{ form_label(form.end) }}
+            <div class="form-datetime">
+                {{ form_widget(form.end) }}
+                {{ form_errors(form.end) }}
+            </div>
+            <div class="form-date">
+                {{ form_widget(form.end_date) }}
+                {{ form_errors(form.end_date) }}
+            </div>
         </div>
         {{ form_row(form.repeats, {'attr': {'class': 'event-repeats'}}) }}
-        <div id="repeat_data">
+        <div id="repeat_data" class="mb-3">
             <div class="event-frequency">{{ form_row(form.frequency) }}</div>
             {{ form_row(form.until) }}
         </div>
