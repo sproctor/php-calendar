@@ -23,10 +23,13 @@ use App\Form\CalendarType;
 use App\Form\UserType;
 use App\Repository\CalendarRepository;
 use Doctrine\DBAL\Exception\ConnectionException;
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,49 +45,74 @@ class SetupController extends AbstractController
         CalendarRepository          $repository,
         EntityManagerInterface      $entityManager,
         UserPasswordHasherInterface $passwordHasher,
-        KernelInterface $kernel,
+        KernelInterface             $kernel,
     ): Response
     {
         $calendars = null;
         try {
             $calendars = $repository->findAll();
         } catch (ConnectionException) {
-            $application = new Application($kernel);
-            $application->setAutoExit(false);
-            $input = new ArrayInput([
-                'command' => 'doctrine:database:create',
-            ]);
+            $this->createDatabase($kernel);
+            $this->createSchema($kernel);
+        } catch (TableNotFoundException) {
+            $this->createSchema($kernel);
         }
 
-//        if (empty($calendars)) {
-        $data = [
-            'calendar' => new Calendar(),
-            'user' => new User()
-        ];
-        $form = $this->createFormBuilder($data)
-            ->add('calendar', CalendarType::class)
-            ->add('user', UserType::class)
-            ->add('save', SubmitType::class, ['label' => 'save-label'])
-            ->getForm();
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($data['calendar']);
-            /* @var User $user */
-            $user = $data['user'];
-            $user->setDefaultCalendar($data['calendar']);
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $form->get('user')->get('password')->getData()
-            );
-            $user->setHash($hashedPassword);
-            $user->setIsAdmin(true);
-            $entityManager->persist($user);
-            $entityManager->flush();
-            return $this->redirectToRoute('default_month_display', ['cid' => $data['calendar']->getCid()]);
+        if (empty($calendars)) {
+            $data = [
+                'calendar' => new Calendar(),
+                'user' => new User()
+            ];
+            $form = $this->createFormBuilder($data)
+                ->add('calendar', CalendarType::class)
+                ->add('user', UserType::class)
+                ->add('save', SubmitType::class, ['label' => 'save-label'])
+                ->getForm();
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                /* @var Calendar $calendar */
+                $calendar = $data['calendar'];
+                $entityManager->persist($calendar);
+                /* @var User $user */
+                $user = $data['user'];
+                $user->setDefaultCalendar($calendar);
+                $hashedPassword = $passwordHasher->hashPassword(
+                    $user,
+                    $form->get('user')->get('password')->getData()
+                );
+                $user->setHash($hashedPassword);
+                $user->setIsAdmin(true);
+                $entityManager->persist($user);
+                $entityManager->flush();
+                return $this->redirectToRoute('default_view', ['cid' => $calendar->getCid()]);
+            }
+            return $this->render('setup.html.twig', ['form' => $form]);
         }
-        return $this->render('setup.html.twig', ['form' => $form]);
-//        }
 
-//        throw $this->createAccessDeniedException();
+        throw $this->createAccessDeniedException();
+    }
+
+    private function createDatabase(KernelInterface $kernel): void
+    {
+        $this->runCommand($kernel, 'doctrine:database:create');
+    }
+
+    private function createSchema(KernelInterface $kernel): void
+    {
+        $this->runCommand($kernel, 'doctrine:schema:create');
+    }
+
+    private function runCommand(KernelInterface $kernel, string $command): void
+    {
+        $application = new Application($kernel);
+        $application->setAutoExit(false);
+        $output = new BufferedOutput();
+        $input = new ArrayInput(['command' => $command]);
+        try {
+            $application->run($input, $output);
+        } catch (Exception) {
+            // TODO: output $output
+            throw new Exception("Error running command: $command");
+        }
     }
 }
