@@ -2,9 +2,9 @@
 
 {% block body %}
 <ul>
-    {% for calendar in calendar %}
+    {% for calendar in calendars %}
         <li>
-            <a href="{{ path('display_month', {cid: calendar.cid}) }}">{{ calendar.title }}</a>
+            <a href="{{ path('default_view', {cid: calendar.cid}) }}">{{ calendar.title }}</a>
         </li>
     {% endfor %}
 </ul>
