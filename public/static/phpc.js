@@ -1,6 +1,3 @@
-let activeRequest = null;
-const cache = {};
-
 addEventListener("DOMContentLoaded", (event) => {
 
     // Tabs - Persistence reference: http://stackoverflow.com/questions/19539547/maintaining-jquery-ui-previous-active-tab-before-reload-on-page-reload
@@ -27,16 +24,16 @@ addEventListener("DOMContentLoaded", (event) => {
     }
     */
 
-    // Summary init
+    // Enable Bootstrap 5.x popovers
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
     // Enable confirmation dialogues for links
     $('button[data-toggle=confirmation]').click(function (e) {
-        var title = $(this).attr('data-title');
-        var content = $(this).attr('data-content');
-        var okButtonTxt = $(this).attr('data-button-text');
-        var confirmModal =
+        const title = $(this).attr('data-title');
+        const content = $(this).attr('data-content');
+        const okButtonTxt = $(this).attr('data-button-text');
+        const confirmModal =
             $('<div class="modal fade">' +
                 '<div class="modal-dialog" role="document">' +
                 '<div class="modal-content">' +
@@ -57,7 +54,7 @@ addEventListener("DOMContentLoaded", (event) => {
                 '</div>' +
                 '</div>');
         confirmModal.modal();
-        form = $(this).parents('form');
+        const form = $(this).parents('form');
         confirmModal.on('shown.bs.modal', function () {
             $("#confirmation-button").click(function () {
                 $(form).submit();
