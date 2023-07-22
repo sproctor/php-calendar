@@ -21,34 +21,33 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
-use function App\__;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class UserPermissionsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $data = $options['data'];
         $builder
             ->add('uid', HiddenType::class)
             ->add(
                 'read',
                 CheckboxType::class,
-                ['label' => __('read-label'), 'data' => $data['read'], 'required' => false]
+                ['label' => new TranslatableMessage('read-label'), 'required' => false]
             )
             ->add(
                 'write',
                 CheckboxType::class,
-                ['label' => __('write-label'), 'data' => $data['write'], 'required' => false]
+                ['label' => new TranslatableMessage('write-label'), 'required' => false]
             )
             ->add(
                 'modify',
                 CheckboxType::class,
-                ['label' => __('modify-label'), 'data' => $data['modify'], 'required' => false]
+                ['label' => new TranslatableMessage('modify-label'), 'required' => false]
             )
             ->add(
                 'admin',
                 CheckboxType::class,
-                ['label' => __('admin-label'), 'data' => $data['admin'], 'required' => false]
+                ['label' => new TranslatableMessage('admin-label'), 'required' => false]
             );
     }
 }

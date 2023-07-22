@@ -43,6 +43,7 @@ class DefaultController extends AbstractController
         }
 
         $template_variables["calendars"] = $calendars;
+        $template_variables['calendar'] = $this->getUser()->getDefaultCalendar();
 
         if (empty($calendars)) {
             return $this->redirectToRoute('setup');

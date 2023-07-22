@@ -46,7 +46,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\ManyToOne(targetEntity: 'Calendar')]
     #[ORM\JoinColumn(name: 'default_cid', referencedColumnName: 'cid')]
-    private ?\App\Entity\Calendar $default_calendar = null;
+    private ?Calendar $default_calendar = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $timezone = null;
@@ -127,11 +127,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function isAdmin(): bool
     {
         return $this->is_admin;
-    }
-
-    public function defaultCalendar()
-    {
-        return $this->default_calendar;
     }
 
     /**

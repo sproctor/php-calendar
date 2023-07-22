@@ -101,7 +101,6 @@ class CalendarController extends AbstractController
         return $this->render('calendar/day_view.html.twig',
             [
                 'calendar' => $calendar,
-                'user' => $user,
                 'date' => $date,
                 'permissions' => $permissions,
                 'prev_date' => $yesterday,
@@ -168,7 +167,6 @@ class CalendarController extends AbstractController
         return $this->render("calendar/month_view.html.twig",
             [
                 'calendar' => $calendar,
-                'user' => $user,
                 'date' => $datetime,
                 'months' => $months,
                 'years' => $years,

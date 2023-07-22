@@ -11,7 +11,7 @@
                 >{% if (not in_same_month(cur_date, date) and day_of_week == 0) or cur_date|day == 1 %}{{ cur_date|month_abbr }}{% endif %} {{ cur_date|day }}</a>
                 {% if permissions.canCreate %}
                     <a href="{{ path('create_event', {cid: calendar.getCid}) }}" class="phpc-add"
-                       title="{{ "create-event-menu-link"|trans }}"><i class="bi-plus"></i></a>
+                       title="{{ "create-event-label"|trans }}"><i class="bi-plus"></i></a>
                 {% endif %}
             </div>
             {% set days_occurrences = occurrences_for_date(occurrences, cur_date) %}

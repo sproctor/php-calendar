@@ -19,10 +19,10 @@
             {% if calendars is defined and calendars|length > 1 %}
                 <div class="nav-item dropdown">
                     <button class="btn btn-link navbar-brand dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">{{ calendar.getTitle }}</button>
+                            aria-expanded="false">{{ calendar.title }}</button>
                     <div class="dropdown-menu">
                         {% for cal in calendars %}
-                            <a class="dropdown-item" href="{{ script }}?phpcid={{ cal.getCid }}">{{ cal.getTitle }}</a>
+                            <a class="dropdown-item" href="{{ path('default_view', {cid: cal.cid}) }}">{{ cal.title }}</a>
                         {% endfor %}
                     </div>
                 </div>
@@ -35,8 +35,8 @@
             </button>
             <div class="collapse navbar-collapse" id="phpc-navbar">
                 <ul class="navbar-nav mr-auto">
-                    {% if permissions.canCreate %}
-                        {{ menu_item("create_event", "create-event-menu-link"|trans, 'plus', {cid: calendar.cid}) }}
+                    {% if permissions is defined and permissions.canCreate %}
+                        {{ menu_item("create_event", "create-event-label"|trans, 'plus', {cid: calendar.cid}) }}
                     {% endif %}
                     {% if app.current_route != 'month_view' and app.current_route != 'default_view' and date is defined %}
                         {{ menu_item("month_view", "view-month-menu-link"|trans, 'eye', {cid: calendar.cid, month: date|month, year: date|year}) }}
@@ -44,10 +44,10 @@
                     {% if app.current_route == "display_event" %}
                         {{ menu_item("display_day", "view-date-menu-link"|trans, 'eye') }}
                     {% endif %}
-                    {% if permissions.canAdmin %}
+                    {% if permissions is defined and permissions.canAdmin %}
                     {#  {{ menu_item("admin", "admin-menu-link"|trans, 'cog') }} #}
                     {% endif %}
-                    {% if user is null %}
+                    {% if app.user is null %}
                         <li class="nav-item dropdown">
                             <button class="btn btn-link nav-link dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown"
@@ -65,16 +65,16 @@
                     <li class="nav-item dropdown">
                         <button class="btn btn-link nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown"
                                 aria-expanded="false"><i class="bi-person"></i>
-                            {% if user is null %}
+                            {% if app.user is null %}
                                 {{ "anonymous"|trans }}
                             {% else %}
-                                {{ user.username }}
+                                {{ app.user.username }}
                             {% endif %}
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{# {{ path("user_settings") }} #}"><i
-                                        class="bi-gear"></i> {{ "settings-menu-link"|trans }}</a>
-                            {% if not user is null %}
+                            {% if not app.user is null %}
+                                <a class="dropdown-item" href="{{ path("user_settings") }}"><i
+                                            class="bi-gear"></i> {{ "settings-menu-link"|trans }}</a>
                                 <a class="dropdown-item" href="{{ path("app_logout") }}"><i
                                             class="bi-bow-arrow-right"></i> {{ "log-out-menu-link"|trans }}</a>
                             {% else %}

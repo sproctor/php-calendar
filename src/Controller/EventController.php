@@ -105,6 +105,7 @@ class EventController extends AbstractController
         int $eid,
     ): Response
     {
+        // TODO: check permission
         $event = $this->event_repository->find($eid);
         $this->event_repository->remove($event, true);
         // TODO: create a message to be displayed
@@ -126,6 +127,8 @@ class EventController extends AbstractController
         $cid = $calendar->getCid();
         
         $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
+
+        // TODO: check permission
 
         $form = $this->createForm(
             EventFormType::class,

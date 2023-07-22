@@ -1,9 +1,5 @@
 <?php
 
-use App\Entity\Calendar;
-use App\Entity\User;
-use App\Entity\UserPermissions;
-
 function days_in_year(int $year): int
 {
     return 365 + intval(create_datetime(1, 1, $year)->format('L'));
