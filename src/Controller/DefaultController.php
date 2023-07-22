@@ -17,12 +17,14 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\CalendarRepository;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\LocaleSwitcher;
 
 /**
  * Controller used to redirect to the month view.
@@ -33,17 +35,25 @@ class DefaultController extends AbstractController
 {
 
     #[Route("/", name: "default")]
-    public function index(CalendarRepository $repository): Response
+    public function index(
+        CalendarRepository $repository,
+        LocaleSwitcher     $localeSwitcher,
+    ): Response
     {
         $template_variables = [];
         try {
             $calendars = $repository->findAll();
-        } catch (ConnectionException | TableNotFoundException) {
+        } catch (ConnectionException|TableNotFoundException) {
             return $this->redirectToRoute('setup');
         }
 
         $template_variables["calendars"] = $calendars;
-        $template_variables['calendar'] = $this->getUser()->getDefaultCalendar();
+        /* @var User $user */
+        $user = $this->getUser();
+        if ($user != null) {
+            $template_variables['calendar'] = $user->getDefaultCalendar();
+            $localeSwitcher->setLocale($user->getLocale());
+        }
 
         if (empty($calendars)) {
             return $this->redirectToRoute('setup');
