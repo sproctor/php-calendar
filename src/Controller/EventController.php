@@ -64,20 +64,27 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/create/{cid}', name: 'create_event')]
+    #[Route('/create/{cid}/{year}/{month}/{day}', name: 'create_event')]
     public function createEvent(
         int     $cid,
         Request $request,
+        ?int    $year = null,
+        ?int    $month = null,
+        ?int    $day = null,
     ): Response
     {
         $calendar = $this->calendar_repository->find($cid);
         $user = $this->getUser();
+        $date = new DateTimeImmutable();
+        if ($year !== null && $month !== null && $day !== null) {
+            $date = $date->setDate($year, $month, $day);
+        }
         return $this->eventForm(
             $request,
             new Event($calendar, $user),
             $calendar,
             $user,
-            new DateTimeImmutable(),
+            $date,
             false,
         );
     }
