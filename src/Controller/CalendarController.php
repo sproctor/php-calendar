@@ -90,7 +90,6 @@ class CalendarController extends AbstractController
         $calendar = $this->calendar_repository->find($cid);
         $user = $this->getUser();
         $date = new DateTimeImmutable("$year-$month-$day");
-        $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
         $yesterday = $date->sub(new DateInterval('P1D'));
         $tomorrow = $date->add(new DateInterval('P1D'));
         $occurrences = // array_filter(
@@ -102,7 +101,6 @@ class CalendarController extends AbstractController
             [
                 'calendar' => $calendar,
                 'date' => $date,
-                'permissions' => $permissions,
                 'prev_date' => $yesterday,
                 'next_date' => $tomorrow,
                 'occurrences' => $occurrences,
@@ -155,8 +153,6 @@ class CalendarController extends AbstractController
         $last_day = $weeks * 7 - day_of_week($month, 1, $year);
         $to_date = create_datetime($month, $last_day + 1, $year);
 
-        $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
-
         $occurrences = $this->occurrence_repository->findOccurrencesByDay(
             $calendar,
             $from_date,
@@ -170,7 +166,6 @@ class CalendarController extends AbstractController
                 'date' => $datetime,
                 'months' => $months,
                 'years' => $years,
-                'permissions' => $permissions,
                 'prev_month_url' => $prev_month_url,
                 'next_month_url' => $next_month_url,
                 'weeks' => $weeks,

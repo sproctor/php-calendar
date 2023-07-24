@@ -54,12 +54,10 @@ class EventController extends AbstractController
         $event = $this->event_repository->find($eid);
         $calendar = $event->getCalendar();
         $user = $this->getUser();
-        $permissions = $this->user_permissions_repository->getUserPermissions($calendar->getCid(), $user);
 
         return $this->render('event/view.html.twig', [
             'event' => $event,
             'user' => $user,
-            'permissions' => $permissions,
             'calendar' => $calendar,
         ]);
     }

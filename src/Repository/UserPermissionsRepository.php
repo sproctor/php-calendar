@@ -17,6 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserPermissionsRepository extends ServiceEntityRepository
 {
+    private array $cache = [];
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, UserPermissions::class);
@@ -42,7 +44,11 @@ class UserPermissionsRepository extends ServiceEntityRepository
 
     public function getUserPermissions(int $cid, ?User $user): UserPermissions
     {
-        $permissions = $this->findOneBy(['cid' => $cid, 'uid' => $user?->getUid()]);
+        $uid = $user?->getUid();
+        if (isset($this->cache["$cid:$uid"])) {
+            return $this->cache["$cid:$uid"];
+        }
+        $permissions = $this->findOneBy(['cid' => $cid, 'uid' => $uid]);
         if ($user !== null) {
             $default_permissions = $this->findOneBy(['cid' => $cid, 'uid' => null]);
             if ($default_permissions !== null) {
@@ -54,7 +60,7 @@ class UserPermissionsRepository extends ServiceEntityRepository
             }
         }
         if ($permissions === null) {
-            $permissions = new UserPermissions($cid, $user?->getUid());
+            $permissions = new UserPermissions($cid, $uid);
         }
         if ($user?->isAdmin()) {
             $permissions->setRead(true);
@@ -63,7 +69,7 @@ class UserPermissionsRepository extends ServiceEntityRepository
             $permissions->setModerate(true);
             $permissions->setAdmin(true);
         }
-
+        $this->cache["$cid:$uid"] = $permissions;
         return $permissions;
     }
 

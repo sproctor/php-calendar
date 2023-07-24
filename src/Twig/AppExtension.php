@@ -225,7 +225,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     /**
      * @return string
      */
-    function shortMonthName(DateTimeInterface $date)
+    function shortMonthName(DateTimeInterface $date): string
     {
         $formatter = new \IntlDateFormatter(
             \Locale::getDefault(),
