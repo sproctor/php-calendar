@@ -3,16 +3,20 @@
 {% block body %}
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" role="presentation">
-            <a class="nav-link active" id="calendars-tab" data-bs-toggle="tab" href="#calendars"
-                                role="tab" aria-controls="calendars">{{ "calendars-label"|trans }}</a>
+            <button class="nav-link active" id="calendars-tab" data-bs-toggle="tab" data-bs-target="#calendars"
+                    type="button" role="tab" aria-controls="calendars" aria-selected="true">
+                {{ "calendars-label"|trans }}
+            </button>
         </li>
         <li class="nav-item" role="presentation">
-            <a class="nav-link" id="users-tab" data-bs-toggle="tab" href="#users" role="tab"
-                                aria-controls="users">{{ "users-label"|trans }}</a>
+            <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users"
+                    type="button" role="tab" aria-controls="users" aria-selected="false">
+                {{ "users-label"|trans }}
+            </button>
         </li>
     </ul>
     <div class="tab-content">
-        <div class="tab-pane fade show active" id="calendars" role="tabpanel" aria-labelledby="calendars-tab">
+        <div class="tab-pane show active" id="calendars" role="tabpanel" aria-labelledby="calendars-tab">
             <h3>{{ "calendars-label"|trans }}</h3>
             <table class="table">
                 <thead>
@@ -44,12 +48,13 @@
                         class="fas fa-plus-square"></i> {{ "create-calendar-button"|trans }}</a>
         </div>
 
-        <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+        <div class="tab-pane" id="users" role="tabpanel" aria-labelledby="users-tab">
             <h3>{{ "users-label"|trans }}</h3>
             <table class="table">
                 <thead>
                 <tr>
                     <th scope="col">{{ "username-label"|trans }}</th>
+                    <th scope="col">{{ "groups-label"|trans }}</th>
                     <th scope="col">{{ "actions-label"|trans }}</th>
                 </tr>
                 </thead>
@@ -57,15 +62,18 @@
                 {% for user in get_users() %}
                     <tr>
                         <td>{{ user.username }}</td>
+                        <td>{# {{ user.getGroups|join(', ') }} #}</td>
                         <td>
                             <a class="btn btn-primary"
                                href="{# {{ context.createUrl('user_groups', {'uid': user.getUid}) }} #}">{{ "edit-groups-label"|trans }}</a>
                             {% if user.isDisabled %}
-                                <a class="btn btn-primary"
-                                   href="{# {{ context.createUrl('user_enable', {'uid': user.getUid}) }} #}">{{ "enable-user-label"|trans }}</a>
+                                <a class="btn btn-primary" href="{{ path('enable_user', {'uid': user.uid}) }}">
+                                    {{ "enable-user-label"|trans }}
+                                </a>
                             {% else %}
-                                <a class="btn btn-primary"
-                                   href="{# {{ context.createUrl('user_disable', {'uid': user.getUid}) }} #}">{{ "disable-user-label"|trans }}</a>
+                                <a class="btn btn-primary" href="{{ path('disable_user', {'uid': user.uid}) }}">
+                                    {{ "disable-user-label"|trans }}
+                                </a>
                             {% endif %}
                         </td>
                     </tr>

@@ -1,97 +1,14 @@
 addEventListener("DOMContentLoaded", (event) => {
 
-    // Tabs - Persistence reference: http://stackoverflow.com/questions/19539547/maintaining-jquery-ui-previous-active-tab-before-reload-on-page-reload
-    /*
-    var currentTabId = "0";
-    $tab = $(".phpc-tabs").tabs({
-        activate: function (e, ui) {
-            currentTabId = ui.newPanel.attr("id");
-            sessionStorage.setItem("phpc-tab-index", currentTabId);
-        }
-    });
-    var haveTabs = false;
-    $(".phpc-tabs").each (function () {
-      haveTabs = true;
-      if (sessionStorage.getItem("phpc-tab-index") != null) {
-        currentTabId = sessionStorage.getItem("phpc-tab-index");
-        var index = $(this).find('a[href="#' + currentTabId + '"]').parent().index();
-        if (index > 0)
-          $tab.tabs('option', 'active', index);
-      }
-    });
-    if (!haveTabs) {
-      sessionStorage.removeItem("phpc-tab-index");
-    }
-    */
+    // Open tab by hash
+    // See: https://stackoverflow.com/questions/69573435/twitter-bootstrap-5-tabs-go-to-specific-tab-on-page-reload-or-hyperlink
+    const trigger = document.querySelector(`ul.nav button[data-bs-target="${window.location.hash}"]`)
+    const tab = new bootstrap.Tab(trigger)
+    tab.show()
 
     // Enable Bootstrap 5.x popovers
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-
-    // Enable confirmation dialogues for links
-    $('button[data-toggle=confirmation]').click(function (e) {
-        const title = $(this).attr('data-title');
-        const content = $(this).attr('data-content');
-        const okButtonTxt = $(this).attr('data-button-text');
-        const confirmModal =
-            $('<div class="modal fade">' +
-                '<div class="modal-dialog" role="document">' +
-                '<div class="modal-content">' +
-                '<div class="modal-header">' +
-                '<h5 class="modal-title">' + title + '</h5>' +
-                '<button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
-                '<span aria-hidden="true">&times;</span>' +
-                '</button>' +
-                '</div>' +
-                '<div class="modal-body">' +
-                '<p>' + content + '</p>' +
-                '</div>' +
-                '<div class="modal-footer">' +
-                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>' +
-                '<button id="confirmation-button" type="button" class="btn btn-primary">' + okButtonTxt + '</a>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>');
-        confirmModal.modal();
-        const form = $(this).parents('form');
-        confirmModal.on('shown.bs.modal', function () {
-            $("#confirmation-button").click(function () {
-                $(form).submit();
-            });
-        });
-        e.preventDefault();
-    });
-
-    // Enable confirmation dialogues for links
-    $('a[data-toggle=confirmation]').click(function (e) {
-        var title = $(this).attr('data-title');
-        var href = $(this).attr('href');
-        var content = $(this).attr('data-content');
-        var okButtonTxt = $(this).attr('data-button-text');
-        var confirmModal =
-            $('<div class="modal fade">' +
-                '<div class="modal-dialog" role="document">' +
-                '<div class="modal-content">' +
-                '<div class="modal-header">' +
-                '<h5 class="modal-title">' + title + '</h5>' +
-                '<button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
-                '<span aria-hidden="true">&times;</span>' +
-                '</button>' +
-                '</div>' +
-                '<div class="modal-body">' +
-                '<p>' + content + '</p>' +
-                '</div>' +
-                '<div class="modal-footer">' +
-                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>' +
-                '<a href="' + href + '" class="btn btn-primary">' + okButtonTxt + '</a>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>');
-        confirmModal.modal();
-        e.preventDefault();
-    });
 
     // Silence marked warnings
     marked.use({
