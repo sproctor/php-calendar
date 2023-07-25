@@ -1,8 +1,13 @@
-php-calendar
-============
+# php-calendar
+
 by Sean Proctor
 
-This program requires a PHP enabled webserver and a database (MySQL) installed.
+## Intent
+
+php-calendar is an open source web-based calendar. It was originally written to facilitate
+easy sharing of events for a student group at Northeastern University in 2003.
+
+## Usage
 
 Installation and upgrade instructions:
 https://github.com/sproctor/php-calendar/wiki/Installation-Guide
@@ -18,3 +23,12 @@ FAQ: https://github.com/sproctor/php-calendar/wiki/Frequently-Asked-Questions
 See the demo live at http://www.php-calendar.org/php-calendar-dev/
 
 Translations can be done at https://www.transifex.com/projects/p/php-calendar/
+
+## Development
+
+Source code can be found at https://github.com/sproctor/php-calendar
+
+### Modifying schema
+
+See instructions on creating migrations here: https://symfony.com/bundles/DoctrineMigrationsBundle/current/index.html
+

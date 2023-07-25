@@ -17,12 +17,14 @@
 
 namespace App\Exception;
 
+use Symfony\Component\Translation\TranslatableMessage;
+
 class PermissionException extends \Exception
 {
     public function __construct($msg = null)
     {
         if ($msg == null) {
-            $msg = __('permission-error');
+            $msg = new TranslatableMessage('permission-error');
         }
         parent::__construct($msg);
     }

@@ -44,18 +44,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private bool $password_is_editable = true;
 
-    #[ORM\ManyToOne(targetEntity: 'Calendar')]
-    #[ORM\JoinColumn(name: 'default_cid', referencedColumnName: 'cid')]
-    private ?Calendar $default_calendar = null;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $timezone = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $locale = null;
-
-    // TODO: implement
-    private $groups;
 
     #[ORM\Column(type: 'boolean')]
     private bool $is_disabled = false;
@@ -108,15 +101,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getLocale(): ?string
     {
         return $this->locale;
-    }
-    
-    public function getGroups()
-    {
-        if (!isset($this->groups)) {
-            $this->groups = $this->db->getGroupsForUser($this->uid);
-        }
-
-        return $this->groups;
     }
 
     public function isDisabled(): bool
@@ -185,11 +169,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isIsAdmin(): ?bool
-    {
-        return $this->is_admin;
-    }
-
     public function setIsAdmin(bool $is_admin): self
     {
         $this->is_admin = $is_admin;
@@ -223,26 +202,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isIsDisabled(): ?bool
-    {
-        return $this->is_disabled;
-    }
-
     public function setIsDisabled(bool $is_disabled): self
     {
         $this->is_disabled = $is_disabled;
-
-        return $this;
-    }
-
-    public function getDefaultCalendar(): ?Calendar
-    {
-        return $this->default_calendar;
-    }
-
-    public function setDefaultCalendar(?Calendar $default_calendar): self
-    {
-        $this->default_calendar = $default_calendar;
 
         return $this;
     }

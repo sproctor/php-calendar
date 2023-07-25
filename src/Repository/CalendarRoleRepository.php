@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\Group;
+use App\Entity\CalendarRole;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Group>
+ * @extends ServiceEntityRepository<CalendarRole>
  *
- * @method Group|null find($id, $lockMode = null, $lockVersion = null)
- * @method Group|null findOneBy(array $criteria, array $orderBy = null)
- * @method Group[]    findAll()
- * @method Group[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CalendarRole|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CalendarRole|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CalendarRole[]    findAll()
+ * @method CalendarRole[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class GroupRepository extends ServiceEntityRepository
+class CalendarRoleRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Group::class);
+        parent::__construct($registry, CalendarRole::class);
     }
 
-    public function save(Group $entity, bool $flush = false): void
+    public function save(CalendarRole $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class GroupRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Group $entity, bool $flush = false): void
+    public function remove(CalendarRole $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class GroupRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return Group[] Returns an array of Group objects
+//     * @return CalendarRole[] Returns an array of CalendarRole objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class GroupRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Group
+//    public function findOneBySomeField($value): ?CalendarRole
 //    {
 //        return $this->createQueryBuilder('g')
 //            ->andWhere('g.exampleField = :val')

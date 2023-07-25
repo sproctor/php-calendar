@@ -1,116 +1,86 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-  <ul class="nav nav-tabs" role="tablist">
-  {% if user.isAdmin() %}
-    <li class="nav-item"><a class="nav-link active" id="calendars-tab" data-toggle="tab" href="#calendars" role="tab" aria-controls="calendars">{{ "calendars-label"|trans }}</a></li>
-    <li class="nav-item"><a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users">{{ "users-label"|trans }}</a></li>
-  {% endif %}
-  {% if calendar.canAdmin(user) %}
-    <li class="nav-item"><a class="nav-link" id="calendar-tab" data-toggle="tab" href="#calendar" role="tab" aria-controls="calendar">{{ "calendar-settings-label"|trans }}</a></li>
-    <li class="nav-item"><a class="nav-link" id="calendar-users-tab" data-toggle="tab" href="#calendar-users" role="tab" aria-controls="calendar-users">{{ "calendar-users-label"|trans }}</a></li>
-  {% endif %}
-  {% if calendar.canAdmin(user) %}
-      
-  {% endif %}
-  </ul>
-  <div class="tab-content">
-    <div class="tab-pane fade show active" id="calendars" role="tabpanel" aria-labelledby="calendars-tab">
-      <h3>{{ "calendars-label"|trans }}</h3>
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">{{ "calendar-label"|trans }}</th>
-            <th scope="col">{{ "actions-label"|trans }}</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for calendar in calendars %}
-          <tr>
-            <td>{{ calendar.getTitle() }}</td>
-            <td>
-              <a class="btn btn-primary settings-button" href="{{ script }}?action=admin&amp;phpcid={{ calendar.getCid }}#calendar"><i class="fas fa-wrench"></i> {{ "settings-button"|trans }}</a>
-              <a class="btn btn-primary" href="{{ script }}?action=calendar_delete&amp;cid={{ calendar.getCid() }}"
-                data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}" data-button-text="{{ "delete-button"|trans }}"
-                data-content="{{ "permanently-delete-calendar-question"|trans }}"><i class="fas fa-trash"></i> {{ "delete-button"|trans }}</a>
-              {% if calendar.getCid == context.db.getConfig('default_cid') %}
-                <span>{{ "default-calendar-label"|trans }}</span>
-              {% else %}
-                <a href="{{ context.createUrl('default_calendar', {'cid': calendar.getCid}) }}" class="btn btn-primary">{{ "make-default-button"|trans }}</a>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      <a class="btn btn-primary" href="{{ context.createUrl('create_calendar') }}"><i class="fas fa-plus-square"></i> {{ "create-calendar-button"|trans }}</a>
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="calendars-tab" data-bs-toggle="tab" href="#calendars"
+                                role="tab" aria-controls="calendars">{{ "calendars-label"|trans }}</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="users-tab" data-bs-toggle="tab" href="#users" role="tab"
+                                aria-controls="users">{{ "users-label"|trans }}</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="calendars" role="tabpanel" aria-labelledby="calendars-tab">
+            <h3>{{ "calendars-label"|trans }}</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">{{ "calendar-label"|trans }}</th>
+                    <th scope="col">{{ "actions-label"|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for calendar in get_calendars() %}
+                    <tr>
+                        <td>{{ calendar.title }}</td>
+                        <td>
+                            <a class="btn btn-primary settings-button"
+                               href="{{ path('calendar_admin', {cid: calendar.cid}) }}"><i
+                                        class="fas fa-wrench"></i> {{ "settings-button"|trans }}</a>
+                            <a class="btn btn-primary"
+                               href="{# {{ script }}?action=calendar_delete&amp;cid={{ calendar.getCid() }} #}"
+                               data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}"
+                               data-button-text="{{ "delete-button"|trans }}"
+                               data-content="{{ "permanently-delete-calendar-question"|trans }}"><i
+                                        class="fas fa-trash"></i> {{ "delete-button"|trans }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <a class="btn btn-primary" href="{# {{ context.createUrl('create_calendar') }} #}"><i
+                        class="fas fa-plus-square"></i> {{ "create-calendar-button"|trans }}</a>
+        </div>
+
+        <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+            <h3>{{ "users-label"|trans }}</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">{{ "username-label"|trans }}</th>
+                    <th scope="col">{{ "groups-label"|trans }}</th>
+                    <th scope="col">{{ "actions-label"|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in get_users() %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{# {{ user.getGroups|join(', ') }} #}</td>
+                        <td>
+                            <a class="btn btn-primary"
+                               href="{# {{ context.createUrl('user_groups', {'uid': user.getUid}) }} #}">{{ "edit-groups-label"|trans }}</a>
+                            {% if user.isDisabled %}
+                                <a class="btn btn-primary"
+                                   href="{# {{ context.createUrl('user_enable', {'uid': user.getUid}) }} #}">{{ "enable-user-label"|trans }}</a>
+                            {% else %}
+                                <a class="btn btn-primary"
+                                   href="{# {{ context.createUrl('user_disable', {'uid': user.getUid}) }} #}">{{ "disable-user-label"|trans }}</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <a class="btn btn-primary" href="{# {{ context.createUrl('create_user') }} #}"><i
+                        class="fas fa-plus-square"></i> {{ "create-user-button"|trans }}</a>
+        </div>
     </div>
 
-    <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
-      <h3>{{ "users-label"|trans }}</h3>
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">{{ "username-label"|trans }}</th>
-            <th scope="col">{{ "groups-label"|trans }}</th>
-            <th scope="col">{{ "actions-label"|trans }}</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for user in context.db.getUsers %}
-          <tr>
-            <td>{{ user.getUsername }}</td>
-            <td>{{ user.getGroups|join(', ') }}</td>
-            <td>
-              <a class="btn btn-primary" href="{{ context.createUrl('user_groups', {'uid': user.getUid}) }}">{{ "edit-groups-label"|trans }}</a>
-              {% if user.isDisabled %}
-                <a class="btn btn-primary" href="{{ context.createUrl('user_enable', {'uid': user.getUid}) }}">{{ "enable-user-label"|trans }}</a>
-              {% else %}
-                <a class="btn btn-primary" href="{{ context.createUrl('user_disable', {'uid': user.getUid}) }}">{{ "disable-user-label"|trans }}</a>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      <a class="btn btn-primary" href="{{ context.createUrl('create_user') }}"><i class="fas fa-plus-square"></i> {{ "create-user-button"|trans }}</a>
-    </div>
 
-    <div class="tab-pane fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
-      <h3>{{ "calendar-settings-label"|trans }}</h3>
-      {{ form_start(calendar_form) }}
-        {{ form_widget(calendar_form) }}
-        <button type="submit" class="btn btn-primary">{{ "update-calendar-button"|trans }}</button>
-      {{ form_end(calendar_form) }}
-    </div>
-
-    <div class="tab-pane fade" id="calendar-users" role="tabpanel" aria-labelledby="calendar-users-tab">
-      <h3>{{ "user-permissions-label"|trans }}</h3>
-      {{ form_start(user_form) }}
-        {% for user_field in user_form.children %}
-          {% if user_field.vars.name != '_token' %}
-            <div class="form-group">
-            {{ form_label(user_field) }}
-            {% for perm in user_field.children %}
-              <div class="form-check form-check-inline">
-                {{ form_row(perm) }}
-              </div>
-            {% endfor %}
-            {{ form_errors(user_field) }}
-            </div>
-          {% endif %}
-        {% endfor %}
-        <button type="submit" class="btn btn-primary">{{ "update-permissions-button"|trans }}</button>
-      {{ form_end(user_form) }}
-    </div>
-  </div>
-  
-
-  <script>
-    $('.nav-tabs a[href="' + window.location.hash + '"]').tab('show');
-    $('.settings-button').click(function() {
-      window.location = $(this).attr('href');
-      window.location.reload();
-    });
-  </script>
+    <script>
+        $('.nav-tabs a[href="' + window.location.hash + '"]').tab('show');
+    </script>
 {% endblock %}

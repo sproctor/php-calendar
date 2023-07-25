@@ -37,10 +37,13 @@ class Event
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     private int $eid;
 
-    // TODO: do we really want author and owner separated?
-//    #[ORM\ManyToOne(targetEntity: User::class)]
-//    #[ORM\JoinColumn(name: 'author_uid', referencedColumnName: 'uid')]
-//    private int $author;
+    #[ORM\ManyToOne(targetEntity: Calendar::class)]
+    #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid')]
+    private Calendar $calendar;
+
+    #[ORM\ManyToOne(targetEntity: 'User')]
+    #[ORM\JoinColumn(name: 'owner_uid', referencedColumnName: 'uid')]
+    private ?User $owner;
 
     #[ORM\OneToMany(mappedBy: 'event', targetEntity: Occurrence::class)]
     private Collection $occurrences;
@@ -70,15 +73,10 @@ class Event
     #[ORM\JoinColumn(name: 'catid', referencedColumnName: 'catid')]
     private ?Category $category;
 
-    public function __construct(
-        #[ORM\ManyToOne(targetEntity: 'Calendar')]
-        #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid')]
-        private Calendar $calendar,
-        #[ORM\ManyToOne(targetEntity: 'User')]
-        #[ORM\JoinColumn(name: 'owner_uid', referencedColumnName: 'uid')]
-        private ?User    $owner,
-    )
+    public function __construct(Calendar $calendar, ?User $owner)
     {
+        $this->calendar = $calendar;
+        $this->owner = $owner;
         $this->ctime = new DateTimeImmutable();
         $this->occurrences = new ArrayCollection();
         $this->fields = new ArrayCollection();

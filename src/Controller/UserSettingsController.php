@@ -73,7 +73,6 @@ class UserSettingsController extends AbstractController
         return $this->render('settings/index.html.twig', [
             'passwordForm' => $passwordForm,
             'settingsForm' => $settingsForm,
-            'calendar' => $user->getDefaultCalendar(),
         ]);
     }
 }

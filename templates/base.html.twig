@@ -13,21 +13,23 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 <body>
-{% if calendar is defined %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            {% if calendars is defined and calendars|length > 1 %}
-                <div class="nav-item dropdown">
-                    <button class="btn btn-link navbar-brand dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">{{ calendar.title }}</button>
-                    <div class="dropdown-menu">
-                        {% for cal in calendars %}
-                            <a class="dropdown-item" href="{{ path('default_view', {cid: cal.cid}) }}">{{ cal.title }}</a>
-                        {% endfor %}
+            {% if calendar is defined %}
+                {% set calendars = get_calendars() %}
+                {% if calendars|length > 1 %}
+                    <div class="nav-item dropdown">
+                        <button class="btn btn-link navbar-brand dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">{{ calendar.title }}</button>
+                        <div class="dropdown-menu">
+                            {% for cal in calendars %}
+                                <a class="dropdown-item" href="{{ path('default_view', {cid: cal.cid}) }}">{{ cal.title }}</a>
+                            {% endfor %}
+                        </div>
                     </div>
-                </div>
-            {% else %}
-                <a class="navbar-brand" href="{{ path('default_view', {cid: calendar.cid}) }}">{{ calendar.title }}</a>
+                {% else %}
+                    <a class="navbar-brand" href="{{ path('default_view', {cid: calendar.cid}) }}">{{ calendar.title }}</a>
+                {% endif %}
             {% endif %}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#phpc-navbar"
                     aria-controls="phpc-navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +37,7 @@
             </button>
             <div class="collapse navbar-collapse" id="phpc-navbar">
                 <ul class="navbar-nav mr-auto">
+                    {% if calendar is defined %}
                     {% if can_create(calendar.cid, app.user) %}
                         {{ menu_item("create_event", "create-event-label"|trans, 'plus', {cid: calendar.cid}) }}
                     {% endif %}
@@ -45,7 +48,8 @@
                         {{ menu_item("display_day", "view-date-menu-link"|trans, 'eye') }}
                     {% endif %}
                     {% if can_admin(calendar.cid, app.user) %}
-                    {#  {{ menu_item("admin", "admin-menu-link"|trans, 'cog') }} #}
+                        {{ menu_item("admin", "admin-menu-link"|trans, 'gear') }}
+                    {% endif %}
                     {% endif %}
                     <li class="nav-item dropdown">
                         <button class="btn btn-link nav-link dropdown-toggle" type="button"
@@ -83,6 +87,7 @@
                         </div>
                     </li>
                 </ul>
+                {% if calendar is defined %}
                 <form class="d-flex" role="search" action="{#  { context.createUrl('search') } #}" method="post">
                     <div class="input-group">
                         <input id="search-input" class="form-control" name="query" type="search"
@@ -92,10 +97,10 @@
                         </button>
                     </div>
                 </form>
+                {% endif %}
             </div>
         </div>
     </nav>
-{% endif %}
 
 {% if messages is defined %}
     {% for message in messages %}

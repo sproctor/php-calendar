@@ -19,16 +19,22 @@ namespace App\Controller;
 
 use App\Entity\Calendar;
 use App\Entity\User;
+use App\Exception\PermissionException;
+use App\Form\CalendarType;
+use App\Form\UserType;
 use App\Repository\CalendarRepository;
 use App\Repository\OccurrenceRepository;
 use App\Repository\UserPermissionsRepository;
 use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * Controller used to display the month view.
@@ -90,6 +96,13 @@ class CalendarController extends AbstractController
         $calendar = $this->calendar_repository->find($cid);
         $user = $this->getUser();
         $date = new DateTimeImmutable("$year-$month-$day");
+        $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
+        if (!$permissions->canRead()) {
+            return $this->render('error.html.twig', [
+                'calendar' => $calendar,
+                'message' => new TranslatableMessage('read-permission-error')
+            ]);
+        }
         $yesterday = $date->sub(new DateInterval('P1D'));
         $tomorrow = $date->add(new DateInterval('P1D'));
         $occurrences = // array_filter(
@@ -108,6 +121,7 @@ class CalendarController extends AbstractController
         );
     }
 
+    /** @noinspection PhpUnhandledExceptionInspection */
     private function displayMonth(
         Calendar          $calendar,
         ?User             $user,
@@ -115,6 +129,13 @@ class CalendarController extends AbstractController
     ): Response
     {
         $cid = $calendar->getCid();
+        $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
+        if (!$permissions->canRead()) {
+            return $this->render('error.html.twig', [
+                'calendar' => $calendar,
+                'message' => new TranslatableMessage('read-permission-error')
+            ]);
+        }
         $year = intval($datetime->format('Y'));
         $month = intval($datetime->format('n'));
         $next_month = $month + 1;
@@ -131,7 +152,6 @@ class CalendarController extends AbstractController
         }
         $months = [];
         for ($i = 1; $i <= 12; $i++) {
-            /** @noinspection PhpUnhandledExceptionInspection */
             $months[month_name(new \DateTimeImmutable(sprintf("%04d-%02d", $year, $i)))] =
                 $this->generateUrl('month_view', ['cid' => $cid, 'year' => $year, 'month' => $i]);
         }
@@ -173,5 +193,43 @@ class CalendarController extends AbstractController
                 'start_date' => $from_date,
             ]
         );
+    }
+
+    #[Route("/admin", name: "calendar_admin")]
+    public function settings(
+        int $cid,
+        Request $request,
+        CalendarRepository $calendar_repository,
+        UserPermissionsRepository $user_permissions_repository,
+        EntityManagerInterface $entity_manager,
+    ): Response
+    {
+        /* @var User $user */
+        $user = $this->getUser();
+        if ($user == null) {
+            throw $this->createAccessDeniedException();
+        }
+        $calendar = $calendar_repository->find($cid);
+        $permissions = $user_permissions_repository->getUserPermissions($cid, $user);
+
+        $calendar_form = $this->createForm(CalendarType::class, $calendar);
+        $calendar_form->handleRequest($request);
+        if ($calendar_form->isSubmitted() && $calendar_form->isValid()) {
+            $entity_manager->persist($calendar);
+            $entity_manager->flush();
+        }
+
+        $user_form = $this->createForm(UserType::class, $user);
+        $user_form->handleRequest($request);
+        if ($user_form->isSubmitted() && $user_form->isValid()) {
+            $entity_manager->persist($user);
+            $entity_manager->flush();
+        }
+
+        return $this->render('calendar/admin.html.twig', [
+            'calendar' => $calendar,
+            'calendar_form' => $calendar_form,
+            'user_form' => $user_form,
+        ]);
     }
 }

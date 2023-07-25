@@ -21,7 +21,7 @@ function group_form()
 {
     global $phpc_script, $vars, $phpcdb, $phpcid;
 
-        $form = new Form($phpc_script, __('Group Form'));
+        $form = new Form($phpc_script, __('CalendarRole Form'));
         $form->add_part(
             new FormFreeQuestion(
                 'name',
@@ -35,7 +35,7 @@ function group_form()
     $form->add_hidden('cid', $phpcid);
 
     $form->add_hidden('action', 'group_submit');
-    $form->add_part(new FormSubmitButton(__("Submit Group")));
+    $form->add_part(new FormSubmitButton(__("Submit CalendarRole")));
 
     if (isset($vars['gid'])) {
         $form->add_hidden('gid', $vars['gid']);

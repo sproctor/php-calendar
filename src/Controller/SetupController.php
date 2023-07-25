@@ -29,6 +29,7 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,7 +76,6 @@ class SetupController extends AbstractController
                 $entityManager->persist($calendar);
                 /* @var User $user */
                 $user = $data['user'];
-                $user->setDefaultCalendar($calendar);
                 $hashedPassword = $passwordHasher->hashPassword(
                     $user,
                     $form->get('user')->get('password')->getData()
@@ -94,25 +94,24 @@ class SetupController extends AbstractController
 
     private function createDatabase(KernelInterface $kernel): void
     {
-        $this->runCommand($kernel, 'doctrine:database:create');
+        $this->runCommand($kernel, new ArrayInput(['command' => 'doctrine:database:create']));
     }
 
     private function createSchema(KernelInterface $kernel): void
     {
-        $this->runCommand($kernel, 'doctrine:schema:create');
+        $this->runCommand($kernel, new ArrayInput(['command' => 'doctrine:migrations:migrate', '--quiet' => true]));
     }
 
-    private function runCommand(KernelInterface $kernel, string $command): void
+    private function runCommand(KernelInterface $kernel, InputInterface $input): void
     {
         $application = new Application($kernel);
         $application->setAutoExit(false);
         $output = new BufferedOutput();
-        $input = new ArrayInput(['command' => $command]);
         try {
             $application->run($input, $output);
         } catch (Exception) {
             // TODO: output $output
-            throw new Exception("Error running command: $command");
+            throw new Exception("Error running command: $input");
         }
     }
 }

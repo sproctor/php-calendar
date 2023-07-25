@@ -17,6 +17,8 @@
 
 namespace App\Twig;
 
+use App\Repository\CalendarRepository;
+use App\Repository\UserRepository;
 use DateTimeInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Finder\Finder;
@@ -33,7 +35,12 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 {
     private ?array $mappings = null;
 
-    public function __construct(private KernelInterface $kernel, private UrlGeneratorInterface $router)
+    public function __construct(
+        private KernelInterface $kernel,
+        private UrlGeneratorInterface $router,
+        private CalendarRepository $calendarRepository,
+        private UserRepository $userRepository,
+    )
     {
     }
 
@@ -110,7 +117,17 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                     return "/$locale" . preg_replace('%^/([^/]+)%', '', $uri);
                 },
                 ['needs_context' => true]
-            )
+            ),
+            new TwigFunction(
+                'get_calendars',
+                fn() =>
+                    $this->calendarRepository->findAll(),
+            ),
+            new TwigFunction(
+                'get_users',
+                fn() =>
+                $this->userRepository->findAll(),
+            ),
         ];
     }
 

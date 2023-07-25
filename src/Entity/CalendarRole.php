@@ -2,39 +2,43 @@
 
 namespace App\Entity;
 
-use App\Repository\GroupRepository;
+use App\Repository\CalendarRoleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: GroupRepository::class)]
-#[ORM\Table(name: '`group`')]
-class Group
+#[ORM\Entity(repositoryClass: CalendarRoleRepository::class)]
+#[ORM\Table(name: 'roles')]
+class CalendarRole
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $gid = null;
+    private int $rid;
+
+    #[ORM\ManyToOne(targetEntity: Calendar::class)]
+    #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid')]
+    private ?Calendar $calendar;
 
     #[ORM\Column]
-    private ?bool $can_read = null;
+    private bool $can_read;
 
     #[ORM\Column]
-    private ?bool $can_create = null;
+    private bool $can_create;
 
     #[ORM\Column]
-    private ?bool $can_update = null;
+    private bool $can_update;
 
     #[ORM\Column]
-    private ?bool $can_moderate = null;
+    private bool $can_moderate;
 
     #[ORM\Column]
-    private ?bool $can_admin = null;
+    private bool $can_admin;
 
-    public function getId(): ?int
+    public function getId(): int
     {
-        return $this->id;
+        return $this->rid;
     }
 
-    public function canRead(): ?bool
+    public function canRead(): bool
     {
         return $this->can_read;
     }
@@ -46,7 +50,7 @@ class Group
         return $this;
     }
 
-    public function canCreate(): ?bool
+    public function canCreate(): bool
     {
         return $this->can_create;
     }
@@ -58,7 +62,7 @@ class Group
         return $this;
     }
 
-    public function canUpdate(): ?bool
+    public function canUpdate(): bool
     {
         return $this->can_update;
     }
@@ -70,7 +74,7 @@ class Group
         return $this;
     }
 
-    public function canModerate(): ?bool
+    public function canModerate(): bool
     {
         return $this->can_moderate;
     }
@@ -82,7 +86,7 @@ class Group
         return $this;
     }
 
-    public function canAdmin(): ?bool
+    public function canAdmin(): bool
     {
         return $this->can_admin;
     }

@@ -40,25 +40,24 @@ class DefaultController extends AbstractController
         LocaleSwitcher     $localeSwitcher,
     ): Response
     {
-        $template_variables = [];
         try {
             $calendars = $repository->findAll();
         } catch (ConnectionException|TableNotFoundException) {
             return $this->redirectToRoute('setup');
         }
 
-        $template_variables["calendars"] = $calendars;
         /* @var User $user */
         $user = $this->getUser();
         if ($user != null) {
-            $template_variables['calendar'] = $user->getDefaultCalendar();
             $localeSwitcher->setLocale($user->getLocale());
         }
 
         if (empty($calendars)) {
             return $this->redirectToRoute('setup');
         } else {
-            return $this->render("calendar_list.html.twig", $template_variables);
+            return $this->render("calendar_list.html.twig", [
+                'calendars' => $calendars
+            ]);
         }
     }
 }

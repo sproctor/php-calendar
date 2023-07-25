@@ -196,7 +196,7 @@ function category_list()
                 tag('th', __('Name')),
                 tag('th', __('Text Color')),
                 tag('th', __('Background Color')),
-                tag('th', __('Accessible to Group')),
+                tag('th', __('Accessible to CalendarRole')),
                 tag('th', __('Actions'))
             )
         ),
