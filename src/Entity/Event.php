@@ -235,28 +235,6 @@ class Event
         return $this;
     }
 
-    public function addOccurrence(Occurrence $occurrence): self
-    {
-        if (!$this->occurrences->contains($occurrence)) {
-            $this->occurrences->add($occurrence);
-            $occurrence->setEvent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOccurrence(Occurrence $occurrence): self
-    {
-        if ($this->occurrences->removeElement($occurrence)) {
-            // set the owning side to null (unless already changed)
-            if ($occurrence->getEvent() === $this) {
-                $occurrence->setEvent(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function setCategory(?Category $category): self
     {
         $this->category = $category;

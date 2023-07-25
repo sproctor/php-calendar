@@ -32,3 +32,12 @@ Source code can be found at https://github.com/sproctor/php-calendar
 
 See instructions on creating migrations here: https://symfony.com/bundles/DoctrineMigrationsBundle/current/index.html
 
+When changing entities/schema run
+
+`php bin/console doctrine:migrations:diff`
+
+To update the schema in the DB, run
+
+`php bin/console doctrine:migrations:migrate`
+
+(this will be added to a migration script eventually)

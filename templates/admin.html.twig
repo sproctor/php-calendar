@@ -50,7 +50,6 @@
                 <thead>
                 <tr>
                     <th scope="col">{{ "username-label"|trans }}</th>
-                    <th scope="col">{{ "groups-label"|trans }}</th>
                     <th scope="col">{{ "actions-label"|trans }}</th>
                 </tr>
                 </thead>
@@ -58,7 +57,6 @@
                 {% for user in get_users() %}
                     <tr>
                         <td>{{ user.username }}</td>
-                        <td>{# {{ user.getGroups|join(', ') }} #}</td>
                         <td>
                             <a class="btn btn-primary"
                                href="{# {{ context.createUrl('user_groups', {'uid': user.getUid}) }} #}">{{ "edit-groups-label"|trans }}</a>
@@ -78,9 +76,4 @@
                         class="fas fa-plus-square"></i> {{ "create-user-button"|trans }}</a>
         </div>
     </div>
-
-
-    <script>
-        $('.nav-tabs a[href="' + window.location.hash + '"]').tab('show');
-    </script>
 {% endblock %}
