@@ -3,10 +3,11 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\LocaleType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class UserSettingsFormType extends AbstractType
@@ -17,9 +18,11 @@ class UserSettingsFormType extends AbstractType
             ->add('timezone', TimezoneType::class, [
                 'label' => new TranslatableMessage('timezone-label')
             ])
-            ->add('locale', LocaleType::class, [
-                'label' => new TranslatableMessage('locale-label')
-            ])
+            ->add(
+                'locale',
+                ChoiceType::class,
+                ['label' => new TranslatableMessage('default-language-label'), 'choices' => $options['locales']]
+            )
             ->add(
                 'save',
                 SubmitType::class,
@@ -30,5 +33,12 @@ class UserSettingsFormType extends AbstractType
     public function getBlockPrefix(): string
     {
         return 'user_settings';
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'locales' => [],
+        ]);
     }
 }

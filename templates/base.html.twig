@@ -51,6 +51,9 @@
                     {% if app.user and app.user.isAdmin %}
                         {{ menu_item("admin", "admin-menu-link"|trans, 'gear') }}
                     {% endif %}
+                    {% if calendar is defined %}
+                        {{ menu_item("calendar_admin", "calendar-admin-menu-link"|trans, "gear", {cid: calendar.cid}) }}
+                    {% endif %}
                     <li class="nav-item dropdown">
                         <button class="btn btn-link nav-link dropdown-toggle" type="button"
                                 data-bs-toggle="dropdown"

@@ -16,10 +16,7 @@
     <div class="tab-content">
         <div class="tab-pane fade show active" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
             <h3>{{ "calendar-settings-label"|trans }}</h3>
-            {{ form_start(calendar_form) }}
-            {{ form_widget(calendar_form) }}
-            <button type="submit" class="btn btn-primary">{{ "update-calendar-button"|trans }}</button>
-            {{ form_end(calendar_form) }}
+            {{ form(calendar_form) }}
         </div>
 
         <div class="tab-pane fade" id="calendar-users" role="tabpanel" aria-labelledby="calendar-users-tab">

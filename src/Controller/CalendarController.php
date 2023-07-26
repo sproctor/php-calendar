@@ -20,6 +20,7 @@ namespace App\Controller;
 use App\Entity\Calendar;
 use App\Entity\User;
 use App\Exception\PermissionException;
+use App\Form\CalendarFormType;
 use App\Form\CalendarType;
 use App\Form\UserType;
 use App\Repository\CalendarRepository;
@@ -212,7 +213,7 @@ class CalendarController extends AbstractController
         $calendar = $calendar_repository->find($cid);
         $permissions = $user_permissions_repository->getUserPermissions($cid, $user);
 
-        $calendar_form = $this->createForm(CalendarType::class, $calendar);
+        $calendar_form = $this->createForm(CalendarFormType::class, $calendar);
         $calendar_form->handleRequest($request);
         if ($calendar_form->isSubmitted() && $calendar_form->isValid()) {
             $entity_manager->persist($calendar);
@@ -226,7 +227,7 @@ class CalendarController extends AbstractController
             $entity_manager->flush();
         }
 
-        return $this->render('calendar/settings.html.twig', [
+        return $this->render('calendar/admin.html.twig', [
             'calendar' => $calendar,
             'calendar_form' => $calendar_form,
             'user_form' => $user_form,

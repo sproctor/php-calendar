@@ -21,6 +21,7 @@ use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\Model\ChangePassword;
 use App\Form\UserSettingsFormType;
+use App\Service\LocaleService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,9 +33,10 @@ class UserSettingsController extends AbstractController
 {
     #[Route('/{_locale}/settings', name: 'user_settings')]
     public function form(
-        Request $request,
+        Request                     $request,
         EntityManagerInterface      $entityManager,
         UserPasswordHasherInterface $passwordHasher,
+        LocaleService               $localeService,
     ): Response
     {
         /* @var ?User $user */
@@ -49,7 +51,11 @@ class UserSettingsController extends AbstractController
             'timezone' => $user->getTimezone(),
             'locale' => $user->getLocale(),
         ];
-        $settingsForm = $this->createForm(UserSettingsFormType::class, $settingsData);
+        $settingsForm = $this->createForm(
+            UserSettingsFormType::class,
+            $settingsData,
+            ['locales' => array_flip($localeService->getLocaleMappings())],
+        );
 
         $passwordForm->handleRequest($request);
         $settingsForm->handleRequest($request);

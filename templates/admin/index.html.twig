@@ -57,7 +57,6 @@
                 <thead>
                 <tr>
                     <th scope="col">{{ "username-label"|trans }}</th>
-                    <th scope="col">{{ "groups-label"|trans }}</th>
                     <th scope="col">{{ "actions-label"|trans }}</th>
                 </tr>
                 </thead>
@@ -65,10 +64,7 @@
                 {% for user in get_users() %}
                     <tr>
                         <td>{{ user.username }}</td>
-                        <td>{# {{ user.getGroups|join(', ') }} #}</td>
                         <td>
-                            <a class="btn btn-primary"
-                               href="{# {{ context.createUrl('user_groups', {'uid': user.getUid}) }} #}">{{ "edit-groups-label"|trans }}</a>
                             {% if user.isDisabled %}
                                 <a class="btn btn-primary" href="{{ path('enable_user', {'uid': user.uid}) }}">
                                     {{ "enable-user-label"|trans }}
