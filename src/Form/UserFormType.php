@@ -30,11 +30,4 @@ class UserFormType extends UserType
                 ['label' => new TranslatableMessage('save-label')]
             );
     }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => User::class,
-        ]);
-    }
 }

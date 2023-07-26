@@ -19,6 +19,7 @@ namespace App\Twig;
 
 use App\Repository\CalendarRepository;
 use App\Repository\UserRepository;
+use App\Service\LocaleService;
 use DateTimeInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Finder\Finder;
@@ -33,13 +34,11 @@ use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension implements GlobalsInterface
 {
-    private ?array $mappings = null;
-
     public function __construct(
-        private KernelInterface $kernel,
         private UrlGeneratorInterface $router,
-        private CalendarRepository $calendarRepository,
-        private UserRepository $userRepository,
+        private CalendarRepository    $calendarRepository,
+        private UserRepository        $userRepository,
+        private LocaleService         $languageService,
     )
     {
     }
@@ -177,7 +176,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 
     public function getGlobals(): array
     {
-        return ['languages' => $this->getLanguageMappings()];
+        return ['languages' => $this->languageService->getLocaleMappings()];
     }
 
     /**
@@ -253,23 +252,5 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             "MMM" // short month format
         );
         return $formatter->format($date);
-    }
-
-    private function getLanguageMappings(): array
-    {
-        if ($this->mappings === null) {
-            $this->mappings = [];
-            $finder = new Finder();
-
-            foreach ($finder->name('*.yaml')->in($this->kernel->getProjectDir() . '/translations')->files() as $file) {
-                preg_match('/[^.]\.(.+)/', $file->getFilenameWithoutExtension(), $matches);
-                $code = $matches[1];
-                $lang = Languages::getName($code, $code);
-                $this->mappings[$code] = $lang;
-            }
-            ksort($this->mappings);
-        }
-
-        return $this->mappings;
     }
 }

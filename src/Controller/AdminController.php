@@ -17,12 +17,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Calendar;
 use App\Entity\User;
+use App\Form\CalendarFormType;
 use App\Form\UserFormType;
 use App\Repository\CalendarRepository;
 use App\Repository\OccurrenceRepository;
 use App\Repository\UserPermissionsRepository;
 use App\Repository\UserRepository;
+use App\Service\LocaleService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -125,5 +128,33 @@ class AdminController extends AbstractController
 
         // else
         return $this->render("admin/create_user.html.twig", ['form' => $form]);
+    }
+
+    #[Route("/calendar/create", name: "create_calendar")]
+    public function createCalendar(
+        Request                $request,
+        EntityManagerInterface $entityManager,
+    ): Response
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $calendar = new Calendar();
+        $form = $this->createForm(
+            CalendarFormType::class,
+            $calendar,
+        );
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($calendar);
+            $entityManager->flush();
+            // TODO add message
+            return $this->redirectToRoute('admin', ['_fragment' => 'calendars']);
+        }
+
+        // else
+        return $this->render("admin/create_calendar.html.twig", ['form' => $form]);
     }
 }

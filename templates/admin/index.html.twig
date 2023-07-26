@@ -44,8 +44,9 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <a class="btn btn-primary" href="{# {{ context.createUrl('create_calendar') }} #}"><i
-                        class="fas fa-plus-square"></i> {{ "create-calendar-button"|trans }}</a>
+            <a class="btn btn-primary" href="{{ path('create_calendar') }}">
+                <i class="bi bi-plus-square"></i> {{ "create-calendar-button"|trans }}
+            </a>
         </div>
 
         <div class="tab-pane" id="users" role="tabpanel" aria-labelledby="users-tab">

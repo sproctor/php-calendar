@@ -44,9 +44,6 @@ class Calendar
     #[ORM\Column(type: 'string', length: 255)]
     private string $timezone = "America/New_York";
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private string $locale = "en_US";
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private string $theme;
 
@@ -68,11 +65,6 @@ class Calendar
     public function getTimezone(): string|null
     {
         return $this->timezone;
-    }
-
-    public function getLocale(): string|null
-    {
-        return $this->locale;
     }
 
     public function getMaxSubjectLength(): int
@@ -144,13 +136,6 @@ class Calendar
     public function setTimezone(string $timezone): self
     {
         $this->timezone = $timezone;
-
-        return $this;
-    }
-
-    public function setLocale(string $locale): self
-    {
-        $this->locale = $locale;
 
         return $this;
     }
