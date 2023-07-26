@@ -61,10 +61,15 @@ class EventController extends AbstractController
         $this->logger->debug($request);
         $cid = null;
         foreach ($eids as $eid) {
-            // TODO: check permission
             $event = $this->event_repository->find($eid);
             $cid = $event->getCalendar()->getCid();
-            $this->event_repository->remove($event);
+            $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
+            if ($permissions->canUpdate()) {
+                $this->event_repository->remove($event);
+            } {
+                // TODO: improve error handling
+                throw $this->createAccessDeniedException("Could not delete: $eid");
+            }
         }
         $this->entity_manager->flush();
 
@@ -134,9 +139,16 @@ class EventController extends AbstractController
         int $eid,
     ): Response
     {
-        // TODO: check permission
+        $user = $this->getUser();
         $event = $this->event_repository->find($eid);
-        $this->event_repository->remove($event, true);
+        $cid = $event->getCalendar()->getCid();
+        $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
+        if ($permissions->canUpdate()) {
+            $this->event_repository->remove($event, true);
+        } else {
+            // TODO: improve message
+            throw $this->createAccessDeniedException();
+        }
         // TODO: create a message to be displayed
         return $this->redirectToRoute('default_view', ['cid' => $event->getCalendar()->getCid()]);
     }
