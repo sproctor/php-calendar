@@ -80,8 +80,9 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <a class="btn btn-primary" href="{# {{ context.createUrl('create_user') }} #}"><i
-                        class="fas fa-plus-square"></i> {{ "create-user-button"|trans }}</a>
+            <a class="btn btn-primary" href="{{ path('create_user') }}">
+                <i class="bi bi-plus-square"></i> {{ "create-user-button"|trans }}
+            </a>
         </div>
     </div>
 {% endblock %}

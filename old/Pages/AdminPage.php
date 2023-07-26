@@ -52,7 +52,7 @@ class AdminPage extends Page
 
         return new Response(
             $context->render(
-                "admin.html.twig",
+                "settings.html.twig",
                 ['calendar_form' => $calendar_form->createView(), 'user_form' => $user_form->createView()]
             )
         );

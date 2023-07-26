@@ -37,8 +37,12 @@ class UserSettingsController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
     ): Response
     {
-        /* @var User $user */
+        /* @var ?User $user */
         $user = $this->getUser();
+        if ($user === null) {
+            throw $this->createAccessDeniedException();
+        }
+
         $passwordForm = $this->createForm(ChangePasswordFormType::class);
 
         $settingsData = [
@@ -70,7 +74,7 @@ class UserSettingsController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->render('settings/index.html.twig', [
+        return $this->render('user/settings.html.twig', [
             'passwordForm' => $passwordForm,
             'settingsForm' => $settingsForm,
         ]);

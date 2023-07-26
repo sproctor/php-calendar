@@ -226,7 +226,7 @@ class CalendarController extends AbstractController
             $entity_manager->flush();
         }
 
-        return $this->render('calendar/admin.html.twig', [
+        return $this->render('calendar/settings.html.twig', [
             'calendar' => $calendar,
             'calendar_form' => $calendar_form,
             'user_form' => $user_form,

@@ -56,7 +56,7 @@ class CreateUserPage extends Page
         }
         
         // else
-        return new Response($context->render("user_create.html.twig", ['form' => $form->createView()]));
+        return new Response($context->render("create_user.html.twig", ['form' => $form->createView()]));
     }
 
     /**

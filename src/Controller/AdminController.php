@@ -18,6 +18,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\UserFormType;
 use App\Repository\CalendarRepository;
 use App\Repository\OccurrenceRepository;
 use App\Repository\UserPermissionsRepository;
@@ -25,7 +26,9 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route("/{_locale}/admin")]
@@ -46,7 +49,7 @@ class AdminController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        return $this->render('admin.html.twig');
+        return $this->render('admin/index.html.twig');
     }
 
     #[Route("/user/{uid}/disable", name: "disable_user")]
@@ -91,5 +94,36 @@ class AdminController extends AbstractController
         // TODO: message that the user was created
         // TODO: handle exception
         return $this->redirectToRoute('admin', ['_fragment' => 'users']);
+    }
+
+    #[Route("/user/create", name: "create_user")]
+    public function createUser(
+        Request                     $request,
+        EntityManagerInterface      $entityManager,
+        UserPasswordHasherInterface $passwordHasher,
+    ): Response
+    {
+        if (!$this->getUser()->isAdmin()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $user = new User();
+        $form = $this->createForm(UserFormType::class, $user);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $hashedPassword = $passwordHasher->hashPassword(
+                $user,
+                $form->get('password')->getData()
+            );
+            $user->setHash($hashedPassword);
+            $entityManager->persist($user);
+            $entityManager->flush();
+            // TODO add message
+            return $this->redirectToRoute('admin', ['_fragment' => 'users']);
+        }
+
+        // else
+        return $this->render("admin/create_user.html.twig", ['form' => $form]);
     }
 }
