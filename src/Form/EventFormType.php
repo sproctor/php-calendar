@@ -55,7 +55,7 @@ class EventFormType extends AbstractType
                 ]
             ]
         )
-            ->add('description', TextareaType::class, ['required' => false])
+            ->add('description', TextareaType::class, ['required' => false, 'empty_data' => ''])
             ->add(
                 'start',
                 DateTimeType::class,
