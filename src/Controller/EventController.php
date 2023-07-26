@@ -28,6 +28,7 @@ use App\Repository\OccurrenceRepository;
 use App\Repository\UserPermissionsRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,8 +45,31 @@ class EventController extends AbstractController
         private UserPermissionsRepository $user_permissions_repository,
         private EventRepository           $event_repository,
         private OccurrenceRepository      $occurrence_repository,
+        private LoggerInterface           $logger,
     )
     {
+    }
+
+    // Must come before /{eid}
+    #[Route('/delete', name: 'delete_events', methods: ['POST'])]
+    public function deleteEvents(
+        Request $request,
+    ): Response
+    {
+        $user = $this->getUser();
+        $eids = $request->request->all('eid');
+        $this->logger->debug($request);
+        $cid = null;
+        foreach ($eids as $eid) {
+            // TODO: check permission
+            $event = $this->event_repository->find($eid);
+            $cid = $event->getCalendar()->getCid();
+            $this->event_repository->remove($event);
+        }
+        $this->entity_manager->flush();
+
+        // TODO: create a message to be displayed
+        return $this->redirectToRoute('default_view', ['cid' => $cid]);
     }
 
     #[Route('/{eid}', name: 'event_view')]
@@ -89,7 +113,7 @@ class EventController extends AbstractController
 
     #[Route('/edit/{eid}', name: 'modify_event')]
     public function modifyEvent(
-        int $eid,
+        int     $eid,
         Request $request,
     ): Response
     {
@@ -130,7 +154,7 @@ class EventController extends AbstractController
         $end_datetime = $date->setTime(18, 0);
 
         $cid = $calendar->getCid();
-        
+
         $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
 
         // TODO: check permission
@@ -177,7 +201,7 @@ class EventController extends AbstractController
                     $occurrence = new Occurrence($event, $start, $end, $time_type);
                     $this->entity_manager->persist($occurrence);
                 } else {
-                    $interval = new \DateInterval('P'.$form->get('frequency')->getData().$repeats);
+                    $interval = new \DateInterval('P' . $form->get('frequency')->getData() . $repeats);
 
                     $until = $form->get('until')->getData();
                     echo "days between: " . days_between($start, $until);
