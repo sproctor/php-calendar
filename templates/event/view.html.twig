@@ -22,8 +22,14 @@
            href="{{ path('modify_event', {eid: event.eid}) }}">{{ "modify-menu-link"|trans }}</a>
         <a class="nav-item nav-link"
            href="{# {{ path('occur_form', event.getEid) }} #}">{{ "add-occurrence-menu-link"|trans }}</a>
-        <button class="btn btn-danger"
-           data-bs-toggle="modal" data-bs-target="#deleteModal">{{ "delete-menu-link"|trans }}</button>
+        {{ include('components/confirmation.html.twig', {
+            id: 'deleteEventModal',
+            button: 'delete-menu-link'|trans,
+            title: "delete-confirmation-modal-title"|trans,
+            question: "permanently-delete-event-question"|trans,
+            path: path('delete_event', {eid: event.eid}),
+            confirm_button: "delete-button"|trans,
+        }) }}
     </nav>
 
     {% if event.fields is not empty %}
@@ -55,24 +61,4 @@
             {% endfor %}
         </ul>
     </div>
-
-    <!-- Delete confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="deleteModalLabel">{{ "delete-confirmation-modal-title" }}</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {{ "permanently-remove-occurrence-question"|trans }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <a href="{{ path('delete_event', {eid: event.eid}) }}" role="button" class="btn btn-danger">{{ "delete-button"|trans }}</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
 {% endblock %}

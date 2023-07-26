@@ -157,4 +157,25 @@ class AdminController extends AbstractController
         // else
         return $this->render("admin/create_calendar.html.twig", ['form' => $form]);
     }
+
+    #[Route("/calendar/{cid}/delete", name: "delete_calendar")]
+    public function deleteCalendar(
+        int                    $cid,
+        CalendarRepository         $calendarRepository,
+        EntityManagerInterface $entityManager,
+    ): Response
+    {
+        /* @var User $current_user */
+        $current_user = $this->getUser();
+        if (!$current_user?->isAdmin()) {
+            throw $this->createAccessDeniedException();
+        }
+        /* @var Calendar $calendar */
+        $calendar = $calendarRepository->find($cid);
+        $entityManager->remove($calendar);
+        $entityManager->flush();
+        // TODO: message that the user was created
+        // TODO: handle exception
+        return $this->redirectToRoute('admin', ['_fragment' => 'calendars']);
+    }
 }

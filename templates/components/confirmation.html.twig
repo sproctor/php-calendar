@@ -1,0 +1,21 @@
+<!-- confirmation Modal -->
+<button class="btn btn-danger"
+        data-bs-toggle="modal" data-bs-target="#{{ id }}">{{ button }}</button>
+
+<div class="modal fade" id="{{ id }}" tabindex="-1" aria-labelledby="{{ id }}Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="{{ id }}Label">{{ title }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'close'|trans }}"></button>
+            </div>
+            <div class="modal-body">
+                {{ question }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'close'|trans }}</button>
+                <a href="{{ path }}" role="button" class="btn btn-danger">{{ confirm_button }}</a>
+            </div>
+        </div>
+    </div>
+</div>

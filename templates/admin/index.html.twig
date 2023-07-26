@@ -32,13 +32,15 @@
                         <td>
                             <a class="btn btn-primary settings-button"
                                href="{{ path('calendar_admin', {cid: calendar.cid}) }}"><i
-                                        class="fas fa-wrench"></i> {{ "settings-button"|trans }}</a>
-                            <a class="btn btn-primary"
-                               href="{# {{ script }}?action=calendar_delete&amp;cid={{ calendar.getCid() }} #}"
-                               data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}"
-                               data-button-text="{{ "delete-button"|trans }}"
-                               data-content="{{ "permanently-delete-calendar-question"|trans }}"><i
-                                        class="fas fa-trash"></i> {{ "delete-button"|trans }}</a>
+                                        class="bi bi-wrench"></i> {{ "settings-button"|trans }}</a>
+                            {{ include('components/confirmation.html.twig', {
+                                id: 'deleteCalendarModal' ~ calendar.cid,
+                                button: 'delete-menu-link'|trans,
+                                title: "delete-confirmation-modal-title"|trans,
+                                question: "permanently-delete-calendar-question"|trans,
+                                path: path('delete_calendar', {cid: calendar.cid}),
+                                confirm_button: "delete-button"|trans,
+                            }) }}
                         </td>
                     </tr>
                 {% endfor %}
