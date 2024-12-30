@@ -105,6 +105,13 @@ p.phpc-desc {
 
 .php-calendar caption {
   font-weight: bolder;
+  margin-bottom: 0.5em;
+}
+
+.php-calendar a.phpc-caption {
+  text-decoration: none;
+  font-weight: normal;
+  margin-right: 1em;
 }
 
 .php-calendar tfoot {

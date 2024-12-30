@@ -58,8 +58,10 @@ function display_month()
                         tag('table',
 				attributes('class="phpc-main phpc-calendar"'),
                                 tag('caption',
-					create_dropdown_list(month_name($month), $months),
-					create_dropdown_list($year, $years)),
+					get_month_link($month, -1,$year),
+				    	create_dropdown_list(month_name($month), $months),
+					create_dropdown_list($year, $years),
+			    		get_month_link($month, +1,$year)),
                                 tag('colgroup',
 					tag('col', attributes('class="phpc-week"')),
 					tag('col', attributes('class="phpc-day"')),
@@ -72,6 +74,30 @@ function display_month()
 				   ),
                                 tag('thead', $heading_html),
                                 create_month($month, $year)));
+}
+// creates a link to another month at some offset from that given
+/**
+ * @param int $month
+ * @param int $diff
+ * @param int $year
+ * @return Html
+ */
+function get_month_link($month,$diff,$year) {
+	$newtime = mktime(0, 0, 0, $month + $diff, 1, $year);
+	$newmonth = date('n', $newtime);
+	$newyear = date('Y', $newtime);
+	$newmonthname = month_name($newmonth);
+	$new_args = array('year' => $newyear, 'month' => $newmonth);
+	if ($diff < 0) {
+		return create_action_link( "&lArr; ".__($newmonthname), 'display_month',
+			$new_args,'class="phpc-caption ui-state-default"');
+	} elseif ($diff > 0) {
+		return create_action_link( __($newmonthname)." &rArr;", 'display_month',
+			$new_args,'class="phpc-caption ui-state-default"');
+	} else {
+		return create_action_link( __($newmonthname), 'display_month',
+			$new_args,'class="phpc-caption ui-state-default"');
+	}
 }
 
 // creates a display for a particular month to be embedded in a full view
