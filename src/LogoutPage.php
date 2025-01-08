@@ -33,5 +33,3 @@ class LogoutPage extends Page
         return redirect($context, $context->script);
     }
 }
-
-?>
