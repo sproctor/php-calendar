@@ -97,7 +97,9 @@ function login_user($username, $password)
  * @return bool
  */
 function phpc_do_login($user, $series_token = false) {
-        global $phpcdb, $phpc_prefix;
+    global $phpcdb, $phpc_prefix;
+
+    session_regenerate_id(true);
 
 	$uid = $user->uid;
 	$login_token = phpc_get_token();
