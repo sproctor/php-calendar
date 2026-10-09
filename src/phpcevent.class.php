@@ -95,7 +95,7 @@ class PhpcEvent
             return __('(No subject)');
         }
 
-        return phpc_html_escape(stripslashes($this->subject));
+        return phpc_html_escape($this->subject);
     }
 
     /**
