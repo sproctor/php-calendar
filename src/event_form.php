@@ -438,7 +438,7 @@ function process_form()
         $phpcdb->create_occurrence($eid, $time_type, $start_ts, $end_ts);
 
         $occurrences = 1;
-        switch ($vars["repeats"]) {
+        switch ($vars["repeats"] ?? 'never') {
             case "never":
                 break;
 
