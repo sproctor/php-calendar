@@ -1271,7 +1271,8 @@ function get_header_tags($path)
         $jq_min = '.min';
     }
 
-    $theme = $phpc_cal->theme;
+    // There's no calendar if setup failed, e.g. on an error page
+    $theme = $phpc_cal?->theme;
     if (empty($theme)) {
         $theme = 'base';
     }
