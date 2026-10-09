@@ -110,12 +110,14 @@ function phpc_do_login($user, $series_token = false)
     session_regenerate_id(true);
 
     $uid = $user->uid;
-    $login_token = phpc_get_token();
+    // The series identifies this browser's remember-me login and the token
+    //   is rotated on every use; both are independent random values.
+    $login_token = phpc_random_token();
     $_SESSION["{$phpc_prefix}uid"] = $uid;
-    $_SESSION["{$phpc_prefix}login"] = $login_token;
+    phpc_new_csrf_token();
 
     if (!$series_token) {
-        $series_token = phpc_get_token();
+        $series_token = phpc_random_token();
         $phpcdb->add_login_token(
             $uid,
             $series_token,
@@ -143,6 +145,18 @@ function phpc_do_login($user, $series_token = false)
     );
 
     return true;
+}
+
+/**
+ * Starts a new CSRF token for this session. Forms embed it as "phpc_token"
+ * and verify_token() checks it. It's never used as a login credential.
+ */
+function phpc_new_csrf_token()
+{
+    global $phpc_prefix, $phpc_token;
+
+    $phpc_token = phpc_random_token();
+    $_SESSION["{$phpc_prefix}csrf"] = $phpc_token;
 }
 
 function phpc_do_logout()

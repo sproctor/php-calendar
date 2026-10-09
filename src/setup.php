@@ -75,13 +75,13 @@ if (empty($_SESSION["{$phpc_prefix}uid"])) {
 
         $phpc_uid = intval($_COOKIE["{$phpc_prefix}uid"]);
         $phpc_login_series = (string)$_COOKIE["{$phpc_prefix}login_series"];
-        $phpc_token = $phpcdb->get_login_token(
+        $phpc_login_token = $phpcdb->get_login_token(
             $phpc_uid,
             $phpc_login_series
         );
-        if ($phpc_token) {
+        if ($phpc_login_token) {
             if (hash_equals(
-                $phpc_token,
+                $phpc_login_token,
                 (string)$_COOKIE["{$phpc_prefix}login"]
             )) {
                 $user = $phpcdb->get_user($phpc_uid);
@@ -94,12 +94,12 @@ if (empty($_SESSION["{$phpc_prefix}uid"])) {
             $phpc_uid = 0;
         }
     }
-} else {
-    $phpc_token = $_SESSION["{$phpc_prefix}login"];
 }
 
-if (empty($phpc_token)) {
-    $phpc_token = '';
+if (empty($_SESSION["{$phpc_prefix}csrf"])) {
+    phpc_new_csrf_token();
+} else {
+    $phpc_token = $_SESSION["{$phpc_prefix}csrf"];
 }
 
 // Create vars

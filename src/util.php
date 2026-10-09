@@ -338,44 +338,14 @@ function days_between($ts1, $ts2)
     return intval(date('z', $ts2)) - intval(date('z', $ts1));
 }
 
-// Adapted from Drupal
-function phpc_get_private_key()
+/**
+ * Returns a new unguessable token: 32 random bytes as 43 URL-safe characters.
+ *
+ * @return string
+ */
+function phpc_random_token()
 {
-    static $key;
-
-    if (!isset($key)) {
-        $key = phpc_hash_base64(random_bytes(55));
-    }
-
-    return $key;
-}
-
-function phpc_get_token($value = '')
-{
-    return phpc_hmac_base64($value, session_id() . phpc_get_private_key()
-            . phpc_get_hash_salt());
-}
-
-// Stolen from Drupal
-function phpc_hmac_base64($data, $key)
-{
-    $hmac = base64_encode(hash_hmac('sha256', $data, $key, true));
-    // Modify the hmac so it's safe to use in URLs.
-    return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
-}
-
-// Stolen from Drupal
-function phpc_hash_base64($data)
-{
-    $hash = base64_encode(hash('sha256', $data, true));
-    // Modify the hash so it's safe to use in URLs.
-    return strtr($hash, array('+' => '-', '/' => '_', '=' => ''));
-}
-
-// Adapted from Drupal
-function phpc_get_hash_salt()
-{
-    return hash('sha256', SQL_HOST . SQL_USER . SQL_PASSWD . SQL_DATABASE . SQL_PREFIX);
+    return rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
 }
 
 function phpc_html_escape($str)
