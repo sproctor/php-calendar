@@ -1310,5 +1310,27 @@ function get_timestamp($prefix, $hour = 0, $minute = 0, $second = 0)
  */
 function phpc_set_cookie($name, $value, $expire = 0)
 {
-    return setcookie($name, $value, $expire, "", "", false, true);
+    return setcookie($name, $value, phpc_cookie_options($expire));
+}
+
+/**
+ * Options shared by the session and login cookies: HttpOnly, Secure when the
+ * site is served over HTTPS, and SameSite=Lax so other sites can't make
+ * logged-in POSTs or embedded requests on the user's behalf.
+ *
+ * @param int $expire
+ * @return array
+ */
+function phpc_cookie_options($expire = 0)
+{
+    global $phpc_proto;
+
+    return array(
+        'expires' => $expire,
+        'path' => '',
+        'domain' => '',
+        'secure' => $phpc_proto == 'https',
+        'httponly' => true,
+        'samesite' => 'Lax',
+    );
 }
