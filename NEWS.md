@@ -3,8 +3,26 @@ NEWS
 
 2.0.14 (9 October 2026):
 	- Requires PHP 8.1 or later
-    - Updated jQuery and other JS dependencies
-	- Passwords are now properly hashed (requires DB schema update to widen password columns)
+	- To upgrade, upload the new files, run install.php and choose Upgrade to update the database, then delete install.php. Upgrading from versions before 2.0.0 is no longer supported; upgrade to 2.0.13 first
+	- The installer no longer creates the database or database user; create them before installing
+	- Security: fixed PHP code injection in the installer
+	- Security: fixed SQL injection in login cookie handling that allowed logging in as another user
+	- Security: fixed SQL injection and missing permission checks in the category and group forms
+	- Security: users can no longer edit events or dates in calendars they aren't allowed to modify
+	- Security: fixed cross-site scripting through event descriptions, author names and form values
+	- Security: added CSRF protection to every form that changes data; deleting now requires a confirmation button
+	- Security: passwords are hashed with bcrypt; existing passwords are upgraded when each user next logs in
+	- Security: login cookies use random tokens separate from the form security token, and cookies are SameSite (and Secure over HTTPS)
+	- Security: the session is regenerated on login, and .htaccess rules block direct access to src/ and config.php
+	- Security: the installer no longer drops tables during an upgrade
+	- Added previous and next month buttons to the month view (thanks bellalistair)
+	- Times and colors use the browser's built-in pickers
+	- Updated jQuery to 4.0, jQuery UI to 1.14, Showdown and hoverIntent; libraries load from cdnjs
+	- Release packages include compiled translations
+	- Updated translations
+	- Fixed redirects and links losing the port when the calendar runs on a non-standard port
+	- Fixed a crash when editing an event with no dates
+	- Fixed backslashes being removed from event titles
 
 2.0.13 (28 January 2022):
 	- Fixed compatability with PHP 8
