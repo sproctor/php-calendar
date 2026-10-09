@@ -23,7 +23,7 @@
 $phpc_db_version = 1;
 
 $phpc_root_path = dirname(__FILE__);
-$phpc_includes_path = "$phpc_root_path/includes";
+$phpc_includes_path = "$phpc_root_path/src";
 $phpc_config_file = "$phpc_root_path/config.php";
 
 define('IN_PHPC', true);
