@@ -29,6 +29,9 @@ fi
 tag="v$version"
 name="php-calendar-$version"
 version_re=${version//./[.]}
+# The NEWS.md heading for this version, undated ("2.0.14:") or already dated
+#   by an earlier run ("2.0.14 (9 October 2026):")
+news_re="^$version_re( \\([^)]*\\))?:\$"
 
 cd "$(dirname "$0")"
 
@@ -40,7 +43,7 @@ prepare() {
     [ "$(git branch --show-current)" = master ] || die "releases are made from master"
     git diff --quiet && git diff --cached --quiet \
         || die "commit or stash your changes first"
-    grep -q "^$version_re:" NEWS.md \
+    grep -qE "$news_re" NEWS.md \
         || die "add a \"$version:\" entry to NEWS.md first"
 
     echo "Checking PHP syntax..."
@@ -58,13 +61,18 @@ prepare() {
     sed -i "s/^\$phpc_version = \".*\";/\$phpc_version = \"$version\";/" src/calendar.php
     grep -q "^\$phpc_version = \"$version_re\";" src/calendar.php \
         || die "couldn't set \$phpc_version in src/calendar.php"
-    sed -i "s/^$version_re:\$/$version ($(date '+%-d %B %Y')):/" NEWS.md
+    sed -i -E "s/$news_re/$version ($(date '+%-d %B %Y')):/" NEWS.md
 
     echo "Regenerating messages.po..."
     ./generate_messages.sh
 
     git add src/calendar.php NEWS.md messages.po
-    git commit -q -m "Release $version"
+    # Re-running after the tag was deleted may leave nothing to change
+    if git diff --cached --quiet; then
+        echo "Nothing changed since the last release commit; tagging it as is."
+    else
+        git commit -q -m "Release $version"
+    fi
     git tag -a "$tag" -m "PHP-Calendar $version"
     echo "Committed and tagged $tag."
 }
