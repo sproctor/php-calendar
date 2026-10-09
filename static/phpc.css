@@ -152,8 +152,10 @@ col.phpc-day {
 
 a.phpc-add {
   float: right;
+  width: 1em;
+  height: 1em;
   padding: 0;
-  font-size: .5em !important;
+  margin: 0;
 }
 
 #phpc-summary-view {

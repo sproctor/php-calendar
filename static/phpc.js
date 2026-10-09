@@ -7,8 +7,8 @@ $(document).ready(function(){
   $(".phpc-event-list a, .phpc-message, .phpc-date, .phpc-bar, .php-calendar h1, #phpc-summary-view, .phpc-logged, .php-calendar td, .php-calendar th, .phpc-message, .phpc-dropdown-list ul").addClass("ui-widget");
   // Buttons
   $(".phpc-add").button({
-      text: false,
-      icons: { primary: "ui-icon-plus" }
+      showLabel: false,
+      icon: "ui-icon-plus"
     });
   $(".php-calendar input[type=submit], .php-calendar tfoot a, .phpc-button").button();
   // The buttons are too hard to read waiting on:
