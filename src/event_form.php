@@ -194,6 +194,9 @@ function display_form()
     if (isset($vars['eid'])) {
         $form->add_hidden('eid', $vars['eid']);
         $occs = $phpcdb->get_occurrences_by_eid($vars['eid']);
+        if (empty($occs)) {
+            soft_error(__("Event doesn't exist") . ": " . $vars['eid']);
+        }
         $event = $occs[0];
 
         $defaults = array(
