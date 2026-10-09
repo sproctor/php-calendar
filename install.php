@@ -441,9 +441,19 @@ function get_server_setup()
 		</table>';
 }
 
+// The server setup steps must never run against an existing configuration,
+// otherwise anyone who can reach install.php could replace config.php.
+function refuse_if_configured()
+{
+	if(defined('SQL_HOST'))
+		soft_error('The calendar is already configured. To install again, manually delete config.php.');
+}
+
 function add_sql_user_db()
 {
 	global $dbh;
+
+	refuse_if_configured();
 
 	$my_hostname = $_POST['my_hostname'];
 	$my_username = $_POST['my_username'];
@@ -506,33 +516,45 @@ function install_base()
 {
 	global $phpc_config_file, $dbh;
 
-	$sql_type = "mysqli";
-	$sql_hostname = $_POST['my_hostname'];
-	$sql_username = $_POST['my_username'];
-	$sql_passwd = $_POST['my_passwd'];
-	$sql_prefix = $_POST['my_prefix'];
-	$sql_database = $_POST['my_database'];
+	refuse_if_configured();
+
+	$config = array(
+		'SQL_HOST'     => (string)$_POST['my_hostname'],
+		'SQL_USER'     => (string)$_POST['my_username'],
+		'SQL_PASSWD'   => (string)$_POST['my_passwd'],
+		'SQL_DATABASE' => (string)$_POST['my_database'],
+		'SQL_PREFIX'   => (string)$_POST['my_prefix'],
+		'SQL_TYPE'     => 'mysqli',
+	);
+
+	// The prefix and database name are used unquoted in SQL identifiers.
+	if(!preg_match('/^\w*$/', $config['SQL_PREFIX']))
+		soft_error('The table prefix may only contain letters, numbers and underscores.');
+	if(!preg_match('/^\w+$/', $config['SQL_DATABASE']))
+		soft_error('The database name may only contain letters, numbers and underscores.');
+
+	// Make the database connection.
+	$dbh = connect_db($config['SQL_HOST'], $config['SQL_USER'],
+			$config['SQL_PASSWD'], $config['SQL_DATABASE']);
 
 	$fp = fopen($phpc_config_file, 'w')
 		or soft_error('Couldn\'t open config file.');
 
-	// Make the database connection.
-	$dbh = connect_db($sql_hostname, $sql_username, $sql_passwd, $sql_database);
-
 	phpc_debug("Writing config file \"$phpc_config_file\".");
 
-	$defines = "define('SQL_HOST',     '$sql_hostname');\n"
-        ."define('SQL_USER',     '$sql_username');\n"
-		."define('SQL_PASSWD',   '$sql_passwd');\n"
-		."define('SQL_DATABASE', '$sql_database');\n"
-		."define('SQL_PREFIX',   '$sql_prefix');\n"
-        ."define('SQL_TYPE',     '$sql_type');\n";
+	// var_export() produces safely quoted PHP literals
+	$defines = '';
+	foreach($config as $name => $value) {
+		$defines .= "define('$name', " . var_export($value, true) . ");\n";
+	}
 
-    fwrite($fp, "<"."?php\n$defines?".">\n") // Break this up to fix syntax HL in vim
+	fwrite($fp, "<"."?php\n$defines?".">\n") // Break this up to fix syntax HL in vim
 		or soft_error("Could not write to file");
 	fclose($fp);
 
-	eval($defines);
+	foreach($config as $name => $value) {
+		define($name, $value);
+	}
 
 	create_tables();
 
@@ -679,10 +701,11 @@ function add_calendar()
 	echo "<p>Saved default configuration</p>\n";
 
 	$passwd = md5($_POST['admin_pass']);
+	$admin_user = $dbh->real_escape_string($_POST['admin_user']);
 
 	$query = "INSERT INTO `" . SQL_PREFIX . "users`\n"
 		."(`username`, `password`, `admin`) VALUES\n"
-		."('$_POST[admin_user]', '$passwd', 1)";
+		."('$admin_user', '$passwd', 1)";
 
 	$dbh->query($query)
 		or db_error($dbh, 'Error adding admin.', $query);
