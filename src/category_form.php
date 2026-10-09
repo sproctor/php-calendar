@@ -27,7 +27,7 @@ require_once("$phpc_includes_path/form.php");
  */
 function category_form()
 {
-    global $phpc_script, $vars, $phpcdb, $phpcid;
+    global $phpc_script, $vars, $phpcdb, $phpcid, $phpc_token;
 
     if (isset($vars['catid'])) {
         $category = $phpcdb->get_category($vars['catid']);
@@ -57,6 +57,7 @@ function category_form()
     }
 
     $form->add_hidden('action', 'category_submit');
+    $form->add_hidden('phpc_token', $phpc_token);
     $form->add_hidden('phpcid', $phpcid);
     $form->add_part(new FormColorPicker('text-color', __('Text Color')));
     $form->add_part(new FormColorPicker('bg-color', __('Background Color')));

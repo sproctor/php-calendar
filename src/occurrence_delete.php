@@ -51,18 +51,18 @@ function occurrence_delete()
         }
         $html->add(tag('p', __('Confirm you want to delete:')));
         $html->add($list);
-        $html->add(" [ ", create_action_link(
-            __('Confirm'),
+        $html->add(create_confirm_form(
             "occurrence_delete",
-            array("oid" => $oids,
-                        "confirm" => "1")
-        ), " ] ");
+            array("oid" => $oids)
+        ));
         $html->add(" [ ", create_action_link(
             __('Deny'),
             "display_month"
         ), " ] ");
         return $html;
     }
+
+    verify_token();
 
     $removed_occurs = array();
     $unremoved_occurs = array();

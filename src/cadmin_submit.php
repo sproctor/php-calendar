@@ -27,6 +27,8 @@ function cadmin_submit()
 {
     global $phpcid, $phpc_cal, $vars, $phpcdb, $phpc_script;
 
+    verify_token();
+
     if (!$phpc_cal->can_admin()) {
         return tag('div', __('Permission denied'));
     }

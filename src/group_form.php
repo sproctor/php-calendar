@@ -27,7 +27,7 @@ require_once("$phpc_includes_path/form.php");
  */
 function group_form()
 {
-    global $phpc_script, $vars, $phpcdb, $phpcid;
+    global $phpc_script, $vars, $phpcdb, $phpcid, $phpc_token;
 
     if (isset($vars['gid'])) {
         $group = $phpcdb->get_group($vars['gid']);
@@ -52,6 +52,7 @@ function group_form()
     $form->add_hidden('cid', $phpcid);
 
     $form->add_hidden('action', 'group_submit');
+    $form->add_hidden('phpc_token', $phpc_token);
     $form->add_part(new FormSubmitButton(__("Submit Group")));
 
     if (isset($vars['gid'])) {

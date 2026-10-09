@@ -54,18 +54,18 @@ function group_delete()
         }
         $html->add(tag('p', __('Confirm you want to delete:')));
         $html->add($list);
-        $html->add(" [ ", create_action_link(
-            __('Confirm'),
+        $html->add(create_confirm_form(
             "group_delete",
-            array("gid" => $ids,
-                        "confirm" => "1")
-        ), " ] ");
+            array("gid" => $ids)
+        ));
         $html->add(" [ ", create_action_link(
             __('Deny'),
             "display_month"
         ), " ] ");
         return $html;
     }
+
+    verify_token();
 
     foreach ($groups as $group) {
         if ((empty($group['cid']) && !is_admin()) ||

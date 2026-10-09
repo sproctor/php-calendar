@@ -205,7 +205,7 @@ function user_list()
  */
 function import()
 {
-    global $phpc_script;
+    global $phpc_script, $phpc_token;
 
     $form = new Form($phpc_script, __('Import Form'));
     $form->add_part(new FormFreeQuestion('host', __('MySQL Host Name')));
@@ -218,6 +218,7 @@ function import()
     $form->add_part(new FormFreeQuestion('prefix', __('PHP-Calendar Table Prefix')));
 
     $form->add_hidden('action', 'import');
+    $form->add_hidden('phpc_token', $phpc_token);
     $form->add_hidden('submit_form', 'submit_form');
 
     $form->add_part(new FormSubmitButton(__("Import Calendar")));
@@ -240,11 +241,18 @@ function import()
  */
 function translation_link()
 {
-    global $phpc_script;
+    global $phpc_script, $phpc_token;
 
-    return tag('div', attrs('id="phpc-admin-translate"'),
+    return tag(
+        'div',
+        attrs('id="phpc-admin-translate"'),
         tag('p', __('This script needs read access to your calendar directory in order to write the translation files. Alternatively, you could run translate.php from the command line or use msgfmt or any other gettext tool that can generate .mo files from .po files.')),
-        tag('a', attrs('class="phpc-button"',
-            "href=\"$phpc_script?action=translate\""),
-            __('Generate Translations')));
+        tag(
+            'form',
+            attrs("action=\"$phpc_script\"", 'method="post"'),
+            create_hidden('action', 'translate'),
+            create_hidden('phpc_token', $phpc_token),
+            create_submit(__('Generate Translations'))
+        )
+    );
 }

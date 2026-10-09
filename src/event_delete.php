@@ -49,18 +49,18 @@ function event_delete()
         }
         $html->add(tag('div', __('Confirm you want to delete:')));
         $html->add($list);
-        $html->add(" [ ", create_action_link(
-            __('Confirm'),
+        $html->add(create_confirm_form(
             "event_delete",
-            array("eid" => $eids,
-                        "confirm" => "1")
-        ), " ] ");
+            array("eid" => $eids)
+        ));
         $html->add(" [ ", create_action_link(
             __('Deny'),
             "display_month"
         ), " ] ");
         return $html;
     }
+
+    verify_token();
 
     $removed_events = array();
     $unremoved_events = array();

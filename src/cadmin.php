@@ -68,7 +68,7 @@ function cadmin()
 
 function config_form()
 {
-    global $phpc_cal, $phpc_script, $vars;
+    global $phpc_cal, $phpc_script, $vars, $phpc_token;
 
     $tbody = tag('tbody');
 
@@ -87,7 +87,8 @@ function config_form()
 
     $hidden_div = tag(
         'div',
-        create_hidden('action', 'cadmin_submit')
+        create_hidden('action', 'cadmin_submit'),
+        create_hidden('phpc_token', $phpc_token)
     );
     if (isset($vars['phpcid'])) {
         $hidden_div->add(create_hidden('phpcid', $vars['phpcid']));
@@ -124,7 +125,7 @@ function config_form()
 
 function user_list()
 {
-    global $phpc_script, $phpcid, $phpcdb, $vars;
+    global $phpc_script, $phpcid, $phpcdb, $vars, $phpc_token;
 
     $users = $phpcdb->get_users_with_permissions($phpcid);
 
@@ -161,7 +162,8 @@ function user_list()
 
     $hidden_div = tag(
         'div',
-        create_hidden('action', 'user_permissions_submit')
+        create_hidden('action', 'user_permissions_submit'),
+        create_hidden('phpc_token', $phpc_token)
     );
     if (isset($vars['phpcid'])) {
         $hidden_div->add(create_hidden('phpcid', $vars['phpcid']));

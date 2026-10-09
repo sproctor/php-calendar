@@ -43,18 +43,18 @@ function calendar_delete()
 
     if (empty($vars["confirm"])) {
         $html->add(tag('p', __('Confirm you want to delete calendar:'). $calendar->get_title()));
-        $html->add(" [ ", create_action_link(
-            __('Confirm'),
+        $html->add(create_confirm_form(
             "calendar_delete",
-            array("cid" => $id,
-                        "confirm" => "1")
-        ), " ] ");
+            array("cid" => $id)
+        ));
         $html->add(" [ ", create_action_link(
             __('Deny'),
             "display_month"
         ), " ] ");
         return $html;
     }
+
+    verify_token();
 
     if (!$calendar->can_admin()) {
         $html->add(tag('p', __("You do not have permission to remove calendar") . ": $id"));

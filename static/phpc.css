@@ -150,6 +150,10 @@ col.phpc-day {
   text-align: center;
 }
 
+form.phpc-confirm {
+  display: inline;
+}
+
 a.phpc-add {
   float: right;
   width: 1em;

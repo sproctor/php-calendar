@@ -27,6 +27,8 @@ function import()
 {
     global $vars, $phpcdb, $phpcid, $phpc_script;
 
+    verify_token();
+
     if (!is_admin()) {
         permission_error(__('Need to be admin'));
         exit;

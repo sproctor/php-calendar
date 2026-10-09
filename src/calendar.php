@@ -464,6 +464,39 @@ function create_action_url($action, $year = false, $month = false, $day = false,
  * @param bool|AttributeList $attribs
  * @return Html
  */
+/**
+ * Creates the "Confirm" button for a destructive action. It POSTs the action
+ * with confirm=1 and the CSRF token, so a link or redirect can't trigger it.
+ *
+ * @param string $action
+ * @param array $args
+ * @return Html
+ */
+function create_confirm_form($action, $args = array())
+{
+    global $phpc_script, $phpc_token, $vars;
+
+    $form = tag(
+        'form',
+        attrs("action=\"$phpc_script\"", 'method="post"', 'class="phpc-confirm"'),
+        create_hidden('action', $action),
+        create_hidden('confirm', '1'),
+        create_hidden('phpc_token', $phpc_token)
+    );
+    if (isset($vars['phpcid'])) {
+        $form->add(create_hidden('phpcid', $vars['phpcid']));
+    }
+    foreach ($args as $key => $value) {
+        $name = is_array($value) ? "{$key}[]" : $key;
+        foreach ((array)$value as $v) {
+            $form->add(create_hidden($name, $v));
+        }
+    }
+    $form->add(create_submit(__('Confirm')));
+
+    return $form;
+}
+
 function create_action_link($text, $action, $args = array(), $attribs = false)
 {
     global $phpc_script, $vars;
@@ -1122,14 +1155,16 @@ function get_modifiable_event($eid)
 
 function verify_token()
 {
-    global $vars, $phpc_token;
+    global $phpc_token;
 
     if (!is_user()) {
         return;
     }
 
-    if (empty($vars["phpc_token"]) || !is_string($vars["phpc_token"])
-            || !hash_equals((string)$phpc_token, $vars["phpc_token"])) {
+    // Only accept the token from a POST body, so changes can't be made by
+    //   following a link and the token never ends up in a URL.
+    if (empty($_POST["phpc_token"]) || !is_string($_POST["phpc_token"])
+            || !hash_equals((string)$phpc_token, $_POST["phpc_token"])) {
         //echo "<pre>real token: $phpc_token\n";
         //echo "form token: {$vars["phpc_token"]}</pre>";
         soft_error(__("Secret token mismatch. Possible request forgery attempt."));

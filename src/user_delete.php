@@ -53,18 +53,18 @@ function user_delete()
         }
         $html->add(tag('p', __('Confirm you want to delete:')));
         $html->add($list);
-        $html->add(" [ ", create_action_link(
-            __('Confirm'),
+        $html->add(create_confirm_form(
             "user_delete",
-            array("uid" => $ids,
-                        "confirm" => "1")
-        ), " ] ");
+            array("uid" => $ids)
+        ));
         $html->add(" [ ", create_action_link(
             __('Deny'),
             "display_month"
         ), " ] ");
         return $html;
     }
+
+    verify_token();
 
     foreach ($ids as $id) {
         if ($phpcdb->delete_user($id)) {

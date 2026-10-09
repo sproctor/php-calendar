@@ -29,6 +29,8 @@ function translate()
 {
     global $phpc_locale_path;
 
+    verify_token();
+
     if (!is_admin()) {
         permission_error(__('Need to be admin'));
         exit;

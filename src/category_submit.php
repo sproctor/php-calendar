@@ -27,6 +27,8 @@ function category_submit()
 {
     global $vars, $phpcdb, $phpc_script;
 
+    verify_token();
+
     if (empty($vars["text-color"]) || empty($vars["bg-color"])) {
         $page = "$phpc_script?action=category_form";
         if (!empty($vars["cid"])) {

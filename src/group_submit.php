@@ -27,6 +27,8 @@ function group_submit()
 {
     global $vars, $phpcdb, $phpc_script;
 
+    verify_token();
+
     if (!isset($vars['gid'])) {
         $modify = false;
 

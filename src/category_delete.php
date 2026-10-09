@@ -54,18 +54,18 @@ function category_delete()
         }
         $html->add(tag('p', __('Confirm you want to delete:')));
         $html->add($list);
-        $html->add(" [ ", create_action_link(
-            __('Confirm'),
+        $html->add(create_confirm_form(
             "category_delete",
-            array("catid" => $ids,
-                        "confirm" => "1")
-        ), " ] ");
+            array("catid" => $ids)
+        ));
         $html->add(" [ ", create_action_link(
             __('Deny'),
             "display_month"
         ), " ] ");
         return $html;
     }
+
+    verify_token();
 
     foreach ($categories as $category) {
         if ((empty($category['cid']) && !is_admin()) ||
