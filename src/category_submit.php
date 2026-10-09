@@ -39,9 +39,7 @@ function category_submit()
         return message_redirect(__("Color not specified."), $page);
     }
 
-    // The current widget produces hex values without the "#".
-    //   We may in the future want to allow different input, so store the
-    //   values with the "#"
+    // The native color input submits "#rrggbb", which check_color() requires.
     $text_color = $vars["text-color"];
     $bg_color = $vars["bg-color"];
     if (empty($vars['gid']) || strlen($vars['gid']) == 0) {

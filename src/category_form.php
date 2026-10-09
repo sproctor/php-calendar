@@ -75,8 +75,8 @@ function category_form()
         $form->add_hidden('catid', $vars['catid']);
         $defaults = array(
                 'name' => phpc_html_escape($category['name']),
-                'text-color' => phpc_html_escape(str_replace('#', '', $category['text_color'])),
-                'bg-color' => phpc_html_escape(str_replace('#', '', $category['bg_color'])),
+                'text-color' => $category['text_color'],
+                'bg-color' => $category['bg_color'],
                 'gid' => phpc_html_escape($category['gid']),
                 );
     } else {

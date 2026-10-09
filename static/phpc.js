@@ -103,7 +103,6 @@ $(document).ready(function(){
   $(".form-select").change(function(){
     formSelectUpdate($(this));
   });
-  $(".form-color-input").spectrum({ preferredFormat: "hex", showInput: true });
 
   // Dropdown list stuff
   $(".phpc-dropdown-list").each(function(index, elem) {

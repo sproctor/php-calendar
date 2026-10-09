@@ -642,15 +642,16 @@ class FormColorPicker extends FormAtomicQuestion
 
     protected function get_specific_html($parent, $defaults)
     {
-
-        if (isset($defaults[$this->qid])) {
-            $value = $defaults[$this->qid];
-        } else {
-            $value = '';
+        // A native color input needs "#rrggbb"; accept stored values with or
+        //   without the "#" and fall back to black for anything else.
+        $value = '#000000';
+        if (isset($defaults[$this->qid])
+                && preg_match('/^#?([0-9a-fA-F]{6})$/', $defaults[$this->qid], $matches)) {
+            $value = '#' . strtolower($matches[1]);
         }
 
         return tag('input', attrs(
-            'type="text"',
+            'type="color"',
             'class="form-color-input"',
             "name=\"{$this->qid}\"",
             "value=\"$value\"",
