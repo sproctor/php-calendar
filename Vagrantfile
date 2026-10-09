@@ -25,6 +25,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
     end
 
+    # The Ondřej PHP PPA renamed its Label, which makes Homestead's
+    # apt-get update fail. Accept the change before Homestead provisions.
+    config.vm.provision "shell", name: "accept apt release info changes",
+        inline: "apt-get update --allow-releaseinfo-change -qq"
+
     if File.exist? homesteadYamlPath then
         settings = YAML::load(File.read(homesteadYamlPath))
     elsif File.exist? homesteadJsonPath then

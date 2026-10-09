@@ -9,12 +9,16 @@ folders:
     - map: ./
       to: /home/vagrant/code
 sites:
-    - map: php-calendar-1.local
+    - map: php-calendar-1.localhost
       to: /home/vagrant/code
 databases:
     - homestead
 features:
     - mariadb: false
+    - postgresql: false
     - ohmyzsh: false
     - webdriver: false
+services:
+    - enabled:
+        - "mysql"
 name: php-calendar-1

@@ -15,7 +15,7 @@
         }
     ],
     "require-dev": {
-        "laravel/homestead": "^13.1",
+        "laravel/homestead": "^15.0",
         "friendsofphp/php-cs-fixer": "^3.95"
     }
 }
