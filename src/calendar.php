@@ -29,7 +29,7 @@ require_once("$phpc_includes_path/html.php");
 require_once("$phpc_includes_path/util.php");
 
 // Displayed in admin
-$phpc_version = "2.0.13";
+$phpc_version = "2.0.14";
 
 /**
  * @param string $msg
