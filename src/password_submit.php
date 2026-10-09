@@ -41,23 +41,23 @@ function password_submit()
     if (!isset($vars['old_password'])) {
         return tag('div', __('You must specify your old password.'));
     } else {
-        $old_password = $vars['old_password'];
+        $old_password = phpc_post_password('old_password');
     }
 
-    if ($phpc_user->password != md5($old_password)) {
+    if (!phpc_verify_password($old_password, $phpc_user->password)) {
         return tag('div', __('The password you entered did not match your old password.'));
     }
 
-    if (empty($vars['password1'])) {
+    $password1 = phpc_post_password('password1');
+    if ($password1 === '') {
         return tag('div', __('You must specify a password'));
     }
 
-    if (empty($vars['password2'])
-            || $vars['password1'] != $vars['password2']) {
+    if ($password1 !== phpc_post_password('password2')) {
         return tag('div', __('Your passwords did not match'));
     }
 
-    $passwd = md5($vars['password1']);
+    $passwd = phpc_hash_password($password1);
 
     $phpcdb->set_password($phpc_user->get_uid(), $passwd);
 

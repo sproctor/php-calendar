@@ -89,13 +89,99 @@ function login_user($username, $password)
     global $phpcdb;
 
     $user = $phpcdb->get_user_by_name($username);
-    if (!$user || $user->password !== md5($password)) {
+    if (!$user || !phpc_verify_password($password, $user->password)) {
         return false;
+    }
+
+    // Upgrade old MD5 hashes (and outdated password_hash() ones) on login
+    if (phpc_password_needs_rehash($user->password)) {
+        $hash = phpc_hash_password($password);
+        if ($hash !== $user->password) {
+            $phpcdb->set_password($user->uid, $hash);
+        }
     }
 
     phpc_do_login($user);
 
     return true;
+}
+
+/**
+ * Returns a password field exactly as the user typed it. Passwords are read
+ * from $_POST rather than $vars, which is SQL-escaped.
+ *
+ * @param string $name
+ * @return string
+ */
+function phpc_post_password($name)
+{
+    return isset($_POST[$name]) && is_string($_POST[$name]) ? $_POST[$name] : '';
+}
+
+/**
+ * The form older versions hashed with MD5: the password SQL-escaped, as it
+ * appeared in $vars.
+ *
+ * @param string $password
+ * @return string
+ */
+function phpc_legacy_password_md5($password)
+{
+    global $phpcdb;
+
+    return md5(mysqli_real_escape_string($phpcdb->dbh, $password));
+}
+
+/**
+ * Checks a password against a stored hash: either a password_hash() hash or
+ * the unsalted MD5 hash older versions stored.
+ *
+ * @param string $password
+ * @param string $hash
+ * @return bool
+ */
+function phpc_verify_password($password, $hash)
+{
+    if (phpc_is_md5_hash($hash)) {
+        return hash_equals($hash, phpc_legacy_password_md5($password));
+    }
+    return password_verify($password, $hash);
+}
+
+/**
+ * @param string $hash
+ * @return bool
+ */
+function phpc_password_needs_rehash($hash)
+{
+    return phpc_is_md5_hash($hash)
+        || password_needs_rehash($hash, PASSWORD_DEFAULT);
+}
+
+/**
+ * @param string $hash
+ * @return bool
+ */
+function phpc_is_md5_hash($hash)
+{
+    return preg_match('/^[0-9a-f]{32}$/', $hash) == 1;
+}
+
+/**
+ * Hashes a password for storage. Falls back to MD5 only if the database's
+ * password column is still too narrow and couldn't be widened.
+ *
+ * @param string $password
+ * @return string
+ */
+function phpc_hash_password($password)
+{
+    global $phpcdb;
+
+    if (!$phpcdb->password_column_ready()) {
+        return phpc_legacy_password_md5($password);
+    }
+    return password_hash($password, PASSWORD_DEFAULT);
 }
 
 /**

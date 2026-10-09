@@ -32,7 +32,7 @@ function login()
     //Check password and username
     if (isset($vars['username'])) {
         $user = $vars['username'];
-        $password = $vars['password'];
+        $password = phpc_post_password('password');
 
         if (login_user($user, $password)) {
             $url = $phpc_script;

@@ -3,6 +3,7 @@ NEWS
 
 2.0.14:
     - Updated jQuery and other JS dependencies
+	- Passwords are now properly hashed (requires DB schema update to widen password columns)
 
 2.0.13 (28 January 2022):
 	- Fixed compatability with PHP 8

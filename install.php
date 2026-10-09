@@ -21,7 +21,7 @@
    it needs very much work
 */
 
-$phpc_db_version = 1;
+$phpc_db_version = 2;
 
 $phpc_root_path = dirname(__FILE__);
 $phpc_includes_path = "$phpc_root_path/src";
@@ -32,6 +32,10 @@ define('IN_PHPC', true);
 if (!function_exists("mysqli_connect")) {
     soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
 }
+
+// The installer checks query results itself ("or db_error(...)") and probes
+//   for tables that may not exist, so turn off PHP 8.1+'s mysqli exceptions.
+mysqli_report(MYSQLI_REPORT_OFF);
 
 echo '<!DOCTYPE html>
 <html>
@@ -44,6 +48,7 @@ echo '<!DOCTYPE html>
 <h1>PHP Calendar</h1>';
 
 $must_upgrade = false;
+$existing_version = 0;
 
 if (file_exists($phpc_config_file)) {
     require_once $phpc_config_file;
@@ -56,7 +61,6 @@ if (file_exists($phpc_config_file)) {
         $sth = $dbh->query($query);
         $have_calendar = $sth && $sth->fetch_assoc();
 
-        $existing_version = 0;
 
         $query = "SELECT version\n"
             ."FROM `" . SQL_PREFIX .  "version`\n";
@@ -104,28 +108,13 @@ $drop_tables = isset($_POST["drop_tables"]) && $_POST["drop_tables"] == "yes";
 if (empty($_POST['action'])) {
     get_action();
 } elseif ($_POST['action'] == 'upgrade') {
-    if (empty($_POST['version'])) {
-        get_upgrade_version();
-    } else {
-        if ($_POST['version'] == "2.0rc2") {
-            upgrade_20rc2();
-            echo "<p>Update complete.</p>";
-        } elseif ($_POST['version'] == "2.0beta11") {
-            upgrade_20beta11();
-            echo "<p>Update complete.</p>";
-        } elseif ($_POST['version'] == "2.0beta10") {
-            upgrade_20beta10();
-            echo "<p>Update complete.</p>";
-        } elseif ($_POST['version'] == "2.0beta9") {
-            if (empty($_POST['timezone'])) {
-                upgrade_20_form();
-            } else {
-                upgrade_20_action();
-            }
-        } elseif ($_POST['version'] == "1.1") {
-            echo "<p>You must first install the calendar into a new location, then import the old events through the Admin section.</p>";
+    $drop_tables = false;
+    if (check_upgrade_supported()) {
+        if (empty($_POST['version'])) {
+            get_upgrade_version();
         } else {
-            echo "<p>Invalid version identifier.</p>";
+            upgrade_db_2();
+            echo "<p>Update complete.</p>";
         }
     }
 } elseif (!isset($_POST['my_hostname'])
@@ -152,219 +141,74 @@ function get_action()
     echo '<input type="submit" name="action" value="upgrade"/>';
 }
 
+// Only databases from PHP-Calendar 2.0.0 through 2.0.13 (database version 1)
+//   can be upgraded. They are told apart from 2.0-rc2, which also has version
+//   1, by the users.gid column that 2.0.0 added.
+function check_upgrade_supported()
+{
+    global $phpc_config_file, $existing_version, $dbh;
+
+    if (!file_exists($phpc_config_file) || !defined('SQL_HOST')) {
+        echo '<p><span style="font-weight:bold;">ERROR</span>: You must copy over your config.php from the version you are updating.';
+        echo '<br/><input type="button" onclick="window.location.reload()" value="Reload"/>';
+        return false;
+    }
+
+    try {
+        $sth = $dbh->query("SHOW COLUMNS FROM `" . SQL_PREFIX . "users` LIKE 'gid'");
+        $has_users_gid = $sth && $sth->num_rows > 0;
+    } catch (mysqli_sql_exception $e) {
+        $has_users_gid = false;
+    }
+
+    if ($existing_version != 1 || !$has_users_gid) {
+        echo '<p>This database is from a version of PHP-Calendar older than 2.0.0, which this installer can no longer upgrade. Upgrade to PHP-Calendar 2.0.13 first using its installer, then run this one.</p>';
+        return false;
+    }
+
+    return true;
+}
+
 function get_upgrade_version()
 {
-    global $phpc_config_file;
-
-    if (!file_exists($phpc_config_file)) {
-        echo '<p><span style="font-weight:bold;">ERROR</span>: You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
-        echo '<br/><input type="button" onclick="window.location.reload()" value="Reload"/>';
-        return;
-    }
-
-    echo '<h3>Pick the version you are updating from</h3>';
+    echo '<h3>Upgrade from PHP-Calendar 2.0.x</h3>';
+    echo '<p>This updates your database for this version of PHP-Calendar. Back up your database before continuing.</p>';
     echo '<input type="hidden" name="action" value="upgrade"/>';
-    echo '<select name="version">';
-    echo '<option value="1.1">version 1.1</option>';
-    echo '<option value="2.0beta9">version 2.0-beta4 to beta9</option>';
-    echo '<option value="2.0beta10">version 2.0-beta10</option>';
-    echo '<option value="2.0beta11">version 2.0-beta11 to rc1</option>';
-    echo '<option value="2.0rc2">version 2.0-rc2</option>';
-    echo '</select><span style="display: inline-block; width:50px;"></span>';
-    echo '<input type="submit" value="Submit">';
+    echo '<input type="hidden" name="version" value="2.0"/>';
+    echo '<input type="submit" value="Upgrade">';
 }
 
-function upgrade_20_form()
+// Database version 2: the password column holds password_hash() output
+//   instead of 32-character MD5 hashes.
+function upgrade_db_2()
 {
-    echo '<div>Timezone: <select name="timezone">';
-    foreach (timezone_identifiers_list() as $timezone) {
-        echo "<option value=\"$timezone\">$timezone</option>\n";
-    }
-    echo "</select></div>";
-    echo "<input type=\"submit\" value=\"Submit\"/>";
-}
+    global $dbh;
 
-function upgrade_20_action()
-{
-    global $phpc_config_file, $dbh;
-
+    echo "<p>Widening the password column.</p>";
     $query = "ALTER TABLE `" . SQL_PREFIX . "users`\n"
-        ."ADD `password_editable` tinyint(1) NOT NULL DEFAULT '1',\n"
-        ."ADD `timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-        ."ADD `language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL\n";
+        ."MODIFY `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT ''";
     $dbh->query($query)
-        or db_error($dbh, 'Error adding elements to users table.', $query);
+        or db_error($dbh, 'Error widening the password column.', $query);
 
-    $query = "ALTER TABLE `" . SQL_PREFIX . "occurrences`\n"
-        ."ADD `start_ts` timestamp NULL default NULL,\n"
-        ."ADD `end_ts` timestamp NULL default NULL,\n"
-        ."CHANGE `startdate` `start_date` date default NULL,\n"
-        ."CHANGE `enddate` `end_date` date default NULL,\n"
-        ."CHANGE `timetype` `time_type` tinyint(4) NOT NULL default '0'\n";
+    set_db_version(2);
+}
 
+// The version table has no key, so update its row rather than REPLACE INTO.
+function set_db_version($version)
+{
+    global $dbh;
+
+    $version_table = SQL_PREFIX . 'version';
+    $query = "UPDATE `$version_table` SET `version`='$version'";
     $dbh->query($query)
-        or db_error(
-            $dbh,
-            'Error adding elements to occurrences table.',
-            $query
-        );
+        or db_error($dbh, 'Error updating version.', $query);
 
-    echo "<p>Occurrences table update";
-
-    $query = "SELECT `oid`, YEAR(`start_date`) AS `start_year`, "
-        ."MONTH(`start_date`) AS `start_month`, "
-        ."DAY(`start_date`) AS `start_day`, "
-        ."HOUR(`starttime`) AS `start_hour`, "
-        ."MINUTE(`starttime`) AS `start_minute`, "
-        ."SECOND(`starttime`) AS `start_second`, "
-        ."YEAR(`end_date`) AS `end_year`, "
-        ."MONTH(`end_date`) AS `end_month`, "
-        ."DAY(`end_date`) AS `end_day`, "
-        ."HOUR(`endtime`) AS `end_hour`, "
-        ."MINUTE(`endtime`) AS `end_minute`, "
-        ."SECOND(`endtime`) AS `end_second` "
-        ."FROM `" . SQL_PREFIX . "occurrences`\n";
-
-    $occ_result = $dbh->query($query)
-        or db_error($dbh, 'Error selecting old occurrences.', $query);
-
-    while ($row = $occ_result->fetch_assoc()) {
-        if ($row['start_hour'] !== null) {
-            $start_ts = mktime(
-                $row['start_hour'],
-                $row['start_minute'],
-                $row['start_second'],
-                $row['start_month'],
-                $row['start_day'],
-                $row['start_year']
-            );
-
-            $end_ts = mktime(
-                $row['end_hour'],
-                $row['end_minute'],
-                $row['end_second'],
-                $row['end_month'],
-                $row['end_day'],
-                $row['end_year']
-            );
-
-            $query = "UPDATE `" . SQL_PREFIX . "occurrences`\n"
-                . "SET `start_date` = NULL, "
-                . "`start_ts` = FROM_UNIXTIME($start_ts), "
-                . "`end_ts` = FROM_UNIXTIME($end_ts)\n"
-                . "WHERE `oid` = {$row['oid']}";
-            $dbh->query($query)
-                or db_error(
-                    $dbh,
-                    'Error updating occurrences.',
-                    $query
-                );
-        }
+    $sth = $dbh->query("SELECT COUNT(*) AS `rows` FROM `$version_table`");
+    if ($sth && $sth->fetch_assoc()['rows'] == 0) {
+        $query = "INSERT INTO `$version_table` SET `version`='$version'";
+        $dbh->query($query)
+            or db_error($dbh, 'Error creating version row.', $query);
     }
-
-    echo "<p>Occurrences updated.</p>";
-
-    upgrade_20beta10();
-
-    echo "<p>Update complete.</p>";
-}
-
-function upgrade_20beta10()
-{
-    create_logins_table();
-    upgrade_20beta11();
-}
-
-function upgrade_20beta11()
-{
-    add_event_time();
-    add_calendar_config();
-    add_categories_gid();
-    echo "<p>Adding groups table.</p>";
-    create_table(
-        "groups",
-        "`gid` int(11) NOT NULL AUTO_INCREMENT,\n"
-            ."`cid` int(11),\n"
-            ."`name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-            ."PRIMARY KEY (`gid`)\n"
-    );
-    echo "<p>Adding user_groups table.</p>";
-    create_table(
-        "user_groups",
-        "`gid` int(11),\n"
-            ."`uid` int(11)\n"
-    );
-    create_version_table();
-    upgrade_20rc2();
-}
-
-function upgrade_20rc2()
-{
-    global $dbh;
-
-    $query = "ALTER TABLE `" . SQL_PREFIX . "users`\n"
-        ."ADD `gid` int(11)\n";
-    $dbh->query($query)
-        or db_error($dbh, 'Error adding elements to users table.', $query);
-}
-
-function add_categories_gid()
-{
-    global $dbh;
-
-    echo "<p>Adding gid to categories</p>";
-
-    $query = "ALTER TABLE `" . SQL_PREFIX . "categories`\n"
-        ."ADD `gid` int(11) unsigned DEFAULT NULL";
-
-    $dbh->query($query)
-        or db_warning(
-            $dbh,
-            'Error adding gid to categories table.',
-            $query
-        );
-}
-
-function add_event_time()
-{
-    global $dbh;
-
-    phpc_debug("Adding \"ctime\" and \"mtime\" columns.");
-
-    $query = "ALTER TABLE `" . SQL_PREFIX . "events`\n"
-        ."ADD `ctime` timestamp NOT NULL default CURRENT_TIMESTAMP,\n"
-        ."ADD `mtime` timestamp NULL default NULL";
-
-    $dbh->query($query)
-        or db_warning(
-            $dbh,
-            'Error adding time elements to events table.',
-            $query
-        );
-}
-
-function add_calendar_config()
-{
-    global $dbh;
-
-    $query = "ALTER TABLE `" . SQL_PREFIX . "calendars`\n"
-        ."ADD `hours_24` tinyint(1) NOT NULL DEFAULT 0,\n"
-        ."ADD `date_format` tinyint(1) NOT NULL DEFAULT 0,\n"
-        ."ADD `week_start` tinyint(1) NOT NULL DEFAULT 0,\n"
-        ."ADD `subject_max` smallint(5) unsigned NOT NULL DEFAULT 50,\n"
-        ."ADD `events_max` tinyint(3) unsigned NOT NULL DEFAULT 8,\n"
-        ."ADD `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'PHP-Calendar',\n"
-        ."ADD `anon_permission` tinyint(1) NOT NULL DEFAULT 1,\n"
-        ."ADD `timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-        ."ADD `language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-        ."ADD `theme` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL";
-
-    $dbh->query($query)
-        or db_warning(
-            $dbh,
-            'Error adding time elements to events table.',
-            $query
-        );
 }
 
 function create_version_table()
@@ -500,7 +344,6 @@ function add_sql_user_db()
     $my_hostname = $_POST['my_hostname'];
     $my_username = $_POST['my_username'];
     $my_passwd = $_POST['my_passwd'];
-    $my_prefix = $_POST['my_prefix'];
     $my_database = $_POST['my_database'];
     $my_adminname = $_POST['my_adminname'];
     $my_adminpasswd = $_POST['my_adminpasswd'];
@@ -649,7 +492,7 @@ function create_tables()
         "users",
         "`uid` int(11) unsigned NOT NULL auto_increment,\n"
         ."`username` varchar(32) collate utf8_unicode_ci NOT NULL,\n"
-        ."`password` varchar(32) collate utf8_unicode_ci NOT NULL default '',\n"
+        ."`password` varchar(255) collate utf8_unicode_ci NOT NULL default '',\n"
         ."`admin` tinyint(4) NOT NULL DEFAULT '0',\n"
         ."`password_editable` tinyint(1) NOT NULL DEFAULT '1',\n"
         ."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
@@ -764,7 +607,7 @@ function add_calendar()
 
     echo "<p>Saved default configuration</p>\n";
 
-    $passwd = md5($_POST['admin_pass']);
+    $passwd = password_hash((string)$_POST['admin_pass'], PASSWORD_DEFAULT);
     $admin_user = $dbh->real_escape_string($_POST['admin_user']);
 
     $query = "INSERT INTO `" . SQL_PREFIX . "users`\n"

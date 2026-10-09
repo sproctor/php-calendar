@@ -877,6 +877,35 @@ class PhpcDatabase
      * @param int $uid
      * @param string $password
      */
+    /**
+     * Whether the password column can hold password_hash() output. Older
+     * installs sized it for MD5 (varchar(32)) until the database upgrade in
+     * install.php widens it; until then passwords keep being stored as MD5.
+     *
+     * @return bool
+     */
+    public function password_column_ready()
+    {
+        static $ready = null;
+
+        if ($ready !== null) {
+            return $ready;
+        }
+
+        $users_table = SQL_PREFIX . 'users';
+        try {
+            $sth = $this->dbh->query("SHOW COLUMNS FROM `$users_table` LIKE 'password'");
+            $column = $sth ? $sth->fetch_assoc() : null;
+            $ready = $column
+                && preg_match('/\((\d+)\)/', $column['Type'], $matches)
+                && $matches[1] >= 255;
+        } catch (mysqli_sql_exception $e) {
+            $ready = false;
+        }
+
+        return $ready;
+    }
+
     public function set_password($uid, $password)
     {
         $query = "UPDATE `" . SQL_PREFIX . "users`\n"

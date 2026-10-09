@@ -127,18 +127,18 @@ function process_form()
         return message(__('You must specify a user name'));
     }
 
-    if (empty($vars['password1'])) {
+    $password1 = phpc_post_password('password1');
+    if ($password1 === '') {
         return message(__('You must specify a password'));
     }
 
-    if (empty($vars['password2'])
-            || $vars['password1'] != $vars['password2']) {
+    if ($password1 !== phpc_post_password('password2')) {
         return message(__('Your passwords did not match'));
     }
 
     $make_admin = empty($vars['make_admin']) ? 0 : 1;
 
-    $passwd = md5($vars['password1']);
+    $passwd = phpc_hash_password($password1);
 
     if ($phpcdb->get_user_by_name($vars["user_name"])) {
         return message(__('User already exists.'));
