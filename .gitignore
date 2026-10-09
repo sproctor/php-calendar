@@ -26,3 +26,6 @@ Thumbs.db
 
 # PHP-CS-Fixer
 .php-cs-fixer.cache
+
+# Release packages built by release.sh
+/dist/

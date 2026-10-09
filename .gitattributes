@@ -1,0 +1,18 @@
+# Development files left out of release packages (git archive and GitHub's
+# source downloads)
+/.github export-ignore
+/.tx export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.git-blame-ignore-revs export-ignore
+/.php-cs-fixer.dist.php export-ignore
+/CLAUDE.md export-ignore
+/Homestead.yaml export-ignore
+/Vagrantfile export-ignore
+/after.sh export-ignore
+/aliases export-ignore
+/composer.json export-ignore
+/composer.lock export-ignore
+/generate_messages.sh export-ignore
+/messages.po export-ignore
+/release.sh export-ignore
