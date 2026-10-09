@@ -259,6 +259,7 @@ class PhpcDatabase
      */
     public function get_category($catid)
     {
+        $catid = intval($catid);
         $cats_table = SQL_PREFIX . 'categories';
         $groups_table = SQL_PREFIX . 'groups';
 
@@ -286,6 +287,7 @@ class PhpcDatabase
      */
     public function get_group($gid)
     {
+        $gid = intval($gid);
         $groups_table = SQL_PREFIX . 'groups';
 
         $query = "SELECT `name`, `gid`, `cid`\n"
@@ -314,6 +316,7 @@ class PhpcDatabase
             ."FROM `$groups_table`\n";
 
         if ($cid !== false) {
+            $cid = intval($cid);
             $query .= "WHERE `cid` = $cid";
         }
 
@@ -333,6 +336,7 @@ class PhpcDatabase
      */
     public function get_user_groups($uid)
     {
+        $uid = intval($uid);
         $groups_table = SQL_PREFIX . 'groups';
         $user_groups_table = SQL_PREFIX . 'user_groups';
 
@@ -580,6 +584,7 @@ class PhpcDatabase
      */
     public function delete_category($catid)
     {
+        $catid = intval($catid);
 
         $query = 'DELETE FROM `'.SQL_PREFIX ."categories`\n"
             ."WHERE `catid` = '$catid'";
@@ -599,6 +604,7 @@ class PhpcDatabase
      */
     public function delete_group($gid)
     {
+        $gid = intval($gid);
 
         $query = 'DELETE FROM `'.SQL_PREFIX ."groups`\n"
             ."WHERE `gid` = '$gid'";
@@ -943,6 +949,8 @@ class PhpcDatabase
      */
     public function user_remove_group($uid, $gid)
     {
+        $uid = intval($uid);
+        $gid = intval($gid);
         $user_groups_table = SQL_PREFIX . 'user_groups';
 
         $query = "DELETE FROM `$user_groups_table`\n"

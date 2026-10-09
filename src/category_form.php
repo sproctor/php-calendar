@@ -29,6 +29,17 @@ function category_form()
 {
     global $phpc_script, $vars, $phpcdb, $phpcid;
 
+    if (isset($vars['catid'])) {
+        $category = $phpcdb->get_category($vars['catid']);
+        $owner_cid = $category['cid'];
+    } else {
+        $owner_cid = isset($vars['cid']) ? $vars['cid'] : null;
+    }
+    require_calendar_admin(
+        $owner_cid,
+        __('You do not have permission to edit categories.')
+    );
+
     $form = new Form($phpc_script, __('Category Form'));
     $form->add_part(new FormFreeQuestion(
         'name',
@@ -62,7 +73,6 @@ function category_form()
 
     if (isset($vars['catid'])) {
         $form->add_hidden('catid', $vars['catid']);
-        $category = $phpcdb->get_category($vars['catid']);
         $defaults = array(
                 'name' => phpc_html_escape($category['name']),
                 'text-color' => phpc_html_escape(str_replace('#', '', $category['text_color'])),

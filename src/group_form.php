@@ -29,6 +29,17 @@ function group_form()
 {
     global $phpc_script, $vars, $phpcdb, $phpcid;
 
+    if (isset($vars['gid'])) {
+        $group = $phpcdb->get_group($vars['gid']);
+        $owner_cid = $group['cid'];
+    } else {
+        $owner_cid = $phpcid;
+    }
+    require_calendar_admin(
+        $owner_cid,
+        __('You do not have permission to edit groups.')
+    );
+
     $form = new Form($phpc_script, __('Group Form'));
     $form->add_part(new FormFreeQuestion(
         'name',
@@ -45,7 +56,6 @@ function group_form()
 
     if (isset($vars['gid'])) {
         $form->add_hidden('gid', $vars['gid']);
-        $group = $phpcdb->get_group($vars['gid']);
         $defaults = array('name' => phpc_html_escape($group['name']));
     } else {
         $defaults = array();

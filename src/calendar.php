@@ -1067,6 +1067,26 @@ function short_month_name($month)
     return $short_month_names[$month];
 }
 
+/**
+ * Throws unless the user may administer calendar $cid, or may manage
+ * global items (admin only) when $cid is empty.
+ *
+ * @param int|null $cid
+ * @param string $message
+ */
+function require_calendar_admin($cid, $message)
+{
+    global $phpcdb;
+
+    if (empty($cid)) {
+        if (!is_admin()) {
+            permission_error($message);
+        }
+    } elseif (!$phpcdb->get_calendar($cid)->can_admin()) {
+        permission_error($message);
+    }
+}
+
 function verify_token()
 {
     global $vars, $phpc_token;
