@@ -1087,6 +1087,25 @@ function require_calendar_admin($cid, $message)
     }
 }
 
+/**
+ * Loads an event for editing. Throws unless it belongs to the current
+ * calendar and the current user may modify it.
+ *
+ * @param int $eid
+ * @return PhpcEvent
+ */
+function get_modifiable_event($eid)
+{
+    global $phpcdb, $phpcid;
+
+    $event = new PhpcEvent($phpcdb->get_event_by_eid(intval($eid)));
+    if ($event->cid != intval($phpcid) || !$event->can_modify()) {
+        permission_error(__('You do not have permission to modify this event.'));
+    }
+
+    return $event;
+}
+
 function verify_token()
 {
     global $vars, $phpc_token;

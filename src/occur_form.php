@@ -80,6 +80,7 @@ function display_form()
         $form->add_hidden('oid', $vars['oid']);
 
         $occ = $phpcdb->get_occurrence_by_oid($vars['oid']);
+        get_modifiable_event($occ->get_eid());
         $datefmt = $phpc_cal->date_format;
 
         $start_date = format_short_date_string(
@@ -122,6 +123,7 @@ function display_form()
         }
 
     } else {
+        get_modifiable_event($vars['eid']);
         $form->add_hidden('eid', $vars['eid']);
         $defaults = array(
                 'start-date' => "$month/$day/$year",
@@ -177,6 +179,13 @@ function process_form()
 
     if (!$phpc_cal->can_write()) {
         permission_error(__('You do not have permission to write to this calendar.'));
+    }
+
+    if (isset($vars['oid'])) {
+        $occ = $phpcdb->get_occurrence_by_oid($vars['oid']);
+        get_modifiable_event($occ->get_eid());
+    } else {
+        get_modifiable_event($vars['eid']);
     }
 
     if (!isset($vars['oid'])) {

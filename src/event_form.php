@@ -192,6 +192,7 @@ function display_form()
     $form->add_part(new FormSubmitButton(__("Submit Event")));
 
     if (isset($vars['eid'])) {
+        get_modifiable_event($vars['eid']);
         $form->add_hidden('eid', $vars['eid']);
         $occs = $phpcdb->get_occurrences_by_eid($vars['eid']);
         if (empty($occs)) {
@@ -394,6 +395,10 @@ function process_form()
 
     if (!$phpc_cal->can_write()) {
         permission_error(__('You do not have permission to write to this calendar.'));
+    }
+
+    if (isset($vars['eid'])) {
+        get_modifiable_event($vars['eid']);
     }
 
     if ($phpc_cal->can_create_readonly() && !empty($vars['readonly'])) {
