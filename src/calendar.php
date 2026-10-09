@@ -1139,10 +1139,11 @@ function get_header_tags($path)
     if (empty($theme)) {
         $theme = 'base';
     }
-    $jquery_version = "3.7.1";
+    $jquery_version = "4.0.0";
     $jqueryui_version = "1.14.2";
     $showdown_version = "2.1.0";
     $dompurify_version = "3.4.16";
+    $hoverintent_version = "1.10.2";
 
     return array(
         tag('link', attrs(
@@ -1155,10 +1156,10 @@ function get_header_tags($path)
             'type="text/css"',
             "href=\"https://cdnjs.cloudflare.com/ajax/libs/jqueryui/$jqueryui_version/themes/$theme/jquery-ui$jq_min.css\""
         )),
-        tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
+        tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
         tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
         tag('script', attrs("src=\"$path/phpc.js\""), ''),
-        tag("script", attrs("src=\"$path/jquery.hoverIntent.minified.js\""), ''),
+        tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery.hoverintent/$hoverintent_version/jquery.hoverIntent.min.js\""), ''),
         tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/showdown/$showdown_version/showdown.min.js\""), ''),
         tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/dompurify/$dompurify_version/purify.min.js\""), ''),
     );
