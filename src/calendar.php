@@ -1114,7 +1114,8 @@ function verify_token()
         return;
     }
 
-    if (empty($vars["phpc_token"]) || $vars["phpc_token"] != $phpc_token) {
+    if (empty($vars["phpc_token"]) || !is_string($vars["phpc_token"])
+            || !hash_equals((string)$phpc_token, $vars["phpc_token"])) {
         //echo "<pre>real token: $phpc_token\n";
         //echo "form token: {$vars["phpc_token"]}</pre>";
         soft_error(__("Secret token mismatch. Possible request forgery attempt."));

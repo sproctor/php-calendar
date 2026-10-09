@@ -59,7 +59,10 @@ $phpcdb = new PhpcDatabase(
     SQL_PORT
 );
 
-session_set_cookie_params(0, "", "", false, true);
+$phpc_session_cookie = phpc_cookie_options();
+unset($phpc_session_cookie['expires']);
+$phpc_session_cookie['lifetime'] = 0;
+session_set_cookie_params($phpc_session_cookie);
 session_start();
 
 if (empty($_SESSION["{$phpc_prefix}uid"])) {
