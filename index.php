@@ -39,9 +39,17 @@ $phpc_config_file = "$phpc_root_path/config.php";
 $phpc_locale_path = "$phpc_root_path/locale";
 $phpc_script = htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8');
 
-$phpc_server = $_SERVER['SERVER_NAME'];
-if (!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80) {
-    $phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
+// Prefer the host the browser used, which keeps a forwarded port
+// (e.g. localhost:8000). It's client-supplied, so only accept a plain
+// host[:port]; otherwise fall back to the server's own name.
+if (isset($_SERVER['HTTP_HOST'])
+        && preg_match('/^([A-Za-z0-9.-]+|\[[0-9A-Fa-f:.]+\])(:\d{1,5})?$/', $_SERVER['HTTP_HOST'])) {
+    $phpc_server = $_SERVER['HTTP_HOST'];
+} else {
+    $phpc_server = $_SERVER['SERVER_NAME'];
+    if (!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80) {
+        $phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
+    }
 }
 
 // Protcol ex. http or https

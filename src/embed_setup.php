@@ -35,7 +35,7 @@ $default_calendar_id = 1;
 /*
  * $phpc_root_path gives the location of the base calendar install.
  * if you move this file to a new location, modify $phpc_root_path to point
- * to the location where the support files for the callendar are located.
+ * to the location where the support files for the calendar are located.
  */
 $phpc_includes_path = dirname(__FILE__);
 $phpc_root_path = dirname($phpc_includes_path);
@@ -44,9 +44,17 @@ $phpc_locale_path = "$phpc_root_path/locale";
 require_once "$phpc_includes_path/util.php";
 $phpc_script = phpc_html_escape($_SERVER['PHP_SELF']);
 
-$phpc_server = $_SERVER['SERVER_NAME'];
-if (!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80) {
-    $phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
+// Prefer the host the browser used, which keeps a forwarded port
+// (e.g. localhost:8000). It's client-supplied, so only accept a plain
+// host[:port]; otherwise fall back to the server's own name.
+if (isset($_SERVER['HTTP_HOST'])
+        && preg_match('/^([A-Za-z0-9.-]+|\[[0-9A-Fa-f:.]+\])(:\d{1,5})?$/', $_SERVER['HTTP_HOST'])) {
+    $phpc_server = $_SERVER['HTTP_HOST'];
+} else {
+    $phpc_server = $_SERVER['SERVER_NAME'];
+    if (!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80) {
+        $phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
+    }
 }
 
 // Protcol ex. http or https
