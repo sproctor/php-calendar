@@ -331,16 +331,24 @@ function group_list()
         tag('caption', __('Calendar Groups')),
         tag(
             'thead',
-            tag('tr',
+            tag(
+                'tr',
                 tag('th', __('Name')),
                 tag('th', __('Actions'))
             )
         ),
         $tbody,
-        tag('tfoot',
-            tag('tr',
-                tag('td', attributes('colspan="2"'),
-                    $create_link)))
+        tag(
+            'tfoot',
+            tag(
+                'tr',
+                tag(
+                    'td',
+                    attributes('colspan="2"'),
+                    $create_link
+                )
+            )
+        )
     );
 
     return tag('div', attrs('id="phpc-groups"'), $table);

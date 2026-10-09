@@ -571,7 +571,9 @@ function process_form()
             "$phpc_script?action=display_event&phpcid=$phpcid&eid=$eid"
         );
     } else {
-        return message_redirect(__('Error submitting event.'),
-            "$phpc_script?action=display_month&phpcid=$phpcid");
+        return message_redirect(
+            __('Error submitting event.'),
+            "$phpc_script?action=display_month&phpcid=$phpcid"
+        );
     }
 }

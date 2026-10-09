@@ -1,7 +1,8 @@
 PHP-Calendar
 ----------------
 
-This program requires a PHP enabled webserver and a database (MySQL) installed.
+This program requires a webserver with PHP 8.1 or later (with the mysqli
+extension) and a MySQL or MariaDB database.
 
 Installation and upgrade instructions:
 https://github.com/sproctor/php-calendar/wiki/Installation-Guide

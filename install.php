@@ -29,6 +29,10 @@ $phpc_config_file = "$phpc_root_path/config.php";
 
 define('IN_PHPC', true);
 
+if (PHP_VERSION_ID < 80100) {
+    soft_error("PHP-Calendar requires PHP 8.1 or later. This server is running PHP " . PHP_VERSION . ".");
+}
+
 if (!function_exists("mysqli_connect")) {
     soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
 }
@@ -647,8 +651,11 @@ function create_table($suffix, $columns, $table_args = "")
         .") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci $table_args;\n";
 
     $dbh->query($query)
-        or db_error($dbh, "Error creating table `$table_name`.",
-            $query);
+        or db_error(
+            $dbh,
+            "Error creating table `$table_name`.",
+            $query
+        );
 }
 
 function phpc_debug($msg)

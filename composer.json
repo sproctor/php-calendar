@@ -14,6 +14,10 @@
             "email": "sproctor@gmail.com"
         }
     ],
+    "require": {
+        "php": ">=8.1",
+        "ext-mysqli": "*"
+    },
     "require-dev": {
         "laravel/homestead": "^15.0",
         "friendsofphp/php-cs-fixer": "^3.95"

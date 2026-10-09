@@ -24,6 +24,10 @@ if (!defined('IN_PHPC')) {
     die("Hacking attempt");
 }
 
+if (PHP_VERSION_ID < 80100) {
+    soft_error("PHP-Calendar requires PHP 8.1 or later. This server is running PHP " . PHP_VERSION . ".");
+}
+
 // Run the installer if we have no config file
 // This doesn't work when embedded from outside
 if (!file_exists($phpc_config_file)) {
