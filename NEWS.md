@@ -1,7 +1,7 @@
 NEWS
 -----
 
-2.0.14:
+2.0.14 (9 October 2026):
 	- Requires PHP 8.1 or later
     - Updated jQuery and other JS dependencies
 	- Passwords are now properly hashed (requires DB schema update to widen password columns)
