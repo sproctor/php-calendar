@@ -1,7 +1,25 @@
+# Local configuration written by install.php
 config.php
-*.swp
-*.mo
 
+# Compiled translations (built from .po files)
+*.mo
+# Temp file from generate_messages.sh
+messages.tmp
+
+# Dependencies
 /vendor/
+
+# Runtime cache/logs (left over from the Symfony-based v3.0 branches)
+/var/
+
+# Homestead / Vagrant
 .vagrant
+user-customizations.sh
+
+# Editors and OS
 .idea
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
