@@ -321,25 +321,40 @@ class FormDateQuestion extends FormAtomicQuestion
     }
 }
 
-function form_time_input($qid, $defaults, $hour24)
+/**
+ * Converts a time such as "5:00 PM" or "17:00" to the 24-hour "HH:MM" value
+ * a native time input requires. Returns '' if the time isn't recognized.
+ *
+ * @param string $time
+ * @return string
+ */
+function form_time_value($time)
 {
-    $showPeriod = $hour24 ? "false" : "true";
+    if (!preg_match('/^\s*(\d{1,2})[:.](\d{2})\s*([ap]m)?\s*$/i', $time, $matches)) {
+        return '';
+    }
+    $hour = intval($matches[1]);
+    if (!empty($matches[3])) {
+        $hour = $hour % 12 + (strcasecmp($matches[3], 'pm') == 0 ? 12 : 0);
+    }
+    return sprintf('%02d:%02d', $hour, intval($matches[2]));
+}
+
+function form_time_input($qid, $defaults)
+{
+    // The browser displays the time in the user's locale and always submits
+    //   24-hour "HH:MM", which get_timestamp() parses.
     $time_attrs = attrs(
-        'type="text"',
+        'type="time"',
         'class="form-time"',
         "name=\"$qid-time\"",
         "id=\"$qid-time\""
     );
     if (isset($defaults["$qid-time"])) {
-        $time_attrs->add("value=\"{$defaults["$qid-time"]}\"");
+        $time_attrs->add('value="' . form_time_value($defaults["$qid-time"]) . '"');
     }
 
-    return array(tag('input', $time_attrs),
-        tag(
-            'script',
-            attrs('type="text/javascript"'),
-            "\$('#$qid-time').timepicker({showPeriod: $showPeriod, showLeadingZero: false });"
-        ));
+    return tag('input', $time_attrs);
 }
 
 /* this class is for time input
@@ -361,7 +376,7 @@ class FormTimeQuestion extends FormAtomicQuestion
         return tag(
             'div',
             attrs("class=\"{$this->class}\""),
-            form_time_input($this->qid, $defaults, $this->hour24)
+            form_time_input($this->qid, $defaults)
         );
     }
 }
@@ -408,11 +423,7 @@ class FormDateTimeQuestion extends FormAtomicQuestion
                 $dateFormat
             ),
             " ", tag('label', attrs("for=\"{$this->qid}-time\""), __('Time') . ": "),
-            form_time_input(
-                $this->qid,
-                $defaults,
-                $this->hour24
-            ));
+            form_time_input($this->qid, $defaults));
     }
 }
 

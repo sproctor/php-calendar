@@ -1155,15 +1155,9 @@ function get_header_tags($path)
             'type="text/css"',
             "href=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/themes/$theme/jquery-ui$jq_min.css\""
         )),
-        tag('link', attrs(
-            'rel="stylesheet"',
-            'type="text/css"',
-            "href=\"$path/jquery-ui-timepicker.css\""
-        )),
         tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
         tag("script", attrs("src=\"//ajax.googleapis.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
         tag('script', attrs("src=\"$path/phpc.js\""), ''),
-        tag("script", attrs("src=\"$path/jquery.ui.timepicker.js\""), ''),
         tag("script", attrs("src=\"$path/jquery.hoverIntent.minified.js\""), ''),
         tag("script", attrs("src=\"$path/spectrum.js\""), ''),
         tag('link', attrs(
