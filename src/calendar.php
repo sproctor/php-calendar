@@ -1139,9 +1139,9 @@ function get_header_tags($path)
     if (empty($theme)) {
         $theme = 'base';
     }
-    $jquery_version = "3.6.0";
-    $jqueryui_version = "1.13.1";
-    $showdown_version = "1.9.1";
+    $jquery_version = "3.7.1";
+    $jqueryui_version = "1.13.3";
+    $showdown_version = "2.1.0";
     $dompurify_version = "3.4.16";
 
     return array(
