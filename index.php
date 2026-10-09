@@ -93,7 +93,7 @@ try {
 
 $html = tag(
     'html',
-    attrs("lang=\"$phpc_lang\""),
+    attrs('lang="' . ($phpc_lang ?? 'en') . '"'),
     tag(
         'head',
         tag('title', $calendar_title),
