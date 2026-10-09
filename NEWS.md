@@ -1,6 +1,9 @@
 NEWS
 -----
 
+2.0.14:
+    - Updated jQuery and other JS dependencies
+
 2.0.13 (28 January 2022):
 	- Fixed compatability with PHP 8
 	- Only show readable calendars in the calendar list
