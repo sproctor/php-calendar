@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2014 Sean Proctor
  *
@@ -19,8 +20,8 @@
    This file has the functions for the main displays of the calendar
 */
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
+if (!defined('IN_PHPC')) {
+    die("Hacking attempt");
 }
 
 // View for a single day
@@ -31,119 +32,154 @@ function display_day()
 {
     global $phpcid, $phpc_cal, $phpc_script, $phpcdb, $day, $month, $year;
 
-	$monthname = month_name($month);
+    $monthname = month_name($month);
 
     $results = $phpcdb->get_occurrences_by_date($phpcid, $year, $month, $day);
 
-	$have_events = false;
+    $have_events = false;
 
-	$html_table = tag('table', attributes('class="phpc-main"'),
-			tag('caption', "$day $monthname $year"),
-			tag('thead',
-				tag('tr',
-					tag('th', __('Title')),
-					tag('th', __('Time')),
-					tag('th', __('Description'))
-				   )));
-	if($phpc_cal->can_modify()) {
-		$html_table->add(tag('tfoot',
-					tag('tr',
-						tag('td',
-							attributes('colspan="4"'),
-							create_hidden('action', 'event_delete'),
-							create_hidden('day', $day),
-							create_hidden('month', $month),
-							create_hidden('year', $year),
-							create_submit(__('Delete Selected'))))));
-	}
+    $html_table = tag(
+        'table',
+        attributes('class="phpc-main"'),
+        tag('caption', "$day $monthname $year"),
+        tag(
+            'thead',
+            tag(
+                'tr',
+                tag('th', __('Title')),
+                tag('th', __('Time')),
+                tag('th', __('Description'))
+            )
+        )
+    );
+    if ($phpc_cal->can_modify()) {
+        $html_table->add(tag(
+            'tfoot',
+            tag(
+                'tr',
+                tag(
+                    'td',
+                    attributes('colspan="4"'),
+                    create_hidden('action', 'event_delete'),
+                    create_hidden('day', $day),
+                    create_hidden('month', $month),
+                    create_hidden('year', $year),
+                    create_submit(__('Delete Selected'))
+                )
+            )
+        ));
+    }
 
-	$html_body = tag('tbody');
+    $html_body = tag('tbody');
 
-	while($row = $results->fetch_assoc()) {
-	
-		$event = new PhpcOccurrence($row);
+    while ($row = $results->fetch_assoc()) {
 
-		if(!$event->can_read())
-			continue;
+        $event = new PhpcOccurrence($row);
 
-		$have_events = true;
+        if (!$event->can_read()) {
+            continue;
+        }
 
-		$eid = $event->get_eid();
-		$oid = $event->get_oid();
+        $have_events = true;
 
-		$html_subject = tag('td');
+        $eid = $event->get_eid();
+        $oid = $event->get_oid();
 
-		if($event->can_modify()) {
-			$html_subject->add(create_checkbox('eid[]',
-						$eid));
-		}
+        $html_subject = tag('td');
 
-		$html_subject->add(create_occurrence_link(tag('strong',
-						$event->get_subject()),
-					'display_event', $oid));
+        if ($event->can_modify()) {
+            $html_subject->add(create_checkbox(
+                'eid[]',
+                $eid
+            ));
+        }
 
-		if($event->can_modify()) {
-			$html_subject->add(" (");
-			$html_subject->add(create_event_link(
-						__('Modify'), 'event_form',
-						$eid));
-			$html_subject->add(')');
-		}
+        $html_subject->add(create_occurrence_link(
+            tag(
+                'strong',
+                $event->get_subject()
+            ),
+            'display_event',
+            $oid
+        ));
 
-		$html_body->add(tag('tr',
-					$html_subject,
-					tag('td', $event->get_time_span_string()),
-					tag('td', attributes('class="phpc-desc"'), $event->get_desc())));
-	}
+        if ($event->can_modify()) {
+            $html_subject->add(" (");
+            $html_subject->add(create_event_link(
+                __('Modify'),
+                'event_form',
+                $eid
+            ));
+            $html_subject->add(')');
+        }
 
-	$html_table->add($html_body);
+        $html_body->add(tag(
+            'tr',
+            $html_subject,
+            tag('td', $event->get_time_span_string()),
+            tag('td', attributes('class="phpc-desc"'), $event->get_desc())
+        ));
+    }
 
-	if($phpc_cal->can_modify()) {
-		$output = tag('form',
-				attributes("action=\"$phpc_script\""),
-				$html_table);
-	} else {
-		$output = $html_table;
-	}
+    $html_table->add($html_body);
 
-	if(!$have_events)
-		$output = tag('h2', __('No events on this day.'));
+    if ($phpc_cal->can_modify()) {
+        $output = tag(
+            'form',
+            attributes("action=\"$phpc_script\""),
+            $html_table
+        );
+    } else {
+        $output = $html_table;
+    }
 
-	return tag('', create_day_menu(), $output);
+    if (!$have_events) {
+        $output = tag('h2', __('No events on this day.'));
+    }
+
+    return tag('', create_day_menu(), $output);
 }
 
 /**
  * @return Html
  */
-function create_day_menu() {
-	global $month, $day, $year;
+function create_day_menu()
+{
+    global $month, $day, $year;
 
-	$html = tag('div', attrs('class="phpc-bar ui-widget-content"'));
+    $html = tag('div', attrs('class="phpc-bar ui-widget-content"'));
 
-	$lasttime = mktime(0, 0, 0, $month, $day - 1, $year);
-	$lastday = date('j', $lasttime);
-	$lastmonth = date('n', $lasttime);
-	$lastyear = date('Y', $lasttime);
-	$lastmonthname = month_name($lastmonth);
+    $lasttime = mktime(0, 0, 0, $month, $day - 1, $year);
+    $lastday = date('j', $lasttime);
+    $lastmonth = date('n', $lasttime);
+    $lastyear = date('Y', $lasttime);
+    $lastmonthname = month_name($lastmonth);
 
-	$last_args = array('year' => $lastyear, 'month' => $lastmonth,
-			'day' => $lastday);
+    $last_args = array('year' => $lastyear, 'month' => $lastmonth,
+            'day' => $lastday);
 
-	menu_item_prepend($html, "$lastmonthname $lastday", 'display_day',
-			$last_args);
+    menu_item_prepend(
+        $html,
+        "$lastmonthname $lastday",
+        'display_day',
+        $last_args
+    );
 
-	$nexttime = mktime(0, 0, 0, $month, $day + 1, $year);
-	$nextday = date('j', $nexttime);
-	$nextmonth = date('n', $nexttime);
-	$nextyear = date('Y', $nexttime);
-	$nextmonthname = month_name($nextmonth);
+    $nexttime = mktime(0, 0, 0, $month, $day + 1, $year);
+    $nextday = date('j', $nexttime);
+    $nextmonth = date('n', $nexttime);
+    $nextyear = date('Y', $nexttime);
+    $nextmonthname = month_name($nextmonth);
 
-	$next_args = array('year' => $nextyear, 'month' => $nextmonth,
-			'day' => $nextday);
+    $next_args = array('year' => $nextyear, 'month' => $nextmonth,
+            'day' => $nextday);
 
-	menu_item_append($html, "$nextmonthname $nextday", 'display_day',
-			$next_args);
+    menu_item_append(
+        $html,
+        "$nextmonthname $nextday",
+        'display_day',
+        $next_args
+    );
 
-	return $html;
+    return $html;
 }
-

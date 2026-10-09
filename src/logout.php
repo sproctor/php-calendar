@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2012 Sean Proctor
  *
@@ -15,8 +16,8 @@
  * limitations under the License.
  */
 
-if(!defined('IN_PHPC')) {
-       die("Hacking attempt");
+if (!defined('IN_PHPC')) {
+    die("Hacking attempt");
 }
 
 /**
@@ -24,10 +25,10 @@ if(!defined('IN_PHPC')) {
  */
 function logout()
 {
-	global $phpc_script;
+    global $phpc_script;
 
-	phpc_do_logout();
-        redirect($phpc_script);
+    phpc_do_logout();
+    redirect($phpc_script);
 
-        return tag('h2', __('Loggin out...'));
+    return tag('h2', __('Loggin out...'));
 }

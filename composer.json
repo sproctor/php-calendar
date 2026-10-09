@@ -1,6 +1,8 @@
 {
     "name": "sproctor/php-calendar",
+    "description": "A web-based calendar written in PHP",
     "type": "project",
+    "license": "Apache-2.0",
     "autoload": {
         "psr-4": {
             "Sproctor\\PhpCalendar\\": "src/"
@@ -13,6 +15,7 @@
         }
     ],
     "require-dev": {
-        "laravel/homestead": "^13.1"
+        "laravel/homestead": "^13.1",
+        "friendsofphp/php-cs-fixer": "^3.95"
     }
 }

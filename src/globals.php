@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2010 Sean Proctor
  *
@@ -15,8 +16,8 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
+if (!defined('IN_PHPC')) {
+    die("Hacking attempt");
 }
 
 $month_names = array(
@@ -36,27 +37,27 @@ $month_names = array(
 
 $day_names = array(
                 __('Sunday'),
-		__('Monday'),
-		__('Tuesday'),
-		__('Wednesday'),
-		__('Thursday'),
-		__('Friday'),
-		__('Saturday'),
+        __('Monday'),
+        __('Tuesday'),
+        __('Wednesday'),
+        __('Thursday'),
+        __('Friday'),
+        __('Saturday'),
                 );
 
 $short_month_names = array(
-		1 => __('Jan'),
-		__('Feb'),
-		__('Mar'),
-		__('Apr'),
-		__('May'),
-		__('Jun'),
-		__('Jul'),
-		__('Aug'),
-		__('Sep'),
-		__('Oct'),
-		__('Nov'),
-		__('Dec'),
+        1 => __('Jan'),
+        __('Feb'),
+        __('Mar'),
+        __('Apr'),
+        __('May'),
+        __('Jun'),
+        __('Jul'),
+        __('Aug'),
+        __('Sep'),
+        __('Oct'),
+        __('Nov'),
+        __('Dec'),
                 );
 
 // config stuff

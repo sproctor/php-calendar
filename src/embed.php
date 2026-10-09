@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2012 Sean Proctor
  *
@@ -15,22 +16,28 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
-       die("Invalid setup");
+if (!defined('IN_PHPC')) {
+    die("Invalid setup");
 }
 
 try {
-	require_once("$phpc_includes_path/calendar.php");
-	require_once("$phpc_includes_path/setup.php");
+    require_once("$phpc_includes_path/calendar.php");
+    require_once("$phpc_includes_path/setup.php");
 
-	$calendar_title = $phpc_cal->get_title();
-	$content = display_phpc();
-} catch(Exception $e) {
-	$calendar_title = $e->getMessage();
-	$content = tag('div', attributes('class="php-calendar"'),
-			$e->getMessage());
+    $calendar_title = $phpc_cal->get_title();
+    $content = display_phpc();
+} catch (Exception $e) {
+    $calendar_title = $e->getMessage();
+    $content = tag(
+        'div',
+        attributes('class="php-calendar"'),
+        $e->getMessage()
+    );
 }
-$head = tag('div', attrs('class="phpc-head"'),
-			get_header_tags("static"));
+$head = tag(
+    'div',
+    attrs('class="phpc-head"'),
+    get_header_tags("static")
+);
 echo $head->toString();
 echo $content->toString();

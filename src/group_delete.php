@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2013 Sean Proctor
  *
@@ -15,8 +16,8 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
+if (!defined('IN_PHPC')) {
+    die("Hacking attempt");
 }
 
 /**
@@ -24,57 +25,64 @@ if ( !defined('IN_PHPC') ) {
  */
 function group_delete()
 {
-	global $vars, $phpcdb, $phpcid, $phpc_script;
+    global $vars, $phpcdb, $phpcid, $phpc_script;
 
-	$html = tag('div', attributes('class="phpc-container"'));
+    $html = tag('div', attributes('class="phpc-container"'));
 
-	if(empty($vars["gid"])) {
-		return message_redirect(__('No group selected.'),
-				"$phpc_script?action=cadmin&phpcid=$phpcid");
-	}
+    if (empty($vars["gid"])) {
+        return message_redirect(
+            __('No group selected.'),
+            "$phpc_script?action=cadmin&phpcid=$phpcid"
+        );
+    }
 
-	if (is_array($vars["gid"])) {
-		$ids = $vars["gid"];
-	} else {
-		$ids = array($vars["gid"]);
-	}
+    if (is_array($vars["gid"])) {
+        $ids = $vars["gid"];
+    } else {
+        $ids = array($vars["gid"]);
+    }
 
-	$groups = array();
-	foreach ($ids as $id) {
-		$groups[] = $phpcdb->get_group($id);
-	}
+    $groups = array();
+    foreach ($ids as $id) {
+        $groups[] = $phpcdb->get_group($id);
+    }
 
-	if (empty($vars["confirm"])) {
-		$list = tag('ul');
-		foreach ($groups as $group) {
+    if (empty($vars["confirm"])) {
+        $list = tag('ul');
+        foreach ($groups as $group) {
             $list->add(tag('li', $group['name']));
-		}
-		$html->add(tag('p', __('Confirm you want to delete:')));
-		$html->add($list);
-		$html->add(" [ ", create_action_link(__('Confirm'),
-					"group_delete", array("gid" => $ids,
-						"confirm" => "1")), " ] ");
-		$html->add(" [ ", create_action_link(__('Deny'),
-					"display_month"), " ] ");
-		return $html;
-	}
+        }
+        $html->add(tag('p', __('Confirm you want to delete:')));
+        $html->add($list);
+        $html->add(" [ ", create_action_link(
+            __('Confirm'),
+            "group_delete",
+            array("gid" => $ids,
+                        "confirm" => "1")
+        ), " ] ");
+        $html->add(" [ ", create_action_link(
+            __('Deny'),
+            "display_month"
+        ), " ] ");
+        return $html;
+    }
 
-	foreach($groups as $group) {
-		if((empty($group['cid']) && !is_admin()) ||
-					!$phpcdb->get_calendar($group['cid'])
-					->can_admin()) {
-			$html->add(tag('p', __("You do not have permission to delete group: ") . $group['gid']));
-			continue;
-		}
+    foreach ($groups as $group) {
+        if ((empty($group['cid']) && !is_admin()) ||
+                    !$phpcdb->get_calendar($group['cid'])
+                    ->can_admin()) {
+            $html->add(tag('p', __("You do not have permission to delete group: ") . $group['gid']));
+            continue;
+        }
 
-		if($phpcdb->delete_group($group['gid'])) {
-			$html->add(tag('p', __("Removed group: ")
-					. $group['gid']));
-		} else {        
-			$html->add(tag('p', __("Could not remove group: ")
-						. $group['gid']));
-		}
-	}
+        if ($phpcdb->delete_group($group['gid'])) {
+            $html->add(tag('p', __("Removed group: ")
+                    . $group['gid']));
+        } else {
+            $html->add(tag('p', __("Could not remove group: ")
+                        . $group['gid']));
+        }
+    }
 
-        return message_redirect($html, "$phpc_script?action=cadmin&phpcid=$phpcid");
+    return message_redirect($html, "$phpc_script?action=cadmin&phpcid=$phpcid");
 }

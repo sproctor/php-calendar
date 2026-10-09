@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2014 Sean Proctor
  *
@@ -28,8 +29,9 @@ $phpc_config_file = "$phpc_root_path/config.php";
 
 define('IN_PHPC', true);
 
-if(!function_exists("mysqli_connect"))
-	soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
+if (!function_exists("mysqli_connect")) {
+    soft_error("You must have the mysqli extension for PHP installed to use this calendar.");
+}
 
 echo '<!DOCTYPE html>
 <html>
@@ -44,343 +46,383 @@ echo '<!DOCTYPE html>
 
 $must_upgrade = false;
 
-if(file_exists($phpc_config_file)) {
-	require_once $phpc_config_file;
-	if(defined("SQL_HOST")) {
-		$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
+if (file_exists($phpc_config_file)) {
+    require_once $phpc_config_file;
+    if (defined("SQL_HOST")) {
+        $dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
 
-		$query = "SELECT *\n"
-			."FROM `" . SQL_PREFIX .  "calendars`\n";
+        $query = "SELECT *\n"
+            ."FROM `" . SQL_PREFIX .  "calendars`\n";
 
-		$sth = $dbh->query($query);
-		$have_calendar = $sth && $sth->fetch_assoc();
+        $sth = $dbh->query($query);
+        $have_calendar = $sth && $sth->fetch_assoc();
 
-		$existing_version = 0;
+        $existing_version = 0;
 
-		$query = "SELECT version\n"
-			."FROM `" . SQL_PREFIX .  "version`\n";
+        $query = "SELECT version\n"
+            ."FROM `" . SQL_PREFIX .  "version`\n";
 
 
-		$sth = $dbh->query($query);
-		if($sth) {
-			$result = $sth->fetch_assoc();
-			if(!empty($result['version']))
-				$existing_version = $result['version'];
-		}
+        $sth = $dbh->query($query);
+        if ($sth) {
+            $result = $sth->fetch_assoc();
+            if (!empty($result['version'])) {
+                $existing_version = $result['version'];
+            }
+        }
 
-		if($have_calendar) {
+        if ($have_calendar) {
 
-			$must_upgrade = true;
+            $must_upgrade = true;
 
-			if($existing_version > $phpc_db_version) {
-				echo "<p>DB version is newer than the upgrader.</p>";
-				exit;
-			} elseif($existing_version == $phpc_db_version) {
-				echo '<p>The calendar has already been installed. <a href="index.php">Installed calendar</a></p>';
-				echo '<p>If you want to install again, manually delete config.php</p>';
-				exit;
-			}
-		}
-	}
+            if ($existing_version > $phpc_db_version) {
+                echo "<p>DB version is newer than the upgrader.</p>";
+                exit;
+            } elseif ($existing_version == $phpc_db_version) {
+                echo '<p>The calendar has already been installed. <a href="index.php">Installed calendar</a></p>';
+                echo '<p>If you want to install again, manually delete config.php</p>';
+                exit;
+            }
+        }
+    }
 }
 
 echo '<p>Welcome to the PHP Calendar installation process.</p>
 <form method="post" action="install.php">
 ';
 
-foreach($_POST as $key => $value) {
-	if(!is_string($value))
-		continue;
-	$key = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
-	$value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">\n";
+foreach ($_POST as $key => $value) {
+    if (!is_string($value)) {
+        continue;
+    }
+    $key = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
+    $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+    echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">\n";
 }
 
 $drop_tables = isset($_POST["drop_tables"]) && $_POST["drop_tables"] == "yes";
 
-if(empty($_POST['action'])) {
-	get_action();
-} elseif($_POST['action'] == 'upgrade') {
-	if(empty($_POST['version'])) {
-		get_upgrade_version();
-	} else {
-		if ($_POST['version'] == "2.0rc2") {
-			upgrade_20rc2();
-			echo "<p>Update complete.</p>";
-		} elseif ($_POST['version'] == "2.0beta11") {
-			upgrade_20beta11();
-			echo "<p>Update complete.</p>";
-		} elseif($_POST['version'] == "2.0beta10") {
-			upgrade_20beta10();
-			echo "<p>Update complete.</p>";
-		} elseif($_POST['version'] == "2.0beta9") {
-			if(empty($_POST['timezone']))
-				upgrade_20_form();
-			else
-				upgrade_20_action();
-		} elseif($_POST['version'] == "1.1") {
-			echo "<p>You must first install the calendar into a new location, then import the old events through the Admin section.</p>";
-		} else {
-			echo "<p>Invalid version identifier.</p>";
-		}
-	}
-} elseif(!isset($_POST['my_hostname'])
-		&& !isset($_POST['my_username'])
-		&& !isset($_POST['my_passwd'])
-		&& !isset($_POST['my_prefix'])
-		&& !isset($_POST['my_database'])) {
-	get_server_setup();
-} elseif((isset($_POST['create_user']) || isset($_POST['create_db']))
-		&& !isset($_POST['done_user_db'])) {
-	add_sql_user_db();
-} elseif(!isset($_POST['base'])) {
-	install_base();
-} elseif(!isset($_POST['admin_user'])
-		&& !isset($_POST['admin_pass'])) {
-	get_admin();
+if (empty($_POST['action'])) {
+    get_action();
+} elseif ($_POST['action'] == 'upgrade') {
+    if (empty($_POST['version'])) {
+        get_upgrade_version();
+    } else {
+        if ($_POST['version'] == "2.0rc2") {
+            upgrade_20rc2();
+            echo "<p>Update complete.</p>";
+        } elseif ($_POST['version'] == "2.0beta11") {
+            upgrade_20beta11();
+            echo "<p>Update complete.</p>";
+        } elseif ($_POST['version'] == "2.0beta10") {
+            upgrade_20beta10();
+            echo "<p>Update complete.</p>";
+        } elseif ($_POST['version'] == "2.0beta9") {
+            if (empty($_POST['timezone'])) {
+                upgrade_20_form();
+            } else {
+                upgrade_20_action();
+            }
+        } elseif ($_POST['version'] == "1.1") {
+            echo "<p>You must first install the calendar into a new location, then import the old events through the Admin section.</p>";
+        } else {
+            echo "<p>Invalid version identifier.</p>";
+        }
+    }
+} elseif (!isset($_POST['my_hostname'])
+        && !isset($_POST['my_username'])
+        && !isset($_POST['my_passwd'])
+        && !isset($_POST['my_prefix'])
+        && !isset($_POST['my_database'])) {
+    get_server_setup();
+} elseif ((isset($_POST['create_user']) || isset($_POST['create_db']))
+        && !isset($_POST['done_user_db'])) {
+    add_sql_user_db();
+} elseif (!isset($_POST['base'])) {
+    install_base();
+} elseif (!isset($_POST['admin_user'])
+        && !isset($_POST['admin_pass'])) {
+    get_admin();
 } else {
-	add_calendar();
+    add_calendar();
 }
 
-function get_action() {
-	echo '<input type="submit" name="action" value="install"/><span style="display: inline-block; width:50px;"></span>';
-	echo '<input type="submit" name="action" value="upgrade"/>';
+function get_action()
+{
+    echo '<input type="submit" name="action" value="install"/><span style="display: inline-block; width:50px;"></span>';
+    echo '<input type="submit" name="action" value="upgrade"/>';
 }
 
-function get_upgrade_version() {
-	global $phpc_config_file;
+function get_upgrade_version()
+{
+    global $phpc_config_file;
 
-	if(!file_exists($phpc_config_file)) {
-		echo '<p><span style="font-weight:bold;">ERROR</span>: You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
-		echo '<br/><input type="button" onclick="window.location.reload()" value="Reload"/>';
-		return;
-	}
+    if (!file_exists($phpc_config_file)) {
+        echo '<p><span style="font-weight:bold;">ERROR</span>: You must copy over your config.php from the version you are updating. Only versions 2.0 beta4 and later are supported.';
+        echo '<br/><input type="button" onclick="window.location.reload()" value="Reload"/>';
+        return;
+    }
 
-	echo '<h3>Pick the version you are updating from</h3>';
-	echo '<input type="hidden" name="action" value="upgrade"/>';
-	echo '<select name="version">';
-	echo '<option value="1.1">version 1.1</option>';
-	echo '<option value="2.0beta9">version 2.0-beta4 to beta9</option>';
-	echo '<option value="2.0beta10">version 2.0-beta10</option>';
-	echo '<option value="2.0beta11">version 2.0-beta11 to rc1</option>';
-	echo '<option value="2.0rc2">version 2.0-rc2</option>';
-	echo '</select><span style="display: inline-block; width:50px;"></span>';
-	echo '<input type="submit" value="Submit">';
+    echo '<h3>Pick the version you are updating from</h3>';
+    echo '<input type="hidden" name="action" value="upgrade"/>';
+    echo '<select name="version">';
+    echo '<option value="1.1">version 1.1</option>';
+    echo '<option value="2.0beta9">version 2.0-beta4 to beta9</option>';
+    echo '<option value="2.0beta10">version 2.0-beta10</option>';
+    echo '<option value="2.0beta11">version 2.0-beta11 to rc1</option>';
+    echo '<option value="2.0rc2">version 2.0-rc2</option>';
+    echo '</select><span style="display: inline-block; width:50px;"></span>';
+    echo '<input type="submit" value="Submit">';
 }
 
-function upgrade_20_form() {
-	echo '<div>Timezone: <select name="timezone">';
-	foreach(timezone_identifiers_list() as $timezone) {
-		echo "<option value=\"$timezone\">$timezone</option>\n";
-	}
-	echo "</select></div>";
-	echo "<input type=\"submit\" value=\"Submit\"/>";
+function upgrade_20_form()
+{
+    echo '<div>Timezone: <select name="timezone">';
+    foreach (timezone_identifiers_list() as $timezone) {
+        echo "<option value=\"$timezone\">$timezone</option>\n";
+    }
+    echo "</select></div>";
+    echo "<input type=\"submit\" value=\"Submit\"/>";
 }
 
-function upgrade_20_action() {
-	global $phpc_config_file, $dbh;
+function upgrade_20_action()
+{
+    global $phpc_config_file, $dbh;
 
-	$query = "ALTER TABLE `" . SQL_PREFIX . "users`\n"
-		."ADD `password_editable` tinyint(1) NOT NULL DEFAULT '1',\n"
-		."ADD `timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."ADD `language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL\n";
-	$dbh->query($query)
-		or db_error($dbh, 'Error adding elements to users table.', $query);
+    $query = "ALTER TABLE `" . SQL_PREFIX . "users`\n"
+        ."ADD `password_editable` tinyint(1) NOT NULL DEFAULT '1',\n"
+        ."ADD `timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+        ."ADD `language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL\n";
+    $dbh->query($query)
+        or db_error($dbh, 'Error adding elements to users table.', $query);
 
-	$query = "ALTER TABLE `" . SQL_PREFIX . "occurrences`\n"
-		."ADD `start_ts` timestamp NULL default NULL,\n"
-		."ADD `end_ts` timestamp NULL default NULL,\n"
-		."CHANGE `startdate` `start_date` date default NULL,\n"
-		."CHANGE `enddate` `end_date` date default NULL,\n"
-		."CHANGE `timetype` `time_type` tinyint(4) NOT NULL default '0'\n";
+    $query = "ALTER TABLE `" . SQL_PREFIX . "occurrences`\n"
+        ."ADD `start_ts` timestamp NULL default NULL,\n"
+        ."ADD `end_ts` timestamp NULL default NULL,\n"
+        ."CHANGE `startdate` `start_date` date default NULL,\n"
+        ."CHANGE `enddate` `end_date` date default NULL,\n"
+        ."CHANGE `timetype` `time_type` tinyint(4) NOT NULL default '0'\n";
 
-	$dbh->query($query)
-		or db_error($dbh, 'Error adding elements to occurrences table.',
-				$query);
+    $dbh->query($query)
+        or db_error(
+            $dbh,
+            'Error adding elements to occurrences table.',
+            $query
+        );
 
-	echo "<p>Occurrences table update";
+    echo "<p>Occurrences table update";
 
-	$query = "SELECT `oid`, YEAR(`start_date`) AS `start_year`, "
-		."MONTH(`start_date`) AS `start_month`, "
-		."DAY(`start_date`) AS `start_day`, "
-		."HOUR(`starttime`) AS `start_hour`, "
-		."MINUTE(`starttime`) AS `start_minute`, "
-		."SECOND(`starttime`) AS `start_second`, "
-		."YEAR(`end_date`) AS `end_year`, "
-		."MONTH(`end_date`) AS `end_month`, "
-		."DAY(`end_date`) AS `end_day`, "
-		."HOUR(`endtime`) AS `end_hour`, "
-		."MINUTE(`endtime`) AS `end_minute`, "
-		."SECOND(`endtime`) AS `end_second` "
-		."FROM `" . SQL_PREFIX . "occurrences`\n";
+    $query = "SELECT `oid`, YEAR(`start_date`) AS `start_year`, "
+        ."MONTH(`start_date`) AS `start_month`, "
+        ."DAY(`start_date`) AS `start_day`, "
+        ."HOUR(`starttime`) AS `start_hour`, "
+        ."MINUTE(`starttime`) AS `start_minute`, "
+        ."SECOND(`starttime`) AS `start_second`, "
+        ."YEAR(`end_date`) AS `end_year`, "
+        ."MONTH(`end_date`) AS `end_month`, "
+        ."DAY(`end_date`) AS `end_day`, "
+        ."HOUR(`endtime`) AS `end_hour`, "
+        ."MINUTE(`endtime`) AS `end_minute`, "
+        ."SECOND(`endtime`) AS `end_second` "
+        ."FROM `" . SQL_PREFIX . "occurrences`\n";
 
-	$occ_result = $dbh->query($query)
-		or db_error($dbh, 'Error selecting old occurrences.', $query);
+    $occ_result = $dbh->query($query)
+        or db_error($dbh, 'Error selecting old occurrences.', $query);
 
-	while($row = $occ_result->fetch_assoc()) {
-		if($row['start_hour'] !== NULL) {
-			$start_ts = mktime($row['start_hour'],
-					$row['start_minute'],
-					$row['start_second'],
-					$row['start_month'],
-					$row['start_day'],
-					$row['start_year']);
+    while ($row = $occ_result->fetch_assoc()) {
+        if ($row['start_hour'] !== null) {
+            $start_ts = mktime(
+                $row['start_hour'],
+                $row['start_minute'],
+                $row['start_second'],
+                $row['start_month'],
+                $row['start_day'],
+                $row['start_year']
+            );
 
-			$end_ts = mktime($row['end_hour'],
-					$row['end_minute'],
-					$row['end_second'],
-					$row['end_month'],
-					$row['end_day'],
-					$row['end_year']);
+            $end_ts = mktime(
+                $row['end_hour'],
+                $row['end_minute'],
+                $row['end_second'],
+                $row['end_month'],
+                $row['end_day'],
+                $row['end_year']
+            );
 
-			$query = "UPDATE `" . SQL_PREFIX . "occurrences`\n"
-				. "SET `start_date` = NULL, "
-				. "`start_ts` = FROM_UNIXTIME($start_ts), "
-				. "`end_ts` = FROM_UNIXTIME($end_ts)\n"
-				. "WHERE `oid` = {$row['oid']}";
-			$dbh->query($query)
-				or db_error($dbh, 'Error updating occurrences.',
-						$query);
-		}
-	}
+            $query = "UPDATE `" . SQL_PREFIX . "occurrences`\n"
+                . "SET `start_date` = NULL, "
+                . "`start_ts` = FROM_UNIXTIME($start_ts), "
+                . "`end_ts` = FROM_UNIXTIME($end_ts)\n"
+                . "WHERE `oid` = {$row['oid']}";
+            $dbh->query($query)
+                or db_error(
+                    $dbh,
+                    'Error updating occurrences.',
+                    $query
+                );
+        }
+    }
 
-	echo "<p>Occurrences updated.</p>";
+    echo "<p>Occurrences updated.</p>";
 
-	upgrade_20beta10();
+    upgrade_20beta10();
 
-	echo "<p>Update complete.</p>";
+    echo "<p>Update complete.</p>";
 }
 
-function upgrade_20beta10() {
-	create_logins_table();
-	upgrade_20beta11();
+function upgrade_20beta10()
+{
+    create_logins_table();
+    upgrade_20beta11();
 }
 
-function upgrade_20beta11() {
-	add_event_time();
-	add_calendar_config();
-	add_categories_gid();
-	echo "<p>Adding groups table.</p>";
-	create_table("groups",
-			"`gid` int(11) NOT NULL AUTO_INCREMENT,\n"
-			."`cid` int(11),\n"
-			."`name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-			."PRIMARY KEY (`gid`)\n");
-	echo "<p>Adding user_groups table.</p>";
-	create_table("user_groups",
-			"`gid` int(11),\n"
-			."`uid` int(11)\n");
-	create_version_table();
-	upgrade_20rc2();
+function upgrade_20beta11()
+{
+    add_event_time();
+    add_calendar_config();
+    add_categories_gid();
+    echo "<p>Adding groups table.</p>";
+    create_table(
+        "groups",
+        "`gid` int(11) NOT NULL AUTO_INCREMENT,\n"
+            ."`cid` int(11),\n"
+            ."`name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+            ."PRIMARY KEY (`gid`)\n"
+    );
+    echo "<p>Adding user_groups table.</p>";
+    create_table(
+        "user_groups",
+        "`gid` int(11),\n"
+            ."`uid` int(11)\n"
+    );
+    create_version_table();
+    upgrade_20rc2();
 }
 
 function upgrade_20rc2()
 {
-	global $dbh;
+    global $dbh;
 
-	$query = "ALTER TABLE `" . SQL_PREFIX . "users`\n"
-		."ADD `gid` int(11)\n";
-	$dbh->query($query)
-		or db_error($dbh, 'Error adding elements to users table.', $query);
+    $query = "ALTER TABLE `" . SQL_PREFIX . "users`\n"
+        ."ADD `gid` int(11)\n";
+    $dbh->query($query)
+        or db_error($dbh, 'Error adding elements to users table.', $query);
 }
 
-function add_categories_gid() {
-	global $dbh;
+function add_categories_gid()
+{
+    global $dbh;
 
-	echo "<p>Adding gid to categories</p>";
+    echo "<p>Adding gid to categories</p>";
 
-	$query = "ALTER TABLE `" . SQL_PREFIX . "categories`\n"
-		."ADD `gid` int(11) unsigned DEFAULT NULL";
+    $query = "ALTER TABLE `" . SQL_PREFIX . "categories`\n"
+        ."ADD `gid` int(11) unsigned DEFAULT NULL";
 
-	$dbh->query($query)
-		or db_warning($dbh, 'Error adding gid to categories table.',
-				$query);
+    $dbh->query($query)
+        or db_warning(
+            $dbh,
+            'Error adding gid to categories table.',
+            $query
+        );
 }
 
-function add_event_time() {
-	global $dbh;
+function add_event_time()
+{
+    global $dbh;
 
-	phpc_debug("Adding \"ctime\" and \"mtime\" columns.");
+    phpc_debug("Adding \"ctime\" and \"mtime\" columns.");
 
-	$query = "ALTER TABLE `" . SQL_PREFIX . "events`\n"
-		."ADD `ctime` timestamp NOT NULL default CURRENT_TIMESTAMP,\n"
-		."ADD `mtime` timestamp NULL default NULL";
+    $query = "ALTER TABLE `" . SQL_PREFIX . "events`\n"
+        ."ADD `ctime` timestamp NOT NULL default CURRENT_TIMESTAMP,\n"
+        ."ADD `mtime` timestamp NULL default NULL";
 
-	$dbh->query($query)
-		or db_warning($dbh, 'Error adding time elements to events table.',
-				$query);
+    $dbh->query($query)
+        or db_warning(
+            $dbh,
+            'Error adding time elements to events table.',
+            $query
+        );
 }
 
-function add_calendar_config() {
-	global $dbh;
+function add_calendar_config()
+{
+    global $dbh;
 
-	$query = "ALTER TABLE `" . SQL_PREFIX . "calendars`\n"
-		."ADD `hours_24` tinyint(1) NOT NULL DEFAULT 0,\n"
-		."ADD `date_format` tinyint(1) NOT NULL DEFAULT 0,\n"
-		."ADD `week_start` tinyint(1) NOT NULL DEFAULT 0,\n"
-		."ADD `subject_max` smallint(5) unsigned NOT NULL DEFAULT 50,\n"
-		."ADD `events_max` tinyint(3) unsigned NOT NULL DEFAULT 8,\n"
-		."ADD `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'PHP-Calendar',\n"
-		."ADD `anon_permission` tinyint(1) NOT NULL DEFAULT 1,\n"
-		."ADD `timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."ADD `language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."ADD `theme` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL";
+    $query = "ALTER TABLE `" . SQL_PREFIX . "calendars`\n"
+        ."ADD `hours_24` tinyint(1) NOT NULL DEFAULT 0,\n"
+        ."ADD `date_format` tinyint(1) NOT NULL DEFAULT 0,\n"
+        ."ADD `week_start` tinyint(1) NOT NULL DEFAULT 0,\n"
+        ."ADD `subject_max` smallint(5) unsigned NOT NULL DEFAULT 50,\n"
+        ."ADD `events_max` tinyint(3) unsigned NOT NULL DEFAULT 8,\n"
+        ."ADD `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'PHP-Calendar',\n"
+        ."ADD `anon_permission` tinyint(1) NOT NULL DEFAULT 1,\n"
+        ."ADD `timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+        ."ADD `language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+        ."ADD `theme` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL";
 
-	$dbh->query($query)
-		or db_warning($dbh, 'Error adding time elements to events table.',
-				$query);
+    $dbh->query($query)
+        or db_warning(
+            $dbh,
+            'Error adding time elements to events table.',
+            $query
+        );
 }
 
-function create_version_table() {
-	global $phpc_db_version, $dbh;
+function create_version_table()
+{
+    global $phpc_db_version, $dbh;
 
-	create_table("version",
-			"`version` SMALLINT unsigned NOT NULL DEFAULT '$phpc_db_version'");
+    create_table(
+        "version",
+        "`version` SMALLINT unsigned NOT NULL DEFAULT '$phpc_db_version'"
+    );
 
-	$query = "REPLACE INTO `" . SQL_PREFIX . "version`\n"
-		."SET `version`='$phpc_db_version'";
+    $query = "REPLACE INTO `" . SQL_PREFIX . "version`\n"
+        ."SET `version`='$phpc_db_version'";
 
-	$dbh->query($query)
-		or db_error($dbh, 'Error creating version row.', $query);
+    $dbh->query($query)
+        or db_error($dbh, 'Error creating version row.', $query);
 }
 
 function check_config()
 {
-	global $phpc_config_file;
+    global $phpc_config_file;
 
-	if(is_writable($phpc_config_file))
-		return true;
+    if (is_writable($phpc_config_file)) {
+        return true;
+    }
 
-	// Check if we can create the file
-	if($file = @fopen($phpc_config_file, 'a')) {
-		fclose($file);
-		return true;
-	}
-	return false;
+    // Check if we can create the file
+    if ($file = @fopen($phpc_config_file, 'a')) {
+        fclose($file);
+        return true;
+    }
+    return false;
 }
 
 function report_config()
 {
-	echo '<p>Your configuration file could not be written to. This file '
-		.'probably does not yet exist. If that is the case, you need to '
-		.'create it. You need to make sure this script can write to '
-		.'it. We suggest logging in with a shell and typing:</p>
+    echo '<p>Your configuration file could not be written to. This file '
+        .'probably does not yet exist. If that is the case, you need to '
+        .'create it. You need to make sure this script can write to '
+        .'it. We suggest logging in with a shell and typing:</p>
 		<pre>
 		touch config.php
 		chmod 666 config.php
 		</pre>
 		<p>or if you only have ftp access, upload a blank file named '
-		.'config.php to your php-calendar directory then use the chmod '
-		.'command to change the permissions of config.php to 666.</p>
+        .'config.php to your php-calendar directory then use the chmod '
+        .'command to change the permissions of config.php to 666.</p>
 		<p><input type="submit" value="Retry"/></p>';
 }
 
 function get_server_setup()
 {
-	if(!check_config())
-		return report_config();
+    if (!check_config()) {
+        return report_config();
+    }
 
-	echo '
+    echo '
 		<h3>Step 1: Database</h3>
 		<table class="display">
 		<tr>
@@ -445,275 +487,298 @@ function get_server_setup()
 // otherwise anyone who can reach install.php could replace config.php.
 function refuse_if_configured()
 {
-	if(defined('SQL_HOST'))
-		soft_error('The calendar is already configured. To install again, manually delete config.php.');
+    if (defined('SQL_HOST')) {
+        soft_error('The calendar is already configured. To install again, manually delete config.php.');
+    }
 }
 
 function add_sql_user_db()
 {
-	global $dbh;
+    global $dbh;
 
-	refuse_if_configured();
+    refuse_if_configured();
 
-	$my_hostname = $_POST['my_hostname'];
-	$my_username = $_POST['my_username'];
-	$my_passwd = $_POST['my_passwd'];
-	$my_prefix = $_POST['my_prefix'];
-	$my_database = $_POST['my_database'];
-	$my_adminname = $_POST['my_adminname'];
-	$my_adminpasswd = $_POST['my_adminpasswd'];
+    $my_hostname = $_POST['my_hostname'];
+    $my_username = $_POST['my_username'];
+    $my_passwd = $_POST['my_passwd'];
+    $my_prefix = $_POST['my_prefix'];
+    $my_database = $_POST['my_database'];
+    $my_adminname = $_POST['my_adminname'];
+    $my_adminpasswd = $_POST['my_adminpasswd'];
 
-	$create_user = isset($_POST['create_user'])
-		&& $_POST['create_user'] == 'yes';
-	$create_db = isset($_POST['create_db']) && $_POST['create_db'] == 'yes';
+    $create_user = isset($_POST['create_user'])
+        && $_POST['create_user'] == 'yes';
+    $create_db = isset($_POST['create_db']) && $_POST['create_db'] == 'yes';
 
-	// Make the database connection.
-	if($create_user) {
-		$dbh = connect_db($my_hostname, $my_adminname, $my_adminpasswd);
-	} else {
-		$dbh = connect_db($my_hostname, $my_username, $my_passwd);
-	}
+    // Make the database connection.
+    if ($create_user) {
+        $dbh = connect_db($my_hostname, $my_adminname, $my_adminpasswd);
+    } else {
+        $dbh = connect_db($my_hostname, $my_username, $my_passwd);
+    }
 
-	$string = "<h3>Step 2: Database Setup</h3>";
+    $string = "<h3>Step 2: Database Setup</h3>";
 
-	if($create_db) {
-		phpc_debug("Creating database \"$my_database\".");
+    if ($create_db) {
+        phpc_debug("Creating database \"$my_database\".");
 
-		$query = "CREATE DATABASE $my_database";
+        $query = "CREATE DATABASE $my_database";
 
-		$dbh->query($query)
-			or db_error($dbh, 'error creating db', $query);
+        $dbh->query($query)
+            or db_error($dbh, 'error creating db', $query);
 
-		$string .= "<p>Successfully created database</p>";
-	}
+        $string .= "<p>Successfully created database</p>";
+    }
 
-	if($create_user) {
-		phpc_debug("Creating user \"$my_username\".");
+    if ($create_user) {
+        phpc_debug("Creating user \"$my_username\".");
 
-		$query = "GRANT ALL ON accounts.* TO $my_username@$my_hostname identified by '$my_passwd'";
-		$dbh->query($query)
-			or db_error($dbh, 'Could not grant:', $query);
-		$query = "GRANT ALL ON $my_database.*\n"
-			."TO $my_username IDENTIFIED BY '$my_passwd'";
-		$dbh->query($query)
-			or db_error($dbh, 'Could not grant:', $query);
+        $query = "GRANT ALL ON accounts.* TO $my_username@$my_hostname identified by '$my_passwd'";
+        $dbh->query($query)
+            or db_error($dbh, 'Could not grant:', $query);
+        $query = "GRANT ALL ON $my_database.*\n"
+            ."TO $my_username IDENTIFIED BY '$my_passwd'";
+        $dbh->query($query)
+            or db_error($dbh, 'Could not grant:', $query);
 
-		$query = "FLUSH PRIVILEGES";
-		$dbh->query($query)
-			or db_error($dbh, "Could not flush privileges", $query);
+        $query = "FLUSH PRIVILEGES";
+        $dbh->query($query)
+            or db_error($dbh, "Could not flush privileges", $query);
 
-		$string .= "<p>Successfully added user</p>";
-	}
+        $string .= "<p>Successfully added user</p>";
+    }
 
-	echo "$string\n"
-		."<div><input type=\"submit\" name=\"done_user_db\" value=\"continue\"/>"
-		."</div>\n";
+    echo "$string\n"
+        ."<div><input type=\"submit\" name=\"done_user_db\" value=\"continue\"/>"
+        ."</div>\n";
 
 }
 
 
 function install_base()
 {
-	global $phpc_config_file, $dbh;
+    global $phpc_config_file, $dbh;
 
-	refuse_if_configured();
+    refuse_if_configured();
 
-	$config = array(
-		'SQL_HOST'     => (string)$_POST['my_hostname'],
-		'SQL_USER'     => (string)$_POST['my_username'],
-		'SQL_PASSWD'   => (string)$_POST['my_passwd'],
-		'SQL_DATABASE' => (string)$_POST['my_database'],
-		'SQL_PREFIX'   => (string)$_POST['my_prefix'],
-		'SQL_TYPE'     => 'mysqli',
-	);
+    $config = array(
+        'SQL_HOST'     => (string)$_POST['my_hostname'],
+        'SQL_USER'     => (string)$_POST['my_username'],
+        'SQL_PASSWD'   => (string)$_POST['my_passwd'],
+        'SQL_DATABASE' => (string)$_POST['my_database'],
+        'SQL_PREFIX'   => (string)$_POST['my_prefix'],
+        'SQL_TYPE'     => 'mysqli',
+    );
 
-	// The prefix and database name are used unquoted in SQL identifiers.
-	if(!preg_match('/^\w*$/', $config['SQL_PREFIX']))
-		soft_error('The table prefix may only contain letters, numbers and underscores.');
-	if(!preg_match('/^\w+$/', $config['SQL_DATABASE']))
-		soft_error('The database name may only contain letters, numbers and underscores.');
+    // The prefix and database name are used unquoted in SQL identifiers.
+    if (!preg_match('/^\w*$/', $config['SQL_PREFIX'])) {
+        soft_error('The table prefix may only contain letters, numbers and underscores.');
+    }
+    if (!preg_match('/^\w+$/', $config['SQL_DATABASE'])) {
+        soft_error('The database name may only contain letters, numbers and underscores.');
+    }
 
-	// Make the database connection.
-	$dbh = connect_db($config['SQL_HOST'], $config['SQL_USER'],
-			$config['SQL_PASSWD'], $config['SQL_DATABASE']);
+    // Make the database connection.
+    $dbh = connect_db(
+        $config['SQL_HOST'],
+        $config['SQL_USER'],
+        $config['SQL_PASSWD'],
+        $config['SQL_DATABASE']
+    );
 
-	$fp = fopen($phpc_config_file, 'w')
-		or soft_error('Couldn\'t open config file.');
+    $fp = fopen($phpc_config_file, 'w')
+        or soft_error('Couldn\'t open config file.');
 
-	phpc_debug("Writing config file \"$phpc_config_file\".");
+    phpc_debug("Writing config file \"$phpc_config_file\".");
 
-	// var_export() produces safely quoted PHP literals
-	$defines = '';
-	foreach($config as $name => $value) {
-		$defines .= "define('$name', " . var_export($value, true) . ");\n";
-	}
+    // var_export() produces safely quoted PHP literals
+    $defines = '';
+    foreach ($config as $name => $value) {
+        $defines .= "define('$name', " . var_export($value, true) . ");\n";
+    }
 
-	fwrite($fp, "<"."?php\n$defines?".">\n") // Break this up to fix syntax HL in vim
-		or soft_error("Could not write to file");
-	fclose($fp);
+    fwrite($fp, "<"."?php\n$defines?".">\n") // Break this up to fix syntax HL in vim
+        or soft_error("Could not write to file");
+    fclose($fp);
 
-	foreach($config as $name => $value) {
-		define($name, $value);
-	}
+    foreach ($config as $name => $value) {
+        define($name, $value);
+    }
 
-	create_tables();
+    create_tables();
 
-	echo "<p>Config file created at \"". realpath($phpc_config_file) ."\"</p>"
-		."<p>Calendars database created</p>\n"
-		."<div><input type=\"submit\" name=\"base\" value=\"continue\">"
-		."</div>\n";
+    echo "<p>Config file created at \"". realpath($phpc_config_file) ."\"</p>"
+        ."<p>Calendars database created</p>\n"
+        ."<div><input type=\"submit\" name=\"base\" value=\"continue\">"
+        ."</div>\n";
 }
 
 function create_tables()
 {
-	global $dbh;
+    global $dbh;
 
-	create_table("events",
-		"`eid` int(11) unsigned NOT NULL auto_increment,\n"
-		."`cid` int(11) unsigned NOT NULL,\n"
-		."`owner` int(11) unsigned NOT NULL default 0,\n"
-		."`subject` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
-		."`description` text collate utf8_unicode_ci NOT NULL,\n"
-		."`readonly` tinyint(1) NOT NULL default 0,\n"
-		."`catid` int(11) unsigned default NULL,\n"
-		."`ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
-		."`mtime` timestamp NULL DEFAULT NULL,\n"
-		."PRIMARY KEY (`eid`)\n",
-		"AUTO_INCREMENT=1");
+    create_table(
+        "events",
+        "`eid` int(11) unsigned NOT NULL auto_increment,\n"
+        ."`cid` int(11) unsigned NOT NULL,\n"
+        ."`owner` int(11) unsigned NOT NULL default 0,\n"
+        ."`subject` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
+        ."`description` text collate utf8_unicode_ci NOT NULL,\n"
+        ."`readonly` tinyint(1) NOT NULL default 0,\n"
+        ."`catid` int(11) unsigned default NULL,\n"
+        ."`ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
+        ."`mtime` timestamp NULL DEFAULT NULL,\n"
+        ."PRIMARY KEY (`eid`)\n",
+        "AUTO_INCREMENT=1"
+    );
 
-	create_table("occurrences",
-		"`oid` int(11) unsigned NOT NULL auto_increment,\n"
-		."`eid` int(11) unsigned NOT NULL,\n"
-		."`start_date` date default NULL,\n"
-		."`end_date` date default NULL,\n"
-		."`start_ts` timestamp NULL default NULL,\n"
-		."`end_ts` timestamp NULL default NULL,\n"
-		."`time_type` tinyint(4) NOT NULL default '0',\n"
-		."PRIMARY KEY  (`oid`),\n"
-		."KEY `eid` (`eid`)\n",
-		"AUTO_INCREMENT=1");
+    create_table(
+        "occurrences",
+        "`oid` int(11) unsigned NOT NULL auto_increment,\n"
+        ."`eid` int(11) unsigned NOT NULL,\n"
+        ."`start_date` date default NULL,\n"
+        ."`end_date` date default NULL,\n"
+        ."`start_ts` timestamp NULL default NULL,\n"
+        ."`end_ts` timestamp NULL default NULL,\n"
+        ."`time_type` tinyint(4) NOT NULL default '0',\n"
+        ."PRIMARY KEY  (`oid`),\n"
+        ."KEY `eid` (`eid`)\n",
+        "AUTO_INCREMENT=1"
+    );
 
-	create_table("users",
-		"`uid` int(11) unsigned NOT NULL auto_increment,\n"
-		."`username` varchar(32) collate utf8_unicode_ci NOT NULL,\n"
-		."`password` varchar(32) collate utf8_unicode_ci NOT NULL default '',\n"
-		."`admin` tinyint(4) NOT NULL DEFAULT '0',\n"
-		."`password_editable` tinyint(1) NOT NULL DEFAULT '1',\n"
-		."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."`language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."`gid` int(11),\n"
-		."PRIMARY KEY (`uid`),\n"
-		."UNIQUE KEY `username` (`username`)\n",
-		"AUTO_INCREMENT=1");
+    create_table(
+        "users",
+        "`uid` int(11) unsigned NOT NULL auto_increment,\n"
+        ."`username` varchar(32) collate utf8_unicode_ci NOT NULL,\n"
+        ."`password` varchar(32) collate utf8_unicode_ci NOT NULL default '',\n"
+        ."`admin` tinyint(4) NOT NULL DEFAULT '0',\n"
+        ."`password_editable` tinyint(1) NOT NULL DEFAULT '1',\n"
+        ."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+        ."`language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+        ."`gid` int(11),\n"
+        ."PRIMARY KEY (`uid`),\n"
+        ."UNIQUE KEY `username` (`username`)\n",
+        "AUTO_INCREMENT=1"
+    );
 
-	// added in 2.0-rc3
-	create_table("groups",
-		"`gid` int(11) NOT NULL AUTO_INCREMENT,\n"
-		."`cid` int(11),\n"
-		."`name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."PRIMARY KEY (`gid`)\n");
+    // added in 2.0-rc3
+    create_table(
+        "groups",
+        "`gid` int(11) NOT NULL AUTO_INCREMENT,\n"
+        ."`cid` int(11),\n"
+        ."`name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+        ."PRIMARY KEY (`gid`)\n"
+    );
 
-	// added in 2.0-rc3
-	create_table("user_groups",
-		"`gid` int(11),\n"
-		."`uid` int(11)\n");
+    // added in 2.0-rc3
+    create_table(
+        "user_groups",
+        "`gid` int(11),\n"
+        ."`uid` int(11)\n"
+    );
 
-	create_logins_table();
+    create_logins_table();
 
-	create_table("permissions",
-		"`cid` int(11) unsigned NOT NULL,\n"
-		."`uid` int(11) unsigned NOT NULL,\n"
-		."`read` tinyint(1) NOT NULL,\n"
-		."`write` tinyint(1) NOT NULL,\n"
-		."`readonly` tinyint(1) NOT NULL,\n"
-		."`modify` tinyint(1) NOT NULL,\n"
-		."`admin` tinyint(1) NOT NULL,\n"
-		."UNIQUE KEY `cid` (`cid`,`uid`)\n");
+    create_table(
+        "permissions",
+        "`cid` int(11) unsigned NOT NULL,\n"
+        ."`uid` int(11) unsigned NOT NULL,\n"
+        ."`read` tinyint(1) NOT NULL,\n"
+        ."`write` tinyint(1) NOT NULL,\n"
+        ."`readonly` tinyint(1) NOT NULL,\n"
+        ."`modify` tinyint(1) NOT NULL,\n"
+        ."`admin` tinyint(1) NOT NULL,\n"
+        ."UNIQUE KEY `cid` (`cid`,`uid`)\n"
+    );
 
-	create_table("calendars",
-		"`cid` int(11) unsigned NOT NULL auto_increment,\n"
-		."`hours_24` tinyint(1) NOT NULL DEFAULT 0,\n"
-		."`date_format` tinyint(1) NOT NULL DEFAULT 0,\n"
-		."`week_start` tinyint(1) NOT NULL DEFAULT 0,\n"
-		."`subject_max` smallint(5) unsigned NOT NULL DEFAULT 50,\n"
-		."`events_max` tinyint(4) unsigned NOT NULL DEFAULT 8,\n"
-		."`title` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'PHP-Calendar',\n"
-		."`anon_permission` tinyint(1) NOT NULL DEFAULT 1,\n"
-		."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."`language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."`theme` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
-		."PRIMARY KEY  (`cid`)\n",
-		"AUTO_INCREMENT=1");
+    create_table(
+        "calendars",
+        "`cid` int(11) unsigned NOT NULL auto_increment,\n"
+        ."`hours_24` tinyint(1) NOT NULL DEFAULT 0,\n"
+        ."`date_format` tinyint(1) NOT NULL DEFAULT 0,\n"
+        ."`week_start` tinyint(1) NOT NULL DEFAULT 0,\n"
+        ."`subject_max` smallint(5) unsigned NOT NULL DEFAULT 50,\n"
+        ."`events_max` tinyint(4) unsigned NOT NULL DEFAULT 8,\n"
+        ."`title` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'PHP-Calendar',\n"
+        ."`anon_permission` tinyint(1) NOT NULL DEFAULT 1,\n"
+        ."`timezone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+        ."`language` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+        ."`theme` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n"
+        ."PRIMARY KEY  (`cid`)\n",
+        "AUTO_INCREMENT=1"
+    );
 
-	create_table("categories",
-		"`catid` int(11) unsigned NOT NULL auto_increment,\n"
-		."`cid` int(11) unsigned NOT NULL,\n"
-		."`gid` int(11) unsigned DEFAULT NULL,\n"
-		."`name` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
-		."`text_color` varchar(255) collate utf8_unicode_ci default NULL,\n"
-		."`bg_color` varchar(255) collate utf8_unicode_ci default NULL,\n"
-		."PRIMARY KEY  (`catid`),\n"
-		."KEY `cid` (`cid`)\n",
-		"AUTO_INCREMENT=1");
+    create_table(
+        "categories",
+        "`catid` int(11) unsigned NOT NULL auto_increment,\n"
+        ."`cid` int(11) unsigned NOT NULL,\n"
+        ."`gid` int(11) unsigned DEFAULT NULL,\n"
+        ."`name` varchar(255) collate utf8_unicode_ci NOT NULL,\n"
+        ."`text_color` varchar(255) collate utf8_unicode_ci default NULL,\n"
+        ."`bg_color` varchar(255) collate utf8_unicode_ci default NULL,\n"
+        ."PRIMARY KEY  (`catid`),\n"
+        ."KEY `cid` (`cid`)\n",
+        "AUTO_INCREMENT=1"
+    );
 
-	create_version_table();
+    create_version_table();
 }
 
 function get_admin()
 {
-	echo '<h3>Step 4: Administration account</h3>';
-	echo "<table>\n"
-		."<tr><td colspan=\"2\">Now you must create the calendar administrative "
-		."account.</td></tr>\n"
-		."<tr><td>\n"
-		."Admin name:\n"
-		."</td><td>\n"
-		."<input type=\"text\" name=\"admin_user\" />\n"
-		."</td></tr><tr><td>\n"
-		."Admin password:"
-		."</td><td>\n"
-		."<input type=\"password\" name=\"admin_pass\" />\n"
-		."</td></tr><tr><td colspan=\"2\">"
-		."<input type=\"submit\" value=\"Create Admin Account\" />\n"
-		."</td></tr></table>\n";
+    echo '<h3>Step 4: Administration account</h3>';
+    echo "<table>\n"
+        ."<tr><td colspan=\"2\">Now you must create the calendar administrative "
+        ."account.</td></tr>\n"
+        ."<tr><td>\n"
+        ."Admin name:\n"
+        ."</td><td>\n"
+        ."<input type=\"text\" name=\"admin_user\" />\n"
+        ."</td></tr><tr><td>\n"
+        ."Admin password:"
+        ."</td><td>\n"
+        ."<input type=\"password\" name=\"admin_pass\" />\n"
+        ."</td></tr><tr><td colspan=\"2\">"
+        ."<input type=\"submit\" value=\"Create Admin Account\" />\n"
+        ."</td></tr></table>\n";
 
 }
 
 function add_calendar()
 {
-	global $dbh, $phpc_config_file;
+    global $dbh, $phpc_config_file;
 
-	$calendar_title = 'PHP-Calendar';
+    $calendar_title = 'PHP-Calendar';
 
-	// Make the database connection.
-	$dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
+    // Make the database connection.
+    $dbh = connect_db(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE);
 
-	$query = "INSERT INTO ".SQL_PREFIX."calendars\n"
-		."(`cid`) VALUE (1)";
+    $query = "INSERT INTO ".SQL_PREFIX."calendars\n"
+        ."(`cid`) VALUE (1)";
 
-	$dbh->query($query)
-		or db_error($dbh, 'Error reading options', $query);
+    $dbh->query($query)
+        or db_error($dbh, 'Error reading options', $query);
 
-	$cid = $dbh->insert_id;
+    $cid = $dbh->insert_id;
 
-	echo "<h3>Final Step</h3>\n";
+    echo "<h3>Final Step</h3>\n";
 
-	echo "<p>Saved default configuration</p>\n";
+    echo "<p>Saved default configuration</p>\n";
 
-	$passwd = md5($_POST['admin_pass']);
-	$admin_user = $dbh->real_escape_string($_POST['admin_user']);
+    $passwd = md5($_POST['admin_pass']);
+    $admin_user = $dbh->real_escape_string($_POST['admin_user']);
 
-	$query = "INSERT INTO `" . SQL_PREFIX . "users`\n"
-		."(`username`, `password`, `admin`) VALUES\n"
-		."('$admin_user', '$passwd', 1)";
+    $query = "INSERT INTO `" . SQL_PREFIX . "users`\n"
+        ."(`username`, `password`, `admin`) VALUES\n"
+        ."('$admin_user', '$passwd', 1)";
 
-	$dbh->query($query)
-		or db_error($dbh, 'Error adding admin.', $query);
+    $dbh->query($query)
+        or db_error($dbh, 'Error adding admin.', $query);
 
-	echo "<p>Admin account created.</p>";
-	echo "<p>Now you should delete install.php file from root directory (for security reasons).</p>";
-	echo "<p>You should also change the permissions on config.php so only your webserver can read it.</p>";
-	echo "<p><a href=\"index.php\">View calendar</a></p>";
+    echo "<p>Admin account created.</p>";
+    echo "<p>Now you should delete install.php file from root directory (for security reasons).</p>";
+    echo "<p>You should also change the permissions on config.php so only your webserver can read it.</p>";
+    echo "<p><a href=\"index.php\">View calendar</a></p>";
 }
 
 echo '</form></body></html>';
@@ -721,102 +786,111 @@ echo '</form></body></html>';
 // called when there is an error involving the DB
 function db_error($dbh, $str, $query = "")
 {
-	$string = "$str<br />" . $dbh->error;
+    $string = "$str<br />" . $dbh->error;
 
-	if($query != "")
-		$string .= "<br />SQL query: $query";
+    if ($query != "") {
+        $string .= "<br />SQL query: $query";
+    }
 
-	soft_error($string);
+    soft_error($string);
 }
 
 // called when there is an error involving the DB that we should keep trying
 //   to procede after
 function db_warning($dbh, $str, $query = "")
 {
-	$string = "$str<br />" . $dbh->error;
+    $string = "$str<br />" . $dbh->error;
 
-	if($query != "")
-		$string .= "<br />SQL query: $query";
+    if ($query != "") {
+        $string .= "<br />SQL query: $query";
+    }
 
-	echo $string;
+    echo $string;
 }
 
 function connect_db($hostname, $username, $passwd, $database = false)
 {
 
-	phpc_debug("Connecting to SQL server $hostname with user $username.");
+    phpc_debug("Connecting to SQL server $hostname with user $username.");
 
-	$dbh = new mysqli($hostname, $username, $passwd);
+    $dbh = new mysqli($hostname, $username, $passwd);
 
-	if(mysqli_connect_errno()) {
-		soft_error("Database connect failed (" . mysqli_connect_errno()
-				. "): " . mysqli_connect_error());
-	}
+    if (mysqli_connect_errno()) {
+        soft_error("Database connect failed (" . mysqli_connect_errno()
+                . "): " . mysqli_connect_error());
+    }
 
-	if($database) {
-		phpc_debug("Selecting database $database");
-		$dbh->select_db($database)
-			or soft_error("Could not select database \"$database\".");
-	}
-	$dbh->query("SET NAMES 'utf8'");
+    if ($database) {
+        phpc_debug("Selecting database $database");
+        $dbh->select_db($database)
+            or soft_error("Could not select database \"$database\".");
+    }
+    $dbh->query("SET NAMES 'utf8'");
 
-	return $dbh;
+    return $dbh;
 }
 
 // called when some error happens
 function soft_error($str)
 {
-	echo "<h1>Software Error</h1>\n",
-	     "<h2>Message:</h2>\n",
-	     "<pre>$str</pre>\n",
-	     "<h2>Backtrace</h2>\n",
-	     "<ol>\n";
-	foreach(debug_backtrace() as $bt) {
-		echo "<li>$bt[file]:$bt[line] - $bt[function]</li>\n";
-	}
-	echo "</ol>\n";
-	exit;
+    echo "<h1>Software Error</h1>\n",
+    "<h2>Message:</h2>\n",
+    "<pre>$str</pre>\n",
+    "<h2>Backtrace</h2>\n",
+    "<ol>\n";
+    foreach (debug_backtrace() as $bt) {
+        echo "<li>$bt[file]:$bt[line] - $bt[function]</li>\n";
+    }
+    echo "</ol>\n";
+    exit;
 }
 
-function create_logins_table() {
-	global $dbh;
+function create_logins_table()
+{
+    global $dbh;
 
-	echo '<h3>Step 3: Database Created</h3>';
-	create_table("logins",
-		"`uid` int(11) unsigned NOT NULL,\n"
-		."`series` char(43) collate utf8_unicode_ci NOT NULL,\n"
-		."`token` char(43) collate utf8_unicode_ci NOT NULL,\n"
-		."`atime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
-		."PRIMARY KEY  (`uid`, `series`)\n");
+    echo '<h3>Step 3: Database Created</h3>';
+    create_table(
+        "logins",
+        "`uid` int(11) unsigned NOT NULL,\n"
+        ."`series` char(43) collate utf8_unicode_ci NOT NULL,\n"
+        ."`token` char(43) collate utf8_unicode_ci NOT NULL,\n"
+        ."`atime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
+        ."PRIMARY KEY  (`uid`, `series`)\n"
+    );
 
-	echo "<p>Logins table updated.</p>";
+    echo "<p>Logins table updated.</p>";
 }
 
-function create_table($suffix, $columns, $table_args = "") {
-	global $drop_tables, $dbh;
+function create_table($suffix, $columns, $table_args = "")
+{
+    global $drop_tables, $dbh;
 
-	$table_name = SQL_PREFIX . $suffix;
+    $table_name = SQL_PREFIX . $suffix;
 
-	phpc_debug("Creating table \"$table_name\".");
+    phpc_debug("Creating table \"$table_name\".");
 
-	if($drop_tables) {
-		$query = "DROP TABLE IF EXISTS `$table_name`";
+    if ($drop_tables) {
+        $query = "DROP TABLE IF EXISTS `$table_name`";
 
-		$dbh->query($query)
-			or db_error($dbh, "Error dropping table `$table_name`.",
-					$query);
-	}
+        $dbh->query($query)
+            or db_error(
+                $dbh,
+                "Error dropping table `$table_name`.",
+                $query
+            );
+    }
 
-	$query = "CREATE TABLE `$table_name` (\n"
-		.$columns
-		.") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci $table_args;\n";
+    $query = "CREATE TABLE `$table_name` (\n"
+        .$columns
+        .") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci $table_args;\n";
 
-	$dbh->query($query)
-		or db_error($dbh, "Error creating table `$table_name`.",
-				$query);
+    $dbh->query($query)
+        or db_error($dbh, "Error creating table `$table_name`.",
+            $query);
 }
 
-function phpc_debug($msg) {
-	echo "<p>$msg</p>";
+function phpc_debug($msg)
+{
+    echo "<p>$msg</p>";
 }
-?>

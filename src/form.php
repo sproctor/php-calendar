@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2013 Sean Proctor
  *
@@ -23,7 +24,7 @@
 
 /*
 if(!defined('IN_PHPC')) {
-	   die("Hacking attempt");
+       die("Hacking attempt");
 }
 */
 
@@ -34,14 +35,14 @@ require_once('html.php');
 
 abstract class FormPart
 {
-    var $class = "form-part";
+    public $class = "form-part";
 
     /**
      * @param FormPart $parent
      * @param array $defaults
      * @return Html
      */
-    abstract function get_html($parent, $defaults = array());
+    abstract public function get_html($parent, $defaults = array());
 
     /**
      * @param FormPart $parent
@@ -57,41 +58,46 @@ abstract class FormPart
 class FormGroup extends FormPart
 {
     /** @var FormPart[] */
-    var $list = array();
-    var $title = false;
+    public $list = array();
+    public $title = false;
 
-    function __construct($title = false, $class = false)
+    public function __construct($title = false, $class = false)
     {
         $this->title = $title;
         $this->class .= " form-group";
-        if ($class !== false)
+        if ($class !== false) {
             $this->class = " $class";
+        }
     }
 
     /* add a category or question */
-    function add_part(FormPart $item)
+    public function add_part(FormPart $item)
     {
         $this->list[] = $item;
     }
 
-    function get_html($parent, $defaults = array())
+    public function get_html($parent, $defaults = array())
     {
         // If a FormGroup is embedded in another FormGroup we want to
         //   start a new table. If it isn't, we assume that our parent
         //   (radio or dropdown) has already created the table for us.
-        if (!is_a($parent, 'FormGroup'))
+        if (!is_a($parent, 'FormGroup')) {
             return $this->get_specific_html($parent, $defaults);
+        }
 
         $tag = tag('tr', attrs("class=\"{$this->class}\""));
         $cell = tag('td');
 
-        if ($this->title !== false)
+        if ($this->title !== false) {
             $tag->add(tag('th', $this->title));
-        else
+        } else {
             $cell->add(attrs("colspan=\"2\""));
+        }
 
-        $cell->add(tag('table', $this->get_specific_html($parent,
-            $defaults)));
+        $cell->add(tag('table', $this->get_specific_html(
+            $parent,
+            $defaults
+        )));
         $tag->add($cell);
 
         return $tag;
@@ -113,11 +119,11 @@ class FormGroup extends FormPart
 abstract class FormQuestion extends FormPart
 {
     /** @var string|bool */
-    var $qid;
+    public $qid;
     /** @var string|bool */
-    var $subject;
+    public $subject;
     /** @var string|bool */
-    var $description;
+    public $description;
 
     /**
      * FormQuestion constructor.
@@ -125,7 +131,7 @@ abstract class FormQuestion extends FormPart
      * @param string $subject
      * @param string|bool $description
      */
-    function __construct($qid, $subject, $description)
+    public function __construct($qid, $subject, $description)
     {
         $this->class .= " form-question";
         $this->qid = $qid;
@@ -133,19 +139,24 @@ abstract class FormQuestion extends FormPart
         $this->description = $description;
     }
 
-    function get_html($parent, $defaults = array())
+    public function get_html($parent, $defaults = array())
     {
         $tag = tag('tr', attrs("class=\"{$this->class}\""));
         $cell = tag('td');
 
-        if ($this->subject !== false)
+        if ($this->subject !== false) {
             $tag->add(tag('th', tag('label', attributes("for=\"{$this->qid}\""), $this->subject)));
-        else
+        } else {
             $cell->add(attrs("colspan=\"2\""));
+        }
 
-        if ($this->description !== false)
-            $cell->add(tag('label', attrs("for=\"{$this->qid}\"", 'class="form-question-description"'),
-                $this->description));
+        if ($this->description !== false) {
+            $cell->add(tag(
+                'label',
+                attrs("for=\"{$this->qid}\"", 'class="form-question-description"'),
+                $this->description
+            ));
+        }
 
         $cell->add($this->get_specific_html($parent, $defaults));
         $tag->add($cell);
@@ -165,7 +176,7 @@ abstract class FormAtomicQuestion extends FormQuestion
      * @param string $subject
      * @param string $description
      */
-    function __construct($qid, $subject, $description)
+    public function __construct($qid, $subject, $description)
     {
         parent::__construct($qid, $subject, $description);
         $this->class .= " form-atomic-question";
@@ -178,10 +189,10 @@ abstract class FormAtomicQuestion extends FormQuestion
 
 class FormFreeQuestion extends FormAtomicQuestion
 {
-    var $maxlen;
-    var $type;
+    public $maxlen;
+    public $type;
 
-    function __construct($qid, $subject, $description = false, $maxlen = false)
+    public function __construct($qid, $subject, $description = false, $maxlen = false)
     {
         parent::__construct($qid, $subject, $description);
         $this->maxlen = $maxlen;
@@ -191,8 +202,11 @@ class FormFreeQuestion extends FormAtomicQuestion
 
     protected function get_specific_html($parent, $defaults)
     {
-        $attrs = attrs("name=\"{$this->qid}\"", "id=\"{$this->qid}\"",
-            "type=\"$this->type\"");
+        $attrs = attrs(
+            "name=\"{$this->qid}\"",
+            "id=\"{$this->qid}\"",
+            "type=\"$this->type\""
+        );
         if (!empty($defaults[$this->qid])) {
             $attrs->add("value=\"{$defaults[$this->qid]}\"");
         }
@@ -212,10 +226,10 @@ class FormFreeQuestion extends FormAtomicQuestion
 
 class FormLongFreeQuestion extends FormAtomicQuestion
 {
-    var $rows;
-    var $cols;
+    public $rows;
+    public $cols;
 
-    function __construct($qid, $subject, $description = false, $rows = 8, $cols = 80)
+    public function __construct($qid, $subject, $description = false, $rows = 8, $cols = 80)
     {
         parent::__construct($qid, $subject, $description);
         $this->rows = $rows;
@@ -225,28 +239,39 @@ class FormLongFreeQuestion extends FormAtomicQuestion
 
     protected function get_specific_html($parent, $defaults)
     {
-        if (isset($defaults[$this->qid]))
+        if (isset($defaults[$this->qid])) {
             $text = $defaults[$this->qid];
-        else
+        } else {
             $text = '';
+        }
 
-        $tag = tag('textarea', attrs("rows=\"{$this->rows}\"",
+        $tag = tag('textarea', attrs(
+            "rows=\"{$this->rows}\"",
             "name=\"{$this->qid}\"",
-	    "id=\"{$this->qid}\"",
-            "cols=\"{$this->cols}\""), $text);
+            "id=\"{$this->qid}\"",
+            "cols=\"{$this->cols}\""
+        ), $text);
         return tag('div', attrs("class=\"form-textarea\""), $tag);
     }
 }
 
 function form_date_input($qid, $defaults, $dateFormat)
 {
-    $date_attrs = attrs('type="text"', 'class="form-date"',
-        "name=\"$qid-date\"", "id=\"$qid-date\"");
-    if (isset($defaults["$qid-date"]))
+    $date_attrs = attrs(
+        'type="text"',
+        'class="form-date"',
+        "name=\"$qid-date\"",
+        "id=\"$qid-date\""
+    );
+    if (isset($defaults["$qid-date"])) {
         $date_attrs->add("value=\"{$defaults["$qid-date"]}\"");
+    }
     return array(tag('input', $date_attrs),
-        tag('script', attrs('type="text/javascript"'),
-            "\$('#$qid-date').datepicker({dateFormat: \"$dateFormat\", firstDay: " . day_of_week_start() . " });"));
+        tag(
+            'script',
+            attrs('type="text/javascript"'),
+            "\$('#$qid-date').datepicker({dateFormat: \"$dateFormat\", firstDay: " . day_of_week_start() . " });"
+        ));
     /**** */
 }
 
@@ -255,9 +280,9 @@ function form_date_input($qid, $defaults, $dateFormat)
 
 class FormDateQuestion extends FormAtomicQuestion
 {
-    var $date_format;
+    public $date_format;
 
-    function __construct($qid, $subject, $date_format, $description = false)
+    public function __construct($qid, $subject, $date_format, $description = false)
     {
         parent::__construct($qid, $subject, $description);
         $this->class .= " form-date-question";
@@ -283,24 +308,38 @@ class FormDateQuestion extends FormAtomicQuestion
                 soft_error("Unrecognized date format.");
         }
 
-        return tag('div', attrs("class=\"{$this->class}\""),
+        return tag(
+            'div',
+            attrs("class=\"{$this->class}\""),
             tag('label', attrs("for=\"{$this->qid}-date\""), __("Date") . " ($date_string): "),
-            form_date_input($this->qid, $defaults,
-                $dateFormat));
+            form_date_input(
+                $this->qid,
+                $defaults,
+                $dateFormat
+            )
+        );
     }
 }
 
 function form_time_input($qid, $defaults, $hour24)
 {
     $showPeriod = $hour24 ? "false" : "true";
-    $time_attrs = attrs('type="text"', 'class="form-time"',
-        "name=\"$qid-time\"", "id=\"$qid-time\"");
-    if (isset($defaults["$qid-time"]))
+    $time_attrs = attrs(
+        'type="text"',
+        'class="form-time"',
+        "name=\"$qid-time\"",
+        "id=\"$qid-time\""
+    );
+    if (isset($defaults["$qid-time"])) {
         $time_attrs->add("value=\"{$defaults["$qid-time"]}\"");
+    }
 
     return array(tag('input', $time_attrs),
-        tag('script', attrs('type="text/javascript"'),
-            "\$('#$qid-time').timepicker({showPeriod: $showPeriod, showLeadingZero: false });"));
+        tag(
+            'script',
+            attrs('type="text/javascript"'),
+            "\$('#$qid-time').timepicker({showPeriod: $showPeriod, showLeadingZero: false });"
+        ));
 }
 
 /* this class is for time input
@@ -308,9 +347,9 @@ function form_time_input($qid, $defaults, $hour24)
 
 class FormTimeQuestion extends FormAtomicQuestion
 {
-    var $hour24;
+    public $hour24;
 
-    function __construct($qid, $subject, $hour24, $description = false)
+    public function __construct($qid, $subject, $hour24, $description = false)
     {
         parent::__construct($qid, $subject, $description);
         $this->class .= " form-time-question";
@@ -319,8 +358,11 @@ class FormTimeQuestion extends FormAtomicQuestion
 
     protected function get_specific_html($parent, $defaults)
     {
-        return tag('div', attrs("class=\"{$this->class}\""),
-            form_time_input($this->qid, $defaults, $this->hour24));
+        return tag(
+            'div',
+            attrs("class=\"{$this->class}\""),
+            form_time_input($this->qid, $defaults, $this->hour24)
+        );
     }
 }
 
@@ -329,10 +371,10 @@ class FormTimeQuestion extends FormAtomicQuestion
 
 class FormDateTimeQuestion extends FormAtomicQuestion
 {
-    var $hour24;
-    var $date_format;
+    public $hour24;
+    public $date_format;
 
-    function __construct($qid, $subject, $hour24, $date_format, $description = false)
+    public function __construct($qid, $subject, $hour24, $date_format, $description = false)
     {
         parent::__construct($qid, $subject, $description);
         $this->class .= " form-date-time-question";
@@ -360,11 +402,17 @@ class FormDateTimeQuestion extends FormAtomicQuestion
         }
 
         return array(tag('label', attrs("for=\"{$this->qid}-date\""), __("Date") . " ($date_string): "),
-            form_date_input($this->qid, $defaults,
-                $dateFormat),
+            form_date_input(
+                $this->qid,
+                $defaults,
+                $dateFormat
+            ),
             " ", tag('label', attrs("for=\"{$this->qid}-time\""), __('Time') . ": "),
-            form_time_input($this->qid, $defaults,
-                $this->hour24));
+            form_time_input(
+                $this->qid,
+                $defaults,
+                $this->hour24
+            ));
     }
 }
 
@@ -373,9 +421,9 @@ class FormDateTimeQuestion extends FormAtomicQuestion
 
 class FormSubmitButton extends FormQuestion
 {
-    var $title;
+    public $title;
 
-    function __construct($title = false)
+    public function __construct($title = false)
     {
         parent::__construct(false, false, false);
         $this->title = $title;
@@ -388,8 +436,11 @@ class FormSubmitButton extends FormQuestion
         if ($this->title !== false) {
             $attrs->add("value=\"{$this->title}\"");
         }
-        return tag('div', attrs("class=\"{$this->class}\""),
-            tag('input', $attrs));
+        return tag(
+            'div',
+            attrs("class=\"{$this->class}\""),
+            tag('input', $attrs)
+        );
     }
 }
 
@@ -400,26 +451,31 @@ class FormSubmitButton extends FormQuestion
 abstract class FormCompoundQuestion extends FormQuestion
 {
     /** @var FormPart[] */
-    var $conditionals = array();
-    var $options = array();
-    var $descriptions = array();
+    public $conditionals = array();
+    public $options = array();
+    public $descriptions = array();
 
-    function __construct($qid, $subject, $description)
+    public function __construct($qid, $subject, $description)
     {
         parent::__construct($qid, $subject, $description);
     }
 
-    function add_option($key, $title, $description = NULL,
-                        $conditional = NULL)
-    {
+    public function add_option(
+        $key,
+        $title,
+        $description = null,
+        $conditional = null
+    ) {
         $this->options[$key] = $title;
-        if ($description !== NULL)
+        if ($description !== null) {
             $this->descriptions[$key] = $description;
-        if ($conditional !== NULL)
+        }
+        if ($conditional !== null) {
             $this->conditionals[$key] = $conditional;
+        }
     }
 
-    function add_options($options)
+    public function add_options($options)
     {
         foreach ($options as $key => $title) {
             $this->add_option($key, $title);
@@ -432,31 +488,40 @@ abstract class FormCompoundQuestion extends FormQuestion
 
 class FormCheckBoxQuestion extends FormAtomicQuestion
 {
-    var $checkbox_description;
+    public $checkbox_description;
 
-    function __construct($qid, $subject = false, $description = false)
+    public function __construct($qid, $subject = false, $description = false)
     {
         parent::__construct($qid, $subject, false);
         $this->class .= " form-checkbox-question";
-	$this->checkbox_description = $description;
+        $this->checkbox_description = $description;
     }
 
     protected function get_specific_html($parent, $defaults)
     {
-        $attrs = attrs('type="checkbox"',
+        $attrs = attrs(
+            'type="checkbox"',
             "name=\"{$this->qid}\"",
             "id=\"{$this->qid}\"",
             'value="1"',
-            'class="form-checkbox"');
+            'class="form-checkbox"'
+        );
 
-        if (!empty($defaults[$this->qid]))
+        if (!empty($defaults[$this->qid])) {
             $attrs->add("checked=\"checked\"");
+        }
 
         $tag = tag('div', tag('input', $attrs));
-        if (!empty($this->checkbox_description))
-            $tag->add(tag('label', attrs("for=\"{$this->qid}\"",
-                'class="form-question-description"'),
-                $this->checkbox_description));
+        if (!empty($this->checkbox_description)) {
+            $tag->add(tag(
+                'label',
+                attrs(
+                    "for=\"{$this->qid}\"",
+                    'class="form-question-description"'
+                ),
+                $this->checkbox_description
+            ));
+        }
 
         return $tag;
     }
@@ -468,8 +533,7 @@ class FormCheckBoxQuestion extends FormAtomicQuestion
 
 class FormDropdownQuestion extends FormCompoundQuestion
 {
-
-    function __construct($qid, $subject = false, $description = false)
+    public function __construct($qid, $subject = false, $description = false)
     {
         parent::__construct($qid, $subject, $description);
         $this->class .= " form-dropdown-question";
@@ -477,26 +541,33 @@ class FormDropdownQuestion extends FormCompoundQuestion
 
     protected function get_specific_html($parent, $defaults)
     {
-        $select = tag('select', attrs("id=\"{$this->qid}\"",
+        $select = tag('select', attrs(
+            "id=\"{$this->qid}\"",
             "name=\"{$this->qid}\"",
-            'class="form-select"'));
+            'class="form-select"'
+        ));
 
         $children = array();
         foreach ($this->options as $value => $name) {
             $attrs = attrs("value=\"$value\"");
             if (!empty($defaults[$this->qid])
                 && $defaults[$this->qid] == $value
-            )
+            ) {
                 $attrs->add('selected');
+            }
             $select->add(tag('option', $attrs, $name));
 
             if (!empty($this->conditionals[$value])) {
-                $children[] = tag('table', attrs("id=\"{$this->qid}-{$value}\""),
-                    $this->conditionals[$value]->get_html($this, $defaults));
+                $children[] = tag(
+                    'table',
+                    attrs("id=\"{$this->qid}-{$value}\""),
+                    $this->conditionals[$value]->get_html($this, $defaults)
+                );
             }
         }
-        if (empty($children))
+        if (empty($children)) {
             return $select;
+        }
         return array($select, $children);
     }
 }
@@ -507,8 +578,7 @@ class FormDropdownQuestion extends FormCompoundQuestion
 
 class FormMultipleSelectQuestion extends FormCompoundQuestion
 {
-
-    function __construct($qid, $subject = false, $description = false)
+    public function __construct($qid, $subject = false, $description = false)
     {
         parent::__construct($qid, $subject, $description);
         $this->class .= " form-multi-select-question";
@@ -516,27 +586,34 @@ class FormMultipleSelectQuestion extends FormCompoundQuestion
 
     protected function get_specific_html($parent, $defaults)
     {
-        $select = tag('select', attrs("id=\"{$this->qid}\"",
+        $select = tag('select', attrs(
+            "id=\"{$this->qid}\"",
             "name=\"{$this->qid}\"",
             'multiple="multiple"',
-            'class="form-select"'));
+            'class="form-select"'
+        ));
 
         $children = array();
         foreach ($this->options as $value => $name) {
             $attrs = attrs("value=\"$value\"");
             if (!empty($defaults[$this->qid])
                 && $defaults[$this->qid] == $value
-            )
+            ) {
                 $attrs->add('selected');
+            }
             $select->add(tag('option', $attrs, $name));
 
             if (!empty($this->conditionals[$value])) {
-                $children[] = tag('table', attrs("id=\"{$this->qid}-{$value}\""),
-                    $this->conditionals[$value]->get_html($this, $defaults));
+                $children[] = tag(
+                    'table',
+                    attrs("id=\"{$this->qid}-{$value}\""),
+                    $this->conditionals[$value]->get_html($this, $defaults)
+                );
             }
         }
-        if (empty($children))
+        if (empty($children)) {
             return $select;
+        }
         return array($select, $children);
     }
 }
@@ -546,7 +623,7 @@ class FormMultipleSelectQuestion extends FormCompoundQuestion
 
 class FormColorPicker extends FormAtomicQuestion
 {
-    function __construct($qid, $subject, $selectedcolor = false, $description = false)
+    public function __construct($qid, $subject, $selectedcolor = false, $description = false)
     {
         parent::__construct($qid, $subject, $description);
         $this->class .= " form-color-picker";
@@ -555,16 +632,19 @@ class FormColorPicker extends FormAtomicQuestion
     protected function get_specific_html($parent, $defaults)
     {
 
-        if (isset($defaults[$this->qid]))
+        if (isset($defaults[$this->qid])) {
             $value = $defaults[$this->qid];
-        else
+        } else {
             $value = '';
+        }
 
-        return tag('input', attrs('type="text"',
+        return tag('input', attrs(
+            'type="text"',
             'class="form-color-input"',
             "name=\"{$this->qid}\"",
             "value=\"$value\"",
-            "id=\"{$this->qid}\""));
+            "id=\"{$this->qid}\""
+        ));
     }
 }
 
@@ -574,12 +654,12 @@ class FormColorPicker extends FormAtomicQuestion
 
 class Form extends FormGroup
 {
-    var $vars;
-    var $action;
-    var $method;
-    var $hidden = array();
+    public $vars;
+    public $action;
+    public $method;
+    public $hidden = array();
 
-    function __construct($action, $title = false, $method = false)
+    public function __construct($action, $title = false, $method = false)
     {
         parent::__construct($title);
         $this->action = $action;
@@ -587,10 +667,12 @@ class Form extends FormGroup
         $this->class .= " form";
     }
 
-    function get_form($defaults = array())
+    public function get_form($defaults = array())
     {
-        $form_attrs = attrs("action=\"{$this->action}\"",
-            'method="POST"');
+        $form_attrs = attrs(
+            "action=\"{$this->action}\"",
+            'method="POST"'
+        );
         if ($this->method !== false) {
             $form_attrs->add("method=\"{$this->method}\"");
         }
@@ -603,19 +685,22 @@ class Form extends FormGroup
         $have_hidden = false;
         foreach ($this->hidden as $name => $value) {
             $have_hidden = true;
-            $hidden_div->add(tag('input', attrs('type="hidden"',
+            $hidden_div->add(tag('input', attrs(
+                'type="hidden"',
                 "name=\"$name\"",
                 "value=\"$value\"",
-                "id=\"$name\"")));
+                "id=\"$name\""
+            )));
         }
-        if ($have_hidden)
+        if ($have_hidden) {
             $form->add($hidden_div);
+        }
 
         $form->add($table);
         return $form;
     }
 
-    function add_hidden($name, $value)
+    public function add_hidden($name, $value)
     {
         $this->hidden[$name] = $value;
     }

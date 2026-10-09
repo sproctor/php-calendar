@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 /*
  * Copyright 2012 Sean Proctor
  *
@@ -15,8 +16,8 @@
  * limitations under the License.
  */
 
-if(!defined('IN_PHPC')) {
-       die("Hacking attempt");
+if (!defined('IN_PHPC')) {
+    die("Hacking attempt");
 }
 
 /**
@@ -24,30 +25,30 @@ if(!defined('IN_PHPC')) {
  */
 function login()
 {
-	global $vars, $phpc_script;
+    global $vars, $phpc_script;
 
-	$html = tag('div');
+    $html = tag('div');
 
-	//Check password and username
-	if(isset($vars['username'])){
-		$user = $vars['username'];
-		$password = $vars['password'];
+    //Check password and username
+    if (isset($vars['username'])) {
+        $user = $vars['username'];
+        $password = $vars['password'];
 
-		if(login_user($user, $password)){
-			$url = $phpc_script;
-                        if(!empty($vars['lasturl'])) {
-				$url .= '?' . urldecode($vars['lasturl']);
-			}
-                        redirect($url);
-			return tag('h2', __('Logged in.'));
-		}
+        if (login_user($user, $password)) {
+            $url = $phpc_script;
+            if (!empty($vars['lasturl'])) {
+                $url .= '?' . urldecode($vars['lasturl']);
+            }
+            redirect($url);
+            return tag('h2', __('Logged in.'));
+        }
 
-		$html->add(tag('h2', __('Sorry, Invalid Login')));
+        $html->add(tag('h2', __('Sorry, Invalid Login')));
 
-	}
+    }
 
-	$html->add(login_form());
-	return $html;
+    $html->add(login_form());
+    return $html;
 }
 
 /**
@@ -55,33 +56,60 @@ function login()
  */
 function login_form()
 {
-        global $vars, $phpc_script;
+    global $vars, $phpc_script;
 
-        $submit_data = tag('td', attributes('colspan="2"'),
-                                create_hidden('action', 'login'),
-                                create_submit(__('Log in')));
+    $submit_data = tag(
+        'td',
+        attributes('colspan="2"'),
+        create_hidden('action', 'login'),
+        create_submit(__('Log in'))
+    );
 
-        if(!empty($vars['lasturl'])) {
-		$lasturl = phpc_html_escape(rawurlencode($vars['lasturl']));
-                $submit_data->prepend(create_hidden('lasturl',
-                                        $lasturl));
-	}
+    if (!empty($vars['lasturl'])) {
+        $lasturl = phpc_html_escape(rawurlencode($vars['lasturl']));
+        $submit_data->prepend(create_hidden(
+            'lasturl',
+            $lasturl
+        ));
+    }
 
-	return tag('form', attributes("action=\"$phpc_script\"",
-				'method="post"'),
-		tag('table',
-			tag('caption', __('Log in')),
-                        tag('thead',
-                                tag('tr',
-                                        tag('th', attributes('colspan="2"'),
-                                                __('You must have cookies enabled to login.')))),
-			tag('tfoot',
-				tag('tr', $submit_data)),
-			tag('tbody',
-				tag('tr',
-					tag('th', tag('label', attributes('for="username"'), __('Username'))),
-					tag('td', create_text('username'))),
-				tag('tr',
-					tag('th', tag('label', attributes('for="password"'), __('Password'))),
-					tag('td', create_password('password'))))));
+    return tag(
+        'form',
+        attributes(
+            "action=\"$phpc_script\"",
+            'method="post"'
+        ),
+        tag(
+            'table',
+            tag('caption', __('Log in')),
+            tag(
+                'thead',
+                tag(
+                    'tr',
+                    tag(
+                        'th',
+                        attributes('colspan="2"'),
+                        __('You must have cookies enabled to login.')
+                    )
+                )
+            ),
+            tag(
+                'tfoot',
+                tag('tr', $submit_data)
+            ),
+            tag(
+                'tbody',
+                tag(
+                    'tr',
+                    tag('th', tag('label', attributes('for="username"'), __('Username'))),
+                    tag('td', create_text('username'))
+                ),
+                tag(
+                    'tr',
+                    tag('th', tag('label', attributes('for="password"'), __('Password'))),
+                    tag('td', create_password('password'))
+                )
+            )
+        )
+    );
 }

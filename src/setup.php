@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2012 Sean Proctor
  *
@@ -19,26 +20,26 @@
    This file sets up the global variables to be used later
 */
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
+if (!defined('IN_PHPC')) {
+    die("Hacking attempt");
 }
 
 // Run the installer if we have no config file
 // This doesn't work when embedded from outside
-if(!file_exists($phpc_config_file)) {
-        redirect('install.php');
-        exit;
+if (!file_exists($phpc_config_file)) {
+    redirect('install.php');
+    exit;
 }
 require_once($phpc_config_file);
-if(!defined('SQL_TYPE')) {
-        redirect('install.php');
-        exit;
+if (!defined('SQL_TYPE')) {
+    redirect('install.php');
+    exit;
 }
 
-if(defined('PHPC_DEBUG')) {
-	error_reporting(E_ALL);
-	ini_set('display_errors', 1);
-	ini_set('html_errors', 1);
+if (defined('PHPC_DEBUG')) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    ini_set('html_errors', 1);
 }
 
 $phpc_prefix = "phpc_" . SQL_PREFIX . SQL_DATABASE;
@@ -47,178 +48,201 @@ require_once("$phpc_includes_path/calendar.php");
 
 // Make the database connection.
 require_once("$phpc_includes_path/phpcdatabase.class.php");
-if(!defined("SQL_PORT"))
-	define("SQL_PORT", ini_get("mysqli.default_port"));
-$phpcdb = new PhpcDatabase(SQL_HOST, SQL_USER, SQL_PASSWD, SQL_DATABASE,
-		SQL_PORT);
+if (!defined("SQL_PORT")) {
+    define("SQL_PORT", ini_get("mysqli.default_port"));
+}
+$phpcdb = new PhpcDatabase(
+    SQL_HOST,
+    SQL_USER,
+    SQL_PASSWD,
+    SQL_DATABASE,
+    SQL_PORT
+);
 
 session_set_cookie_params(0, "", "", false, true);
 session_start();
 
-if(empty($_SESSION["{$phpc_prefix}uid"])) {
-	if(!empty($_COOKIE["{$phpc_prefix}login"])
-			&& !empty($_COOKIE["{$phpc_prefix}uid"])
-			&& !empty($_COOKIE["{$phpc_prefix}login_series"])) {
-		// Cleanup before we check their token so they can't login with
-		//   an ancient token
-		$phpcdb->cleanup_login_tokens();
+if (empty($_SESSION["{$phpc_prefix}uid"])) {
+    if (!empty($_COOKIE["{$phpc_prefix}login"])
+            && !empty($_COOKIE["{$phpc_prefix}uid"])
+            && !empty($_COOKIE["{$phpc_prefix}login_series"])) {
+        // Cleanup before we check their token so they can't login with
+        //   an ancient token
+        $phpcdb->cleanup_login_tokens();
 
-		$phpc_uid = intval($_COOKIE["{$phpc_prefix}uid"]);
-		$phpc_login_series = (string)$_COOKIE["{$phpc_prefix}login_series"];
-		$phpc_token = $phpcdb->get_login_token($phpc_uid,
-					$phpc_login_series);
-		if($phpc_token) {
-			if(hash_equals($phpc_token,
-					(string)$_COOKIE["{$phpc_prefix}login"])) {
-				$user = $phpcdb->get_user($phpc_uid);
-				phpc_do_login($user, $phpc_login_series);
-			} else {
-				$phpcdb->remove_login_tokens($phpc_uid);
-				soft_error(__("Possible hacking attempt on your account."));
-			}
-		} else {
-			$phpc_uid = 0;
-		}
-	}
+        $phpc_uid = intval($_COOKIE["{$phpc_prefix}uid"]);
+        $phpc_login_series = (string)$_COOKIE["{$phpc_prefix}login_series"];
+        $phpc_token = $phpcdb->get_login_token(
+            $phpc_uid,
+            $phpc_login_series
+        );
+        if ($phpc_token) {
+            if (hash_equals(
+                $phpc_token,
+                (string)$_COOKIE["{$phpc_prefix}login"]
+            )) {
+                $user = $phpcdb->get_user($phpc_uid);
+                phpc_do_login($user, $phpc_login_series);
+            } else {
+                $phpcdb->remove_login_tokens($phpc_uid);
+                soft_error(__("Possible hacking attempt on your account."));
+            }
+        } else {
+            $phpc_uid = 0;
+        }
+    }
 } else {
-	$phpc_token = $_SESSION["{$phpc_prefix}login"];
+    $phpc_token = $_SESSION["{$phpc_prefix}login"];
 }
 
-if(empty($phpc_token))
-	$phpc_token = '';
+if (empty($phpc_token)) {
+    $phpc_token = '';
+}
 
 // Create vars
 $vars = array_merge(real_escape_r($_GET), real_escape_r($_POST));
 
 // Find an appropriate calendar id
-if(!empty($vars['phpcid'])) {
-	if(!is_numeric($vars['phpcid']))
-		soft_error(__("Invalid calendar ID."));
-        $phpcid = $vars['phpcid'];
-} elseif(!empty($default_calendar_id)) {
-	$phpcid = $default_calendar_id;
+if (!empty($vars['phpcid'])) {
+    if (!is_numeric($vars['phpcid'])) {
+        soft_error(__("Invalid calendar ID."));
+    }
+    $phpcid = $vars['phpcid'];
+} elseif (!empty($default_calendar_id)) {
+    $phpcid = $default_calendar_id;
 } else {
-	$phpcid = 1;
+    $phpcid = 1;
 }
 
 if (!$phpcdb->have_calendar($phpcid)) {
     $phpcid = 1;
-    if (!$phpcdb->have_calendar($phpcid))
+    if (!$phpcdb->have_calendar($phpcid)) {
         soft_error(__("Could not find a calendar."));
+    }
 }
 
 $phpc_cal = $phpcdb->get_calendar($phpcid);
 
 //set action
-if(empty($vars['action'])) {
-	$action = 'display_month';
+if (empty($vars['action'])) {
+    $action = 'display_month';
 } else {
-	$action = $vars['action'];
+    $action = $vars['action'];
 }
 
-if(empty($vars['contentType']))
-	$vars['contentType'] = "html";
+if (empty($vars['contentType'])) {
+    $vars['contentType'] = "html";
+}
 
-if(!empty($_SESSION["{$phpc_prefix}uid"])) {
-	$phpc_user = $phpcdb->get_user($_SESSION["{$phpc_prefix}uid"]);
+if (!empty($_SESSION["{$phpc_prefix}uid"])) {
+    $phpc_user = $phpcdb->get_user($_SESSION["{$phpc_prefix}uid"]);
 } else {
-	$anonymous = array('uid' => 0,
-			'username' => 'anonymous',
-			'password' => '',
-			'admin' => false,
-			'password_editable' => false,
-			'timezone' => NULL,
-			'language' => NULL,
-			);
-	if(isset($_COOKIE["{$phpc_prefix}tz"]))
-		$anonymous['timezone'] = $_COOKIE["{$phpc_prefix}tz"];
-	if(isset($_COOKIE["{$phpc_prefix}lang"]))
-		$anonymous['language'] = $_COOKIE["{$phpc_prefix}lang"];
-	$phpc_user = new PhpcUser($anonymous);
+    $anonymous = array('uid' => 0,
+            'username' => 'anonymous',
+            'password' => '',
+            'admin' => false,
+            'password_editable' => false,
+            'timezone' => null,
+            'language' => null,
+            );
+    if (isset($_COOKIE["{$phpc_prefix}tz"])) {
+        $anonymous['timezone'] = $_COOKIE["{$phpc_prefix}tz"];
+    }
+    if (isset($_COOKIE["{$phpc_prefix}lang"])) {
+        $anonymous['language'] = $_COOKIE["{$phpc_prefix}lang"];
+    }
+    $phpc_user = new PhpcUser($anonymous);
 }
 
 $phpc_user_lang = $phpc_user->get_language();
 $phpc_user_tz = $phpc_user->get_timezone();
 
 // setup translation stuff
-if(!empty($vars['lang'])) {
-	$phpc_lang = $vars['lang'];
-} elseif(!empty($phpc_user_lang)) {
-	$phpc_lang = $phpc_user_lang;
-} elseif(!empty($phpc_cal->language)) {
-	$phpc_lang = $phpc_cal->language;
-} elseif(!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-	$phpc_lang = substr(phpc_html_escape($_SERVER['HTTP_ACCEPT_LANGUAGE']),
-			0, 2);
+if (!empty($vars['lang'])) {
+    $phpc_lang = $vars['lang'];
+} elseif (!empty($phpc_user_lang)) {
+    $phpc_lang = $phpc_user_lang;
+} elseif (!empty($phpc_cal->language)) {
+    $phpc_lang = $phpc_cal->language;
+} elseif (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+    $phpc_lang = substr(
+        phpc_html_escape($_SERVER['HTTP_ACCEPT_LANGUAGE']),
+        0,
+        2
+    );
 } else {
-	$phpc_lang = 'en';
+    $phpc_lang = 'en';
 }
 
-if(!preg_match('/^\w+$/', $phpc_lang, $matches))
-	$phpc_lang = 'en';
+if (!preg_match('/^\w+$/', $phpc_lang, $matches)) {
+    $phpc_lang = 'en';
+}
 
 $phpc_gettext = new Gettext_PHP($phpc_locale_path, 'messages', $phpc_lang);
 
 // Must be included after translation is setup
 require_once("$phpc_includes_path/globals.php");
 
-if(!empty($vars['clearmsg']))
-	$_SESSION["{$phpc_prefix}messages"] = NULL;
+if (!empty($vars['clearmsg'])) {
+    $_SESSION["{$phpc_prefix}messages"] = null;
+}
 
 $phpc_messages = array();
 
-if(!empty($_SESSION["{$phpc_prefix}messages"])) {
-	foreach($_SESSION["{$phpc_prefix}messages"] as $message) {
-		$phpc_messages[] = $message;
-	}
+if (!empty($_SESSION["{$phpc_prefix}messages"])) {
+    foreach ($_SESSION["{$phpc_prefix}messages"] as $message) {
+        $phpc_messages[] = $message;
+    }
 }
 
-if(!empty($phpc_user_tz))
-	$phpc_tz = $phpc_user_tz;
-else
-	$phpc_tz = $phpc_cal->timezone;
+if (!empty($phpc_user_tz)) {
+    $phpc_tz = $phpc_user_tz;
+} else {
+    $phpc_tz = $phpc_cal->timezone;
+}
 
-if(!empty($phpc_tz))
-	date_default_timezone_set($phpc_tz); 
+if (!empty($phpc_tz)) {
+    date_default_timezone_set($phpc_tz);
+}
 $phpc_tz = date_default_timezone_get();
 
 // set day/month/year
-if(isset($vars['month']) && is_numeric($vars['month'])) {
-	$month = $vars['month'];
-	if($month < 1 || $month > 12)
-		display_error(__("Month is out of range."));
+if (isset($vars['month']) && is_numeric($vars['month'])) {
+    $month = $vars['month'];
+    if ($month < 1 || $month > 12) {
+        display_error(__("Month is out of range."));
+    }
 } else {
-	$month = date('n');
+    $month = date('n');
 }
 
-if(isset($vars['year']) && is_numeric($vars['year'])) {
-	$time = mktime(0, 0, 0, $month, 1, $vars['year']);
-        if(!$time || $time < 0) {
-                display_error(__('Invalid year') . ": {$vars['year']}");
-        }
-	$year = date('Y', $time);
+if (isset($vars['year']) && is_numeric($vars['year'])) {
+    $time = mktime(0, 0, 0, $month, 1, $vars['year']);
+    if (!$time || $time < 0) {
+        display_error(__('Invalid year') . ": {$vars['year']}");
+    }
+    $year = date('Y', $time);
 } else {
-	$year = date('Y');
+    $year = date('Y');
 }
 
-if(isset($vars['day']) && is_numeric($vars['day'])) {
-	$day = ($vars['day'] - 1) % date('t', mktime(0, 0, 0, $month, 1, $year))
+if (isset($vars['day']) && is_numeric($vars['day'])) {
+    $day = ($vars['day'] - 1) % date('t', mktime(0, 0, 0, $month, 1, $year))
                 + 1;
 } else {
-	if($month == date('n') && $year == date('Y')) {
-                $day = date('j');
-	} else {
-                $day = 1;
-        }
+    if ($month == date('n') && $year == date('Y')) {
+        $day = date('j');
+    } else {
+        $day = 1;
+    }
 }
 
 if ($vars["contentType"] == "json") {
-	header("Content-Type: application/json; charset=UTF-8");
-	echo do_action();
-	exit;
+    header("Content-Type: application/json; charset=UTF-8");
+    echo do_action();
+    exit;
 }
 
 header("Content-Type: text/html; charset=UTF-8");
 header("X-Content-Type-Options: nosniff");
 header("X-Frame-Options: DENY");
-

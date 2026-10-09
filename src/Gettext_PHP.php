@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2009 David Soria Parra
  *
@@ -37,12 +38,12 @@ class Gettext_PHP //extends Gettext
     /**
      * First magic word in the MO header
      */
-    const MAGIC1 = 0xde120495;
+    public const MAGIC1 = 0xde120495;
 
     /**
      * First magic word in the MO header
      */
-    const MAGIC2 = 0x950412de;
+    public const MAGIC2 = 0x950412de;
 
     protected $mofile;
     protected $translationTable = array();
@@ -57,8 +58,12 @@ class Gettext_PHP //extends Gettext
      */
     public function __construct($directory, $domain, $locale)
     {
-        $this->mofile = sprintf("%s/%s/LC_MESSAGES/%s.mo", $directory,
-                            $locale, $domain);
+        $this->mofile = sprintf(
+            "%s/%s/LC_MESSAGES/%s.mo",
+            $directory,
+            $locale,
+            $domain
+        );
     }
 
     /**
@@ -139,7 +144,7 @@ class Gettext_PHP //extends Gettext
             return fread($fp, $entry['size']);
         }
 
-       return '';
+        return '';
     }
 
 
@@ -169,8 +174,11 @@ class Gettext_PHP //extends Gettext
         }
 
         $transTable = array();
-        $table = $this->parseOffsetTable($fp, $offsets['trans_offset'],
-                    $offsets['num_strings']);
+        $table = $this->parseOffsetTable(
+            $fp,
+            $offsets['trans_offset'],
+            $offsets['num_strings']
+        );
         if (null == $table) {
             fclose($fp);
             return;
@@ -180,14 +188,17 @@ class Gettext_PHP //extends Gettext
             $transTable[$idx] = $this->parseEntry($fp, $entry);
         }
 
-        $table = $this->parseOffsetTable($fp, $offsets['orig_offset'],
-                    $offsets['num_strings']);
+        $table = $this->parseOffsetTable(
+            $fp,
+            $offsets['orig_offset'],
+            $offsets['num_strings']
+        );
         foreach ($table as $idx => $entry) {
             $entry = $this->parseEntry($fp, $entry);
 
             $formes      = explode(chr(0), $entry);
             $translation = explode(chr(0), $transTable[$idx]);
-            foreach($formes as $form) {
+            foreach ($formes as $form) {
                 $this->translationTable[$form] = $translation;
             }
         }
@@ -214,8 +225,9 @@ class Gettext_PHP //extends Gettext
 
         if (array_key_exists($msg, $this->translationTable)) {
             $t = $this->translationTable[$msg][0];
-	    if(!empty($t))
+            if (!empty($t)) {
                 return $t;
+            }
         }
         return $msg;
     }
@@ -237,11 +249,12 @@ class Gettext_PHP //extends Gettext
             $this->parse();
         }
 
-	$key = "{$context}\04{$msg}";
+        $key = "{$context}\04{$msg}";
         if (array_key_exists($key, $this->translationTable)) {
             $t = $this->translationTable[$key][0];
-            if(!empty($t))
+            if (!empty($t)) {
                 return $t;
+            }
         }
         return $msg;
     }
@@ -284,4 +297,3 @@ class Gettext_PHP //extends Gettext
         }
     }
 }
-

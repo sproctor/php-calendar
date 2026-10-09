@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2012 Sean Proctor
  *
@@ -39,22 +40,23 @@ $phpc_locale_path = "$phpc_root_path/locale";
 $phpc_script = htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8');
 
 $phpc_server = $_SERVER['SERVER_NAME'];
-if(!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80)
-	$phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
+if (!empty($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != 80) {
+    $phpc_server .= ":{$_SERVER["SERVER_PORT"]}";
+}
 
 // Protcol ex. http or https
 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'
-		|| $_SERVER['SERVER_PORT'] == 443
-		|| isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
-		|| isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+        || $_SERVER['SERVER_PORT'] == 443
+        || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
+        || isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
     $phpc_proto = "https";
 } else {
     $phpc_proto = "http";
 }
 
-$phpc_home_url="$phpc_proto://$phpc_server$phpc_script";
+$phpc_home_url = "$phpc_proto://$phpc_server$phpc_script";
 $phpc_url = $phpc_home_url . (empty($_SERVER['QUERY_STRING']) ? ''
-		: '?' . $_SERVER['QUERY_STRING']);
+        : '?' . $_SERVER['QUERY_STRING']);
 
 // Remove this line if you must
 ini_set('arg_separator.output', '&amp;');
@@ -62,29 +64,42 @@ ini_set('arg_separator.output', '&amp;');
 /*
  * Do not modify anything under this point
  */
-if (!defined('IN_PHPC'))
-define('IN_PHPC', true);
-
-try {
-	require_once("$phpc_includes_path/calendar.php");
-	require_once("$phpc_includes_path/setup.php");
-
-	$calendar_title = $phpc_cal->get_title();
-	$content = display_phpc();
-} catch(Exception $e) {
-	$calendar_title = $e->getMessage();
-	$content = tag('div', attributes('class="php-calendar"'),
-			$e->getMessage());
+if (!defined('IN_PHPC')) {
+    define('IN_PHPC', true);
 }
 
-$html = tag('html', attrs("lang=\"$phpc_lang\""),
-		tag('head',
-			tag('title', $calendar_title),
-			tag('link', attrs('rel="icon"',
-					"href=\"static/office-calendar.png\"")),
-			get_header_tags("static"),
-			tag('meta', attrs('http-equiv="Content-Type"',
-					   'content="text/html; charset=UTF-8"'))),
-		tag('body', $content));
+try {
+    require_once("$phpc_includes_path/calendar.php");
+    require_once("$phpc_includes_path/setup.php");
+
+    $calendar_title = $phpc_cal->get_title();
+    $content = display_phpc();
+} catch (Exception $e) {
+    $calendar_title = $e->getMessage();
+    $content = tag(
+        'div',
+        attributes('class="php-calendar"'),
+        $e->getMessage()
+    );
+}
+
+$html = tag(
+    'html',
+    attrs("lang=\"$phpc_lang\""),
+    tag(
+        'head',
+        tag('title', $calendar_title),
+        tag('link', attrs(
+            'rel="icon"',
+            "href=\"static/office-calendar.png\""
+        )),
+        get_header_tags("static"),
+        tag('meta', attrs(
+            'http-equiv="Content-Type"',
+            'content="text/html; charset=UTF-8"'
+        ))
+    ),
+    tag('body', $content)
+);
 
 echo '<!DOCTYPE html>', "\n", $html->toString();

@@ -23,3 +23,6 @@ user-customizations.sh
 *~
 .DS_Store
 Thumbs.db
+
+# PHP-CS-Fixer
+.php-cs-fixer.cache

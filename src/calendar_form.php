@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2013 Sean Proctor
  *
@@ -30,8 +31,9 @@ function calendar_form()
         return tag('div', __('Permission denied'));
     }
 
-    if (!empty($vars['submit_form']))
+    if (!empty($vars['submit_form'])) {
         process_form();
+    }
 
     return display_form();
 
@@ -50,10 +52,11 @@ function process_form()
         $type = $item[2];
 
         if ($type == PHPC_CHECK) {
-            if (isset($vars[$name]))
+            if (isset($vars[$name])) {
                 $value = "1";
-            else
+            } else {
                 $value = "0";
+            }
         } else {
             if (isset($vars[$name])) {
                 $value = $vars[$name];
@@ -81,23 +84,39 @@ function display_form()
         $text = $element[1];
         $input = create_config_input($element);
 
-        $tbody->add(tag('tr',
+        $tbody->add(tag(
+            'tr',
             tag('th', $text),
-            tag('td', $input)));
+            tag('td', $input)
+        ));
     }
 
-    return tag('form', attributes("action=\"$phpc_script\"",
-        'method="post"'),
-        tag('table', attributes("class=\"phpc-container\""),
+    return tag(
+        'form',
+        attributes(
+            "action=\"$phpc_script\"",
+            'method="post"'
+        ),
+        tag(
+            'table',
+            attributes("class=\"phpc-container\""),
             tag('caption', __('Create Calendar')),
-            tag('tfoot',
-                tag('tr',
-                    tag('td', attributes('colspan="2"'),
+            tag(
+                'tfoot',
+                tag(
+                    'tr',
+                    tag(
+                        'td',
+                        attributes('colspan="2"'),
                         create_hidden('phpc_token', $phpc_token),
                         create_hidden('action', 'calendar_form'),
                         create_hidden('submit_form', 'submit_form'),
-                        create_submit(__('Submit'))))),
-            $tbody));
+                        create_submit(__('Submit'))
+                    )
+                )
+            ),
+            $tbody
+        )
+    );
 
 }
-

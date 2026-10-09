@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2014 Sean Proctor
  *
@@ -15,8 +16,8 @@
  * limitations under the License.
  */
 
-if ( !defined('IN_PHPC') ) {
-       die("Hacking attempt");
+if (!defined('IN_PHPC')) {
+    die("Hacking attempt");
 }
 
 // called when some error happens
@@ -26,10 +27,11 @@ if ( !defined('IN_PHPC') ) {
  */
 function soft_error($message)
 {
-	throw new Exception(phpc_html_escape($message));
+    throw new Exception(phpc_html_escape($message));
 }
 
-class PermissionException extends Exception {
+class PermissionException extends Exception
+{
 }
 
 /**
@@ -38,7 +40,7 @@ class PermissionException extends Exception {
  */
 function permission_error($message)
 {
-	throw new PermissionException(phpc_html_escape($message));
+    throw new PermissionException(phpc_html_escape($message));
 }
 
 /**
@@ -47,27 +49,28 @@ function permission_error($message)
  */
 function minute_pad($minute)
 {
-	return sprintf('%02d', $minute);
+    return sprintf('%02d', $minute);
 }
 
 /**
  * @param string $page
  */
-function redirect($page) {
-	global $phpc_script, $phpc_server, $phpc_redirect, $phpc_proto;
+function redirect($page)
+{
+    global $phpc_script, $phpc_server, $phpc_redirect, $phpc_proto;
 
-	session_write_close();
+    session_write_close();
 
-	$phpc_redirect = true;
+    $phpc_redirect = true;
 
-	if($page[0] == "/") {
-		$dir = '';
-	} else {
-		$dir = dirname($phpc_script) . "/";
-	}
-	$url = "$phpc_proto://$phpc_server$dir$page";
+    if ($page[0] == "/") {
+        $dir = '';
+    } else {
+        $dir = dirname($phpc_script) . "/";
+    }
+    $url = "$phpc_proto://$phpc_server$dir$page";
 
-	header("Location: $url");
+    header("Location: $url");
 }
 
 /**
@@ -75,44 +78,54 @@ function redirect($page) {
  * @param string $page
  * @return Html
  */
-function message_redirect($message, $page) {
-	global $phpc_prefix;
+function message_redirect($message, $page)
+{
+    global $phpc_prefix;
 
-	if(empty($_SESSION["{$phpc_prefix}messages"]))
-		$_SESSION["{$phpc_prefix}messages"] = array();
+    if (empty($_SESSION["{$phpc_prefix}messages"])) {
+        $_SESSION["{$phpc_prefix}messages"] = array();
+    }
 
-	if (is_a($message, 'Html'))
-		$message = $message->toString();
-	
-	$_SESSION["{$phpc_prefix}messages"][] = $message;
-	redirect($page);
+    if (is_a($message, 'Html')) {
+        $message = $message->toString();
+    }
 
-	$continue_url = $page . '&amp;clearmsg=1';
+    $_SESSION["{$phpc_prefix}messages"][] = $message;
+    redirect($page);
 
-	return tag('div', attrs('class="phpc-box"'), "$message ",
- 		tag('a', attrs("href=\"$continue_url\""), __("continue")));
+    $continue_url = $page . '&amp;clearmsg=1';
+
+    return tag(
+        'div',
+        attrs('class="phpc-box"'),
+        "$message ",
+        tag('a', attrs("href=\"$continue_url\""), __("continue"))
+    );
 }
 
 /**
  * @param string $message
  */
-function message($message) {
-	global $phpc_messages;
+function message($message)
+{
+    global $phpc_messages;
 
-	$phpc_messages[] = $message;
+    $phpc_messages[] = $message;
 }
 
 /**
  * @param array|string $var
  * @return array|string
  */
-function real_escape_r($var) {
-	global $phpcdb;
+function real_escape_r($var)
+{
+    global $phpcdb;
 
-	if(is_array($var))
-		return array_map("real_escape_r", $var);
-	else
-		return mysqli_real_escape_string($phpcdb->dbh, $var);
+    if (is_array($var)) {
+        return array_map("real_escape_r", $var);
+    } else {
+        return mysqli_real_escape_string($phpcdb->dbh, $var);
+    }
 }
 
 /**
@@ -121,7 +134,7 @@ function real_escape_r($var) {
  */
 function asbool($val)
 {
-	return $val ? "1" : "0";
+    return $val ? "1" : "0";
 }
 
 /**
@@ -130,15 +143,16 @@ function asbool($val)
  * @param bool $hours24
  * @return string
  */
-function format_timestamp_string($timestamp, $date_format, $hours24) {
-	$year = date('Y', $timestamp);
-	$month = date('n', $timestamp);
-	$day = date('j', $timestamp);
-	$hour = date('H', $timestamp);
-	$minute = date('i', $timestamp);
+function format_timestamp_string($timestamp, $date_format, $hours24)
+{
+    $year = date('Y', $timestamp);
+    $month = date('n', $timestamp);
+    $day = date('j', $timestamp);
+    $hour = date('H', $timestamp);
+    $minute = date('i', $timestamp);
 
-	return format_date_string($year, $month, $day, $date_format) . ' '
-		. __('at') . ' ' . format_time_string($hour, $minute, $hours24);
+    return format_date_string($year, $month, $day, $date_format) . ' '
+        . __('at') . ' ' . format_time_string($hour, $minute, $hours24);
 }
 
 /**
@@ -150,17 +164,17 @@ function format_timestamp_string($timestamp, $date_format, $hours24) {
  */
 function format_date_string($year, $month, $day, $date_format)
 {
-	$month_name = short_month_name($month);
-	switch($date_format) {
-		case 0: // Month Day Year
-			return "$month_name $day, $year";
-		case 1: // Year Month Day
-			return "$year $month_name $day";
-		case 2: // Day Month Year
-			return "$day $month_name $year";
-		default:
-			soft_error("Invalid date_format");
-	}
+    $month_name = short_month_name($month);
+    switch ($date_format) {
+        case 0: // Month Day Year
+            return "$month_name $day, $year";
+        case 1: // Year Month Day
+            return "$year $month_name $day";
+        case 2: // Day Month Year
+            return "$day $month_name $year";
+        default:
+            soft_error("Invalid date_format");
+    }
 }
 
 /**
@@ -172,16 +186,16 @@ function format_date_string($year, $month, $day, $date_format)
  */
 function format_short_date_string($year, $month, $day, $date_format)
 {
-	switch($date_format) {
-		case 0: // Month Day Year
-			return "$month/$day/$year";
-		case 1: // Year Month Day
-			return "$year-$month-$day";
-		case 2: // Day Month Year
-			return "$day-$month-$year";
-		default:
-			soft_error("Invalid date_format");
-	}
+    switch ($date_format) {
+        case 0: // Month Day Year
+            return "$month/$day/$year";
+        case 1: // Year Month Day
+            return "$year-$month-$day";
+        case 2: // Day Month Year
+            return "$day-$month-$year";
+        default:
+            soft_error("Invalid date_format");
+    }
 }
 
 /**
@@ -192,21 +206,21 @@ function format_short_date_string($year, $month, $day, $date_format)
  */
 function format_time_string($hour, $minute, $hour24)
 {
-	if(!$hour24) {
-		if($hour >= 12) {
-			$hour -= 12;
-			$pm = ' PM';
-		} else {
-			$pm = ' AM';
-		}
-		if($hour == 0) {
-			$hour = 12;
-		}
-	} else {
-		$pm = '';
-	}
+    if (!$hour24) {
+        if ($hour >= 12) {
+            $hour -= 12;
+            $pm = ' PM';
+        } else {
+            $pm = ' AM';
+        }
+        if ($hour == 0) {
+            $hour = 12;
+        }
+    } else {
+        $pm = '';
+    }
 
-	return sprintf('%d:%02d%s', $hour, $minute, $pm);
+    return sprintf('%d:%02d%s', $hour, $minute, $pm);
 }
 
 // called when some error happens
@@ -215,26 +229,27 @@ function format_time_string($hour, $minute, $hour24)
  */
 function display_error($str)
 {
-	echo '<html><head><title>', __('Error'), "</title></head>\n",
-	     '<body><h1>', __('Software Error'), "</h1>\n",
-	     "<h2>", __('Message:'), "</h2>\n",
-	     "<pre>$str</pre>\n",
-	     "<h2>", __('Backtrace'), "</h2>\n",
-	     "<ol>\n";
-	foreach(debug_backtrace() as $bt) {
-		echo "<li>$bt[file]:$bt[line] - $bt[function]</li>\n";
-	}
-	echo "</ol>\n",
-	     "</body></html>\n";
-	exit;
+    echo '<html><head><title>', __('Error'), "</title></head>\n",
+    '<body><h1>', __('Software Error'), "</h1>\n",
+    "<h2>", __('Message:'), "</h2>\n",
+    "<pre>$str</pre>\n",
+    "<h2>", __('Backtrace'), "</h2>\n",
+    "<ol>\n";
+    foreach (debug_backtrace() as $bt) {
+        echo "<li>$bt[file]:$bt[line] - $bt[function]</li>\n";
+    }
+    echo "</ol>\n",
+    "</body></html>\n";
+    exit;
 }
 
 /**
  * @param int $timestamp
  * @return int
  */
-function days_in_year($timestamp) {
-	return 365 + date('L', $timestamp);
+function days_in_year($timestamp)
+{
+    return 365 + date('L', $timestamp);
 }
 
 /**
@@ -244,12 +259,18 @@ function days_in_year($timestamp) {
  */
 function add_days($stamp, $days)
 {
-    if ($stamp == null)
+    if ($stamp == null) {
         return null;
+    }
 
-	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
-			date('n', $stamp), date('j', $stamp) + $days,
-			date('Y', $stamp));
+    return mktime(
+        date('H', $stamp),
+        date('i', $stamp),
+        date('s', $stamp),
+        date('n', $stamp),
+        date('j', $stamp) + $days,
+        date('Y', $stamp)
+    );
 }
 
 /**
@@ -259,12 +280,18 @@ function add_days($stamp, $days)
  */
 function add_months($stamp, $months)
 {
-    if ($stamp == null)
+    if ($stamp == null) {
         return null;
+    }
 
-	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
-			date('m', $stamp) + $months, date('d', $stamp),
-			date('Y', $stamp));
+    return mktime(
+        date('H', $stamp),
+        date('i', $stamp),
+        date('s', $stamp),
+        date('m', $stamp) + $months,
+        date('d', $stamp),
+        date('Y', $stamp)
+    );
 }
 
 /**
@@ -274,12 +301,18 @@ function add_months($stamp, $months)
  */
 function add_years($stamp, $years)
 {
-    if ($stamp == null)
+    if ($stamp == null) {
         return null;
+    }
 
-	return mktime(date('H', $stamp), date('i', $stamp), date('s', $stamp),
-			date('m', $stamp), date('d', $stamp),
-			date('Y', $stamp) + $years);
+    return mktime(
+        date('H', $stamp),
+        date('i', $stamp),
+        date('s', $stamp),
+        date('m', $stamp),
+        date('d', $stamp),
+        date('Y', $stamp) + $years
+    );
 }
 
 /**
@@ -287,55 +320,65 @@ function add_years($stamp, $years)
  * @param int $ts2
  * @return int
  */
-function days_between($ts1, $ts2) {
-	// First date always comes first
-	if($ts1 > $ts2)
-		return -days_between($ts2, $ts1);
+function days_between($ts1, $ts2)
+{
+    // First date always comes first
+    if ($ts1 > $ts2) {
+        return -days_between($ts2, $ts1);
+    }
 
-	// If we're in different years, keep adding years until we're in
-	//   the same year
-	if(date('Y', $ts2) > date('Y', $ts1))
-		return days_in_year($ts1)
-			+ days_between(add_years($ts1, 1), $ts2);
+    // If we're in different years, keep adding years until we're in
+    //   the same year
+    if (date('Y', $ts2) > date('Y', $ts1)) {
+        return days_in_year($ts1)
+            + days_between(add_years($ts1, 1), $ts2);
+    }
 
-	// The years are equal, subtract day of the year of each
+    // The years are equal, subtract day of the year of each
     return intval(date('z', $ts2)) - intval(date('z', $ts1));
 }
 
 // Adapted from Drupal
-function phpc_get_private_key() {
-	static $key;
+function phpc_get_private_key()
+{
+    static $key;
 
-	if(!isset($key))
-		$key = phpc_hash_base64(random_bytes(55));
+    if (!isset($key)) {
+        $key = phpc_hash_base64(random_bytes(55));
+    }
 
-	return $key;
+    return $key;
 }
 
-function phpc_get_token($value='') {
-	return phpc_hmac_base64($value, session_id() . phpc_get_private_key()
-			. phpc_get_hash_salt());
-}
-
-// Stolen from Drupal
-function phpc_hmac_base64($data, $key) {
-	$hmac = base64_encode(hash_hmac('sha256', $data, $key, TRUE));
-	// Modify the hmac so it's safe to use in URLs.
-	return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
+function phpc_get_token($value = '')
+{
+    return phpc_hmac_base64($value, session_id() . phpc_get_private_key()
+            . phpc_get_hash_salt());
 }
 
 // Stolen from Drupal
-function phpc_hash_base64($data) {
-	$hash = base64_encode(hash('sha256', $data, TRUE));
-	// Modify the hash so it's safe to use in URLs.
-	return strtr($hash, array('+' => '-', '/' => '_', '=' => ''));
+function phpc_hmac_base64($data, $key)
+{
+    $hmac = base64_encode(hash_hmac('sha256', $data, $key, true));
+    // Modify the hmac so it's safe to use in URLs.
+    return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
+}
+
+// Stolen from Drupal
+function phpc_hash_base64($data)
+{
+    $hash = base64_encode(hash('sha256', $data, true));
+    // Modify the hash so it's safe to use in URLs.
+    return strtr($hash, array('+' => '-', '/' => '_', '=' => ''));
 }
 
 // Adapted from Drupal
-function phpc_get_hash_salt() {
-	return hash('sha256', SQL_HOST . SQL_USER . SQL_PASSWD . SQL_DATABASE . SQL_PREFIX);
+function phpc_get_hash_salt()
+{
+    return hash('sha256', SQL_HOST . SQL_USER . SQL_PASSWD . SQL_DATABASE . SQL_PREFIX);
 }
 
-function phpc_html_escape($str) {
-	return htmlspecialchars($str, ENT_COMPAT, "UTF-8");
+function phpc_html_escape($str)
+{
+    return htmlspecialchars($str, ENT_COMPAT, "UTF-8");
 }

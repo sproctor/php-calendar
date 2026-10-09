@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2009 Sean Proctor
  *
@@ -15,92 +16,99 @@
  * limitations under the License.
  */
 
-class PhpcUser {
+class PhpcUser
+{
     /** @var int */
-	var $uid;
+    public $uid;
     /** @var string */
-	var $username;
+    public $username;
     /** @var string */
-	var $password;
+    public $password;
     /** @var bool */
-	var $admin;
+    public $admin;
     /** @var bool */
-	var $password_editable;
+    public $password_editable;
     /** @var string */
-    var $timezone;
+    public $timezone;
     /** @var string */
-	var $language;
+    public $language;
     /** @var array */
-	var $groups;
+    public $groups;
 
     /**
      * PhpcUser constructor.
      * @param string[] $result
      */
-    function __construct($result)
-	{
+    public function __construct($result)
+    {
         $this->uid = intval($result['uid']);
-		$this->username = $result['username'];
-		$this->password = $result['password'];
+        $this->username = $result['username'];
+        $this->password = $result['password'];
         $this->admin = intval($result['admin']) != 0;
         $this->password_editable = intval($result['password_editable']) != 0;
-		$this->timezone = $result['timezone'];
-		$this->language = $result['language'];
-	}
+        $this->timezone = $result['timezone'];
+        $this->language = $result['language'];
+    }
 
     /**
      * @return string
      */
-	function get_username()
-	{
-		return $this->username;
-	}
+    public function get_username()
+    {
+        return $this->username;
+    }
 
     /**
      * @return int
      */
-	function get_uid()
-	{
-		return $this->uid;
-	}
+    public function get_uid()
+    {
+        return $this->uid;
+    }
 
     /**
      * @return string
      */
-	function get_password() {
-		return $this->password;
-	}
+    public function get_password()
+    {
+        return $this->password;
+    }
 
     /**
      * @return bool
      */
-	function is_password_editable() {
-		return $this->password_editable;
-	}
+    public function is_password_editable()
+    {
+        return $this->password_editable;
+    }
 
     /**
      * @return string
      */
-	function get_timezone() {
-		return $this->timezone;
-	}
+    public function get_timezone()
+    {
+        return $this->timezone;
+    }
 
     /**
      * @return string
      */
-	function get_language() {
-		return $this->language;
-	}
+    public function get_language()
+    {
+        return $this->language;
+    }
 
     /**
      * @return array
      */
-	function get_groups() {
-		global $phpcdb;
+    public function get_groups()
+    {
+        global $phpcdb;
 
-		if(!isset($this->groups))
-			$this->groups = $phpcdb->get_user_groups($this->uid);
+        if (!isset($this->groups)) {
+            $this->groups = $phpcdb->get_user_groups($this->uid);
+        }
 
-		return $this->groups;
-	}
+        return $this->groups;
+    }
 }
