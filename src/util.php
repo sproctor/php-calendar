@@ -106,17 +106,6 @@ function message($message) {
  * @param array|string $var
  * @return array|string
  */
-function stripslashes_r($var) {
-	if (is_array($var))
-		return array_map("stripslashes_r", $var);
-	else
-		return stripslashes($var);
-}
-
-/**
- * @param array|string $var
- * @return array|string
- */
 function real_escape_r($var) {
 	global $phpcdb;
 
