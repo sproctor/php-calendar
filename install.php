@@ -89,6 +89,10 @@ echo '<p>Welcome to the PHP Calendar installation process.</p>
 ';
 
 foreach($_POST as $key => $value) {
+	if(!is_string($value))
+		continue;
+	$key = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
+	$value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 	echo "<input name=\"$key\" value=\"$value\" type=\"hidden\">\n";
 }
 
