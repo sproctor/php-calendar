@@ -103,7 +103,7 @@ class PhpcEvent
      */
     public function get_author()
     {
-        return $this->author;
+        return phpc_html_escape($this->author);
     }
 
     /**
@@ -128,7 +128,9 @@ class PhpcEvent
      */
     public function get_desc()
     {
-        return $this->desc;
+        // Descriptions are Markdown, rendered and sanitized in the browser
+        //   (phpc.js), so the page only ever contains the escaped source.
+        return phpc_html_escape($this->desc);
     }
 
     /**

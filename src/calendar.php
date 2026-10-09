@@ -1142,6 +1142,7 @@ function get_header_tags($path)
     $jquery_version = "3.6.0";
     $jqueryui_version = "1.13.1";
     $showdown_version = "1.9.1";
+    $dompurify_version = "3.4.16";
 
     return array(
         tag('link', attrs(
@@ -1171,6 +1172,7 @@ function get_header_tags($path)
             "href=\"$path/spectrum.css\""
         )),
         tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/showdown/$showdown_version/showdown.min.js\""), ''),
+        tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/dompurify/$dompurify_version/purify.min.js\""), ''),
     );
 }
 

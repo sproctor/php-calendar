@@ -40,7 +40,7 @@ $(document).ready(function(){
   var converter = new showdown.Converter();
   $(".phpc-desc").each(function() {
     var text = $(this).text();
-    var html = converter.makeHtml(text);
+    var html = DOMPurify.sanitize(converter.makeHtml(text));
     $(this).html(html);
   });
 
@@ -265,7 +265,7 @@ function setSummaryText(title,author,time,description,category) {
 	$("#phpc-summary-title").html(title);
 	$("#phpc-summary-author").html(author);
 	$("#phpc-summary-time").html(time);
-	$("#phpc-summary-body").html(converter.makeHtml(description));
+	$("#phpc-summary-body").html(DOMPurify.sanitize(converter.makeHtml(description)));
 	$("#phpc-summary-category").html(category);
 }
  

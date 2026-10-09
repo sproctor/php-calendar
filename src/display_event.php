@@ -342,5 +342,6 @@ function display_event_json()
                 "author" => $author,
                 "time" => $time,
                 "category" => $category_text,
-                "body" => $event->get_desc()));
+                // Raw Markdown; phpc.js renders it and sanitizes the result
+                "body" => $event->desc));
 }
