@@ -1,0 +1,5 @@
+# Commits listed here are skipped by `git blame` (and GitHub's blame view).
+# Enable locally with: git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Apply PHP-CS-Fixer (PSR-12) to the entire codebase
+c04dd6e7921334dd059335085f6d2acc81d11b05
