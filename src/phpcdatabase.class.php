@@ -726,6 +726,7 @@ class PhpcDatabase {
      */
 	function get_user($uid)
 	{
+		$uid = intval($uid);
 		$query = "SELECT " . $this->get_user_fields()
 			."FROM ".SQL_PREFIX."users\n"
 			."WHERE `uid`='$uid'";
@@ -1172,6 +1173,8 @@ class PhpcDatabase {
      * @return bool
      */
 	function get_login_token($uid, $series) {
+		$uid = intval($uid);
+		$series = $this->dbh->real_escape_string($series);
 		$query = "SELECT token FROM ".SQL_PREFIX."logins\n"
 			."WHERE `uid`='$uid' AND `series`='$series'";
 
@@ -1191,6 +1194,9 @@ class PhpcDatabase {
      * @param int $token
      */
 	function add_login_token($uid, $series, $token) {
+		$uid = intval($uid);
+		$series = $this->dbh->real_escape_string($series);
+		$token = $this->dbh->real_escape_string($token);
 		$query = "INSERT INTO ".SQL_PREFIX."logins\n"
 			."(`uid`, `series`, `token`)\n"
 			."VALUES ('$uid', '$series', '$token')";
@@ -1206,6 +1212,9 @@ class PhpcDatabase {
      * @param int $token
      */
 	function update_login_token($uid, $series, $token) {
+		$uid = intval($uid);
+		$series = $this->dbh->real_escape_string($series);
+		$token = $this->dbh->real_escape_string($token);
 		$query = "UPDATE ".SQL_PREFIX."logins\n"
 			."SET `token`='$token', `atime`=NOW()\n"
 			."WHERE `uid`='$uid' AND `series`='$series'";
@@ -1219,6 +1228,7 @@ class PhpcDatabase {
      * @param int $uid
      */
 	function remove_login_tokens($uid) {
+		$uid = intval($uid);
 		$query = "DELETE FROM ".SQL_PREFIX."logins\n"
 			."WHERE `uid`='$uid'";
 

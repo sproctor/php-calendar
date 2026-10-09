@@ -63,12 +63,13 @@ if(empty($_SESSION["{$phpc_prefix}uid"])) {
 		//   an ancient token
 		$phpcdb->cleanup_login_tokens();
 
-		$phpc_uid = $_COOKIE["{$phpc_prefix}uid"];
-		$phpc_login_series = $_COOKIE["{$phpc_prefix}login_series"];
+		$phpc_uid = intval($_COOKIE["{$phpc_prefix}uid"]);
+		$phpc_login_series = (string)$_COOKIE["{$phpc_prefix}login_series"];
 		$phpc_token = $phpcdb->get_login_token($phpc_uid,
 					$phpc_login_series);
 		if($phpc_token) {
-			if($phpc_token == $_COOKIE["{$phpc_prefix}login"]) {
+			if(hash_equals($phpc_token,
+					(string)$_COOKIE["{$phpc_prefix}login"])) {
 				$user = $phpcdb->get_user($phpc_uid);
 				phpc_do_login($user, $phpc_login_series);
 			} else {
