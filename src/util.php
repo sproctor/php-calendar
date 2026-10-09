@@ -350,5 +350,6 @@ function phpc_random_token()
 
 function phpc_html_escape($str)
 {
-    return htmlspecialchars($str, ENT_COMPAT, "UTF-8");
+    // null (an empty database field) is escaped as an empty string
+    return htmlspecialchars($str ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
