@@ -154,6 +154,15 @@ form.phpc-confirm {
   display: inline;
 }
 
+/* Previous/next month buttons beside the month view's dropdowns */
+a.phpc-month-nav {
+  width: 1.5em;
+  height: 1.5em;
+  padding: 0;
+  margin: 0 .5em;
+  vertical-align: middle;
+}
+
 a.phpc-add {
   float: right;
   width: 1em;

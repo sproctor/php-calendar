@@ -10,6 +10,14 @@ $(document).ready(function(){
       showLabel: false,
       icon: "ui-icon-plus"
     });
+  $(".phpc-prev-month").button({
+      showLabel: false,
+      icon: "ui-icon-triangle-1-w"
+    });
+  $(".phpc-next-month").button({
+      showLabel: false,
+      icon: "ui-icon-triangle-1-e"
+    });
   $(".php-calendar input[type=submit], .php-calendar tfoot a, .phpc-button").button();
   // The buttons are too hard to read waiting on:
   //    http://wiki.jqueryui.com/w/page/12137730/Checkbox

@@ -68,8 +68,10 @@ function display_month()
             attributes('class="phpc-main phpc-calendar"'),
             tag(
                 'caption',
+                month_nav_link($month - 1, $year, 'prev'),
                 create_dropdown_list(month_name($month), $months),
-                create_dropdown_list($year, $years)
+                create_dropdown_list($year, $years),
+                month_nav_link($month + 1, $year, 'next')
             ),
             tag(
                 'colgroup',
@@ -85,6 +87,30 @@ function display_month()
             tag('thead', $heading_html),
             create_month($month, $year)
         )
+    );
+}
+
+/**
+ * Creates the "<" or ">" button for the previous or next month. mktime()
+ * turns month 0 or 13 into December or January of the adjacent year.
+ *
+ * @param int $month
+ * @param int $year
+ * @param string $direction "prev" or "next"
+ * @return Html
+ */
+function month_nav_link($month, $year, $direction)
+{
+    $time = mktime(0, 0, 0, $month, 1, $year);
+    $new_month = date('n', $time);
+    $new_year = date('Y', $time);
+    $title = phpc_html_escape(month_name($new_month) . " $new_year");
+
+    return create_action_link(
+        $direction == 'prev' ? '&lt;' : '&gt;',
+        'display_month',
+        array('year' => $new_year, 'month' => $new_month),
+        "class=\"phpc-month-nav phpc-$direction-month\" title=\"$title\""
     );
 }
 
