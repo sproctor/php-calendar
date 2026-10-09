@@ -157,12 +157,8 @@ function check_upgrade_supported()
         return false;
     }
 
-    try {
-        $sth = $dbh->query("SHOW COLUMNS FROM `" . SQL_PREFIX . "users` LIKE 'gid'");
-        $has_users_gid = $sth && $sth->num_rows > 0;
-    } catch (mysqli_sql_exception $e) {
-        $has_users_gid = false;
-    }
+    $sth = $dbh->query("SHOW COLUMNS FROM `" . SQL_PREFIX . "users` LIKE 'gid'");
+    $has_users_gid = $sth && $sth->num_rows > 0;
 
     if ($existing_version != 1 || !$has_users_gid) {
         echo '<p>This database is from a version of PHP-Calendar older than 2.0.0, which this installer can no longer upgrade. Upgrade to PHP-Calendar 2.0.13 first using its installer, then run this one.</p>';

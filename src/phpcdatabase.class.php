@@ -40,6 +40,10 @@ class PhpcDatabase
      */
     public function __construct($host, $username, $passwd, $dbname, $port)
     {
+        // Queries are checked with "or $this->db_error(...)", so report
+        //   errors by return value rather than PHP 8.1+'s mysqli exceptions.
+        mysqli_report(MYSQLI_REPORT_OFF);
+
         // Make the database connection.
         $this->dbh = new mysqli(
             $host,
@@ -893,15 +897,11 @@ class PhpcDatabase
         }
 
         $users_table = SQL_PREFIX . 'users';
-        try {
-            $sth = $this->dbh->query("SHOW COLUMNS FROM `$users_table` LIKE 'password'");
-            $column = $sth ? $sth->fetch_assoc() : null;
-            $ready = $column
-                && preg_match('/\((\d+)\)/', $column['Type'], $matches)
-                && $matches[1] >= 255;
-        } catch (mysqli_sql_exception $e) {
-            $ready = false;
-        }
+        $sth = $this->dbh->query("SHOW COLUMNS FROM `$users_table` LIKE 'password'");
+        $column = $sth ? $sth->fetch_assoc() : null;
+        $ready = $column
+            && preg_match('/\((\d+)\)/', $column['Type'], $matches)
+            && $matches[1] >= 255;
 
         return $ready;
     }
