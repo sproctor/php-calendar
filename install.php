@@ -95,7 +95,9 @@ echo '<p>Welcome to the PHP Calendar installation process.</p>
 ';
 
 foreach ($_POST as $key => $value) {
-    if (!is_string($value)) {
+    // Passwords are only needed by the step they're submitted to; don't copy
+    //   them into later pages.
+    if (!is_string($value) || $key == 'my_passwd' || $key == 'admin_pass') {
         continue;
     }
     $key = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
@@ -123,9 +125,6 @@ if (empty($_POST['action'])) {
         && !isset($_POST['my_prefix'])
         && !isset($_POST['my_database'])) {
     get_server_setup();
-} elseif ((isset($_POST['create_user']) || isset($_POST['create_db']))
-        && !isset($_POST['done_user_db'])) {
-    add_sql_user_db();
 } elseif (!isset($_POST['base'])) {
     install_base();
 } elseif (!isset($_POST['admin_user'])
@@ -267,6 +266,12 @@ function get_server_setup()
 
     echo '
 		<h3>Step 1: Database</h3>
+		<p>Before continuing, create a MySQL database and a database user for
+		PHP-Calendar, for example in your hosting control panel. If you
+		administer the database server yourself, you can use:</p>
+		<pre>CREATE DATABASE calendar CHARACTER SET utf8mb4;
+CREATE USER \'calendar\'@\'localhost\' IDENTIFIED BY \'your password\';
+GRANT ALL ON calendar.* TO \'calendar\'@\'localhost\';</pre>
 		<table class="display">
 		<tr>
 		<td><label for="my_hostname">SQL Server Hostname:</label></td>
@@ -290,33 +295,9 @@ function get_server_setup()
 		</tr>
 		<tr>
 		<td colspan="2">
-		  <input type="checkbox" name="create_db" id="create_db" value="yes"/>
-		  <label for="create_db">Create the database (don\'t check this if it already exists)</label>
-		</td>
-		</tr>
-		<tr>
-		<td colspan="2">
 		  <input type="checkbox" name="drop_tables" id="drop_tables" value="yes">
 		  <label for="drop_tables">Drop tables before creating them</label>
 		</td>
-		</tr>
-		<tr><td colspan="2">
-		<span style="font-weight:bold;">Optional: user creation on database</span>
-		</td></tr>
-		<tr><td colspan="2">
-		If the credentials supplied above are new, you have to be the database administrator.
-		</td></tr>
-		<tr><td colspan="2">
-		 <input type="checkbox" name="create_user" id="create_user" value="yes">
-		 <label for="create_user">Check this if you want to do it and provide admin user and password.</label>
-		</td></tr>
-		<tr>
-		<td><label for="my_adminname">SQL Admin name:</label></td>
-		<td><input type="text" name="my_adminname" id="my_adminname"></td>
-		</tr>
-		<tr>
-		<td><label for="my_adminpasswd">SQL Admin Password:</label></td>
-		<td><input type="password" name="my_adminpasswd" id="my_adminpasswd"></td>
 		</tr>
 		<tr>
 		<td colspan="2">
@@ -334,68 +315,6 @@ function refuse_if_configured()
         soft_error('The calendar is already configured. To install again, manually delete config.php.');
     }
 }
-
-function add_sql_user_db()
-{
-    global $dbh;
-
-    refuse_if_configured();
-
-    $my_hostname = $_POST['my_hostname'];
-    $my_username = $_POST['my_username'];
-    $my_passwd = $_POST['my_passwd'];
-    $my_database = $_POST['my_database'];
-    $my_adminname = $_POST['my_adminname'];
-    $my_adminpasswd = $_POST['my_adminpasswd'];
-
-    $create_user = isset($_POST['create_user'])
-        && $_POST['create_user'] == 'yes';
-    $create_db = isset($_POST['create_db']) && $_POST['create_db'] == 'yes';
-
-    // Make the database connection.
-    if ($create_user) {
-        $dbh = connect_db($my_hostname, $my_adminname, $my_adminpasswd);
-    } else {
-        $dbh = connect_db($my_hostname, $my_username, $my_passwd);
-    }
-
-    $string = "<h3>Step 2: Database Setup</h3>";
-
-    if ($create_db) {
-        phpc_debug("Creating database \"$my_database\".");
-
-        $query = "CREATE DATABASE $my_database";
-
-        $dbh->query($query)
-            or db_error($dbh, 'error creating db', $query);
-
-        $string .= "<p>Successfully created database</p>";
-    }
-
-    if ($create_user) {
-        phpc_debug("Creating user \"$my_username\".");
-
-        $query = "GRANT ALL ON accounts.* TO $my_username@$my_hostname identified by '$my_passwd'";
-        $dbh->query($query)
-            or db_error($dbh, 'Could not grant:', $query);
-        $query = "GRANT ALL ON $my_database.*\n"
-            ."TO $my_username IDENTIFIED BY '$my_passwd'";
-        $dbh->query($query)
-            or db_error($dbh, 'Could not grant:', $query);
-
-        $query = "FLUSH PRIVILEGES";
-        $dbh->query($query)
-            or db_error($dbh, "Could not flush privileges", $query);
-
-        $string .= "<p>Successfully added user</p>";
-    }
-
-    echo "$string\n"
-        ."<div><input type=\"submit\" name=\"done_user_db\" value=\"continue\"/>"
-        ."</div>\n";
-
-}
-
 
 function install_base()
 {
