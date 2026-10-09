@@ -549,7 +549,7 @@ class FormDropdownQuestion extends FormCompoundQuestion
 
         $children = array();
         foreach ($this->options as $value => $name) {
-            $attrs = attrs("value=\"$value\"");
+            $attrs = attrs("value=\"" . phpc_html_escape((string)$value) . "\"");
             if (!empty($defaults[$this->qid])
                 && $defaults[$this->qid] == $value
             ) {
@@ -595,7 +595,7 @@ class FormMultipleSelectQuestion extends FormCompoundQuestion
 
         $children = array();
         foreach ($this->options as $value => $name) {
-            $attrs = attrs("value=\"$value\"");
+            $attrs = attrs("value=\"" . phpc_html_escape((string)$value) . "\"");
             if (!empty($defaults[$this->qid])
                 && $defaults[$this->qid] == $value
             ) {
@@ -688,7 +688,7 @@ class Form extends FormGroup
             $hidden_div->add(tag('input', attrs(
                 'type="hidden"',
                 "name=\"$name\"",
-                "value=\"$value\"",
+                "value=\"" . phpc_html_escape((string)$value) . "\"",
                 "id=\"$name\""
             )));
         }

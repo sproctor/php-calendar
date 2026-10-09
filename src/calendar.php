@@ -575,7 +575,7 @@ function create_hidden($name, $value)
 {
     return tag('input', attributes(
         "name=\"$name\"",
-        "value=\"$value\"",
+        "value=\"" . phpc_html_escape((string)$value) . "\"",
         'type="hidden"'
     ));
 }
@@ -590,7 +590,7 @@ function create_submit($value)
 {
     return tag('input', attributes(
         'name="submit"',
-        "value=\"$value\"",
+        "value=\"" . phpc_html_escape((string)$value) . "\"",
         'type="submit"'
     ));
 }
@@ -607,7 +607,7 @@ function create_text($name, $value = false)
 {
     $attributes = attributes("name=\"$name\"", "id=\"$name\"", 'type="text"');
     if ($value !== false) {
-        $attributes->add("value=\"$value\"");
+        $attributes->add("value=\"" . phpc_html_escape((string)$value) . "\"");
     }
     return tag('input', $attributes);
 }
@@ -638,7 +638,7 @@ function create_checkbox($name, $value, $checked = false, $label = false)
         "id=\"$name\"",
         "name=\"$name\"",
         'type="checkbox"',
-        "value=\"$value\""
+        "value=\"" . phpc_html_escape((string)$value) . "\""
     );
     if (!empty($checked)) {
         $attributes->add('checked="checked"');
