@@ -54,9 +54,6 @@
                         {% if app.current_route != 'month_view' and app.current_route != 'default_view' and date is defined %}
                             {{ menu_item("month_view", "view-month-menu-link"|trans, 'calendar3', {slug: calendar.slug, month: date|month, year: date|year}) }}
                         {% endif %}
-                        {% if app.current_route not in ['day_view'] and date is defined %}
-                            {{ menu_item("day_view", "view-date-menu-link"|trans, 'calendar-day', {slug: calendar.slug}|merge(date|dateparts)) }}
-                        {% endif %}
                     {% endif %}
                     {% if app.user and app.user.isAdmin %}
                         {{ menu_item("admin", "admin-menu-link"|trans, 'gear') }}
