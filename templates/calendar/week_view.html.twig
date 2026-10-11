@@ -1,10 +1,10 @@
 {% extends "calendar/display.html.twig" %}
 
-{% block title %}{{ "week-of-year-title"|trans({'%week%': week, '%year': year}) }}{% endblock %}
+{% block title %}{{ "week-of-year-title"|trans({'%week%': week, '%year%': year}) }}{% endblock %}
 
 {% block navigation %}
 <a class="nav-link" href="{{ prev_week_url }}"><i class="fas fa-angle-left fa-lg"></i></a>
-{{ "week-of-year-title"|trans({'%week%': week, '%year': year}) }}
+{{ "week-of-year-title"|trans({'%week%': week, '%year%': year}) }}
 <a class="nav-link" href="{{ next_week_url }}"><i class="fas fa-angle-right fa-lg"></i></a>
 {% endblock %}
 

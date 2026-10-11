@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello LoginController!{% endblock %}
+{% block title %}{{ 'log-in-title'|trans }}{% endblock %}
 
 {% block body %}
     {% if error %}
@@ -25,6 +25,6 @@
         {# If you want to control the URL the user is redirected to on success #}
         <input type="hidden" name="_target_path" value="{{ target_path }}"/>
 
-        <button class="btn btn-primary mb-3" type="submit">login</button>
+        <button class="btn btn-primary mb-3" type="submit">{{ 'log-in-button'|trans }}</button>
     </form>
 {% endblock %}
