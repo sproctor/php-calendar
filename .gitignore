@@ -14,12 +14,8 @@ config.php
 .vscode
 .idea
 .vagrant
+.php-cs-fixer.cache
 node_modules
-
-###> symfony/phpunit-bridge ###
-.phpunit.result.cache
-/phpunit.xml
-###< symfony/phpunit-bridge ###
 
 ###> phpunit/phpunit ###
 /phpunit.xml
