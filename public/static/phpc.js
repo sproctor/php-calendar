@@ -13,10 +13,6 @@ addEventListener("DOMContentLoaded", () => {
     }
 
     // Render markdown to sanitized HTML. The source is the element's text, which Twig escaped.
-    marked.use({
-        mangle: false,
-        headerIds: false
-    });
     const renderMarkdown = (source) => DOMPurify.sanitize(marked.parse(source));
 
     document.querySelectorAll('.markdown').forEach((element) => {
