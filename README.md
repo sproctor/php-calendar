@@ -24,6 +24,27 @@ See the demo live at http://www.php-calendar.org/php-calendar-dev/
 
 Translations can be done at https://www.transifex.com/projects/p/php-calendar/
 
+### Upgrading from 2.0
+
+3.0 uses a new database schema. Install 3.0 with a new, empty database, then copy everything from
+the 2.0 database (which isn't changed) with:
+
+    php bin/console doctrine:migrations:migrate
+    php bin/console app:import-2.0 "mysql://user:password@host/old_database" --prefix=phpc_
+
+Use the table prefix from 2.0's `config.php` (`SQL_PREFIX`). Add `--dry-run` to check the import
+without saving anything. Users keep their passwords, and 2.0 groups become roles.
+
+### Embedding a calendar
+
+To show a calendar on another website, add this where it should appear:
+
+    <script src="https://calendar.example.com/static/embed.js"
+            data-src="https://calendar.example.com/en/calendar/1/"></script>
+
+`data-src` can be any month, week or day view, event, or search URL. The calendar appears in an
+iframe that grows to fit it.
+
 ## Development
 
 Source code can be found at https://github.com/sproctor/php-calendar
@@ -42,6 +63,12 @@ http://localhost:8025. On first visit the app redirects to `/setup` to create th
 and admin account. Run `bin/console` and `composer` inside the `php` container, since the database
 host `database` only resolves there. The container runs as UID/GID 1000 by default; if your user
 differs, build with `UID=$(id -u) GID=$(id -g) docker compose build`.
+
+### Tests
+
+    docker compose exec php vendor/bin/phpunit
+
+The tests use the `app_test` database, which they rebuild from the migrations on every run.
 
 ### Modifying schema
 
