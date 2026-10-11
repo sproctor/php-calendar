@@ -205,6 +205,17 @@ class Event
         return $this->mtime;
     }
 
+    /**
+     * Sets the creation and modification times, for imported events
+     */
+    public function setTimestamps(DateTimeImmutable $created, ?DateTimeImmutable $modified): self
+    {
+        $this->ctime = $created;
+        $this->mtime = $modified;
+
+        return $this;
+    }
+
     public function markModified(): self
     {
         $this->mtime = new DateTimeImmutable();
