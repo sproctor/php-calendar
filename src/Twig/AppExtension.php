@@ -18,6 +18,7 @@
 namespace App\Twig;
 
 use App\EventSubscriber\EmbedSubscriber;
+use App\EventSubscriber\LastCalendarSubscriber;
 use App\Repository\CalendarRepository;
 use App\Security\Voter\CalendarVoter;
 use App\Service\CalendarDates;
@@ -39,6 +40,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         private AuthorizationCheckerInterface $authorizationChecker,
         private LocaleService         $languageService,
         private CalendarDates         $dates,
+        private LastCalendarSubscriber $lastCalendar,
     )
     {
     }
@@ -84,6 +86,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                     \DateTimeImmutable::createFromInterface($date)->modify("$days days")
             ),
             new TwigFunction('is_today', $this->dates->isToday(...)),
+            new TwigFunction('last_calendar', $this->lastCalendar->getLastCalendar(...)),
             new TwigFunction(
                 'is_embedded',
                 fn(array $context) => $context['app']->getRequest() !== null
@@ -116,6 +119,11 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     {
         return [
             new TwigFilter('month_name', $this->dates->monthName(...)),
+            new TwigFilter('month_year', fn(DateTimeInterface $date) => $this->dates->formatSkeleton($date, 'yMMMM')),
+            new TwigFilter('day_heading', fn(DateTimeInterface $date) => $this->dates->formatSkeleton($date, 'EEEEdMMMM')),
+            new TwigFilter('date_from_key', $this->dates->fromDayKey(...)),
+            // Unlike Twig's capitalize, leaves the rest of the string alone
+            new TwigFilter('ucfirst', fn(string $text) => mb_strtoupper(mb_substr($text, 0, 1)) . mb_substr($text, 1)),
             new TwigFilter('month_abbr', fn(DateTimeInterface $date) => $this->dates->format($date, 'MMM')),
             new TwigFilter('day_name', fn(DateTimeInterface $date) => $this->dates->format($date, 'EEEE')),
             new TwigFilter('day_abbr', fn(DateTimeInterface $date) => $this->dates->format($date, 'E')),
@@ -160,7 +168,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     {
         // TODO: make this a template
         $output = "<div class=\"dropdown\">"
-            . "<button class=\"btn btn-navlink dropdown-toggle\" data-bs-toggle=\"dropdown\" type=\"button\""
+            . "<button class=\"btn btn-sm btn-outline-secondary dropdown-toggle\" data-bs-toggle=\"dropdown\" type=\"button\""
             . " aria-expanded=\"false\">" . htmlspecialchars($title) . "</button>"
             . "<ul class=\"dropdown-menu\">";
         foreach ($values as $key => $value) {

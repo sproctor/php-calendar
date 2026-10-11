@@ -40,6 +40,7 @@
             <p class="text-secondary">{{ "user-permissions-help"|trans }}</p>
             <form method="post" action="{{ path('calendar_permissions', {slug: calendar.slug}) }}">
                 <input type="hidden" name="_token" value="{{ csrf_token('calendar-permissions-' ~ calendar.cid) }}">
+                <div class="table-responsive">
                 <table class="table table-sm align-middle">
                     <thead>
                     <tr>
@@ -71,12 +72,14 @@
                     {% endfor %}
                     </tbody>
                 </table>
+                </div>
                 <button type="submit" class="btn btn-primary">{{ "update-permissions-button"|trans }}</button>
             </form>
         </div>
 
         <div class="tab-pane" id="roles" role="tabpanel" aria-labelledby="roles-tab">
             <p class="text-secondary">{{ "roles-help"|trans }}</p>
+            <div class="table-responsive">
             <table class="table table-sm align-middle">
                 <thead>
                 <tr>
@@ -104,10 +107,12 @@
                 {% endfor %}
                 </tbody>
             </table>
+            </div>
             <a class="btn btn-primary" href="{{ path('create_role', {slug: calendar.slug}) }}"><i class="bi-plus-square"></i> {{ "create-role-title"|trans }}</a>
         </div>
 
         <div class="tab-pane" id="categories" role="tabpanel" aria-labelledby="categories-tab">
+            <div class="table-responsive">
             <table class="table table-sm align-middle">
                 <thead>
                 <tr>
@@ -129,11 +134,13 @@
                 {% endfor %}
                 </tbody>
             </table>
+            </div>
             <a class="btn btn-primary" href="{{ path('create_category', {slug: calendar.slug}) }}"><i class="bi-plus-square"></i> {{ "create-category-title"|trans }}</a>
         </div>
 
         <div class="tab-pane" id="fields" role="tabpanel" aria-labelledby="fields-tab">
             <p class="text-secondary">{{ "fields-help"|trans }}</p>
+            <div class="table-responsive">
             <table class="table table-sm align-middle">
                 <thead>
                 <tr>
@@ -157,6 +164,7 @@
                 {% endfor %}
                 </tbody>
             </table>
+            </div>
             <a class="btn btn-primary" href="{{ path('create_field', {slug: calendar.slug}) }}"><i class="bi-plus-square"></i> {{ "create-field-title"|trans }}</a>
         </div>
     </div>

@@ -1,19 +1,27 @@
 {% extends "base.html.twig" %}
 
-{% block title %}{{ date|format_date('long') }}{% endblock %}
+{% block title %}{{ date|format_date('long') }} – {{ calendar.title }}{% endblock %}
 
 {% block body %}
-    <h3>
-        <a href="{{ path('day_view', {slug: calendar.slug}|merge(prev_date|dateparts)) }}" aria-label="{{ 'previous-day-label'|trans }}"><i
-                    class="bi-chevron-left"></i></a>
-        {{ date|format_date('long') }}
-        <a href="{{ path('day_view', {slug: calendar.slug}|merge(next_date|dateparts)) }}" aria-label="{{ 'next-day-label'|trans }}"><i
-                    class="bi-chevron-right"></i></a>
-    </h3>
+    {% set can_create = is_granted('CALENDAR_CREATE', calendar) %}
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <h1 class="h3 mb-0 me-2">{{ date|format_date('full')|ucfirst }}</h1>
+        {{ include('components/view_nav.html.twig', {
+            prev_url: path('day_view', {slug: calendar.slug}|merge(prev_date|dateparts)),
+            next_url: path('day_view', {slug: calendar.slug}|merge(next_date|dateparts)),
+            prev_label: 'previous-day-label', next_label: 'next-day-label',
+        }) }}
+        {% if can_create %}
+            <a class="btn btn-primary btn-sm ms-auto" href="{{ path('create_event', {slug: calendar.slug}|merge(date|dateparts)) }}">
+                <i class="bi-plus"></i> {{ 'create-event-label'|trans }}
+            </a>
+        {% endif %}
+    </div>
     {% if occurrences|length > 0 %}
         {% set can_delete_any = false %}
         <form id="delete-events-form" action="{{ path('delete_events', {slug: calendar.slug}) }}" method="post">
             <input type="hidden" name="_token" value="{{ csrf_token('delete-events') }}">
+            <div class="table-responsive">
             <table class="table">
                 <thead>
                 <tr>
@@ -47,6 +55,7 @@
                 {% endfor %}
                 </tbody>
             </table>
+            </div>
         </form>
         {% if can_delete_any %}
             {{ include('components/confirmation.html.twig', {
@@ -60,5 +69,10 @@
         {% endif %}
     {% else %}
         <p class="lead">{{ "no-events-message"|trans }}</p>
+        {% if can_create %}
+            <a class="btn btn-outline-primary" href="{{ path('create_event', {slug: calendar.slug}|merge(date|dateparts)) }}">
+                <i class="bi-plus"></i> {{ 'create-event-on-day-button'|trans }}
+            </a>
+        {% endif %}
     {% endif %}
 {% endblock %}

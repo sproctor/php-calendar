@@ -70,6 +70,7 @@ class CalendarController extends AbstractController
         $start = $this->dates->weekStart($week, $year);
         $end = $start->modify('+7 days');
         $previous = $start->modify('-7 days');
+        $days = $this->grid->byDay($calendar, $start, $end, $this->currentUser());
 
         return $this->render('calendar/week_view.html.twig', [
             'calendar' => $calendar,
@@ -77,7 +78,15 @@ class CalendarController extends AbstractController
             'start_date' => $start,
             'week' => $week,
             'year' => $year,
-            'occurrences' => $this->grid->byDay($calendar, $start, $end, $this->currentUser()),
+            'end_date' => $end->modify('-1 day'),
+            'occurrences' => OccurrenceGrid::capped($days, $calendar->getEventsMax()),
+            'agenda' => $days,
+            'create_date' => $this->createDate($start, $end),
+            'today_url' => $this->generateUrl('week_view', [
+                'slug' => $calendar->getSlug(),
+                'year' => $this->dates->weekYear(new DateTimeImmutable('today')),
+                'week' => $this->dates->weekOfYear(new DateTimeImmutable('today')),
+            ]),
             'prev_week_url' => $this->generateUrl('week_view', [
                 'slug' => $calendar->getSlug(),
                 'year' => $this->dates->weekYear($previous),
@@ -107,6 +116,9 @@ class CalendarController extends AbstractController
             'date' => $date,
             'prev_date' => $date->modify('-1 day'),
             'next_date' => $next,
+            'today_url' => $this->generateUrl('day_view', ['slug' => $calendar->getSlug()]
+                + $this->dateParts(new DateTimeImmutable('today'))),
+            'create_date' => $date,
             'occurrences' => $this->grid->findVisible($calendar, $date, $next, $this->currentUser()),
         ]);
     }
@@ -179,6 +191,9 @@ class CalendarController extends AbstractController
         $weeks = $this->dates->weeksInMonth($year, $month);
         $from_date = $this->dates->monthGridStart($year, $month);
         $to_date = $from_date->modify('+' . ($weeks * 7) . ' days');
+        $days = $this->grid->byDay($calendar, $from_date, $to_date, $this->currentUser());
+        $monthStart = $date->modify('first day of this month');
+        $monthEnd = $monthStart->modify('+1 month');
 
         return $this->render('calendar/month_view.html.twig', [
             'calendar' => $calendar,
@@ -195,10 +210,36 @@ class CalendarController extends AbstractController
                 'year' => $next->format('Y'),
                 'month' => $next->format('n'),
             ]),
+            'today_url' => $this->generateUrl('default_view', ['slug' => $slug]),
             'weeks' => $weeks,
-            'occurrences' => $this->grid->byDay($calendar, $from_date, $to_date, $this->currentUser()),
+            'occurrences' => OccurrenceGrid::capped($days, $calendar->getEventsMax()),
+            // The phone layout lists every event of the month itself
+            'agenda' => array_filter(
+                $days,
+                fn(string $day) => $day >= $monthStart->format('Y-m-d') && $day < $monthEnd->format('Y-m-d'),
+                ARRAY_FILTER_USE_KEY,
+            ),
             'start_date' => $from_date,
+            'create_date' => $this->createDate($monthStart, $monthEnd),
         ]);
+    }
+
+    /**
+     * The date "Create event" suggests for a view of [$from, $to): today when it's in view, else the first day
+     */
+    private function createDate(DateTimeImmutable $from, DateTimeImmutable $to): DateTimeImmutable
+    {
+        $today = new DateTimeImmutable('today');
+
+        return $today >= $from && $today < $to ? $today : $from;
+    }
+
+    /**
+     * @return array{year: string, month: string, day: string}
+     */
+    private function dateParts(DateTimeImmutable $date): array
+    {
+        return ['year' => $date->format('Y'), 'month' => $date->format('m'), 'day' => $date->format('d')];
     }
 
     private function currentUser(): ?User

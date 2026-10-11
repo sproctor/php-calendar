@@ -1,12 +1,18 @@
 {% extends "calendar/display.html.twig" %}
 
-{% block title %}{{ calendar.title }}{% endblock %}
+{% block title %}{{ date|month_year|ucfirst }} – {{ calendar.title }}{% endblock %}
+
+{% block heading %}{{ date|month_year|ucfirst }}{% endblock %}
 
 {% block navigation %}
-<a class="nav-link" href="{{ prev_month_url }}" aria-label="{{ 'previous-month-label'|trans }}"><i class="bi-chevron-left"></i></a>
-{{ dropdown(date|month_name, months) }}
-{{ dropdown(date|year, years) }}
-<a class="nav-link" href="{{ next_month_url }}" aria-label="{{ 'next-month-label'|trans }}"><i class="bi-chevron-right"></i></a>
+    {{ include('components/view_nav.html.twig', {
+        prev_url: prev_month_url, next_url: next_month_url,
+        prev_label: 'previous-month-label', next_label: 'next-month-label',
+    }) }}
+    <div class="d-flex gap-1">
+        {{ dropdown(date|month_name|ucfirst, months) }}
+        {{ dropdown(date|year, years) }}
+    </div>
 {% endblock %}
 
 {% block content %}

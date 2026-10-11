@@ -37,6 +37,7 @@
 
     <h3>{{ "search-results-label"|trans }}</h3>
     {% if results is not empty %}
+        <div class="table-responsive">
         <table class="table">
             <thead>
                 <tr>
@@ -55,6 +56,7 @@
             {% endfor %}
             </tbody>
         </table>
+        </div>
     {% elseif query is not empty or from or to %}
         <p>{{ "no-search-results-message"|trans }}</p>
     {% endif %}

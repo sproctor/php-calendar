@@ -50,15 +50,13 @@ class OccurrenceGrid
     }
 
     /**
-     * Visible occurrences grouped by day, keyed by CalendarDates::dayKey(). Multi-day occurrences appear on each day.
-     * Each day holds at most the calendar's maximum events; when there are more, a null follows them to
-     * stand for "more events".
+     * Visible occurrences grouped by day, keyed by CalendarDates::dayKey(), in date order. Multi-day
+     * occurrences appear on each day they touch.
      *
-     * @return array<string, array<Occurrence|null>>
+     * @return array<string, Occurrence[]>
      */
     public function byDay(Calendar $calendar, DateTimeImmutable $from, DateTimeImmutable $to, ?User $user): array
     {
-        $max = $calendar->getEventsMax();
         $days = [];
         foreach ($this->findVisible($calendar, $from, $to, $user) as $occurrence) {
             $day = max($occurrence->getStart(), $from)->setTime(0, 0);
@@ -66,17 +64,29 @@ class OccurrenceGrid
             // Every day the occurrence touches, at least its first. A timed occurrence ending at
             // midnight doesn't continue into that day.
             do {
-                $key = $this->dates->dayKey($day);
-                $count = count($days[$key] ?? []);
-                if ($count < $max) {
-                    $days[$key][] = $occurrence;
-                } elseif ($count === $max) {
-                    $days[$key][] = null;
-                }
+                $days[$this->dates->dayKey($day)][] = $occurrence;
                 $day = $day->modify('+1 day');
             } while ($day < $end);
         }
+        ksort($days);
 
         return $days;
+    }
+
+    /**
+     * Limits each day of byDay() output to $max occurrences. When a day has more, a null follows them
+     * to stand for "more events".
+     *
+     * @param array<string, Occurrence[]> $days
+     * @return array<string, array<Occurrence|null>>
+     */
+    public static function capped(array $days, int $max): array
+    {
+        return array_map(
+            fn(array $occurrences) => count($occurrences) > $max
+                ? [...array_slice($occurrences, 0, $max), null]
+                : $occurrences,
+            $days,
+        );
     }
 }

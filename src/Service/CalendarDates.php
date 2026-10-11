@@ -21,6 +21,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use IntlCalendar;
 use IntlDateFormatter;
+use IntlDatePatternGenerator;
 use Locale;
 
 /**
@@ -143,6 +144,27 @@ class CalendarDates
         );
 
         return $formatter->format($date);
+    }
+
+    /**
+     * Formats $date from an ICU skeleton, which lists the fields to show (e.g. "yMMMM" for "October 2026");
+     * the locale decides their order and punctuation
+     */
+    public function formatSkeleton(DateTimeInterface $date, string $skeleton): string
+    {
+        $pattern = (new IntlDatePatternGenerator(Locale::getDefault()))->getBestPattern($skeleton);
+
+        return $this->format($date, $pattern === false ? $skeleton : $pattern);
+    }
+
+    /**
+     * The inverse of dayKey()
+     */
+    public function fromDayKey(string $key): DateTimeImmutable
+    {
+        [$year, $month, $day] = array_map('intval', explode('-', $key));
+
+        return $this->date($year, $month, $day);
     }
 
     /**
