@@ -14,9 +14,11 @@ security:
             entity:
                 class: App\Entity\User
                 property: username
+
     firewalls:
         dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            # Ensure dev tools and static assets are always allowed
+            pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
         main:
             lazy: true
@@ -27,19 +29,18 @@ security:
                 check_path: app_login
                 enable_csrf: true
             logout:
-                path: app_logout
+                path: /logout
                 enable_csrf: true
                 # where to redirect after logout
                 target: default
 
-            # activate different ways to authenticate
+            # Activate different ways to authenticate:
             # https://symfony.com/doc/current/security.html#the-firewall
 
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
+    # Note: Only the *first* matching rule is applied
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
@@ -47,10 +48,8 @@ security:
 when@test:
     security:
         password_hashers:
-            # By default, password hashers are resource intensive and take time. This is
-            # important to generate secure password hashes. In tests however, secure hashes
-            # are not important, waste resources and increase test times. The following
-            # reduces the work factor to the lowest possible values.
+            # Password hashers are resource-intensive by design to ensure security.
+            # In tests, it's safe to reduce their cost to improve performance.
             App\Entity\User:
                 algorithm: auto
                 cost: 4 # Lowest possible value for bcrypt

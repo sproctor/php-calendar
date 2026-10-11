@@ -228,4 +228,20 @@ class PermissionTest extends AppWebTestCase
         $this->client->request('GET', '/setup');
         $this->assertResponseRedirects('/');
     }
+
+    public function testLogoutNeedsToken(): void
+    {
+        $this->createCalendar();
+        $user = $this->createUser('user');
+        $this->login($user);
+
+        $this->client->request('GET', '/logout');
+        $this->assertResponseStatusCodeSame(403);
+
+        $crawler = $this->client->request('GET', '/en/settings');
+        $this->client->click($crawler->filter('a[href^="/logout?_csrf_token="]')->link());
+        $this->assertResponseRedirects('/');
+        $this->client->request('GET', '/en/settings');
+        $this->assertResponseRedirects('/login');
+    }
 }
