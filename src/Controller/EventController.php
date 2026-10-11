@@ -32,7 +32,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/{_locale}/event')]
 class EventController extends AbstractController
@@ -66,7 +66,7 @@ class EventController extends AbstractController
             $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
             if ($permissions->canUpdate()) {
                 $this->event_repository->remove($event);
-            } {
+            } else {
                 // TODO: improve error handling
                 throw $this->createAccessDeniedException("Could not delete: $eid");
             }

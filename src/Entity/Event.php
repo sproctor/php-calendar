@@ -48,14 +48,14 @@ class Event
     #[ORM\OneToMany(mappedBy: 'event', targetEntity: Occurrence::class)]
     private Collection $occurrences;
 
-    #[ORM\Column(type: 'datetime')]
-    private DateTimeInterface $ctime;
+    #[ORM\Column(type: 'datetime_immutable')]
+    private DateTimeImmutable $ctime;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?DateTimeInterface $mtime;
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?DateTimeImmutable $mtime = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?DateTimeInterface $pubtime = null;
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?DateTimeImmutable $pubtime = null;
 
     /**
      * One Event can have many Fields.
@@ -197,7 +197,7 @@ class Event
         return $this->ctime;
     }
 
-    public function setCtime(DateTimeInterface $ctime): self
+    public function setCtime(DateTimeImmutable $ctime): self
     {
         $this->ctime = $ctime;
 
@@ -209,7 +209,7 @@ class Event
         return $this->mtime;
     }
 
-    public function setMtime(DateTimeInterface $mtime): self
+    public function setMtime(DateTimeImmutable $mtime): self
     {
         $this->mtime = $mtime;
 
@@ -221,7 +221,7 @@ class Event
         return $this->pubtime;
     }
 
-    public function setPubtime(?DateTimeInterface $pubtime): self
+    public function setPubtime(?DateTimeImmutable $pubtime): self
     {
         $this->pubtime = $pubtime;
 
