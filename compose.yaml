@@ -29,6 +29,7 @@ services:
       retries: 20
     volumes:
       - db-data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 
   # Catches outgoing mail; web UI at http://localhost:8025
   mailer:
