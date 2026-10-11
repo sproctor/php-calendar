@@ -28,16 +28,31 @@ Translations can be done at https://www.transifex.com/projects/p/php-calendar/
 
 Source code can be found at https://github.com/sproctor/php-calendar
 
+### Local environment
+
+The development stack runs in Docker Compose (`compose.yaml`): PHP 8.3 with Apache, MySQL 8.4,
+and Mailpit to catch outgoing mail.
+
+    docker compose up -d --build
+    docker compose exec php composer install
+    docker compose exec php bin/console doctrine:migrations:migrate
+
+The calendar is served at http://localhost:8080 (set `HTTP_PORT` to change it) and Mailpit at
+http://localhost:8025. On first visit the app redirects to `/setup` to create the first calendar
+and admin account. Run `bin/console` and `composer` inside the `php` container, since the database
+host `database` only resolves there. The container runs as UID/GID 1000 by default; if your user
+differs, build with `UID=$(id -u) GID=$(id -g) docker compose build`.
+
 ### Modifying schema
 
 See instructions on creating migrations here: https://symfony.com/bundles/DoctrineMigrationsBundle/current/index.html
 
 When changing entities/schema run
 
-`php bin/console doctrine:migrations:diff`
+`docker compose exec php bin/console doctrine:migrations:diff`
 
 To update the schema in the DB, run
 
-`php bin/console doctrine:migrations:migrate`
+`docker compose exec php bin/console doctrine:migrations:migrate`
 
 (this will be added to a migration script eventually)

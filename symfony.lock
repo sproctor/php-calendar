@@ -74,9 +74,6 @@
     "laminas/laminas-code": {
         "version": "4.5.1"
     },
-    "laravel/homestead": {
-        "version": "v12.8.0"
-    },
     "monolog/monolog": {
         "version": "2.3.5"
     },
