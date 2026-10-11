@@ -20,6 +20,7 @@ namespace App\Twig;
 use App\EventSubscriber\EmbedSubscriber;
 use App\Repository\CalendarRepository;
 use App\Security\Voter\CalendarVoter;
+use App\Service\CalendarDates;
 use App\Service\LocaleService;
 use DateTimeInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,6 +38,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         private CalendarRepository    $calendarRepository,
         private AuthorizationCheckerInterface $authorizationChecker,
         private LocaleService         $languageService,
+        private CalendarDates         $dates,
     )
     {
     }
@@ -81,7 +83,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                 fn(\DateTimeInterface $date, int $days) =>
                     \DateTimeImmutable::createFromInterface($date)->modify("$days days")
             ),
-            new TwigFunction('is_today', '\is_today'),
+            new TwigFunction('is_today', $this->dates->isToday(...)),
             new TwigFunction(
                 'is_embedded',
                 fn(array $context) => $context['app']->getRequest() !== null
@@ -113,22 +115,10 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     public function getFilters(): array
     {
         return [
-            new TwigFilter(
-                'month_name',
-                [$this, 'monthName']
-            ),
-            new TwigFilter(
-                'month_abbr',
-                [$this, 'shortMonthName']
-            ),
-            new TwigFilter(
-                'day_name',
-                [$this, 'dayName']
-            ),
-            new TwigFilter(
-                'day_abbr',
-                [$this, 'shortDayName']
-            ),
+            new TwigFilter('month_name', $this->dates->monthName(...)),
+            new TwigFilter('month_abbr', fn(DateTimeInterface $date) => $this->dates->format($date, 'MMM')),
+            new TwigFilter('day_name', fn(DateTimeInterface $date) => $this->dates->format($date, 'EEEE')),
+            new TwigFilter('day_abbr', fn(DateTimeInterface $date) => $this->dates->format($date, 'E')),
             new TwigFilter(
                 'year',
                 fn(DateTimeInterface $datetime): int => intval($datetime->format('Y'))
@@ -141,9 +131,9 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                 'day',
                 fn(\DateTimeInterface $date) => intval($date->format('j'))
             ),
-            new TwigFilter('week', fn(DateTimeInterface $date): int => \week_of_year($date)),
-            new TwigFilter('week_year', fn(DateTimeInterface $date): int => \year_of_week_of_year($date)),
-            new TwigFilter('date_index', fn(DateTimeInterface $date): string => \date_index($date)),
+            new TwigFilter('week', $this->dates->weekOfYear(...)),
+            new TwigFilter('week_year', $this->dates->weekYear(...)),
+            new TwigFilter('date_index', $this->dates->dayKey(...)),
             new TwigFilter(
                 'dateparts',
                 function (DateTimeInterface $datetime): array {
@@ -178,63 +168,5 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                 . htmlspecialchars((string) $key) . '</a></li>';
         }
         return $output . "</ul></div>";
-    }
-
-    /**
-     * Takes a date, returns the full month name
-     */
-    function monthName(DateTimeInterface $date): string
-    {
-        $formatter = new \IntlDateFormatter(
-            \Locale::getDefault(),
-            \IntlDateFormatter::NONE,
-            \IntlDateFormatter::NONE,
-            null,
-            null,
-            "MMMM" // full month format
-        );
-        return $formatter->format($date);
-    }
-
-    function shortDayName(DateTimeInterface $date): string
-    {
-        $formatter = new \IntlDateFormatter(
-            \Locale::getDefault(),
-            \IntlDateFormatter::NONE,
-            \IntlDateFormatter::NONE,
-            null,
-            null,
-            "E"
-        );
-        return $formatter->format($date);
-    }
-
-    function dayName(DateTimeInterface $date): string
-    {
-        $formatter = new \IntlDateFormatter(
-            \Locale::getDefault(),
-            \IntlDateFormatter::NONE,
-            \IntlDateFormatter::NONE,
-            null,
-            null,
-            "EEEE"
-        );
-        return $formatter->format($date);
-    }
-
-    /**
-     * @return string
-     */
-    function shortMonthName(DateTimeInterface $date): string
-    {
-        $formatter = new \IntlDateFormatter(
-            \Locale::getDefault(),
-            \IntlDateFormatter::NONE,
-            \IntlDateFormatter::NONE,
-            null,
-            null,
-            "MMM" // short month format
-        );
-        return $formatter->format($date);
     }
 }

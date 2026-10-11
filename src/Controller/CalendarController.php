@@ -22,6 +22,7 @@ use App\Entity\User;
 use App\Repository\OccurrenceRepository;
 use App\Security\Voter\CalendarVoter;
 use App\Security\Voter\EventVoter;
+use App\Service\CalendarDates;
 use App\Service\OccurrenceGrid;
 use DateTimeImmutable;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -38,6 +39,7 @@ class CalendarController extends AbstractController
 {
     public function __construct(
         private OccurrenceGrid $grid,
+        private CalendarDates $dates,
     ) {
     }
 
@@ -54,7 +56,7 @@ class CalendarController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        return $this->displayMonth($calendar, create_datetime($month, 1, $year));
+        return $this->displayMonth($calendar, $this->dates->date($year, $month, 1));
     }
 
     #[Route('/week/{year}/{week}', name: 'week_view', requirements: ['year' => '\d{4}', 'week' => '\d{1,2}'], methods: ['GET'])]
@@ -65,7 +67,7 @@ class CalendarController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $start = week_start_date($week, $year);
+        $start = $this->dates->weekStart($week, $year);
         $end = $start->modify('+7 days');
         $previous = $start->modify('-7 days');
 
@@ -78,13 +80,13 @@ class CalendarController extends AbstractController
             'occurrences' => $this->grid->byDay($calendar, $start, $end, $this->currentUser()),
             'prev_week_url' => $this->generateUrl('week_view', [
                 'cid' => $calendar->getCid(),
-                'year' => year_of_week_of_year($previous),
-                'week' => week_of_year($previous),
+                'year' => $this->dates->weekYear($previous),
+                'week' => $this->dates->weekOfYear($previous),
             ]),
             'next_week_url' => $this->generateUrl('week_view', [
                 'cid' => $calendar->getCid(),
-                'year' => year_of_week_of_year($end),
-                'week' => week_of_year($end),
+                'year' => $this->dates->weekYear($end),
+                'week' => $this->dates->weekOfYear($end),
             ]),
         ]);
     }
@@ -97,7 +99,7 @@ class CalendarController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $date = _create_datetime($month, $day, $year);
+        $date = $this->dates->date($year, $month, $day);
         $next = $date->modify('+1 day');
 
         return $this->render('calendar/day_view.html.twig', [
@@ -164,7 +166,7 @@ class CalendarController extends AbstractController
 
         $months = [];
         for ($i = 1; $i <= 12; $i++) {
-            $months[month_name(_create_datetime($i, 1, $year))] =
+            $months[$this->dates->monthName($this->dates->date($year, $i, 1))] =
                 $this->generateUrl('month_view', ['cid' => $cid, 'year' => $year, 'month' => $i]);
         }
         $years = [];
@@ -174,11 +176,9 @@ class CalendarController extends AbstractController
         $previous = $date->modify('-1 month');
         $next = $date->modify('+1 month');
 
-        $weeks = weeks_in_month($month, $year);
-        // The grid starts on the first day of the week containing the 1st
-        $first_day = 1 - day_of_week($month, 1, $year);
-        $from_date = create_datetime($month, $first_day, $year);
-        $to_date = create_datetime($month, $first_day + $weeks * 7, $year);
+        $weeks = $this->dates->weeksInMonth($year, $month);
+        $from_date = $this->dates->monthGridStart($year, $month);
+        $to_date = $from_date->modify('+' . ($weeks * 7) . ' days');
 
         return $this->render('calendar/month_view.html.twig', [
             'calendar' => $calendar,

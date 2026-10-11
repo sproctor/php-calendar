@@ -21,8 +21,6 @@ services:
         exclude:
             - '../src/Entity/'
             - '../src/Kernel.php'
-            # Loaded by Composer's autoloader; not a class
-            - '../src/functions.php'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

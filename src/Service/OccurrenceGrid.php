@@ -32,6 +32,7 @@ class OccurrenceGrid
     public function __construct(
         private OccurrenceRepository $occurrenceRepository,
         private EventVoter $eventVoter,
+        private CalendarDates $dates,
     ) {
     }
 
@@ -49,7 +50,7 @@ class OccurrenceGrid
     }
 
     /**
-     * Visible occurrences grouped by day, keyed by date_index(). Multi-day occurrences appear on each day.
+     * Visible occurrences grouped by day, keyed by CalendarDates::dayKey(). Multi-day occurrences appear on each day.
      * Each day holds at most the calendar's maximum events; when there are more, a null follows them to
      * stand for "more events".
      *
@@ -65,7 +66,7 @@ class OccurrenceGrid
             // Every day the occurrence touches, at least its first. A timed occurrence ending at
             // midnight doesn't continue into that day.
             do {
-                $key = date_index($day);
+                $key = $this->dates->dayKey($day);
                 $count = count($days[$key] ?? []);
                 if ($count < $max) {
                     $days[$key][] = $occurrence;

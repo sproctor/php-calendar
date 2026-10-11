@@ -27,6 +27,7 @@ use App\Repository\EventRepository;
 use App\Security\PermissionResolver;
 use App\Security\Voter\CalendarVoter;
 use App\Security\Voter\EventVoter;
+use App\Service\CalendarDates;
 use App\Service\OccurrenceGenerator;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -45,6 +46,7 @@ class EventController extends AbstractController
         private OccurrenceGenerator $occurrenceGenerator,
         private PermissionResolver $permissionResolver,
         private TranslatorInterface $translator,
+        private CalendarDates $dates,
     ) {
     }
 
@@ -78,7 +80,7 @@ class EventController extends AbstractController
 
         $date = new DateTimeImmutable('today');
         if ($year !== null && $month !== null && $day !== null && checkdate($month, $day, $year)) {
-            $date = _create_datetime($month, $day, $year);
+            $date = $this->dates->date($year, $month, $day);
         }
 
         return $this->eventForm($request, new Event($calendar, $this->currentUser()), OccurrenceTimesType::defaults($date));
