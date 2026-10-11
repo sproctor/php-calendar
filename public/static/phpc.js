@@ -41,3 +41,34 @@ addEventListener("DOMContentLoaded", () => {
         day.querySelectorAll('.phpc-day-number').forEach((n) => n.classList.add('bg-primary', 'rounded', 'text-white'));
     });
 });
+
+// Inside an embedded calendar (see embed.js): keep calendar links embedded, open everything else in a
+// new tab, and tell the host page our height
+if (document.body && document.body.dataset.embed === '1') {
+    // Must match EmbedSubscriber::EMBEDDABLE_ROUTES
+    const embeddable = /^\/[^/]+\/(calendar\/\d+\/((month|week|day)\/[\d\/]+|search)?|event\/\d+)$/;
+    document.querySelectorAll('a[href]').forEach((a) => {
+        const url = new URL(a.href, location.href);
+        if (url.origin !== location.origin || a.target) {
+            return;
+        }
+        if (embeddable.test(url.pathname)) {
+            url.searchParams.set('embed', '1');
+            a.href = url.toString();
+        } else {
+            a.target = '_blank';
+            a.rel = 'noopener';
+        }
+    });
+    document.querySelectorAll('form[method="get" i]').forEach((form) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'embed';
+        input.value = '1';
+        form.append(input);
+    });
+    const postHeight = () => window.parent.postMessage(
+        {type: 'phpc-height', height: document.documentElement.scrollHeight}, '*');
+    new ResizeObserver(postHeight).observe(document.documentElement);
+    postHeight();
+}

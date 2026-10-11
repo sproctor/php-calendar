@@ -17,6 +17,7 @@
 
 namespace App\Twig;
 
+use App\EventSubscriber\EmbedSubscriber;
 use App\Repository\CalendarRepository;
 use App\Security\Voter\CalendarVoter;
 use App\Service\LocaleService;
@@ -81,6 +82,12 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                     \DateTimeImmutable::createFromInterface($date)->modify("$days days")
             ),
             new TwigFunction('is_today', '\is_today'),
+            new TwigFunction(
+                'is_embedded',
+                fn(array $context) => $context['app']->getRequest() !== null
+                    && EmbedSubscriber::isEmbedded($context['app']->getRequest()),
+                ['needs_context' => true],
+            ),
             new TwigFunction(
                 'change_locale',
                 function (array $context, string $locale) {

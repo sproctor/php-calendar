@@ -12,7 +12,16 @@
     <link rel="stylesheet" href="{{ asset('static/phpc.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
-<body>
+{% set embedded = is_embedded() %}
+<body{% if embedded %} data-embed="1"{% endif %}>
+{% if embedded %}
+    <div class="d-flex align-items-center px-2 py-1 bg-light">
+        {% if calendar is defined %}
+            <a class="fw-semibold text-decoration-none" href="{{ path('default_view', {cid: calendar.cid}) }}" target="_blank" rel="noopener">{{ calendar.title }}</a>
+        {% endif %}
+        <a class="ms-auto small" href="{{ app.request.baseUrl ~ app.request.pathInfo }}" target="_blank" rel="noopener"><i class="bi-box-arrow-up-right"></i> {{ 'open-full-calendar-link'|trans }}</a>
+    </div>
+{% else %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             {% if calendar is defined %}
@@ -104,6 +113,7 @@
             </div>
         </div>
     </nav>
+{% endif %}
 
 <div class="container-fluid">
 {% for type, messages in app.flashes %}
