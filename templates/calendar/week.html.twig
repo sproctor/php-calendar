@@ -2,7 +2,7 @@
 {% set can_create = is_granted('CALENDAR_CREATE', calendar) %}
 <tr>
     <th class="phpc-date" scope="row">
-        <a href="{{ path('week_view', {cid: calendar.cid, year: start_date|week_year, week: start_date|week}) }}">{{ start_date|week }}</a>
+        <a href="{{ path('week_view', {slug: calendar.slug, year: start_date|week_year, week: start_date|week}) }}">{{ start_date|week }}</a>
     </th>
     {% for day_of_week in 0..6 %}
         {% set cur_date = add_days(start_date, day_of_week) %}
@@ -10,10 +10,10 @@
         <td class="phpc-date{% if not in_month %} phpc-shadow{% endif %}{% if is_today(cur_date) %} phpc-today{% endif %}">
             <div>
                 <a class="phpc-day-number"
-                   href="{{ path('day_view', {cid: calendar.cid}|merge(cur_date|dateparts)) }}"
+                   href="{{ path('day_view', {slug: calendar.slug}|merge(cur_date|dateparts)) }}"
                 >{% if (not in_month and day_of_week == 0) or cur_date|day == 1 %}{{ cur_date|month_abbr }}{% endif %} {{ cur_date|day }}</a>
                 {% if can_create %}
-                    <a href="{{ path('create_event', {cid: calendar.cid}|merge(cur_date|dateparts)) }}" class="phpc-add"
+                    <a href="{{ path('create_event', {slug: calendar.slug}|merge(cur_date|dateparts)) }}" class="phpc-add"
                        title="{{ "create-event-label"|trans }}"><i class="bi-plus"></i></a>
                 {% endif %}
             </div>
@@ -22,7 +22,7 @@
                 <div class="occurrence-list list-group">
                     {% for occurrence in days_occurrences %}
                         {% if occurrence is null %}
-                            <a href="{{ path('day_view', {cid: calendar.cid}|merge(cur_date|dateparts)) }}"
+                            <a href="{{ path('day_view', {slug: calendar.slug}|merge(cur_date|dateparts)) }}"
                                class="list-group-item">{{ "view-additional-events-link"|trans }}</a>
                         {% else %}
                             {% set event = occurrence.event %}

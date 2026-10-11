@@ -63,14 +63,14 @@ class EventController extends AbstractController
     }
 
     #[Route(
-        '/calendar/{cid}/event/new/{year}/{month}/{day}',
+        '/calendar/{slug}/event/new/{year}/{month}/{day}',
         name: 'create_event',
-        requirements: ['cid' => '\d+', 'year' => '\d{4}', 'month' => '\d{1,2}', 'day' => '\d{1,2}'],
+        requirements: ['slug' => Calendar::SLUG_PATTERN, 'year' => '\d{4}', 'month' => '\d{1,2}', 'day' => '\d{1,2}'],
         defaults: ['year' => null, 'month' => null, 'day' => null],
         methods: ['GET', 'POST'],
     )]
     public function create(
-        #[MapEntity(id: 'cid')] Calendar $calendar,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar,
         Request $request,
         ?int $year = null,
         ?int $month = null,
@@ -110,12 +110,12 @@ class EventController extends AbstractController
         $this->entityManager->flush();
         $this->addFlash('success', 'event-deleted-message');
 
-        return $this->redirectToRoute('default_view', ['cid' => $calendar->getCid()]);
+        return $this->redirectToRoute('default_view', ['slug' => $calendar->getSlug()]);
     }
 
-    #[Route('/calendar/{cid}/events/delete', name: 'delete_events', requirements: ['cid' => '\d+'], methods: ['POST'])]
+    #[Route('/calendar/{slug}/events/delete', name: 'delete_events', requirements: ['slug' => Calendar::SLUG_PATTERN], methods: ['POST'])]
     public function deleteEvents(
-        #[MapEntity(id: 'cid')] Calendar $calendar,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar,
         Request $request,
         EventRepository $eventRepository,
     ): Response {
@@ -141,7 +141,7 @@ class EventController extends AbstractController
         }
 
         return $this->redirect($request->headers->get('referer')
-            ?: $this->generateUrl('default_view', ['cid' => $calendar->getCid()]));
+            ?: $this->generateUrl('default_view', ['slug' => $calendar->getSlug()]));
     }
 
     /**

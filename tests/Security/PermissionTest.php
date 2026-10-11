@@ -12,7 +12,7 @@ class PermissionTest extends AppWebTestCase
 {
     private function month(Calendar $calendar): string
     {
-        return "/en/calendar/{$calendar->getCid()}/month/2026/10";
+        return "/en/calendar/{$calendar->getSlug()}/month/2026/10";
     }
 
     public function testAnonymousAccessFollowsCalendarSetting(): void
@@ -28,12 +28,12 @@ class PermissionTest extends AppWebTestCase
         $this->client->request('GET', $this->month($calendar));
         $this->assertResponseIsSuccessful();
         $this->assertSelectorNotExists('.phpc-add');
-        $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/event/new");
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/event/new");
         $this->assertResponseRedirects('/login');
 
         $this->fresh($calendar)->setAnonPermission(Calendar::ANON_CREATE);
         $this->em()->flush();
-        $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/event/new");
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/event/new");
         $this->assertResponseIsSuccessful();
     }
 
@@ -62,7 +62,7 @@ class PermissionTest extends AppWebTestCase
         $this->em()->flush();
 
         $this->login($user);
-        $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/event/new");
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/event/new");
         $this->assertResponseIsSuccessful();
     }
 
@@ -160,7 +160,7 @@ class PermissionTest extends AppWebTestCase
         $this->assertResponseStatusCodeSame(403);
 
         $this->postWithToken("/en/event/$eid", "/en/event/$eid/delete");
-        $this->assertResponseRedirects("/en/calendar/{$calendar->getCid()}/");
+        $this->assertResponseRedirects("/en/calendar/{$calendar->getSlug()}/");
         $this->em()->clear();
         $this->assertNull($this->em()->find(\App\Entity\Event::class, $eid));
     }
@@ -174,9 +174,9 @@ class PermissionTest extends AppWebTestCase
         $theirs = $this->createEvent($calendar, $other, 'Theirs');
         $this->login($owner);
 
-        $crawler = $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/day/2026/10/15");
+        $crawler = $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/day/2026/10/15");
         $token = $crawler->filter('#delete-events-form input[name="_token"]')->attr('value');
-        $this->client->request('POST', "/en/calendar/{$calendar->getCid()}/events/delete", [
+        $this->client->request('POST', "/en/calendar/{$calendar->getSlug()}/events/delete", [
             '_token' => $token,
             'eid' => [$mine->getEid(), $theirs->getEid()],
         ]);
@@ -184,7 +184,7 @@ class PermissionTest extends AppWebTestCase
         $this->em()->clear();
         $this->assertNotNull($this->em()->find(\App\Entity\Event::class, $mine->getEid()));
 
-        $this->client->request('POST', "/en/calendar/{$calendar->getCid()}/events/delete", [
+        $this->client->request('POST', "/en/calendar/{$calendar->getSlug()}/events/delete", [
             '_token' => $token,
             'eid' => [$mine->getEid()],
         ]);
@@ -198,13 +198,13 @@ class PermissionTest extends AppWebTestCase
         $calendar = $this->createCalendar();
         $user = $this->createUser('user');
         $this->login($user);
-        $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/admin");
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/admin");
         $this->assertResponseStatusCodeSame(403);
         $this->client->request('GET', '/en/admin/');
         $this->assertResponseStatusCodeSame(403);
 
         $this->grant($calendar, $user, 'admin');
-        $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/admin");
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/admin");
         $this->assertResponseIsSuccessful();
     }
 

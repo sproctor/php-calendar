@@ -25,9 +25,9 @@
                 <tbody>
                 {% for calendar in calendars %}
                     <tr>
-                        <td><a href="{{ path('default_view', {cid: calendar.cid}) }}">{{ calendar.title }}</a></td>
+                        <td><a href="{{ path('default_view', {slug: calendar.slug}) }}">{{ calendar.title }}</a></td>
                         <td class="d-flex gap-2">
-                            <a class="btn btn-sm btn-primary" href="{{ path('calendar_admin', {cid: calendar.cid}) }}"><i
+                            <a class="btn btn-sm btn-primary" href="{{ path('calendar_admin', {slug: calendar.slug}) }}"><i
                                         class="bi bi-wrench"></i> {{ "settings-button"|trans }}</a>
                             {{ include('components/confirmation.html.twig', {
                                 id: 'deleteCalendarModal' ~ calendar.cid,
@@ -35,7 +35,7 @@
                                 small: true,
                                 title: "delete-confirmation-modal-title"|trans,
                                 question: "permanently-delete-calendar-question"|trans,
-                                path: path('delete_calendar', {cid: calendar.cid}),
+                                path: path('delete_calendar', {slug: calendar.slug}),
                                 token_id: 'delete-calendar-' ~ calendar.cid,
                                 confirm_button: "delete-button"|trans,
                             }) }}

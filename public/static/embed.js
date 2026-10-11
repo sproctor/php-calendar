@@ -18,7 +18,7 @@
  * Embeds a calendar in another page. Add where the calendar should appear:
  *
  *   <script src="https://calendar.example.com/static/embed.js"
- *           data-src="https://calendar.example.com/en/calendar/1/"></script>
+ *           data-src="https://calendar.example.com/en/calendar/club-events/"></script>
  *
  * data-src is any month, week or day view, event or search URL. Optional: data-title (the iframe's
  * accessible title) and data-min-height (pixels, default 400). The iframe grows to fit its content.

@@ -9,7 +9,7 @@ class EmbedTest extends AppWebTestCase
     public function testCalendarViewsCanBeEmbedded(): void
     {
         $calendar = $this->createCalendar();
-        $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/month/2026/10", ['embed' => '1']);
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/month/2026/10", ['embed' => '1']);
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Security-Policy', 'frame-ancestors *');
         $this->assertResponseNotHasHeader('X-Frame-Options');
@@ -20,7 +20,7 @@ class EmbedTest extends AppWebTestCase
     public function testOtherPagesCanOnlyBeFramedBySameOrigin(): void
     {
         $calendar = $this->createCalendar();
-        $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/month/2026/10");
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/month/2026/10");
         $this->assertResponseHeaderSame('X-Frame-Options', 'SAMEORIGIN');
         $this->assertSelectorExists('nav.navbar');
 

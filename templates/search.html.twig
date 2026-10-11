@@ -3,7 +3,7 @@
 {% block title %}{{ "search-results-label"|trans }}{% endblock %}
 
 {% block body %}
-    <form class="row g-2 align-items-end mb-3" method="get" action="{{ path('search', {cid: calendar.cid}) }}">
+    <form class="row g-2 align-items-end mb-3" method="get" action="{{ path('search', {slug: calendar.slug}) }}">
         <div class="col-md-4">
             <label class="form-label" for="search-q">{{ "search-label"|trans }}</label>
             <input class="form-control" id="search-q" type="search" name="q" value="{{ query }}">

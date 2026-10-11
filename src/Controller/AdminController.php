@@ -77,8 +77,8 @@ class AdminController extends AbstractController
         ], new Response(status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
     }
 
-    #[Route('/calendar/{cid}/delete', name: 'delete_calendar', requirements: ['cid' => '\d+'], methods: ['POST'])]
-    public function deleteCalendar(#[MapEntity(id: 'cid')] Calendar $calendar, Request $request): Response
+    #[Route('/calendar/{slug}/delete', name: 'delete_calendar', requirements: ['slug' => Calendar::SLUG_PATTERN], methods: ['POST'])]
+    public function deleteCalendar(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, Request $request): Response
     {
         $this->checkToken($request, 'delete-calendar-' . $calendar->getCid());
         // Events, categories, roles, fields and permissions go with it through foreign keys

@@ -41,7 +41,7 @@ use Symfony\Component\Routing\Attribute\Route;
  * A calendar's settings, user permissions, roles, categories and custom fields. Needs admin
  * permission on the calendar.
  */
-#[Route('/{_locale}/calendar/{cid}/admin', requirements: ['cid' => '\d+'])]
+#[Route('/{_locale}/calendar/{slug}/admin', requirements: ['slug' => Calendar::SLUG_PATTERN])]
 class CalendarAdminController extends AbstractController
 {
     public function __construct(
@@ -51,7 +51,7 @@ class CalendarAdminController extends AbstractController
 
     #[Route('', name: 'calendar_admin', methods: ['GET', 'POST'])]
     public function settings(
-        #[MapEntity(id: 'cid')] Calendar $calendar,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar,
         Request $request,
         UserRepository $userRepository,
         UserPermissionsRepository $permissionsRepository,
@@ -64,7 +64,11 @@ class CalendarAdminController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'calendar-saved-message');
 
-            return $this->redirectToRoute('calendar_admin', ['cid' => $calendar->getCid()]);
+            return $this->redirectToRoute('calendar_admin', ['slug' => $calendar->getSlug()]);
+        }
+        if ($form->isSubmitted()) {
+            // The form shows what was submitted; the rest of the page (links, title) uses the saved calendar
+            $this->entityManager->refresh($calendar);
         }
 
         $permissions = [];
@@ -84,7 +88,7 @@ class CalendarAdminController extends AbstractController
 
     #[Route('/permissions', name: 'calendar_permissions', methods: ['POST'])]
     public function permissions(
-        #[MapEntity(id: 'cid')] Calendar $calendar,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar,
         Request $request,
         UserRepository $userRepository,
         UserPermissionsRepository $permissionsRepository,
@@ -111,13 +115,13 @@ class CalendarAdminController extends AbstractController
         $this->entityManager->flush();
         $this->addFlash('success', 'permissions-saved-message');
 
-        return $this->redirectToRoute('calendar_admin', ['cid' => $calendar->getCid(), '_fragment' => 'users']);
+        return $this->redirectToRoute('calendar_admin', ['slug' => $calendar->getSlug(), '_fragment' => 'users']);
     }
 
     #[Route('/role/new', name: 'create_role', methods: ['GET', 'POST'])]
     #[Route('/role/{rid}', name: 'edit_role', requirements: ['rid' => '\d+'], methods: ['GET', 'POST'])]
     public function role(
-        #[MapEntity(id: 'cid')] Calendar $calendar,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar,
         Request $request,
         ?int $rid = null,
     ): Response {
@@ -134,7 +138,7 @@ class CalendarAdminController extends AbstractController
     }
 
     #[Route('/role/{rid}/delete', name: 'delete_role', requirements: ['rid' => '\d+'], methods: ['POST'])]
-    public function deleteRole(#[MapEntity(id: 'cid')] Calendar $calendar, int $rid, Request $request): Response
+    public function deleteRole(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, int $rid, Request $request): Response
     {
         return $this->deleteItem($request, $calendar, CalendarRole::class, $rid, 'role', 'roles');
     }
@@ -142,7 +146,7 @@ class CalendarAdminController extends AbstractController
     #[Route('/category/new', name: 'create_category', methods: ['GET', 'POST'])]
     #[Route('/category/{catid}', name: 'edit_category', requirements: ['catid' => '\d+'], methods: ['GET', 'POST'])]
     public function category(
-        #[MapEntity(id: 'cid')] Calendar $calendar,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar,
         Request $request,
         ?int $catid = null,
     ): Response {
@@ -161,7 +165,7 @@ class CalendarAdminController extends AbstractController
     }
 
     #[Route('/category/{catid}/delete', name: 'delete_category', requirements: ['catid' => '\d+'], methods: ['POST'])]
-    public function deleteCategory(#[MapEntity(id: 'cid')] Calendar $calendar, int $catid, Request $request): Response
+    public function deleteCategory(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, int $catid, Request $request): Response
     {
         return $this->deleteItem($request, $calendar, Category::class, $catid, 'category', 'categories');
     }
@@ -169,7 +173,7 @@ class CalendarAdminController extends AbstractController
     #[Route('/field/new', name: 'create_field', methods: ['GET', 'POST'])]
     #[Route('/field/{fid}', name: 'edit_field', requirements: ['fid' => '\d+'], methods: ['GET', 'POST'])]
     public function field(
-        #[MapEntity(id: 'cid')] Calendar $calendar,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar,
         Request $request,
         ?int $fid = null,
     ): Response {
@@ -186,7 +190,7 @@ class CalendarAdminController extends AbstractController
     }
 
     #[Route('/field/{fid}/delete', name: 'delete_field', requirements: ['fid' => '\d+'], methods: ['POST'])]
-    public function deleteField(#[MapEntity(id: 'cid')] Calendar $calendar, int $fid, Request $request): Response
+    public function deleteField(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, int $fid, Request $request): Response
     {
         return $this->deleteItem($request, $calendar, FieldDefinition::class, $fid, 'field', 'fields');
     }
@@ -206,7 +210,7 @@ class CalendarAdminController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', $message);
 
-            return $this->redirectToRoute('calendar_admin', ['cid' => $calendar->getCid(), '_fragment' => $tab]);
+            return $this->redirectToRoute('calendar_admin', ['slug' => $calendar->getSlug(), '_fragment' => $tab]);
         }
 
         return $this->render('calendar/admin_item.html.twig', $parameters + [
@@ -227,7 +231,7 @@ class CalendarAdminController extends AbstractController
         $this->entityManager->flush();
         $this->addFlash('success', "$kind-deleted-message");
 
-        return $this->redirectToRoute('calendar_admin', ['cid' => $calendar->getCid(), '_fragment' => $tab]);
+        return $this->redirectToRoute('calendar_admin', ['slug' => $calendar->getSlug(), '_fragment' => $tab]);
     }
 
     /**

@@ -5,7 +5,7 @@
 {% block body %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ path('calendar_admin', {cid: calendar.cid, _fragment: tab}) }}">{{ "calendar-settings-label"|trans }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('calendar_admin', {slug: calendar.slug, _fragment: tab}) }}">{{ "calendar-settings-label"|trans }}</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{ heading|trans }}</li>
         </ol>
     </nav>

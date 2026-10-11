@@ -16,7 +16,7 @@ class SmokeTest extends AppWebTestCase
     {
         $calendar = $this->createCalendar();
         $this->login($this->createUser('admin', admin: true));
-        $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/month/2026/10");
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/month/2026/10");
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('.navbar-brand', 'Test calendar');
     }
@@ -25,7 +25,7 @@ class SmokeTest extends AppWebTestCase
     {
         $calendar = $this->createCalendar();
         $this->login($this->createUser('admin', admin: true));
-        $url = "/en/calendar/{$calendar->getCid()}/month/2026/10";
+        $url = "/en/calendar/{$calendar->getSlug()}/month/2026/10";
 
         $this->client->request('GET', $url, server: ['HTTP_ACCEPT_LANGUAGE' => 'en-US']);
         $this->assertSelectorTextSame('.phpc-month-view thead th:nth-child(2)', 'Sun');

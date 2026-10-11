@@ -42,7 +42,7 @@ addEventListener("DOMContentLoaded", () => {
 // new tab, and tell the host page our height
 if (document.body && document.body.dataset.embed === '1') {
     // Must match EmbedSubscriber::EMBEDDABLE_ROUTES
-    const embeddable = /^\/[^/]+\/(calendar\/\d+\/((month|week|day)\/[\d\/]+|search)?|event\/\d+)$/;
+    const embeddable = /^\/[^/]+\/(calendar\/[a-z0-9-]+\/((month|week|day)\/[\d\/]+|search)?|event\/\d+)$/;
     document.querySelectorAll('a[href]').forEach((a) => {
         const url = new URL(a.href, location.href);
         if (url.origin !== location.origin || a.target) {

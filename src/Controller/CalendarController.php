@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Attribute\Route;
 /**
  * The month, week and day views of a calendar, and search
  */
-#[Route('/{_locale}/calendar/{cid}', requirements: ['cid' => '\d+'])]
+#[Route('/{_locale}/calendar/{slug}', requirements: ['slug' => Calendar::SLUG_PATTERN])]
 class CalendarController extends AbstractController
 {
     public function __construct(
@@ -44,13 +44,13 @@ class CalendarController extends AbstractController
     }
 
     #[Route('/', name: 'default_view', methods: ['GET'])]
-    public function defaultRoute(#[MapEntity(id: 'cid')] Calendar $calendar): Response
+    public function defaultRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar): Response
     {
         return $this->displayMonth($calendar, new DateTimeImmutable('first day of this month midnight'));
     }
 
     #[Route('/month/{year}/{month}', name: 'month_view', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}'], methods: ['GET'])]
-    public function monthRoute(#[MapEntity(id: 'cid')] Calendar $calendar, int $year, int $month): Response
+    public function monthRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, int $year, int $month): Response
     {
         if ($month < 1 || $month > 12) {
             throw $this->createNotFoundException();
@@ -60,7 +60,7 @@ class CalendarController extends AbstractController
     }
 
     #[Route('/week/{year}/{week}', name: 'week_view', requirements: ['year' => '\d{4}', 'week' => '\d{1,2}'], methods: ['GET'])]
-    public function weekRoute(#[MapEntity(id: 'cid')] Calendar $calendar, int $year, int $week): Response
+    public function weekRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, int $year, int $week): Response
     {
         $this->denyAccessUnlessGranted(CalendarVoter::READ, $calendar);
         if ($week < 1 || $week > 53) {
@@ -79,12 +79,12 @@ class CalendarController extends AbstractController
             'year' => $year,
             'occurrences' => $this->grid->byDay($calendar, $start, $end, $this->currentUser()),
             'prev_week_url' => $this->generateUrl('week_view', [
-                'cid' => $calendar->getCid(),
+                'slug' => $calendar->getSlug(),
                 'year' => $this->dates->weekYear($previous),
                 'week' => $this->dates->weekOfYear($previous),
             ]),
             'next_week_url' => $this->generateUrl('week_view', [
-                'cid' => $calendar->getCid(),
+                'slug' => $calendar->getSlug(),
                 'year' => $this->dates->weekYear($end),
                 'week' => $this->dates->weekOfYear($end),
             ]),
@@ -92,7 +92,7 @@ class CalendarController extends AbstractController
     }
 
     #[Route('/day/{year}/{month}/{day}', name: 'day_view', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}', 'day' => '\d{1,2}'], methods: ['GET'])]
-    public function dayRoute(#[MapEntity(id: 'cid')] Calendar $calendar, int $year, int $month, int $day): Response
+    public function dayRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, int $year, int $month, int $day): Response
     {
         $this->denyAccessUnlessGranted(CalendarVoter::READ, $calendar);
         if (!checkdate($month, $day, $year)) {
@@ -113,7 +113,7 @@ class CalendarController extends AbstractController
 
     #[Route('/search', name: 'search', methods: ['GET'])]
     public function search(
-        #[MapEntity(id: 'cid')] Calendar $calendar,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar,
         Request $request,
         OccurrenceRepository $occurrenceRepository,
         EventVoter $eventVoter,
@@ -162,16 +162,16 @@ class CalendarController extends AbstractController
 
         $year = intval($date->format('Y'));
         $month = intval($date->format('n'));
-        $cid = $calendar->getCid();
+        $slug = $calendar->getSlug();
 
         $months = [];
         for ($i = 1; $i <= 12; $i++) {
             $months[$this->dates->monthName($this->dates->date($year, $i, 1))] =
-                $this->generateUrl('month_view', ['cid' => $cid, 'year' => $year, 'month' => $i]);
+                $this->generateUrl('month_view', ['slug' => $slug, 'year' => $year, 'month' => $i]);
         }
         $years = [];
         for ($i = $year - 5; $i <= $year + 5; $i++) {
-            $years[$i] = $this->generateUrl('month_view', ['cid' => $cid, 'month' => $month, 'year' => $i]);
+            $years[$i] = $this->generateUrl('month_view', ['slug' => $slug, 'month' => $month, 'year' => $i]);
         }
         $previous = $date->modify('-1 month');
         $next = $date->modify('+1 month');
@@ -186,12 +186,12 @@ class CalendarController extends AbstractController
             'months' => $months,
             'years' => $years,
             'prev_month_url' => $this->generateUrl('month_view', [
-                'cid' => $cid,
+                'slug' => $slug,
                 'year' => $previous->format('Y'),
                 'month' => $previous->format('n'),
             ]),
             'next_month_url' => $this->generateUrl('month_view', [
-                'cid' => $cid,
+                'slug' => $slug,
                 'year' => $next->format('Y'),
                 'month' => $next->format('n'),
             ]),

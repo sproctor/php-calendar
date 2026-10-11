@@ -18,7 +18,7 @@
 {% if embedded %}
     <div class="d-flex align-items-center px-2 py-1 bg-light">
         {% if calendar is defined %}
-            <a class="fw-semibold text-decoration-none" href="{{ path('default_view', {cid: calendar.cid}) }}" target="_blank" rel="noopener">{{ calendar.title }}</a>
+            <a class="fw-semibold text-decoration-none" href="{{ path('default_view', {slug: calendar.slug}) }}" target="_blank" rel="noopener">{{ calendar.title }}</a>
         {% endif %}
         <a class="ms-auto small" href="{{ app.request.baseUrl ~ app.request.pathInfo }}" target="_blank" rel="noopener"><i class="bi-box-arrow-up-right"></i> {{ 'open-full-calendar-link'|trans }}</a>
     </div>
@@ -33,12 +33,12 @@
                                 aria-expanded="false">{{ calendar.title }}</button>
                         <div class="dropdown-menu">
                             {% for cal in calendars %}
-                                <a class="dropdown-item" href="{{ path('default_view', {cid: cal.cid}) }}">{{ cal.title }}</a>
+                                <a class="dropdown-item" href="{{ path('default_view', {slug: cal.slug}) }}">{{ cal.title }}</a>
                             {% endfor %}
                         </div>
                     </div>
                 {% else %}
-                    <a class="navbar-brand" href="{{ path('default_view', {cid: calendar.cid}) }}">{{ calendar.title }}</a>
+                    <a class="navbar-brand" href="{{ path('default_view', {slug: calendar.slug}) }}">{{ calendar.title }}</a>
                 {% endif %}
             {% endif %}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#phpc-navbar"
@@ -49,20 +49,20 @@
                 <ul class="navbar-nav me-auto">
                     {% if calendar is defined %}
                         {% if is_granted('CALENDAR_CREATE', calendar) %}
-                            {{ menu_item("create_event", "create-event-label"|trans, 'plus', {cid: calendar.cid}) }}
+                            {{ menu_item("create_event", "create-event-label"|trans, 'plus', {slug: calendar.slug}) }}
                         {% endif %}
                         {% if app.current_route != 'month_view' and app.current_route != 'default_view' and date is defined %}
-                            {{ menu_item("month_view", "view-month-menu-link"|trans, 'calendar3', {cid: calendar.cid, month: date|month, year: date|year}) }}
+                            {{ menu_item("month_view", "view-month-menu-link"|trans, 'calendar3', {slug: calendar.slug, month: date|month, year: date|year}) }}
                         {% endif %}
                         {% if app.current_route not in ['day_view'] and date is defined %}
-                            {{ menu_item("day_view", "view-date-menu-link"|trans, 'calendar-day', {cid: calendar.cid}|merge(date|dateparts)) }}
+                            {{ menu_item("day_view", "view-date-menu-link"|trans, 'calendar-day', {slug: calendar.slug}|merge(date|dateparts)) }}
                         {% endif %}
                     {% endif %}
                     {% if app.user and app.user.isAdmin %}
                         {{ menu_item("admin", "admin-menu-link"|trans, 'gear') }}
                     {% endif %}
                     {% if calendar is defined and is_granted('CALENDAR_ADMIN', calendar) %}
-                        {{ menu_item("calendar_admin", "calendar-admin-menu-link"|trans, "sliders", {cid: calendar.cid}) }}
+                        {{ menu_item("calendar_admin", "calendar-admin-menu-link"|trans, "sliders", {slug: calendar.slug}) }}
                     {% endif %}
                     <li class="nav-item dropdown">
                         <button class="btn btn-link nav-link dropdown-toggle" type="button"
@@ -101,7 +101,7 @@
                     </li>
                 </ul>
                 {% if calendar is defined %}
-                <form class="d-flex ms-auto" role="search" action="{{ path('search', {cid: calendar.cid}) }}" method="get">
+                <form class="d-flex ms-auto" role="search" action="{{ path('search', {slug: calendar.slug}) }}" method="get">
                     <div class="input-group">
                         <input id="search-input" class="form-control" name="q" type="search"
                                placeholder="{{ "search-label"|trans }}" aria-label="{{ "search-label"|trans }}">

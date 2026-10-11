@@ -76,12 +76,12 @@ class OccurrenceController extends AbstractController
         $event->removeOccurrence($occurrence);
         // An event without occurrences can't be seen anywhere, so remove it with its last occurrence
         if ($event->getOccurrences()->isEmpty()) {
-            $cid = $event->getCalendar()->getCid();
+            $slug = $event->getCalendar()->getSlug();
             $this->entityManager->remove($event);
             $this->entityManager->flush();
             $this->addFlash('success', 'event-deleted-message');
 
-            return $this->redirectToRoute('default_view', ['cid' => $cid]);
+            return $this->redirectToRoute('default_view', ['slug' => $slug]);
         }
         $event->markModified();
         $this->entityManager->flush();

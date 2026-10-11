@@ -53,7 +53,7 @@ class DefaultController extends AbstractController
 
         $readable = array_values(array_filter($calendars, fn($calendar) => $this->isGranted(CalendarVoter::READ, $calendar)));
         if (count($readable) === 1) {
-            return $this->redirectToRoute('default_view', ['_locale' => $locale, 'cid' => $readable[0]->getCid()]);
+            return $this->redirectToRoute('default_view', ['_locale' => $locale, 'slug' => $readable[0]->getSlug()]);
         }
         if ($readable === [] && $user === null) {
             return $this->redirectToRoute('app_login');

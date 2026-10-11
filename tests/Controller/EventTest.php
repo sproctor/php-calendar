@@ -14,7 +14,7 @@ class EventTest extends AppWebTestCase
         $calendar = $this->createCalendar();
         $this->login($this->createUser('admin', admin: true));
 
-        $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/event/new/2026/10/15");
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/event/new/2026/10/15");
         $this->assertResponseIsSuccessful();
         $this->submit('Save', [
             'event_form[subject]' => 'Book club',
@@ -41,7 +41,7 @@ class EventTest extends AppWebTestCase
     {
         $calendar = $this->createCalendar();
         $this->login($this->createUser('admin', admin: true));
-        $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/event/new/2026/10/15");
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/event/new/2026/10/15");
         $this->submit('Save', [
             'event_form[subject]' => 'Backwards',
             'event_form[times][time_type]' => Occurrence::TIME_FULL_DAY,
@@ -103,7 +103,7 @@ class EventTest extends AppWebTestCase
             $oid = $occurrence->getOid();
             $this->postWithToken("/en/event/$eid", "/en/occurrence/$oid/delete");
         }
-        $this->assertResponseRedirects("/en/calendar/{$calendar->getCid()}/");
+        $this->assertResponseRedirects("/en/calendar/{$calendar->getSlug()}/");
         $this->em()->clear();
         $this->assertNull($this->em()->find(Event::class, $eid));
     }
@@ -122,7 +122,7 @@ class EventTest extends AppWebTestCase
             'event_form[times][end][date]' => '2026-10-15',
         ];
         $name = "event_form[field_{$field->getFid()}]";
-        $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/event/new/2026/10/15");
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/event/new/2026/10/15");
         $this->submit('Save', $values + [$name => 'basement']);
         $this->assertResponseStatusCodeSame(422);
 
@@ -139,13 +139,14 @@ class EventTest extends AppWebTestCase
         $this->createEvent($calendar, null, 'Annual picnic');
         $this->createEvent($calendar, null, 'Board meeting');
         $cid = $calendar->getCid();
+        $slug = $calendar->getSlug();
 
-        $this->client->request('GET', "/en/calendar/$cid/search", ['q' => 'picnic']);
+        $this->client->request('GET', "/en/calendar/$slug/search", ['q' => 'picnic']);
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('table', 'Annual picnic');
         $this->assertSelectorTextNotContains('table', 'Board meeting');
 
-        $this->client->request('GET', "/en/calendar/$cid/search", ['q' => 'picnic', 'from' => '2026-11-01']);
+        $this->client->request('GET', "/en/calendar/$slug/search", ['q' => 'picnic', 'from' => '2026-11-01']);
         $this->assertSelectorTextContains('p', 'No events matched');
     }
 
@@ -154,7 +155,7 @@ class EventTest extends AppWebTestCase
         $calendar = $this->createCalendar();
         $this->createEvent($calendar, null, 'Midweek');
 
-        $this->client->request('GET', "/en/calendar/{$calendar->getCid()}/week/2026/42", server: ['HTTP_ACCEPT_LANGUAGE' => 'en-US']);
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/week/2026/42", server: ['HTTP_ACCEPT_LANGUAGE' => 'en-US']);
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('.phpc-month-view', 'Midweek');
         // Week 42 of 2026 in the US starts on Sunday, October 11th

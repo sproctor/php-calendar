@@ -68,7 +68,7 @@
         <ul class="list-group">
             {% for occurrence in event.occurrences %}
                 <li class="list-group-item d-flex align-items-center gap-2">
-                    <a href="{{ path('day_view', {cid: calendar.cid}|merge(occurrence.start|dateparts)) }}">{{ occurrence.datetimeString|trans }}</a>
+                    <a href="{{ path('day_view', {slug: calendar.slug}|merge(occurrence.start|dateparts)) }}">{{ occurrence.datetimeString|trans }}</a>
                     {% if can_edit %}
                         <a class="ms-auto btn btn-sm btn-outline-primary" href="{{ path('edit_occurrence', {oid: occurrence.oid}) }}">{{ "edit-link"|trans }}</a>
                         {{ include('components/confirmation.html.twig', {

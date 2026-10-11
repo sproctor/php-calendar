@@ -18,22 +18,38 @@
 namespace App\Form;
 
 use App\Entity\Calendar;
+use App\Repository\CalendarRepository;
+use App\Service\CalendarSlugger;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
+use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class CalendarFormType extends AbstractType
 {
+    public function __construct(
+        private CalendarSlugger $slugger,
+        private CalendarRepository $calendarRepository,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('title', TextType::class, ['label' => new TranslatableMessage('title-label')])
+            ->add('slug', TextType::class, [
+                'label' => new TranslatableMessage('slug-label'),
+                'help' => new TranslatableMessage('slug-help'),
+                'required' => false,
+                'attr' => ['maxlength' => Calendar::SLUG_MAX_LENGTH, 'pattern' => Calendar::SLUG_PATTERN],
+            ])
             ->add('subject_max', IntegerType::class, [
                 'label' => new TranslatableMessage('max-subject-length-label'),
                 'attr' => ['min' => 1, 'max' => 255],
@@ -56,7 +72,20 @@ class CalendarFormType extends AbstractType
                 'label' => new TranslatableMessage('default-timezone-label'),
                 'help' => new TranslatableMessage('default-timezone-help'),
             ])
-            ->add('save', SubmitType::class, ['label' => new TranslatableMessage('save-label')]);
+            ->add('save', SubmitType::class, ['label' => new TranslatableMessage('save-label')])
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
+                // An empty slug is made from the title
+                $data = $event->getData();
+                if (is_array($data) && trim((string) ($data['slug'] ?? '')) === '') {
+                    $calendar = $event->getForm()->getData();
+                    $data['slug'] = $this->slugger->uniqueSlug((string) ($data['title'] ?? ''), function (string $slug) use ($calendar) {
+                        $other = $this->calendarRepository->findOneBy(['slug' => $slug]);
+
+                        return $other !== null && $other !== $calendar;
+                    });
+                    $event->setData($data);
+                }
+            });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

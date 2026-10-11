@@ -4,15 +4,15 @@
 
 {% block body %}
     <h3>
-        <a href="{{ path('day_view', {cid: calendar.cid}|merge(prev_date|dateparts)) }}" aria-label="{{ 'previous-day-label'|trans }}"><i
+        <a href="{{ path('day_view', {slug: calendar.slug}|merge(prev_date|dateparts)) }}" aria-label="{{ 'previous-day-label'|trans }}"><i
                     class="bi-chevron-left"></i></a>
         {{ date|format_date('long') }}
-        <a href="{{ path('day_view', {cid: calendar.cid}|merge(next_date|dateparts)) }}" aria-label="{{ 'next-day-label'|trans }}"><i
+        <a href="{{ path('day_view', {slug: calendar.slug}|merge(next_date|dateparts)) }}" aria-label="{{ 'next-day-label'|trans }}"><i
                     class="bi-chevron-right"></i></a>
     </h3>
     {% if occurrences|length > 0 %}
         {% set can_delete_any = false %}
-        <form id="delete-events-form" action="{{ path('delete_events', {cid: calendar.cid}) }}" method="post">
+        <form id="delete-events-form" action="{{ path('delete_events', {slug: calendar.slug}) }}" method="post">
             <input type="hidden" name="_token" value="{{ csrf_token('delete-events') }}">
             <table class="table">
                 <thead>

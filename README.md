@@ -40,7 +40,7 @@ without saving anything. Users keep their passwords, and 2.0 groups become roles
 To show a calendar on another website, add this where it should appear:
 
     <script src="https://calendar.example.com/static/embed.js"
-            data-src="https://calendar.example.com/en/calendar/1/"></script>
+            data-src="https://calendar.example.com/en/calendar/club-events/"></script>
 
 `data-src` can be any month, week or day view, event, or search URL. The calendar appears in an
 iframe that grows to fit it.

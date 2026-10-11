@@ -21,12 +21,19 @@ use App\Repository\CalendarRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CalendarRepository::class)]
 #[ORM\Table("calendars")]
+#[ORM\UniqueConstraint(name: 'slug', columns: ['slug'])]
+#[UniqueEntity(fields: ['slug'], message: 'slug-taken-error')]
 class Calendar
 {
+    /** What a slug may look like, for validation and route requirements */
+    public const SLUG_PATTERN = '[a-z0-9]+(?:-[a-z0-9]+)*';
+    public const SLUG_MAX_LENGTH = 100;
+
     /** Anonymous users (and everyone else) can't see the calendar */
     public const ANON_NONE = 0;
     /** Everyone can read events */
@@ -44,6 +51,14 @@ class Calendar
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
     private string $title = '';
+
+    /**
+     * Identifies the calendar in URLs. CalendarSlugListener fills it in from the title when it's left empty.
+     */
+    #[ORM\Column(type: 'string', length: self::SLUG_MAX_LENGTH)]
+    #[Assert\Length(max: self::SLUG_MAX_LENGTH)]
+    #[Assert\Regex(pattern: '/^' . self::SLUG_PATTERN . '$/', message: 'invalid-slug-error')]
+    private string $slug = '';
 
     #[ORM\Column(type: 'integer')]
     #[Assert\Range(min: 1, max: 255)]
@@ -99,6 +114,18 @@ class Calendar
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug ?? '';
 
         return $this;
     }
