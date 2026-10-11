@@ -15,6 +15,7 @@
         "php": ">=8.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-intl": "*",
         "doctrine/doctrine-bundle": "^2.19",
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.7",
@@ -92,7 +93,8 @@
     },
     "replace": {
         "symfony/polyfill-ctype": "*",
-        "symfony/polyfill-iconv": "*"
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-intl-icu": "*"
     },
     "scripts": {
         "auto-scripts": {
