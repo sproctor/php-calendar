@@ -45,7 +45,7 @@ class Event
 
     /** @var Collection<int, Occurrence> */
     #[ORM\OneToMany(mappedBy: 'event', targetEntity: Occurrence::class, cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['start' => 'ASC'])]
+    #[ORM\OrderBy(['start' => \SortDirection::Ascending])]
     private Collection $occurrences;
 
     #[ORM\Column(type: 'datetime_immutable')]

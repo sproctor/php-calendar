@@ -29,11 +29,11 @@ class Field
     public function __construct(
         #[ORM\Id]
         #[ORM\ManyToOne(targetEntity: FieldDefinition::class)]
-        #[ORM\JoinColumn(name: 'fid', referencedColumnName: 'fid', nullable: false, onDelete: 'CASCADE')]
+        #[ORM\JoinColumn(name: 'fid', referencedColumnName: 'fid', onDelete: 'CASCADE')]
         private FieldDefinition $definition,
         #[ORM\Id]
         #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'fields')]
-        #[ORM\JoinColumn(name: 'eid', referencedColumnName: 'eid', nullable: false, onDelete: 'CASCADE')]
+        #[ORM\JoinColumn(name: 'eid', referencedColumnName: 'eid', onDelete: 'CASCADE')]
         private Event $event,
         #[ORM\Column(type: 'text')]
         private string $value,

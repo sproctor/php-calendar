@@ -65,7 +65,7 @@ class CalendarRole
     #[ORM\JoinTable(name: 'role_users')]
     #[ORM\JoinColumn(name: 'rid', referencedColumnName: 'rid', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'uid', referencedColumnName: 'uid', onDelete: 'CASCADE')]
-    #[ORM\OrderBy(['username' => 'ASC'])]
+    #[ORM\OrderBy(['username' => \SortDirection::Ascending])]
     private Collection $users;
 
     public function __construct(Calendar $calendar)

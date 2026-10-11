@@ -92,7 +92,7 @@ class OccurrenceRepository extends ServiceEntityRepository
         if ($to !== null) {
             $query->andWhere('o.start < :to')->setParameter('to', $to->modify('+1 day'));
         }
-        $direction = $order === 'DESC' ? 'DESC' : 'ASC';
+        $direction = $order === 'DESC' ? \SortDirection::Descending : \SortDirection::Ascending;
         $query->orderBy($sort === 'subject' ? 'e.subject' : 'o.start', $direction)
             ->addOrderBy('o.start', $direction);
 

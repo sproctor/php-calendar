@@ -45,11 +45,11 @@ class UserPermissions
     public function __construct(
         #[ORM\Id]
         #[ORM\ManyToOne(targetEntity: Calendar::class)]
-        #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid', nullable: false, onDelete: 'CASCADE')]
+        #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid', onDelete: 'CASCADE')]
         private Calendar $calendar,
         #[ORM\Id]
         #[ORM\ManyToOne(targetEntity: User::class)]
-        #[ORM\JoinColumn(name: 'uid', referencedColumnName: 'uid', nullable: false, onDelete: 'CASCADE')]
+        #[ORM\JoinColumn(name: 'uid', referencedColumnName: 'uid', onDelete: 'CASCADE')]
         private User $user,
     ) {
     }

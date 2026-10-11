@@ -54,7 +54,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                 {
                     $app = $context['app'];
                     $request = $app->getRequest();
-                    $active_route = $request->get('_route');
+                    $active_route = $request->attributes->get('_route');
                     $active = $active_route === $name ? " active" : "";
                     $text = htmlspecialchars($text);
                     if ($icon != null) {

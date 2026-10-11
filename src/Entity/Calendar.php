@@ -81,17 +81,17 @@ class Calendar
 
     /** @var Collection<int, Category> */
     #[ORM\OneToMany(mappedBy: 'calendar', targetEntity: Category::class)]
-    #[ORM\OrderBy(['name' => 'ASC'])]
+    #[ORM\OrderBy(['name' => \SortDirection::Ascending])]
     private Collection $categories;
 
     /** @var Collection<int, CalendarRole> */
     #[ORM\OneToMany(mappedBy: 'calendar', targetEntity: CalendarRole::class)]
-    #[ORM\OrderBy(['name' => 'ASC'])]
+    #[ORM\OrderBy(['name' => \SortDirection::Ascending])]
     private Collection $roles;
 
     /** @var Collection<int, FieldDefinition> */
     #[ORM\OneToMany(mappedBy: 'calendar', targetEntity: FieldDefinition::class)]
-    #[ORM\OrderBy(['name' => 'ASC'])]
+    #[ORM\OrderBy(['name' => \SortDirection::Ascending])]
     private Collection $field_definitions;
 
     public function __construct()
