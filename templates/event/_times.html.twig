@@ -1,0 +1,18 @@
+{# The fields of an OccurrenceTimesType; the script in event/_times_script.html.twig switches between date-times and dates #}
+<div class="phpc-times">
+    {{ form_row(times.time_type) }}
+    <div class="row">
+        <div class="col-md-6 phpc-timed">
+            {{ form_row(times.start) }}
+        </div>
+        <div class="col-md-6 phpc-timed">
+            {{ form_row(times.end) }}
+        </div>
+        <div class="col-md-6 phpc-dated">
+            {{ form_row(times.start_date) }}
+        </div>
+        <div class="col-md-6 phpc-dated">
+            {{ form_row(times.end_date) }}
+        </div>
+    </div>
+</div>

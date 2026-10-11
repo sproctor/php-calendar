@@ -36,23 +36,23 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="phpc-navbar">
-                <ul class="navbar-nav mr-auto">
+                <ul class="navbar-nav me-auto">
                     {% if calendar is defined %}
-                        {% if can_create(calendar.cid, app.user) %}
+                        {% if is_granted('CALENDAR_CREATE', calendar) %}
                             {{ menu_item("create_event", "create-event-label"|trans, 'plus', {cid: calendar.cid}) }}
                         {% endif %}
                         {% if app.current_route != 'month_view' and app.current_route != 'default_view' and date is defined %}
-                            {{ menu_item("month_view", "view-month-menu-link"|trans, 'eye', {cid: calendar.cid, month: date|month, year: date|year}) }}
+                            {{ menu_item("month_view", "view-month-menu-link"|trans, 'calendar3', {cid: calendar.cid, month: date|month, year: date|year}) }}
                         {% endif %}
-                        {% if app.current_route == "display_event" %}
-                            {{ menu_item("display_day", "view-date-menu-link"|trans, 'eye') }}
+                        {% if app.current_route not in ['day_view'] and date is defined %}
+                            {{ menu_item("day_view", "view-date-menu-link"|trans, 'calendar-day', {cid: calendar.cid}|merge(date|dateparts)) }}
                         {% endif %}
                     {% endif %}
                     {% if app.user and app.user.isAdmin %}
                         {{ menu_item("admin", "admin-menu-link"|trans, 'gear') }}
                     {% endif %}
-                    {% if calendar is defined %}
-                        {{ menu_item("calendar_admin", "calendar-admin-menu-link"|trans, "gear", {cid: calendar.cid}) }}
+                    {% if calendar is defined and is_granted('CALENDAR_ADMIN', calendar) %}
+                        {{ menu_item("calendar_admin", "calendar-admin-menu-link"|trans, "sliders", {cid: calendar.cid}) }}
                     {% endif %}
                     <li class="nav-item dropdown">
                         <button class="btn btn-link nav-link dropdown-toggle" type="button"
@@ -80,7 +80,7 @@
                             {% if not app.user is null %}
                                 <a class="dropdown-item" href="{{ path("user_settings") }}"><i
                                             class="bi-gear"></i> {{ "settings-menu-link"|trans }}</a>
-                                <a class="dropdown-item" href="{{ path("app_logout") }}"><i
+                                <a class="dropdown-item" href="{{ logout_path() }}"><i
                                             class="bi-bow-arrow-right"></i> {{ "log-out-menu-link"|trans }}</a>
                             {% else %}
                                 <a class="dropdown-item"
@@ -91,9 +91,9 @@
                     </li>
                 </ul>
                 {% if calendar is defined %}
-                <form class="d-flex" role="search" action="{#  { context.createUrl('search') } #}" method="post">
+                <form class="d-flex ms-auto" role="search" action="{{ path('search', {cid: calendar.cid}) }}" method="get">
                     <div class="input-group">
-                        <input id="search-input" class="form-control" name="query" type="search"
+                        <input id="search-input" class="form-control" name="q" type="search"
                                placeholder="{{ "search-label"|trans }}" aria-label="{{ "search-label"|trans }}">
                         <button class="btn btn-primary" title="{{ "search-label"|trans }}" type="submit">
                             <i class="bi-search"></i>
@@ -105,16 +105,16 @@
         </div>
     </nav>
 
-{% if messages is defined %}
+<div class="container-fluid">
+{% for type, messages in app.flashes %}
     {% for message in messages %}
-        <div class="alert alert-primary alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+        <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show mt-2" role="alert">
+            {{ message|trans }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ 'close'|trans }}"></button>
         </div>
     {% endfor %}
-{% endif %}
+{% endfor %}
+</div>
 
 <div class="phpc-body container-fluid">
     {% block body %}{% endblock %}
@@ -130,17 +130,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/5.1.1/marked.min.js"
         integrity="sha512-geNSPsVaubOv19D7VZY9lJH7MNdRkIq84doaoubf6zknjXsyBQ77XQbqiHX89Mg3e+67E16huocEGUlR4Pgjtg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<!-- TODO: remove JQuery dependence -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="{{ asset('static/phpc.js') }}"></script>
 
 {% block script %}{% endblock %}
 
-{#
-{% if embed %}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
-    <script src="static/embed.js"></script>
-{% endif %}
-#}
 </body>
 </html>

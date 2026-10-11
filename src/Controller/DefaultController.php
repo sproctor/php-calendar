@@ -19,45 +19,51 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\CalendarRepository;
+use App\Security\Voter\CalendarVoter;
+use App\Service\LocaleService;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Translation\LocaleSwitcher;
 
 /**
- * Controller used to redirect to the month view.
- *
- * @author Sean Proctor <sproctor@gmail.com>
+ * The start page: sends visitors to setup when there are no calendars, to the calendar when they can only
+ * see one, and otherwise lists the calendars they can see
  */
 class DefaultController extends AbstractController
 {
-
-    #[Route("/", name: "default")]
-    public function index(
-        CalendarRepository $repository,
-        LocaleSwitcher     $localeSwitcher,
-    ): Response
+    #[Route('/', name: 'default', methods: ['GET'])]
+    public function index(Request $request, CalendarRepository $repository, LocaleService $localeService): Response
     {
         try {
-            $calendars = $repository->findAll();
+            $calendars = $repository->findBy([], ['title' => 'ASC']);
         } catch (ConnectionException|TableNotFoundException) {
             return $this->redirectToRoute('setup');
         }
-
-        /* @var User $user */
-        $user = $this->getUser();
-        if ($user != null) {
-            $localeSwitcher->setLocale($user->getLocale());
-        }
-
-        if (empty($calendars)) {
+        if ($calendars === []) {
             return $this->redirectToRoute('setup');
-        } else {
-            return $this->render("calendar_list.html.twig", [
-                'calendars' => $calendars
-            ]);
         }
+
+        $user = $this->getUser();
+        $preferred = $user instanceof User && $user->getLocale() ? [\Locale::getPrimaryLanguage($user->getLocale())] : [];
+        $languages = array_keys($localeService->getLocaleMappings());
+        $locale = $request->getPreferredLanguage(array_merge(array_intersect($preferred, $languages), $languages)) ?? 'en';
+
+        $readable = array_values(array_filter($calendars, fn($calendar) => $this->isGranted(CalendarVoter::READ, $calendar)));
+        if (count($readable) === 1) {
+            return $this->redirectToRoute('default_view', ['_locale' => $locale, 'cid' => $readable[0]->getCid()]);
+        }
+        if ($readable === [] && $user === null) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $request->setLocale($locale);
+
+        return $this->render('calendar_list.html.twig', [
+            'calendars' => $readable,
+            'locale' => $locale,
+        ]);
     }
 }

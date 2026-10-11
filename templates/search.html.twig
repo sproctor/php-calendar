@@ -1,9 +1,43 @@
 {% extends "base.html.twig" %}
 
+{% block title %}{{ "search-results-label"|trans }}{% endblock %}
+
 {% block body %}
+    <form class="row g-2 align-items-end mb-3" method="get" action="{{ path('search', {cid: calendar.cid}) }}">
+        <div class="col-md-4">
+            <label class="form-label" for="search-q">{{ "search-label"|trans }}</label>
+            <input class="form-control" id="search-q" type="search" name="q" value="{{ query }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" for="search-from">{{ "from-label"|trans }}</label>
+            <input class="form-control" id="search-from" type="date" name="from" value="{{ from ? from|date('Y-m-d') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" for="search-to">{{ "to-label"|trans }}</label>
+            <input class="form-control" id="search-to" type="date" name="to" value="{{ to ? to|date('Y-m-d') }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" for="search-sort">{{ "sort-by-label"|trans }}</label>
+            <select class="form-select" id="search-sort" name="sort">
+                <option value="start"{% if sort == 'start' %} selected{% endif %}>{{ "date-time-label"|trans }}</option>
+                <option value="subject"{% if sort == 'subject' %} selected{% endif %}>{{ "subject-label"|trans }}</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label" for="search-order">{{ "order-label"|trans }}</label>
+            <select class="form-select" id="search-order" name="order">
+                <option value="ASC"{% if order == 'ASC' %} selected{% endif %}>{{ "ascending-label"|trans }}</option>
+                <option value="DESC"{% if order == 'DESC' %} selected{% endif %}>{{ "descending-label"|trans }}</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <button class="btn btn-primary" type="submit"><i class="bi-search"></i> {{ "search-label"|trans }}</button>
+        </div>
+    </form>
+
     <h3>{{ "search-results-label"|trans }}</h3>
-    {% if results %}
-        <table>
+    {% if results is not empty %}
+        <table class="table">
             <thead>
                 <tr>
                     <th>{{ "subject-label"|trans }}</th>
@@ -12,16 +46,16 @@
                 </tr>
             </thead>
             <tbody>
-            {% for result in results %}
+            {% for occurrence in results %}
                 <tr>
-                    <td><a href="{{ context.createEventUrl('display_event', result.eid) }}">{{ result.subject }}</a></td>
-                    <td>{{ result.when }}</td>
-                    <td>{{ result.description }}</td>
+                    <td><a href="{{ path('event_view', {eid: occurrence.event.eid}) }}">{{ occurrence.event.subject }}</a></td>
+                    <td>{{ occurrence.datetimeString|trans }}</td>
+                    <td class="markdown">{{ occurrence.event.description }}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
-    {% else %}
-        <div>{{ "no-search-results-message"|trans }}</div>
+    {% elseif query is not empty or from or to %}
+        <p>{{ "no-search-results-message"|trans }}</p>
     {% endif %}
 {% endblock %}

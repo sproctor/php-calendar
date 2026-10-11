@@ -23,14 +23,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ChangePassword
 {
     #[SecurityAssert\UserPassword(
-        message: 'Wrong value for your current password',
+        message: 'wrong-password-error',
     )]
     public string $oldPassword;
 
     #[Assert\Length(
-        min: 6,
+        min: 8,
         max: 4096, // max length allowed by Symfony for security reasons
-        minMessage: 'Your password should be at least {{ limit }} characters',
+        minMessage: 'password-too-short-error',
     )]
     public string $newPassword;
 }

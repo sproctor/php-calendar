@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ heading|trans }}{% endblock %}
+
+{% block body %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('admin', {_fragment: tab}) }}">{{ "admin-menu-link"|trans }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ heading|trans }}</li>
+        </ol>
+    </nav>
+    <h3>{{ heading|trans }}</h3>
+    {{ form(form) }}
+{% endblock %}

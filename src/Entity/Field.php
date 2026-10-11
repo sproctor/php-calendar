@@ -17,32 +17,40 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * User defined field on an actual event.
- *
- * @author Sean Proctor <sproctor@gmail.com>
+ * An event's value for a custom field
  */
 #[ORM\Entity]
 #[ORM\Table('fields')]
 class Field
 {
-    #[ORM\ManyToOne(targetEntity: 'FieldDefinition')]
-    #[ORM\JoinColumn(name: 'fid', referencedColumnName: 'fid')]
-    #[ORM\Id]
-    private ?\App\Entity\FieldDefinition $definition = null;
+    public function __construct(
+        #[ORM\Id]
+        #[ORM\ManyToOne(targetEntity: FieldDefinition::class)]
+        #[ORM\JoinColumn(name: 'fid', referencedColumnName: 'fid', nullable: false, onDelete: 'CASCADE')]
+        private FieldDefinition $definition,
+        #[ORM\Id]
+        #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'fields')]
+        #[ORM\JoinColumn(name: 'eid', referencedColumnName: 'eid', nullable: false, onDelete: 'CASCADE')]
+        private Event $event,
+        #[ORM\Column(type: 'text')]
+        private string $value,
+    ) {
+    }
 
-    #[ORM\ManyToOne(targetEntity: 'Event', inversedBy: 'fields')]
-    #[ORM\JoinColumn(name: 'eid', referencedColumnName: 'eid')]
-    #[ORM\Id]
-    private ?\App\Entity\Event $event = null;
+    public function getDefinition(): FieldDefinition
+    {
+        return $this->definition;
+    }
 
-    #[ORM\Column(type: 'text')]
-    private ?string $value = null;
+    public function getEvent(): Event
+    {
+        return $this->event;
+    }
 
-    public function getValue(): ?string
+    public function getValue(): string
     {
         return $this->value;
     }
@@ -50,30 +58,6 @@ class Field
     public function setValue(string $value): self
     {
         $this->value = $value;
-
-        return $this;
-    }
-
-    public function getDefinition(): ?FieldDefinition
-    {
-        return $this->definition;
-    }
-
-    public function setDefinition(?FieldDefinition $definition): self
-    {
-        $this->definition = $definition;
-
-        return $this;
-    }
-
-    public function getEvent(): ?Event
-    {
-        return $this->event;
-    }
-
-    public function setEvent(?Event $event): self
-    {
-        $this->event = $event;
 
         return $this;
     }

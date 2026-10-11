@@ -18,15 +18,12 @@
 namespace App\Twig;
 
 use App\Repository\CalendarRepository;
-use App\Repository\UserRepository;
+use App\Security\Voter\CalendarVoter;
 use App\Service\LocaleService;
 use DateTimeInterface;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Intl\Languages;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
@@ -37,7 +34,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     public function __construct(
         private UrlGeneratorInterface $router,
         private CalendarRepository    $calendarRepository,
-        private UserRepository        $userRepository,
+        private AuthorizationCheckerInterface $authorizationChecker,
         private LocaleService         $languageService,
     )
     {
@@ -54,11 +51,12 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                     $request = $app->getRequest();
                     $active_route = $request->get('_route');
                     $active = $active_route === $name ? " active" : "";
+                    $text = htmlspecialchars($text);
                     if ($icon != null) {
-                        $text = "<i class=\"bi-$icon\"></i> $text";
+                        $text = '<i class="bi-' . htmlspecialchars($icon) . "\"></i> $text";
                     }
-                    $url = $this->router->generate($name, $options);
-                    return "<li class=\"nav-item$active\"><a class=\"nav-link\" href=\"$url\">$text</a></li>";
+                    $url = htmlspecialchars($this->router->generate($name, $options));
+                    return "<li class=\"nav-item\"><a class=\"nav-link$active\" href=\"$url\">$text</a></li>";
                 },
                 [
                     'needs_context' => true,
@@ -79,32 +77,10 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             ),
             new TwigFunction(
                 'add_days',
-                function (\DateTimeInterface $date, int $days) {
-                    $next_date = new \DateTime('@' . $date->getTimestamp());
-                    return $next_date->add(new \DateInterval("P{$days}D"));
-                }
+                fn(\DateTimeInterface $date, int $days) =>
+                    \DateTimeImmutable::createFromInterface($date)->modify("$days days")
             ),
             new TwigFunction('is_today', '\is_today'),
-            new TwigFunction(
-                'occurrences_for_date',
-                function ($occurrences, \DateTimeInterface $date) {
-                    $key = date_index($date);
-                    if (array_key_exists($key, $occurrences)) {
-                        return $occurrences[date_index($date)];
-                    }
-                    return null;
-                }
-            ),
-            new TwigFunction(
-                'week_link',
-                function (int $cid, DateTimeInterface $date) {
-                    $week = \week_of_year($date);
-                    $year = \year_of_week_of_year($date);
-                    $url = $this->router->generate('week_view', ['cid' => $cid, 'week' => $week, 'year' => $year]);
-                    return "<a href=\"$url\">$week</a>";
-                },
-                ['is_safe' => ['html']]
-            ),
             new TwigFunction(
                 'change_locale',
                 function (array $context, string $locale) {
@@ -119,13 +95,10 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             ),
             new TwigFunction(
                 'get_calendars',
-                fn() =>
-                    $this->calendarRepository->findAll(),
-            ),
-            new TwigFunction(
-                'get_users',
-                fn() =>
-                $this->userRepository->findAll(),
+                fn() => array_values(array_filter(
+                    $this->calendarRepository->findBy([], ['title' => 'ASC']),
+                    fn($calendar) => $this->authorizationChecker->isGranted(CalendarVoter::READ, $calendar),
+                )),
             ),
         ];
     }
@@ -161,6 +134,9 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                 'day',
                 fn(\DateTimeInterface $date) => intval($date->format('j'))
             ),
+            new TwigFilter('week', fn(DateTimeInterface $date): int => \week_of_year($date)),
+            new TwigFilter('week_year', fn(DateTimeInterface $date): int => \year_of_week_of_year($date)),
+            new TwigFilter('date_index', fn(DateTimeInterface $date): string => \date_index($date)),
             new TwigFilter(
                 'dateparts',
                 function (DateTimeInterface $datetime): array {
@@ -188,10 +164,11 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         // TODO: make this a template
         $output = "<div class=\"dropdown\">"
             . "<button class=\"btn btn-navlink dropdown-toggle\" data-bs-toggle=\"dropdown\" type=\"button\""
-            . " aria-expanded=\"false\">$title</button>"
+            . " aria-expanded=\"false\">" . htmlspecialchars($title) . "</button>"
             . "<ul class=\"dropdown-menu\">";
         foreach ($values as $key => $value) {
-            $output .= "<li><a class=\"dropdown-item\" href=\"$value\">$key</a></li>";
+            $output .= '<li><a class="dropdown-item" href="' . htmlspecialchars($value) . '">'
+                . htmlspecialchars((string) $key) . '</a></li>';
         }
         return $output . "</ul></div>";
     }

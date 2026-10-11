@@ -3,5 +3,16 @@
 {% block title %}{{ 'setup-label'|trans }}{% endblock %}
 
 {% block body %}
-    {{ form(form) }}
+    <h3>{{ 'setup-label'|trans }}</h3>
+    <p>{{ 'setup-help'|trans }}</p>
+    {{ form_start(form) }}
+    <fieldset class="mb-3">
+        <legend>{{ 'calendar-label'|trans }}</legend>
+        {{ form_widget(form.calendar) }}
+    </fieldset>
+    <fieldset class="mb-3">
+        <legend>{{ 'admin-account-label'|trans }}</legend>
+        {{ form_widget(form.user) }}
+    </fieldset>
+    {{ form_end(form) }}
 {% endblock %}

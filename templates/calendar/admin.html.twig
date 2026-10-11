@@ -1,42 +1,163 @@
 {% extends "base.html.twig" %}
 
+{% block title %}{{ "calendar-settings-label"|trans }}{% endblock %}
+
+{% macro tab(id, label, active = false) %}
+    <li class="nav-item" role="presentation">
+        <a class="nav-link{{ active ? ' active' }}" id="{{ id }}-tab" data-bs-toggle="tab" href="#{{ id }}" role="tab"
+           aria-controls="{{ id }}" aria-selected="{{ active ? 'true' : 'false' }}">{{ label|trans }}</a>
+    </li>
+{% endmacro %}
+
+{% macro delete_button(id, path, token_id, question) %}
+    {{ include('components/confirmation.html.twig', {
+        id: id,
+        button: 'delete-button'|trans,
+        small: true,
+        title: 'delete-confirmation-modal-title'|trans,
+        question: question|trans,
+        path: path,
+        token_id: token_id,
+        confirm_button: 'delete-button'|trans,
+    }) }}
+{% endmacro %}
+
 {% block body %}
-    <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="calendar-tab" data-bs-toggle="tab" href="#calendar" role="tab" aria-controls="calendar">
-                {{ "calendar-settings-label"|trans }}
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="calendar-users-tab" data-bs-toggle="tab" href="#calendar-users" role="tab" aria-controls="calendar-users">
-                {{ "calendar-users-label"|trans }}
-            </a>
-        </li>
+    {% import _self as m %}
+    <ul class="nav nav-tabs mb-3" role="tablist">
+        {{ m.tab('settings', 'calendar-settings-label', true) }}
+        {{ m.tab('users', 'user-permissions-label') }}
+        {{ m.tab('roles', 'roles-label') }}
+        {{ m.tab('categories', 'categories-label') }}
+        {{ m.tab('fields', 'fields-title') }}
     </ul>
     <div class="tab-content">
-        <div class="tab-pane fade show active" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
-            <h3>{{ "calendar-settings-label"|trans }}</h3>
+        <div class="tab-pane show active" id="settings" role="tabpanel" aria-labelledby="settings-tab">
             {{ form(calendar_form) }}
         </div>
 
-        <div class="tab-pane fade" id="calendar-users" role="tabpanel" aria-labelledby="calendar-users-tab">
-            <h3>{{ "user-permissions-label"|trans }}</h3>
-            {{ form_start(user_form) }}
-            {% for user_field in user_form.children %}
-                {% if user_field.vars.name != '_token' %}
-                    <div class="form-group">
-                        {{ form_label(user_field) }}
-                        {% for perm in user_field.children %}
-                            <div class="form-check form-check-inline">
-                                {{ form_row(perm) }}
-                            </div>
+        <div class="tab-pane" id="users" role="tabpanel" aria-labelledby="users-tab">
+            <p class="text-secondary">{{ "user-permissions-help"|trans }}</p>
+            <form method="post" action="{{ path('calendar_permissions', {cid: calendar.cid}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('calendar-permissions-' ~ calendar.cid) }}">
+                <table class="table table-sm align-middle">
+                    <thead>
+                    <tr>
+                        <th scope="col">{{ "username-label"|trans }}</th>
+                        {% for permission, label in permission_labels %}
+                            <th scope="col" title="{{ permission_help[permission]|trans }}">{{ label|trans }}</th>
                         {% endfor %}
-                        {{ form_errors(user_field) }}
-                    </div>
-                {% endif %}
-            {% endfor %}
-            <button type="submit" class="btn btn-primary">{{ "update-permissions-button"|trans }}</button>
-            {{ form_end(user_form) }}
+                        <th scope="col">{{ "roles-label"|trans }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        {% set row = permissions[user.uid] ?? null %}
+                        <tr>
+                            <td>{{ user.username }}{% if user.admin %} <span class="badge text-bg-secondary">{{ "site-admin-label"|trans }}</span>{% endif %}</td>
+                            {% for permission, label in permission_labels %}
+                                {% set checked = row and attribute(row, 'can' ~ permission|capitalize) %}
+                                <td>
+                                    <input class="form-check-input" type="checkbox" name="perm[{{ user.uid }}][{{ permission }}]" value="1"
+                                           aria-label="{{ user.username }}: {{ label|trans }}"{{ checked ? ' checked' }}>
+                                </td>
+                            {% endfor %}
+                            <td>
+                                {% for role in calendar.roles|filter(r => r.hasUser(user)) %}
+                                    <span class="badge text-bg-light">{{ role.name }}</span>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary">{{ "update-permissions-button"|trans }}</button>
+            </form>
+        </div>
+
+        <div class="tab-pane" id="roles" role="tabpanel" aria-labelledby="roles-tab">
+            <p class="text-secondary">{{ "roles-help"|trans }}</p>
+            <table class="table table-sm align-middle">
+                <thead>
+                <tr>
+                    <th scope="col">{{ "name-label"|trans }}</th>
+                    <th scope="col">{{ "permissions-label"|trans }}</th>
+                    <th scope="col">{{ "members-label"|trans }}</th>
+                    <th scope="col">{{ "actions-label"|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for role in calendar.roles %}
+                    <tr>
+                        <td>{{ role.name }}</td>
+                        <td>
+                            {% for permission, label in permission_labels|filter((l, p) => attribute(role, 'can' ~ p|capitalize)) %}
+                                <span class="badge text-bg-light">{{ label|trans }}</span>
+                            {% endfor %}
+                        </td>
+                        <td>{{ role.users|map(u => u.username)|join(', ') }}</td>
+                        <td class="d-flex gap-2">
+                            <a class="btn btn-sm btn-primary" href="{{ path('edit_role', {cid: calendar.cid, rid: role.rid}) }}">{{ "edit-link"|trans }}</a>
+                            {{ m.delete_button('deleteRole' ~ role.rid, path('delete_role', {cid: calendar.cid, rid: role.rid}), 'delete-role-' ~ role.rid, 'permanently-delete-role-question') }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <a class="btn btn-primary" href="{{ path('create_role', {cid: calendar.cid}) }}"><i class="bi-plus-square"></i> {{ "create-role-title"|trans }}</a>
+        </div>
+
+        <div class="tab-pane" id="categories" role="tabpanel" aria-labelledby="categories-tab">
+            <table class="table table-sm align-middle">
+                <thead>
+                <tr>
+                    <th scope="col">{{ "name-label"|trans }}</th>
+                    <th scope="col">{{ "visible-to-role-label"|trans }}</th>
+                    <th scope="col">{{ "actions-label"|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for category in calendar.categories %}
+                    <tr>
+                        <td><span class="badge" style="color: {{ category.textColor }}; background: {{ category.color }};">{{ category.name }}</span></td>
+                        <td>{{ category.role ? category.role.name : 'everyone-label'|trans }}</td>
+                        <td class="d-flex gap-2">
+                            <a class="btn btn-sm btn-primary" href="{{ path('edit_category', {cid: calendar.cid, catid: category.catid}) }}">{{ "edit-link"|trans }}</a>
+                            {{ m.delete_button('deleteCategory' ~ category.catid, path('delete_category', {cid: calendar.cid, catid: category.catid}), 'delete-category-' ~ category.catid, 'permanently-delete-category-question') }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <a class="btn btn-primary" href="{{ path('create_category', {cid: calendar.cid}) }}"><i class="bi-plus-square"></i> {{ "create-category-title"|trans }}</a>
+        </div>
+
+        <div class="tab-pane" id="fields" role="tabpanel" aria-labelledby="fields-tab">
+            <p class="text-secondary">{{ "fields-help"|trans }}</p>
+            <table class="table table-sm align-middle">
+                <thead>
+                <tr>
+                    <th scope="col">{{ "name-label"|trans }}</th>
+                    <th scope="col">{{ "required-field-label"|trans }}</th>
+                    <th scope="col">{{ "field-format-label"|trans }}</th>
+                    <th scope="col">{{ "actions-label"|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for field in calendar.fieldDefinitions %}
+                    <tr>
+                        <td>{{ field.name }}</td>
+                        <td>{% if field.required %}<i class="bi-check-lg" aria-label="{{ 'yes-label'|trans }}"></i>{% endif %}</td>
+                        <td><code>{{ field.format }}</code></td>
+                        <td class="d-flex gap-2">
+                            <a class="btn btn-sm btn-primary" href="{{ path('edit_field', {cid: calendar.cid, fid: field.fid}) }}">{{ "edit-link"|trans }}</a>
+                            {{ m.delete_button('deleteField' ~ field.fid, path('delete_field', {cid: calendar.cid, fid: field.fid}), 'delete-field-' ~ field.fid, 'permanently-delete-field-question') }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <a class="btn btn-primary" href="{{ path('create_field', {cid: calendar.cid}) }}"><i class="bi-plus-square"></i> {{ "create-field-title"|trans }}</a>
         </div>
     </div>
 {% endblock %}

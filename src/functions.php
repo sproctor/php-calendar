@@ -43,32 +43,26 @@ function weeks_in_month(int $month, int $year): int
  */
 function week_of_year(DateTimeInterface $date): int
 {
-    $formatter = new \IntlDateFormatter(
-        \Locale::getDefault(),
-        \IntlDateFormatter::NONE,
-        \IntlDateFormatter::NONE,
-        null,
-        null,
-        "w" // short month format
-    );
-    return $formatter->format($date);
+    return locale_calendar($date)->get(\IntlCalendar::FIELD_WEEK_OF_YEAR);
 }
-
 
 /**
  * return the year of week of year for $date in the current locale
  */
 function year_of_week_of_year(DateTimeInterface $date): int
 {
-    $formatter = new \IntlDateFormatter(
-        \Locale::getDefault(),
-        \IntlDateFormatter::NONE,
-        \IntlDateFormatter::NONE,
-        null,
-        null,
-        "Y" // short month format
-    );
-    return $formatter->format($date);
+    return locale_calendar($date)->get(\IntlCalendar::FIELD_YEAR_WOY);
+}
+
+/**
+ * An IntlCalendar set to $date's calendar day, with the current locale's week rules
+ */
+function locale_calendar(DateTimeInterface $date): \IntlCalendar
+{
+    $calendar = \IntlCalendar::createInstance('UTC', \Locale::getDefault());
+    $calendar->clear();
+    $calendar->set(intval($date->format('Y')), intval($date->format('n')) - 1, intval($date->format('j')));
+    return $calendar;
 }
 
 /**
@@ -88,9 +82,9 @@ function month_name(DateTimeInterface $date): string
 }
 
 /**
- * Returns the number of days in the week before the
- * taking into account whether we start on sunday or monday
- * 1 for Monday, 7 for Sunday
+ * Returns the number of days between the start of the week and the given day,
+ * 0 for the first day of the week, 6 for the last. The first day of the week
+ * depends on the current locale.
  */
 function day_of_week(int $month, int $day, int $year): int
 {
@@ -107,22 +101,40 @@ function is_today(DateTimeInterface $date): bool
     return days_between($date, new \DateTime()) == 0;
 }
 
-function datetime_from_timestamp(string $timestamp): DateTimeInterface
-{
-
-    $date = \DateTimeImmutable::createFromFormat('U', $timestamp);
-    $date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
-    return $date;
-}
-
 /**
- *  returns the number of days in the week before the
- *  taking into account whether we start on sunday or monday
- *  1 for Monday, 7 for Sunday
+ * Returns the number of days between the start of the week and $date,
+ * 0 for the first day of the week, 6 for the last. The first day of the week
+ * depends on the current locale.
  */
 function day_of_week_date(DateTimeInterface $date): int
 {
-    return intval($date->format('N'));
+    return (intval($date->format('N')) - first_day_of_week() + 7) % 7;
+}
+
+/**
+ * Returns the first day of the week in the current locale as an ISO-8601
+ * day number, 1 for Monday through 7 for Sunday
+ */
+function first_day_of_week(): int
+{
+    // IntlCalendar numbers days 1 for Sunday through 7 for Saturday
+    $first_day = \IntlCalendar::createInstance(null, \Locale::getDefault())->getFirstDayOfWeek();
+    return $first_day === \IntlCalendar::DOW_SUNDAY ? 7 : $first_day - 1;
+}
+
+/**
+ * Returns the first day of week $week of week-numbering year $year, using the
+ * current locale's week rules (the same ones week_of_year() uses)
+ */
+function week_start_date(int $week, int $year): DateTimeImmutable
+{
+    $calendar = \IntlCalendar::createInstance('UTC', \Locale::getDefault());
+    $calendar->clear();
+    $calendar->set(\IntlCalendar::FIELD_YEAR_WOY, $year);
+    $calendar->set(\IntlCalendar::FIELD_WEEK_OF_YEAR, $week);
+    $calendar->set(\IntlCalendar::FIELD_DAY_OF_WEEK, $calendar->getFirstDayOfWeek());
+    /** @noinspection PhpUnhandledExceptionInspection */
+    return new DateTimeImmutable($calendar->toDateTime()->format('Y-m-d'));
 }
 
 /**

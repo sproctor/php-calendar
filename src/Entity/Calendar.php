@@ -18,43 +18,72 @@
 namespace App\Entity;
 
 use App\Repository\CalendarRepository;
-use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CalendarRepository::class)]
 #[ORM\Table("calendars")]
 class Calendar
 {
+    /** Anonymous users (and everyone else) can't see the calendar */
+    public const ANON_NONE = 0;
+    /** Everyone can read events */
+    public const ANON_READ = 1;
+    /** Everyone can read and create events */
+    public const ANON_CREATE = 2;
+    /** Everyone can read, create and modify events */
+    public const ANON_MODIFY = 3;
+
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     private int $cid;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private string $title;
-
-    private array $categories;
+    #[Assert\NotBlank]
+    private string $title = '';
 
     #[ORM\Column(type: 'integer')]
+    #[Assert\Range(min: 1, max: 255)]
     private int $subject_max = 50;
 
     #[ORM\Column(type: 'integer')]
-    private int $events_max = 5;
+    #[Assert\Range(min: 1, max: 255)]
+    private int $events_max = 8;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private string $timezone = "America/New_York";
+    #[Assert\Timezone]
+    private string $timezone = 'UTC';
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private string $theme;
+    /**
+     * Minimum permission level everyone has on this calendar, logged in or not (ANON_* constants)
+     */
+    #[ORM\Column(type: 'smallint', options: ['default' => self::ANON_READ])]
+    #[Assert\Choice(choices: [self::ANON_NONE, self::ANON_READ, self::ANON_CREATE, self::ANON_MODIFY])]
+    private int $anon_permission = self::ANON_READ;
 
-    public function getTitle(): string
+    /** @var Collection<int, Category> */
+    #[ORM\OneToMany(mappedBy: 'calendar', targetEntity: Category::class)]
+    #[ORM\OrderBy(['name' => 'ASC'])]
+    private Collection $categories;
+
+    /** @var Collection<int, CalendarRole> */
+    #[ORM\OneToMany(mappedBy: 'calendar', targetEntity: CalendarRole::class)]
+    #[ORM\OrderBy(['name' => 'ASC'])]
+    private Collection $roles;
+
+    /** @var Collection<int, FieldDefinition> */
+    #[ORM\OneToMany(mappedBy: 'calendar', targetEntity: FieldDefinition::class)]
+    #[ORM\OrderBy(['name' => 'ASC'])]
+    private Collection $field_definitions;
+
+    public function __construct()
     {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): void
-    {
-        $this->title = $title;
+        $this->categories = new ArrayCollection();
+        $this->roles = new ArrayCollection();
+        $this->field_definitions = new ArrayCollection();
     }
 
     public function getCid(): int
@@ -62,54 +91,19 @@ class Calendar
         return $this->cid;
     }
 
-    public function getTimezone(): string|null
+    public function getTitle(): string
     {
-        return $this->timezone;
+        return $this->title;
     }
 
-    public function getMaxSubjectLength(): int
+    public function setTitle(string $title): self
     {
-        return $this->subject_max;
+        $this->title = $title;
+
+        return $this;
     }
 
-    public function getMaxDisplayEvents(): int
-    {
-        return $this->events_max;
-    }
-
-    public function getVisibleCategories(int $uid): array
-    {
-        return $this->db->getVisibleCategories($uid, $this->cid);
-    }
-    
-    public function getCategories(): array
-    {
-        if (!isset($this->categories)) {
-            $this->categories = $this->db->getCategoriesForCalendar($this->cid);
-        }
-        return $this->categories;
-    }
-
-    public function getGroups(): array
-    {
-        if (!isset($this->groups)) {
-            $this->groups = $this->db->getGroupsForCalendar($this->cid);
-        }
-        return $this->groups;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getField(int $fid): array
-    {
-        if (!isset($this->fields)) {
-            $this->fields = $this->db->getFields($this->cid);
-        }
-        return $this->fields[$fid];
-    }
-
-    public function getSubjectMax(): ?int
+    public function getSubjectMax(): int
     {
         return $this->subject_max;
     }
@@ -121,7 +115,7 @@ class Calendar
         return $this;
     }
 
-    public function getEventsMax(): ?int
+    public function getEventsMax(): int
     {
         return $this->events_max;
     }
@@ -133,6 +127,11 @@ class Calendar
         return $this;
     }
 
+    public function getTimezone(): string
+    {
+        return $this->timezone;
+    }
+
     public function setTimezone(string $timezone): self
     {
         $this->timezone = $timezone;
@@ -140,15 +139,39 @@ class Calendar
         return $this;
     }
 
-    public function getTheme(): ?string
+    public function getAnonPermission(): int
     {
-        return $this->theme;
+        return $this->anon_permission;
     }
 
-    public function setTheme(?string $theme): self
+    public function setAnonPermission(int $anon_permission): self
     {
-        $this->theme = $theme;
+        $this->anon_permission = $anon_permission;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    /**
+     * @return Collection<int, CalendarRole>
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @return Collection<int, FieldDefinition>
+     */
+    public function getFieldDefinitions(): Collection
+    {
+        return $this->field_definitions;
     }
 }

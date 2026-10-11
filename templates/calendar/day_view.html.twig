@@ -1,18 +1,19 @@
 {% extends "base.html.twig" %}
 
-{% block title %}{{ date|format_datetime('long', 'none') }}{% endblock %}
+{% block title %}{{ date|format_date('long') }}{% endblock %}
 
 {% block body %}
     <h3>
-        <a href="{{ path('day_view', {cid: calendar.cid}|merge(prev_date|dateparts)) }}"><i
+        <a href="{{ path('day_view', {cid: calendar.cid}|merge(prev_date|dateparts)) }}" aria-label="{{ 'previous-day-label'|trans }}"><i
                     class="bi-chevron-left"></i></a>
-        {{ date|format_datetime('long', 'none') }}
-        <a href="{{ path('day_view', {cid: calendar.cid}|merge(next_date|dateparts)) }}"><i
+        {{ date|format_date('long') }}
+        <a href="{{ path('day_view', {cid: calendar.cid}|merge(next_date|dateparts)) }}" aria-label="{{ 'next-day-label'|trans }}"><i
                     class="bi-chevron-right"></i></a>
     </h3>
     {% if occurrences|length > 0 %}
-        <form name="form" action="{{ path('delete_events') }}" method="post">
-            {% set can_modify = false %}
+        {% set can_delete_any = false %}
+        <form id="delete-events-form" action="{{ path('delete_events', {cid: calendar.cid}) }}" method="post">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete-events') }}">
             <table class="table">
                 <thead>
                 <tr>
@@ -23,37 +24,41 @@
                 </thead>
                 <tbody>
                 {% for occurrence in occurrences %}
+                    {% set event = occurrence.event %}
                     <tr>
                         <td>
-                            {% if can_update(calendar.cid, app.user) or occurrence.event.isOwner(app.user) %}
+                            {% if is_granted('EVENT_EDIT', event) %}
+                                {% set can_delete_any = true %}
                                 <div class="form-check form-check-inline">
-                                    {% set can_modify = true %}
                                     <input name="eid[]" type="checkbox" class="form-check-input"
-                                           id="eid_{{ occurrence.event.eid }}" value="{{ occurrence.event.eid }}">
-                                    <label class="form-check-label" for="eid_{{ occurrence.event.eid }}">
-                                        <a href="{{ path('event_view', {eid: occurrence.event.eid}) }}">{{ occurrence.event.subject }}</a>
-                                    </label></div>
-                                <a href="{{ path('modify_event', {eid: occurrence.event.eid}) }}">{{ "modify-label"|trans }}</a>
+                                           id="eid_{{ occurrence.oid }}" value="{{ event.eid }}">
+                                    <label class="form-check-label" for="eid_{{ occurrence.oid }}">
+                                        <a href="{{ path('event_view', {eid: event.eid}) }}">{{ event.subject }}</a>
+                                    </label>
+                                </div>
+                                <a href="{{ path('modify_event', {eid: event.eid}) }}">{{ "modify-label"|trans }}</a>
                             {% else %}
-                                <a href="{{ path('event_view', {eid: occurrence.event.eid}) }}">{{ occurrence.event.subject }}</a>
+                                <a href="{{ path('event_view', {eid: event.eid}) }}">{{ event.subject }}</a>
                             {% endif %}
                         </td>
-                        {% set textcolor = occurrence.getTextColor %}
-                        {% set bgcolor = occurrence.getBgColor %}
-                        <td>{{ occurrence.getTimeString }}</td>
-                        <td>{{ occurrence.event.description }}</td>
+                        <td>{{ occurrence.timespanString|trans }}</td>
+                        <td class="markdown">{{ event.description }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
-            {% if can_modify %}
-                <button type="submit" class="btn btn-primary" data-toggle="confirmation"
-                        data-title="{{ "confirmation-required-dialog-title"|trans }}"
-                        data-button-text="{{ "delete-events-button"|trans }}"
-                        data-content="{{ "permanently-delete-selected-events-question"|trans }}">{{ "delete-events-button"|trans }}</button>
-            {% endif %}
         </form>
+        {% if can_delete_any %}
+            {{ include('components/confirmation.html.twig', {
+                id: 'deleteEventsModal',
+                button: 'delete-events-button'|trans,
+                title: 'delete-confirmation-modal-title'|trans,
+                question: 'permanently-delete-selected-events-question'|trans,
+                form: 'delete-events-form',
+                confirm_button: 'delete-button'|trans,
+            }) }}
+        {% endif %}
     {% else %}
-        <h3>{{ "no-events-message"|trans }}</h3>
+        <p class="lead">{{ "no-events-message"|trans }}</p>
     {% endif %}
 {% endblock %}

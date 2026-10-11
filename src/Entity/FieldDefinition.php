@@ -17,13 +17,12 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * Defintion for event fields.
- *
- * @author Sean Proctor <sproctor@gmail.com>
+ * A custom field that events on a calendar can fill in
  */
 #[ORM\Entity]
 #[ORM\Table('field_definitions')]
@@ -32,27 +31,44 @@ class FieldDefinition
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private $fid;
+    private int $fid;
 
-    #[ORM\ManyToOne(targetEntity: 'Calendar')]
-    #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid')]
-    private ?\App\Entity\Calendar $calendar = null;
+    #[ORM\ManyToOne(targetEntity: Calendar::class, inversedBy: 'field_definitions')]
+    #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid', nullable: false, onDelete: 'CASCADE')]
+    private Calendar $calendar;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $name = null;
-    
-    #[ORM\Column(type: 'boolean')]
-    private ?bool $is_required = null;
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
+    private string $name = '';
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: 'boolean')]
+    private bool $is_required = false;
+
+    /**
+     * Optional regular expression (without delimiters) that values must match
+     */
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\Callback([self::class, 'validateFormat'])]
     private ?string $format = null;
 
-    public function getFid(): ?int
+    public function __construct(Calendar $calendar)
+    {
+        $this->calendar = $calendar;
+        $calendar->getFieldDefinitions()->add($this);
+    }
+
+    public function getFid(): int
     {
         return $this->fid;
     }
 
-    public function getName(): ?string
+    public function getCalendar(): Calendar
+    {
+        return $this->calendar;
+    }
+
+    public function getName(): string
     {
         return $this->name;
     }
@@ -64,7 +80,7 @@ class FieldDefinition
         return $this;
     }
 
-    public function isIsRequired(): ?bool
+    public function isRequired(): bool
     {
         return $this->is_required;
     }
@@ -81,22 +97,33 @@ class FieldDefinition
         return $this->format;
     }
 
-    public function setFormat(string $format): self
+    public function setFormat(?string $format): self
     {
-        $this->format = $format;
+        $this->format = $format === '' ? null : $format;
 
         return $this;
     }
 
-    public function getCalendar(): ?Calendar
+    /**
+     * The format as a PCRE pattern matching the whole value, or null when any value is allowed
+     */
+    public function getPattern(): ?string
     {
-        return $this->calendar;
+        if ($this->format === null) {
+            return null;
+        }
+
+        return '/^(?:' . str_replace('/', '\/', $this->format) . ')$/u';
     }
 
-    public function setCalendar(?Calendar $calendar): self
+    public static function validateFormat(?string $format, ExecutionContextInterface $context): void
     {
-        $this->calendar = $calendar;
-
-        return $this;
+        if ($format === null || $format === '') {
+            return;
+        }
+        $pattern = '/^(?:' . str_replace('/', '\/', $format) . ')$/u';
+        if (@preg_match($pattern, '') === false) {
+            $context->buildViolation('invalid-field-format-error')->addViolation();
+        }
     }
 }

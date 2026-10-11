@@ -1,26 +1,19 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-<nav class="nav">
+<nav class="nav align-items-center mb-2">
     {% block navigation %}{% endblock %}
 </nav>
 <table class="phpc-month-view table table-bordered">
     <colgroup>
         <col class="wnumber">
-        <col class="day">
-        <col class="day">
-        <col class="day">
-        <col class="day">
-        <col class="day">
-        <col class="day">
-        <col class="day">
+        {% for i in 0..6 %}<col class="day">{% endfor %}
     </colgroup>
     <thead class="thead-light">
         <tr>
             <th scope="col">{{ "week-number-abbr"|trans }}</th>
             {% for i in range(0, 6) %}
-                {% set week_date = add_days(start_date, i) %}
-                <th scope="col">{{ week_date|day_abbr }}</th>
+                <th scope="col">{{ add_days(start_date, i)|day_abbr }}</th>
             {% endfor %}
         </tr>
     </thead>

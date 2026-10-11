@@ -1,11 +1,16 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-<ul>
-    {% for calendar in calendars %}
-        <li>
-            <a href="{{ path('default_view', {cid: calendar.cid}) }}">{{ calendar.title }}</a>
-        </li>
-    {% endfor %}
-</ul>
+    <h3>{{ "calendars-label"|trans }}</h3>
+    {% if calendars is empty %}
+        <p>{{ "no-calendars-message"|trans }}</p>
+    {% else %}
+        <ul class="list-group">
+            {% for calendar in calendars %}
+                <li class="list-group-item">
+                    <a href="{{ path('default_view', {_locale: locale, cid: calendar.cid}) }}">{{ calendar.title }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}

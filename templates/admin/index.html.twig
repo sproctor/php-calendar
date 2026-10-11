@@ -1,24 +1,21 @@
 {% extends "base.html.twig" %}
 
+{% block title %}{{ "admin-menu-link"|trans }}{% endblock %}
+
 {% block body %}
-    <ul class="nav nav-tabs" role="tablist">
+    <ul class="nav nav-tabs mb-3" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="calendars-tab" data-bs-toggle="tab" data-bs-target="#calendars"
-                    type="button" role="tab" aria-controls="calendars" aria-selected="true">
-                {{ "calendars-label"|trans }}
-            </button>
+            <a class="nav-link active" id="calendars-tab" data-bs-toggle="tab" href="#calendars" role="tab"
+               aria-controls="calendars" aria-selected="true">{{ "calendars-label"|trans }}</a>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users"
-                    type="button" role="tab" aria-controls="users" aria-selected="false">
-                {{ "users-label"|trans }}
-            </button>
+            <a class="nav-link" id="users-tab" data-bs-toggle="tab" href="#users" role="tab"
+               aria-controls="users" aria-selected="false">{{ "users-label"|trans }}</a>
         </li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane show active" id="calendars" role="tabpanel" aria-labelledby="calendars-tab">
-            <h3>{{ "calendars-label"|trans }}</h3>
-            <table class="table">
+            <table class="table align-middle">
                 <thead>
                 <tr>
                     <th scope="col">{{ "calendar-label"|trans }}</th>
@@ -26,19 +23,20 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for calendar in get_calendars() %}
+                {% for calendar in calendars %}
                     <tr>
-                        <td>{{ calendar.title }}</td>
-                        <td>
-                            <a class="btn btn-primary settings-button"
-                               href="{{ path('calendar_admin', {cid: calendar.cid}) }}"><i
+                        <td><a href="{{ path('default_view', {cid: calendar.cid}) }}">{{ calendar.title }}</a></td>
+                        <td class="d-flex gap-2">
+                            <a class="btn btn-sm btn-primary" href="{{ path('calendar_admin', {cid: calendar.cid}) }}"><i
                                         class="bi bi-wrench"></i> {{ "settings-button"|trans }}</a>
                             {{ include('components/confirmation.html.twig', {
                                 id: 'deleteCalendarModal' ~ calendar.cid,
                                 button: 'delete-menu-link'|trans,
+                                small: true,
                                 title: "delete-confirmation-modal-title"|trans,
                                 question: "permanently-delete-calendar-question"|trans,
                                 path: path('delete_calendar', {cid: calendar.cid}),
+                                token_id: 'delete-calendar-' ~ calendar.cid,
                                 confirm_button: "delete-button"|trans,
                             }) }}
                         </td>
@@ -52,8 +50,7 @@
         </div>
 
         <div class="tab-pane" id="users" role="tabpanel" aria-labelledby="users-tab">
-            <h3>{{ "users-label"|trans }}</h3>
-            <table class="table">
+            <table class="table align-middle">
                 <thead>
                 <tr>
                     <th scope="col">{{ "username-label"|trans }}</th>
@@ -61,18 +58,32 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for user in get_users() %}
+                {% for user in users %}
                     <tr>
-                        <td>{{ user.username }}</td>
                         <td>
-                            {% if user.isDisabled %}
-                                <a class="btn btn-primary" href="{{ path('enable_user', {'uid': user.uid}) }}">
-                                    {{ "enable-user-label"|trans }}
-                                </a>
-                            {% else %}
-                                <a class="btn btn-primary" href="{{ path('disable_user', {'uid': user.uid}) }}">
-                                    {{ "disable-user-label"|trans }}
-                                </a>
+                            {{ user.username }}
+                            {% if user.admin %}<span class="badge text-bg-secondary">{{ "site-admin-label"|trans }}</span>{% endif %}
+                            {% if user.disabled %}<span class="badge text-bg-warning">{{ "disabled-label"|trans }}</span>{% endif %}
+                        </td>
+                        <td class="d-flex gap-2">
+                            <a class="btn btn-sm btn-primary" href="{{ path('edit_user', {uid: user.uid}) }}">{{ "edit-link"|trans }}</a>
+                            {% if user != app.user %}
+                                <form method="post" action="{{ path(user.disabled ? 'enable_user' : 'disable_user', {uid: user.uid}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle-user-' ~ user.uid) }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                        {{ (user.disabled ? "enable-user-label" : "disable-user-label")|trans }}
+                                    </button>
+                                </form>
+                                {{ include('components/confirmation.html.twig', {
+                                    id: 'deleteUserModal' ~ user.uid,
+                                    button: 'delete-menu-link'|trans,
+                                    small: true,
+                                    title: "delete-confirmation-modal-title"|trans,
+                                    question: "permanently-delete-user-question"|trans,
+                                    path: path('delete_user', {uid: user.uid}),
+                                    token_id: 'delete-user-' ~ user.uid,
+                                    confirm_button: "delete-button"|trans,
+                                }) }}
                             {% endif %}
                         </td>
                     </tr>

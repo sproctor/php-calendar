@@ -16,12 +16,20 @@ class UserSettingsFormType extends AbstractType
     {
         $builder
             ->add('timezone', TimezoneType::class, [
-                'label' => new TranslatableMessage('timezone-label')
+                'label' => new TranslatableMessage('timezone-label'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('calendar-timezone-label'),
             ])
             ->add(
                 'locale',
                 ChoiceType::class,
-                ['label' => new TranslatableMessage('default-language-label'), 'choices' => $options['locales']]
+                [
+                    'label' => new TranslatableMessage('default-language-label'),
+                    'choices' => $options['locales'],
+                    'choice_translation_domain' => false,
+                    'required' => false,
+                    'placeholder' => new TranslatableMessage('browser-language-label'),
+                ]
             )
             ->add(
                 'save',

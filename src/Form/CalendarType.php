@@ -20,16 +20,24 @@ namespace App\Form;
 use App\Entity\Calendar;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * The calendar settings asked for during setup
+ */
 class CalendarType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title', TextType::class)
-        ;
+            ->add('title', TextType::class, ['label' => new TranslatableMessage('title-label')])
+            ->add('timezone', TimezoneType::class, [
+                'label' => new TranslatableMessage('default-timezone-label'),
+                'help' => new TranslatableMessage('default-timezone-help'),
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

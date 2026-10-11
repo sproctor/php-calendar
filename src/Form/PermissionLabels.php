@@ -15,8 +15,26 @@
  * limitations under the License.
  */
 
-namespace App\Exception;
+namespace App\Form;
 
-class NoCalendarsException extends \Exception
+/**
+ * Translation keys for the calendar permissions, in display order
+ */
+final class PermissionLabels
 {
+    public const LABELS = [
+        'read' => 'read-label',
+        'create' => 'write-label',
+        'update' => 'modify-label',
+        'moderate' => 'moderate-label',
+        'admin' => 'admin-label',
+    ];
+
+    public const HELP = [
+        'read' => 'read-permission-help',
+        'create' => 'create-permission-help',
+        'update' => 'update-permission-help',
+        'moderate' => 'moderate-permission-help',
+        'admin' => 'admin-permission-help',
+    ];
 }

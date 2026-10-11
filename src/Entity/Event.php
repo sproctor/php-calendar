@@ -17,19 +17,14 @@
 
 namespace App\Entity;
 
+use App\Repository\EventRepository;
 use DateTimeImmutable;
-use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * Event represents an event that may have multiple occurrences.
- *
- * @author Sean Proctor <sproctor@gmail.com>
- */
-#[ORM\Entity(repositoryClass: 'App\Repository\EventRepository')]
-#[ORM\Table(name: 'events')]
+#[ORM\Entity(repositoryClass: EventRepository::class)]
+#[ORM\Table('events')]
 class Event
 {
     #[ORM\Column(type: 'integer')]
@@ -38,14 +33,19 @@ class Event
     private int $eid;
 
     #[ORM\ManyToOne(targetEntity: Calendar::class)]
-    #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid')]
+    #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid', nullable: false, onDelete: 'CASCADE')]
     private Calendar $calendar;
 
-    #[ORM\ManyToOne(targetEntity: 'User')]
-    #[ORM\JoinColumn(name: 'owner_uid', referencedColumnName: 'uid')]
+    /**
+     * Null for events created anonymously or whose owner was deleted
+     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'owner_uid', referencedColumnName: 'uid', nullable: true, onDelete: 'SET NULL')]
     private ?User $owner;
 
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Occurrence::class)]
+    /** @var Collection<int, Occurrence> */
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Occurrence::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['start' => 'ASC'])]
     private Collection $occurrences;
 
     #[ORM\Column(type: 'datetime_immutable')]
@@ -54,24 +54,32 @@ class Event
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?DateTimeImmutable $mtime = null;
 
+    /**
+     * When set, the event is hidden from people who can't edit it until this time
+     */
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?DateTimeImmutable $pubtime = null;
 
-    /**
-     * One Event can have many Fields.
-     */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: 'Field')]
+    /** @var Collection<int, Field> */
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Field::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $fields;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private string $subject;
+    private string $subject = '';
 
     #[ORM\Column(type: 'text')]
-    private string $description;
+    private string $description = '';
 
-    #[ORM\ManyToOne(targetEntity: 'Category')]
-    #[ORM\JoinColumn(name: 'catid', referencedColumnName: 'catid')]
-    private ?Category $category;
+    #[ORM\ManyToOne(targetEntity: Category::class)]
+    #[ORM\JoinColumn(name: 'catid', referencedColumnName: 'catid', nullable: true, onDelete: 'SET NULL')]
+    private ?Category $category = null;
+
+    /**
+     * Read-only events can only be changed by their owner and calendar admins,
+     * not by other users who can modify events
+     */
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $readonly = false;
 
     public function __construct(Calendar $calendar, ?User $owner)
     {
@@ -82,32 +90,9 @@ class Event
         $this->fields = new ArrayCollection();
     }
 
-    public function getSubject(): string
-    {
-        return $this->subject;
-    }
-
-    public function getOwner(): ?User
-    {
-        return $this->owner;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
     public function getEid(): int
     {
         return $this->eid;
-    }
-
-    /**
-     * @return Occurrence[]
-     */
-    public function getOccurrences(): Collection
-    {
-        return $this->occurrences;
     }
 
     public function getCalendar(): Calendar
@@ -115,67 +100,22 @@ class Event
         return $this->calendar;
     }
 
-    public function getColor(): ?string
+    public function getOwner(): ?User
     {
-        return $this->category?->getColor();
+        return $this->owner;
     }
 
-    public function getTextColor(): ?string {
-        $color = $this->getColor();
-
-        if ($color === null) return null;
-
-        list($r, $g, $b) = sscanf($color, "#%02x%02x%02x");
-        $l = $this->computeLuminosity($r, $g, $b);
-
-        return $l > 0.179 ? '#000000' : '#ffffff';
-    }
-
-    private function computeLuminosity(int $r, int $g, int $b): float {
-        return 0.2126 * $this->intermediateLuminosity($r)
-            + 0.7152 * $this->intermediateLuminosity($g)
-            + 0.0722 * $this->intermediateLuminosity($b);
-    }
-
-    private function intermediateLuminosity(int $c): float {
-        $sc = ($c / 255.0);
-        return $sc <= 0.03928 ? $sc / 12.92 : (($sc + 0.055) / 1.055) ^ 2.4;
-    }
-
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
+    /**
+     * Anonymous users never own events
+     */
     public function isOwner(?User $user): bool
     {
-        if ($this->owner === null) return true;
-        return $user?->getUid() == $this->owner->getUid();
+        return $user !== null && $this->owner !== null && $user->getUid() === $this->owner->getUid();
     }
 
-    public function getFields(): Collection
+    public function getSubject(): string
     {
-        return $this->fields;
-    }
-
-    public function getCreated(): DateTimeInterface
-    {
-        return $this->ctime;
-    }
-
-    public function getModified(): ?DateTimeInterface
-    {
-        return $this->mtime;
-    }
-
-    public function getPublishDate(): ?DateTimeInterface
-    {
-        return $this->pubtime;
-    }
-
-    public function isPublished(): bool
-    {
-        return $this->pubtime == null || $this->pubtime <= new DateTimeImmutable();
+        return $this->subject;
     }
 
     public function setSubject(string $subject): self
@@ -185,38 +125,94 @@ class Event
         return $this;
     }
 
-    public function setDescription(string $description): self
+    public function getDescription(): string
     {
-        $this->description = $description;
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description ?? '';
 
         return $this;
     }
 
-    public function getCtime(): ?DateTimeInterface
+    /**
+     * @return Collection<int, Occurrence>
+     */
+    public function getOccurrences(): Collection
+    {
+        return $this->occurrences;
+    }
+
+    public function addOccurrence(Occurrence $occurrence): self
+    {
+        if (!$this->occurrences->contains($occurrence)) {
+            $this->occurrences->add($occurrence);
+        }
+
+        return $this;
+    }
+
+    public function removeOccurrence(Occurrence $occurrence): self
+    {
+        $this->occurrences->removeElement($occurrence);
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->category?->getColor();
+    }
+
+    public function getTextColor(): ?string
+    {
+        return $this->category?->getTextColor();
+    }
+
+    public function isReadonly(): bool
+    {
+        return $this->readonly;
+    }
+
+    public function setReadonly(bool $readonly): self
+    {
+        $this->readonly = $readonly;
+
+        return $this;
+    }
+
+    public function getCreated(): DateTimeImmutable
     {
         return $this->ctime;
     }
 
-    public function setCtime(DateTimeImmutable $ctime): self
-    {
-        $this->ctime = $ctime;
-
-        return $this;
-    }
-
-    public function getMtime(): ?DateTimeInterface
+    public function getModified(): ?DateTimeImmutable
     {
         return $this->mtime;
     }
 
-    public function setMtime(DateTimeImmutable $mtime): self
+    public function markModified(): self
     {
-        $this->mtime = $mtime;
+        $this->mtime = new DateTimeImmutable();
 
         return $this;
     }
 
-    public function getPubtime(): ?DateTimeInterface
+    public function getPubtime(): ?DateTimeImmutable
     {
         return $this->pubtime;
     }
@@ -228,44 +224,48 @@ class Event
         return $this;
     }
 
-    public function setOwner(?User $owner): self
+    public function isPublished(): bool
     {
-        $this->owner = $owner;
-
-        return $this;
+        return $this->pubtime === null || $this->pubtime <= new DateTimeImmutable();
     }
 
-    public function setCategory(?Category $category): self
+    /**
+     * @return Collection<int, Field>
+     */
+    public function getFields(): Collection
     {
-        $this->category = $category;
-
-        return $this;
+        return $this->fields;
     }
 
-    public function setCalendar(?Calendar $calendar): self
+    public function getFieldValue(FieldDefinition $definition): ?string
     {
-        $this->calendar = $calendar;
-
-        return $this;
-    }
-
-    public function addField(Field $field): self
-    {
-        if (!$this->fields->contains($field)) {
-            $this->fields->add($field);
-            $field->setEvent($this);
+        foreach ($this->fields as $field) {
+            if ($field->getDefinition()->getFid() === $definition->getFid()) {
+                return $field->getValue();
+            }
         }
 
-        return $this;
+        return null;
     }
 
-    public function removeField(Field $field): self
+    /**
+     * Sets a custom field's value; null or an empty string removes it
+     */
+    public function setFieldValue(FieldDefinition $definition, ?string $value): self
     {
-        if ($this->fields->removeElement($field)) {
-            // set the owning side to null (unless already changed)
-            if ($field->getEvent() === $this) {
-                $field->setEvent(null);
+        foreach ($this->fields as $field) {
+            if ($field->getDefinition() === $definition) {
+                if ($value === null || $value === '') {
+                    $this->fields->removeElement($field);
+                } else {
+                    $field->setValue($value);
+                }
+
+                return $this;
             }
+        }
+        if ($value !== null && $value !== '') {
+            $this->fields->add(new Field($definition, $this, $value));
         }
 
         return $this;

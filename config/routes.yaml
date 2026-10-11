@@ -3,3 +3,5 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+    requirements:
+        _locale: '[a-z]{2,3}(_[A-Z][a-z]{3})?(_[A-Z]{2})?'

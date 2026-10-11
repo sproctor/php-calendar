@@ -18,6 +18,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table('categories')]
@@ -26,24 +27,48 @@ class Category
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private $catid;
+    private int $catid;
 
-    #[ORM\ManyToOne(targetEntity: 'Calendar')]
-    #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid')]
-    private ?Calendar $calendar = null;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private ?string $name = null;
+    #[ORM\ManyToOne(targetEntity: Calendar::class, inversedBy: 'categories')]
+    #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid', nullable: false, onDelete: 'CASCADE')]
+    private Calendar $calendar;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $color = null;
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
+    private string $name = '';
 
-    public function getCatid(): ?int
+    /**
+     * Background color as #rrggbb; the text color is picked for contrast
+     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\Regex('/^#[0-9a-fA-F]{6}$/')]
+    private string $color = '#ffffff';
+
+    /**
+     * When set, only members of this role (and calendar admins) can see the category's events
+     */
+    #[ORM\ManyToOne(targetEntity: CalendarRole::class)]
+    #[ORM\JoinColumn(name: 'rid', referencedColumnName: 'rid', nullable: true, onDelete: 'SET NULL')]
+    private ?CalendarRole $role = null;
+
+    public function __construct(Calendar $calendar)
+    {
+        $this->calendar = $calendar;
+        $calendar->getCategories()->add($this);
+    }
+
+    public function getCatid(): int
     {
         return $this->catid;
     }
 
-    public function getName(): ?string
+    public function getCalendar(): Calendar
+    {
+        return $this->calendar;
+    }
+
+    public function getName(): string
     {
         return $this->name;
     }
@@ -55,7 +80,7 @@ class Category
         return $this;
     }
 
-    public function getColor(): ?string
+    public function getColor(): string
     {
         return $this->color;
     }
@@ -67,15 +92,38 @@ class Category
         return $this;
     }
 
-    public function getCalendar(): ?Calendar
+    /**
+     * Black or white, whichever contrasts better with the background color
+     */
+    public function getTextColor(): string
     {
-        return $this->calendar;
+        [$r, $g, $b] = sscanf($this->color, '#%02x%02x%02x');
+        $luminance = 0.2126 * self::linearize($r) + 0.7152 * self::linearize($g) + 0.0722 * self::linearize($b);
+
+        return $luminance > 0.179 ? '#000000' : '#ffffff';
     }
 
-    public function setCalendar(?Calendar $calendar): self
+    private static function linearize(int $channel): float
     {
-        $this->calendar = $calendar;
+        $c = $channel / 255.0;
+
+        return $c <= 0.03928 ? $c / 12.92 : (($c + 0.055) / 1.055) ** 2.4;
+    }
+
+    public function getRole(): ?CalendarRole
+    {
+        return $this->role;
+    }
+
+    public function setRole(?CalendarRole $role): self
+    {
+        $this->role = $role;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

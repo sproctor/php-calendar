@@ -21,13 +21,14 @@ use App\Entity\Calendar;
 use App\Entity\User;
 use App\Form\CalendarType;
 use App\Form\UserType;
-use App\Repository\CalendarRepository;
+use App\Repository\UserRepository;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -37,29 +38,33 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SetupController extends AbstractController
 {
-    #[Route("/setup", name: "setup")]
+    #[Route("/setup", name: "setup", methods: ['GET', 'POST'])]
     public function setup(
         Request                     $request,
-        CalendarRepository          $repository,
+        UserRepository              $userRepository,
         EntityManagerInterface      $entityManager,
+        Security                    $security,
         UserPasswordHasherInterface $passwordHasher,
         KernelInterface             $kernel,
     ): Response
     {
-        $calendars = null;
         try {
-            $calendars = $repository->findAll();
+            $hasUsers = $userRepository->count() > 0;
         } catch (ConnectionException) {
             $this->createDatabase($kernel);
             $this->createSchema($kernel);
+            $hasUsers = false;
         } catch (TableNotFoundException) {
             $this->createSchema($kernel);
+            $hasUsers = false;
         }
 
-        if (empty($calendars)) {
+        // Setup creates the first admin, so it's only open until someone has an account
+        if (!$hasUsers) {
             $data = [
                 'calendar' => new Calendar(),
                 'user' => new User()
@@ -67,7 +72,7 @@ class SetupController extends AbstractController
             $form = $this->createFormBuilder($data)
                 ->add('calendar', CalendarType::class)
                 ->add('user', UserType::class)
-                ->add('save', SubmitType::class, ['label' => 'save-label'])
+                ->add('save', SubmitType::class, ['label' => new TranslatableMessage('save-label')])
                 ->getForm();
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
@@ -84,12 +89,17 @@ class SetupController extends AbstractController
                 $user->setIsAdmin(true);
                 $entityManager->persist($user);
                 $entityManager->flush();
-                return $this->redirectToRoute('default_view', ['cid' => $calendar->getCid()]);
+                $security->login($user, 'form_login', 'main');
+
+                return $this->redirectToRoute('default');
             }
-            return $this->render('setup.html.twig', ['form' => $form]);
+
+            return $this->render('setup.html.twig', ['form' => $form], new Response(
+                status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK,
+            ));
         }
 
-        throw $this->createAccessDeniedException();
+        return $this->redirectToRoute('default');
     }
 
     private function createDatabase(KernelInterface $kernel): void

@@ -1,0 +1,16 @@
+{% extends "base.html.twig" %}
+
+{% set heading = occurrence ? 'edit-occurrence-title' : 'add-occurrence-title' %}
+{% block title %}{{ heading|trans }}{% endblock %}
+
+{% block body %}
+    <h3>{{ heading|trans }}</h3>
+    <p><a href="{{ path('event_view', {eid: event.eid}) }}">{{ event.subject }}</a></p>
+    {{ form_start(form) }}
+    {{ include('event/_times.html.twig', {times: form.times}) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block script %}
+    {{ include('event/_times_script.html.twig') }}
+{% endblock %}

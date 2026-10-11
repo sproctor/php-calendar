@@ -1,131 +1,80 @@
 {% extends "base.html.twig" %}
 
-{% block title %}{{ 'create-event-label'|trans }}{% endblock %}
+{% set heading = modifying ? 'modify-event-title' : 'create-event-label' %}
+{% block title %}{{ heading|trans }}{% endblock %}
 
 {% block body %}
-    <h3>{{ 'create-event-label'|trans }}</h3>
+    <h3>{{ heading|trans }}</h3>
     {{ form_start(form) }}
     {{ form_row(form.subject) }}
     <div class="mb-3">
-        <label class="form-label" for="form_description">{{ "description-label"|trans }} <a
-                    href="http://commonmark.org/help/" target="_blank"><i class="bi-info-circle"></i></a></label>
-        {{ form_errors(form.description) }}
+        {{ form_label(form.description) }}
+        <a href="https://commonmark.org/help/" target="_blank" rel="noopener" title="{{ 'markdown-help-link'|trans }}"><i class="bi-info-circle"></i></a>
         {{ form_widget(form.description) }}
+        {{ form_errors(form.description) }}
     </div>
-    {% if form.modify is defined %}
-        {{ form_row(form.modify) }}
+    {% if form.category is defined %}
+        {{ form_row(form.category) }}
     {% endif %}
-    <div id="time_data">
-        <div class="mb-3">
-            {{ form_row(form.time_type) }}
-            {{ form_label(form.start) }}
-            <div class="form-datetime">
-                {{ form_widget(form.start) }}
-                {{ form_errors(form.start) }}
-            </div>
-            <div class="form-date">
-                {{ form_widget(form.start_date) }}
-                {{ form_errors(form.start_date) }}
-            </div>
+    {% for child in form.children|filter((child, name) => name starts with 'field_') %}
+        {{ form_row(child) }}
+    {% endfor %}
+    {% if form.readonly is defined %}
+        {{ form_row(form.readonly) }}
+    {% endif %}
+
+    {% if form.modify is defined %}
+        {{ form_row(form.modify, {attr: {class: 'phpc-modify'}}) }}
+    {% endif %}
+    <fieldset id="time_data">
+        {{ include('event/_times.html.twig', {times: form.times}) }}
+        {{ form_row(form.repeats) }}
+        <div id="repeat_data" class="row">
+            <div class="col-md-6 phpc-frequency">{{ form_row(form.frequency) }}</div>
+            <div class="col-md-6">{{ form_row(form.until) }}</div>
         </div>
-        <div class="mb-3">
-            {{ form_label(form.end) }}
-            <div class="form-datetime">
-                {{ form_widget(form.end) }}
-                {{ form_errors(form.end) }}
-            </div>
-            <div class="form-date">
-                {{ form_widget(form.end_date) }}
-                {{ form_errors(form.end_date) }}
-            </div>
-        </div>
-        {{ form_row(form.repeats, {'attr': {'class': 'event-repeats'}}) }}
-        <div id="repeat_data" class="mb-3">
-            <div class="event-frequency">{{ form_row(form.frequency) }}</div>
-            {{ form_row(form.until) }}
-        </div>
-    </div>
-    {{ form_row(form.delay_publish) }}
+    </fieldset>
+
+    {{ form_row(form.delay_publish, {attr: {class: 'phpc-delay-publish'}}) }}
     <div id="publish_data">
         {{ form_row(form.pubtime) }}
     </div>
     {{ form_end(form) }}
-
 {% endblock %}
 
 {% block script %}
+    {{ include('event/_times_script.html.twig') }}
     <script>
-        const type_selector = $('#event_form_time_type');
-
-        function updateToFrom() {
-            console.log("updating from...")
-            if (type_selector.val() === '0') {
-                $('.form-datetime').show();
-                $('.form-datetime select').prop('disabled', false);
-                $('.form-date').hide();
-                $('.form-date select').prop('disabled', true);
-            } else {
-                $('.form-datetime').hide();
-                $('.form-datetime select').prop('disabled', true);
-                $('.form-date').show();
-                $('.form-date select').prop('disabled', false);
+        const toggle = (checkbox, section) => {
+            if (!checkbox) {
+                return;
             }
-        }
+            const update = () => {
+                section.hidden = !checkbox.checked;
+            };
+            checkbox.addEventListener('change', update);
+            update();
+        };
+        // Only show the date and time fields when changing them while editing
+        toggle(document.querySelector('.phpc-modify'), document.getElementById('time_data'));
+        toggle(document.querySelector('.phpc-delay-publish'), document.getElementById('publish_data'));
 
-        updateToFrom();
-        type_selector.change(function () {
-            updateToFrom();
-        });
-        {% if form.modify is defined %}
-        // show hide time stuff with modify checkbox
-        $('#time_data').toggle($('#event_form_modify').checked);
-        $('#event_form_modify').click(function () {
-            $('#time_data').toggle(this.checked);
-        });
-        {% endif %}
-
-        // show/hide publish date with checkbox
-        $('#publish_data').toggle($('#event_form_delay_publish').prop('checked') != false);
-        $('#event_form_delay_publish').click(function () {
-            $('#publish_data').toggle(this.checked);
-        });
-
-        const $repeat_selector = $('.event-repeats');
-        const $repeat_data = $('#repeat_data');
-        if ($repeat_selector.val() === '0') {
-            $repeat_data.hide();
-            $repeat_data.find("input").prop('disabled', true);
-        } else {
-            $repeat_data.show();
-            $repeat_data.find("input").prop('disabled', false);
-        }
-        // When selected ...
-        $repeat_selector.change(function () {
-            console.log('changed...');
-            var label = '';
-            switch ($repeat_selector.val()) {
-                case '0':
-                    $repeat_data.hide();
-                    $repeat_data.find("input").prop('disabled', true);
-                    return;
-                case 'D':
-                    label = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'days'|trans}) }}";
-                    break;
-                case 'W':
-                    label = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'weeks'|trans}) }}";
-                    break;
-                case 'M':
-                    label = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'months'|trans}) }}";
-                    break;
-                case 'Y':
-                    label = "{{ 'repeat-every-unit-question'|trans({'%unit%': 'years'|trans}) }}";
-                    break;
-                default:
-                    // invalid option
+        const repeatLabels = {
+            D: {{ 'repeat-every-unit-question'|trans({'%unit%': 'days'|trans})|json_encode|raw }},
+            W: {{ 'repeat-every-unit-question'|trans({'%unit%': 'weeks'|trans})|json_encode|raw }},
+            M: {{ 'repeat-every-unit-question'|trans({'%unit%': 'months'|trans})|json_encode|raw }},
+            Y: {{ 'repeat-every-unit-question'|trans({'%unit%': 'years'|trans})|json_encode|raw }},
+        };
+        const repeatSelector = document.querySelector('.phpc-repeats');
+        const repeatData = document.getElementById('repeat_data');
+        const updateRepeat = () => {
+            const label = repeatLabels[repeatSelector.value];
+            repeatData.hidden = label === undefined;
+            if (label !== undefined) {
+                repeatData.querySelector('.phpc-frequency label').textContent = label;
             }
-            $repeat_data.show();
-            $('.event-frequency label').html(label);
-            $repeat_data.find("input").prop('disabled', false);
-        });
+        };
+        repeatSelector.addEventListener('change', updateRepeat);
+        updateRepeat();
     </script>
 {% endblock %}

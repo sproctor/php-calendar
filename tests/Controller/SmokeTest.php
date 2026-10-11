@@ -20,4 +20,19 @@ class SmokeTest extends AppWebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('.navbar-brand', 'Test calendar');
     }
+
+    public function testMonthStartsOnLocaleFirstDayOfWeek(): void
+    {
+        $calendar = $this->createCalendar();
+        $this->login($this->createUser('admin', admin: true));
+        $url = "/en/calendar/{$calendar->getCid()}/month/2026/10";
+
+        $this->client->request('GET', $url, server: ['HTTP_ACCEPT_LANGUAGE' => 'en-US']);
+        $this->assertSelectorTextSame('.phpc-month-view thead th:nth-child(2)', 'Sun');
+
+        $this->client->request('GET', $url, server: ['HTTP_ACCEPT_LANGUAGE' => 'en-GB']);
+        $this->assertSelectorTextSame('.phpc-month-view thead th:nth-child(2)', 'Mon');
+        // 2026-09-28 is the Monday before October 1st
+        $this->assertSelectorTextContains('.phpc-month-view tbody tr:first-child td:nth-child(2)', 'Sept 28');
+    }
 }

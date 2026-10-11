@@ -19,218 +19,192 @@ namespace App\Controller;
 
 use App\Entity\Calendar;
 use App\Entity\User;
-use App\Exception\PermissionException;
-use App\Form\CalendarFormType;
-use App\Form\CalendarType;
-use App\Form\UserType;
-use App\Repository\CalendarRepository;
 use App\Repository\OccurrenceRepository;
-use App\Repository\UserPermissionsRepository;
-use DateInterval;
+use App\Security\Voter\CalendarVoter;
+use App\Security\Voter\EventVoter;
+use App\Service\OccurrenceGrid;
 use DateTimeImmutable;
-use DateTimeInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Translation\TranslatableMessage;
 
 /**
- * Controller used to display the month view.
- *
- * @author Sean Proctor <sproctor@gmail.com>
+ * The month, week and day views of a calendar, and search
  */
-#[Route("/{_locale}/calendar/{cid}")]
+#[Route('/{_locale}/calendar/{cid}', requirements: ['cid' => '\d+'])]
 class CalendarController extends AbstractController
 {
     public function __construct(
-        private LoggerInterface           $logger,
-        private CalendarRepository        $calendar_repository,
-        private OccurrenceRepository      $occurrence_repository,
-        private UserPermissionsRepository $user_permissions_repository,
-    )
-    {
+        private OccurrenceGrid $grid,
+    ) {
     }
 
-    #[Route("/", name: "default_view")]
-    public function defaultRoute(
-        int $cid,
-    ): Response
+    #[Route('/', name: 'default_view', methods: ['GET'])]
+    public function defaultRoute(#[MapEntity(id: 'cid')] Calendar $calendar): Response
     {
-        $calendar = $this->calendar_repository->find($cid);
-        $user = $this->getUser();
-        return $this->displayMonth($calendar, $user, new DateTimeImmutable());
+        return $this->displayMonth($calendar, new DateTimeImmutable('first day of this month midnight'));
     }
 
-    #[Route("/month/{year}/{month}", name: "month_view")]
-    public function monthRoute(
-        int $cid,
-        int $year,
-        int $month,
-    ): Response
+    #[Route('/month/{year}/{month}', name: 'month_view', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}'], methods: ['GET'])]
+    public function monthRoute(#[MapEntity(id: 'cid')] Calendar $calendar, int $year, int $month): Response
     {
-        $calendar = $this->calendar_repository->find($cid);
-        $user = $this->getUser();
-        $date = new DateTimeImmutable(sprintf("%04d-%02d", $year, $month));
-        return $this->displayMonth($calendar, $user, $date);
-    }
-
-    #[Route("/week/{year}/{week}", name: "week_view")]
-    public function weekRoute(
-        int $cid,
-        int $year,
-        int $week,
-    ): Response
-    {
-        $calendar = $this->calendar_repository->find($cid);
-        $user = $this->getUser();
-//        $date = new DateTimeImmutable(sprintf("%04d-%02d", $year, $month));
-//        return $this->displayMonth($calendar, $user, $date);
-        return new Response();
-    }
-
-    #[Route('/day/{year}/{month}/{day}', name: 'day_view')]
-    public function dayRoute(int $cid, int $year, int $month, int $day): Response
-    {
-        $calendar = $this->calendar_repository->find($cid);
-        $user = $this->getUser();
-        $date = new DateTimeImmutable("$year-$month-$day");
-        $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
-        if (!$permissions->canRead()) {
-            return $this->render('error.html.twig', [
-                'calendar' => $calendar,
-                'message' => new TranslatableMessage('read-permission-error')
-            ]);
+        if ($month < 1 || $month > 12) {
+            throw $this->createNotFoundException();
         }
-        $yesterday = $date->sub(new DateInterval('P1D'));
-        $tomorrow = $date->add(new DateInterval('P1D'));
-        $occurrences = // array_filter(
-            $this->occurrence_repository->findOccurrencesByDate($cid, $year, $month, $day);
-//            fn(Occurrence $occurrence) => $permissions->canRead() || $occurrence->getEvent()->isOwner($user)
-//        );
 
-        return $this->render('calendar/day_view.html.twig',
-            [
-                'calendar' => $calendar,
-                'date' => $date,
-                'prev_date' => $yesterday,
-                'next_date' => $tomorrow,
-                'occurrences' => $occurrences,
-            ]
-        );
+        return $this->displayMonth($calendar, create_datetime($month, 1, $year));
     }
 
-    /** @noinspection PhpUnhandledExceptionInspection */
-    private function displayMonth(
-        Calendar          $calendar,
-        ?User             $user,
-        DateTimeInterface $datetime,
-    ): Response
+    #[Route('/week/{year}/{week}', name: 'week_view', requirements: ['year' => '\d{4}', 'week' => '\d{1,2}'], methods: ['GET'])]
+    public function weekRoute(#[MapEntity(id: 'cid')] Calendar $calendar, int $year, int $week): Response
     {
+        $this->denyAccessUnlessGranted(CalendarVoter::READ, $calendar);
+        if ($week < 1 || $week > 53) {
+            throw $this->createNotFoundException();
+        }
+
+        $start = week_start_date($week, $year);
+        $end = $start->modify('+7 days');
+        $previous = $start->modify('-7 days');
+
+        return $this->render('calendar/week_view.html.twig', [
+            'calendar' => $calendar,
+            'date' => $start,
+            'start_date' => $start,
+            'week' => $week,
+            'year' => $year,
+            'occurrences' => $this->grid->byDay($calendar, $start, $end, $this->currentUser()),
+            'prev_week_url' => $this->generateUrl('week_view', [
+                'cid' => $calendar->getCid(),
+                'year' => year_of_week_of_year($previous),
+                'week' => week_of_year($previous),
+            ]),
+            'next_week_url' => $this->generateUrl('week_view', [
+                'cid' => $calendar->getCid(),
+                'year' => year_of_week_of_year($end),
+                'week' => week_of_year($end),
+            ]),
+        ]);
+    }
+
+    #[Route('/day/{year}/{month}/{day}', name: 'day_view', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}', 'day' => '\d{1,2}'], methods: ['GET'])]
+    public function dayRoute(#[MapEntity(id: 'cid')] Calendar $calendar, int $year, int $month, int $day): Response
+    {
+        $this->denyAccessUnlessGranted(CalendarVoter::READ, $calendar);
+        if (!checkdate($month, $day, $year)) {
+            throw $this->createNotFoundException();
+        }
+
+        $date = _create_datetime($month, $day, $year);
+        $next = $date->modify('+1 day');
+
+        return $this->render('calendar/day_view.html.twig', [
+            'calendar' => $calendar,
+            'date' => $date,
+            'prev_date' => $date->modify('-1 day'),
+            'next_date' => $next,
+            'occurrences' => $this->grid->findVisible($calendar, $date, $next, $this->currentUser()),
+        ]);
+    }
+
+    #[Route('/search', name: 'search', methods: ['GET'])]
+    public function search(
+        #[MapEntity(id: 'cid')] Calendar $calendar,
+        Request $request,
+        OccurrenceRepository $occurrenceRepository,
+        EventVoter $eventVoter,
+    ): Response {
+        $this->denyAccessUnlessGranted(CalendarVoter::READ, $calendar);
+
+        $query = trim($request->query->getString('q'));
+        $from = self::parseDate($request->query->getString('from'));
+        $to = self::parseDate($request->query->getString('to'));
+        $sort = $request->query->getString('sort') === 'subject' ? 'subject' : 'start';
+        $order = $request->query->getString('order') === 'DESC' ? 'DESC' : 'ASC';
+
+        $results = [];
+        $keywords = array_filter(preg_split('/\s+/', $query), fn($k) => $k !== '');
+        if ($keywords !== [] || $from !== null || $to !== null) {
+            $results = array_filter(
+                $occurrenceRepository->search($calendar, $keywords, $from, $to?->modify('+1 day'), $sort, $order),
+                fn($o) => $eventVoter->canView($o->getEvent(), $this->currentUser()),
+            );
+        }
+
+        return $this->render('search.html.twig', [
+            'calendar' => $calendar,
+            'query' => $query,
+            'from' => $from,
+            'to' => $to,
+            'sort' => $sort,
+            'order' => $order,
+            'results' => $results,
+        ]);
+    }
+
+    private static function parseDate(string $value): ?DateTimeImmutable
+    {
+        if ($value === '') {
+            return null;
+        }
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
+
+        return $date === false ? null : $date;
+    }
+
+    private function displayMonth(Calendar $calendar, DateTimeImmutable $date): Response
+    {
+        $this->denyAccessUnlessGranted(CalendarVoter::READ, $calendar);
+
+        $year = intval($date->format('Y'));
+        $month = intval($date->format('n'));
         $cid = $calendar->getCid();
-        $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
-        if (!$permissions->canRead()) {
-            return $this->render('error.html.twig', [
-                'calendar' => $calendar,
-                'message' => new TranslatableMessage('read-permission-error')
-            ]);
-        }
-        $year = intval($datetime->format('Y'));
-        $month = intval($datetime->format('n'));
-        $next_month = $month + 1;
-        $next_year = $year;
-        if ($next_month > 12) {
-            $next_month -= 12;
-            $next_year++;
-        }
-        $prev_month = $month - 1;
-        $prev_year = $year;
-        if ($prev_month < 1) {
-            $prev_month += 12;
-            $prev_year--;
-        }
+
         $months = [];
         for ($i = 1; $i <= 12; $i++) {
-            $months[month_name(new \DateTimeImmutable(sprintf("%04d-%02d", $year, $i)))] =
+            $months[month_name(_create_datetime($i, 1, $year))] =
                 $this->generateUrl('month_view', ['cid' => $cid, 'year' => $year, 'month' => $i]);
         }
         $years = [];
         for ($i = $year - 5; $i <= $year + 5; $i++) {
             $years[$i] = $this->generateUrl('month_view', ['cid' => $cid, 'month' => $month, 'year' => $i]);
         }
+        $previous = $date->modify('-1 month');
+        $next = $date->modify('+1 month');
 
-        $prev_month_url =
-            $this->generateUrl('month_view', ['cid' => $cid, 'year' => $prev_year, 'month' => $prev_month]);
-        $next_month_url =
-            $this->generateUrl('month_view', ['cid' => $cid, 'year' => $next_year, 'month' => $next_month]);
-
-        $weeks = \weeks_in_month($month, $year);
-
-        $first_day = 2 - day_of_week($month, 1, $year);
+        $weeks = weeks_in_month($month, $year);
+        // The grid starts on the first day of the week containing the 1st
+        $first_day = 1 - day_of_week($month, 1, $year);
         $from_date = create_datetime($month, $first_day, $year);
+        $to_date = create_datetime($month, $first_day + $weeks * 7, $year);
 
-        $last_day = $weeks * 7 - day_of_week($month, 1, $year);
-        $to_date = create_datetime($month, $last_day + 1, $year);
-
-        $occurrences = $this->occurrence_repository->findOccurrencesByDay(
-            $calendar,
-            $from_date,
-            $to_date,
-            $user
-        );
-
-        return $this->render("calendar/month_view.html.twig",
-            [
-                'calendar' => $calendar,
-                'date' => $datetime,
-                'months' => $months,
-                'years' => $years,
-                'prev_month_url' => $prev_month_url,
-                'next_month_url' => $next_month_url,
-                'weeks' => $weeks,
-                'occurrences' => $occurrences,
-                'start_date' => $from_date,
-            ]
-        );
+        return $this->render('calendar/month_view.html.twig', [
+            'calendar' => $calendar,
+            'date' => $date,
+            'months' => $months,
+            'years' => $years,
+            'prev_month_url' => $this->generateUrl('month_view', [
+                'cid' => $cid,
+                'year' => $previous->format('Y'),
+                'month' => $previous->format('n'),
+            ]),
+            'next_month_url' => $this->generateUrl('month_view', [
+                'cid' => $cid,
+                'year' => $next->format('Y'),
+                'month' => $next->format('n'),
+            ]),
+            'weeks' => $weeks,
+            'occurrences' => $this->grid->byDay($calendar, $from_date, $to_date, $this->currentUser()),
+            'start_date' => $from_date,
+        ]);
     }
 
-    #[Route("/admin", name: "calendar_admin")]
-    public function settings(
-        int $cid,
-        Request $request,
-        CalendarRepository $calendar_repository,
-        UserPermissionsRepository $user_permissions_repository,
-        EntityManagerInterface $entity_manager,
-    ): Response
+    private function currentUser(): ?User
     {
-        /* @var User $user */
         $user = $this->getUser();
-        if ($user == null) {
-            throw $this->createAccessDeniedException();
-        }
-        $calendar = $calendar_repository->find($cid);
-        $permissions = $user_permissions_repository->getUserPermissions($cid, $user);
 
-        $calendar_form = $this->createForm(CalendarFormType::class, $calendar);
-        $calendar_form->handleRequest($request);
-        if ($calendar_form->isSubmitted() && $calendar_form->isValid()) {
-            $entity_manager->persist($calendar);
-            $entity_manager->flush();
-        }
-
-        $user_form = $this->createForm(UserType::class, $user);
-        $user_form->handleRequest($request);
-        if ($user_form->isSubmitted() && $user_form->isValid()) {
-            $entity_manager->persist($user);
-            $entity_manager->flush();
-        }
-
-        return $this->render('calendar/admin.html.twig', [
-            'calendar' => $calendar,
-            'calendar_form' => $calendar_form,
-            'user_form' => $user_form,
-        ]);
+        return $user instanceof User ? $user : null;
     }
 }

@@ -18,245 +18,221 @@
 namespace App\Controller;
 
 use App\Entity\Calendar;
+use App\Entity\Category;
 use App\Entity\Event;
-use App\Entity\Occurrence;
 use App\Entity\User;
 use App\Form\EventFormType;
-use App\Repository\CalendarRepository;
+use App\Form\OccurrenceTimesType;
 use App\Repository\EventRepository;
-use App\Repository\OccurrenceRepository;
-use App\Repository\UserPermissionsRepository;
+use App\Security\PermissionResolver;
+use App\Security\Voter\CalendarVoter;
+use App\Security\Voter\EventVoter;
+use App\Service\OccurrenceGenerator;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/{_locale}/event')]
+#[Route('/{_locale}')]
 class EventController extends AbstractController
 {
-    const MAX_OCCURRENCES = 1000;
-
     public function __construct(
-        private EntityManagerInterface    $entity_manager,
-        private CalendarRepository        $calendar_repository,
-        private UserPermissionsRepository $user_permissions_repository,
-        private EventRepository           $event_repository,
-        private OccurrenceRepository      $occurrence_repository,
-        private LoggerInterface           $logger,
-    )
-    {
+        private EntityManagerInterface $entityManager,
+        private OccurrenceGenerator $occurrenceGenerator,
+        private PermissionResolver $permissionResolver,
+        private TranslatorInterface $translator,
+    ) {
     }
 
-    // Must come before /{eid}
-    #[Route('/delete', name: 'delete_events', methods: ['POST'])]
-    public function deleteEvents(
-        Request $request,
-    ): Response
+    #[Route('/event/{eid}', name: 'event_view', requirements: ['eid' => '\d+'], methods: ['GET'])]
+    public function view(#[MapEntity(id: 'eid')] Event $event): Response
     {
-        $user = $this->getUser();
-        $eids = $request->request->all('eid');
-        $this->logger->debug($request);
-        $cid = null;
-        foreach ($eids as $eid) {
-            $event = $this->event_repository->find($eid);
-            $cid = $event->getCalendar()->getCid();
-            $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
-            if ($permissions->canUpdate()) {
-                $this->event_repository->remove($event);
-            } else {
-                // TODO: improve error handling
-                throw $this->createAccessDeniedException("Could not delete: $eid");
-            }
-        }
-        $this->entity_manager->flush();
-
-        // TODO: create a message to be displayed
-        return $this->redirectToRoute('default_view', ['cid' => $cid]);
-    }
-
-    #[Route('/{eid}', name: 'event_view')]
-    public function view(int $eid): Response
-    {
-        $event = $this->event_repository->find($eid);
-        $calendar = $event->getCalendar();
-        $user = $this->getUser();
+        $this->denyAccessUnlessGranted(EventVoter::VIEW, $event);
 
         return $this->render('event/view.html.twig', [
             'event' => $event,
-            'user' => $user,
-            'calendar' => $calendar,
+            'calendar' => $event->getCalendar(),
+            'date' => $event->getOccurrences()->first() ? $event->getOccurrences()->first()->getStart() : null,
         ]);
     }
 
-    #[Route('/create/{cid}/{year}/{month}/{day}', name: 'create_event')]
-    public function createEvent(
-        int     $cid,
+    #[Route(
+        '/calendar/{cid}/event/new/{year}/{month}/{day}',
+        name: 'create_event',
+        requirements: ['cid' => '\d+', 'year' => '\d{4}', 'month' => '\d{1,2}', 'day' => '\d{1,2}'],
+        defaults: ['year' => null, 'month' => null, 'day' => null],
+        methods: ['GET', 'POST'],
+    )]
+    public function create(
+        #[MapEntity(id: 'cid')] Calendar $calendar,
         Request $request,
-        ?int    $year = null,
-        ?int    $month = null,
-        ?int    $day = null,
-    ): Response
-    {
-        $calendar = $this->calendar_repository->find($cid);
-        $user = $this->getUser();
-        $date = new DateTimeImmutable();
-        if ($year !== null && $month !== null && $day !== null) {
-            $date = $date->setDate($year, $month, $day);
+        ?int $year = null,
+        ?int $month = null,
+        ?int $day = null,
+    ): Response {
+        $this->denyAccessUnlessGranted(CalendarVoter::CREATE, $calendar);
+
+        $date = new DateTimeImmutable('today');
+        if ($year !== null && $month !== null && $day !== null && checkdate($month, $day, $year)) {
+            $date = _create_datetime($month, $day, $year);
         }
-        return $this->eventForm(
-            $request,
-            new Event($calendar, $user),
-            $calendar,
-            $user,
-            $date,
-            false,
-        );
+
+        return $this->eventForm($request, new Event($calendar, $this->currentUser()), OccurrenceTimesType::defaults($date));
     }
 
-    #[Route('/edit/{eid}', name: 'modify_event')]
-    public function modifyEvent(
-        int     $eid,
+    #[Route('/event/{eid}/edit', name: 'modify_event', requirements: ['eid' => '\d+'], methods: ['GET', 'POST'])]
+    public function edit(#[MapEntity(id: 'eid')] Event $event, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted(EventVoter::EDIT, $event);
+
+        $first = $event->getOccurrences()->first();
+        $times = $first ? OccurrenceTimesType::fromOccurrence($first) : OccurrenceTimesType::defaults(new DateTimeImmutable('today'));
+
+        return $this->eventForm($request, $event, $times);
+    }
+
+    #[Route('/event/{eid}/delete', name: 'delete_event', requirements: ['eid' => '\d+'], methods: ['POST'])]
+    public function delete(#[MapEntity(id: 'eid')] Event $event, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted(EventVoter::EDIT, $event);
+        if (!$this->isCsrfTokenValid('delete-event-' . $event->getEid(), $request->getPayload()->getString('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token');
+        }
+
+        $calendar = $event->getCalendar();
+        $this->entityManager->remove($event);
+        $this->entityManager->flush();
+        $this->addFlash('success', 'event-deleted-message');
+
+        return $this->redirectToRoute('default_view', ['cid' => $calendar->getCid()]);
+    }
+
+    #[Route('/calendar/{cid}/events/delete', name: 'delete_events', requirements: ['cid' => '\d+'], methods: ['POST'])]
+    public function deleteEvents(
+        #[MapEntity(id: 'cid')] Calendar $calendar,
         Request $request,
-    ): Response
-    {
-        $event = $this->event_repository->find($eid);
-        $user = $this->getUser();
-        return $this->eventForm(
-            $request,
-            $event,
-            $event->getCalendar(),
-            $user,
-            new DateTimeImmutable(),
-            true,
-        );
-    }
-
-    #[Route('/delete/{eid}', name: 'delete_event')]
-    public function deleteEvent(
-        int $eid,
-    ): Response
-    {
-        $user = $this->getUser();
-        $event = $this->event_repository->find($eid);
-        $cid = $event->getCalendar()->getCid();
-        $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
-        if ($permissions->canUpdate()) {
-            $this->event_repository->remove($event, true);
-        } else {
-            // TODO: improve message
-            throw $this->createAccessDeniedException();
+        EventRepository $eventRepository,
+    ): Response {
+        if (!$this->isCsrfTokenValid('delete-events', $request->getPayload()->getString('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token');
         }
-        // TODO: create a message to be displayed
-        return $this->redirectToRoute('default_view', ['cid' => $event->getCalendar()->getCid()]);
+
+        $events = [];
+        foreach ($request->getPayload()->all('eid') as $eid) {
+            $event = $eventRepository->find((int) $eid);
+            // Only events on this calendar that the user can edit; anything else rejects the whole request
+            if ($event === null || $event->getCalendar() !== $calendar || !$this->isGranted(EventVoter::EDIT, $event)) {
+                throw $this->createAccessDeniedException();
+            }
+            $events[] = $event;
+        }
+        foreach ($events as $event) {
+            $this->entityManager->remove($event);
+        }
+        $this->entityManager->flush();
+        if ($events !== []) {
+            $this->addFlash('success', 'events-deleted-message');
+        }
+
+        return $this->redirect($request->headers->get('referer')
+            ?: $this->generateUrl('default_view', ['cid' => $calendar->getCid()]));
     }
 
-    private function eventForm(
-        Request           $request,
-        Event             $event,
-        Calendar          $calendar,
-        ?User             $user,
-        DateTimeImmutable $date,
-        bool              $modifying,
-    ): Response
+    /**
+     * @param array $times OccurrenceTimesType data to start the form with
+     */
+    private function eventForm(Request $request, Event $event, array $times): Response
     {
-        $default_date = $date->setTime(17, 0);
-        $end_datetime = $date->setTime(18, 0);
+        $calendar = $event->getCalendar();
+        $user = $this->currentUser();
+        $modifying = $this->entityManager->contains($event);
+        $permissions = $this->permissionResolver->getPermissions($calendar, $user);
 
-        $cid = $calendar->getCid();
-
-        $permissions = $this->user_permissions_repository->getUserPermissions($cid, $user);
-
-        // TODO: check permission
-
-        $form = $this->createForm(
-            EventFormType::class,
-            $event,
-            [
-                'maxlength' => $calendar->getMaxSubjectLength(),
-                'date' => $default_date,
-                'end' => $end_datetime,
-                'modifying' => $modifying,
-            ]
-        );
-
-        // Check constraints
-        //                    if ($end->getTimestamp() < $start->getTimestamp()) {
-//                        $form->get($error_element)->addError(
-//                            new FormError(__('end-before-start-date-time-error'))
-//                        );
-//                    }
+        [$repeat, $frequency] = $this->occurrenceGenerator->inferRepeat($event->getOccurrences()->toArray());
+        $occurrences = $event->getOccurrences();
+        $form = $this->createForm(EventFormType::class, $event, [
+            'maxlength' => $calendar->getSubjectMax(),
+            'categories' => $this->visibleCategories($calendar, $user, $permissions->admin),
+            'field_definitions' => $calendar->getFieldDefinitions()->toArray(),
+            'can_moderate' => $permissions->moderate,
+            'modifying' => $modifying,
+            'times' => $times,
+            'repeat' => $repeat,
+            'frequency' => $frequency,
+            'until' => $occurrences->count() > 1 ? $occurrences->last()->getStart()->setTime(0, 0) : null,
+            'delay_publish' => $event->getPubtime() !== null,
+        ]);
+        foreach ($calendar->getFieldDefinitions() as $definition) {
+            $form->get('field_' . $definition->getFid())->setData($event->getFieldValue($definition));
+        }
 
         $form->handleRequest($request);
+        if ($form->isSubmitted()) {
+            EventFormType::addCrossFieldErrors($form, $this->translator);
+        }
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entity_manager->persist($event);
+            if (!$form->get('delay_publish')->getData()) {
+                $event->setPubtime(null);
+            }
+            foreach ($calendar->getFieldDefinitions() as $definition) {
+                $event->setFieldValue($definition, $form->get('field_' . $definition->getFid())->getData());
+            }
 
             if (!$modifying || $form->get('modify')->getData()) {
-                if ($modifying) {
-                    $this->occurrence_repository->removeByEid($event->getEid());
+                foreach ($event->getOccurrences()->toArray() as $occurrence) {
+                    $event->removeOccurrence($occurrence);
                 }
-                $time_type = $form->get('time_type')->getData();
-                /* @var DateTimeImmutable $start */
-                /* @var DateTimeImmutable $end */
-                if ($time_type === 0) {
-                    $start = $form->get('start')->getData();
-                    $end = $form->get('end')->getData();
-                } else {
-                    $start = $form->get('start_date')->getData();
-                    $end = $form->get('end_date')->getData();
-                }
-
-                $repeats = $form->get('repeats')->getData();
-                if ($repeats === '0') {
-                    $occurrence = new Occurrence($event, $start, $end, $time_type);
-                    $this->entity_manager->persist($occurrence);
-                } else {
-                    $interval = new \DateInterval('P' . $form->get('frequency')->getData() . $repeats);
-
-                    $until = $form->get('until')->getData();
-                    echo "days between: " . days_between($start, $until);
-
-                    $occurrence_count = 0;
-                    while ($occurrence_count <= self::MAX_OCCURRENCES && days_between($start, $until) >= 0) {
-                        $occurrence = new Occurrence($event, $start, $end, $time_type);
-                        $occurrence_count++;
-                        $this->entity_manager->persist($occurrence);
-
-                        $start = $start->add($interval);
-                        $end = $end->add($interval);
-                    }
-                }
+                [$start, $end, $timeType] = OccurrenceTimesType::toTimes($form->get('times')->getData());
+                $this->occurrenceGenerator->generate(
+                    $event,
+                    $start,
+                    $end,
+                    $timeType,
+                    $form->get('repeats')->getData(),
+                    $form->get('frequency')->getData() ?? 1,
+                    $form->get('until')->getData(),
+                );
             }
-            $this->entity_manager->flush();
+            if ($modifying) {
+                $event->markModified();
+            }
+
+            $this->entityManager->persist($event);
+            $this->entityManager->flush();
+            $this->addFlash('success', $modifying ? 'event-updated-message' : 'event-created-message');
+
             return $this->redirectToRoute('event_view', ['eid' => $event->getEid()]);
         }
-        //echo "<pre>"; var_dump($context->request); echo "</pre>";
-//        if ($modifying) {
-//            $occs = $event->getOccurrences();
-//            $occurrence = $occs[0];
-//        }
-
-        /*
-        $calendar_choices = array();
-        foreach($context->db->getCalendars() as $calendar) {
-        if($calendar->canWrite($context->getUser()))
-        $calendar_choices[$calendar->getTitle()] = $calendar->getCID();
-        }
-
-        if(sizeof($calendar_choices) > 1) {
-        $builder->add('cid', ChoiceType::class, array('choices' => $calendar_choices));
-        } else {
-        $builder->add('cid', HiddenType::class, array('data' => $context->getCalendar()->getCID()));
-        }*/
-
 
         return $this->render('event/form.html.twig', [
             'form' => $form,
             'calendar' => $calendar,
-            'permissions' => $permissions,
-            'user' => $user,
-        ]);
+            'event' => $event,
+            'modifying' => $modifying,
+        ], new Response(status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
+    }
+
+    /**
+     * The calendar's categories that aren't limited to a role the user isn't in
+     *
+     * @return Category[]
+     */
+    private function visibleCategories(Calendar $calendar, ?User $user, bool $isAdmin): array
+    {
+        return array_values(array_filter(
+            $calendar->getCategories()->toArray(),
+            fn(Category $category) => $isAdmin || $category->getRole() === null || $category->getRole()->hasUser($user),
+        ));
+    }
+
+    private function currentUser(): ?User
+    {
+        $user = $this->getUser();
+
+        return $user instanceof User ? $user : null;
     }
 }

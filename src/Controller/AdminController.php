@@ -20,162 +20,164 @@ namespace App\Controller;
 use App\Entity\Calendar;
 use App\Entity\User;
 use App\Form\CalendarFormType;
-use App\Form\UserFormType;
+use App\Form\UserType;
 use App\Repository\CalendarRepository;
-use App\Repository\OccurrenceRepository;
-use App\Repository\UserPermissionsRepository;
 use App\Repository\UserRepository;
-use App\Service\LocaleService;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
 
-#[Route("/{_locale}/admin")]
+/**
+ * Site administration: calendars and user accounts
+ */
+#[Route('/{_locale}/admin')]
+#[IsGranted('ROLE_ADMIN')]
 class AdminController extends AbstractController
 {
     public function __construct(
-        private LoggerInterface $logger,
-    )
-    {
+        private EntityManagerInterface $entityManager,
+    ) {
     }
 
-    #[Route("/", name: "admin")]
-    public function settings(): Response
+    #[Route('/', name: 'admin', methods: ['GET'])]
+    public function index(CalendarRepository $calendarRepository, UserRepository $userRepository): Response
     {
-        /* @var User $user */
-        $user = $this->getUser();
-        if ($user == null || !$user->isAdmin()) {
-            throw $this->createAccessDeniedException();
-        }
-
-        return $this->render('admin/index.html.twig');
+        return $this->render('admin/index.html.twig', [
+            'calendars' => $calendarRepository->findBy([], ['title' => 'ASC']),
+            'users' => $userRepository->findBy([], ['username' => 'ASC']),
+        ]);
     }
 
-    #[Route("/user/{uid}/disable", name: "disable_user")]
-    public function disableUser(
-        int                    $uid,
-        UserRepository         $userRepository,
-        EntityManagerInterface $entityManager,
-    ): Response
+    #[Route('/calendar/create', name: 'create_calendar', methods: ['GET', 'POST'])]
+    public function createCalendar(Request $request): Response
     {
-        /* @var User $current_user */
-        $current_user = $this->getUser();
-        if (!$current_user?->isAdmin()) {
-            throw $this->createAccessDeniedException();
-        }
-        /* @var User $user */
-        $user = $userRepository->find($uid);
-        $user->setIsDisabled(true);
-        $entityManager->persist($user);
-        $entityManager->flush();
-        // TODO: message that the user was created
-        // TODO: handle exception
-        return $this->redirectToRoute('admin', ['_fragment' => 'users']);
-    }
-
-    #[Route("/user/{uid}/enable", name: "enable_user")]
-    public function enableUser(
-        int                    $uid,
-        UserRepository         $userRepository,
-        EntityManagerInterface $entityManager,
-    ): Response
-    {
-        /* @var User $current_user */
-        $current_user = $this->getUser();
-        if (!$current_user?->isAdmin()) {
-            throw $this->createAccessDeniedException();
-        }
-        /* @var User $user */
-        $user = $userRepository->find($uid);
-        $user->setIsDisabled(false);
-        $entityManager->persist($user);
-        $entityManager->flush();
-        // TODO: message that the user was created
-        // TODO: handle exception
-        return $this->redirectToRoute('admin', ['_fragment' => 'users']);
-    }
-
-    #[Route("/user/create", name: "create_user")]
-    public function createUser(
-        Request                     $request,
-        EntityManagerInterface      $entityManager,
-        UserPasswordHasherInterface $passwordHasher,
-    ): Response
-    {
-        if (!$this->getUser()->isAdmin()) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $user = new User();
-        $form = $this->createForm(UserFormType::class, $user);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $form->get('password')->getData()
-            );
-            $user->setHash($hashedPassword);
-            $entityManager->persist($user);
-            $entityManager->flush();
-            // TODO add message
-            return $this->redirectToRoute('admin', ['_fragment' => 'users']);
-        }
-
-        // else
-        return $this->render("admin/create_user.html.twig", ['form' => $form]);
-    }
-
-    #[Route("/calendar/create", name: "create_calendar")]
-    public function createCalendar(
-        Request                $request,
-        EntityManagerInterface $entityManager,
-    ): Response
-    {
-        if (!$this->getUser()->isAdmin()) {
-            throw $this->createAccessDeniedException();
-        }
-
         $calendar = new Calendar();
-        $form = $this->createForm(
-            CalendarFormType::class,
-            $calendar,
-        );
-
+        $calendar->setTimezone(date_default_timezone_get());
+        $form = $this->createForm(CalendarFormType::class, $calendar);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($calendar);
-            $entityManager->flush();
-            // TODO add message
+            $this->entityManager->persist($calendar);
+            $this->entityManager->flush();
+            $this->addFlash('success', 'calendar-created-message');
+
             return $this->redirectToRoute('admin', ['_fragment' => 'calendars']);
         }
 
-        // else
-        return $this->render("admin/create_calendar.html.twig", ['form' => $form]);
+        return $this->render('admin/form.html.twig', [
+            'form' => $form,
+            'heading' => 'create-calendar-label',
+            'tab' => 'calendars',
+        ], new Response(status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
     }
 
-    #[Route("/calendar/{cid}/delete", name: "delete_calendar")]
-    public function deleteCalendar(
-        int                    $cid,
-        CalendarRepository         $calendarRepository,
-        EntityManagerInterface $entityManager,
-    ): Response
+    #[Route('/calendar/{cid}/delete', name: 'delete_calendar', requirements: ['cid' => '\d+'], methods: ['POST'])]
+    public function deleteCalendar(#[MapEntity(id: 'cid')] Calendar $calendar, Request $request): Response
     {
-        /* @var User $current_user */
-        $current_user = $this->getUser();
-        if (!$current_user?->isAdmin()) {
-            throw $this->createAccessDeniedException();
-        }
-        /* @var Calendar $calendar */
-        $calendar = $calendarRepository->find($cid);
-        $entityManager->remove($calendar);
-        $entityManager->flush();
-        // TODO: message that the user was created
-        // TODO: handle exception
+        $this->checkToken($request, 'delete-calendar-' . $calendar->getCid());
+        // Events, categories, roles, fields and permissions go with it through foreign keys
+        $this->entityManager->remove($calendar);
+        $this->entityManager->flush();
+        $this->addFlash('success', 'calendar-deleted-message');
+
         return $this->redirectToRoute('admin', ['_fragment' => 'calendars']);
+    }
+
+    #[Route('/user/create', name: 'create_user', methods: ['GET', 'POST'])]
+    #[Route('/user/{uid}', name: 'edit_user', requirements: ['uid' => '\d+'], methods: ['GET', 'POST'])]
+    public function user(
+        Request $request,
+        UserPasswordHasherInterface $passwordHasher,
+        UserRepository $userRepository,
+        ?int $uid = null,
+    ): Response {
+        $user = $uid === null ? new User() : $userRepository->find($uid);
+        if ($user === null) {
+            throw $this->createNotFoundException();
+        }
+        $creating = $uid === null;
+        $form = $this->createForm(UserType::class, $user, [
+            'password_required' => $creating,
+            'include_admin' => true,
+        ])->add('save', SubmitType::class, ['label' => new TranslatableMessage('save-label')]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $password = $form->get('password')->getData();
+            if ($password !== null && $password !== '') {
+                $user->setHash($passwordHasher->hashPassword($user, $password));
+            }
+            if ($user === $this->getUser() && !$user->isAdmin()) {
+                // Don't let admins lock themselves out of this page
+                $user->setIsAdmin(true);
+            }
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+            $this->addFlash('success', $creating ? 'user-created-message' : 'user-saved-message');
+
+            return $this->redirectToRoute('admin', ['_fragment' => 'users']);
+        }
+
+        return $this->render('admin/form.html.twig', [
+            'form' => $form,
+            'heading' => $creating ? 'create-user-label' : 'edit-user-title',
+            'tab' => 'users',
+        ], new Response(status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
+    }
+
+    #[Route('/user/{uid}/disable', name: 'disable_user', requirements: ['uid' => '\d+'], methods: ['POST'])]
+    public function disableUser(#[MapEntity(id: 'uid')] User $user, Request $request): Response
+    {
+        return $this->setDisabled($user, true, $request);
+    }
+
+    #[Route('/user/{uid}/enable', name: 'enable_user', requirements: ['uid' => '\d+'], methods: ['POST'])]
+    public function enableUser(#[MapEntity(id: 'uid')] User $user, Request $request): Response
+    {
+        return $this->setDisabled($user, false, $request);
+    }
+
+    #[Route('/user/{uid}/delete', name: 'delete_user', requirements: ['uid' => '\d+'], methods: ['POST'])]
+    public function deleteUser(#[MapEntity(id: 'uid')] User $user, Request $request): Response
+    {
+        $this->checkToken($request, 'delete-user-' . $user->getUid());
+        $this->protectSelf($user);
+        // Their events stay, without an owner; permissions and role memberships go
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
+        $this->addFlash('success', 'user-deleted-message');
+
+        return $this->redirectToRoute('admin', ['_fragment' => 'users']);
+    }
+
+    private function setDisabled(User $user, bool $disabled, Request $request): Response
+    {
+        $this->checkToken($request, 'toggle-user-' . $user->getUid());
+        $this->protectSelf($user);
+        $user->setIsDisabled($disabled);
+        $this->entityManager->flush();
+        $this->addFlash('success', $disabled ? 'user-disabled-message' : 'user-enabled-message');
+
+        return $this->redirectToRoute('admin', ['_fragment' => 'users']);
+    }
+
+    private function protectSelf(User $user): void
+    {
+        if ($user === $this->getUser()) {
+            throw $this->createAccessDeniedException('Admins can\'t disable or delete their own account');
+        }
+    }
+
+    private function checkToken(Request $request, string $id): void
+    {
+        if (!$this->isCsrfTokenValid($id, $request->getPayload()->getString('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token');
+        }
     }
 }

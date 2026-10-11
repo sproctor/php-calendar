@@ -3,15 +3,15 @@
 {% block title %}{{ calendar.title }}{% endblock %}
 
 {% block navigation %}
-<a class="nav-link" href="{{ prev_month_url }}"><i class="bi-chevron-left"></i></a>
+<a class="nav-link" href="{{ prev_month_url }}" aria-label="{{ 'previous-month-label'|trans }}"><i class="bi-chevron-left"></i></a>
 {{ dropdown(date|month_name, months) }}
 {{ dropdown(date|year, years) }}
-<a class="nav-link" href="{{ next_month_url }}"><i class="bi-chevron-right"></i></a>
+<a class="nav-link" href="{{ next_month_url }}" aria-label="{{ 'next-month-label'|trans }}"><i class="bi-chevron-right"></i></a>
 {% endblock %}
 
 {% block content %}
     {% for week_of_month in 1..weeks %}
-        {% include('calendar/week.html.twig') %}
+        {% include 'calendar/week.html.twig' %}
         {% set start_date = add_days(start_date, 7) %}
     {% endfor %}
 {% endblock %}

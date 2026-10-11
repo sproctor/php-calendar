@@ -3,61 +3,90 @@
 {% block title %}{{ event.subject }}{% endblock %}
 
 {% block body %}
-    <h3>{{ event.subject }}</h3>
+    <h3>
+        {{ event.subject }}
+        {% if event.readonly %}<i class="bi-lock" title="{{ 'readonly-event-label'|trans }}"></i>{% endif %}
+    </h3>
 
-    <div class="phpc-event-header">
-        <div>{{ "by-author"|trans({'%author%': event.owner.username}) }} {{ "on-date-time"|trans({'%datetime%': event.created|format_datetime('medium', 'short')}) }}</div>
-        {% set modified = event.modified %}
-        {% if modified is not null %}
-            <div>{{ "last-modified"|trans({'%modified%': modified|format_datetime('medium', 'short')}) }}</div>
+    <div class="phpc-event-header text-secondary mb-2">
+        <div>
+            {% if event.owner %}{{ "by-author"|trans({'%author%': event.owner.username}) }}{% endif %}
+            {{ "on-date-time"|trans({'%datetime%': event.created|format_datetime('medium', 'short')}) }}
+        </div>
+        {% if event.modified is not null %}
+            <div>{{ "last-modified"|trans({'%modified%': event.modified|format_datetime('medium', 'short')}) }}</div>
         {% endif %}
-        {% set category = event.category %}
-        {% if category %}
-            <div>{{ "category-declaration"|trans({'%category%': category}) }}</div>
+        {% if event.category %}
+            <div>{{ "category-declaration"|trans({'%category%': event.category.name}) }}
+                <span class="badge" style="color: {{ event.textColor }}; background: {{ event.color }};">&nbsp;</span></div>
+        {% endif %}
+        {% if not event.published %}
+            <div class="text-warning">{{ "publishes-at-message"|trans({'%datetime%': event.pubtime|format_datetime('medium', 'short')}) }}</div>
         {% endif %}
     </div>
 
-    <nav class="nav nav-pills">
-        <a class="nav-item nav-link"
-           href="{{ path('modify_event', {eid: event.eid}) }}">{{ "modify-menu-link"|trans }}</a>
-        <a class="nav-item nav-link"
-           href="{# {{ path('occur_form', event.getEid) }} #}">{{ "add-occurrence-menu-link"|trans }}</a>
-        {{ include('components/confirmation.html.twig', {
-            id: 'deleteEventModal',
-            button: 'delete-menu-link'|trans,
-            title: "delete-confirmation-modal-title"|trans,
-            question: "permanently-delete-event-question"|trans,
-            path: path('delete_event', {eid: event.eid}),
-            confirm_button: "delete-button"|trans,
-        }) }}
-    </nav>
-
-    {% if event.fields is not empty %}
-        <h4>{{ "fields-title"|trans }}</h4>
-        {% for field in event.fields %}
-            {% set def = calendar.getField(field['fid']) %}
-            <div>{{ def['name'] }}: {{ field['value'] }}</div>
-        {% endfor %}
+    {% set can_edit = is_granted('EVENT_EDIT', event) %}
+    {% if can_edit %}
+        <nav class="nav nav-pills mb-3 gap-2">
+            <a class="nav-item nav-link" href="{{ path('modify_event', {eid: event.eid}) }}">{{ "modify-menu-link"|trans }}</a>
+            <a class="nav-item nav-link" href="{{ path('create_occurrence', {eid: event.eid}) }}">{{ "add-occurrence-menu-link"|trans }}</a>
+            {{ include('components/confirmation.html.twig', {
+                id: 'deleteEventModal',
+                button: 'delete-menu-link'|trans,
+                title: "delete-confirmation-modal-title"|trans,
+                question: "permanently-delete-event-question"|trans,
+                path: path('delete_event', {eid: event.eid}),
+                token_id: 'delete-event-' ~ event.eid,
+                confirm_button: "delete-button"|trans,
+            }) }}
+        </nav>
     {% endif %}
 
-    <div class="phpc-desc">
-        <h4>{{ "description-title"|trans }}</h4>
-        <div class="border rounded markdown p-3">{{ event.getDescription }}</div>
-    </div>
+    {% set definitions = calendar.fieldDefinitions %}
+    {% if event.fields is not empty %}
+        <h4>{{ "fields-title"|trans }}</h4>
+        <dl class="row">
+            {% for definition in definitions %}
+                {% set value = event.fieldValue(definition) %}
+                {% if value is not null %}
+                    <dt class="col-sm-3">{{ definition.name }}</dt>
+                    <dd class="col-sm-9">{{ value }}</dd>
+                {% endif %}
+            {% endfor %}
+        </dl>
+    {% endif %}
+
+    {% if event.description is not empty %}
+        <div class="phpc-desc">
+            <h4>{{ "description-title"|trans }}</h4>
+            <div class="border rounded markdown p-3 mb-3">{{ event.description }}</div>
+        </div>
+    {% endif %}
 
     <div class="phpc-occ">
         <h4>{{ "occurrences-title"|trans }}</h4>
         <ul class="list-group">
             {% for occurrence in event.occurrences %}
-                <li class="list-group-item">{{ occurrence.getDatetimeString|trans }}
-                    {% if event.isOwner(user) or permissions.canUpdate %}
-                        <a href="{# {{ context.createOccurrenceUrl('occur_form', occurrence.getOid) }} #}">{{ "edit-link"|trans }}</a>
-                        <a href="{# {{ context.createOccurrenceUrl('occurrence_delete', occurrence.getOid) }} #}"
-                           data-toggle="confirmation" data-title="{{ "confirmation-required-dialog-title"|trans }}"
-                           data-button-text="{{ "remove-button"|trans }}"
-                           data-content="{{ "permanently-remove-occurrence-question"|trans }}">{{ "remove-button"|trans }}</a>
+                <li class="list-group-item d-flex align-items-center gap-2">
+                    <a href="{{ path('day_view', {cid: calendar.cid}|merge(occurrence.start|dateparts)) }}">{{ occurrence.datetimeString|trans }}</a>
+                    {% if can_edit %}
+                        <a class="ms-auto btn btn-sm btn-outline-primary" href="{{ path('edit_occurrence', {oid: occurrence.oid}) }}">{{ "edit-link"|trans }}</a>
+                        {{ include('components/confirmation.html.twig', {
+                            id: 'removeOccurrenceModal' ~ occurrence.oid,
+                            button: 'remove-button'|trans,
+                            small: true,
+                            title: "confirmation-required-dialog-title"|trans,
+                            question: (event.occurrences|length == 1
+                                ? 'remove-last-occurrence-question'
+                                : 'permanently-remove-occurrence-question')|trans,
+                            path: path('delete_occurrence', {oid: occurrence.oid}),
+                            token_id: 'delete-occurrence-' ~ occurrence.oid,
+                            confirm_button: "remove-button"|trans,
+                        }) }}
                     {% endif %}
                 </li>
+            {% else %}
+                <li class="list-group-item">{{ "no-occurrences-message"|trans }}</li>
             {% endfor %}
         </ul>
     </div>

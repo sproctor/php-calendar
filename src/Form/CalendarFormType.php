@@ -18,7 +18,6 @@
 namespace App\Form;
 
 use App\Entity\Calendar;
-use App\Entity\Event;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -34,36 +33,30 @@ class CalendarFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title', TextType::class)
-            ->add('subject_max', IntegerType::class, ['label' => new TranslatableMessage('max-subject-length-label')])
-            ->add('events_max', IntegerType::class, ['label' => new TranslatableMessage('max-events-display-label')])
-            ->add(
-                'anon_permission',
-                ChoiceType::class,
-                [
-                    'label' => new TranslatableMessage('public-permissions-label'),
-                    'choices' => [
-                        'no-read-no-write-events-label' => 0,
-                        'read-no-write-events-label' => 1,
-                        'read-create-no-modify-events-label' => 2,
-                        'read-create-modify-events-label' => 3,
-                    ],
-                    'choice_label' => function ($choice, $key) {
-                        return new TranslatableMessage($key);
-                    },
-                    'mapped' => false,
-                ]
-            )
-            ->add(
-                'timezone',
-                TimezoneType::class,
-                ['label' => new TranslatableMessage('default-timezone-label'), 'preferred_choices' => ['America/New_York']]
-            )
-            ->add(
-                'save',
-                SubmitType::class,
-                ['label' => new TranslatableMessage('save-label')]
-            );
+            ->add('title', TextType::class, ['label' => new TranslatableMessage('title-label')])
+            ->add('subject_max', IntegerType::class, [
+                'label' => new TranslatableMessage('max-subject-length-label'),
+                'attr' => ['min' => 1, 'max' => 255],
+            ])
+            ->add('events_max', IntegerType::class, [
+                'label' => new TranslatableMessage('max-events-display-label'),
+                'attr' => ['min' => 1, 'max' => 255],
+            ])
+            ->add('anon_permission', ChoiceType::class, [
+                'label' => new TranslatableMessage('public-permissions-label'),
+                'help' => new TranslatableMessage('public-permissions-help'),
+                'choices' => [
+                    'no-read-no-write-events-label' => Calendar::ANON_NONE,
+                    'read-no-write-events-label' => Calendar::ANON_READ,
+                    'read-create-no-modify-events-label' => Calendar::ANON_CREATE,
+                    'read-create-modify-events-label' => Calendar::ANON_MODIFY,
+                ],
+            ])
+            ->add('timezone', TimezoneType::class, [
+                'label' => new TranslatableMessage('default-timezone-label'),
+                'help' => new TranslatableMessage('default-timezone-help'),
+            ])
+            ->add('save', SubmitType::class, ['label' => new TranslatableMessage('save-label')]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

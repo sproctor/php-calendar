@@ -31,7 +31,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class UserSettingsController extends AbstractController
 {
-    #[Route('/{_locale}/settings', name: 'user_settings')]
+    #[Route('/{_locale}/settings', name: 'user_settings', methods: ['GET', 'POST'])]
     public function form(
         Request                     $request,
         EntityManagerInterface      $entityManager,
@@ -54,13 +54,13 @@ class UserSettingsController extends AbstractController
         $settingsForm = $this->createForm(
             UserSettingsFormType::class,
             $settingsData,
-            ['locales' => array_flip($localeService->getLocaleMappings())],
+            ['locales' => $localeService->getLocaleChoices()],
         );
 
         $passwordForm->handleRequest($request);
         $settingsForm->handleRequest($request);
 
-        if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
+        if ($user->hasEditablePassword() && $passwordForm->isSubmitted() && $passwordForm->isValid()) {
             /* @var ChangePassword $changePassword */
             $changePassword = $passwordForm->getData();
             $hashedPassword = $passwordHasher->hashPassword(
@@ -68,21 +68,25 @@ class UserSettingsController extends AbstractController
                 $changePassword->newPassword
             );
             $user->setHash($hashedPassword);
-            $entityManager->persist($user);
             $entityManager->flush();
+            $this->addFlash('success', 'password-changed-message');
+
+            return $this->redirectToRoute('user_settings');
         }
 
         if ($settingsForm->isSubmitted() && $settingsForm->isValid()) {
             $data = $settingsForm->getData();
             $user->setTimezone($data['timezone']);
             $user->setLocale($data['locale']);
-            $entityManager->persist($user);
             $entityManager->flush();
+            $this->addFlash('success', 'settings-saved-message');
+
+            return $this->redirectToRoute('user_settings');
         }
 
         return $this->render('user/settings.html.twig', [
-            'passwordForm' => $passwordForm,
+            'passwordForm' => $user->hasEditablePassword() ? $passwordForm : null,
             'settingsForm' => $settingsForm,
-        ]);
+        ], new Response(status: $request->isMethod('POST') ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
     }
 }

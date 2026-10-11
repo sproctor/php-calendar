@@ -1,0 +1,13 @@
+<script>
+    // Show the date-time fields for normal occurrences and the date fields otherwise
+    document.querySelectorAll('.phpc-times').forEach((times) => {
+        const typeSelector = times.querySelector('.phpc-time-type');
+        const update = () => {
+            const timed = typeSelector.value === '{{ constant('App\\Entity\\Occurrence::TIME_NORMAL') }}';
+            times.querySelectorAll('.phpc-timed').forEach((e) => e.hidden = !timed);
+            times.querySelectorAll('.phpc-dated').forEach((e) => e.hidden = timed);
+        };
+        typeSelector.addEventListener('change', update);
+        update();
+    });
+</script>

@@ -3,8 +3,10 @@
 {% block title %}{{ 'user-settings-title'|trans }}{% endblock %}
 
 {% block body %}
-    <h3>{{ 'change-password-title'|trans }}</h3>
-    {{ form(passwordForm) }}
     <h3>{{ 'user-settings-title'|trans }}</h3>
     {{ form(settingsForm) }}
+    {% if passwordForm %}
+        <h3 class="mt-4">{{ 'change-password-title'|trans }}</h3>
+        {{ form(passwordForm) }}
+    {% endif %}
 {% endblock %}

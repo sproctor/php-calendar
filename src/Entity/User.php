@@ -21,10 +21,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
-#[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
+#[UniqueEntity(fields: ['username'], message: 'username-taken-error')]
 #[ORM\Entity]
 #[ORM\Table('users')]
+#[ORM\UniqueConstraint(name: 'username', columns: ['username'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Column(type: 'integer')]
@@ -33,6 +35,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private int $uid;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private string $username;
 
     #[ORM\Column(type: 'string', length: 255)]

@@ -1,5 +1,8 @@
-<!-- confirmation Modal -->
-<button class="btn btn-danger"
+{#
+  A button that opens a confirmation dialog. Confirming submits a POST, either to `path` with a CSRF
+  token for `token_id`, or, when `form` is given, the existing form with that id.
+#}
+<button type="button" class="btn btn-danger{{ small is defined and small ? ' btn-sm' }}"
         data-bs-toggle="modal" data-bs-target="#{{ id }}">{{ button }}</button>
 
 <div class="modal fade" id="{{ id }}" tabindex="-1" aria-labelledby="{{ id }}Label" aria-hidden="true">
@@ -14,7 +17,14 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'close'|trans }}</button>
-                <a href="{{ path }}" role="button" class="btn btn-danger">{{ confirm_button }}</a>
+                {% if form is defined %}
+                    <button type="submit" form="{{ form }}" class="btn btn-danger">{{ confirm_button }}</button>
+                {% else %}
+                    <form method="post" action="{{ path }}" class="d-inline">
+                        <input type="hidden" name="_token" value="{{ csrf_token(token_id) }}">
+                        <button type="submit" class="btn btn-danger">{{ confirm_button }}</button>
+                    </form>
+                {% endif %}
             </div>
         </div>
     </div>
