@@ -1,12 +1,6 @@
 {
-    "doctrine/cache": {
-        "version": "2.1.1"
-    },
     "doctrine/collections": {
         "version": "1.6.8"
-    },
-    "doctrine/common": {
-        "version": "3.2.1"
     },
     "doctrine/dbal": {
         "version": "3.3.1"
@@ -67,12 +61,6 @@
     },
     "egulias/email-validator": {
         "version": "3.1.2"
-    },
-    "friendsofphp/proxy-manager-lts": {
-        "version": "v1.0.5"
-    },
-    "laminas/laminas-code": {
-        "version": "4.5.1"
     },
     "monolog/monolog": {
         "version": "2.3.5"
@@ -339,9 +327,6 @@
     "symfony/polyfill-intl-grapheme": {
         "version": "v1.24.0"
     },
-    "symfony/polyfill-intl-icu": {
-        "version": "v1.24.0"
-    },
     "symfony/polyfill-intl-idn": {
         "version": "v1.24.0"
     },
@@ -349,10 +334,7 @@
         "version": "v1.24.0"
     },
     "symfony/polyfill-mbstring": {
-        "version": "v1.24.0"
-    },
-    "symfony/polyfill-php80": {
-        "version": "v1.24.0"
+        "version": "v1.43.0"
     },
     "symfony/process": {
         "version": "v5.4.3"
@@ -361,9 +343,6 @@
         "version": "v5.4.3"
     },
     "symfony/property-info": {
-        "version": "v5.4.3"
-    },
-    "symfony/proxy-manager-bridge": {
         "version": "v5.4.3"
     },
     "symfony/routing": {
@@ -479,18 +458,6 @@
         "files": [
             "config/packages/web_profiler.yaml",
             "config/routes/web_profiler.yaml"
-        ]
-    },
-    "symfony/webapp-meta": {
-        "version": "1.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "1.0",
-            "ref": "67cae591d131c133d63b893c5324796b88c59b34"
-        },
-        "files": [
-            "config/packages/messenger.yaml"
         ]
     },
     "symfony/yaml": {
