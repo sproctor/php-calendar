@@ -52,6 +52,7 @@
         "symfony/validator": "7.4.*",
         "symfony/web-link": "7.4.*",
         "symfony/yaml": "7.4.*",
+        "thomaspark/bootswatch": "^5.3",
         "twbs/bootstrap": "^5.3.8",
         "twbs/bootstrap-icons": "^1.13",
         "twig/extra-bundle": "^3.29",

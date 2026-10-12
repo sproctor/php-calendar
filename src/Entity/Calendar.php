@@ -79,6 +79,12 @@ class Calendar
     private ?string $locale = null;
 
     /**
+     * Theme ID (see ThemeRegistry); null uses the site's default theme
+     */
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private ?string $theme = null;
+
+    /**
      * Minimum permission level everyone has on this calendar, logged in or not (ANON_* constants)
      */
     #[ORM\Column(type: 'smallint', options: ['default' => self::ANON_READ])]
@@ -180,6 +186,18 @@ class Calendar
     public function setLocale(?string $locale): self
     {
         $this->locale = $locale;
+
+        return $this;
+    }
+
+    public function getTheme(): ?string
+    {
+        return $this->theme;
+    }
+
+    public function setTheme(?string $theme): self
+    {
+        $this->theme = $theme === '' ? null : $theme;
 
         return $this;
     }

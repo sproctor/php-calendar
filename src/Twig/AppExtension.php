@@ -29,6 +29,7 @@ use App\Service\CalendarDates;
 use App\Service\CalendarFeedLinks;
 use App\Service\EventStructuredData;
 use App\Service\LocaleService;
+use App\Theme\ThemeRegistry;
 use DateTimeInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,6 +56,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         private Mailing               $mailing,
         private EventStructuredData   $structuredData,
         private CalendarFeedLinks     $feedLinks,
+        private ThemeRegistry         $themes,
         private Security              $security,
     )
     {
@@ -106,6 +108,8 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('app_version', $this->version->get(...)),
             new TwigFunction('mail_enabled', $this->mailing->isConfigured(...)),
             new TwigFunction('event_json_ld', $this->structuredData->script(...), ['is_safe' => ['html']]),
+            new TwigFunction('page_theme', $this->themes->forCalendar(...)),
+            new TwigFunction('themes', $this->themes->all(...)),
             new TwigFunction('feed_links', fn(Calendar $calendar) => $this->feedLinks->linksFor(
                 $calendar, ($user = $this->security->getUser()) instanceof User ? $user : null)),
             new TwigFunction('is_rtl', LocaleService::isRightToLeft(...)),

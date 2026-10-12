@@ -3,19 +3,7 @@
 {% block title %}{{ "admin-menu-link"|trans }}{% endblock %}
 
 {% block body %}
-    <ul class="nav nav-tabs mb-3" role="tablist">
-        <li class="nav-item" role="presentation">
-            <a class="nav-link active" id="calendars-tab" data-bs-toggle="tab" href="#calendars" role="tab"
-               aria-controls="calendars" aria-selected="true">{{ "calendars-label"|trans }}</a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link" id="users-tab" data-bs-toggle="tab" href="#users" role="tab"
-               aria-controls="users" aria-selected="false">{{ "users-label"|trans }}</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ path('mail_settings') }}">{{ ux_icon('bi:envelope') }} {{ 'mail-settings-title'|trans({}, 'account') }}{% if not mail_enabled() %} <span class="badge text-bg-secondary">{{ 'mail-off-badge'|trans({}, 'account') }}</span>{% endif %}</a>
-        </li>
-    </ul>
+    {{ include('admin/_tabs.html.twig', {active: null}) }}
     <div class="tab-content">
         <div class="tab-pane show active" id="calendars" role="tabpanel" aria-labelledby="calendars-tab">
             <div class="table-responsive">

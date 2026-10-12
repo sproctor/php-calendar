@@ -4,14 +4,8 @@
 {% block title %}{{ 'mail-settings-title'|trans }}{% endblock %}
 
 {% block body %}
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ "admin-menu-link"|trans({}, 'messages') }}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ 'mail-settings-title'|trans }}</li>
-        </ol>
-    </nav>
+    {{ include('admin/_tabs.html.twig', {active: 'mail'}) }}
     <div class="phpc-narrow">
-        <h3>{{ 'mail-settings-title'|trans }}</h3>
         <p>{{ 'mail-settings-intro'|trans }}</p>
         {% if not editable %}
             <div class="alert alert-info">{{ 'mail-settings-from-environment'|trans }}</div>

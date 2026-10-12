@@ -1,7 +1,11 @@
 {%- set embedded = is_embedded() -%}
-{#- Light, dark, or auto (follow the browser). Embedded calendars stay light to match most host pages. -#}
+{#- The calendar this page is about, or the last one visited, which also decides the theme -#}
+{%- set nav_calendar = calendar is defined ? calendar : last_calendar() -%}
+{%- set theme = page_theme(nav_calendar) -%}
+{#- Light, dark, or auto (follow the browser). Embedded calendars stay light to match most host pages;
+    themes designed dark are always dark. -#}
 {%- set color_mode = embedded ? 'light' : app.request.cookies.get('phpc_color_mode') -%}
-{%- set color_mode = color_mode in ['light', 'dark'] ? color_mode : 'auto' -%}
+{%- set color_mode = theme.darkOnly ? 'dark' : (color_mode in ['light', 'dark'] ? color_mode : 'auto') -%}
 <!doctype html>
 <html lang="{{ app.request.locale|replace({'_': '-'}) }}"{% if is_rtl(app.request.locale) %} dir="rtl"{% endif %} data-bs-theme="{{ color_mode == 'dark' ? 'dark' : 'light' }}" data-phpc-color-mode="{{ color_mode }}">
 <head>
@@ -16,7 +20,7 @@
     <meta name="description" content="{% block description %}{{ calendar is defined ? 'calendar-meta-description'|trans({'%calendar%': calendar.title}) : 'meta-description'|trans }}{% endblock %}">
 
     <link rel="icon" href="{{ asset('static/office-calendar.png') }}">
-    <link rel="stylesheet" href="{{ asset(is_rtl(app.request.locale) ? 'static/lib/bootstrap/bootstrap.rtl.min.css' : 'static/lib/bootstrap/bootstrap.min.css') }}">
+    <link rel="stylesheet" id="phpc-theme" href="{{ asset(theme.stylesheetFor(is_rtl(app.request.locale))) }}">
     <link rel="stylesheet" href="{{ asset('static/phpc.css') }}">
     {% if calendar is defined and calendar.anonPermission >= constant('App\\Entity\\Calendar::ANON_READ') %}
         <link rel="alternate" type="text/calendar" title="{{ calendar.title }}" href="{{ url('calendar_feed', {slug: calendar.slug}) }}">
@@ -35,7 +39,6 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
             {# On pages that aren't about a calendar, link back to the one last viewed #}
-            {% set nav_calendar = calendar is defined ? calendar : last_calendar() %}
             {% if nav_calendar %}
                 {% set calendars = get_calendars() %}
                 {% if calendars|length > 1 %}
@@ -94,24 +97,26 @@
                             {% endfor %}
                         </div>
                     </li>
-                    {% set color_mode_icons = {light: 'bi:sun-fill', dark: 'bi:moon-stars-fill', auto: 'bi:circle-half'} %}
-                    <li class="nav-item dropdown phpc-color-mode" data-cookie-path="{{ app.request.basePath ~ '/' }}">
-                        <button class="btn btn-link nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                            {% for mode, icon in color_mode_icons %}
-                                <span class="phpc-color-mode-icon" data-mode="{{ mode }}">{{ ux_icon(icon) }}</span>
-                            {% endfor %}
-                            {{ "color-mode-menu-label"|trans }}
-                        </button>
-                        <div class="dropdown-menu">
-                            {% for mode, icon in color_mode_icons %}
-                                <button class="dropdown-item{{ mode == color_mode ? ' active' }}" type="button" data-mode="{{ mode }}"
-                                        aria-pressed="{{ mode == color_mode ? 'true' : 'false' }}">
-                                    {{ ux_icon(icon) }} {{ ('color-mode-' ~ mode)|trans }}
-                                </button>
-                            {% endfor %}
-                        </div>
-                    </li>
+                    {% if not theme.darkOnly %}
+                        {% set color_mode_icons = {light: 'bi:sun-fill', dark: 'bi:moon-stars-fill', auto: 'bi:circle-half'} %}
+                        <li class="nav-item dropdown phpc-color-mode" data-cookie-path="{{ app.request.basePath ~ '/' }}">
+                            <button class="btn btn-link nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                {% for mode, icon in color_mode_icons %}
+                                    <span class="phpc-color-mode-icon" data-mode="{{ mode }}">{{ ux_icon(icon) }}</span>
+                                {% endfor %}
+                                {{ "color-mode-menu-label"|trans }}
+                            </button>
+                            <div class="dropdown-menu">
+                                {% for mode, icon in color_mode_icons %}
+                                    <button class="dropdown-item{{ mode == color_mode ? ' active' }}" type="button" data-mode="{{ mode }}"
+                                            aria-pressed="{{ mode == color_mode ? 'true' : 'false' }}">
+                                        {{ ux_icon(icon) }} {{ ('color-mode-' ~ mode)|trans }}
+                                    </button>
+                                {% endfor %}
+                            </div>
+                        </li>
+                    {% endif %}
                     <li class="nav-item dropdown">
                         <button class="btn btn-link nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">{{ ux_icon('bi:person') }}

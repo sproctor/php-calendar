@@ -17,7 +17,7 @@
     RewriteRule ^ - [E=HTTP_AUTHORIZATION:%0]
 
     # Public files. public/.htaccess takes over from there.
-    RewriteRule ^(static|bundles)/(.*)$ public/$1/$2 [L]
+    RewriteRule ^(static|bundles|themes)/(.*)$ public/$1/$2 [L]
 
     # The front controller
     RewriteRule ^index\.php$ - [L]

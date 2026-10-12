@@ -31,7 +31,7 @@ docker compose -f "$root/compose.yaml" run --rm --no-deps -T \
 # Leave out what's only needed to build: the front-end packages copy-assets copied from, and the icons
 # nobody uses (about 40 MB and thousands of files, which matters when uploading by FTP)
 vendor="$work/$name/vendor"
-rm -rf "$vendor/twbs/bootstrap"
+rm -rf "$vendor/twbs/bootstrap" "$vendor/thomaspark"
 icons="$vendor/twbs/bootstrap-icons"
 mkdir "$work/icons"
 while read -r icon; do

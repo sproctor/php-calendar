@@ -82,6 +82,11 @@ class CalendarFormType extends AbstractType
                 'choices' => array_flip($this->localeService->getLocaleMappings()),
                 'choice_translation_domain' => false,
             ])
+            ->add('theme', ThemeChoiceType::class, [
+                'label' => new TranslatableMessage('theme-label'),
+                'help' => new TranslatableMessage('theme-help'),
+                'site_default' => true,
+            ])
             ->add('save', SubmitType::class, ['label' => new TranslatableMessage('save-label')])
             ->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
                 // An empty slug is made from the title

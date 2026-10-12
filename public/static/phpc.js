@@ -90,6 +90,26 @@ addEventListener("DOMContentLoaded", () => {
         }));
     });
 
+    // Theme menus show the chosen theme on the page right away; see ThemeChoiceType
+    document.querySelectorAll('[data-phpc-theme-preview]').forEach((select) => {
+        const link = document.getElementById('phpc-theme');
+        const root = document.documentElement;
+        // The visitor's own light/dark choice, which themes designed dark override
+        const chosenMode = document.cookie.match(/(?:^|; )phpc_color_mode=(light|dark)/)?.[1] ?? 'auto';
+        select.addEventListener('change', () => {
+            const option = select.selectedOptions[0];
+            // The empty option is the site's default theme
+            const data = option.value === '' ? {
+                stylesheet: select.dataset.defaultStylesheet,
+                stylesheetRtl: select.dataset.defaultStylesheetRtl,
+                dark: select.dataset.defaultDark,
+            } : option.dataset;
+            link.href = (root.dir === 'rtl' && data.stylesheetRtl) || data.stylesheet;
+            root.dataset.phpcColorMode = data.dark ? 'dark' : chosenMode;
+            applyColorMode();
+        });
+    });
+
     // Copy buttons: data-phpc-copy names the input whose text to copy
     document.querySelectorAll('[data-phpc-copy]').forEach((button) => {
         button.addEventListener('click', async () => {

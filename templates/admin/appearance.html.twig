@@ -1,0 +1,10 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ 'appearance-title'|trans }}{% endblock %}
+
+{% block body %}
+    {{ include('admin/_tabs.html.twig', {active: 'appearance'}) }}
+    <div class="phpc-narrow">
+        {{ form(form) }}
+    </div>
+{% endblock %}

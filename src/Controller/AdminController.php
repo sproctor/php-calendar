@@ -20,9 +20,12 @@ namespace App\Controller;
 use App\Entity\Calendar;
 use App\Entity\User;
 use App\Form\CalendarFormType;
+use App\Form\ThemeChoiceType;
 use App\Form\UserType;
 use App\Repository\CalendarRepository;
+use App\Repository\SettingRepository;
 use App\Repository\UserRepository;
+use App\Theme\ThemeRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -53,6 +56,33 @@ class AdminController extends AbstractController
             'calendars' => $calendarRepository->findBy([], ['title' => 'ASC']),
             'users' => $userRepository->findBy([], ['username' => 'ASC']),
         ]);
+    }
+
+    /**
+     * The site's default theme, for calendars that don't choose one and pages outside calendars
+     */
+    #[Route('/appearance', name: 'admin_appearance', methods: ['GET', 'POST'])]
+    public function appearance(Request $request, SettingRepository $settings, ThemeRegistry $themes): Response
+    {
+        $form = $this->createFormBuilder(['theme' => $themes->getSiteDefault()->id])
+            ->add('theme', ThemeChoiceType::class, [
+                'label' => new TranslatableMessage('default-theme-label'),
+                'help' => new TranslatableMessage('default-theme-help'),
+            ])
+            ->add('save', SubmitType::class, ['label' => new TranslatableMessage('save-label')])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $theme = $form->get('theme')->getData();
+            $settings->setValue(SettingRepository::DEFAULT_THEME, $theme === ThemeRegistry::DEFAULT ? null : $theme);
+            $this->addFlash('success', 'settings-saved-message');
+
+            return $this->redirectToRoute('admin_appearance');
+        }
+
+        return $this->render('admin/appearance.html.twig', ['form' => $form],
+            new Response(status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
     }
 
     #[Route('/calendar/create', name: 'create_calendar', methods: ['GET', 'POST'])]

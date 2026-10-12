@@ -2,14 +2,23 @@
 <?php
 
 // Copies front-end files from Composer packages into public/static/lib/, where the web server can serve
-// them. Runs after composer install and update, and in bin/build-release.
+// them: Bootstrap, and the Bootswatch themes. Runs after composer install and update, and in
+// bin/build-release, which then leaves the packages out.
 
 $root = dirname(__DIR__);
 $files = [
     'vendor/twbs/bootstrap/dist/css/bootstrap.min.css' => 'bootstrap/bootstrap.min.css',
     'vendor/twbs/bootstrap/dist/css/bootstrap.rtl.min.css' => 'bootstrap/bootstrap.rtl.min.css',
     'vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js' => 'bootstrap/bootstrap.bundle.min.js',
+    'vendor/twbs/bootstrap/LICENSE' => 'bootstrap/LICENSE',
+    'vendor/thomaspark/bootswatch/LICENSE' => 'bootswatch/LICENSE',
 ];
+foreach (glob("$root/vendor/thomaspark/bootswatch/dist/*/bootstrap.min.css") as $theme) {
+    $name = basename(dirname($theme));
+    foreach (['bootstrap.min.css', 'bootstrap.rtl.min.css'] as $file) {
+        $files["vendor/thomaspark/bootswatch/dist/$name/$file"] = "bootswatch/$name/$file";
+    }
+}
 
 foreach ($files as $source => $target) {
     $from = "$root/$source";
@@ -24,6 +33,9 @@ foreach ($files as $source => $target) {
     }
     // The minified files point browser developer tools at source maps, which aren't copied
     $content = preg_replace('~\n?/[/*]# sourceMappingURL=\S+(?: \*/)?\s*$~', "\n", file_get_contents($from));
+    // Most Bootswatch themes load their fonts from Google, which would tell Google about every visitor;
+    // without them, the themes use the fallback fonts they name
+    $content = preg_replace('~@import url\((["\']?)https://fonts\.googleapis\.com/[^)]*\1\);?~', '', $content);
     file_put_contents($to, $content);
 }
 echo "Copied front-end files to public/static/lib/\n";

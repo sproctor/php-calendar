@@ -81,6 +81,7 @@ class MailSettingsTest extends AppWebTestCase
     public function testReadOnlyWithoutAConfigFile(): void
     {
         $this->client->request('GET', '/en/admin/mail/');
+        $this->assertSelectorTextContains('.nav-tabs .nav-link.active[aria-current="page"]', 'Email');
         $this->assertSelectorTextContains('.alert-info', 'environment variables');
         $this->assertSelectorExists('input[name="form[host]"][disabled]');
     }
