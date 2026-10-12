@@ -103,7 +103,7 @@ class NavigationTest extends AppWebTestCase
         $this->assertStringContainsString('Until 1:00', $timed->eq(0)->text());
         $this->assertStringContainsString('Late party', $timed->eq(0)->text());
         $this->assertStringContainsString('Evening talk', $timed->eq(1)->text());
-        $this->assertStringContainsString('Bring **questions**', $timed->eq(1)->filter('.markdown')->text());
+        $this->assertStringContainsString('Bring <strong>questions</strong>', $timed->eq(1)->filter('.markdown')->html());
         // Anonymous visitors can't edit, so there are no selection boxes
         $this->assertSelectorNotExists('input[name="eid[]"]');
     }

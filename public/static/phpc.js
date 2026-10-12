@@ -12,21 +12,8 @@ addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Render markdown to sanitized HTML. The source is the element's text, which Twig escaped.
-    const renderMarkdown = (source) => DOMPurify.sanitize(marked.parse(source));
-
-    document.querySelectorAll('.markdown').forEach((element) => {
-        element.innerHTML = renderMarkdown(element.textContent);
-    });
-
-    // Event popovers show the rendered description
-    document.querySelectorAll('[data-bs-toggle="popover"]').forEach((element) => {
-        const content = element.getAttribute('data-bs-content');
-        if (content !== null) {
-            element.setAttribute('data-bs-content', renderMarkdown(content));
-        }
-        new bootstrap.Popover(element);
-    });
+    // Event previews in the month view; their content is HTML rendered on the server
+    document.querySelectorAll('[data-bs-toggle="popover"]').forEach((element) => new bootstrap.Popover(element));
 
     // Make days out of month gray
     document.querySelectorAll('.phpc-shadow a').forEach((a) => a.classList.add('text-secondary'));

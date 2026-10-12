@@ -75,7 +75,7 @@ col.wnumber {
   min-width: 0;
 }
 
-.phpc-day-item .markdown > :last-child {
+.markdown > :last-child {
   margin-bottom: 0;
 }
 

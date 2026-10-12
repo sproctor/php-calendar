@@ -61,7 +61,7 @@
     {% if event.description is not empty %}
         <div class="phpc-desc">
             <h4>{{ "description-title"|trans }}</h4>
-            <div class="border rounded markdown p-3 mb-3">{{ event.description }}</div>
+            <div class="border rounded markdown p-3 mb-3">{{ event.description|markdown_to_html }}</div>
         </div>
     {% endif %}
 

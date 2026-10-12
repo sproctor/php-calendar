@@ -25,6 +25,7 @@
                                class="list-group-item">{{ "view-additional-events-link"|trans }}</a>
                         {% else %}
                             {% set event = occurrence.event %}
+                            {% set preview %}<p class="mb-1">{{ occurrence.datetimeString|trans }}{% if event.owner %} — {{ "by-author"|trans({'%author%': event.owner.username}) }}{% endif %}</p>{{ event.description|markdown_to_html }}{% endset %}
                             <a class="phpc-occurrence list-group-item"
                                href="{{ path('event_view', {eid: event.eid}) }}"
                                {% if event.color %}style="color: {{ event.textColor }} !important; background: {{ event.color }} !important;"{% endif %}
@@ -33,7 +34,7 @@
                                data-bs-html="true"
                                data-bs-placement="auto"
                                data-bs-title="{{ event.subject }}"
-                               data-bs-content="{{ occurrence.datetimeString|trans }}{% if event.owner %} — {{ "by-author"|trans({'%author%': event.owner.username}) }}{% endif %}{{ "\n\n" }}{{ event.description }}"
+                               data-bs-content="{{ preview|e('html_attr') }}"
                             >
                                 {% set time = occurrence.timeString %}
                                 {% if time is not null %}

@@ -35,7 +35,7 @@
             <div class="small text-secondary">{{ occurrence.datetimeString|trans }}</div>
         {% endif %}
         {% if event.description is not empty %}
-            <div class="markdown small mt-1">{{ event.description }}</div>
+            <div class="markdown small mt-1">{{ event.description|markdown_to_html }}</div>
         {% endif %}
     </div>
     {% if can_edit %}

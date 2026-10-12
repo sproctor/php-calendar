@@ -179,4 +179,29 @@ class EventTest extends AppWebTestCase
         $this->assertSelectorTextContains('.phpc-occ', 'Oct 16, 2026');
         $this->assertSelectorTextContains('.phpc-occ', '6:00');
     }
+
+    public function testDescriptionsAreRenderedSafely(): void
+    {
+        $calendar = $this->createCalendar();
+        $event = $this->createEvent($calendar, null, 'Party');
+        $this->fresh($event)->setDescription(
+            "**Bring** snacks\n\n<script>alert(1)</script> [click](javascript:alert(1)) <img src=x onerror=alert(1)>\n\n| a | b |\n|---|---|\n| 1 | 2 |"
+        );
+        $this->em()->flush();
+
+        $crawler = $this->client->request('GET', "/en/event/{$event->getEid()}");
+        $description = $crawler->filter('.phpc-desc .markdown');
+        $this->assertStringContainsString('<strong>Bring</strong>', $description->html());
+        $this->assertCount(1, $description->filter('table'));
+        $this->assertCount(0, $description->filter('script, img'));
+        $this->assertStringContainsString('<script>alert(1)</script>', $description->text());
+        $this->assertCount(0, $description->filter('[href*="javascript"], [src*="javascript"]'));
+        $this->assertStringContainsString('click', $description->text());
+
+        // The month view's preview gets the same HTML, escaped into the attribute
+        $crawler = $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/month/2026/10");
+        $preview = $crawler->filter('.phpc-occurrence')->attr('data-bs-content');
+        $this->assertStringContainsString('<strong>Bring</strong>', $preview);
+        $this->assertStringNotContainsString('<script>', $preview);
+    }
 }
