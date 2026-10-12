@@ -199,4 +199,11 @@ class AdminTest extends AppWebTestCase
         $this->submit('Save', ['calendar_form[title]' => 'Renamed', 'calendar_form[slug]' => '']);
         $this->assertResponseRedirects('/en/calendar/renamed/admin');
     }
+
+    public function testShowsTheVersion(): void
+    {
+        $this->login($this->createUser('admin', admin: true));
+        $this->client->request('GET', '/en/admin/');
+        $this->assertSelectorTextContains('main', 'PHP-Calendar ' . static::getContainer()->get(\App\Service\AppVersion::class)->get());
+    }
 }

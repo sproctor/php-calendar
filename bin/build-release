@@ -20,6 +20,8 @@ fi
 
 git -C "$root" archive --format=tar --prefix="$name/" HEAD | tar -x -C "$work"
 mkdir -p "$work/$name/var"
+# Shown on the admin page; see src/Service/AppVersion.php
+echo "$version" > "$work/$name/VERSION"
 
 docker compose -f "$root/compose.yaml" run --rm --no-deps -T \
     -v "$work/$name:/build" -w /build -e APP_ENV=prod \
