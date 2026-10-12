@@ -19,6 +19,7 @@ namespace App\Form;
 
 use App\Entity\Occurrence;
 use DateTimeImmutable;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -96,16 +97,18 @@ class OccurrenceTimesType extends AbstractType
     }
 
     /**
-     * Form data for a new occurrence on $date, 17:00–18:00
+     * Form data for a new hour-long occurrence on $date, starting at the next whole hour (e.g. 3:00 at
+     * 2:20). Late in the evening it's 22:00–23:00, so it stays within the day.
      */
     public static function defaults(DateTimeImmutable $date): array
     {
-        $start = $date->setTime(17, 0);
+        $hour = min((int) Clock::get()->now()->format('G') + 1, 22);
+        $start = $date->setTime($hour, 0);
 
         return [
             'time_type' => Occurrence::TIME_NORMAL,
             'start' => $start,
-            'end' => $start->setTime(18, 0),
+            'end' => $start->modify('+1 hour'),
             'start_date' => $start->setTime(0, 0),
             'end_date' => $start->setTime(0, 0),
         ];
