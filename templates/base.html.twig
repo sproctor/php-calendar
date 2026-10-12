@@ -94,12 +94,12 @@
                             {% endfor %}
                         </div>
                     </li>
-                    {% set color_mode_icons = {light: 'sun-fill', dark: 'moon-stars-fill', auto: 'circle-half'} %}
+                    {% set color_mode_icons = {light: 'bi:sun-fill', dark: 'bi:moon-stars-fill', auto: 'bi:circle-half'} %}
                     <li class="nav-item dropdown phpc-color-mode" data-cookie-path="{{ app.request.basePath ~ '/' }}">
                         <button class="btn btn-link nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
                             {% for mode, icon in color_mode_icons %}
-                                <span class="phpc-color-mode-icon" data-mode="{{ mode }}">{{ ux_icon('bi:' ~ icon) }}</span>
+                                <span class="phpc-color-mode-icon" data-mode="{{ mode }}">{{ ux_icon(icon) }}</span>
                             {% endfor %}
                             {{ "color-mode-menu-label"|trans }}
                         </button>
@@ -107,7 +107,7 @@
                             {% for mode, icon in color_mode_icons %}
                                 <button class="dropdown-item{{ mode == color_mode ? ' active' }}" type="button" data-mode="{{ mode }}"
                                         aria-pressed="{{ mode == color_mode ? 'true' : 'false' }}">
-                                    {{ ux_icon('bi:' ~ icon) }} {{ ('color-mode-' ~ mode)|trans }}
+                                    {{ ux_icon(icon) }} {{ ('color-mode-' ~ mode)|trans }}
                                 </button>
                             {% endfor %}
                         </div>

@@ -1,0 +1,46 @@
+#!/usr/bin/env php
+<?php
+
+// Lists the Bootstrap Icons (the "bi" set) that the templates and code use, one name per line, so
+// bin/build-release can leave the other ~2,000 out of the release. An icon counts as used when its full
+// name appears as a string ('bi:gear'), or as the icon argument of menu_item() ('gear'). Names built from
+// parts ('bi:' ~ name) can't be found, so they make this fail instead of going missing from releases;
+// tests/UsedIconsTest.php runs it.
+
+$root = dirname(__DIR__);
+$icons = [];
+$unreadable = [];
+
+$sources = [];
+foreach (['templates' => '.twig', 'src' => '.php'] as $dir => $extension) {
+    $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator("$root/$dir", FilesystemIterator::SKIP_DOTS));
+    foreach ($files as $file) {
+        if (str_ends_with($file->getFilename(), $extension)) {
+            $sources[substr($file->getPathname(), strlen($root) + 1)] = file_get_contents($file->getPathname());
+        }
+    }
+}
+
+foreach ($sources as $path => $source) {
+    preg_match_all('/([\'"])bi:([a-z0-9-]+)\1/', $source, $m);
+    array_push($icons, ...$m[2]);
+    preg_match_all('/menu_item\(\s*[^,()]+,\s*[^,()]+(?:\([^()]*\))?[^,()]*,\s*([\'"])([a-z0-9-]+)\1/', $source, $m);
+    array_push($icons, ...$m[2]);
+
+    // menu_item() itself is the one place allowed to add the prefix
+    $built = preg_match_all('/([\'"])bi:\1\s*(~|\.)/', $source)
+        - ($path === 'src/Twig/AppExtension.php' ? preg_match_all("/renderIcon\\('bi:' \\. \\\$icon\\)/", $source) : 0);
+    if ($built > 0) {
+        $unreadable[] = $path;
+    }
+}
+
+if ($unreadable !== []) {
+    fwrite(STDERR, "These files build icon names from parts, so the icons they use can't be found; write each\n"
+        . "name in full, e.g. 'bi:gear':\n  " . implode("\n  ", $unreadable) . "\n");
+    exit(1);
+}
+
+$icons = array_unique($icons);
+sort($icons);
+echo implode("\n", $icons), "\n";

@@ -25,7 +25,21 @@ echo "$version" > "$work/$name/VERSION"
 
 docker compose -f "$root/compose.yaml" run --rm --no-deps -T \
     -v "$work/$name:/build" -w /build -e APP_ENV=prod \
-    php sh -c 'composer install --no-dev --classmap-authoritative --no-interaction --no-progress --no-scripts && php bin/copy-assets'
+    php sh -c 'composer install --no-dev --classmap-authoritative --no-interaction --no-progress --no-scripts \
+        && php bin/copy-assets && php bin/used-icons > var/used-icons'
+
+# Leave out what's only needed to build: the front-end packages copy-assets copied from, and the icons
+# nobody uses (about 40 MB and thousands of files, which matters when uploading by FTP)
+vendor="$work/$name/vendor"
+rm -rf "$vendor/twbs/bootstrap"
+icons="$vendor/twbs/bootstrap-icons"
+mkdir "$work/icons"
+while read -r icon; do
+    cp "$icons/icons/$icon.svg" "$work/icons/"
+done < "$work/$name/var/used-icons"
+rm "$work/$name/var/used-icons"
+find "$icons" -mindepth 1 -maxdepth 1 ! -name LICENSE -exec rm -rf {} +
+mv "$work/icons" "$icons/icons"
 
 # Like the other private folders, var/ and vendor/ must never be served
 cp "$root/config/.htaccess" "$work/$name/var/.htaccess"
