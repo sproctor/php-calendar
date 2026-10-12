@@ -54,6 +54,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255)]
     private string $hash;
 
+    /**
+     * Secret part of the user's personal calendar feed links (see CalendarFeedLinks); replacing it
+     * stops the old links working
+     */
+    #[ORM\Column(type: 'string', length: 64, nullable: true)]
+    private ?string $feed_key = null;
+
     #[ORM\Column(type: 'boolean')]
     private bool $is_admin = false;
 
@@ -127,6 +134,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $email = $email === null ? '' : trim($email);
         $this->email = $email === '' ? null : $email;
+
+        return $this;
+    }
+
+    /**
+     * The key for personal feed links, made the first time it's needed. The caller saves it.
+     */
+    public function getFeedKey(): string
+    {
+        return $this->feed_key ??= bin2hex(random_bytes(16));
+    }
+
+    public function hasFeedKey(): bool
+    {
+        return $this->feed_key !== null;
+    }
+
+    public function resetFeedKey(): self
+    {
+        $this->feed_key = bin2hex(random_bytes(16));
 
         return $this;
     }

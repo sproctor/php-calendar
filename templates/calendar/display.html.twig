@@ -4,11 +4,14 @@
 <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
     <h1 class="h3 mb-0 me-2">{% block heading %}{% endblock %}</h1>
     {% block navigation %}{% endblock %}
-    {% if is_granted('CALENDAR_CREATE', calendar) %}
-        <a class="btn btn-primary btn-sm ms-auto" href="{{ path('create_event', {slug: calendar.slug}|merge(create_date|dateparts)) }}">
-            {{ ux_icon('bi:plus') }} {{ 'create-event-label'|trans }}
-        </a>
-    {% endif %}
+    <div class="ms-auto d-flex flex-wrap gap-2">
+        {{ include('components/subscribe.html.twig') }}
+        {% if is_granted('CALENDAR_CREATE', calendar) %}
+            <a class="btn btn-primary btn-sm" href="{{ path('create_event', {slug: calendar.slug}|merge(create_date|dateparts)) }}">
+                {{ ux_icon('bi:plus') }} {{ 'create-event-label'|trans }}
+            </a>
+        {% endif %}
+    </div>
 </div>
 {# A grid on wider screens, a list of days on phones #}
 <div class="d-none d-md-block">

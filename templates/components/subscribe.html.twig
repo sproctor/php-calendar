@@ -1,0 +1,55 @@
+{#
+  "Subscribe" button and dialog for adding `calendar` to a calendar app: the public feed when anyone can
+  read it, and the logged-in user's personal feed, which includes what only they can see.
+#}
+{% set feeds = feed_links(calendar) %}
+{% if feeds.public or feeds.personal %}
+    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#subscribeModal">
+        {{ ux_icon('bi:calendar-plus') }} {{ 'subscribe-button'|trans }}
+    </button>
+    <div class="modal fade" id="subscribeModal" tabindex="-1" aria-labelledby="subscribeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="subscribeModalLabel">{{ 'subscribe-title'|trans }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'close'|trans }}"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ 'subscribe-intro'|trans }}</p>
+                    {% for kind in ['public', 'personal'] %}
+                        {% set url = feeds[kind] %}
+                        {% if url %}
+                            {% set webcal = url|replace({'https://': 'webcal://', 'http://': 'webcal://'}) %}
+                            <section class="mb-3">
+                                <label class="form-label fw-semibold" for="feed-{{ kind }}">{{ (kind ~ '-feed-label')|trans }}</label>
+                                {% if kind == 'personal' %}
+                                    <div class="form-text mt-0 mb-2">{{ 'personal-feed-help'|trans }}</div>
+                                {% endif %}
+                                <div class="input-group mb-2">
+                                    <input class="form-control font-monospace small" id="feed-{{ kind }}" value="{{ url }}" readonly>
+                                    <button class="btn btn-outline-secondary" type="button" data-phpc-copy="feed-{{ kind }}"
+                                            data-copied-label="{{ 'link-copied-message'|trans }}">{{ ux_icon('bi:clipboard') }} {{ 'copy-link-button'|trans }}</button>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a class="btn btn-sm btn-outline-primary" href="{{ webcal }}">{{ 'open-in-calendar-app-button'|trans }}</a>
+                                    <a class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener"
+                                       href="https://calendar.google.com/calendar/render?cid={{ webcal|url_encode }}">{{ 'add-to-google-calendar-button'|trans }}</a>
+                                </div>
+                            </section>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% if feeds.personal %}
+                    <div class="modal-footer justify-content-start">
+                        <form method="post" action="{{ path('reset_feed_links') }}"
+                              onsubmit="return confirm({{ 'reset-feed-links-question'|trans|json_encode }})">
+                            <input type="hidden" name="_token" value="{{ csrf_token('reset-feed-links') }}">
+                            <input type="hidden" name="back" value="{{ app.request.requestUri }}">
+                            <button class="btn btn-sm btn-outline-danger" type="submit">{{ 'reset-feed-links-button'|trans }}</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}

@@ -18,6 +18,9 @@
     <link rel="icon" href="{{ asset('static/office-calendar.png') }}">
     <link rel="stylesheet" href="{{ asset(is_rtl(app.request.locale) ? 'static/lib/bootstrap/bootstrap.rtl.min.css' : 'static/lib/bootstrap/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('static/phpc.css') }}">
+    {% if calendar is defined and calendar.anonPermission >= constant('App\\Entity\\Calendar::ANON_READ') %}
+        <link rel="alternate" type="text/calendar" title="{{ calendar.title }}" href="{{ url('calendar_feed', {slug: calendar.slug}) }}">
+    {% endif %}
     {% block structured_data %}{% endblock %}
 </head>
 <body{% if embedded %} data-embed="1"{% endif %}>

@@ -17,16 +17,20 @@
 
 namespace App\Twig;
 
+use App\Entity\Calendar;
+use App\Entity\User;
 use App\EventSubscriber\EmbedSubscriber;
 use App\EventSubscriber\LastCalendarSubscriber;
+use App\Mail\Mailing;
 use App\Repository\CalendarRepository;
 use App\Security\Voter\CalendarVoter;
-use App\Mail\Mailing;
 use App\Service\AppVersion;
 use App\Service\CalendarDates;
+use App\Service\CalendarFeedLinks;
 use App\Service\EventStructuredData;
 use App\Service\LocaleService;
 use DateTimeInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Timezones;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -50,6 +54,8 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         private AppVersion            $version,
         private Mailing               $mailing,
         private EventStructuredData   $structuredData,
+        private CalendarFeedLinks     $feedLinks,
+        private Security              $security,
     )
     {
     }
@@ -100,6 +106,8 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('app_version', $this->version->get(...)),
             new TwigFunction('mail_enabled', $this->mailing->isConfigured(...)),
             new TwigFunction('event_json_ld', $this->structuredData->script(...), ['is_safe' => ['html']]),
+            new TwigFunction('feed_links', fn(Calendar $calendar) => $this->feedLinks->linksFor(
+                $calendar, ($user = $this->security->getUser()) instanceof User ? $user : null)),
             new TwigFunction('is_rtl', LocaleService::isRightToLeft(...)),
             new TwigFunction(
                 'is_embedded',

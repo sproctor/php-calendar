@@ -71,6 +71,13 @@ With a command line, you can instead import from any database:
 Use the table prefix from 2.0's `config.php` (`SQL_PREFIX`). Add `--dry-run` to check the import
 without saving anything. Users keep their passwords, and 2.0 groups become roles.
 
+### Subscribing from a calendar app
+
+Each calendar has a Subscribe button that gives an iCalendar (`.ics`) link for Google Calendar, Apple
+Calendar, Outlook and other calendar apps, which then keep the calendar up to date themselves. A
+calendar anyone can read has a public link, `/calendar/<name>/feed.ics`; logged-in users also get a
+personal link that includes events only they can see, and can reset it if it leaks.
+
 ### Embedding a calendar
 
 To show a calendar on another website, add this where it should appear:

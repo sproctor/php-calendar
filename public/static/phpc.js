@@ -90,6 +90,22 @@ addEventListener("DOMContentLoaded", () => {
         }));
     });
 
+    // Copy buttons: data-phpc-copy names the input whose text to copy
+    document.querySelectorAll('[data-phpc-copy]').forEach((button) => {
+        button.addEventListener('click', async () => {
+            const input = document.getElementById(button.dataset.phpcCopy);
+            input.select();
+            try {
+                await navigator.clipboard.writeText(input.value);
+            } catch {
+                document.execCommand('copy');
+            }
+            const label = button.innerHTML;
+            button.textContent = button.dataset.copiedLabel;
+            setTimeout(() => button.innerHTML = label, 2000);
+        });
+    });
+
     // Make days out of month gray
     document.querySelectorAll('.phpc-shadow a').forEach((a) => a.classList.add('text-secondary'));
 

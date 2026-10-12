@@ -11,11 +11,14 @@
             next_url: path('day_view', {slug: calendar.slug}|merge(next_date|dateparts)),
             prev_label: 'previous-day-label', next_label: 'next-day-label',
         }) }}
-        {% if can_create %}
-            <a class="btn btn-primary btn-sm ms-auto" href="{{ path('create_event', {slug: calendar.slug}|merge(date|dateparts)) }}">
-                {{ ux_icon('bi:plus') }} {{ 'create-event-label'|trans }}
-            </a>
-        {% endif %}
+        <div class="ms-auto d-flex flex-wrap gap-2">
+            {{ include('components/subscribe.html.twig') }}
+            {% if can_create %}
+                <a class="btn btn-primary btn-sm" href="{{ path('create_event', {slug: calendar.slug}|merge(date|dateparts)) }}">
+                    {{ ux_icon('bi:plus') }} {{ 'create-event-label'|trans }}
+                </a>
+            {% endif %}
+        </div>
     </div>
     {% if occurrences|length > 0 %}
         {% set editable = occurrences|filter(o => is_granted('EVENT_EDIT', o.event))|map(o => o.oid) %}

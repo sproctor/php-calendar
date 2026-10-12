@@ -21,8 +21,6 @@ use App\Entity\Occurrence;
 use App\Security\Voter\EventVoter;
 use DateTimeZone;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Twig\Environment;
-use Twig\Extra\Markdown\MarkdownRuntime;
 
 /**
  * schema.org Event markup (JSON-LD) for an event's page, which search engines use to list events. Only
@@ -36,7 +34,7 @@ class EventStructuredData
     public function __construct(
         private EventVoter $eventVoter,
         private UrlGeneratorInterface $urlGenerator,
-        private Environment $twig,
+        private MarkdownText $markdownText,
     ) {
     }
 
@@ -84,7 +82,7 @@ class EventStructuredData
                 'url' => $this->urlGenerator->generate('default_view', ['slug' => $calendar->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL),
             ],
         ];
-        $description = $this->plainText($event->getDescription());
+        $description = $this->markdownText->toPlainText($event->getDescription());
         if ($description !== '') {
             $common['description'] = $description;
         }
@@ -132,19 +130,5 @@ class EventStructuredData
         }
 
         return [];
-    }
-
-    /**
-     * The description's text without Markdown, as rendered on the page
-     */
-    private function plainText(string $markdown): string
-    {
-        if (trim($markdown) === '') {
-            return '';
-        }
-        $html = $this->twig->getRuntime(MarkdownRuntime::class)->convert($markdown);
-        $text = html_entity_decode(strip_tags(preg_replace('~<(br|/p|/li|/h\d)>~i', "$0\n", $html)), ENT_QUOTES | ENT_HTML5);
-
-        return trim(preg_replace(["~[ \t]+~", "~\n{2,}~"], [' ', "\n"], $text));
     }
 }
