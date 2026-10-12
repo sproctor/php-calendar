@@ -1,0 +1,10 @@
+# The pages refer to these files with a version suffix (?v=...) that changes whenever the file does, so
+# browsers and CDNs can keep them for a year without checking for updates.
+<IfModule mod_headers.c>
+    Header set Cache-Control "public, max-age=31536000, immutable"
+
+    # Other websites load embed.js by its plain address, so it has to pick up new versions without one
+    <Files "embed.js">
+        Header set Cache-Control "public, max-age=86400"
+    </Files>
+</IfModule>
