@@ -4,36 +4,75 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-PHP-Calendar is a plain-PHP web calendar backed by MySQL (via the `mysqli` extension). It requires PHP 8.1 or later (declared in `composer.json` and checked at runtime in `install.php` and `src/setup.php`). It uses no framework and has no build step, test suite, or linter. Users install it by dropping the files on a PHP webserver, running `install.php` (which writes `config.php` with `SQL_*` constants and creates or upgrades the schema), then loading `index.php`. Installation docs live on the GitHub wiki (Installation-Guide, FAQ).
+PHP-Calendar 3 is a web calendar built on Symfony 7.4 LTS (PHP 8.3+, `intl` and `pdo_mysql`), Doctrine
+ORM 3 / DBAL 4 on MySQL or MariaDB, Twig and Bootstrap 5.3. It's meant for shared web hosting: people
+upload a release zip, open it in a browser and the web installer does the rest, with no command line or
+Composer needed. Keep that audience in mind: no build steps on the server, no background workers or cron
+required, no third-party requests from pages (no CDNs, no Google Fonts).
 
-`master` is the development line for the 2.0.x releases and is merged into the `v2.0.x` branch. Releases are tagged `vX.Y.Z`. The `v3.0` and `symfony` branches hold separate 3.0 work.
+Branches: `main` is development (3.x); `v2.0` maintains the old plain-PHP 2.0 line. When 3.1 work starts,
+`v3.0` is branched from the `v3.0.0` tag for 3.0.x fixes. Fixes go on the oldest branch that needs them and
+are merged forward. Tags are `vX.Y.Z`. GitHub: sproctor/php-calendar.
 
 ## Commands
 
-- Syntax-check a file: `php -l src/<file>.php`.
-- Formatting: PHP-CS-Fixer with PSR-12 (`.php-cs-fixer.dist.php`). Check with `vendor/bin/php-cs-fixer fix --dry-run --diff` and apply with `vendor/bin/php-cs-fixer fix`. To limit it to specific files, add `--config=.php-cs-fixer.dist.php --path-mode=intersection <files...>`. The whole codebase has been reformatted to PSR-12, so keep files clean by running the fixer on files you change. Add any future bulk-formatting commit to `.git-blame-ignore-revs`.
-- Local dev VM: Laravel Homestead through Vagrant (`vagrant up`). See `Homestead.yaml` and `Vagrantfile`; the site is served at http://php-calendar-1.localhost:8000/ (`*.localhost` resolves to 127.0.0.1 and Homestead forwards port 8000 to the VM's port 80, so no `/etc/hosts` entry is needed). `composer install` pulls Homestead as a dev dependency. Composer is used for nothing else, and its PSR-4 autoload for `src/` is not used by the code.
-- Release: add a `X.Y.Z:` entry to `NEWS.md`, then run `./release.sh X.Y.Z`. It checks syntax and formatting, sets `$phpc_version`, dates the NEWS entry, regenerates `messages.po`, commits, tags `vX.Y.Z` and builds `dist/php-calendar-X.Y.Z.{zip,tar.gz}` with compiled `.mo` files. `.gitattributes` keeps development files out of the packages. Nothing is pushed until `./release.sh X.Y.Z --publish`, which pushes master and the tag and creates a draft GitHub release.
-- Regenerate the translation template: `./generate_messages.sh`. It runs `xgettext` over `*.php src/*.php` with the `__` and `__p` keywords and writes `messages.po`. Translations are synced through Transifex (`.tx/config`) into `locale/<lang>/LC_MESSAGES/messages.po`. The `.mo` files are gitignored; admins compile them in the app (the `translate` action uses `src/msgfmt-functions.php`), or you can run `msgfmt`.
+The development stack is Docker Compose (`compose.yaml`): PHP 8.3 + Apache on http://localhost:8080,
+MySQL 8.4, Mailpit on http://localhost:8025. Run PHP tooling inside the `php` container, since the
+database host only resolves there:
+
+- Tests: `docker compose exec php vendor/bin/phpunit` (one file: add its path; one test: `--filter name`).
+  They use the `app_test` database, rebuilt from the migrations; mail goes to a `null://test` transport.
+- Console: `docker compose exec php bin/console ...`, e.g. `cache:clear`, `lint:twig templates`,
+  `lint:yaml translations config`, `lint:container`.
+- Schema changes: edit the entities, then `bin/console doctrine:migrations:diff`, give the generated
+  migration a description and doc comment and drop the "auto-generated" comments, then
+  `doctrine:migrations:migrate`.
+- Release: `bin/build-release X.Y.Z` builds `dist/php-calendar-X.Y.Z.{zip,tar.gz}` from HEAD (it refuses
+  uncommitted changes), with production dependencies, a `VERSION` file, and build-only files removed (the
+  Bootstrap and Bootswatch packages once copied, unused icons).
 
 ## Architecture
 
-**Request flow.** `index.php` sets path globals (`$phpc_root_path`, `$phpc_includes_path`, `$phpc_script`, …), defines `IN_PHPC`, then requires `src/calendar.php` (core helpers) and `src/setup.php`. `setup.php` does the following:
-1. Loads `config.php` and connects `PhpcDatabase` as `$phpcdb`.
-2. Builds `$vars` by merging the escaped `$_GET` and `$_POST`.
-3. Resolves the current calendar (`$phpc_cal`), the user (`$phpc_user`, or an anonymous `PhpcUser`), the language, the timezone, and the date (`$year`, `$month`, `$day`).
-4. Returns JSON directly when `contentType=json`.
+- **Controllers** (`src/Controller/`) use route attributes; pages live under `/{_locale}/...`.
+  `LanguageController` handles URLs without a language, `FormattingLocaleSubscriber` picks one for them
+  (`LocaleService::pickLanguage`: user setting, `phpc_locale` cookie, calendar default, Accept-Language).
+- **Permissions**: `CalendarVoter` (`CALENDAR_READ/CREATE/UPDATE/MODERATE/ADMIN`) and `EventVoter`
+  (`EVENT_VIEW/EDIT`), resolved by `PermissionResolver` from the calendar's anonymous permission, per-user
+  permissions and roles. Use `EventVoter::canView($event, null)` for "can anyone see this" (feeds,
+  structured data).
+- **Events and dates**: an `Event` has many `Occurrence`s. Timed occurrences are stored in UTC; full-day
+  and TBA ones as floating dates. `TimezoneSubscriber` sets PHP's timezone per request (user setting,
+  `phpc_timezone` cookie, calendar, UTC). `OccurrenceGenerator` makes repeat series, and `update()` keeps
+  existing occurrences (and their IDs, which feeds use as UIDs) when an event's dates change.
+- **Install and config**: `InstallSubscriber` sends unconfigured sites to `/setup` and shows a maintenance
+  page while migrations are pending. `InstallState` writes `.env.local.php` (database, mail settings).
+  An empty `APP_SECRET` falls back to a generated `var/secret` (`SecretEnvVarProcessor`). Site-wide
+  settings edited in the app go in the `settings` table (`SettingRepository`).
+- **Mail**: `App\Mail\Mailing` sends templated emails (`templates/emails/`) synchronously, in the
+  recipient's language; features that need mail check `isConfigured()`. Signed links (password reset,
+  email confirmation) come from `AccountLinks`; calendar feed links from `CalendarFeedLinks`.
+- **Themes**: `ThemeRegistry` lists Bootstrap, the Bootswatch themes and admins' own in `public/themes/`;
+  a calendar's theme, else the site default. Dark-designed themes are detected from their CSS.
+- **Front end**: Bootstrap and Bootswatch come from Composer and `bin/copy-assets` copies them into
+  `public/static/lib/` (gitignored), stripping source maps and Google Fonts imports. Icons are Symfony UX
+  Icons from `twbs/bootstrap-icons`; always write icon names in full (`'bi:gear'`), since releases only
+  keep the icons `bin/used-icons` finds and it fails on names built from parts. App JS/CSS is plain
+  `public/static/phpc.js` and `phpc.css`, versioned by file time.
+- **Importing 2.0**: `App\Import\Import20` (web installer and `bin/console app:import-2.0`).
 
-**Action dispatch.** `?action=foo` maps to `src/foo.php`, which must define a function `foo()` that returns an `Html` object (or a string). `do_action()` in `src/calendar.php` checks that the name is `\w+` and that the file exists, then requires the file and calls the function. The default action is `display_month`. To add a page, create a new `src/<action>.php` with a matching function. Every action that changes data must call `verify_token()`. It checks the per-session CSRF token `$phpc_token` (a random value, separate from the login cookies) and accepts it only from `$_POST`, so forms embed it as a hidden `phpc_token` field and links can never change data. Delete actions show a confirmation page whose Confirm button is built with `create_confirm_form()`.
+## Translations
 
-**Every file in `src/`** begins with `if (!defined('IN_PHPC')) die("Hacking attempt");`. State is shared through globals (`$vars`, `$phpcdb`, `$phpc_cal`, `$phpc_user`, `$phpc_script`, `$phpc_prefix`, …) declared with `global` inside functions.
+Domains: `messages`, `validators`, `security`, `account`, as `translations/<domain>.<code>.yaml`, with
+English as the source. 26 languages; a language appears in the menu once it has a `messages` file. Add new
+strings to English and French at least, and keep keys in English order; other languages fall back to
+English until translated (community translations come through Weblate). Placeholders are `%name%`.
+Right-to-left languages get `dir="rtl"` and a theme's RTL stylesheet.
 
-**HTML generation.** Output is built as a tree, not with templates. `tag('div', attrs('class="x"'), $child, ...)` in `src/html.php` returns `Html` objects that are serialized with `->toString()`. `src/form.php` provides a small form-builder class hierarchy (`FormPart`, `FormGroup`, questions) used by the `*_form.php` actions. Link and URL helpers (`create_action_url`, `create_action_link`, `create_event_link`, menu helpers) are in `src/calendar.php`.
+## Conventions
 
-**Data layer.** `PhpcDatabase` (`src/phpcdatabase.class.php`) holds all SQL as hand-built `mysqli` queries. Every table name is prefixed with `SQL_PREFIX`. It returns model objects: `PhpcCalendar`, `PhpcEvent`, `PhpcOccurrence`, `PhpcUser`. An event can have many occurrences (dated instances). Calendars have categories, groups, and per-user permissions. Schema creation and upgrades are in `install.php` and are versioned by `$phpc_db_version` and the `version` table.
-
-**i18n.** Wrap user-facing strings in `__('...')`, or in `__p('context', '...')` when they need context. These use the bundled pure-PHP `Gettext_PHP` reader, not the gettext extension. `src/globals.php` defines translated arrays (month and day names, …) and must be loaded after translation is set up.
-
-**Security.** Recent commits address XSS. Escape output with `phpc_html_escape()` and use `htmlspecialchars` for request-derived values such as `$phpc_script`. `$vars` is SQL-escaped (`real_escape_r`) but not HTML-escaped. The app is deployed with its whole directory under the web root. Direct access to `src/` and `config.php` is blocked by `.htaccess` files on Apache only (nginx needs equivalent `location` rules from the admin), with the `IN_PHPC` guard as the fallback.
-
-**Frontend.** `static/` holds `phpc.js`, `phpc.css`, and vendored jQuery plugins (timepicker, hoverIntent, spectrum). jQuery and jQuery UI load from a CDN through `get_header_tags()`.
+- Match the surrounding code: short doc comments that say why, sentence-case UI text, Bootstrap utility
+  classes over custom CSS, theme colors via `var(--bs-...)` so dark mode and themes work.
+- Every new feature gets functional tests (`tests/AppWebTestCase.php` helpers: `createUser`,
+  `createCalendar`, `createEvent`, `login`, `submit`, `postWithToken`, `fresh`).
+- State-changing requests are POST with a CSRF token; redirects go only to paths on this site.
+- Other Claude sessions may share this checkout: stage the files you changed by name, never `git add -A`.
