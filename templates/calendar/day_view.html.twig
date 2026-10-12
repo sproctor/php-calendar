@@ -18,49 +18,27 @@
         {% endif %}
     </div>
     {% if occurrences|length > 0 %}
-        {% set can_delete_any = false %}
+        {% set editable = occurrences|filter(o => is_granted('EVENT_EDIT', o.event))|map(o => o.oid) %}
+        {% set all_day = occurrences|filter(o => not o.hasTime) %}
+        {% set timed = occurrences|filter(o => o.hasTime) %}
         <form id="delete-events-form" action="{{ path('delete_events', {slug: calendar.slug}) }}" method="post">
             <input type="hidden" name="_token" value="{{ csrf_token('delete-events') }}">
-            <div class="table-responsive">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>{{ "title-label"|trans }}</th>
-                    <th>{{ "time-label"|trans }}</th>
-                    <th>{{ "description-label"|trans }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for occurrence in occurrences %}
-                    {% set event = occurrence.event %}
-                    <tr>
-                        <td>
-                            {% if is_granted('EVENT_EDIT', event) %}
-                                {% set can_delete_any = true %}
-                                <div class="form-check form-check-inline">
-                                    <input name="eid[]" type="checkbox" class="form-check-input"
-                                           id="eid_{{ occurrence.oid }}" value="{{ event.eid }}">
-                                    <label class="form-check-label" for="eid_{{ occurrence.oid }}">
-                                        <a href="{{ path('event_view', {eid: event.eid}) }}">{{ event.subject }}</a>
-                                    </label>
-                                </div>
-                                <a href="{{ path('modify_event', {eid: event.eid}) }}">{{ "modify-label"|trans }}</a>
-                            {% else %}
-                                <a href="{{ path('event_view', {eid: event.eid}) }}">{{ event.subject }}</a>
-                            {% endif %}
-                        </td>
-                        <td>{{ occurrence.timespanString|trans }}</td>
-                        <td class="markdown">{{ event.description }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            </div>
+            {% for section in [{heading: 'all-day-label', items: all_day}, {heading: 'scheduled-label', items: timed}] %}
+                {% if section.items is not empty %}
+                    <h2 class="h6 text-uppercase text-secondary mt-3">{{ section.heading|trans }}</h2>
+                    <ul class="list-group mb-3 phpc-day-list">
+                        {% for occurrence in section.items %}
+                            {{ include('calendar/_day_item.html.twig', {can_edit: occurrence.oid in editable}) }}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
         </form>
-        {% if can_delete_any %}
+        {% if editable is not empty %}
             {{ include('components/confirmation.html.twig', {
                 id: 'deleteEventsModal',
                 button: 'delete-events-button'|trans,
+                button_id: 'delete-events-button',
                 title: 'delete-confirmation-modal-title'|trans,
                 question: 'permanently-delete-selected-events-question'|trans,
                 form: 'delete-events-form',
@@ -75,4 +53,19 @@
             </a>
         {% endif %}
     {% endif %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        // "Delete selected" only applies once something is selected
+        const deleteButton = document.getElementById('delete-events-button');
+        if (deleteButton) {
+            const boxes = document.querySelectorAll('#delete-events-form input[name="eid[]"]');
+            const update = () => {
+                deleteButton.disabled = ![...boxes].some((box) => box.checked);
+            };
+            boxes.forEach((box) => box.addEventListener('change', update));
+            update();
+        }
+    </script>
 {% endblock %}

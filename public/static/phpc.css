@@ -52,3 +52,15 @@ col.wnumber {
 .occurrence-list {
   margin-top: .5rem;
 }
+
+.phpc-day-time {
+  min-width: 9.5rem;
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+.phpc-day-item .markdown > :last-child {
+  margin-bottom: 0;
+}

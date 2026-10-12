@@ -1,0 +1,49 @@
+{#
+  One occurrence in the day view: time, title, category and description, with edit controls for people
+  who can edit it. Expects `occurrence`, `date` (the day shown), `next_date` and `can_edit`.
+#}
+{% set event = occurrence.event %}
+{% set multi_day = occurrence.start|date('Y-m-d') != occurrence.end|date('Y-m-d') %}
+<li class="list-group-item d-flex flex-wrap flex-sm-nowrap gap-2 gap-sm-3 phpc-day-item"
+    {% if event.color %}style="border-left: .35rem solid {{ event.color }};"{% endif %}>
+    <div class="text-secondary text-nowrap phpc-day-time">
+        {% if not occurrence.hasTime %}
+            {{ occurrence.timeString ? occurrence.timeString|trans : 'all-day-label'|trans }}
+        {% else %}
+            {% set starts_today = occurrence.start >= date %}
+            {% set ends_today = occurrence.end <= next_date %}
+            {% if starts_today and ends_today %}
+                {{ occurrence.timespanString|trans }}
+            {% elseif starts_today %}
+                {{ 'from-time'|trans({'%time%': occurrence.start|format_time('short')}) }}
+            {% elseif ends_today %}
+                {{ 'until-time'|trans({'%time%': occurrence.end|format_time('short')}) }}
+            {% else %}
+                {{ 'all-day-label'|trans }}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="flex-grow-1 min-w-0">
+        <div class="d-flex flex-wrap align-items-baseline gap-2">
+            <a class="fw-semibold" href="{{ path('event_view', {eid: event.eid}) }}">{{ event.subject }}</a>
+            {% if event.category %}
+                <span class="badge" style="color: {{ event.textColor }}; background: {{ event.color }};">{{ event.category.name }}</span>
+            {% endif %}
+            {% if event.readonly %}<i class="bi-lock text-secondary" title="{{ 'readonly-event-label'|trans }}"></i>{% endif %}
+        </div>
+        {% if multi_day %}
+            <div class="small text-secondary">{{ occurrence.datetimeString|trans }}</div>
+        {% endif %}
+        {% if event.description is not empty %}
+            <div class="markdown small mt-1">{{ event.description }}</div>
+        {% endif %}
+    </div>
+    {% if can_edit %}
+        <div class="d-flex align-items-start gap-2 ms-auto">
+            <a class="btn btn-sm btn-outline-primary" href="{{ path('modify_event', {eid: event.eid}) }}"
+               aria-label="{{ 'edit-event-label'|trans({'%event%': event.subject}) }}">{{ 'edit-link'|trans }}</a>
+            <input name="eid[]" type="checkbox" class="form-check-input mt-1" value="{{ event.eid }}"
+                   id="eid_{{ occurrence.oid }}" aria-label="{{ 'select-event-label'|trans({'%event%': event.subject}) }}">
+        </div>
+    {% endif %}
+</li>

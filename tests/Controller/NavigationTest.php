@@ -79,4 +79,27 @@ class NavigationTest extends AppWebTestCase
         $this->assertSelectorExists('.navbar .dropdown-menu a[href="/en/calendar/club/admin"]');
         $this->assertSelectorExists('.navbar .dropdown-menu a[href="/en/admin/"]');
     }
+
+    public function testDayViewListsAllDayEventsFirst(): void
+    {
+        $calendar = $this->createCalendar('Club');
+        $evening = $this->createEvent($calendar, null, 'Evening talk', '2026-10-22 19:00', '2026-10-22 20:00');
+        $this->fresh($evening)->setDescription('Bring **questions**');
+        $this->em()->flush();
+        $this->createEvent($calendar, null, 'Retreat', '2026-10-21', '2026-10-23', \App\Entity\Occurrence::TIME_FULL_DAY);
+        $this->createEvent($calendar, null, 'Late party', '2026-10-21 22:00', '2026-10-22 01:00');
+
+        $crawler = $this->client->request('GET', '/en/calendar/club/day/2026/10/22', server: ['HTTP_ACCEPT_LANGUAGE' => 'en-US']);
+        $sections = $crawler->filter('.phpc-day-list');
+        $this->assertCount(2, $sections);
+        $this->assertStringContainsString('Retreat', $sections->eq(0)->text());
+        $this->assertStringContainsString('Oct 21, 2026 to Oct 23, 2026', $sections->eq(0)->text());
+        $timed = $sections->eq(1)->filter('.phpc-day-item');
+        $this->assertStringContainsString('Until 1:00', $timed->eq(0)->text());
+        $this->assertStringContainsString('Late party', $timed->eq(0)->text());
+        $this->assertStringContainsString('Evening talk', $timed->eq(1)->text());
+        $this->assertStringContainsString('Bring **questions**', $timed->eq(1)->filter('.markdown')->text());
+        // Anonymous visitors can't edit, so there are no selection boxes
+        $this->assertSelectorNotExists('input[name="eid[]"]');
+    }
 }

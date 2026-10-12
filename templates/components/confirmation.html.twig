@@ -3,6 +3,7 @@
   token for `token_id`, or, when `form` is given, the existing form with that id.
 #}
 <button type="button" class="btn btn-danger{{ small is defined and small ? ' btn-sm' }}"
+        {% if button_id is defined %}id="{{ button_id }}"{% endif %}
         data-bs-toggle="modal" data-bs-target="#{{ id }}">{{ button }}</button>
 
 <div class="modal fade" id="{{ id }}" tabindex="-1" aria-labelledby="{{ id }}Label" aria-hidden="true">
