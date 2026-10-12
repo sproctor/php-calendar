@@ -150,18 +150,14 @@ class EventTest extends AppWebTestCase
         $this->assertSelectorTextContains('p', 'No events matched');
     }
 
-    public function testWeekView(): void
+    public function testMonthShowsWeekNumbers(): void
     {
         $calendar = $this->createCalendar();
-        $this->createEvent($calendar, null, 'Midweek');
-
-        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/week/2026/42", server: ['HTTP_ACCEPT_LANGUAGE' => 'en-US']);
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('.phpc-month-view', 'Midweek');
-        // Week 42 of 2026 in the US starts on Sunday, October 11th
-        $this->assertSelectorTextContains('.phpc-month-view tbody td:nth-child(2)', '11');
-        $this->assertSelectorExists('a[href$="/week/2026/41"]');
-        $this->assertSelectorExists('a[href$="/week/2026/43"]');
+        $this->client->request('GET', "/en/calendar/{$calendar->getSlug()}/month/2026/10", server: ['HTTP_ACCEPT_LANGUAGE' => 'en-GB']);
+        // ISO weeks 40 to 44 cover October 2026, shown without links
+        $this->assertSelectorTextSame('.phpc-month-view tbody tr:first-child th', '40');
+        $this->assertSelectorTextSame('.phpc-month-view tbody tr:last-child th', '44');
+        $this->assertSelectorNotExists('.phpc-month-view tbody th a');
     }
 
     public function testTimesFollowTheViewersTimezone(): void

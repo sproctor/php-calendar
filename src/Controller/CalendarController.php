@@ -32,7 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * The month, week and day views of a calendar, and search
+ * The month and day views of a calendar, and search
  */
 #[Route('/{_locale}/calendar/{slug}', requirements: ['slug' => Calendar::SLUG_PATTERN])]
 class CalendarController extends AbstractController
@@ -57,47 +57,6 @@ class CalendarController extends AbstractController
         }
 
         return $this->displayMonth($calendar, $this->dates->date($year, $month, 1));
-    }
-
-    #[Route('/week/{year}/{week}', name: 'week_view', requirements: ['year' => '\d{4}', 'week' => '\d{1,2}'], methods: ['GET'])]
-    public function weekRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, int $year, int $week): Response
-    {
-        $this->denyAccessUnlessGranted(CalendarVoter::READ, $calendar);
-        if ($week < 1 || $week > 53) {
-            throw $this->createNotFoundException();
-        }
-
-        $start = $this->dates->weekStart($week, $year);
-        $end = $start->modify('+7 days');
-        $previous = $start->modify('-7 days');
-        $days = $this->grid->byDay($calendar, $start, $end, $this->currentUser());
-
-        return $this->render('calendar/week_view.html.twig', [
-            'calendar' => $calendar,
-            'date' => $start,
-            'start_date' => $start,
-            'week' => $week,
-            'year' => $year,
-            'end_date' => $end->modify('-1 day'),
-            'occurrences' => OccurrenceGrid::capped($days, $calendar->getEventsMax()),
-            'agenda' => $days,
-            'create_date' => $this->createDate($start, $end),
-            'today_url' => $this->generateUrl('week_view', [
-                'slug' => $calendar->getSlug(),
-                'year' => $this->dates->weekYear(new DateTimeImmutable('today')),
-                'week' => $this->dates->weekOfYear(new DateTimeImmutable('today')),
-            ]),
-            'prev_week_url' => $this->generateUrl('week_view', [
-                'slug' => $calendar->getSlug(),
-                'year' => $this->dates->weekYear($previous),
-                'week' => $this->dates->weekOfYear($previous),
-            ]),
-            'next_week_url' => $this->generateUrl('week_view', [
-                'slug' => $calendar->getSlug(),
-                'year' => $this->dates->weekYear($end),
-                'week' => $this->dates->weekOfYear($end),
-            ]),
-        ]);
     }
 
     #[Route('/day/{year}/{month}/{day}', name: 'day_view', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}', 'day' => '\d{1,2}'], methods: ['GET'])]

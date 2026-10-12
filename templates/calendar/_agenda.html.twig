@@ -1,5 +1,5 @@
 {#
-  The phone layout of the month and week views: each day that has events, with all of them.
+  The phone layout of the month view: each day that has events, with all of them.
   `agenda` maps date keys to occurrences.
 #}
 <div class="phpc-agenda">
@@ -28,6 +28,6 @@
             </div>
         </section>
     {% else %}
-        <p class="text-secondary">{{ (app.current_route == 'week_view' ? 'no-events-this-week-message' : 'no-events-this-month-message')|trans }}</p>
+        <p class="text-secondary">{{ 'no-events-this-month-message'|trans }}</p>
     {% endfor %}
 </div>

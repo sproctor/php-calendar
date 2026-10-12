@@ -140,7 +140,6 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                 fn(\DateTimeInterface $date) => intval($date->format('j'))
             ),
             new TwigFilter('week', $this->dates->weekOfYear(...)),
-            new TwigFilter('week_year', $this->dates->weekYear(...)),
             new TwigFilter('date_index', $this->dates->dayKey(...)),
             new TwigFilter(
                 'dateparts',

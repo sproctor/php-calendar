@@ -58,20 +58,19 @@ class CalendarDatesTest extends TestCase
 
     public static function weeks(): iterable
     {
-        yield ['en_US', '2027-01-01', 1, 2027, '2026-12-27'];
-        yield ['en_GB', '2027-01-01', 53, 2026, '2026-12-28'];
-        yield ['en_GB', '2027-01-04', 1, 2027, '2027-01-04'];
-        yield ['ar_EG', '2026-10-01', 40, 2026, '2026-09-26'];
+        // US weeks start on Sunday and week 1 contains January 1st
+        yield ['en_US', '2027-01-01', 1];
+        // ISO weeks: January 1st 2027 is still in week 53 of 2026
+        yield ['en_GB', '2027-01-01', 53];
+        yield ['en_GB', '2027-01-04', 1];
+        yield ['ar_EG', '2026-10-01', 40];
     }
 
     #[DataProvider('weeks')]
-    public function testWeekNumbers(string $locale, string $date, int $week, int $year, string $weekStart): void
+    public function testWeekNumbers(string $locale, string $date, int $week): void
     {
         \Locale::setDefault($locale);
-        $date = new DateTimeImmutable($date);
-        $this->assertSame($week, $this->dates->weekOfYear($date));
-        $this->assertSame($year, $this->dates->weekYear($date));
-        $this->assertSame($weekStart, $this->dates->weekStart($week, $year)->format('Y-m-d'));
+        $this->assertSame($week, $this->dates->weekOfYear(new DateTimeImmutable($date)));
     }
 
     public function testIsToday(): void

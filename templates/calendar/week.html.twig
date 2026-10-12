@@ -1,12 +1,10 @@
-{# One row of the month or week grid, starting at start_date. In the week view every day is in "the month". #}
+{# One week of the month grid, starting at start_date #}
 {% set can_create = is_granted('CALENDAR_CREATE', calendar) %}
 <tr>
-    <th class="phpc-date" scope="row">
-        <a href="{{ path('week_view', {slug: calendar.slug, year: start_date|week_year, week: start_date|week}) }}">{{ start_date|week }}</a>
-    </th>
+    <th class="phpc-date text-secondary fw-normal" scope="row">{{ start_date|week }}</th>
     {% for day_of_week in 0..6 %}
         {% set cur_date = add_days(start_date, day_of_week) %}
-        {% set in_month = app.current_route == 'week_view' or in_same_month(cur_date, date) %}
+        {% set in_month = in_same_month(cur_date, date) %}
         <td class="phpc-date{% if not in_month %} phpc-shadow{% endif %}{% if is_today(cur_date) %} phpc-today{% endif %}">
             <div>
                 <a class="phpc-day-number"

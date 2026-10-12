@@ -42,7 +42,7 @@ To show a calendar on another website, add this where it should appear:
     <script src="https://calendar.example.com/static/embed.js"
             data-src="https://calendar.example.com/en/calendar/club-events/"></script>
 
-`data-src` can be any month, week or day view, event, or search URL. The calendar appears in an
+`data-src` can be any month or day view, event, or search URL. The calendar appears in an
 iframe that grows to fit it.
 
 ## Development

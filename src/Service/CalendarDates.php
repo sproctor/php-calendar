@@ -99,29 +99,6 @@ class CalendarDates
     }
 
     /**
-     * The year that $date's week number belongs to, which differs from the calendar year around January 1st
-     */
-    public function weekYear(DateTimeInterface $date): int
-    {
-        return $this->intlCalendar($date)->get(IntlCalendar::FIELD_YEAR_WOY);
-    }
-
-    /**
-     * The first day of week $week of week-numbering year $year
-     */
-    public function weekStart(int $week, int $year): DateTimeImmutable
-    {
-        $calendar = IntlCalendar::createInstance('UTC', Locale::getDefault());
-        $calendar->clear();
-        $calendar->set(IntlCalendar::FIELD_YEAR_WOY, $year);
-        $calendar->set(IntlCalendar::FIELD_WEEK_OF_YEAR, $week);
-        $calendar->set(IntlCalendar::FIELD_DAY_OF_WEEK, $calendar->getFirstDayOfWeek());
-        $start = $calendar->toDateTime();
-
-        return $this->date((int) $start->format('Y'), (int) $start->format('n'), (int) $start->format('j'));
-    }
-
-    /**
      * The month's full name, e.g. "October"
      */
     public function monthName(DateTimeInterface $date): string
