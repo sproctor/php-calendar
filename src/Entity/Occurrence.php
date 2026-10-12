@@ -97,16 +97,34 @@ class Occurrence
     public function setTimes(DateTimeInterface $start, DateTimeInterface $end, int $time_type): self
     {
         $this->time_type = $time_type;
-        if ($time_type === self::TIME_NORMAL) {
-            $this->start = DateTimeImmutable::createFromInterface($start);
-            $this->end = DateTimeImmutable::createFromInterface($end);
-        } else {
-            $utc = new DateTimeZone('UTC');
-            $this->start = new DateTimeImmutable($start->format('Y-m-d'), $utc);
-            $this->end = new DateTimeImmutable($end->format('Y-m-d'), $utc);
-        }
+        [$this->start, $this->end] = self::storedTimes($start, $end, $time_type);
 
         return $this;
+    }
+
+    /**
+     * Whether setTimes() with these would change nothing
+     */
+    public function hasTimes(DateTimeInterface $start, DateTimeInterface $end, int $time_type): bool
+    {
+        [$storedStart, $storedEnd] = self::storedTimes($start, $end, $time_type);
+
+        return $this->time_type === $time_type && $this->start == $storedStart && $this->end == $storedEnd;
+    }
+
+    /**
+     * Times as they're stored: as given, or for dated types, the dates alone
+     *
+     * @return array{0: DateTimeImmutable, 1: DateTimeImmutable}
+     */
+    private static function storedTimes(DateTimeInterface $start, DateTimeInterface $end, int $time_type): array
+    {
+        if ($time_type === self::TIME_NORMAL) {
+            return [DateTimeImmutable::createFromInterface($start), DateTimeImmutable::createFromInterface($end)];
+        }
+        $utc = new DateTimeZone('UTC');
+
+        return [new DateTimeImmutable($start->format('Y-m-d'), $utc), new DateTimeImmutable($end->format('Y-m-d'), $utc)];
     }
 
     public function getStart(): DateTimeImmutable

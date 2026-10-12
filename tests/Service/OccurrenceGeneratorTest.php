@@ -124,4 +124,86 @@ class OccurrenceGeneratorTest extends TestCase
         $this->assertSame([OccurrenceGenerator::REPEAT_MONTHLY, 1], $this->generator->inferRepeat($monthly));
         $this->assertSame([OccurrenceGenerator::REPEAT_NEVER, 1], $this->generator->inferRepeat([$monthly[0]]));
     }
+
+    /**
+     * Four Tuesdays, 7–8 PM, and the Occurrence objects they start as
+     *
+     * @return Occurrence[]
+     */
+    private function weeklySeries(): array
+    {
+        return $this->generator->generate($this->event, new DateTimeImmutable('2026-10-06 19:00'),
+            new DateTimeImmutable('2026-10-06 20:00'), Occurrence::TIME_NORMAL, OccurrenceGenerator::REPEAT_WEEKLY, 1,
+            new DateTimeImmutable('2026-10-27'));
+    }
+
+    private function updateWeekly(string $start, string $end, string $until): void
+    {
+        $this->generator->update($this->event, new DateTimeImmutable($start), new DateTimeImmutable($end),
+            Occurrence::TIME_NORMAL, OccurrenceGenerator::REPEAT_WEEKLY, 1, new DateTimeImmutable($until));
+    }
+
+    /**
+     * The event's occurrences in start order
+     *
+     * @return Occurrence[]
+     */
+    private function current(): array
+    {
+        $occurrences = $this->event->getOccurrences()->toArray();
+        usort($occurrences, fn(Occurrence $a, Occurrence $b) => $a->getStart() <=> $b->getStart());
+
+        return $occurrences;
+    }
+
+    public function testUpdateKeepsUnchangedOccurrences(): void
+    {
+        $original = $this->weeklySeries();
+        // Two more weeks
+        $this->updateWeekly('2026-10-06 19:00', '2026-10-06 20:00', '2026-11-10');
+
+        $current = $this->current();
+        $this->assertSame($original, array_slice($current, 0, 4));
+        $this->assertSame(['2026-11-03 19:00', '2026-11-10 19:00'], $this->starts(array_slice($current, 4)));
+    }
+
+    public function testUpdateMovesTimesOfDay(): void
+    {
+        $original = $this->weeklySeries();
+        $this->updateWeekly('2026-10-06 20:00', '2026-10-06 21:30', '2026-10-27');
+
+        $this->assertSame($original, $this->current());
+        $this->assertSame(['2026-10-06 20:00', '2026-10-13 20:00', '2026-10-20 20:00', '2026-10-27 20:00'], $this->starts($this->current()));
+        $this->assertSame('21:30', $original[0]->getEnd()->format('H:i'));
+    }
+
+    public function testUpdateMovesDatesInOrder(): void
+    {
+        $original = $this->weeklySeries();
+        // Wednesdays instead
+        $this->updateWeekly('2026-10-07 19:00', '2026-10-07 20:00', '2026-10-28');
+
+        $this->assertSame($original, $this->current());
+        $this->assertSame(['2026-10-07 19:00', '2026-10-14 19:00', '2026-10-21 19:00', '2026-10-28 19:00'], $this->starts($this->current()));
+    }
+
+    public function testUpdateRemovesDatesNoLongerInTheSeries(): void
+    {
+        $original = $this->weeklySeries();
+        $this->updateWeekly('2026-10-06 19:00', '2026-10-06 20:00', '2026-10-13');
+
+        $this->assertSame(array_slice($original, 0, 2), $this->current());
+    }
+
+    public function testUpdateToAllDayKeepsTheOccurrence(): void
+    {
+        [$occurrence] = $this->generator->generate($this->event, new DateTimeImmutable('2026-10-15 17:00'),
+            new DateTimeImmutable('2026-10-15 18:00'), Occurrence::TIME_NORMAL);
+        $this->generator->update($this->event, new DateTimeImmutable('2026-10-15'), new DateTimeImmutable('2026-10-16'),
+            Occurrence::TIME_FULL_DAY);
+
+        $this->assertSame([$occurrence], $this->current());
+        $this->assertFalse($occurrence->hasTime());
+        $this->assertSame('2026-10-16', $occurrence->getEnd()->format('Y-m-d'));
+    }
 }

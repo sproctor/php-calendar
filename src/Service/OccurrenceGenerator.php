@@ -36,10 +36,7 @@ class OccurrenceGenerator
     public const MAX_OCCURRENCES = 1000;
 
     /**
-     * Adds occurrences to $event: one at $start–$end, then, when $repeat isn't REPEAT_NEVER, one every
-     * $frequency days/weeks/months/years whose start is on or before $until. Monthly and yearly repeats
-     * skip dates that don't exist (the 31st in a 30-day month, February 29th in other years) rather
-     * than rolling over into the next month.
+     * Adds occurrences to $event for the dates times() gives
      *
      * @return Occurrence[] the new occurrences
      */
@@ -52,8 +49,77 @@ class OccurrenceGenerator
         int $frequency = 1,
         ?DateTimeImmutable $until = null,
     ): array {
+        return array_map(
+            fn(array $times) => new Occurrence($event, ...$times),
+            $this->times($start, $end, $timeType, $repeat, $frequency, $until),
+        );
+    }
+
+    /**
+     * Makes $event's occurrences the dates times() gives, keeping the occurrences it already has where it
+     * can, so they keep their IDs (which calendar apps subscribed to the feed know them by):
+     *
+     *  1. an occurrence with exactly the new times stays as it is;
+     *  2. one starting on the same day as a new date moves to its times (a changed time of day);
+     *  3. the rest are moved to the remaining new dates in order (e.g. a weekly event moved to another
+     *     weekday);
+     *  4. new dates left over are added, and occurrences left over are removed.
+     */
+    public function update(
+        Event $event,
+        DateTimeImmutable $start,
+        DateTimeImmutable $end,
+        int $timeType,
+        string $repeat = self::REPEAT_NEVER,
+        int $frequency = 1,
+        ?DateTimeImmutable $until = null,
+    ): void {
+        $wanted = $this->times($start, $end, $timeType, $repeat, $frequency, $until);
+        $existing = $event->getOccurrences()->toArray();
+        usort($existing, fn(Occurrence $a, Occurrence $b) => $a->getStart() <=> $b->getStart());
+
+        $rules = [
+            fn(Occurrence $o, array $times) => $o->hasTimes(...$times),
+            fn(Occurrence $o, array $times) => $o->getStart()->format('Y-m-d') === $times[0]->format('Y-m-d'),
+            fn(Occurrence $o, array $times) => true,
+        ];
+        foreach ($rules as $matches) {
+            foreach ($wanted as $i => $times) {
+                foreach ($existing as $j => $occurrence) {
+                    if ($matches($occurrence, $times)) {
+                        $occurrence->setTimes(...$times);
+                        unset($wanted[$i], $existing[$j]);
+                        break;
+                    }
+                }
+            }
+        }
+        foreach ($wanted as $times) {
+            new Occurrence($event, ...$times);
+        }
+        foreach ($existing as $occurrence) {
+            $event->removeOccurrence($occurrence);
+        }
+    }
+
+    /**
+     * The times of an event's occurrences: $start–$end, then, when $repeat isn't REPEAT_NEVER, one every
+     * $frequency days/weeks/months/years whose start is on or before $until. Monthly and yearly repeats
+     * skip dates that don't exist (the 31st in a 30-day month, February 29th in other years) rather
+     * than rolling over into the next month.
+     *
+     * @return list<array{0: DateTimeImmutable, 1: DateTimeImmutable, 2: int}> start, end and time type
+     */
+    public function times(
+        DateTimeImmutable $start,
+        DateTimeImmutable $end,
+        int $timeType,
+        string $repeat = self::REPEAT_NEVER,
+        int $frequency = 1,
+        ?DateTimeImmutable $until = null,
+    ): array {
         if ($repeat === self::REPEAT_NEVER || $until === null) {
-            return [new Occurrence($event, $start, $end, $timeType)];
+            return [[$start, $end, $timeType]];
         }
         if ($frequency < 1) {
             throw new \InvalidArgumentException('Frequency must be at least 1');
@@ -79,7 +145,7 @@ class OccurrenceGenerator
                 && $next->format('d') !== $start->format('d')) {
                 continue;
             }
-            $occurrences[] = new Occurrence($event, $next, $next->add($duration), $timeType);
+            $occurrences[] = [$next, $next->add($duration), $timeType];
         }
 
         return $occurrences;

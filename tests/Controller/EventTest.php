@@ -136,6 +136,50 @@ class EventTest extends AppWebTestCase
         $this->assertNotNull($this->em()->find(Occurrence::class, $other));
     }
 
+    public function testChangingTimesKeepsTheDates(): void
+    {
+        $calendar = $this->createCalendar();
+        $slug = $calendar->getSlug();
+        $this->login($this->createUser('admin', admin: true));
+        $series = [
+            'event_form[subject]' => 'Choir',
+            'event_form[times][time_type]' => Occurrence::TIME_NORMAL,
+            'event_form[times][start][date]' => '2026-10-06',
+            'event_form[times][start][time]' => '19:00',
+            'event_form[times][end][date]' => '2026-10-06',
+            'event_form[times][end][time]' => '20:00',
+            'event_form[repeats]' => 'W',
+            'event_form[frequency]' => '1',
+            'event_form[until]' => '2026-10-27',
+        ];
+        $this->client->request('GET', "/en/calendar/$slug/event/new/2026/10/06");
+        $this->submit('Save', $series);
+        $event = $this->em()->getRepository(Event::class)->findOneBy(['subject' => 'Choir']);
+        $oids = $event->getOccurrences()->map(fn(Occurrence $o) => $o->getOid())->getValues();
+        $this->assertCount(4, $oids);
+        $feedUids = function () use ($slug): array {
+            $this->client->request('GET', "/calendar/$slug/feed.ics");
+            $feed = \Sabre\VObject\Reader::read($this->client->getResponse()->getContent());
+
+            return array_map(fn($vevent) => (string) $vevent->UID, $feed->select('VEVENT'));
+        };
+        $uids = $feedUids();
+
+        // Half an hour later, and two more weeks
+        $this->client->request('GET', "/en/event/{$event->getEid()}/edit");
+        $this->submit('Save', ['event_form[modify]' => true, 'event_form[times][start][time]' => '19:30',
+            'event_form[times][end][time]' => '20:30', 'event_form[until]' => '2026-11-10'] + $series);
+        $this->assertResponseRedirects();
+
+        $this->em()->clear();
+        $occurrences = $this->em()->find(Event::class, $event->getEid())->getOccurrences();
+        $this->assertCount(6, $occurrences);
+        $this->assertSame($oids, array_slice($occurrences->map(fn(Occurrence $o) => $o->getOid())->getValues(), 0, 4));
+        $this->assertSame('19:30', $occurrences->first()->getStart()->format('H:i'));
+        // Calendar apps see the same events, updated, plus the two new ones
+        $this->assertSame($uids, array_slice($feedUids(), 0, 4));
+    }
+
     public function testLocation(): void
     {
         $calendar = $this->createCalendar();

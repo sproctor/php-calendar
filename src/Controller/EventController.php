@@ -185,11 +185,9 @@ class EventController extends AbstractController
             }
 
             if (!$modifying || $form->get('modify')->getData()) {
-                foreach ($event->getOccurrences()->toArray() as $occurrence) {
-                    $event->removeOccurrence($occurrence);
-                }
                 [$start, $end, $timeType] = OccurrenceTimesType::toTimes($form->get('times')->getData());
-                $this->occurrenceGenerator->generate(
+                // Keeps the dates that stay, so calendar apps update them instead of replacing them
+                $this->occurrenceGenerator->update(
                     $event,
                     $start,
                     $end,
