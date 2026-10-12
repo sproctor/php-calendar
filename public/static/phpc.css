@@ -62,6 +62,7 @@ col.wnumber {
   display: inline-block;
   padding: .125rem .375rem;
   border-radius: var(--bs-border-radius);
+  color: var(--bs-body-color);
   font-weight: 700;
   text-decoration: none;
   white-space: nowrap;
