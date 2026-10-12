@@ -4,3 +4,8 @@ doctrine_migrations:
         # as migrations classes should NOT be autoloaded
         'DoctrineMigrations': '%kernel.project_dir%/migrations'
     enable_profiler: false
+    # Generated migrations extend App\Doctrine\PrefixedMigration
+    custom_template: '%kernel.project_dir%/config/migration.php.tpl'
+    storage:
+        table_storage:
+            table_name: '%env(TABLE_PREFIX)%doctrine_migration_versions'

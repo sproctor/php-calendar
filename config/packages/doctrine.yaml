@@ -10,6 +10,8 @@ doctrine:
         server_version: '8.0.32'
 
         profiling_collect_backtrace: '%kernel.debug%'
+        # Only this calendar's tables, when the database is shared (see App\Doctrine\TablePrefixListener)
+        schema_filter: '~^%env(TABLE_PREFIX)%~'
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

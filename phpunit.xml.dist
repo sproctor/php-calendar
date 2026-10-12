@@ -19,6 +19,8 @@
         <!-- Tests check the emails that would be sent instead of sending them -->
         <env name="MAILER_DSN" value="null://test" force="true" />
         <env name="MAILER_FROM" value="calendar@example.com" force="true" />
+        <!-- So a table name that misses the prefix fails the tests -->
+        <env name="TABLE_PREFIX" value="test_" force="true" />
         <server name="SHELL_VERBOSITY" value="-1" />
     </php>
 

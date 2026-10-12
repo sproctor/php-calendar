@@ -77,7 +77,7 @@ class InstallState
      * Saves the production configuration in .env.local.php, which Symfony loads instead of the .env files.
      * Refuses to replace an existing file, so the installer can't be used to change a working setup.
      */
-    public function writeConfig(string $databaseUrl, string $defaultUri): void
+    public function writeConfig(string $databaseUrl, string $defaultUri, string $tablePrefix = ''): void
     {
         if (file_exists($this->localEnvFile)) {
             throw new \RuntimeException('The configuration file already exists: ' . $this->localEnvFile);
@@ -90,7 +90,7 @@ class InstallState
             'DEFAULT_URI' => $defaultUri,
             'MAILER_DSN' => 'null://null',
             'MAILER_FROM' => '',
-            'MESSENGER_TRANSPORT_DSN' => 'doctrine://default?auto_setup=0',
+            'TABLE_PREFIX' => $tablePrefix,
         ];
         $this->saveConfig($env);
     }

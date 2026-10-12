@@ -23,9 +23,10 @@ database. On Apache, `mod_rewrite` and `.htaccess` files must be enabled.
      `.htaccess` file in it keeps everything except `public/` from being downloaded. This only works
      on Apache; on nginx, serve `public/`.
 3. Make sure the web server can write to the folder and to `var/` inside it.
-4. Open the calendar in your browser. The installer asks for the database, creates the tables, and
-   then either creates your first calendar and admin account or imports a PHP-Calendar 2.0
-   installation from the same database.
+4. Open the calendar in your browser. The installer asks for the database and a prefix for the
+   calendar's table names (`phpc3_` unless you change it, so it can share a database with other
+   apps), creates the tables, and then either creates your first calendar and admin account or
+   imports a PHP-Calendar 2.0 installation from the same database.
 
 The installer saves its settings in `.env.local.php`. To install again, delete that file.
 
@@ -58,10 +59,9 @@ opens pull requests with the changes.
 
 ### Upgrading from 2.0
 
-3.0 uses a new database schema, in tables without a prefix, so it can share the 2.0 database (whose
-tables start with `phpc_` by default). When it does, the installer offers to import the 2.0 calendar.
-The 2.0 tables aren't changed. If your 2.0 tables have no prefix, give 3.0 its own database and use the
-command below.
+3.0 uses a new database schema, in tables with their own prefix (`phpc3_` by default, where 2.0's is
+`phpc_`), so it can share the 2.0 database. When it does, the installer offers to import the 2.0
+calendar. The 2.0 tables aren't changed.
 
 With a command line, you can instead import from any database:
 

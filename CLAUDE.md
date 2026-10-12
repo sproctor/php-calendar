@@ -24,9 +24,11 @@ database host only resolves there:
   They use the `app_test` database, rebuilt from the migrations; mail goes to a `null://test` transport.
 - Console: `docker compose exec php bin/console ...`, e.g. `cache:clear`, `lint:twig templates`,
   `lint:yaml translations config`, `lint:container`.
-- Schema changes: edit the entities, then `bin/console doctrine:migrations:diff`, give the generated
-  migration a description and doc comment and drop the "auto-generated" comments, then
-  `doctrine:migrations:migrate`.
+- Schema changes: edit the entities, then `bin/console doctrine:migrations:diff`, then
+  `doctrine:migrations:migrate`. In the generated migration, write a description and doc comment, and
+  replace the table names in its SQL with `$this->table('name')`: tables start with `TABLE_PREFIX`,
+  which the dev setup leaves empty but installs usually set (`SchemaTest` checks the migrations
+  against the entities with a prefix).
 - Release: `bin/build-release X.Y.Z` builds `dist/php-calendar-X.Y.Z.{zip,tar.gz}` from HEAD (it refuses
   uncommitted changes), with production dependencies, a `VERSION` file, and build-only files removed (the
   Bootstrap and Bootswatch packages once copied, unused icons).
@@ -45,7 +47,9 @@ database host only resolves there:
   `phpc_timezone` cookie, calendar, UTC). `OccurrenceGenerator` makes repeat series, and `update()` keeps
   existing occurrences (and their IDs, which feeds use as UIDs) when an event's dates change.
 - **Install and config**: `InstallSubscriber` sends unconfigured sites to `/setup` and shows a maintenance
-  page while migrations are pending. `InstallState` writes `.env.local.php` (database, mail settings).
+  page while migrations are pending. `InstallState` writes `.env.local.php` (database, table prefix,
+  mail settings). `TablePrefixListener` adds `TABLE_PREFIX` to every entity's table, and raw SQL must
+  get table names from Doctrine metadata, not write them out.
   An empty `APP_SECRET` falls back to a generated `var/secret` (`SecretEnvVarProcessor`). Site-wide
   settings edited in the app go in the `settings` table (`SettingRepository`).
 - **Mail**: `App\Mail\Mailing` sends templated emails (`templates/emails/`) synchronously, in the

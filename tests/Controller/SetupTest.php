@@ -5,12 +5,14 @@ namespace App\Tests\Controller;
 use App\Install\InstallState;
 use App\Tests\AppWebTestCase;
 use App\Tests\Import\Legacy20Fixture;
+use Doctrine\DBAL\DriverManager;
 
 class SetupTest extends AppWebTestCase
 {
     private ?string $databaseUrl = null;
     private string $configFile;
     private bool $legacyTables = false;
+    private ?array $connectionParams = null;
 
     protected function setUp(): void
     {
@@ -29,7 +31,11 @@ class SetupTest extends AppWebTestCase
         @unlink($this->configFile);
         try {
             if ($this->legacyTables) {
-                Legacy20Fixture::drop($this->em()->getConnection());
+                // The app's own connection has no database when a test unconfigured it
+                $connection = $this->connectionParams !== null
+                    ? DriverManager::getConnection($this->connectionParams)
+                    : $this->em()->getConnection();
+                Legacy20Fixture::drop($connection);
             }
         } finally {
             parent::tearDown();
@@ -41,6 +47,8 @@ class SetupTest extends AppWebTestCase
      */
     private function unconfigure(): void
     {
+        // The test database's (with Doctrine's _test suffix), for cleaning up afterwards
+        $this->connectionParams = $this->em()->getConnection()->getParams();
         $this->databaseUrl = $_SERVER['DATABASE_URL'] ?? $_ENV['DATABASE_URL'] ?? getenv('DATABASE_URL');
         $_SERVER['DATABASE_URL'] = $_ENV['DATABASE_URL'] = '';
         putenv('DATABASE_URL=');
@@ -78,6 +86,39 @@ class SetupTest extends AppWebTestCase
             $config['DATABASE_URL'],
         );
         $this->assertSame('http://localhost', $config['DEFAULT_URI']);
+        $this->assertSame('phpc3_', $config['TABLE_PREFIX']);
+    }
+
+    public function testTablePrefix(): void
+    {
+        // A 2.0 installation in the same database, made while the app can still reach it
+        Legacy20Fixture::create($this->em()->getConnection());
+        $this->legacyTables = true;
+        $this->unconfigure();
+        $values = [
+            'database_form[host]' => 'database',
+            'database_form[port]' => '3306',
+            'database_form[name]' => 'app_test',
+            'database_form[user]' => 'app',
+            'database_form[password]' => 'app',
+        ];
+        $this->client->request('GET', '/setup');
+        $this->assertSelectorExists('input[name="database_form[prefix]"][value="phpc3_"]');
+
+        $this->submit('Connect', ['database_form[prefix]' => 'Bad-Prefix'] + $values);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSelectorTextContains('.invalid-feedback', 'lowercase letters');
+
+        // Not one the 2.0 installation uses
+        $this->submit('Connect', ['database_form[prefix]' => 'old_'] + $values);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSelectorTextContains('.invalid-feedback', 'PHP-Calendar 2.0 already uses tables starting with "old_"');
+        $this->assertFileDoesNotExist($this->configFile);
+
+        // Or none at all
+        $this->submit('Connect', ['database_form[prefix]' => ''] + $values);
+        $this->assertResponseRedirects('/setup');
+        $this->assertSame('', (include $this->configFile)['TABLE_PREFIX']);
     }
 
     public function testFirstCalendarAndAdmin(): void

@@ -26,12 +26,16 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Constraints\Regex;
 
 /**
- * The MySQL or MariaDB connection asked for by the installer
+ * The MySQL or MariaDB connection asked for by the installer, and the prefix for the calendar's tables
  */
 class DatabaseFormType extends AbstractType
 {
+    /** Not 2.0's default, phpc_, so a 2.0 installation can share the database */
+    public const DEFAULT_PREFIX = 'phpc3_';
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -60,6 +64,14 @@ class DatabaseFormType extends AbstractType
                 'required' => false,
                 'always_empty' => false,
                 'attr' => ['autocomplete' => 'off'],
+            ])
+            ->add('prefix', TextType::class, [
+                'label' => new TranslatableMessage('table-prefix-label'),
+                'help' => new TranslatableMessage('new-table-prefix-help'),
+                'data' => self::DEFAULT_PREFIX,
+                'required' => false,
+                'empty_data' => '',
+                'constraints' => [new Regex('/^[a-z0-9_]{0,20}$/', message: 'table-prefix-error')],
             ])
             ->add('save', SubmitType::class, ['label' => new TranslatableMessage('connect-database-button')]);
     }

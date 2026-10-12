@@ -2,6 +2,7 @@
 
 namespace App\Tests;
 
+use App\Doctrine\PrefixedMigration;
 use App\Entity\Calendar;
 use App\Entity\Event;
 use App\Entity\Occurrence;
@@ -26,8 +27,10 @@ abstract class AppWebTestCase extends WebTestCase
         $this->client = static::createClient();
         $connection = $this->em()->getConnection();
         $connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
+        // This app's tables (see App\Doctrine\TablePrefixListener), except the migrations' record
+        $prefix = PrefixedMigration::prefix();
         foreach ($connection->fetchFirstColumn('SHOW TABLES') as $table) {
-            if ($table !== 'doctrine_migration_versions') {
+            if (str_starts_with($table, $prefix) && $table !== $prefix . 'doctrine_migration_versions') {
                 $connection->executeStatement("TRUNCATE TABLE `$table`");
             }
         }

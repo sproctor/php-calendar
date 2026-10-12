@@ -14,37 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+namespace App\Doctrine;
 
-namespace App\Entity;
-
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Configuration entity
+ * Base for migrations, which name tables with table() so they get TABLE_PREFIX like the entities do
+ * (see TablePrefixListener)
  */
-#[ORM\Entity]
-#[ORM\Table(name: 'config')]
-class Config
+abstract class PrefixedMigration extends AbstractMigration
 {
-    #[ORM\Column(type: 'string')]
-    #[ORM\Id]
-    private $key;
-
-    #[ORM\Column(type: 'string')]
-    private ?string $value = null;
-
-    public function getValue()
+    protected function table(string $name): string
     {
-        return $this->value;
+        return self::prefix() . $name;
     }
 
-    public function setValue(string $value)
+    public static function prefix(): string
     {
-        $this->value = $value;
-    }
-
-    public function getKey(): ?string
-    {
-        return $this->key;
+        return (string) ($_SERVER['TABLE_PREFIX'] ?? $_ENV['TABLE_PREFIX'] ?? getenv('TABLE_PREFIX') ?: '');
     }
 }

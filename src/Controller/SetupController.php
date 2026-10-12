@@ -17,6 +17,7 @@
 
 namespace App\Controller;
 
+use App\Doctrine\PrefixedMigration;
 use App\Entity\Calendar;
 use App\Entity\User;
 use App\Form\CalendarType;
@@ -159,7 +160,8 @@ class SetupController extends AbstractController
         if ($form->isSubmitted() && $form->isValid() && $requirements === []) {
             $url = $this->testConnection($form);
             if ($url !== null) {
-                $this->installState->writeConfig($url, $request->getSchemeAndHttpHost() . $request->getBasePath());
+                $this->installState->writeConfig($url, $request->getSchemeAndHttpHost() . $request->getBasePath(),
+                    (string) $form->get('prefix')->getData());
 
                 return $this->redirectToRoute('setup');
             }
@@ -189,10 +191,19 @@ class SetupController extends AbstractController
         try {
             $connection = DriverManager::getConnection($params);
             $version = (string) $connection->fetchOne('SELECT VERSION()');
+            // 2.0 and 3.0 have tables with the same names, so they can't share a prefix
+            $sharesWith20 = in_array((string) $data['prefix'], Import20::findPrefixes($connection), true);
             $connection->close();
         } catch (DBALException $e) {
             $form->addError(new FormError($this->translator->trans('database-connection-error', [
                 '%error%' => $e->getMessage(),
+            ])));
+
+            return null;
+        }
+        if ($sharesWith20) {
+            $form->get('prefix')->addError(new FormError($this->translator->trans('table-prefix-taken-error', [
+                '%prefix%' => $data['prefix'],
             ])));
 
             return null;
@@ -226,7 +237,8 @@ class SetupController extends AbstractController
     }
 
     /**
-     * Table prefixes of PHP-Calendar 2.0 installations in this database, which can be imported
+     * Table prefixes of PHP-Calendar 2.0 installations in this database, which can be imported. One
+     * without a prefix only counts when this installation has one, or the two would have the same tables.
      *
      * @return string[]
      */
@@ -234,7 +246,7 @@ class SetupController extends AbstractController
     {
         return array_values(array_filter(
             Import20::findPrefixes($this->entityManager->getConnection()),
-            fn(string $prefix) => $prefix !== '',
+            fn(string $prefix) => $prefix !== '' || PrefixedMigration::prefix() !== '',
         ));
     }
 }

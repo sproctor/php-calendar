@@ -71,11 +71,11 @@ class Import20
      */
     public function missingTables(): array
     {
-        $schemaManager = $this->source->createSchemaManager();
+        $existing = array_map('strtolower', self::listTables($this->source));
 
         return array_values(array_filter(
             array_map(fn(string $table) => $this->table($table), self::TABLES),
-            fn(string $table) => !$schemaManager->tablesExist([$table]),
+            fn(string $table) => !in_array(strtolower($table), $existing, true),
         ));
     }
 
@@ -86,7 +86,7 @@ class Import20
      */
     public static function findPrefixes(Connection $connection): array
     {
-        $tables = array_map('strtolower', $connection->createSchemaManager()->listTableNames());
+        $tables = array_map('strtolower', self::listTables($connection));
         $prefixes = [];
         foreach ($tables as $table) {
             if (str_ends_with($table, 'user_groups')) {
@@ -101,14 +101,30 @@ class Import20
     }
 
     /**
+     * Every table in the database. Not the schema manager's list, which only has this app's tables when
+     * TABLE_PREFIX is set (Doctrine's schema_filter).
+     *
+     * @return string[]
+     */
+    private static function listTables(Connection $connection): array
+    {
+        return $connection->fetchFirstColumn('SHOW TABLES');
+    }
+
+    /**
      * Whether the target (this app's) database already has users or calendars
      */
     public function targetHasData(): bool
     {
         $target = $this->entityManager->getConnection();
+        foreach ([User::class, Calendar::class] as $class) {
+            $table = $target->quoteSingleIdentifier($this->entityManager->getClassMetadata($class)->getTableName());
+            if ((int) $target->fetchOne("SELECT COUNT(*) FROM $table") > 0) {
+                return true;
+            }
+        }
 
-        return (int) $target->fetchOne('SELECT COUNT(*) FROM users') > 0
-            || (int) $target->fetchOne('SELECT COUNT(*) FROM calendars') > 0;
+        return false;
     }
 
     /**
