@@ -51,9 +51,6 @@
             <div class="collapse navbar-collapse" id="phpc-navbar">
                 <ul class="navbar-nav me-auto">
                     {% if calendar is defined %}
-                        {% if is_granted('CALENDAR_CREATE', calendar) %}
-                            {{ menu_item("create_event", "create-event-label"|trans, 'plus', {slug: calendar.slug}|merge(create_date is defined ? create_date|dateparts : {})) }}
-                        {% endif %}
                         {% if app.current_route != 'month_view' and app.current_route != 'default_view' and date is defined %}
                             {{ menu_item("month_view", "view-month-menu-link"|trans, 'calendar3', {slug: calendar.slug, month: date|month, year: date|year}) }}
                         {% endif %}

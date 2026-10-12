@@ -11,8 +11,9 @@
                    href="{{ path('day_view', {slug: calendar.slug}|merge(cur_date|dateparts)) }}"
                 >{% if (not in_month and day_of_week == 0) or cur_date|day == 1 %}{{ cur_date|month_abbr }}{% endif %} {{ cur_date|day }}</a>
                 {% if can_create %}
+                    {% set create_label = 'create-event-on-date-label'|trans({'%date%': cur_date|day_heading}) %}
                     <a href="{{ path('create_event', {slug: calendar.slug}|merge(cur_date|dateparts)) }}" class="phpc-add"
-                       title="{{ "create-event-label"|trans }}"><i class="bi-plus"></i></a>
+                       title="{{ create_label }}" aria-label="{{ create_label }}"><i class="bi-plus-lg"></i></a>
                 {% endif %}
             </div>
             {% set days_occurrences = occurrences[cur_date|date_index] ?? [] %}

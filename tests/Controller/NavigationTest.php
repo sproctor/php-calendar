@@ -45,10 +45,14 @@ class NavigationTest extends AppWebTestCase
         $this->login($this->createUser('admin', admin: true));
 
         $this->client->request('GET', '/en/calendar/club/month/2030/5');
-        $this->assertSelectorExists('#phpc-navbar a[href="/en/calendar/club/event/new/2030/05/01"]');
+        $this->assertSelectorExists('main a.btn-primary[href="/en/calendar/club/event/new/2030/05/01"]');
+        // One "Create event" button per view; the navigation bar doesn't repeat it
+        $this->assertSelectorNotExists('#phpc-navbar a[href*="/event/new"]');
+        // Each day's shortcut says which day it's for
+        $this->assertSelectorExists('a.phpc-add[aria-label="Create event on Friday, May 17"]');
 
         $this->client->request('GET', '/en/calendar/club/day/2030/05/17');
-        $this->assertSelectorExists('#phpc-navbar a[href="/en/calendar/club/event/new/2030/05/17"]');
+        $this->assertCount(1, $this->client->getCrawler()->filter('a[href="/en/calendar/club/event/new/2030/05/17"]'));
     }
 
     public function testEmptyDayOffersToCreateAnEvent(): void
@@ -57,7 +61,8 @@ class NavigationTest extends AppWebTestCase
         $calendar->setAnonPermission(Calendar::ANON_CREATE);
         $this->em()->flush();
         $this->client->request('GET', '/en/calendar/club/day/2030/05/17');
-        $this->assertSelectorTextContains('a.btn-outline-primary', 'Create an event on this day');
+        $this->assertSelectorTextContains('main', 'No events on this day');
+        $this->assertCount(1, $this->client->getCrawler()->filter('a[href="/en/calendar/club/event/new/2030/05/17"]'));
     }
 
     public function testOtherPagesLinkBackToTheLastCalendar(): void

@@ -5,7 +5,7 @@
     <h1 class="h3 mb-0 me-2">{% block heading %}{% endblock %}</h1>
     {% block navigation %}{% endblock %}
     {% if is_granted('CALENDAR_CREATE', calendar) %}
-        <a class="btn btn-primary btn-sm ms-auto d-md-none" href="{{ path('create_event', {slug: calendar.slug}|merge(create_date|dateparts)) }}">
+        <a class="btn btn-primary btn-sm ms-auto" href="{{ path('create_event', {slug: calendar.slug}|merge(create_date|dateparts)) }}">
             <i class="bi-plus"></i> {{ 'create-event-label'|trans }}
         </a>
     {% endif %}

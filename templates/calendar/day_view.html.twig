@@ -47,11 +47,6 @@
         {% endif %}
     {% else %}
         <p class="lead">{{ "no-events-message"|trans }}</p>
-        {% if can_create %}
-            <a class="btn btn-outline-primary" href="{{ path('create_event', {slug: calendar.slug}|merge(date|dateparts)) }}">
-                <i class="bi-plus"></i> {{ 'create-event-on-day-button'|trans }}
-            </a>
-        {% endif %}
     {% endif %}
 {% endblock %}
 

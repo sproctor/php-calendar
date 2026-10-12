@@ -34,6 +34,20 @@ col.wnumber {
 
 .phpc-add {
   float: right;
+  padding: 0 .25rem;
+  border-radius: .25rem;
+}
+
+/* On devices that can hover, the add buttons only show for the day under the pointer or with focus */
+@media (hover: hover) {
+  .phpc-add {
+    opacity: 0;
+  }
+
+  .phpc-date:hover .phpc-add,
+  .phpc-add:focus-visible {
+    opacity: 1;
+  }
 }
 
 .phpc-month-view td {
