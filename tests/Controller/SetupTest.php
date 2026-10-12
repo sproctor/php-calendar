@@ -89,6 +89,17 @@ class SetupTest extends AppWebTestCase
         $this->assertSame('phpc3_', $config['TABLE_PREFIX']);
     }
 
+    public function testSavingTheConfigForgetsCachedTableNames(): void
+    {
+        // In production the installer's first pages compile the entities' metadata, prefix and all
+        $cache = static::getContainer()->get('doctrine.orm.default_metadata_cache');
+        $cache->save($cache->getItem('App__Entity__Calendar')->set('without a prefix'));
+
+        static::getContainer()->get(InstallState::class)->writeConfig('mysql://app:app@database/app', 'http://localhost', 'phpc3_');
+
+        $this->assertFalse($cache->getItem('App__Entity__Calendar')->isHit());
+    }
+
     public function testTablePrefix(): void
     {
         // A 2.0 installation in the same database, made while the app can still reach it

@@ -19,6 +19,7 @@ namespace App\Install;
 
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\Migrations\DependencyFactory;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -42,6 +43,11 @@ class InstallState
         private DependencyFactory $migrations,
         #[Autowire(service: 'cache.app')]
         private CacheInterface $cache,
+        // Hold table names, which depend on TABLE_PREFIX (see TablePrefixListener)
+        #[Autowire(service: 'doctrine.orm.default_metadata_cache')]
+        private CacheItemPoolInterface $metadataCache,
+        #[Autowire(service: 'doctrine.orm.default_query_cache')]
+        private CacheItemPoolInterface $queryCache,
         private KernelInterface $kernel,
     ) {
     }
@@ -93,6 +99,10 @@ class InstallState
             'TABLE_PREFIX' => $tablePrefix,
         ];
         $this->saveConfig($env);
+        // The installer's own pages cached the entities' table names before there was a prefix; in
+        // production that's a compiled file that would otherwise keep them
+        $this->metadataCache->clear();
+        $this->queryCache->clear();
     }
 
     /**
