@@ -59,8 +59,26 @@ col.wnumber {
 }
 
 .phpc-day-number {
-  padding: .25rem;
+  display: inline-block;
+  padding: .125rem .375rem;
+  border-radius: var(--bs-border-radius);
+  font-weight: 700;
+  text-decoration: none;
   white-space: nowrap;
+  transition: background-color .15s ease-in-out;
+}
+
+/* Like a text button: tinted on hover, since the number opens the day */
+.phpc-day-number:hover {
+  background-color: var(--bs-secondary-bg);
+}
+
+.phpc-day-number:active {
+  background-color: var(--bs-tertiary-color);
+}
+
+.phpc-day-number.bg-primary:hover {
+  background-color: rgba(var(--bs-primary-rgb), .85) !important;
 }
 
 .occurrence-list {
