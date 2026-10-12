@@ -46,7 +46,7 @@ class Calendar
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private int $cid;
+    private ?int $cid = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
@@ -101,7 +101,7 @@ class Calendar
         $this->field_definitions = new ArrayCollection();
     }
 
-    public function getCid(): int
+    public function getCid(): ?int
     {
         return $this->cid;
     }

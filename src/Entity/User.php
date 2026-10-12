@@ -33,7 +33,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private int $uid;
+    private ?int $uid = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
@@ -73,9 +73,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->username;
     }
 
-    public function getUid(): int
+    public function getUid(): ?int
     {
         return $this->uid;
+    }
+
+    /**
+     * Whether $other is this user: the same object, or a saved user with the same ID (e.g. loaded by
+     * another entity manager, as the security token's user is)
+     */
+    public function isSameUser(User $other): bool
+    {
+        return $other === $this || ($this->uid !== null && $this->uid === $other->uid);
     }
 
     /**

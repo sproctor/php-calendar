@@ -34,7 +34,7 @@ class CalendarRole
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private int $rid;
+    private ?int $rid = null;
 
     #[ORM\ManyToOne(targetEntity: Calendar::class, inversedBy: 'roles')]
     #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid', nullable: false, onDelete: 'CASCADE')]
@@ -75,7 +75,7 @@ class CalendarRole
         $this->users = new ArrayCollection();
     }
 
-    public function getRid(): int
+    public function getRid(): ?int
     {
         return $this->rid;
     }
@@ -171,7 +171,7 @@ class CalendarRole
             return false;
         }
         foreach ($this->users as $member) {
-            if ($member->getUid() === $user->getUid()) {
+            if ($member->isSameUser($user)) {
                 return true;
             }
         }
@@ -191,7 +191,7 @@ class CalendarRole
     public function removeUser(User $user): self
     {
         foreach ($this->users as $member) {
-            if ($member->getUid() === $user->getUid()) {
+            if ($member->isSameUser($user)) {
                 $this->users->removeElement($member);
             }
         }

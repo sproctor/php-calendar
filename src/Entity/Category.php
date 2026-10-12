@@ -27,7 +27,7 @@ class Category
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private int $catid;
+    private ?int $catid = null;
 
     #[ORM\ManyToOne(targetEntity: Calendar::class, inversedBy: 'categories')]
     #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid', nullable: false, onDelete: 'CASCADE')]
@@ -58,7 +58,7 @@ class Category
         $calendar->getCategories()->add($this);
     }
 
-    public function getCatid(): int
+    public function getCatid(): ?int
     {
         return $this->catid;
     }

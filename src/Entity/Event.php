@@ -30,7 +30,7 @@ class Event
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private int $eid;
+    private ?int $eid = null;
 
     #[ORM\ManyToOne(targetEntity: Calendar::class)]
     #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid', nullable: false, onDelete: 'CASCADE')]
@@ -90,7 +90,7 @@ class Event
         $this->fields = new ArrayCollection();
     }
 
-    public function getEid(): int
+    public function getEid(): ?int
     {
         return $this->eid;
     }
@@ -110,7 +110,7 @@ class Event
      */
     public function isOwner(?User $user): bool
     {
-        return $user !== null && $this->owner !== null && $user->getUid() === $this->owner->getUid();
+        return $user !== null && $this->owner !== null && $user->isSameUser($this->owner);
     }
 
     public function getSubject(): string
@@ -251,7 +251,7 @@ class Event
     public function getFieldValue(FieldDefinition $definition): ?string
     {
         foreach ($this->fields as $field) {
-            if ($field->getDefinition()->getFid() === $definition->getFid()) {
+            if ($field->getDefinition() === $definition) {
                 return $field->getValue();
             }
         }

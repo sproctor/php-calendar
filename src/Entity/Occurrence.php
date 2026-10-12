@@ -48,7 +48,7 @@ class Occurrence
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private int $oid;
+    private ?int $oid = null;
 
     #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'occurrences')]
     #[ORM\JoinColumn(name: 'eid', referencedColumnName: 'eid', nullable: false, onDelete: 'CASCADE')]
@@ -70,7 +70,7 @@ class Occurrence
         $event->addOccurrence($this);
     }
 
-    public function getOid(): int
+    public function getOid(): ?int
     {
         return $this->oid;
     }
