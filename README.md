@@ -78,6 +78,13 @@ To show a calendar on another website, add this where it should appear:
 `data-src` can be any month or day view, event, or search URL. The calendar appears in an
 iframe that grows to fit it.
 
+## Supporting PHP-Calendar
+
+If PHP-Calendar is useful to you, you can support its development through
+[GitHub Sponsors](https://github.com/sponsors/sproctor) or a one-time donation with
+[PayPal](https://www.paypal.com/donate/?hosted_button_id=2N7QSB55AEEZL). Any donations are much
+appreciated.
+
 ## Development
 
 Source code can be found at https://github.com/sproctor/php-calendar

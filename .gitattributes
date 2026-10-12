@@ -2,6 +2,7 @@
 /.editorconfig export-ignore
 /.env.dev export-ignore
 /.env.test export-ignore
+/.github export-ignore
 /.gitattributes export-ignore
 /.gitignore export-ignore
 /bin/build-release export-ignore
