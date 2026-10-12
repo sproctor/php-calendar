@@ -44,7 +44,7 @@ class Event
     private ?User $owner;
 
     /** @var Collection<int, Occurrence> */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Occurrence::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Occurrence::class, mappedBy: 'event', cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['start' => \SortDirection::Ascending])]
     private Collection $occurrences;
 
@@ -61,7 +61,7 @@ class Event
     private ?DateTimeImmutable $pubtime = null;
 
     /** @var Collection<int, Field> */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Field::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Field::class, mappedBy: 'event', cascade: ['persist'], orphanRemoval: true)]
     private Collection $fields;
 
     #[ORM\Column(type: 'string', length: 255)]

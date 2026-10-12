@@ -80,17 +80,17 @@ class Calendar
     private int $anon_permission = self::ANON_READ;
 
     /** @var Collection<int, Category> */
-    #[ORM\OneToMany(mappedBy: 'calendar', targetEntity: Category::class)]
+    #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'calendar')]
     #[ORM\OrderBy(['name' => \SortDirection::Ascending])]
     private Collection $categories;
 
     /** @var Collection<int, CalendarRole> */
-    #[ORM\OneToMany(mappedBy: 'calendar', targetEntity: CalendarRole::class)]
+    #[ORM\OneToMany(targetEntity: CalendarRole::class, mappedBy: 'calendar')]
     #[ORM\OrderBy(['name' => \SortDirection::Ascending])]
     private Collection $roles;
 
     /** @var Collection<int, FieldDefinition> */
-    #[ORM\OneToMany(mappedBy: 'calendar', targetEntity: FieldDefinition::class)]
+    #[ORM\OneToMany(targetEntity: FieldDefinition::class, mappedBy: 'calendar')]
     #[ORM\OrderBy(['name' => \SortDirection::Ascending])]
     private Collection $field_definitions;
 
