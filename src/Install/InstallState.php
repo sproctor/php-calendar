@@ -89,8 +89,51 @@ class InstallState
             'DATABASE_URL' => $databaseUrl,
             'DEFAULT_URI' => $defaultUri,
             'MAILER_DSN' => 'null://null',
+            'MAILER_FROM' => '',
             'MESSENGER_TRANSPORT_DSN' => 'doctrine://default?auto_setup=0',
         ];
+        $this->saveConfig($env);
+    }
+
+    /**
+     * Whether settings live in .env.local.php, where updateConfig() can change them. Otherwise they come
+     * from the environment, e.g. in the Docker development setup.
+     */
+    public function hasConfigFile(): bool
+    {
+        return is_file($this->localEnvFile);
+    }
+
+    /**
+     * The settings saved in .env.local.php, or [] without one
+     *
+     * @return array<string, string>
+     */
+    public function readConfig(): array
+    {
+        if (!$this->hasConfigFile()) {
+            return [];
+        }
+        $env = require $this->localEnvFile;
+
+        return is_array($env) ? $env : [];
+    }
+
+    /**
+     * Changes some of the settings in .env.local.php, keeping the rest
+     *
+     * @param array<string, string> $changes
+     */
+    public function updateConfig(array $changes): void
+    {
+        if (!$this->hasConfigFile()) {
+            throw new \RuntimeException('There is no configuration file to update: ' . $this->localEnvFile);
+        }
+        $this->saveConfig(array_merge($this->readConfig(), $changes));
+    }
+
+    private function saveConfig(array $env): void
+    {
         $content = "<?php\n\n// Written by the PHP-Calendar installer. Keep this file private.\n\nreturn "
             . var_export($env, true) . ";\n";
 

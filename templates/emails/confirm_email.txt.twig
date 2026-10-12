@@ -1,0 +1,9 @@
+{% trans_default_domain 'account' %}
+{{ 'confirm-email-body'|trans({'%username%': user.username}) }}
+
+{{ url|raw }}
+
+{{ 'confirm-email-ignore'|trans }}
+
+-- 
+PHP-Calendar

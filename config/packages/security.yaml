@@ -11,9 +11,9 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         app_user_provider:
+            # Loads users by username or email; see UserRepository::loadUserByIdentifier()
             entity:
                 class: App\Entity\User
-                property: username
 
     firewalls:
         dev:

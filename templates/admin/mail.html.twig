@@ -1,0 +1,51 @@
+{% extends "base.html.twig" %}
+{% trans_default_domain 'account' %}
+
+{% block title %}{{ 'mail-settings-title'|trans }}{% endblock %}
+
+{% block body %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('admin') }}">{{ "admin-menu-link"|trans({}, 'messages') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ 'mail-settings-title'|trans }}</li>
+        </ol>
+    </nav>
+    <div class="phpc-narrow">
+        <h3>{{ 'mail-settings-title'|trans }}</h3>
+        <p>{{ 'mail-settings-intro'|trans }}</p>
+        {% if not editable %}
+            <div class="alert alert-info">{{ 'mail-settings-from-environment'|trans }}</div>
+        {% endif %}
+        {{ form(form) }}
+
+        <h4 class="h5 mt-4">{{ 'test-email-title'|trans }}</h4>
+        {% if not configured %}
+            <p class="text-secondary">{{ 'test-email-unconfigured'|trans }}</p>
+        {% elseif app.user.email is null %}
+            <p class="text-secondary">{{ 'test-email-no-address-error'|trans }}
+                <a href="{{ path('user_settings') }}">{{ 'settings-menu-link'|trans({}, 'messages') }}</a></p>
+        {% else %}
+            <form method="post" action="{{ path('mail_test') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('mail-test') }}">
+                <p>{{ 'test-email-intro'|trans({'%email%': app.user.email}) }}</p>
+                <button class="btn btn-outline-primary" type="submit">{{ 'send-test-email-button'|trans }}</button>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // Server details only apply to SMTP
+        const transport = document.querySelectorAll('input[name="form[transport]"]');
+        const smtpOnly = ['host', 'port', 'tls', 'username', 'password'].map((f) => document.getElementById('form_' + f)?.closest('.mb-3'));
+        const fromRow = document.getElementById('form_from')?.closest('.mb-3');
+        const update = () => {
+            const value = [...transport].find((r) => r.checked)?.value;
+            smtpOnly.forEach((row) => row && (row.hidden = value !== 'smtp'));
+            if (fromRow) fromRow.hidden = value === 'none';
+        };
+        transport.forEach((r) => r.addEventListener('change', update));
+        update();
+    </script>
+{% endblock %}

@@ -12,6 +12,9 @@
             <a class="nav-link" id="users-tab" data-bs-toggle="tab" href="#users" role="tab"
                aria-controls="users" aria-selected="false">{{ "users-label"|trans }}</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('mail_settings') }}">{{ ux_icon('bi:envelope') }} {{ 'mail-settings-title'|trans({}, 'account') }}{% if not mail_enabled() %} <span class="badge text-bg-secondary">{{ 'mail-off-badge'|trans({}, 'account') }}</span>{% endif %}</a>
+        </li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane show active" id="calendars" role="tabpanel" aria-labelledby="calendars-tab">

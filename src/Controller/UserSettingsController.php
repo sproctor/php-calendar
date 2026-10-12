@@ -21,10 +21,17 @@ use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\Model\ChangePassword;
 use App\Form\UserSettingsFormType;
+use App\Mail\Mailing;
+use App\Repository\UserRepository;
+use App\Security\AccountLinks;
 use App\Service\LocaleService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -37,6 +44,10 @@ class UserSettingsController extends AbstractController
         EntityManagerInterface      $entityManager,
         UserPasswordHasherInterface $passwordHasher,
         LocaleService               $localeService,
+        TranslatorInterface         $translator,
+        UserRepository              $userRepository,
+        Mailing                     $mailing,
+        AccountLinks                $links,
     ): Response
     {
         /* @var ?User $user */
@@ -48,13 +59,14 @@ class UserSettingsController extends AbstractController
         $passwordForm = $this->createForm(ChangePasswordFormType::class);
 
         $settingsData = [
+            'email' => $user->getEmail(),
             'timezone' => $user->getTimezone(),
             'locale' => $user->getLocale(),
         ];
         $settingsForm = $this->createForm(
             UserSettingsFormType::class,
             $settingsData,
-            ['locales' => $localeService->getLocaleChoices()],
+            ['locales' => $localeService->getLocaleChoices(), 'mail_enabled' => $mailing->isConfigured()],
         );
 
         $passwordForm->handleRequest($request);
@@ -76,12 +88,37 @@ class UserSettingsController extends AbstractController
 
         if ($settingsForm->isSubmitted() && $settingsForm->isValid()) {
             $data = $settingsForm->getData();
-            $user->setTimezone($data['timezone']);
-            $user->setLocale($data['locale']);
-            $entityManager->flush();
-            $this->addFlash('success', 'settings-saved-message');
+            $email = (new User())->setEmail($data['email'])->getEmail();
+            $emailChanged = mb_strtolower((string) $email) !== mb_strtolower((string) $user->getEmail());
+            if ($emailChanged && $email !== null && array_filter(
+                $userRepository->findLoginConflicts(['email' => $email]),
+                fn(User $other) => !$other->isSameUser($user),
+            ) !== []) {
+                $settingsForm->get('email')->addError(new FormError($translator->trans('email-taken-error', [], 'validators')));
+            } else {
+                $user->setTimezone($data['timezone']);
+                $user->setLocale($data['locale']);
+                $confirming = $emailChanged && $email !== null && $mailing->isConfigured();
+                if ($emailChanged && !$confirming) {
+                    // Removing the address, or no mail to prove it with
+                    $user->setEmail($email);
+                }
+                $entityManager->flush();
+                $this->addFlash('success', 'settings-saved-message');
+                if ($confirming) {
+                    try {
+                        $mailing->send($email, $user, 'confirm-email-subject', 'confirm_email', [
+                            'user' => $user,
+                            'url' => $links->confirmEmailUrl($user, $email),
+                        ]);
+                        $this->addFlash('info', new TranslatableMessage('confirm-email-sent-message', ['%email%' => $email], 'account'));
+                    } catch (TransportExceptionInterface) {
+                        $this->addFlash('danger', new TranslatableMessage('email-send-failed-error', domain: 'account'));
+                    }
+                }
 
-            return $this->redirectToRoute('user_settings');
+                return $this->redirectToRoute('user_settings');
+            }
         }
 
         return $this->render('user/settings.html.twig', [

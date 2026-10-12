@@ -29,6 +29,9 @@ database. On Apache, `mod_rewrite` and `.htaccess` files must be enabled.
 
 The installer saves its settings in `.env.local.php`. To install again, delete that file.
 
+To let people reset forgotten passwords and confirm their email addresses, set up email under
+Admin → Email (an SMTP server, or the web server's sendmail) and send yourself a test.
+
 Finish the installer soon after uploading: until then, anyone who finds the site could complete it.
 
 ### Upgrading

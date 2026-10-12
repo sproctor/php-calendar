@@ -22,6 +22,7 @@ use App\Service\LocaleService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -52,6 +53,12 @@ class UserType extends AbstractType
             ->add('username', TextType::class, [
                 'label' => new TranslatableMessage('username-label'),
                 'attr' => ['autocomplete' => 'username'],
+            ])
+            ->add('email', EmailType::class, [
+                'label' => new TranslatableMessage('email-label', domain: 'account'),
+                'help' => new TranslatableMessage('email-admin-help', domain: 'account'),
+                'required' => false,
+                'attr' => ['autocomplete' => 'email'],
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,

@@ -16,6 +16,9 @@
         <server name="APP_ENV" value="test" force="true" />
         <!-- compose.yaml sets APP_ENV=dev in the container's environment -->
         <env name="APP_ENV" value="test" force="true" />
+        <!-- Tests check the emails that would be sent instead of sending them -->
+        <env name="MAILER_DSN" value="null://test" force="true" />
+        <env name="MAILER_FROM" value="calendar@example.com" force="true" />
         <server name="SHELL_VERBOSITY" value="-1" />
     </php>
 

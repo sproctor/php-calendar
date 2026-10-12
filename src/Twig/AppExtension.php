@@ -21,6 +21,7 @@ use App\EventSubscriber\EmbedSubscriber;
 use App\EventSubscriber\LastCalendarSubscriber;
 use App\Repository\CalendarRepository;
 use App\Security\Voter\CalendarVoter;
+use App\Mail\Mailing;
 use App\Service\AppVersion;
 use App\Service\CalendarDates;
 use App\Service\LocaleService;
@@ -46,6 +47,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         private LastCalendarSubscriber $lastCalendar,
         private IconRendererInterface $iconRenderer,
         private AppVersion            $version,
+        private Mailing               $mailing,
     )
     {
     }
@@ -94,6 +96,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('last_calendar', $this->lastCalendar->getLastCalendar(...)),
             new TwigFunction('current_timezone', 'date_default_timezone_get'),
             new TwigFunction('app_version', $this->version->get(...)),
+            new TwigFunction('mail_enabled', $this->mailing->isConfigured(...)),
             new TwigFunction('is_rtl', LocaleService::isRightToLeft(...)),
             new TwigFunction(
                 'is_embedded',

@@ -1,0 +1,31 @@
+framework:
+    rate_limiter:
+        # "Forgot password" requests, so the form can't be used to flood someone's inbox
+        password_reset_ip:
+            policy: sliding_window
+            limit: 5
+            interval: '15 minutes'
+        password_reset_account:
+            policy: sliding_window
+            limit: 3
+            interval: '1 hour'
+
+when@test:
+    framework:
+        cache:
+            pools:
+                # Separate from the real limits; AccountTest empties it before each test
+                cache.rate_limiter.test:
+                    adapter: cache.adapter.filesystem
+                    public: true
+        rate_limiter:
+            password_reset_ip:
+                policy: sliding_window
+                limit: 5
+                interval: '15 minutes'
+                cache_pool: cache.rate_limiter.test
+            password_reset_account:
+                policy: sliding_window
+                limit: 3
+                interval: '1 hour'
+                cache_pool: cache.rate_limiter.test

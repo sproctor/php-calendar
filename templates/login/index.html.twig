@@ -11,7 +11,7 @@
 
         <form action="{{ path('app_login') }}" method="post">
             <div class="mb-3">
-                <label class="form-label" for="username">{{ 'username-label'|trans }}</label>
+                <label class="form-label" for="username">{{ 'username-or-email-label'|trans({}, 'account') }}</label>
                 <input class="form-control" type="text" id="username" name="_username" value="{{ last_username }}"
                        autocomplete="username" required autofocus>
             </div>
@@ -29,7 +29,12 @@
             <input type="hidden" name="_target_path" value="{{ target_path }}">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-            <button class="btn btn-primary" type="submit">{{ 'log-in-button'|trans }}</button>
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <button class="btn btn-primary" type="submit">{{ 'log-in-button'|trans }}</button>
+                {% if mail_enabled() %}
+                    <a href="{{ path('forgot_password') }}">{{ 'forgot-password-link'|trans({}, 'account') }}</a>
+                {% endif %}
+            </div>
         </form>
     </div>
 {% endblock %}

@@ -1,0 +1,7 @@
+{% extends 'emails/_layout.html.twig' %}
+{% trans_default_domain 'account' %}
+{% block content %}
+<p>{{ 'confirm-email-body'|trans({'%username%': user.username}) }}</p>
+{{ include('emails/_button.html.twig', {url: url, label: 'confirm-email-button'|trans}) }}
+<p>{{ 'confirm-email-ignore'|trans }}</p>
+{% endblock %}

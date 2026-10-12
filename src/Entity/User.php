@@ -24,10 +24,13 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[UniqueEntity(fields: ['username'], message: 'username-taken-error')]
+// People log in with their username or email address, so neither may match another account's username or email
+#[UniqueEntity(fields: ['username'], message: 'username-taken-error', repositoryMethod: 'findLoginConflicts')]
+#[UniqueEntity(fields: ['email'], message: 'email-taken-error', repositoryMethod: 'findLoginConflicts')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table('users')]
 #[ORM\UniqueConstraint(name: 'username', columns: ['username'])]
+#[ORM\UniqueConstraint(name: 'email', columns: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Column(type: 'integer')]
@@ -39,6 +42,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
     private string $username;
+
+    /**
+     * For logging in, resetting the password and notifications; optional
+     */
+    #[ORM\Column(type: 'string', length: 180, nullable: true)]
+    #[Assert\Email]
+    #[Assert\Length(max: 180)]
+    private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $hash;
@@ -105,6 +116,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function hasEditablePassword(): bool
     {
         return $this->password_is_editable;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $email = $email === null ? '' : trim($email);
+        $this->email = $email === '' ? null : $email;
+
+        return $this;
     }
 
     public function getTimezone(): ?string

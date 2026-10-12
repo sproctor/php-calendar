@@ -23,15 +23,47 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 
 /**
  * @extends ServiceEntityRepository<User>
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserLoaderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
+    }
+
+    /**
+     * Finds who's logging in from what they typed: a username, or else an email address. Both compare
+     * without regard to case, following the database's collation.
+     */
+    public function loadUserByIdentifier(string $identifier): ?User
+    {
+        return $this->findOneBy(['username' => $identifier])
+            ?? ($identifier !== '' ? $this->findOneBy(['email' => $identifier]) : null);
+    }
+
+    /**
+     * For UniqueEntity: users whose username or email is the value being checked, which would make
+     * logging in with it ambiguous
+     *
+     * @param array<string, ?string> $criteria
+     * @return User[]
+     */
+    public function findLoginConflicts(array $criteria): array
+    {
+        $value = reset($criteria);
+        if ($value === null || $value === '') {
+            return [];
+        }
+
+        return $this->createQueryBuilder('u')
+            ->where('u.username = :value OR u.email = :value')
+            ->setParameter('value', $value)
+            ->getQuery()
+            ->getResult();
     }
 
     /**
