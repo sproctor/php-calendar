@@ -55,6 +55,27 @@ class LocaleServiceTest extends TestCase
         $this->assertSame($expected, $service->translationFor($locale));
     }
 
+    public static function pickLanguageCases(): iterable
+    {
+        yield 'browser language' => ['de-DE,de;q=0.9', 'de'];
+        yield 'no header' => [null, 'en'];
+        yield 'no translated language' => ['xx', 'en'];
+    }
+
+    #[DataProvider('pickLanguageCases')]
+    public function testPickLanguage(?string $acceptLanguage, string $expected): void
+    {
+        $request = new Request();
+        if ($acceptLanguage !== null) {
+            $request->headers->set('Accept-Language', $acceptLanguage);
+        }
+        $kernel = $this->createStub(KernelInterface::class);
+        $kernel->method('getProjectDir')->willReturn(dirname(__DIR__, 2));
+        $service = new LocaleService($kernel);
+
+        $this->assertSame($expected, $service->pickLanguage($request, null));
+    }
+
     public function testRegionalTranslationFormatsForItsRegion(): void
     {
         $request = new Request();

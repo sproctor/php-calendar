@@ -102,6 +102,10 @@ class LocaleService
             }
         }
 
+        // getPreferredLanguage() falls back to the first language when the browser sends no
+        // Accept-Language header or none of its languages match, so make that English
+        $languages = array_values(array_unique(['en', ...$languages]));
+
         return $request->getPreferredLanguage($languages) ?? 'en';
     }
 
