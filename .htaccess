@@ -26,7 +26,6 @@
     RewriteRule ^ %{ENV:BASE}/index.php [L]
 </IfModule>
 
-<IfModule !mod_rewrite.c>
-    # Without mod_rewrite these files would be served as they are, so serve nothing
-    Require all denied
-</IfModule>
+# Without mod_rewrite, nothing above applies; the folders with private files (config, src, var, vendor,
+# ...) each have an .htaccess that denies access. Don't deny everything here: Apache also applies
+# this file to public/ when the web server serves public/.

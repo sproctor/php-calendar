@@ -16,7 +16,8 @@ RUN sed -ri 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-avail
     && sed -ri 's/<VirtualHost \*:80>/<VirtualHost *:8080>/' /etc/apache2/sites-available/*.conf \
     && printf '<Directory ${APACHE_DOCUMENT_ROOT}>\n    FallbackResource /index.php\n</Directory>\n' \
         > /etc/apache2/conf-available/symfony.conf \
-    && a2enconf symfony
+    && a2enconf symfony \
+    && a2enmod rewrite
 
 # Run as the host user so files written to the bind mount (var/, vendor/) stay editable on the host
 ARG UID=1000

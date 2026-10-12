@@ -25,6 +25,10 @@ docker compose -f "$root/compose.yaml" run --rm --no-deps -T \
     -v "$work/$name:/build" -w /build -e APP_ENV=prod \
     php composer install --no-dev --classmap-authoritative --no-interaction --no-progress --no-scripts
 
+# Like the other private folders, var/ and vendor/ must never be served
+cp "$root/config/.htaccess" "$work/$name/var/.htaccess"
+cp "$root/config/.htaccess" "$work/$name/vendor/.htaccess"
+
 mkdir -p "$root/dist"
 rm -f "$root/dist/$name.zip" "$root/dist/$name.tar.gz"
 (cd "$work" && zip -qr "$root/dist/$name.zip" "$name" && tar -czf "$root/dist/$name.tar.gz" "$name")
