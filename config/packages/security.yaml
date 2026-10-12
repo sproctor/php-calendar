@@ -28,6 +28,12 @@ security:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
+            # Keeps people logged in for 30 days if they tick "Keep me logged in". The cookie is signed with
+            # APP_SECRET and stops working when the password changes or the account is disabled.
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 2592000
+                signature_properties: ['password', 'disabled']
             logout:
                 path: /logout
                 enable_csrf: true

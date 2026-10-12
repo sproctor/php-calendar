@@ -3,29 +3,33 @@
 {% block title %}{{ 'log-in-title'|trans }}{% endblock %}
 
 {% block body %}
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+    <div class="phpc-narrow">
+        <h1 class="h3">{{ 'log-in-title'|trans|ucfirst }}</h1>
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
 
-    <form action="{{ path('app_login') }}" method="post">
-        <div class="mb-3 row">
-            <label class="col-sm-2 col-form-label" for="username">{{ 'username-label'|trans }}</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="text" id="username" name="_username" value="{{ last_username }}"/>
+        <form action="{{ path('app_login') }}" method="post">
+            <div class="mb-3">
+                <label class="form-label" for="username">{{ 'username-label'|trans }}</label>
+                <input class="form-control" type="text" id="username" name="_username" value="{{ last_username }}"
+                       autocomplete="username" required autofocus>
             </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label class="col-sm-2 col-form-label" for="password">{{ 'password-label'|trans }}</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="password" id="password" name="_password"/>
+            <div class="mb-3">
+                <label class="form-label" for="password">{{ 'password-label'|trans }}</label>
+                <input class="form-control" type="password" id="password" name="_password"
+                       autocomplete="current-password" required>
             </div>
-        </div>
+            <div class="mb-3 form-check">
+                <input class="form-check-input" type="checkbox" id="remember_me" name="_remember_me" value="on" checked>
+                <label class="form-check-label" for="remember_me">{{ 'remember-me-label'|trans }}</label>
+                <div class="form-text">{{ 'remember-me-help'|trans }}</div>
+            </div>
 
-        {# If you want to control the URL the user is redirected to on success #}
-        <input type="hidden" name="_target_path" value="{{ target_path }}"/>
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+            <input type="hidden" name="_target_path" value="{{ target_path }}">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-        <button class="btn btn-primary mb-3" type="submit">{{ 'log-in-button'|trans }}</button>
-    </form>
+            <button class="btn btn-primary" type="submit">{{ 'log-in-button'|trans }}</button>
+        </form>
+    </div>
 {% endblock %}
