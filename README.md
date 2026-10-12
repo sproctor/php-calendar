@@ -42,7 +42,7 @@ on the various pages on the website.
 
 FAQ: https://github.com/sproctor/php-calendar/wiki/Frequently-Asked-Questions
 
-See the demo live at http://www.php-calendar.org/php-calendar-dev/
+See the demos live at https://demo.php-calendar.org/ (latest release) and https://dev.php-calendar.org/ (development version)
 
 Translations are in `translations/`, one YAML file per language for each of `messages`, `validators`
 and `security`, with English (`*.en.yaml`) as the source. Besides English and French, they were
