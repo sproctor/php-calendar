@@ -1,5 +1,7 @@
 # php-calendar
 
+[![Translation status](https://hosted.weblate.org/widget/php-calendar/svg-badge.svg)](https://hosted.weblate.org/engage/php-calendar/)
+
 by Sean Proctor
 
 ## Intent
@@ -48,7 +50,8 @@ Translations are in `translations/`, one YAML file per language for each of `mes
 and `security`, with English (`*.en.yaml`) as the source. Besides English and French, they were
 ported from the 2.0 community translations and machine-translated where 3.0's wording is new, so
 corrections from native speakers are welcome. A language appears in the language menu once it has
-a `messages` file.
+a `messages` file. Translate on [Weblate](https://hosted.weblate.org/engage/php-calendar/), which
+opens pull requests with the changes.
 
 ### Upgrading from 2.0
 
