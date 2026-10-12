@@ -4,6 +4,9 @@
 
 {% block description %}{{ event.subject }}{% if event.occurrences is not empty %} – {{ event.occurrences.first.datetimeString|trans }}{% endif %} – {{ calendar.title }}{% endblock %}
 
+{# schema.org markup for search engines, on public calendars #}
+{% block structured_data %}{{ event_json_ld(event) }}{% endblock %}
+
 {% block body %}
     <h3>
         {{ event.subject }}

@@ -18,6 +18,7 @@
     <link rel="icon" href="{{ asset('static/office-calendar.png') }}">
     <link rel="stylesheet" href="{{ asset(is_rtl(app.request.locale) ? 'static/lib/bootstrap/bootstrap.rtl.min.css' : 'static/lib/bootstrap/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('static/phpc.css') }}">
+    {% block structured_data %}{% endblock %}
 </head>
 <body{% if embedded %} data-embed="1"{% endif %}>
 {% if embedded %}

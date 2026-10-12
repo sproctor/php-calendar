@@ -24,6 +24,7 @@ use App\Security\Voter\CalendarVoter;
 use App\Mail\Mailing;
 use App\Service\AppVersion;
 use App\Service\CalendarDates;
+use App\Service\EventStructuredData;
 use App\Service\LocaleService;
 use DateTimeInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,6 +49,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         private IconRendererInterface $iconRenderer,
         private AppVersion            $version,
         private Mailing               $mailing,
+        private EventStructuredData   $structuredData,
     )
     {
     }
@@ -97,6 +99,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('current_timezone', 'date_default_timezone_get'),
             new TwigFunction('app_version', $this->version->get(...)),
             new TwigFunction('mail_enabled', $this->mailing->isConfigured(...)),
+            new TwigFunction('event_json_ld', $this->structuredData->script(...), ['is_safe' => ['html']]),
             new TwigFunction('is_rtl', LocaleService::isRightToLeft(...)),
             new TwigFunction(
                 'is_embedded',
