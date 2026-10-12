@@ -108,7 +108,7 @@
                 </tbody>
             </table>
             </div>
-            <a class="btn btn-primary" href="{{ path('create_role', {slug: calendar.slug}) }}"><i class="bi-plus-square"></i> {{ "create-role-title"|trans }}</a>
+            <a class="btn btn-primary" href="{{ path('create_role', {slug: calendar.slug}) }}">{{ ux_icon('bi:plus-square') }} {{ "create-role-title"|trans }}</a>
         </div>
 
         <div class="tab-pane" id="categories" role="tabpanel" aria-labelledby="categories-tab">
@@ -135,7 +135,7 @@
                 </tbody>
             </table>
             </div>
-            <a class="btn btn-primary" href="{{ path('create_category', {slug: calendar.slug}) }}"><i class="bi-plus-square"></i> {{ "create-category-title"|trans }}</a>
+            <a class="btn btn-primary" href="{{ path('create_category', {slug: calendar.slug}) }}">{{ ux_icon('bi:plus-square') }} {{ "create-category-title"|trans }}</a>
         </div>
 
         <div class="tab-pane" id="fields" role="tabpanel" aria-labelledby="fields-tab">
@@ -154,7 +154,7 @@
                 {% for field in calendar.fieldDefinitions %}
                     <tr>
                         <td>{{ field.name }}</td>
-                        <td>{% if field.required %}<i class="bi-check-lg" aria-label="{{ 'yes-label'|trans }}"></i>{% endif %}</td>
+                        <td>{% if field.required %}{{ ux_icon('bi:check-lg', {'aria-label': 'yes-label'|trans}) }}{% endif %}</td>
                         <td><code>{{ field.format }}</code></td>
                         <td class="d-flex gap-2">
                             <a class="btn btn-sm btn-primary" href="{{ path('edit_field', {slug: calendar.slug, fid: field.fid}) }}">{{ "edit-link"|trans }}</a>
@@ -165,7 +165,7 @@
                 </tbody>
             </table>
             </div>
-            <a class="btn btn-primary" href="{{ path('create_field', {slug: calendar.slug}) }}"><i class="bi-plus-square"></i> {{ "create-field-title"|trans }}</a>
+            <a class="btn btn-primary" href="{{ path('create_field', {slug: calendar.slug}) }}">{{ ux_icon('bi:plus-square') }} {{ "create-field-title"|trans }}</a>
         </div>
     </div>
 {% endblock %}

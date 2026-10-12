@@ -13,7 +13,7 @@
                 {% if can_create %}
                     {% set create_label = 'create-event-on-date-label'|trans({'%date%': cur_date|day_heading}) %}
                     <a href="{{ path('create_event', {slug: calendar.slug}|merge(cur_date|dateparts)) }}" class="phpc-add"
-                       title="{{ create_label }}" aria-label="{{ create_label }}"><i class="bi-plus-lg"></i></a>
+                       title="{{ create_label }}" aria-label="{{ create_label }}">{{ ux_icon('bi:plus-lg') }}</a>
                 {% endif %}
             </div>
             {% set days_occurrences = occurrences[cur_date|date_index] ?? [] %}
@@ -41,7 +41,7 @@
                                     {% if occurrence.start >= cur_date %}
                                         <span class="badge text-bg-light">{{ time|trans }}</span>
                                     {% else %}
-                                        <i class="bi-three-dots"></i>
+                                        {{ ux_icon('bi:three-dots') }}
                                     {% endif %}
                                 {% endif %}
                                 {{ event.subject }}

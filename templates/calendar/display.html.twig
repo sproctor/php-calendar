@@ -6,7 +6,7 @@
     {% block navigation %}{% endblock %}
     {% if is_granted('CALENDAR_CREATE', calendar) %}
         <a class="btn btn-primary btn-sm ms-auto" href="{{ path('create_event', {slug: calendar.slug}|merge(create_date|dateparts)) }}">
-            <i class="bi-plus"></i> {{ 'create-event-label'|trans }}
+            {{ ux_icon('bi:plus') }} {{ 'create-event-label'|trans }}
         </a>
     {% endif %}
 </div>

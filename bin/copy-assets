@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php
+
+// Copies front-end files from Composer packages into public/static/lib/, where the web server can serve
+// them. Runs after composer install and update, and in bin/build-release.
+
+$root = dirname(__DIR__);
+$files = [
+    'vendor/twbs/bootstrap/dist/css/bootstrap.min.css' => 'bootstrap/bootstrap.min.css',
+    'vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js' => 'bootstrap/bootstrap.bundle.min.js',
+];
+
+foreach ($files as $source => $target) {
+    $from = "$root/$source";
+    $to = "$root/public/static/lib/$target";
+    if (!is_file($from)) {
+        fwrite(STDERR, "Missing $source; run composer install first.\n");
+        exit(1);
+    }
+    if (!is_dir(dirname($to)) && !mkdir(dirname($to), 0777, true)) {
+        fwrite(STDERR, 'Could not create ' . dirname($to) . "\n");
+        exit(1);
+    }
+    // The minified files point browser developer tools at source maps, which aren't copied
+    $content = preg_replace('~\n?/[/*]# sourceMappingURL=\S+(?: \*/)?\s*$~', "\n", file_get_contents($from));
+    file_put_contents($to, $content);
+}
+echo "Copied front-end files to public/static/lib/\n";

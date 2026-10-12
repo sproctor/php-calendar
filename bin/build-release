@@ -23,7 +23,7 @@ mkdir -p "$work/$name/var"
 
 docker compose -f "$root/compose.yaml" run --rm --no-deps -T \
     -v "$work/$name:/build" -w /build -e APP_ENV=prod \
-    php composer install --no-dev --classmap-authoritative --no-interaction --no-progress --no-scripts
+    php sh -c 'composer install --no-dev --classmap-authoritative --no-interaction --no-progress --no-scripts && php bin/copy-assets'
 
 # Like the other private folders, var/ and vendor/ must never be served
 cp "$root/config/.htaccess" "$work/$name/var/.htaccess"

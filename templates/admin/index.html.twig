@@ -28,8 +28,7 @@
                     <tr>
                         <td><a href="{{ path('default_view', {slug: calendar.slug}) }}">{{ calendar.title }}</a></td>
                         <td class="d-flex gap-2">
-                            <a class="btn btn-sm btn-primary" href="{{ path('calendar_admin', {slug: calendar.slug}) }}"><i
-                                        class="bi bi-wrench"></i> {{ "settings-button"|trans }}</a>
+                            <a class="btn btn-sm btn-primary" href="{{ path('calendar_admin', {slug: calendar.slug}) }}">{{ ux_icon('bi:wrench') }} {{ "settings-button"|trans }}</a>
                             {{ include('components/confirmation.html.twig', {
                                 id: 'deleteCalendarModal' ~ calendar.cid,
                                 button: 'delete-menu-link'|trans,
@@ -47,7 +46,7 @@
             </table>
             </div>
             <a class="btn btn-primary" href="{{ path('create_calendar') }}">
-                <i class="bi bi-plus-square"></i> {{ "create-calendar-button"|trans }}
+                {{ ux_icon('bi:plus-square') }} {{ "create-calendar-button"|trans }}
             </a>
         </div>
 
@@ -95,7 +94,7 @@
             </table>
             </div>
             <a class="btn btn-primary" href="{{ path('create_user') }}">
-                <i class="bi bi-plus-square"></i> {{ "create-user-button"|trans }}
+                {{ ux_icon('bi:plus-square') }} {{ "create-user-button"|trans }}
             </a>
         </div>
     </div>

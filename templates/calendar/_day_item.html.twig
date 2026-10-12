@@ -29,7 +29,7 @@
             {% if event.category %}
                 <span class="badge" style="color: {{ event.textColor }}; background: {{ event.color }};">{{ event.category.name }}</span>
             {% endif %}
-            {% if event.readonly %}<i class="bi-lock text-secondary" title="{{ 'readonly-event-label'|trans }}"></i>{% endif %}
+            {% if event.readonly %}<span class="text-secondary" title="{{ 'readonly-event-label'|trans }}">{{ ux_icon('bi:lock', {'aria-label': 'readonly-event-label'|trans}) }}</span>{% endif %}
         </div>
         {% if multi_day %}
             <div class="small text-secondary">{{ occurrence.datetimeString|trans }}</div>

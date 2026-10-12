@@ -27,6 +27,7 @@ use DateTimeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\UX\Icons\IconRendererInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
@@ -41,6 +42,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         private LocaleService         $languageService,
         private CalendarDates         $dates,
         private LastCalendarSubscriber $lastCalendar,
+        private IconRendererInterface $iconRenderer,
     )
     {
     }
@@ -58,7 +60,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                     $active = $active_route === $name ? " active" : "";
                     $text = htmlspecialchars($text);
                     if ($icon != null) {
-                        $text = '<i class="bi-' . htmlspecialchars($icon) . "\"></i> $text";
+                        $text = $this->iconRenderer->renderIcon('bi:' . $icon) . " $text";
                     }
                     $url = htmlspecialchars($this->router->generate($name, $options));
                     return "<li class=\"nav-item\"><a class=\"nav-link$active\" href=\"$url\">$text</a></li>";

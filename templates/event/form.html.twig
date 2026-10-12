@@ -9,7 +9,7 @@
     {{ form_row(form.subject) }}
     <div class="mb-3">
         {{ form_label(form.description) }}
-        <a href="https://commonmark.org/help/" target="_blank" rel="noopener" title="{{ 'markdown-help-link'|trans }}"><i class="bi-info-circle"></i></a>
+        <a href="https://commonmark.org/help/" target="_blank" rel="noopener" title="{{ 'markdown-help-link'|trans }}">{{ ux_icon('bi:info-circle') }}</a>
         {{ form_widget(form.description) }}
         {{ form_errors(form.description) }}
     </div>

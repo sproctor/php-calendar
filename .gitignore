@@ -27,3 +27,5 @@ phpstan.neon
 ###< phpstan/phpstan ###
 
 /dist/
+# Copied from Composer packages by bin/copy-assets
+/public/static/lib/

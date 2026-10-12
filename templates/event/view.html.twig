@@ -7,7 +7,7 @@
 {% block body %}
     <h3>
         {{ event.subject }}
-        {% if event.readonly %}<i class="bi-lock" title="{{ 'readonly-event-label'|trans }}"></i>{% endif %}
+        {% if event.readonly %}<span title="{{ 'readonly-event-label'|trans }}">{{ ux_icon('bi:lock', {'aria-label': 'readonly-event-label'|trans}) }}</span>{% endif %}
     </h3>
 
     <div class="phpc-event-header text-secondary mb-2">

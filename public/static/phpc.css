@@ -83,3 +83,8 @@ col.wnumber {
 .phpc-narrow {
   max-width: 44rem;
 }
+
+/* Inline SVG icons (ux_icon), aligned with the text like the Bootstrap Icons font */
+.phpc-icon {
+  vertical-align: -.125em;
+}

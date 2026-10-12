@@ -46,9 +46,12 @@
         "symfony/string": "7.4.*",
         "symfony/translation": "7.4.*",
         "symfony/twig-bundle": "7.4.*",
+        "symfony/ux-icons": "^2.36",
         "symfony/validator": "7.4.*",
         "symfony/web-link": "7.4.*",
         "symfony/yaml": "7.4.*",
+        "twbs/bootstrap": "^5.3.8",
+        "twbs/bootstrap-icons": "^1.13",
         "twig/extra-bundle": "^3.29",
         "twig/intl-extra": "^3.30",
         "twig/markdown-extra": "^3.29",
@@ -101,11 +104,14 @@
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "@copy-assets"
         ],
         "post-update-cmd": [
-            "@auto-scripts"
-        ]
+            "@auto-scripts",
+            "@copy-assets"
+        ],
+        "copy-assets": "@php bin/copy-assets"
     },
     "conflict": {
         "symfony/symfony": "*"
