@@ -60,4 +60,5 @@
     {% elseif query is not empty or from or to %}
         <p>{{ "no-search-results-message"|trans }}</p>
     {% endif %}
+    {{ include('components/timezone_note.html.twig') }}
 {% endblock %}

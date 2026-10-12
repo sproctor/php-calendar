@@ -48,6 +48,7 @@
     {% else %}
         <p class="lead">{{ "no-events-message"|trans }}</p>
     {% endif %}
+    {{ include('components/timezone_note.html.twig') }}
 {% endblock %}
 
 {% block script %}

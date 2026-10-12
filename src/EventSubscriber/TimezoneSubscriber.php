@@ -23,17 +23,29 @@ use App\Entity\Occurrence;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Sets PHP's default timezone, which forms and date formatting use, to the user's timezone. When the user
- * hasn't chosen one (or isn't logged in), uses the timezone of the calendar the request is about, found
- * from the controller's Calendar, Event or Occurrence argument. Dates are stored in UTC either way.
+ * Sets PHP's default timezone, which forms and date formatting use. In order of preference: the user's
+ * timezone setting; the timezone a visitor chose on this device (a cookie, so it works without logging
+ * in); the timezone of the calendar the request is about, found from the controller's Calendar, Event or
+ * Occurrence argument; UTC. Dates are stored in UTC either way.
  */
 class TimezoneSubscriber implements EventSubscriberInterface
 {
+    /** The cookie a visitor's own timezone choice is kept in; set and cleared by phpc.js */
+    public const COOKIE = 'phpc_timezone';
+
+    /** Request attribute saying where the timezone came from: one of the SOURCE_* constants */
+    public const SOURCE_ATTRIBUTE = '_timezone_source';
+    public const SOURCE_USER = 'user';
+    public const SOURCE_COOKIE = 'cookie';
+    public const SOURCE_CALENDAR = 'calendar';
+    public const SOURCE_DEFAULT = 'default';
+
     public function __construct(private Security $security)
     {
     }
@@ -48,14 +60,19 @@ class TimezoneSubscriber implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if ($event->isMainRequest()) {
-            date_default_timezone_set($this->userTimezone() ?? 'UTC');
+        if (!$event->isMainRequest()) {
+            return;
         }
+        $request = $event->getRequest();
+        [$timezone, $source] = $this->chosenTimezone($request) ?? ['UTC', self::SOURCE_DEFAULT];
+        date_default_timezone_set($timezone);
+        $request->attributes->set(self::SOURCE_ATTRIBUTE, $source);
     }
 
     public function onControllerArguments(ControllerArgumentsEvent $event): void
     {
-        if (!$event->isMainRequest() || $this->userTimezone() !== null) {
+        $request = $event->getRequest();
+        if (!$event->isMainRequest() || $this->chosenTimezone($request) !== null) {
             return;
         }
         foreach ($event->getArguments() as $argument) {
@@ -67,19 +84,36 @@ class TimezoneSubscriber implements EventSubscriberInterface
             };
             if ($calendar !== null) {
                 date_default_timezone_set($calendar->getTimezone());
+                $request->attributes->set(self::SOURCE_ATTRIBUTE, self::SOURCE_CALENDAR);
 
                 return;
             }
         }
     }
 
-    private function userTimezone(): ?string
+    /**
+     * The timezone the visitor picked, as [timezone, source]: their user setting, else the one saved on
+     * this device. Null when they haven't picked one, so the calendar's applies.
+     *
+     * @return array{0: string, 1: string}|null
+     */
+    private function chosenTimezone(Request $request): ?array
     {
         $user = $this->security->getUser();
         $timezone = $user instanceof User ? $user->getTimezone() : null;
+        if (self::isValid($timezone)) {
+            return [$timezone, self::SOURCE_USER];
+        }
+        $timezone = $request->cookies->get(self::COOKIE);
+        if (self::isValid($timezone)) {
+            return [$timezone, self::SOURCE_COOKIE];
+        }
 
-        return $timezone !== null && $timezone !== '' && in_array($timezone, \DateTimeZone::listIdentifiers(), true)
-            ? $timezone
-            : null;
+        return null;
+    }
+
+    private static function isValid(mixed $timezone): bool
+    {
+        return is_string($timezone) && $timezone !== '' && in_array($timezone, \DateTimeZone::listIdentifiers(), true);
     }
 }

@@ -15,6 +15,33 @@ addEventListener("DOMContentLoaded", () => {
     // Event previews in the month view; their content is HTML rendered on the server
     document.querySelectorAll('[data-bs-toggle="popover"]').forEach((element) => new bootstrap.Popover(element));
 
+    // Offer the browser's timezone when the page shows another one; see components/timezone_note.html.twig
+    document.querySelectorAll('.phpc-timezone-note').forEach((note) => {
+        const setTimezone = (timezone) => {
+            const secure = location.protocol === 'https:' ? '; Secure' : '';
+            const value = timezone === null ? '; max-age=0' : `${encodeURIComponent(timezone)}; max-age=31536000`;
+            document.cookie = `phpc_timezone=${value}; path=${note.dataset.cookiePath}; SameSite=Lax${secure}`;
+            location.reload();
+        };
+        note.querySelector('.phpc-timezone-reset')?.addEventListener('click', () => setTimezone(null));
+
+        const local = note.querySelector('.phpc-timezone-local');
+        const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (!local || !browserTimezone || browserTimezone === note.dataset.timezone) {
+            return;
+        }
+        // E.g. "Central European Time (Paris)", like the server's names
+        const name = new Intl.DateTimeFormat(document.documentElement.lang || undefined, {
+            timeZone: browserTimezone,
+            timeZoneName: 'longGeneric',
+        }).formatToParts(new Date()).find((part) => part.type === 'timeZoneName')?.value;
+        const city = browserTimezone.split('/').pop().replaceAll('_', ' ');
+        const button = local.querySelector('button');
+        button.textContent = button.dataset.label.replace('%timezone%', name ? `${name} (${city})` : browserTimezone);
+        button.addEventListener('click', () => setTimezone(browserTimezone));
+        local.hidden = false;
+    });
+
     // Make days out of month gray
     document.querySelectorAll('.phpc-shadow a').forEach((a) => a.classList.add('text-secondary'));
 

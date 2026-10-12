@@ -25,6 +25,7 @@ use App\Service\CalendarDates;
 use App\Service\LocaleService;
 use DateTimeInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Intl\Timezones;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\UX\Icons\IconRendererInterface;
@@ -89,6 +90,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             ),
             new TwigFunction('is_today', $this->dates->isToday(...)),
             new TwigFunction('last_calendar', $this->lastCalendar->getLastCalendar(...)),
+            new TwigFunction('current_timezone', 'date_default_timezone_get'),
             new TwigFunction(
                 'is_embedded',
                 fn(array $context) => $context['app']->getRequest() !== null
@@ -124,6 +126,14 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFilter('month_year', fn(DateTimeInterface $date) => $this->dates->formatSkeleton($date, 'yMMMM')),
             new TwigFilter('day_heading', fn(DateTimeInterface $date) => $this->dates->formatSkeleton($date, 'EEEEdMMMM')),
             new TwigFilter('date_from_key', $this->dates->fromDayKey(...)),
+            new TwigFilter('timezone_name', function (string $timezone): string {
+                // E.g. "Central European Time (Paris)", in the current language
+                try {
+                    return Timezones::getName($timezone, \Locale::getPrimaryLanguage(\Locale::getDefault()));
+                } catch (\Throwable) {
+                    return $timezone;
+                }
+            }),
             // Unlike Twig's capitalize, leaves the rest of the string alone
             new TwigFilter('ucfirst', fn(string $text) => mb_strtoupper(mb_substr($text, 0, 1)) . mb_substr($text, 1)),
             new TwigFilter('month_abbr', fn(DateTimeInterface $date) => $this->dates->format($date, 'MMM')),

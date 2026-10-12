@@ -1,0 +1,26 @@
+{#
+  Says which timezone the times on the page are in and why, and lets visitors switch between the
+  calendar's timezone and their own. phpc.js shows "Show in my timezone" when the browser's timezone
+  differs, and sets or clears the phpc_timezone cookie (see TimezoneSubscriber).
+#}
+{% set timezone = current_timezone() %}
+{% set source = app.request.attributes.get('_timezone_source') %}
+<p class="small text-secondary phpc-timezone-note" data-timezone="{{ timezone }}"
+   data-cookie-path="{{ app.request.basePath ~ '/' }}">
+    {{ ux_icon('bi:globe2') }}
+    {{ 'times-in-timezone'|trans({'%timezone%': timezone|timezone_name}) }}
+    {% if source == 'user' %}
+        ({{ 'timezone-source-user'|trans }}, <a href="{{ path('user_settings') }}">{{ 'change-link'|trans }}</a>)
+    {% elseif source == 'cookie' %}
+        ({{ 'timezone-source-device'|trans }}) ·
+        <button type="button" class="btn btn-link btn-sm p-0 align-baseline phpc-timezone-reset">{{ 'use-calendar-timezone-button'|trans }}</button>
+    {% elseif source == 'calendar' %}
+        ({{ 'timezone-source-calendar'|trans }})
+    {% endif %}
+    {% if source != 'user' %}
+        <span class="phpc-timezone-local" hidden>·
+            <button type="button" class="btn btn-link btn-sm p-0 align-baseline"
+                    data-label="{{ 'use-my-timezone-button'|trans({'%timezone%': '%timezone%'}) }}"></button>
+        </span>
+    {% endif %}
+</p>
