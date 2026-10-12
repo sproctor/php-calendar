@@ -21,7 +21,7 @@
         {% set editable = occurrences|filter(o => is_granted('EVENT_EDIT', o.event))|map(o => o.oid) %}
         {% set all_day = occurrences|filter(o => not o.hasTime) %}
         {% set timed = occurrences|filter(o => o.hasTime) %}
-        <form id="delete-events-form" action="{{ path('delete_events', {slug: calendar.slug}) }}" method="post">
+        <form id="delete-events-form" data-phpc-selection="delete-events-button" action="{{ path('delete_events', {slug: calendar.slug}) }}" method="post">
             <input type="hidden" name="_token" value="{{ csrf_token('delete-events') }}">
             {% for section in [{heading: 'all-day-label', items: all_day}, {heading: 'scheduled-label', items: timed}] %}
                 {% if section.items is not empty %}
@@ -49,19 +49,4 @@
         <p class="lead">{{ "no-events-message"|trans }}</p>
     {% endif %}
     {{ include('components/timezone_note.html.twig') }}
-{% endblock %}
-
-{% block script %}
-    <script>
-        // "Delete selected" only applies once something is selected
-        const deleteButton = document.getElementById('delete-events-button');
-        if (deleteButton) {
-            const boxes = document.querySelectorAll('#delete-events-form input[name="eid[]"]');
-            const update = () => {
-                deleteButton.disabled = ![...boxes].some((box) => box.checked);
-            };
-            boxes.forEach((box) => box.addEventListener('change', update));
-            update();
-        }
-    </script>
 {% endblock %}

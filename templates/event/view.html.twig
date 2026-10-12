@@ -65,32 +65,51 @@
         </div>
     {% endif %}
 
-    <div class="phpc-occ">
+    <div class="phpc-occ mb-3">
         <h4>{{ "occurrences-title"|trans }}</h4>
-        <ul class="list-group">
+        {% if can_edit %}
+            <form id="delete-occurrences-form" data-phpc-selection="delete-occurrences-button" action="{{ path('delete_occurrences', {eid: event.eid}) }}" method="post">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete-occurrences-' ~ event.eid) }}">
+        {% endif %}
+        <ul class="list-group mb-2">
+            {% if can_edit and event.occurrences|length > 1 %}
+                <li class="list-group-item">
+                    <div class="form-check mb-0">
+                        <input class="form-check-input" type="checkbox" id="select-all-occurrences" data-phpc-select-all>
+                        <label class="form-check-label" for="select-all-occurrences">{{ 'select-all-label'|trans }}</label>
+                    </div>
+                </li>
+            {% endif %}
             {% for occurrence in event.occurrences %}
                 <li class="list-group-item d-flex align-items-center gap-2">
+                    {% if can_edit %}
+                        <input name="oid[]" type="checkbox" class="form-check-input mt-0" value="{{ occurrence.oid }}"
+                               id="oid_{{ occurrence.oid }}" aria-label="{{ 'select-occurrence-label'|trans({'%date%': occurrence.datetimeString|trans}) }}">
+                    {% endif %}
                     <a href="{{ path('day_view', {slug: calendar.slug}|merge(occurrence.start|dateparts)) }}">{{ occurrence.datetimeString|trans }}</a>
                     {% if can_edit %}
                         <a class="ms-auto btn btn-sm btn-outline-primary" href="{{ path('edit_occurrence', {oid: occurrence.oid}) }}">{{ "edit-link"|trans }}</a>
-                        {{ include('components/confirmation.html.twig', {
-                            id: 'removeOccurrenceModal' ~ occurrence.oid,
-                            button: 'remove-button'|trans,
-                            small: true,
-                            title: "confirmation-required-dialog-title"|trans,
-                            question: (event.occurrences|length == 1
-                                ? 'remove-last-occurrence-question'
-                                : 'permanently-remove-occurrence-question')|trans,
-                            path: path('delete_occurrence', {oid: occurrence.oid}),
-                            token_id: 'delete-occurrence-' ~ occurrence.oid,
-                            confirm_button: "remove-button"|trans,
-                        }) }}
                     {% endif %}
                 </li>
             {% else %}
                 <li class="list-group-item">{{ "no-occurrences-message"|trans }}</li>
             {% endfor %}
         </ul>
+        {% if can_edit %}
+            </form>
+            {% if event.occurrences is not empty %}
+                {{ include('components/confirmation.html.twig', {
+                    id: 'deleteOccurrencesModal',
+                    button: 'remove-selected-occurrences-button'|trans,
+                    button_id: 'delete-occurrences-button',
+                    small: true,
+                    title: 'confirmation-required-dialog-title'|trans,
+                    question: 'remove-selected-occurrences-question'|trans,
+                    form: 'delete-occurrences-form',
+                    confirm_button: 'remove-button'|trans,
+                }) }}
+            {% endif %}
+        {% endif %}
     </div>
     {{ include('components/timezone_note.html.twig') }}
 {% endblock %}

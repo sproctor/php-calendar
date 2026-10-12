@@ -42,6 +42,30 @@ addEventListener("DOMContentLoaded", () => {
         local.hidden = false;
     });
 
+    // Forms of checkboxes, e.g. to delete the selected events: the button named by data-phpc-selection
+    // only works once something is selected, and a data-phpc-select-all box checks them all
+    document.querySelectorAll('form[data-phpc-selection]').forEach((form) => {
+        const button = document.getElementById(form.dataset.phpcSelection);
+        const all = form.querySelector('[data-phpc-select-all]');
+        const boxes = [...form.querySelectorAll('input[type="checkbox"]:not([data-phpc-select-all])')];
+        const update = () => {
+            const checked = boxes.filter((box) => box.checked).length;
+            if (button) {
+                button.disabled = checked === 0;
+            }
+            if (all) {
+                all.checked = checked === boxes.length;
+                all.indeterminate = checked > 0 && checked < boxes.length;
+            }
+        };
+        boxes.forEach((box) => box.addEventListener('change', update));
+        all?.addEventListener('change', () => {
+            boxes.forEach((box) => box.checked = all.checked);
+            update();
+        });
+        update();
+    });
+
     // Make days out of month gray
     document.querySelectorAll('.phpc-shadow a').forEach((a) => a.classList.add('text-secondary'));
 

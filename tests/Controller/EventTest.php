@@ -99,13 +99,41 @@ class EventTest extends AppWebTestCase
         $this->assertSame('2026-10-21', $this->em()->find(Occurrence::class, $added->getOid())->getStart()->format('Y-m-d'));
 
         // Removing both occurrences removes the event
-        foreach ($occurrences as $occurrence) {
-            $oid = $occurrence->getOid();
-            $this->postWithToken("/en/event/$eid", "/en/occurrence/$oid/delete");
-        }
+        $this->postWithToken("/en/event/$eid", "/en/event/$eid/occurrences/delete", [
+            'oid' => $occurrences->map(fn(Occurrence $o) => $o->getOid())->getValues(),
+        ]);
         $this->assertResponseRedirects("/en/calendar/{$calendar->getSlug()}/");
         $this->em()->clear();
         $this->assertNull($this->em()->find(Event::class, $eid));
+    }
+
+    public function testRemoveSelectedOccurrences(): void
+    {
+        $calendar = $this->createCalendar();
+        $event = $this->createEvent($calendar, null, 'Series', '2026-10-15 17:00', '2026-10-15 18:00');
+        foreach (['2026-10-22', '2026-10-29'] as $date) {
+            new Occurrence($this->fresh($event), new \DateTimeImmutable("$date 17:00"), new \DateTimeImmutable("$date 18:00"), Occurrence::TIME_NORMAL);
+        }
+        $this->em()->flush();
+        $eid = $event->getEid();
+        [$first, $second, $third] = $this->fresh($event)->getOccurrences()->map(fn(Occurrence $o) => $o->getOid())->getValues();
+        $other = $this->createEvent($calendar, null, 'Other')->getOccurrences()->first()->getOid();
+        $this->login($this->createUser('admin', admin: true));
+
+        $crawler = $this->client->request('GET', "/en/event/$eid");
+        $this->assertCount(3, $crawler->filter('input[name="oid[]"]'));
+        $this->assertSelectorExists('#select-all-occurrences');
+
+        // Another event's occurrence rejects the whole request
+        $this->postWithToken("/en/event/$eid", "/en/event/$eid/occurrences/delete", ['oid' => [$first, $other]]);
+        $this->assertResponseStatusCodeSame(403);
+
+        $this->postWithToken("/en/event/$eid", "/en/event/$eid/occurrences/delete", ['oid' => [$first, $third]]);
+        $this->assertResponseRedirects("/en/event/$eid");
+        $this->em()->clear();
+        $left = $this->em()->find(Event::class, $eid)->getOccurrences()->map(fn(Occurrence $o) => $o->getOid())->getValues();
+        $this->assertSame([$second], $left);
+        $this->assertNotNull($this->em()->find(Occurrence::class, $other));
     }
 
     public function testCustomFields(): void

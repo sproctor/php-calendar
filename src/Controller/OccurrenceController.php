@@ -64,16 +64,30 @@ class OccurrenceController extends AbstractController
         return $this->occurrenceForm($request, $event, $occurrence, OccurrenceTimesType::fromOccurrence($occurrence));
     }
 
-    #[Route('/occurrence/{oid}/delete', name: 'delete_occurrence', requirements: ['oid' => '\d+'], methods: ['POST'])]
-    public function delete(#[MapEntity(id: 'oid')] Occurrence $occurrence, Request $request): Response
+    /**
+     * Removes the occurrences checked on the event page (oid[]). Removing all of them deletes the event.
+     */
+    #[Route('/event/{eid}/occurrences/delete', name: 'delete_occurrences', requirements: ['eid' => '\d+'], methods: ['POST'])]
+    public function delete(#[MapEntity(id: 'eid')] Event $event, Request $request): Response
     {
-        $event = $occurrence->getEvent();
         $this->denyAccessUnlessGranted(EventVoter::EDIT, $event);
-        if (!$this->isCsrfTokenValid('delete-occurrence-' . $occurrence->getOid(), $request->getPayload()->getString('_token'))) {
+        if (!$this->isCsrfTokenValid('delete-occurrences-' . $event->getEid(), $request->getPayload()->getString('_token'))) {
             throw $this->createAccessDeniedException('Invalid CSRF token');
         }
 
-        $event->removeOccurrence($occurrence);
+        $selected = array_map('intval', $request->getPayload()->all('oid'));
+        $occurrences = $event->getOccurrences()->filter(fn(Occurrence $o) => in_array($o->getOid(), $selected, true));
+        // Only this event's occurrences; anything else rejects the whole request
+        if ($occurrences->count() !== count(array_unique($selected))) {
+            throw $this->createAccessDeniedException();
+        }
+        if ($occurrences->isEmpty()) {
+            return $this->redirectToRoute('event_view', ['eid' => $event->getEid()]);
+        }
+
+        foreach ($occurrences as $occurrence) {
+            $event->removeOccurrence($occurrence);
+        }
         // An event without occurrences can't be seen anywhere, so remove it with its last occurrence
         if ($event->getOccurrences()->isEmpty()) {
             $slug = $event->getCalendar()->getSlug();
@@ -85,7 +99,7 @@ class OccurrenceController extends AbstractController
         }
         $event->markModified();
         $this->entityManager->flush();
-        $this->addFlash('success', 'occurrence-removed-message');
+        $this->addFlash('success', 'occurrences-removed-message');
 
         return $this->redirectToRoute('event_view', ['eid' => $event->getEid()]);
     }
