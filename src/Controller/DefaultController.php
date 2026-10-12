@@ -47,19 +47,21 @@ class DefaultController extends AbstractController
         }
 
         $user = $this->getUser();
-        $preferred = $user instanceof User && $user->getLocale() ? [\Locale::getPrimaryLanguage($user->getLocale())] : [];
-        $languages = array_keys($localeService->getLocaleMappings());
-        $locale = $request->getPreferredLanguage(array_merge(array_intersect($preferred, $languages), $languages)) ?? 'en';
+        $user = $user instanceof User ? $user : null;
 
         $readable = array_values(array_filter($calendars, fn($calendar) => $this->isGranted(CalendarVoter::READ, $calendar)));
         if (count($readable) === 1) {
-            return $this->redirectToRoute('default_view', ['_locale' => $locale, 'slug' => $readable[0]->getSlug()]);
+            return $this->redirectToRoute('default_view', [
+                '_locale' => $localeService->pickLanguage($request, $user, $readable[0]),
+                'slug' => $readable[0]->getSlug(),
+            ]);
         }
         if ($readable === [] && $user === null) {
             return $this->redirectToRoute('app_login');
         }
 
-        $request->setLocale($locale);
+        // FormattingLocaleSubscriber picked the language, since this URL doesn't name one
+        $locale = $request->getLocale();
 
         return $this->render('calendar_list.html.twig', [
             'calendars' => $readable,

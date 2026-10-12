@@ -200,6 +200,7 @@ class Import20
             $calendar->setEventsMax(max(1, min(255, (int) $row['events_max'])));
             $calendar->setAnonPermission(max(Calendar::ANON_NONE, min(Calendar::ANON_MODIFY, (int) $row['anon_permission'])));
             $calendar->setTimezone(self::validTimezone($row['timezone']) ?? 'UTC');
+            $calendar->setLocale(self::validLocale($row['language'] ?? null));
             $this->entityManager->persist($calendar);
             $this->calendars[(int) $row['cid']] = $calendar;
         }

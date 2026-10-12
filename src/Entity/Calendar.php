@@ -73,6 +73,12 @@ class Calendar
     private string $timezone = 'UTC';
 
     /**
+     * Language to show the calendar in when a visitor hasn't picked one; null uses the browser's
+     */
+    #[ORM\Column(type: 'string', length: 35, nullable: true)]
+    private ?string $locale = null;
+
+    /**
      * Minimum permission level everyone has on this calendar, logged in or not (ANON_* constants)
      */
     #[ORM\Column(type: 'smallint', options: ['default' => self::ANON_READ])]
@@ -162,6 +168,18 @@ class Calendar
     public function setTimezone(string $timezone): self
     {
         $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(?string $locale): self
+    {
+        $this->locale = $locale;
 
         return $this;
     }

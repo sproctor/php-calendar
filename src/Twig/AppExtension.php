@@ -100,12 +100,18 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction(
                 'change_locale',
                 function (array $context, string $locale) {
-                    $app = $context['app'];
                     /* @var Request $request */
-                    $request = $app->getRequest();
-                    $uri = $request->getRequestUri();
-                    // replaces _locale in "/{_locale}/rest/of/path" with $locale
-                    return "/$locale" . preg_replace('%^/([^/]+)%', '', $uri);
+                    $request = $context['app']->getRequest();
+                    // The current page in $locale: replaces _locale in "/{_locale}/rest/of/path". Pages
+                    // without a language in the URL pick up the remembered one.
+                    $path = $request->getPathInfo();
+                    if ($request->attributes->has('_locale')) {
+                        $path = "/$locale" . preg_replace('%^/[^/]+%', '', $path);
+                    }
+                    $query = $request->getQueryString();
+                    $to = $request->getBasePath() . $path . ($query !== null ? "?$query" : '');
+
+                    return $this->router->generate('change_language', ['language' => $locale, 'to' => $to]);
                 },
                 ['needs_context' => true]
             ),

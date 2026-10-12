@@ -52,8 +52,8 @@ final class Legacy20Fixture
         $md5 = md5(addslashes("it's md5"));
         $connection->executeStatement("INSERT INTO old_users (uid, username, password, admin, timezone, language) VALUES
             (1, 'boss', ?, 1, 'Europe/Paris', 'fr'), (2, 'pat', ?, 0, 'Not/AZone', 'de_DE')", [$bcrypt, $md5]);
-        $connection->executeStatement("INSERT INTO old_calendars (cid, title, anon_permission, timezone, events_max) VALUES
-            (1, 'Club', 0, 'America/Chicago', 4)");
+        $connection->executeStatement("INSERT INTO old_calendars (cid, title, anon_permission, timezone, language, events_max) VALUES
+            (1, 'Club', 0, 'America/Chicago', 'fr', 4)");
         $connection->executeStatement("INSERT INTO old_permissions VALUES (1, 2, 1, 1, 1, 0, 0)");
         $connection->executeStatement("INSERT INTO old_groups (gid, cid, name) VALUES (1, 1, 'Board'), (2, NULL, 'Orphan')");
         $connection->executeStatement("INSERT INTO old_user_groups VALUES (1, 2), (1, 2), (1, 99)");

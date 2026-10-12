@@ -48,6 +48,7 @@ class Import20CommandTest extends AppWebTestCase
         $calendar = $em->getRepository(Calendar::class)->findOneBy(['title' => 'Club']);
         $this->assertSame(Calendar::ANON_NONE, $calendar->getAnonPermission());
         $this->assertSame('America/Chicago', $calendar->getTimezone());
+        $this->assertSame('fr', $calendar->getLocale());
         $this->assertSame(4, $calendar->getEventsMax());
 
         $boss = $em->getRepository(User::class)->findOneBy(['username' => 'boss']);
@@ -98,7 +99,7 @@ class Import20CommandTest extends AppWebTestCase
             $this->client->submitForm('Log in', ['_username' => $username, '_password' => $password]);
             $this->assertResponseRedirects();
             $this->assertStringNotContainsString('/login', $this->client->getResponse()->headers->get('Location'), $username);
-            $this->client->request('GET', '/logout');
+            $this->client->restart();
         }
 
         // The MD5 hash was replaced on login

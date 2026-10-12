@@ -8,7 +8,7 @@
         <ul class="list-group">
             {% for calendar in calendars %}
                 <li class="list-group-item">
-                    <a href="{{ path('default_view', {_locale: locale, slug: calendar.slug}) }}">{{ calendar.title }}</a>
+                    <a href="{{ path('calendar_entry_slash', {slug: calendar.slug}) }}">{{ calendar.title }}</a>
                 </li>
             {% endfor %}
         </ul>

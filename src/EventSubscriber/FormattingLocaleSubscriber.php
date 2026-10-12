@@ -23,16 +23,19 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Translation\LocaleSwitcher;
 
 /**
  * Sets PHP's default locale, which ICU date formatting and the first day of the week use,
- * to the locale picked by LocaleService::getFormattingLocale().
+ * to the locale picked by LocaleService::getFormattingLocale(). Pages whose URL doesn't name a
+ * language, such as the login page, get the one picked by LocaleService::pickLanguage().
  */
 class FormattingLocaleSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private LocaleService $localeService,
         private Security $security,
+        private LocaleSwitcher $localeSwitcher,
     ) {
     }
 
@@ -44,8 +47,15 @@ class FormattingLocaleSubscriber implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
+        $request = $event->getRequest();
         $user = $this->security->getUser();
-        $userLocale = $user instanceof User ? $user->getLocale() : null;
-        \Locale::setDefault($this->localeService->getFormattingLocale($event->getRequest(), $userLocale));
+        $user = $user instanceof User ? $user : null;
+        if ($event->isMainRequest() && !$request->attributes->has('_locale')) {
+            // Too late for LocaleListener, which runs before the firewall knows the user
+            $language = $this->localeService->pickLanguage($request, $user);
+            $request->setLocale($language);
+            $this->localeSwitcher->setLocale($language);
+        }
+        \Locale::setDefault($this->localeService->getFormattingLocale($request, $user?->getLocale()));
     }
 }

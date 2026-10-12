@@ -20,6 +20,7 @@ namespace App\Form;
 use App\Entity\Calendar;
 use App\Repository\CalendarRepository;
 use App\Service\CalendarSlugger;
+use App\Service\LocaleService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -37,6 +38,7 @@ class CalendarFormType extends AbstractType
     public function __construct(
         private CalendarSlugger $slugger,
         private CalendarRepository $calendarRepository,
+        private LocaleService $localeService,
     ) {
     }
 
@@ -71,6 +73,14 @@ class CalendarFormType extends AbstractType
             ->add('timezone', TimezoneType::class, [
                 'label' => new TranslatableMessage('default-timezone-label'),
                 'help' => new TranslatableMessage('default-timezone-help'),
+            ])
+            ->add('locale', ChoiceType::class, [
+                'label' => new TranslatableMessage('default-language-label'),
+                'help' => new TranslatableMessage('default-language-help'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('browser-language-option'),
+                'choices' => array_flip($this->localeService->getLocaleMappings()),
+                'choice_translation_domain' => false,
             ])
             ->add('save', SubmitType::class, ['label' => new TranslatableMessage('save-label')])
             ->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {

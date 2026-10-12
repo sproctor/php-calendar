@@ -17,6 +17,8 @@
 
 namespace App\Service;
 
+use App\Entity\Calendar;
+use App\Entity\User;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -25,6 +27,9 @@ use Symfony\Component\Intl\Locales;
 
 class LocaleService
 {
+    /** The language a visitor picked from the menu, remembered for pages whose URL doesn't name one */
+    public const COOKIE = 'phpc_locale';
+
     private ?array $mappings = null;
 
     public function __construct(
@@ -70,6 +75,31 @@ class LocaleService
         ksort($choices, SORT_NATURAL | SORT_FLAG_CASE);
 
         return $choices;
+    }
+
+    /**
+     * Picks the language for a page whose URL doesn't name one: the logged-in user's setting, then the
+     * language this browser picked from the menu (the COOKIE), then $calendar's default language, then
+     * the browser's Accept-Language preferences.
+     */
+    public function pickLanguage(Request $request, ?User $user, ?Calendar $calendar = null): string
+    {
+        $languages = array_keys($this->getLocaleMappings());
+        foreach ([$user?->getLocale(), $request->cookies->get(self::COOKIE), $calendar?->getLocale()] as $choice) {
+            if (is_string($choice) && $choice !== '') {
+                $language = \Locale::getPrimaryLanguage($choice);
+                if (in_array($language, $languages, true)) {
+                    return $language;
+                }
+            }
+        }
+
+        return $request->getPreferredLanguage($languages) ?? 'en';
+    }
+
+    public function isLanguage(string $language): bool
+    {
+        return array_key_exists($language, $this->getLocaleMappings());
     }
 
     /**
