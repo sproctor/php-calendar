@@ -4,9 +4,10 @@ doctrine:
         types:
             datetime_immutable: App\Doctrine\UtcDateTimeImmutableType
 
-        # IMPORTANT: You MUST configure your server version,
-        # either here or in the DATABASE_URL env var (see .env file)
-        #server_version: '16'
+        driver: pdo_mysql
+        # Used until the installer saves a DATABASE_URL, which names the real server version and overrides
+        # this. Without it, building the cache before installation would try to connect to ask the server.
+        server_version: '8.0.32'
 
         profiling_collect_backtrace: '%kernel.debug%'
     orm:

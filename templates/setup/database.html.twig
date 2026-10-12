@@ -1,0 +1,21 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ 'setup-label'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="phpc-narrow">
+        <h1 class="h3">{{ 'setup-label'|trans }}</h1>
+        <p>{{ 'database-step-help'|trans }}</p>
+        {% if requirements is not empty %}
+            <div class="alert alert-danger">
+                <p class="mb-2">{{ 'requirements-error'|trans }}</p>
+                <ul class="mb-0">
+                    {% for requirement, path in requirements %}
+                        <li>{{ requirement|trans({'%path%': path}) }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        {{ form(form) }}
+    </div>
+{% endblock %}

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Builds dist/php-calendar-VERSION.zip and .tar.gz from the committed files, with production
+# dependencies in vendor/, ready to upload to a web host without Composer or a command line.
+#
+#   bin/build-release 3.0.0
+#
+# Composer runs in the Docker Compose php service, which has the PHP extensions the app requires.
+set -euo pipefail
+
+version=${1:?usage: bin/build-release VERSION}
+root=$(cd "$(dirname "$0")/.." && pwd)
+name="php-calendar-$version"
+work=$(mktemp -d)
+trap 'rm -rf "$work"' EXIT
+
+if [ -n "$(git -C "$root" status --porcelain --untracked-files=no)" ]; then
+    echo "Commit or stash your changes first; the release is built from HEAD." >&2
+    exit 1
+fi
+
+git -C "$root" archive --format=tar --prefix="$name/" HEAD | tar -x -C "$work"
+mkdir -p "$work/$name/var"
+
+docker compose -f "$root/compose.yaml" run --rm --no-deps -T \
+    -v "$work/$name:/build" -w /build -e APP_ENV=prod \
+    php composer install --no-dev --classmap-authoritative --no-interaction --no-progress --no-scripts
+
+mkdir -p "$root/dist"
+rm -f "$root/dist/$name.zip" "$root/dist/$name.tar.gz"
+(cd "$work" && zip -qr "$root/dist/$name.zip" "$name" && tar -czf "$root/dist/$name.tar.gz" "$name")
+echo "Built dist/$name.zip and dist/$name.tar.gz"

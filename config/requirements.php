@@ -16,26 +16,37 @@
  */
 
 /*
- * Stops with an explanation when a PHP extension the app can't run without is missing, instead of
- * failing later with an error about a missing class. Included by public/index.php and bin/console
- * before anything else.
+ * Stops with an explanation when the app can't run (a missing PHP extension, or a var/ folder it can't
+ * write to), instead of failing later with an error about a missing class or the cache. Included by
+ * the front controllers and bin/console before anything else.
  */
+
+$phpcProblems = [];
 
 $phpcMissingExtensions = array_values(array_filter(
     ['intl', 'pdo_mysql'],
     fn(string $extension) => !extension_loaded($extension),
 ));
-
 if ($phpcMissingExtensions !== []) {
-    $phpcList = implode(', ', $phpcMissingExtensions);
-    $phpcHelp = "PHP-Calendar needs these PHP extensions, which aren't enabled: $phpcList.\n\n"
+    $phpcProblems[] = "PHP-Calendar needs these PHP extensions, which aren't enabled: " . implode(', ', $phpcMissingExtensions) . ".\n\n"
         . "On shared hosting, enable them in your control panel (in cPanel: \"Select PHP Version\" or\n"
         . "\"PHP Extensions\"), or ask your host. On Debian or Ubuntu, install the packages, e.g.\n"
         . 'sudo apt install ' . implode(' ', array_map(
             fn(string $extension) => 'php' . PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '-' . ($extension === 'pdo_mysql' ? 'mysql' : $extension),
             $phpcMissingExtensions,
-        )) . "\nand restart the web server or PHP-FPM. On Windows, enable them in php.ini.\n";
+        )) . "\nand restart the web server or PHP-FPM. On Windows, enable them in php.ini.";
+}
 
+// The cache and logs go in var/, which has to exist and be writable before anything else can run
+$phpcVarDir = dirname(__DIR__) . '/var';
+if (!(is_dir($phpcVarDir) ? is_writable($phpcVarDir) : is_writable(dirname($phpcVarDir)))) {
+    $phpcProblems[] = "The web server can't write to the folder $phpcVarDir, where PHP-Calendar keeps its cache and logs.\n\n"
+        . "Make it writable for the web server: in an FTP program or your host's file manager, set the\n"
+        . "folder's permissions to 755 (or 775 or 777 if that isn't enough), or ask your host.";
+}
+
+if ($phpcProblems !== []) {
+    $phpcHelp = implode("\n\n", $phpcProblems) . "\n";
     if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
         fwrite(STDERR, $phpcHelp);
         exit(1);

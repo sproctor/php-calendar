@@ -1,0 +1,19 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ 'import-finished-title'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="phpc-narrow">
+        <h1 class="h3">{{ 'import-finished-title'|trans }}</h1>
+        <ul>
+            {% for kind, count in counts %}
+                <li>{{ ('imported-' ~ kind)|trans({'%number%': count}) }}</li>
+            {% endfor %}
+        </ul>
+        {% for warning in warnings %}
+            <div class="alert alert-warning">{{ warning }}</div>
+        {% endfor %}
+        <p>{{ 'import-finished-help'|trans }}</p>
+        <a class="btn btn-primary" href="{{ path('app_login') }}">{{ 'log-in-button'|trans }}</a>
+    </div>
+{% endblock %}

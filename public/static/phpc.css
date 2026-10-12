@@ -64,3 +64,8 @@ col.wnumber {
 .phpc-day-item .markdown > :last-child {
   margin-bottom: 0;
 }
+
+/* Forms and messages that read better in a column than across a wide screen */
+.phpc-narrow {
+  max-width: 44rem;
+}

@@ -1,0 +1,32 @@
+# Used when the whole PHP-Calendar folder is uploaded into the folder your web server serves (or one
+# inside it). If you can, set up the web server to serve the public/ folder instead; then this file
+# and index.php next to it aren't used.
+#
+# Public files are served from public/, and every other request goes to index.php, so nothing else in
+# this folder (configuration, source code, cache, logs) can be downloaded.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # The path this folder is served under, as the BASE variable
+    RewriteCond %{REQUEST_URI}::$0 ^(/.+)/(.*)::\2$
+    RewriteRule .* - [E=BASE:%1]
+
+    # Pass the Authorization header, which Apache drops, to PHP
+    RewriteCond %{HTTP:Authorization} .+
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%0]
+
+    # Public files. public/.htaccess takes over from there.
+    RewriteRule ^(static|bundles)/(.*)$ public/$1/$2 [L]
+
+    # The front controller
+    RewriteRule ^index\.php$ - [L]
+
+    # Everything else, including any file outside public/
+    RewriteRule ^ %{ENV:BASE}/index.php [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    # Without mod_rewrite these files would be served as they are, so serve nothing
+    Require all denied
+</IfModule>

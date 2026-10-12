@@ -20,7 +20,9 @@ namespace App\EventSubscriber;
 use App\Entity\Calendar;
 use App\Entity\Event;
 use App\Entity\Occurrence;
+use App\Install\InstallState;
 use App\Repository\CalendarRepository;
+use Doctrine\DBAL\Exception as DBALException;
 use App\Security\Voter\CalendarVoter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -41,6 +43,7 @@ class LastCalendarSubscriber implements EventSubscriberInterface
         private RequestStack $requestStack,
         private CalendarRepository $calendarRepository,
         private AuthorizationCheckerInterface $authorizationChecker,
+        private InstallState $installState,
     ) {
     }
 
@@ -75,6 +78,19 @@ class LastCalendarSubscriber implements EventSubscriberInterface
      * see. Null when neither applies.
      */
     public function getLastCalendar(): ?Calendar
+    {
+        if (!$this->installState->isConfigured()) {
+            return null;
+        }
+        try {
+            return $this->findLastCalendar();
+        } catch (DBALException) {
+            // E.g. the installer's pages while the database is being set up
+            return null;
+        }
+    }
+
+    private function findLastCalendar(): ?Calendar
     {
         $request = $this->requestStack->getMainRequest();
         if ($request !== null && $request->hasPreviousSession()) {

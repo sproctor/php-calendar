@@ -9,8 +9,30 @@ easy sharing of events for a student group at Northeastern University in 2003.
 
 ## Usage
 
-Installation and upgrade instructions:
-https://github.com/sproctor/php-calendar/wiki/Installation-Guide
+### Installing
+
+You need PHP 8.3 or later with the `intl` and `pdo_mysql` extensions, and a MySQL or MariaDB
+database. On Apache, `mod_rewrite` and `.htaccess` files must be enabled.
+
+1. Download `php-calendar-<version>.zip` from the releases and unpack it.
+2. Upload the `php-calendar-<version>` folder to your web host. Either:
+   - point your web server at its `public/` folder (best, when your host lets you), or
+   - upload it into the folder your web server serves, e.g. as `public_html/calendar/`. The
+     `.htaccess` file in it keeps everything except `public/` from being downloaded. This only works
+     on Apache; on nginx, serve `public/`.
+3. Make sure the web server can write to the folder and to `var/` inside it.
+4. Open the calendar in your browser. The installer asks for the database, creates the tables, and
+   then either creates your first calendar and admin account or imports a PHP-Calendar 2.0
+   installation from the same database.
+
+The installer saves its settings in `.env.local.php`. To install again, delete that file.
+
+Finish the installer soon after uploading: until then, anyone who finds the site could complete it.
+
+### Upgrading
+
+Upload the new version over the old one, keeping `.env.local.php`, then open `/setup` as a site
+admin and update the database. Visitors see a maintenance page until you do.
 
 This program is licensed under the Apache License, Version 2.0 located at
 http://www.apache.org/licenses/LICENSE-2.0.html
@@ -26,8 +48,12 @@ Translations can be done at https://www.transifex.com/projects/p/php-calendar/
 
 ### Upgrading from 2.0
 
-3.0 uses a new database schema. Install 3.0 with a new, empty database, then copy everything from
-the 2.0 database (which isn't changed) with:
+3.0 uses a new database schema, in tables without a prefix, so it can share the 2.0 database (whose
+tables start with `phpc_` by default). When it does, the installer offers to import the 2.0 calendar.
+The 2.0 tables aren't changed. If your 2.0 tables have no prefix, give 3.0 its own database and use the
+command below.
+
+With a command line, you can instead import from any database:
 
     php bin/console doctrine:migrations:migrate
     php bin/console app:import-2.0 "mysql://user:password@host/old_database" --prefix=phpc_
@@ -48,6 +74,13 @@ iframe that grows to fit it.
 ## Development
 
 Source code can be found at https://github.com/sproctor/php-calendar
+
+### Building a release
+
+    bin/build-release 3.0.0
+
+builds `dist/php-calendar-3.0.0.zip` and `.tar.gz` from the committed files (leaving out what
+`.gitattributes` marks `export-ignore`), with production dependencies in `vendor/`.
 
 ### Local environment
 

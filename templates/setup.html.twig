@@ -3,16 +3,41 @@
 {% block title %}{{ 'setup-label'|trans }}{% endblock %}
 
 {% block body %}
-    <h3>{{ 'setup-label'|trans }}</h3>
-    <p>{{ 'setup-help'|trans }}</p>
-    {{ form_start(form) }}
-    <fieldset class="mb-3">
-        <legend>{{ 'calendar-label'|trans }}</legend>
-        {{ form_widget(form.calendar) }}
-    </fieldset>
-    <fieldset class="mb-3">
-        <legend>{{ 'admin-account-label'|trans }}</legend>
-        {{ form_widget(form.user) }}
-    </fieldset>
-    {{ form_end(form) }}
+    <div class="phpc-narrow">
+        <h1 class="h3">{{ 'setup-label'|trans }}</h1>
+        {% if import_prefixes is not empty %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h5">{{ 'import-2-0-title'|trans }}</h2>
+                    <p>{{ 'import-2-0-help'|trans }}</p>
+                    <form method="post" action="{{ path('setup_import') }}" class="d-flex flex-wrap gap-2 align-items-end">
+                        <input type="hidden" name="_token" value="{{ csrf_token('setup-import') }}">
+                        {% if import_prefixes|length > 1 %}
+                            <div>
+                                <label class="form-label" for="import-prefix">{{ 'table-prefix-label'|trans }}</label>
+                                <select class="form-select" id="import-prefix" name="prefix">
+                                    {% for prefix in import_prefixes %}<option>{{ prefix }}</option>{% endfor %}
+                                </select>
+                            </div>
+                        {% else %}
+                            <input type="hidden" name="prefix" value="{{ import_prefixes|first }}">
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary">{{ 'import-2-0-button'|trans }}</button>
+                    </form>
+                </div>
+            </div>
+            <h2 class="h5">{{ 'start-fresh-title'|trans }}</h2>
+        {% endif %}
+        <p>{{ 'setup-help'|trans }}</p>
+        {{ form_start(form) }}
+        <fieldset class="mb-3">
+            <legend class="h6">{{ 'calendar-label'|trans }}</legend>
+            {{ form_widget(form.calendar) }}
+        </fieldset>
+        <fieldset class="mb-3">
+            <legend class="h6">{{ 'admin-account-label'|trans }}</legend>
+            {{ form_widget(form.user) }}
+        </fieldset>
+        {{ form_end(form) }}
+    </div>
 {% endblock %}
