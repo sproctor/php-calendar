@@ -10,6 +10,9 @@
         {% if event.readonly %}<span title="{{ 'readonly-event-label'|trans }}">{{ ux_icon('bi:lock', {'aria-label': 'readonly-event-label'|trans}) }}</span>{% endif %}
     </h3>
 
+    {% if event.location %}
+        <p class="mb-2">{{ include('components/location.html.twig') }}</p>
+    {% endif %}
     <div class="phpc-event-header text-secondary mb-2">
         <div>
             {% if event.owner %}{{ "by-author"|trans({'%author%': event.owner.username}) }}{% endif %}

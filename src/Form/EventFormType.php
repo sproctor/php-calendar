@@ -66,6 +66,12 @@ class EventFormType extends AbstractType
                     'autofocus' => true,
                 ],
             ])
+            ->add('location', TextType::class, [
+                'label' => new TranslatableMessage('location-label'),
+                'help' => new TranslatableMessage('location-help'),
+                'required' => false,
+                'attr' => ['maxlength' => 255],
+            ])
             ->add('description', TextareaType::class, [
                 'label' => new TranslatableMessage('description-label'),
                 'required' => false,

@@ -136,6 +136,53 @@ class EventTest extends AppWebTestCase
         $this->assertNotNull($this->em()->find(Occurrence::class, $other));
     }
 
+    public function testLocation(): void
+    {
+        $calendar = $this->createCalendar();
+        $slug = $calendar->getSlug();
+        $this->login($this->createUser('admin', admin: true));
+
+        $this->client->request('GET', "/en/calendar/$slug/event/new/2026/10/15");
+        $this->submit('Save', [
+            'event_form[subject]' => 'Picnic',
+            'event_form[location]' => '  Riverside Park, shelter 3  ',
+            'event_form[times][time_type]' => Occurrence::TIME_NORMAL,
+            'event_form[times][start][date]' => '2026-10-15',
+            'event_form[times][start][time]' => '12:00',
+            'event_form[times][end][date]' => '2026-10-15',
+            'event_form[times][end][time]' => '14:00',
+        ]);
+        $this->assertResponseRedirects();
+        $event = $this->em()->getRepository(Event::class)->findOneBy(['subject' => 'Picnic']);
+        $this->assertSame('Riverside Park, shelter 3', $event->getLocation());
+
+        $this->client->request('GET', "/en/event/{$event->getEid()}");
+        $this->assertSelectorTextContains('main', 'Riverside Park, shelter 3');
+        $this->assertSelectorNotExists('main a[href*="Riverside"]');
+        $this->client->request('GET', "/en/calendar/$slug/day/2026/10/15");
+        $this->assertSelectorTextContains('.phpc-day-item', 'Riverside Park');
+        $this->client->request('GET', "/en/calendar/$slug/search", ['q' => 'riverside']);
+        $this->assertSelectorTextContains('main table', 'Picnic');
+    }
+
+    public function testOnlineLocationIsALink(): void
+    {
+        $calendar = $this->createCalendar();
+        $online = $this->createEvent($calendar, null, 'Online');
+        $online->setLocation('https://meet.example.com/abc');
+        $script = $this->createEvent($calendar, null, 'Script');
+        $script->setLocation('javascript:alert(1)');
+        $blank = $this->createEvent($calendar, null, 'Nowhere');
+        $blank->setLocation('   ');
+        $this->em()->flush();
+
+        $this->client->request('GET', "/en/event/{$online->getEid()}");
+        $this->assertSelectorExists('main a[href="https://meet.example.com/abc"][rel~="noopener"]');
+        $this->client->request('GET', "/en/event/{$script->getEid()}");
+        $this->assertSelectorNotExists('main a[href^="javascript"]');
+        $this->assertNull($blank->getLocation());
+    }
+
     public function testCustomFields(): void
     {
         $calendar = $this->createCalendar();

@@ -63,7 +63,7 @@ class OccurrenceRepository extends ServiceEntityRepository
     }
 
     /**
-     * Occurrences on $calendar whose event's subject or description contains every keyword and that overlap
+     * Occurrences on $calendar whose event's subject, description or location contains every keyword and that overlap
      * the optional date range, in the given order. Doesn't check permissions.
      *
      * @param string[] $keywords
@@ -83,7 +83,7 @@ class OccurrenceRepository extends ServiceEntityRepository
             ->where('e.calendar = :calendar')
             ->setParameter('calendar', $calendar);
         foreach (array_values($keywords) as $i => $keyword) {
-            $query->andWhere("e.subject LIKE :kw$i OR e.description LIKE :kw$i")
+            $query->andWhere("e.subject LIKE :kw$i OR e.description LIKE :kw$i OR e.location LIKE :kw$i")
                 ->setParameter("kw$i", '%' . addcslashes($keyword, '%_\\') . '%');
         }
         if ($from !== null) {

@@ -22,7 +22,9 @@
                             {% set time = occurrence.timeString %}
                             {% if time is null %}{{ 'all-day-label'|trans }}{% elseif occurrence.start < day_date %}…{% else %}{{ time|trans }}{% endif %}
                         </span>
-                        <span>{{ event.subject }}</span>
+                        <span class="min-w-0">{{ event.subject }}
+                            {% if event.location %}<span class="d-block small text-secondary">{{ include('components/location.html.twig', {link: false}) }}</span>{% endif %}
+                        </span>
                     </a>
                 {% endfor %}
             </div>

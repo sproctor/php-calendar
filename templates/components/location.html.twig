@@ -1,0 +1,9 @@
+{# An event's location, linked when it's a web address (unless `link` is false, e.g. inside another link). Expects `event`. #}
+{% if event.location %}
+    {{ ux_icon('bi:geo-alt', {'aria-label': 'location-label'|trans}) }}
+    {% if event.locationUrl and (link ?? true) %}
+        <a href="{{ event.locationUrl }}" rel="noopener nofollow" target="_blank">{{ event.location }}</a>
+    {% else %}
+        {{ event.location }}
+    {% endif %}
+{% endif %}

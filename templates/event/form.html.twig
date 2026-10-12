@@ -7,6 +7,7 @@
     <h3>{{ heading|trans }}</h3>
     {{ form_start(form) }}
     {{ form_row(form.subject) }}
+    {{ form_row(form.location) }}
     <div class="mb-3">
         {{ form_label(form.description) }}
         <a href="https://commonmark.org/help/" target="_blank" rel="noopener" title="{{ 'markdown-help-link'|trans }}">{{ ux_icon('bi:info-circle') }}</a>

@@ -49,7 +49,8 @@
             <tbody>
             {% for occurrence in results %}
                 <tr>
-                    <td><a href="{{ path('event_view', {eid: occurrence.event.eid}) }}">{{ occurrence.event.subject }}</a></td>
+                    <td><a href="{{ path('event_view', {eid: occurrence.event.eid}) }}">{{ occurrence.event.subject }}</a>
+                        {% if occurrence.event.location %}<div class="small text-secondary">{{ include('components/location.html.twig', {event: occurrence.event}) }}</div>{% endif %}</td>
                     <td>{{ occurrence.datetimeString|trans }}</td>
                     <td class="markdown">{{ occurrence.event.description|markdown_to_html }}</td>
                 </tr>

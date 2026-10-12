@@ -22,6 +22,7 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ORM\Table('events')]
@@ -69,6 +70,13 @@ class Event
 
     #[ORM\Column(type: 'text')]
     private string $description = '';
+
+    /**
+     * Where it happens: an address, a room, or a link for an online event
+     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $location = null;
 
     #[ORM\ManyToOne(targetEntity: Category::class)]
     #[ORM\JoinColumn(name: 'catid', referencedColumnName: 'catid', nullable: true, onDelete: 'SET NULL')]
@@ -135,6 +143,27 @@ class Event
         $this->description = $description ?? '';
 
         return $this;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?string $location): self
+    {
+        $location = $location === null ? '' : trim($location);
+        $this->location = $location === '' ? null : $location;
+
+        return $this;
+    }
+
+    /**
+     * The location, when it's a web link (e.g. to an online meeting)
+     */
+    public function getLocationUrl(): ?string
+    {
+        return $this->location !== null && preg_match('~^https?://\S+$~i', $this->location) ? $this->location : null;
     }
 
     /**
