@@ -4,6 +4,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Calendar;
 use App\Tests\AppWebTestCase;
+use Symfony\Component\BrowserKit\Cookie;
 
 class NavigationTest extends AppWebTestCase
 {
@@ -106,5 +107,42 @@ class NavigationTest extends AppWebTestCase
         $this->assertStringContainsString('Bring <strong>questions</strong>', $timed->eq(1)->filter('.markdown')->html());
         // Anonymous visitors can't edit, so there are no selection boxes
         $this->assertSelectorNotExists('input[name="eid[]"]');
+    }
+
+    public function testColorModeFollowsTheBrowserUntilChosen(): void
+    {
+        $this->createCalendar('Club');
+
+        // No choice yet: light, switched to dark before drawing if the browser prefers it
+        $crawler = $this->client->request('GET', '/en/calendar/club/');
+        $html = $crawler->filter('html');
+        $this->assertSame('auto', $html->attr('data-phpc-color-mode'));
+        $this->assertSame('light', $html->attr('data-bs-theme'));
+        $this->assertStringContainsString('prefers-color-scheme: dark', $crawler->filter('head script')->text());
+        $this->assertSelectorExists('.phpc-color-mode .dropdown-item.active[data-mode="auto"]');
+
+        // A chosen mode is drawn by the server, so no script is needed
+        $this->client->getCookieJar()->set(new Cookie('phpc_color_mode', 'dark'));
+        $crawler = $this->client->request('GET', '/en/calendar/club/');
+        $this->assertSame('dark', $crawler->filter('html')->attr('data-bs-theme'));
+        $this->assertSame('dark', $crawler->filter('html')->attr('data-phpc-color-mode'));
+        $this->assertCount(0, $crawler->filter('head script'));
+        $this->assertSelectorExists('.phpc-color-mode .dropdown-item.active[data-mode="dark"]');
+
+        // Anything else counts as no choice
+        $this->client->getCookieJar()->set(new Cookie('phpc_color_mode', 'purple'));
+        $crawler = $this->client->request('GET', '/en/calendar/club/');
+        $this->assertSame('auto', $crawler->filter('html')->attr('data-phpc-color-mode'));
+    }
+
+    public function testEmbeddedCalendarsStayLight(): void
+    {
+        $this->createCalendar('Club');
+        $this->client->getCookieJar()->set(new Cookie('phpc_color_mode', 'dark'));
+
+        $crawler = $this->client->request('GET', '/en/calendar/club/month/2026/10', ['embed' => '1']);
+        $this->assertSame('light', $crawler->filter('html')->attr('data-bs-theme'));
+        $this->assertCount(0, $crawler->filter('head script'));
+        $this->assertSelectorNotExists('.phpc-color-mode');
     }
 }

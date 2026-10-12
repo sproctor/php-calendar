@@ -1,3 +1,11 @@
+// In auto color mode, follow the browser's light or dark setting, also when it changes
+const darkScheme = matchMedia('(prefers-color-scheme: dark)');
+const applyColorMode = () => {
+    const mode = document.documentElement.dataset.phpcColorMode;
+    document.documentElement.dataset.bsTheme = mode === 'dark' || (mode === 'auto' && darkScheme.matches) ? 'dark' : 'light';
+};
+darkScheme.addEventListener('change', applyColorMode);
+
 addEventListener("DOMContentLoaded", () => {
 
     // Open the tab named in the URL hash, e.g. /admin#users
@@ -66,12 +74,28 @@ addEventListener("DOMContentLoaded", () => {
         update();
     });
 
+    // Light, dark or auto color mode, remembered in a cookie; base.html.twig applies it on the next page
+    document.querySelectorAll('.phpc-color-mode').forEach((menu) => {
+        menu.querySelectorAll('[data-mode]').forEach((item) => item.addEventListener('click', () => {
+            const mode = item.dataset.mode;
+            const secure = location.protocol === 'https:' ? '; Secure' : '';
+            const value = mode === 'auto' ? '; max-age=0' : `${mode}; max-age=31536000`;
+            document.cookie = `phpc_color_mode=${value}; path=${menu.dataset.cookiePath}; SameSite=Lax${secure}`;
+            document.documentElement.dataset.phpcColorMode = mode;
+            applyColorMode();
+            menu.querySelectorAll('.dropdown-item').forEach((other) => {
+                other.classList.toggle('active', other === item);
+                other.setAttribute('aria-pressed', other === item ? 'true' : 'false');
+            });
+        }));
+    });
+
     // Make days out of month gray
     document.querySelectorAll('.phpc-shadow a').forEach((a) => a.classList.add('text-secondary'));
 
     // Highlight today
     document.querySelectorAll('.phpc-today').forEach((day) => {
-        day.classList.add('bg-light');
+        day.classList.add('bg-body-tertiary');
         day.querySelectorAll('.phpc-day-number').forEach((n) => n.classList.add('bg-primary', 'rounded', 'text-white'));
     });
 });

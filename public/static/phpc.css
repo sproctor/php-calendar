@@ -117,3 +117,13 @@ col.wnumber {
 .phpc-icon {
   vertical-align: -.125em;
 }
+
+/* The color mode menu shows the icon of the chosen mode */
+.phpc-color-mode-icon {
+  display: none;
+}
+[data-phpc-color-mode="light"] .phpc-color-mode-icon[data-mode="light"],
+[data-phpc-color-mode="dark"] .phpc-color-mode-icon[data-mode="dark"],
+[data-phpc-color-mode="auto"] .phpc-color-mode-icon[data-mode="auto"] {
+  display: inline;
+}

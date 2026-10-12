@@ -65,7 +65,7 @@
                             {% endfor %}
                             <td>
                                 {% for role in calendar.roles|filter(r => r.hasUser(user)) %}
-                                    <span class="badge text-bg-light">{{ role.name }}</span>
+                                    <span class="badge bg-body-secondary text-body">{{ role.name }}</span>
                                 {% endfor %}
                             </td>
                         </tr>
@@ -95,7 +95,7 @@
                         <td>{{ role.name }}</td>
                         <td>
                             {% for permission, label in permission_labels|filter((l, p) => attribute(role, 'can' ~ p|capitalize)) %}
-                                <span class="badge text-bg-light">{{ label|trans }}</span>
+                                <span class="badge bg-body-secondary text-body">{{ label|trans }}</span>
                             {% endfor %}
                         </td>
                         <td>{{ role.users|map(u => u.username)|join(', ') }}</td>
