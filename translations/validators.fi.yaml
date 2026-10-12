@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "Käyttäjänimi on jo olemassa."
+wrong-password-error: "Syöttämäsi salasana ei täsmää vanhan salasanasi kanssa."
+password-too-short-error: "Salasanassa on oltava vähintään {{ limit }} merkkiä."
+passwords-do-not-match-error: "Salasanat eivät täsmää."
+missing-start-error: "Valitse alku."
+missing-end-error: "Valitse loppu."
+end-before-start-date-time-error: "Tapahtuma ei voi päättyä aikaisemmin kuin se alkaa."
+field-format-mismatch-error: "Tämä arvo ei ole oikeassa muodossa."
+invalid-field-format-error: "Tämä ei ole kelvollinen säännöllinen lauseke."
+slug-taken-error: "Toinen kalenteri käyttää jo tätä URL-nimeä."
+invalid-slug-error: "Käytä vain pieniä kirjaimia, numeroita ja yksittäisiä yhdysmerkkejä. Yhdysmerkki ei saa olla alussa eikä lopussa."

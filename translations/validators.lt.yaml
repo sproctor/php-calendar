@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "Paskyra su šiuo vartotojo vardu jau yra."
+wrong-password-error: "Tai ne jūsų dabartinis slaptažodis."
+password-too-short-error: "Mažiausias slaptažodžio ilgis – {{ limit }} simb."
+passwords-do-not-match-error: "Slaptažodžiai nesutampa."
+missing-start-error: "Pasirinkite pradžią."
+missing-end-error: "Pasirinkite pabaigą."
+end-before-start-date-time-error: "Pabaiga yra ankstesnė nei pradžia."
+field-format-mismatch-error: "Šios reikšmės formatas netinkamas."
+invalid-field-format-error: "Tai netinkama reguliarioji išraiška."
+slug-taken-error: "Kitas kalendorius jau naudoja šį pavadinimą adrese."
+invalid-slug-error: "Naudokite tik mažąsias raides, skaitmenis ir pavienius brūkšnelius, be brūkšnelio pradžioje ar pabaigoje."

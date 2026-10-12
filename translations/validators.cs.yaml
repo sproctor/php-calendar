@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "Uživatel již existuje."
+wrong-password-error: "Zadané heslo neodpovídá starému heslu."
+password-too-short-error: "Heslo musí mít alespoň {{ limit }} znaků."
+passwords-do-not-match-error: "Zadaná hesla se neshodují."
+missing-start-error: "Vyberte začátek."
+missing-end-error: "Vyberte konec."
+end-before-start-date-time-error: "Událost nemůže mít konec před svým začátkem."
+field-format-mismatch-error: "Tato hodnota nemá správný formát."
+invalid-field-format-error: "Toto není platný regulární výraz."
+slug-taken-error: "Tento název v URL už používá jiný kalendář."
+invalid-slug-error: "Používejte jen malá písmena, číslice a jednotlivé pomlčky, bez pomlčky na začátku nebo na konci."

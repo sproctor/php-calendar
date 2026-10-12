@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "Usuário já cadastrado."
+wrong-password-error: "A senha atual está incorreta."
+password-too-short-error: "A senha deve ter pelo menos {{ limit }} caracteres."
+passwords-do-not-match-error: "As senhas estão diferentes."
+missing-start-error: "Escolha um início."
+missing-end-error: "Escolha um fim."
+end-before-start-date-time-error: "O agendamento não pode terminar antes de começar."
+field-format-mismatch-error: "Este valor não está no formato correto."
+invalid-field-format-error: "Esta não é uma expressão regular válida."
+slug-taken-error: "Outro calendário já usa este nome na URL."
+invalid-slug-error: "Use apenas letras minúsculas, dígitos e hífens simples, sem hífen no início ou no fim."

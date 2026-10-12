@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "Ja hi ha un compte amb aquest nom d'usuari."
+wrong-password-error: "Aquesta no és la vostra contrasenya actual."
+password-too-short-error: "La contrasenya ha de tenir com a mínim {{ limit }} caràcters."
+passwords-do-not-match-error: "Les contrasenyes no coincideixen."
+missing-start-error: "Trieu un inici."
+missing-end-error: "Trieu un final."
+end-before-start-date-time-error: "El final és anterior a l'inici."
+field-format-mismatch-error: "Aquest valor no té el format correcte."
+invalid-field-format-error: "Aquesta no és una expressió regular vàlida."
+slug-taken-error: "Un altre calendari ja fa servir aquest nom a l'URL."
+invalid-slug-error: "Feu servir només lletres minúscules, xifres i guionets simples, sense guionet al principi ni al final."

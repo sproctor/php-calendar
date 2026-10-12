@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "ผู้ใช้งานมีอยู่แล้ว"
+wrong-password-error: "นี่ไม่ใช่รหัสผ่านปัจจุบันของคุณ"
+password-too-short-error: "รหัสผ่านต้องมีอย่างน้อย {{ limit }} ตัวอักษร"
+passwords-do-not-match-error: "รหัสผ่านไม่ตรงกัน"
+missing-start-error: "เลือกเวลาเริ่มต้น"
+missing-end-error: "เลือกเวลาสิ้นสุด"
+end-before-start-date-time-error: "ไม่สามารถเพิ่มเหตุการณ์ที่สิ้นสุดก่อนเริ่มต้น"
+field-format-mismatch-error: "ค่านี้มีรูปแบบไม่ถูกต้อง"
+invalid-field-format-error: "นี่ไม่ใช่นิพจน์ปกติที่ถูกต้อง"
+slug-taken-error: "มีปฏิทินอื่นใช้ชื่อใน URL นี้แล้ว"
+invalid-slug-error: "ใช้เฉพาะตัวพิมพ์เล็ก ตัวเลข และขีดกลางเดี่ยว โดยไม่มีขีดกลางที่ต้นหรือท้าย"

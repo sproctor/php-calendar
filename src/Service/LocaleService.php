@@ -22,7 +22,6 @@ use App\Entity\User;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Intl\Languages;
 use Symfony\Component\Intl\Locales;
 
 class LocaleService
@@ -37,6 +36,14 @@ class LocaleService
     ) {
     }
 
+    /** Languages written right to left */
+    private const RTL_LANGUAGES = ['ar', 'ckb', 'dv', 'fa', 'he', 'ps', 'sd', 'ug', 'ur', 'yi'];
+
+    public static function isRightToLeft(string $locale): bool
+    {
+        return in_array(\Locale::getPrimaryLanguage($locale), self::RTL_LANGUAGES, true);
+    }
+
     /**
      * The languages that have translations, as language code => name in that language
      */
@@ -49,7 +56,8 @@ class LocaleService
             foreach ($finder->name('*.yaml')->in($this->kernel->getProjectDir() . '/translations')->files() as $file) {
                 preg_match('/[^.]\.(.+)/', $file->getFilenameWithoutExtension(), $matches);
                 $code = $matches[1];
-                $this->mappings[$code] = Languages::getName($code, $code);
+                // Codes are languages (e.g. "de"), or a language and region where the variants differ (e.g. "zh_TW")
+                $this->mappings[$code] = Locales::getName($code, $code);
             }
             ksort($this->mappings);
         }
@@ -87,14 +95,34 @@ class LocaleService
         $languages = array_keys($this->getLocaleMappings());
         foreach ([$user?->getLocale(), $request->cookies->get(self::COOKIE), $calendar?->getLocale()] as $choice) {
             if (is_string($choice) && $choice !== '') {
-                $language = \Locale::getPrimaryLanguage($choice);
-                if (in_array($language, $languages, true)) {
-                    return $language;
+                $translation = $this->translationFor($choice);
+                if ($translation !== null) {
+                    return $translation;
                 }
             }
         }
 
         return $request->getPreferredLanguage($languages) ?? 'en';
+    }
+
+    /**
+     * The translation to use for $locale: the one for exactly that locale (e.g. "zh_TW"), else the one
+     * for its language (e.g. "fr" for "fr_CA"), else null
+     */
+    public function translationFor(string $locale): ?string
+    {
+        $locale = \Locale::canonicalize($locale);
+        $mappings = $this->getLocaleMappings();
+        if (isset($mappings[$locale])) {
+            return $locale;
+        }
+        $language = \Locale::getPrimaryLanguage($locale);
+        $region = \Locale::getRegion($locale);
+        if ($region !== '' && isset($mappings["{$language}_$region"])) {
+            return "{$language}_$region";
+        }
+
+        return isset($mappings[$language]) ? $language : null;
     }
 
     public function isLanguage(string $language): bool
@@ -112,6 +140,10 @@ class LocaleService
     public function getFormattingLocale(Request $request, ?string $userLocale): string
     {
         $locale = $request->getLocale();
+        // Translations for a region, e.g. "pt_BR", already say how to format
+        if (\Locale::getRegion($locale) !== '') {
+            return $locale;
+        }
         $language = \Locale::getPrimaryLanguage($locale);
 
         $candidates = $request->getLanguages();

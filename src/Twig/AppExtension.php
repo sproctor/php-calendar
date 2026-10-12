@@ -91,6 +91,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('is_today', $this->dates->isToday(...)),
             new TwigFunction('last_calendar', $this->lastCalendar->getLastCalendar(...)),
             new TwigFunction('current_timezone', 'date_default_timezone_get'),
+            new TwigFunction('is_rtl', LocaleService::isRightToLeft(...)),
             new TwigFunction(
                 'is_embedded',
                 fn(array $context) => $context['app']->getRequest() !== null

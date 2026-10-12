@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "A usuaria xa existe."
+wrong-password-error: "Ese non é o teu contrasinal actual."
+password-too-short-error: "O contrasinal debe ter polo menos {{ limit }} caracteres."
+passwords-do-not-match-error: "Os contrasinais non coinciden."
+missing-start-error: "Escolle un inicio."
+missing-end-error: "Escolle un final."
+end-before-start-date-time-error: "O final é anterior ao inicio."
+field-format-mismatch-error: "Este valor non ten o formato correcto."
+invalid-field-format-error: "Esta non é unha expresión regular válida."
+slug-taken-error: "Outro calendario xa usa este nome no URL."
+invalid-slug-error: "Usa só letras minúsculas, díxitos e guións simples, sen guión ao principio nin ao final."

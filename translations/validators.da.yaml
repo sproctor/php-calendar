@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "Der findes allerede en konto med dette brugernavn."
+wrong-password-error: "Kodeordet du indtastede svarede ikke til dit nuværende kodeord."
+password-too-short-error: "Kodeordet skal være mindst {{ limit }} tegn."
+passwords-do-not-match-error: "Dine kodeord var ikke ens."
+missing-start-error: "Vælg en start."
+missing-end-error: "Vælg en slutning."
+end-before-start-date-time-error: "En begivenhed kan ikke slutte før den begynder."
+field-format-mismatch-error: "Denne værdi har ikke det rigtige format."
+invalid-field-format-error: "Dette er ikke et gyldigt regulært udtryk."
+slug-taken-error: "En anden kalender bruger allerede dette URL-navn."
+invalid-slug-error: "Brug kun små bogstaver, cifre og enkelte bindestreger, uden bindestreg i starten eller slutningen."

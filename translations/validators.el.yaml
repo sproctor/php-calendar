@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "Ο χρήστης υπάρχει ήδη."
+wrong-password-error: "Ο κωδικός πρόσβασης που εισαγάγατε δεν αντιστοιχεί στον τρέχοντα κωδικό σας."
+password-too-short-error: "Ο κωδικός πρόσβασης πρέπει να έχει τουλάχιστον {{ limit }} χαρακτήρες."
+passwords-do-not-match-error: "Οι κωδικοί πρόσβασης δεν ταιριάζουν."
+missing-start-error: "Επιλέξτε αρχή."
+missing-end-error: "Επιλέξτε τέλος."
+end-before-start-date-time-error: "Ένα συμβάν δεν μπορεί να τελειώνει νωρίτερα από όταν αρχίζει."
+field-format-mismatch-error: "Αυτή η τιμή δεν έχει τη σωστή μορφή."
+invalid-field-format-error: "Αυτή δεν είναι έγκυρη κανονική έκφραση."
+slug-taken-error: "Ένα άλλο ημερολόγιο χρησιμοποιεί ήδη αυτό το όνομα URL."
+invalid-slug-error: "Χρησιμοποιήστε μόνο πεζά λατινικά γράμματα, ψηφία και μονές παύλες, χωρίς παύλα στην αρχή ή στο τέλος."

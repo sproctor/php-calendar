@@ -91,4 +91,17 @@ class LanguageTest extends AppWebTestCase
         $this->submit('Save', ['calendar_form[locale]' => 'fr']);
         $this->assertSame('fr', $this->fresh($calendar)->getLocale());
     }
+
+    public function testRegionalAndRightToLeftLanguages(): void
+    {
+        $this->createCalendar('Club');
+        $this->client->request('GET', '/', server: ['HTTP_ACCEPT_LANGUAGE' => 'zh-TW,zh;q=0.9']);
+        $this->assertResponseRedirects('/zh_TW/calendar/club/');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('html[lang="zh-TW"]:not([dir])');
+
+        $this->client->request('GET', '/he/calendar/club/');
+        $this->assertSelectorExists('html[lang="he"][dir="rtl"]');
+        $this->assertSelectorExists('link[href*="bootstrap.rtl.min.css"]');
+    }
 }

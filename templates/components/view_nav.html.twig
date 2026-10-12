@@ -1,6 +1,6 @@
 {# Previous / Today / Next buttons for the calendar views #}
 <div class="btn-group btn-group-sm" role="group" aria-label="{{ 'date-navigation-label'|trans }}">
-    <a class="btn btn-outline-secondary" href="{{ prev_url }}" aria-label="{{ prev_label|trans }}" title="{{ prev_label|trans }}">{{ ux_icon('bi:chevron-left') }}</a>
+    <a class="btn btn-outline-secondary" href="{{ prev_url }}" aria-label="{{ prev_label|trans }}" title="{{ prev_label|trans }}">{{ ux_icon('bi:chevron-left', {class: 'phpc-icon phpc-flip-rtl'}) }}</a>
     <a class="btn btn-outline-secondary" href="{{ today_url }}">{{ 'today-button'|trans }}</a>
-    <a class="btn btn-outline-secondary" href="{{ next_url }}" aria-label="{{ next_label|trans }}" title="{{ next_label|trans }}">{{ ux_icon('bi:chevron-right') }}</a>
+    <a class="btn btn-outline-secondary" href="{{ next_url }}" aria-label="{{ next_label|trans }}" title="{{ next_label|trans }}">{{ ux_icon('bi:chevron-right', {class: 'phpc-icon phpc-flip-rtl'}) }}</a>
 </div>

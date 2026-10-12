@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ app.request.locale }}">
+<html lang="{{ app.request.locale|replace({'_': '-'}) }}"{% if is_rtl(app.request.locale) %} dir="rtl"{% endif %}>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +8,7 @@
     <meta name="description" content="{% block description %}{{ calendar is defined ? 'calendar-meta-description'|trans({'%calendar%': calendar.title}) : 'meta-description'|trans }}{% endblock %}">
 
     <link rel="icon" href="{{ asset('static/office-calendar.png') }}">
-    <link rel="stylesheet" href="{{ asset('static/lib/bootstrap/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset(is_rtl(app.request.locale) ? 'static/lib/bootstrap/bootstrap.rtl.min.css' : 'static/lib/bootstrap/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('static/phpc.css') }}">
 </head>
 {% set embedded = is_embedded() %}

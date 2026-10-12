@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "此用户已经存在。"
+wrong-password-error: "您输入的密码和您的旧密码不匹配。"
+password-too-short-error: "密码至少需要 {{ limit }} 个字符。"
+passwords-do-not-match-error: "前后输入的密码不匹配。"
+missing-start-error: "请选择开始时间。"
+missing-end-error: "请选择结束时间。"
+end-before-start-date-time-error: "一个日程不能在开始前结束。"
+field-format-mismatch-error: "此值的格式不正确。"
+invalid-field-format-error: "这不是有效的正则表达式。"
+slug-taken-error: "另一个日程表已使用此 URL 名称。"
+invalid-slug-error: "只能使用小写字母、数字和单个连字符，开头和结尾不能是连字符。"

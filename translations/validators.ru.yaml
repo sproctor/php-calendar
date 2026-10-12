@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "Пользователь с таким именем уже существует."
+wrong-password-error: "Пароль не совпадает с текущим паролем."
+password-too-short-error: "Пароль должен содержать не менее {{ limit }} символов."
+passwords-do-not-match-error: "Пароли не совпадают."
+missing-start-error: "Выберите начало."
+missing-end-error: "Выберите окончание."
+end-before-start-date-time-error: "Событие не может заканчиваться раньше, чем началось."
+field-format-mismatch-error: "Значение имеет неверный формат."
+invalid-field-format-error: "Это недопустимое регулярное выражение."
+slug-taken-error: "Это имя в URL уже использует другой календарь."
+invalid-slug-error: "Используйте только строчные латинские буквы, цифры и одиночные дефисы, без дефиса в начале или в конце."

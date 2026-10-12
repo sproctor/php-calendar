@@ -7,6 +7,7 @@
 $root = dirname(__DIR__);
 $files = [
     'vendor/twbs/bootstrap/dist/css/bootstrap.min.css' => 'bootstrap/bootstrap.min.css',
+    'vendor/twbs/bootstrap/dist/css/bootstrap.rtl.min.css' => 'bootstrap/bootstrap.rtl.min.css',
     'vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js' => 'bootstrap/bootstrap.bundle.min.js',
 ];
 

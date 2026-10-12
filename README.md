@@ -44,7 +44,11 @@ FAQ: https://github.com/sproctor/php-calendar/wiki/Frequently-Asked-Questions
 
 See the demo live at http://www.php-calendar.org/php-calendar-dev/
 
-Translations can be done at https://www.transifex.com/projects/p/php-calendar/
+Translations are in `translations/`, one YAML file per language for each of `messages`, `validators`
+and `security`, with English (`*.en.yaml`) as the source. Besides English and French, they were
+ported from the 2.0 community translations and machine-translated where 3.0's wording is new, so
+corrections from native speakers are welcome. A language appears in the language menu once it has
+a `messages` file.
 
 ### Upgrading from 2.0
 

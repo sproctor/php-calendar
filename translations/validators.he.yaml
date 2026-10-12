@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "שם המשתמש קיים במערכת."
+wrong-password-error: "הסיסמה שהקלדת לא מתאימה לסיסמה הנוכחית שלך."
+password-too-short-error: "הסיסמה חייבת להכיל לפחות {{ limit }} תווים."
+passwords-do-not-match-error: "הסיסמאות שלך לא תואמות."
+missing-start-error: "בחר התחלה."
+missing-end-error: "בחר סיום."
+end-before-start-date-time-error: "אירוע לא יכול להסתיים לפני שהתחיל."
+field-format-mismatch-error: "לערך הזה אין את התבנית הנכונה."
+invalid-field-format-error: "זה לא ביטוי רגולרי תקין."
+slug-taken-error: "לוח שנה אחר כבר משתמש בשם הזה בכתובת."
+invalid-slug-error: "השתמש רק באותיות לטיניות קטנות, בספרות ובמקפים בודדים, ללא מקף בהתחלה או בסוף."

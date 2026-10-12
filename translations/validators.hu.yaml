@@ -1,0 +1,12 @@
+# Translated by machine, keeping the PHP-Calendar 2.0 community translation where it existed. Corrections welcome.
+username-taken-error: "A felhasználó már létezik."
+wrong-password-error: "Ez nem az Ön jelenlegi jelszava."
+password-too-short-error: "A jelszónak legalább {{ limit }} karakterből kell állnia."
+passwords-do-not-match-error: "A jelszavak nem egyeznek."
+missing-start-error: "Válassza ki a kezdetet."
+missing-end-error: "Válassza ki a véget."
+end-before-start-date-time-error: "A vége a kezdete előtt van."
+field-format-mismatch-error: "Ennek az értéknek nem megfelelő a formátuma."
+invalid-field-format-error: "Ez nem érvényes reguláris kifejezés."
+slug-taken-error: "Egy másik naptár már használja ezt az URL-nevet."
+invalid-slug-error: "Csak kisbetűket, számjegyeket és egyszeres kötőjeleket használjon, a kötőjel nem lehet az elején vagy a végén."

@@ -5,7 +5,7 @@
 {% set event = occurrence.event %}
 {% set multi_day = occurrence.start|date('Y-m-d') != occurrence.end|date('Y-m-d') %}
 <li class="list-group-item d-flex flex-wrap flex-sm-nowrap gap-2 gap-sm-3 phpc-day-item"
-    {% if event.color %}style="border-left: .35rem solid {{ event.color }};"{% endif %}>
+    {% if event.color %}style="border-inline-start: .35rem solid {{ event.color }};"{% endif %}>
     <div class="text-secondary text-nowrap phpc-day-time">
         {% if not occurrence.hasTime %}
             {{ occurrence.timeString ? occurrence.timeString|trans : 'all-day-label'|trans }}

@@ -33,4 +33,42 @@ class LocaleServiceTest extends TestCase
 
         $this->assertSame($expected, $service->getFormattingLocale($request, $userLocale));
     }
+
+    public static function translationCases(): iterable
+    {
+        yield 'exact language' => ['de', 'de'];
+        yield 'regional form of a language' => ['de_AT', 'de'];
+        yield 'exact region' => ['zh_TW', 'zh_TW'];
+        yield 'other region of a language' => ['zh_CN', 'zh'];
+        yield 'region-only translation' => ['pt_BR', 'pt_BR'];
+        yield 'hyphenated' => ['pt-BR', 'pt_BR'];
+        yield 'no translation' => ['xx', null];
+    }
+
+    #[DataProvider('translationCases')]
+    public function testTranslationFor(string $locale, ?string $expected): void
+    {
+        $kernel = $this->createStub(KernelInterface::class);
+        $kernel->method('getProjectDir')->willReturn(dirname(__DIR__, 2));
+        $service = new LocaleService($kernel);
+
+        $this->assertSame($expected, $service->translationFor($locale));
+    }
+
+    public function testRegionalTranslationFormatsForItsRegion(): void
+    {
+        $request = new Request();
+        $request->setLocale('zh_TW');
+        $request->headers->set('Accept-Language', 'zh-CN');
+        $service = new LocaleService($this->createStub(KernelInterface::class));
+
+        $this->assertSame('zh_TW', $service->getFormattingLocale($request, null));
+    }
+
+    public function testRightToLeft(): void
+    {
+        $this->assertTrue(LocaleService::isRightToLeft('he'));
+        $this->assertTrue(LocaleService::isRightToLeft('ar_EG'));
+        $this->assertFalse(LocaleService::isRightToLeft('de'));
+    }
 }

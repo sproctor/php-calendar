@@ -38,6 +38,16 @@ col.wnumber {
   border-radius: .25rem;
 }
 
+/* Right-to-left languages */
+[dir="rtl"] .phpc-add {
+  float: left;
+}
+
+/* Arrows point the way the page reads */
+[dir="rtl"] .phpc-flip-rtl {
+  transform: scaleX(-1);
+}
+
 /* On devices that can hover, the add buttons only show for the day under the pointer or with focus */
 @media (hover: hover) {
   .phpc-add {
