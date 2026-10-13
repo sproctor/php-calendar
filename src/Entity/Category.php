@@ -52,6 +52,12 @@ class Category
     #[ORM\JoinColumn(name: 'rid', referencedColumnName: 'rid', nullable: true, onDelete: 'SET NULL')]
     private ?CalendarRole $role = null;
 
+    /**
+     * Whether full-day events in this category shade their days, as for holidays and days off
+     */
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $marksDay = false;
+
     public function __construct(Calendar $calendar)
     {
         $this->calendar = $calendar;
@@ -118,6 +124,18 @@ class Category
     public function setRole(?CalendarRole $role): self
     {
         $this->role = $role;
+
+        return $this;
+    }
+
+    public function marksDay(): bool
+    {
+        return $this->marksDay;
+    }
+
+    public function setMarksDay(bool $marksDay): self
+    {
+        $this->marksDay = $marksDay;
 
         return $this;
     }

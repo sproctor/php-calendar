@@ -1,0 +1,4 @@
+{# Badges for the categories marking a day, like holidays and days off. Expects `day_marks`. #}
+{% for category in day_marks %}
+    <span class="badge fw-normal" style="color: {{ category.textColor }}; background: {{ category.color }};">{{ category.name }}</span>
+{% endfor %}

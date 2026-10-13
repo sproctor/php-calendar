@@ -124,7 +124,10 @@
                 <tbody>
                 {% for category in calendar.categories %}
                     <tr>
-                        <td><span class="badge" style="color: {{ category.textColor }}; background: {{ category.color }};">{{ category.name }}</span></td>
+                        <td>
+                            <span class="badge" style="color: {{ category.textColor }}; background: {{ category.color }};">{{ category.name }}</span>
+                            {% if category.marksDay %}<span class="text-secondary" title="{{ 'marks-day-label'|trans }}">{{ ux_icon('bi:calendar-day-fill', {'aria-label': 'marks-day-label'|trans}) }}</span>{% endif %}
+                        </td>
                         <td>{{ category.role ? category.role.name : 'everyone-label'|trans }}</td>
                         <td class="d-flex gap-2">
                             <a class="btn btn-sm btn-primary" href="{{ path('edit_category', {slug: calendar.slug, catid: category.catid}) }}">{{ "edit-link"|trans }}</a>

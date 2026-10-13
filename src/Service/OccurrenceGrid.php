@@ -17,6 +17,7 @@
 
 namespace App\Service;
 
+use App\Entity\Category;
 use App\Entity\EventSource;
 use App\Entity\Occurrence;
 use App\Entity\User;
@@ -88,5 +89,26 @@ class OccurrenceGrid
                 : $occurrences,
             $days,
         );
+    }
+
+    /**
+     * The categories marking a day (holidays, days off): those of its full-day occurrences that have
+     * Mark the day set, each once, in occurrence order
+     *
+     * @param array<Occurrence|null> $occurrences one day's occurrences
+     * @return Category[]
+     */
+    public static function dayMarks(array $occurrences): array
+    {
+        $marks = [];
+        foreach ($occurrences as $occurrence) {
+            $category = $occurrence?->getEvent()->getCategory();
+            if ($category !== null && $category->marksDay()
+                && $occurrence->getTimeType() === Occurrence::TIME_FULL_DAY) {
+                $marks[spl_object_id($category)] = $category;
+            }
+        }
+
+        return array_values($marks);
     }
 }

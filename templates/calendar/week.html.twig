@@ -5,11 +5,17 @@
     {% for day_of_week in 0..6 %}
         {% set cur_date = add_days(start_date, day_of_week) %}
         {% set in_month = in_same_month(cur_date, date) %}
-        <td class="phpc-date{% if not in_month %} phpc-shadow{% endif %}{% if is_today(cur_date) %} phpc-today{% endif %}">
+        {# Holidays and days off shade the day in their category's color #}
+        {% set day_marks = marks[cur_date|date_index] ?? [] %}
+        <td class="phpc-date{% if not in_month %} phpc-shadow{% endif %}{% if is_today(cur_date) %} phpc-today{% endif %}{% if day_marks is not empty %} phpc-marked{% endif %}"
+            {% if day_marks is not empty %}style="--phpc-mark: {{ (day_marks|first).color }};"{% endif %}>
             <div>
                 <a class="phpc-day-number"
                    href="{{ source_path(source, 'day', cur_date|dateparts) }}"
                 >{% if (not in_month and day_of_week == 0) or cur_date|day == 1 %}{{ cur_date|month_abbr }}{% endif %} {{ cur_date|day }}</a>
+                {% if day_marks is not empty %}
+                    <span class="visually-hidden">{{ day_marks|map(c => c.name)|join(', ') }}</span>
+                {% endif %}
                 {% if can_create %}
                     {% set create_label = 'create-event-on-date-label'|trans({'%date%': cur_date|day_heading}) %}
                     <a href="{{ source_path(source, 'create', cur_date|dateparts) }}" class="phpc-add"

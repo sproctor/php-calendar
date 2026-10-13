@@ -76,6 +76,7 @@ abstract class AbstractEventSourceController extends AbstractController
             'today_url' => $this->generateUrl(EventSourceRoutes::route($source, 'default'), EventSourceRoutes::parameters($source)),
             'weeks' => $weeks,
             'occurrences' => OccurrenceGrid::capped($days, $source->getEventsMax()),
+            'marks' => array_map(OccurrenceGrid::dayMarks(...), $days),
             // The phone layout lists every event of the month itself
             'agenda' => array_filter(
                 $days,
@@ -96,6 +97,7 @@ abstract class AbstractEventSourceController extends AbstractController
 
         $date = $this->dates->date($year, $month, $day);
         $next = $date->modify('+1 day');
+        $occurrences = $this->grid->findVisible($source, $date, $next, $this->currentUser());
 
         return $this->render('calendar/day_view.html.twig', $this->context($source) + [
             'date' => $date,
@@ -104,7 +106,8 @@ abstract class AbstractEventSourceController extends AbstractController
             'today_url' => $this->generateUrl(EventSourceRoutes::route($source, 'day'),
                 EventSourceRoutes::parameters($source, $this->dateParts(new DateTimeImmutable('today')))),
             'create_date' => $date,
-            'occurrences' => $this->grid->findVisible($source, $date, $next, $this->currentUser()),
+            'occurrences' => $occurrences,
+            'marks' => OccurrenceGrid::dayMarks($occurrences),
         ]);
     }
 

@@ -6,6 +6,7 @@
     {% set can_create = is_granted('CALENDAR_CREATE', source) %}
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <h1 class="h3 mb-0 me-2">{{ date|format_date('full')|ucfirst }}</h1>
+        {{ include('calendar/_day_marks.html.twig', {day_marks: marks}) }}
         {{ include('components/view_nav.html.twig', {
             prev_url: source_path(source, 'day', prev_date|dateparts),
             next_url: source_path(source, 'day', next_date|dateparts),

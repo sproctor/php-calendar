@@ -68,6 +68,11 @@ col.wnumber {
   white-space: nowrap;
 }
 
+/* A holiday or day off: a translucent layer of its category's color, over today's highlight too */
+.phpc-month-view td.phpc-marked {
+  --bs-table-bg-type: color-mix(in srgb, var(--phpc-mark) 30%, transparent);
+}
+
 .phpc-day-number {
   display: inline-block;
   padding: .125rem .375rem;

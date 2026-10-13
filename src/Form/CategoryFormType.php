@@ -21,6 +21,7 @@ use App\Entity\CalendarRole;
 use App\Entity\Category;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -35,6 +36,11 @@ class CategoryFormType extends AbstractType
         $builder
             ->add('name', TextType::class, ['label' => new TranslatableMessage('name-label')])
             ->add('color', ColorType::class, ['label' => new TranslatableMessage('color-label')])
+            ->add('marksDay', CheckboxType::class, [
+                'label' => new TranslatableMessage('marks-day-label'),
+                'help' => new TranslatableMessage('marks-day-help'),
+                'required' => false,
+            ])
             ->add('role', EntityType::class, [
                 'label' => new TranslatableMessage('visible-to-role-label'),
                 'help' => new TranslatableMessage('visible-to-role-help'),

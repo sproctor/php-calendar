@@ -85,11 +85,13 @@ class AdminTest extends AppWebTestCase
             'category_form[name]' => 'Workshops',
             'category_form[color]' => '#123456',
             'category_form[role]' => $role->getRid(),
+            'category_form[marksDay]' => true,
         ]);
         $this->assertResponseRedirects("/en/calendar/$slug/admin#categories");
         $category = $this->em()->getRepository(Category::class)->findOneBy(['name' => 'Workshops']);
         $this->assertSame('Volunteers', $category->getRole()->getName());
         $this->assertSame('#ffffff', $category->getTextColor());
+        $this->assertTrue($category->marksDay());
 
         $this->client->request('GET', "/en/calendar/$slug/admin/field/new");
         $this->submit('Save', ['field_definition_form[name]' => 'Room', 'field_definition_form[format]' => '(']);

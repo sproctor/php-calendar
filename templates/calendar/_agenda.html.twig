@@ -1,6 +1,6 @@
 {#
   The phone layout of the month view: each day that has events, with all of them.
-  `agenda` maps date keys to occurrences.
+  `agenda` maps date keys to occurrences, and `marks` to the categories marking those days.
 #}
 <div class="phpc-agenda">
     {% for day, day_occurrences in agenda %}
@@ -11,6 +11,7 @@
                     {{ day_date|day_heading|ucfirst }}
                 </a>
                 {% if is_today(day_date) %}<span class="badge text-bg-primary">{{ 'today-button'|trans }}</span>{% endif %}
+                {{ include('calendar/_day_marks.html.twig', {day_marks: marks[day] ?? []}) }}
             </h2>
             <div class="list-group">
                 {% for occurrence in day_occurrences %}
