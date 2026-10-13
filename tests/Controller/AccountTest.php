@@ -124,7 +124,10 @@ class AccountTest extends AppWebTestCase
 
         $this->client->request('GET', preg_replace('~/reset-password/\d+~', '/reset-password/' . ($user->getUid() + 1), $link));
         $this->assertResponseStatusCodeSame(410);
-        $this->client->request('GET', preg_replace('~([?&]h=)[0-9a-f]~', '${1}0', $link));
+        // A different first character of the password fingerprint
+        $tampered = preg_replace_callback('~([?&]h=)([0-9a-f])~', fn($m) => $m[1] . ($m[2] === '0' ? '1' : '0'), $link);
+        $this->assertNotSame($link, $tampered);
+        $this->client->request('GET', $tampered);
         $this->assertResponseStatusCodeSame(410);
     }
 
