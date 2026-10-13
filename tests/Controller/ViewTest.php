@@ -163,6 +163,32 @@ class ViewTest extends AppWebTestCase
         }
     }
 
+    /**
+     * The layout's calendar menu, shown after visiting a calendar, mustn't replace pages' own variables
+     */
+    public function testPagesKeepTheirOwnLists(): void
+    {
+        $this->createView('Everything', [[$this->club, '#2da44e'], [$this->holidays, '#cf222e']]);
+        $this->login($this->createUser('admin', admin: true));
+        $this->client->request('GET', '/en/calendar/club/');
+
+        $this->client->request('GET', '/en/admin/views');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('main table', 'Everything');
+        $this->assertSelectorTextNotContains('main table', 'All calendars');
+
+        // Only the calendars this person can add events to, not every one they can read
+        $editor = $this->createUser('pat');
+        $this->grant($this->club, $editor, 'read', 'create');
+        $this->grant($this->holidays, $editor, 'read', 'create');
+        $this->grant($this->board, $editor, 'read');
+        $this->login($editor);
+        $this->client->request('GET', '/en/calendar/club/');
+        $this->client->request('GET', '/en/view/all/event/new/2026/10/20');
+        $this->assertSelectorExists('a[href="/en/calendar/club/event/new/2026/10/20"]');
+        $this->assertSelectorNotExists('a[href="/en/calendar/board/event/new/2026/10/20"]');
+    }
+
     public function testDeletingAViewKeepsItsCalendars(): void
     {
         $view = $this->createView('Everything', [[$this->club, '#2da44e']]);
