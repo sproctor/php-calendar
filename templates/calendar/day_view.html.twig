@@ -8,11 +8,12 @@
         <h1 class="h3 mb-0 me-2">{{ date|format_date('full')|ucfirst }}</h1>
         {{ include('calendar/_day_marks.html.twig', {day_marks: marks}) }}
         {{ include('components/view_nav.html.twig', {
-            prev_url: source_path(source, 'day', prev_date|dateparts),
-            next_url: source_path(source, 'day', next_date|dateparts),
+            prev_url: source_path(source, 'day', prev_date|dateparts|merge(filter.query)),
+            next_url: source_path(source, 'day', next_date|dateparts|merge(filter.query)),
             prev_label: 'previous-day-label', next_label: 'next-day-label',
         }) }}
         <div class="ms-auto d-flex flex-wrap gap-2">
+            {{ include('components/event_filter.html.twig') }}
             {{ include('components/subscribe.html.twig') }}
             {% if can_create %}
                 <a class="btn btn-primary btn-sm" href="{{ source_path(source, 'create', date|dateparts) }}">
@@ -21,6 +22,7 @@
             {% endif %}
         </div>
     </div>
+    {{ include('components/event_filter_notice.html.twig') }}
     {% if occurrences|length > 0 %}
         {% set editable = occurrences|filter(o => is_granted('EVENT_EDIT', o.event))|map(o => o.oid) %}
         {% set all_day = occurrences|filter(o => not o.hasTime) %}

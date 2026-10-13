@@ -1,0 +1,13 @@
+{# Which events a filtered month or day page shows, with a way back to all of them. Expects `filter`. #}
+{% if filter.active %}
+    <p class="small d-flex flex-wrap align-items-center gap-2 mb-2 phpc-filter-notice">
+        <span class="text-secondary">{{ ux_icon('bi:funnel-fill') }} {{ 'filtered-events-label'|trans }}</span>
+        {% if filter.category %}
+            <span class="badge" style="color: {{ filter.category.textColor }}; background: {{ filter.category.color }};">{{ filter.category.name }}</span>
+        {% endif %}
+        {% if filter.author %}
+            <span>{{ 'by-author'|trans({'%author%': filter.author.username}) }}</span>
+        {% endif %}
+        <a href="{{ filter_path({}) }}">{{ 'show-all-events-link'|trans }}</a>
+    </p>
+{% endif %}

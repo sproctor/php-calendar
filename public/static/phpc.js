@@ -126,6 +126,13 @@ addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Leave unchosen filters out of the address, rather than sending ?category=&author=
+    document.querySelectorAll('.phpc-filter-menu').forEach((form) => {
+        form.addEventListener('submit', () => {
+            form.querySelectorAll('select').forEach((select) => select.disabled = select.value === '');
+        });
+    });
+
     // Make days out of month gray
     document.querySelectorAll('.phpc-shadow a').forEach((a) => a.classList.add('text-secondary'));
 

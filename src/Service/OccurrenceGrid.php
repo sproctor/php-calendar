@@ -38,15 +38,21 @@ class OccurrenceGrid
     }
 
     /**
-     * Occurrences overlapping [$from, $to) that $user can see
+     * Occurrences overlapping [$from, $to) that $user can see, and that $filter lets through
      *
      * @return Occurrence[]
      */
-    public function findVisible(EventSource $source, DateTimeImmutable $from, DateTimeImmutable $to, ?User $user): array
-    {
+    public function findVisible(
+        EventSource $source,
+        DateTimeImmutable $from,
+        DateTimeImmutable $to,
+        ?User $user,
+        ?EventFilter $filter = null,
+    ): array {
         return array_values(array_filter(
             $this->occurrenceRepository->findInRange($source, $from, $to),
-            fn(Occurrence $o) => $this->eventVoter->canView($o->getEvent(), $user),
+            fn(Occurrence $o) => $this->eventVoter->canView($o->getEvent(), $user)
+                && ($filter === null || $filter->matches($o->getEvent())),
         ));
     }
 
@@ -56,10 +62,15 @@ class OccurrenceGrid
      *
      * @return array<string, Occurrence[]>
      */
-    public function byDay(EventSource $source, DateTimeImmutable $from, DateTimeImmutable $to, ?User $user): array
-    {
+    public function byDay(
+        EventSource $source,
+        DateTimeImmutable $from,
+        DateTimeImmutable $to,
+        ?User $user,
+        ?EventFilter $filter = null,
+    ): array {
         $days = [];
-        foreach ($this->findVisible($source, $from, $to, $user) as $occurrence) {
+        foreach ($this->findVisible($source, $from, $to, $user, $filter) as $occurrence) {
             $day = max($occurrence->getStart(), $from)->setTime(0, 0);
             $end = min($occurrence->getEndBoundary(), $to);
             // Every day the occurrence touches, at least its first. A timed occurrence ending at

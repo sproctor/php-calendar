@@ -17,7 +17,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Calendar;
+use App\Entity\Category;
+use App\Entity\Event;
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -33,6 +37,38 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
+    }
+
+    /**
+     * The owners of published events on $calendars that aren't in a category outside $categories, by
+     * username: the authors a visitor can filter by, without naming those of events hidden from them
+     *
+     * @param Calendar[] $calendars
+     * @param Category[] $categories
+     * @return User[]
+     */
+    public function findEventAuthors(array $calendars, array $categories): array
+    {
+        if ($calendars === []) {
+            return [];
+        }
+        $events = $this->getEntityManager()->createQueryBuilder()
+            ->select('e.eid')
+            ->from(Event::class, 'e')
+            ->where('e.owner = u AND e.calendar IN (:calendars)')
+            ->andWhere('e.pubtime IS NULL OR e.pubtime <= :now')
+            ->andWhere($categories === [] ? 'e.category IS NULL' : 'e.category IS NULL OR e.category IN (:categories)');
+
+        $query = $this->createQueryBuilder('u')
+            ->where('EXISTS (' . $events->getDQL() . ')')
+            ->setParameter('calendars', $calendars)
+            ->setParameter('now', new DateTimeImmutable())
+            ->orderBy('u.username');
+        if ($categories !== []) {
+            $query->setParameter('categories', $categories);
+        }
+
+        return $query->getQuery()->getResult();
     }
 
     /**

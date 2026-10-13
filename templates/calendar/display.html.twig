@@ -5,6 +5,7 @@
     <h1 class="h3 mb-0 me-2">{% block heading %}{% endblock %}</h1>
     {% block navigation %}{% endblock %}
     <div class="ms-auto d-flex flex-wrap gap-2">
+        {{ include('components/event_filter.html.twig') }}
         {{ include('components/subscribe.html.twig') }}
         {% if is_granted('CALENDAR_CREATE', source) %}
             <a class="btn btn-primary btn-sm" href="{{ source_path(source, 'create', create_date|dateparts) }}">
@@ -13,6 +14,7 @@
         {% endif %}
     </div>
 </div>
+{{ include('components/event_filter_notice.html.twig') }}
 {# A grid on wider screens, a list of days on phones #}
 <div class="d-none d-md-block">
 <table class="phpc-month-view table table-bordered">
@@ -47,13 +49,22 @@
     </p>
 {% endif %}
 {% if legend is not empty %}
-    {# Which color is which category; in a view, under each calendar's name #}
+    {# Which color is which category; in a view, under each calendar's name. Each one filters by it. #}
     <div class="small mb-2" role="group" aria-label="{{ 'categories-label'|trans }}">
         {% for group in legend %}
             <span class="d-inline-flex flex-wrap align-items-center gap-1 me-3">
                 <span class="text-secondary">{{ source.view ? group.calendar.title : 'categories-label'|trans }}</span>
                 {% for category in group.categories %}
-                    <span class="badge" style="color: {{ category.textColor }}; background: {{ category.color }};">{{ category.name }}</span>
+                    {% set selected = filter.category and filter.category.catid == category.catid %}
+                    {% if selected %}
+                        <a class="badge text-decoration-none" href="{{ filter_path(filter.query|filter((v, k) => k != 'category')) }}"
+                           aria-current="true" title="{{ 'all-categories-label'|trans }}"
+                           style="color: {{ category.textColor }}; background: {{ category.color }};">{{ ux_icon('bi:check-lg') }} {{ category.name }}</a>
+                    {% else %}
+                        <a class="badge text-decoration-none" href="{{ filter_path(filter.query|merge({category: category.catid})) }}"
+                           title="{{ 'show-only-category-label'|trans({'%category%': category.name}) }}"
+                           style="color: {{ category.textColor }}; background: {{ category.color }};">{{ category.name }}</a>
+                    {% endif %}
                 {% endfor %}
             </span>
         {% endfor %}

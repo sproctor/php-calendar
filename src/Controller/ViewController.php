@@ -34,25 +34,25 @@ use Symfony\Component\Routing\Attribute\Route;
 class ViewController extends AbstractEventSourceController
 {
     #[Route('/', name: 'view_default', methods: ['GET'])]
-    public function defaultRoute(View $view): Response
+    public function defaultRoute(View $view, Request $request): Response
     {
-        return $this->monthPage($view, new DateTimeImmutable('first day of this month midnight'));
+        return $this->monthPage($view, new DateTimeImmutable('first day of this month midnight'), $request);
     }
 
     #[Route('/month/{year}/{month}', name: 'view_month', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}'], methods: ['GET'])]
-    public function monthRoute(View $view, int $year, int $month): Response
+    public function monthRoute(View $view, int $year, int $month, Request $request): Response
     {
         if ($month < 1 || $month > 12) {
             throw $this->createNotFoundException();
         }
 
-        return $this->monthPage($view, $this->dates->date($year, $month, 1));
+        return $this->monthPage($view, $this->dates->date($year, $month, 1), $request);
     }
 
     #[Route('/day/{year}/{month}/{day}', name: 'view_day', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}', 'day' => '\d{1,2}'], methods: ['GET'])]
-    public function dayRoute(View $view, int $year, int $month, int $day): Response
+    public function dayRoute(View $view, int $year, int $month, int $day, Request $request): Response
     {
-        return $this->dayPage($view, $year, $month, $day);
+        return $this->dayPage($view, $year, $month, $day, $request);
     }
 
     #[Route('/search', name: 'view_search', methods: ['GET'])]

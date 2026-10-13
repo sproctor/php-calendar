@@ -1,0 +1,47 @@
+{#
+  The Filter menu of the month and day pages, to show only one category's events, one author's, or both.
+  Expects `filter`, `legend` (the categories, by calendar) and `authors`.
+#}
+{% if legend is not empty or authors|length > 1 %}
+    <div class="dropdown">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle{% if filter.active %} active{% endif %}" type="button"
+                data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+            {{ ux_icon('bi:funnel') }} {{ 'filter-button'|trans }}
+        </button>
+        <form class="dropdown-menu dropdown-menu-end p-3 phpc-filter-menu" method="get" action="{{ filter_path({}) }}">
+            {% if is_embedded() %}<input type="hidden" name="embed" value="1">{% endif %}
+            {% if legend is not empty %}
+                <div class="mb-3">
+                    <label class="form-label" for="filter-category">{{ 'category-label'|trans }}</label>
+                    <select class="form-select form-select-sm" id="filter-category" name="category">
+                        <option value="">{{ 'all-categories-label'|trans }}</option>
+                        {% for group in legend %}
+                            {% if source.view %}<optgroup label="{{ group.calendar.title }}">{% endif %}
+                            {% for category in group.categories %}
+                                <option value="{{ category.catid }}"{% if filter.category and filter.category.catid == category.catid %} selected{% endif %}>{{ category.name }}</option>
+                            {% endfor %}
+                            {% if source.view %}</optgroup>{% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+            {% if authors|length > 1 %}
+                <div class="mb-3">
+                    <label class="form-label" for="filter-author">{{ 'author-label'|trans }}</label>
+                    <select class="form-select form-select-sm" id="filter-author" name="author">
+                        <option value="">{{ 'all-authors-label'|trans }}</option>
+                        {% for author in authors %}
+                            <option value="{{ author.uid }}"{% if filter.author and filter.author.uid == author.uid %} selected{% endif %}>{{ author.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-primary btn-sm" type="submit">{{ 'apply-button'|trans }}</button>
+                {% if filter.active %}
+                    <a class="btn btn-outline-secondary btn-sm" href="{{ filter_path({}) }}">{{ 'show-all-events-link'|trans }}</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+{% endif %}

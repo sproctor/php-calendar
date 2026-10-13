@@ -146,6 +146,18 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                 },
                 ['needs_context' => true]
             ),
+            // The current page with $query as its query string, e.g. to change a month or day page's filter
+            new TwigFunction(
+                'filter_path',
+                function (array $context, array $query) {
+                    /* @var Request $request */
+                    $request = $context['app']->getRequest();
+
+                    return $this->router->generate($request->attributes->get('_route'),
+                        $query + $request->attributes->get('_route_params', []));
+                },
+                ['needs_context' => true]
+            ),
             // A link to one of a calendar's or view's pages (see EventSourceRoutes)
             new TwigFunction('source_path', fn(EventSource $source, string $page, array $parameters = []) => $this->router->generate(
                 EventSourceRoutes::route($source, $page), EventSourceRoutes::parameters($source, $parameters))),

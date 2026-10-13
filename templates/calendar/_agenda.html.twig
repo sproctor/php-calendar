@@ -7,7 +7,7 @@
         {% set day_date = day|date_from_key %}
         <section class="mb-3" aria-labelledby="agenda-{{ day }}">
             <h2 class="h6 mb-1 d-flex align-items-baseline gap-2{% if is_today(day_date) %} text-primary{% endif %}" id="agenda-{{ day }}">
-                <a class="text-reset text-decoration-none" href="{{ source_path(source, 'day', day_date|dateparts) }}">
+                <a class="text-reset text-decoration-none" href="{{ source_path(source, 'day', day_date|dateparts|merge(filter.query)) }}">
                     {{ day_date|day_heading|ucfirst }}
                 </a>
                 {% if is_today(day_date) %}<span class="badge text-bg-primary">{{ 'today-button'|trans }}</span>{% endif %}

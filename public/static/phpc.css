@@ -141,3 +141,7 @@ col.wnumber {
   border-radius: 50%;
   vertical-align: -.05em;
 }
+
+.phpc-filter-menu {
+  min-width: 16rem;
+}

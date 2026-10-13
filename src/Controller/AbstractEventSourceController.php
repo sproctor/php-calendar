@@ -21,9 +21,11 @@ use App\Entity\Category;
 use App\Entity\EventSource;
 use App\Entity\User;
 use App\Repository\OccurrenceRepository;
+use App\Repository\UserRepository;
 use App\Security\Voter\CalendarVoter;
 use App\Security\Voter\EventVoter;
 use App\Service\CalendarDates;
+use App\Service\EventFilter;
 use App\Service\EventSourceRoutes;
 use App\Service\OccurrenceGrid;
 use DateTimeImmutable;
@@ -41,23 +43,27 @@ abstract class AbstractEventSourceController extends AbstractController
         protected OccurrenceGrid $grid,
         protected CalendarDates $dates,
         protected EventVoter $eventVoter,
+        protected UserRepository $userRepository,
     ) {
     }
 
-    protected function monthPage(EventSource $source, DateTimeImmutable $date): Response
+    protected function monthPage(EventSource $source, DateTimeImmutable $date, Request $request): Response
     {
         $this->denyAccessUnlessGranted(CalendarVoter::READ, $source);
+        $legend = $this->legend($source);
+        $authors = $this->authors($source, $legend);
+        $filter = EventFilter::fromRequest($request, self::legendCategories($legend), $authors);
 
         $year = intval($date->format('Y'));
         $month = intval($date->format('n'));
 
         $months = [];
         for ($i = 1; $i <= 12; $i++) {
-            $months[$this->dates->monthName($this->dates->date($year, $i, 1))] = $this->monthUrl($source, $year, $i);
+            $months[$this->dates->monthName($this->dates->date($year, $i, 1))] = $this->monthUrl($source, $year, $i, $filter);
         }
         $years = [];
         for ($i = $year - 5; $i <= $year + 5; $i++) {
-            $years[$i] = $this->monthUrl($source, $i, $month);
+            $years[$i] = $this->monthUrl($source, $i, $month, $filter);
         }
         $previous = $date->modify('-1 month');
         $next = $date->modify('+1 month');
@@ -65,7 +71,7 @@ abstract class AbstractEventSourceController extends AbstractController
         $weeks = $this->dates->weeksInMonth($year, $month);
         $from_date = $this->dates->monthGridStart($year, $month);
         $to_date = $from_date->modify('+' . ($weeks * 7) . ' days');
-        $days = $this->grid->byDay($source, $from_date, $to_date, $this->currentUser());
+        $days = $this->grid->byDay($source, $from_date, $to_date, $this->currentUser(), $filter);
         $monthStart = $date->modify('first day of this month');
         $monthEnd = $monthStart->modify('+1 month');
 
@@ -73,9 +79,10 @@ abstract class AbstractEventSourceController extends AbstractController
             'date' => $date,
             'months' => $months,
             'years' => $years,
-            'prev_month_url' => $this->monthUrl($source, (int) $previous->format('Y'), (int) $previous->format('n')),
-            'next_month_url' => $this->monthUrl($source, (int) $next->format('Y'), (int) $next->format('n')),
-            'today_url' => $this->generateUrl(EventSourceRoutes::route($source, 'default'), EventSourceRoutes::parameters($source)),
+            'prev_month_url' => $this->monthUrl($source, (int) $previous->format('Y'), (int) $previous->format('n'), $filter),
+            'next_month_url' => $this->monthUrl($source, (int) $next->format('Y'), (int) $next->format('n'), $filter),
+            'today_url' => $this->generateUrl(EventSourceRoutes::route($source, 'default'),
+                EventSourceRoutes::parameters($source, $filter->query())),
             'weeks' => $weeks,
             'occurrences' => OccurrenceGrid::capped($days, $source->getEventsMax()),
             'marks' => array_map(OccurrenceGrid::dayMarks(...), $days),
@@ -87,30 +94,38 @@ abstract class AbstractEventSourceController extends AbstractController
             ),
             'start_date' => $from_date,
             'create_date' => $this->createDate($monthStart, $monthEnd),
-            'legend' => $this->legend($source),
+            'legend' => $legend,
+            'authors' => $authors,
+            'filter' => $filter,
         ]);
     }
 
-    protected function dayPage(EventSource $source, int $year, int $month, int $day): Response
+    protected function dayPage(EventSource $source, int $year, int $month, int $day, Request $request): Response
     {
         $this->denyAccessUnlessGranted(CalendarVoter::READ, $source);
         if (!checkdate($month, $day, $year)) {
             throw $this->createNotFoundException();
         }
+        $legend = $this->legend($source);
+        $authors = $this->authors($source, $legend);
+        $filter = EventFilter::fromRequest($request, self::legendCategories($legend), $authors);
 
         $date = $this->dates->date($year, $month, $day);
         $next = $date->modify('+1 day');
-        $occurrences = $this->grid->findVisible($source, $date, $next, $this->currentUser());
+        $occurrences = $this->grid->findVisible($source, $date, $next, $this->currentUser(), $filter);
 
         return $this->render('calendar/day_view.html.twig', $this->context($source) + [
             'date' => $date,
             'prev_date' => $date->modify('-1 day'),
             'next_date' => $next,
             'today_url' => $this->generateUrl(EventSourceRoutes::route($source, 'day'),
-                EventSourceRoutes::parameters($source, $this->dateParts(new DateTimeImmutable('today')))),
+                EventSourceRoutes::parameters($source, $this->dateParts(new DateTimeImmutable('today')) + $filter->query())),
             'create_date' => $date,
             'occurrences' => $occurrences,
             'marks' => OccurrenceGrid::dayMarks($occurrences),
+            'legend' => $legend,
+            'authors' => $authors,
+            'filter' => $filter,
         ]);
     }
 
@@ -167,6 +182,29 @@ abstract class AbstractEventSourceController extends AbstractController
     }
 
     /**
+     * @param list<array{calendar: Calendar, categories: Category[]}> $legend
+     * @return Category[]
+     */
+    private static function legendCategories(array $legend): array
+    {
+        return array_merge(...array_column($legend, 'categories'));
+    }
+
+    /**
+     * Who the visitor can filter events by: the authors of events they could see on the source's calendars
+     *
+     * @param list<array{calendar: Calendar, categories: Category[]}> $legend the categories they can see
+     * @return User[]
+     */
+    private function authors(EventSource $source, array $legend): array
+    {
+        return $this->userRepository->findEventAuthors(
+            array_values(array_filter($source->getCalendars(), fn(Calendar $c) => $this->isGranted(CalendarVoter::READ, $c))),
+            self::legendCategories($legend),
+        );
+    }
+
+    /**
      * What every page about $source passes its template: `source`, and for a calendar `calendar` too,
      * which the layout uses for the calendar's menus
      */
@@ -190,10 +228,10 @@ abstract class AbstractEventSourceController extends AbstractController
         return $user instanceof User ? $user : null;
     }
 
-    private function monthUrl(EventSource $source, int $year, int $month): string
+    private function monthUrl(EventSource $source, int $year, int $month, EventFilter $filter): string
     {
         return $this->generateUrl(EventSourceRoutes::route($source, 'month'),
-            EventSourceRoutes::parameters($source, ['year' => $year, 'month' => $month]));
+            EventSourceRoutes::parameters($source, ['year' => $year, 'month' => $month] + $filter->query()));
     }
 
     /**

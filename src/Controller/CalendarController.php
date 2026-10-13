@@ -32,25 +32,25 @@ use Symfony\Component\Routing\Attribute\Route;
 class CalendarController extends AbstractEventSourceController
 {
     #[Route('/', name: 'default_view', methods: ['GET'])]
-    public function defaultRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar): Response
+    public function defaultRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, Request $request): Response
     {
-        return $this->monthPage($calendar, new DateTimeImmutable('first day of this month midnight'));
+        return $this->monthPage($calendar, new DateTimeImmutable('first day of this month midnight'), $request);
     }
 
     #[Route('/month/{year}/{month}', name: 'month_view', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}'], methods: ['GET'])]
-    public function monthRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, int $year, int $month): Response
+    public function monthRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, int $year, int $month, Request $request): Response
     {
         if ($month < 1 || $month > 12) {
             throw $this->createNotFoundException();
         }
 
-        return $this->monthPage($calendar, $this->dates->date($year, $month, 1));
+        return $this->monthPage($calendar, $this->dates->date($year, $month, 1), $request);
     }
 
     #[Route('/day/{year}/{month}/{day}', name: 'day_view', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}', 'day' => '\d{1,2}'], methods: ['GET'])]
-    public function dayRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, int $year, int $month, int $day): Response
+    public function dayRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, int $year, int $month, int $day, Request $request): Response
     {
-        return $this->dayPage($calendar, $year, $month, $day);
+        return $this->dayPage($calendar, $year, $month, $day, $request);
     }
 
     #[Route('/search', name: 'search', methods: ['GET'])]

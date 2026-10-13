@@ -11,7 +11,7 @@
             {% if day_marks is not empty %}style="--phpc-mark: {{ (day_marks|first).color }};"{% endif %}>
             <div>
                 <a class="phpc-day-number"
-                   href="{{ source_path(source, 'day', cur_date|dateparts) }}"
+                   href="{{ source_path(source, 'day', cur_date|dateparts|merge(filter.query)) }}"
                 >{% if (not in_month and day_of_week == 0) or cur_date|day == 1 %}{{ cur_date|month_abbr }}{% endif %} {{ cur_date|day }}</a>
                 {% if day_marks is not empty %}
                     <span class="visually-hidden">{{ day_marks|map(c => c.name)|join(', ') }}</span>
@@ -27,7 +27,7 @@
                 <div class="occurrence-list list-group">
                     {% for occurrence in days_occurrences %}
                         {% if occurrence is null %}
-                            <a href="{{ source_path(source, 'day', cur_date|dateparts) }}"
+                            <a href="{{ source_path(source, 'day', cur_date|dateparts|merge(filter.query)) }}"
                                class="list-group-item">{{ "view-additional-events-link"|trans }}</a>
                         {% else %}
                             {% set event = occurrence.event %}
