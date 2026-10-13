@@ -1,20 +1,20 @@
 {% extends "base.html.twig" %}
 
-{% block title %}{{ date|format_date('long') }} – {{ calendar.title }}{% endblock %}
+{% block title %}{{ date|format_date('long') }} – {{ source.title }}{% endblock %}
 
 {% block body %}
-    {% set can_create = is_granted('CALENDAR_CREATE', calendar) %}
+    {% set can_create = is_granted('CALENDAR_CREATE', source) %}
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <h1 class="h3 mb-0 me-2">{{ date|format_date('full')|ucfirst }}</h1>
         {{ include('components/view_nav.html.twig', {
-            prev_url: path('day_view', {slug: calendar.slug}|merge(prev_date|dateparts)),
-            next_url: path('day_view', {slug: calendar.slug}|merge(next_date|dateparts)),
+            prev_url: source_path(source, 'day', prev_date|dateparts),
+            next_url: source_path(source, 'day', next_date|dateparts),
             prev_label: 'previous-day-label', next_label: 'next-day-label',
         }) }}
         <div class="ms-auto d-flex flex-wrap gap-2">
             {{ include('components/subscribe.html.twig') }}
             {% if can_create %}
-                <a class="btn btn-primary btn-sm" href="{{ path('create_event', {slug: calendar.slug}|merge(date|dateparts)) }}">
+                <a class="btn btn-primary btn-sm" href="{{ source_path(source, 'create', date|dateparts) }}">
                     {{ ux_icon('bi:plus') }} {{ 'create-event-label'|trans }}
                 </a>
             {% endif %}
@@ -24,20 +24,22 @@
         {% set editable = occurrences|filter(o => is_granted('EVENT_EDIT', o.event))|map(o => o.oid) %}
         {% set all_day = occurrences|filter(o => not o.hasTime) %}
         {% set timed = occurrences|filter(o => o.hasTime) %}
-        <form id="delete-events-form" data-phpc-selection="delete-events-button" action="{{ path('delete_events', {slug: calendar.slug}) }}" method="post">
+        {# Deleting several events at once works within one calendar, so a view of several only has Edit #}
+        {% set bulk_delete = not source.view and editable is not empty %}
+        <form id="delete-events-form" data-phpc-selection="delete-events-button" action="{{ source.view ? '' : path('delete_events', {slug: source.slug}) }}" method="post">
             <input type="hidden" name="_token" value="{{ csrf_token('delete-events') }}">
             {% for section in [{heading: 'all-day-label', items: all_day}, {heading: 'scheduled-label', items: timed}] %}
                 {% if section.items is not empty %}
                     <h2 class="h6 text-uppercase text-secondary mt-3">{{ section.heading|trans }}</h2>
                     <ul class="list-group mb-3 phpc-day-list">
                         {% for occurrence in section.items %}
-                            {{ include('calendar/_day_item.html.twig', {can_edit: occurrence.oid in editable}) }}
+                            {{ include('calendar/_day_item.html.twig', {can_edit: occurrence.oid in editable, selectable: bulk_delete}) }}
                         {% endfor %}
                     </ul>
                 {% endif %}
             {% endfor %}
         </form>
-        {% if editable is not empty %}
+        {% if bulk_delete %}
             {{ include('components/confirmation.html.twig', {
                 id: 'deleteEventsModal',
                 button: 'delete-events-button'|trans,

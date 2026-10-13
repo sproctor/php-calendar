@@ -119,15 +119,4 @@ final class Version20261012220000 extends PrefixedMigration
             $this->table($table), $this->generatedName('FK', $table, $column), $column,
             $this->table($target), $targetColumn, $onDelete));
     }
-
-    /**
-     * The name Doctrine gives an unnamed index or key: the prefix and the CRC32 of the table and column
-     * names (Doctrine\DBAL\Schema\AbstractAsset::_generateIdentifierName())
-     */
-    private function generatedName(string $prefix, string $table, string $column): string
-    {
-        $hash = implode('', array_map(fn(string $name) => dechex(crc32($name)), [$this->table($table), $column]));
-
-        return strtoupper(substr($prefix . '_' . $hash, 0, 30));
-    }
 }

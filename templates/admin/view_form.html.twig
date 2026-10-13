@@ -1,0 +1,33 @@
+{% extends "base.html.twig" %}
+
+{% set heading = view.vid ? 'edit-view-title' : 'create-view-button' %}
+{% block title %}{{ heading|trans }}{% endblock %}
+
+{% block body %}
+    {{ include('admin/_tabs.html.twig', {active: 'views'}) }}
+    <div class="phpc-narrow">
+        <h3>{{ heading|trans }}</h3>
+        {{ form_start(form) }}
+        {% for error in form.vars.errors %}
+            <div class="alert alert-danger" role="alert">{{ error.message }}</div>
+        {% endfor %}
+        {{ form_row(form.title) }}
+        {{ form_row(form.slug) }}
+        <fieldset class="mb-3">
+            <legend class="form-label fs-6">{{ 'view-calendars-label'|trans }}</legend>
+            <div class="form-text mt-0 mb-2">{{ 'view-calendars-help'|trans }}</div>
+            <ul class="list-group">
+                {% for calendar in calendars %}
+                    <li class="list-group-item d-flex align-items-center gap-3">
+                        <div class="form-check mb-0 flex-grow-1">
+                            {{ form_widget(form['calendar_' ~ calendar.cid]) }}
+                        </div>
+                        {{ form_widget(form['color_' ~ calendar.cid], {attr: {class: 'form-control-color', title: form['color_' ~ calendar.cid].vars.label|trans}}) }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </fieldset>
+        {{ form_rest(form) }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

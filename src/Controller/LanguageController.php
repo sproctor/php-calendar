@@ -19,6 +19,7 @@ namespace App\Controller;
 
 use App\Entity\Calendar;
 use App\Entity\User;
+use App\Entity\View;
 use App\Service\LocaleService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -51,6 +52,19 @@ class LanguageController extends AbstractController
         return $this->redirectToRoute('default_view', [
             '_locale' => $this->localeService->pickLanguage($request, $this->currentUser(), $calendar),
             'slug' => $calendar->getSlug(),
+        ] + $request->query->all());
+    }
+
+    /**
+     * The same for a view
+     */
+    #[Route('/view/{slug}', name: 'view_entry_bare', requirements: ['slug' => Calendar::SLUG_PATTERN], methods: ['GET'])]
+    #[Route('/view/{slug}/', name: 'view_entry', requirements: ['slug' => Calendar::SLUG_PATTERN], methods: ['GET'])]
+    public function view(Request $request, View $view): Response
+    {
+        return $this->redirectToRoute('view_default', [
+            '_locale' => $this->localeService->pickLanguage($request, $this->currentUser(), $view),
+            'slug' => $view->getSlug(),
         ] + $request->query->all());
     }
 

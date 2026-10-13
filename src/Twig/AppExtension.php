@@ -18,18 +18,23 @@
 namespace App\Twig;
 
 use App\Entity\Calendar;
+use App\Entity\EventSource;
 use App\Entity\User;
+use App\Entity\View;
 use App\EventSubscriber\EmbedSubscriber;
 use App\EventSubscriber\LastCalendarSubscriber;
 use App\Mail\Mailing;
 use App\Repository\CalendarRepository;
+use App\Repository\ViewRepository;
 use App\Security\Voter\CalendarVoter;
 use App\Service\AppVersion;
 use App\Service\CalendarDates;
 use App\Service\CalendarFeedLinks;
+use App\Service\EventSourceRoutes;
 use App\Service\EventStructuredData;
 use App\Service\LocaleService;
 use App\Theme\ThemeRegistry;
+use App\View\AllCalendarsView;
 use DateTimeInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,6 +62,8 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         private EventStructuredData   $structuredData,
         private CalendarFeedLinks     $feedLinks,
         private ThemeRegistry         $themes,
+        private ViewRepository        $viewRepository,
+        private AllCalendarsView      $allCalendars,
         private Security              $security,
     )
     {
@@ -110,8 +117,10 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('event_json_ld', $this->structuredData->script(...), ['is_safe' => ['html']]),
             new TwigFunction('page_theme', $this->themes->forCalendar(...)),
             new TwigFunction('themes', $this->themes->all(...)),
-            new TwigFunction('feed_links', fn(Calendar $calendar) => $this->feedLinks->linksFor(
-                $calendar, ($user = $this->security->getUser()) instanceof User ? $user : null)),
+            new TwigFunction('public_feed', fn(EventSource $source) => $this->feedLinks->isPublic($source)
+                ? $this->feedLinks->publicUrl($source) : null),
+            new TwigFunction('feed_links', fn(EventSource $source) => $this->feedLinks->linksFor(
+                $source, ($user = $this->security->getUser()) instanceof User ? $user : null)),
             new TwigFunction('is_rtl', LocaleService::isRightToLeft(...)),
             new TwigFunction(
                 'is_embedded',
@@ -137,6 +146,18 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                 },
                 ['needs_context' => true]
             ),
+            // A link to one of a calendar's or view's pages (see EventSourceRoutes)
+            new TwigFunction('source_path', fn(EventSource $source, string $page, array $parameters = []) => $this->router->generate(
+                EventSourceRoutes::route($source, $page), EventSourceRoutes::parameters($source, $parameters))),
+            new TwigFunction('source_route', EventSourceRoutes::route(...)),
+            // The saved views the visitor can see, then "All calendars" when there's more than one to see
+            new TwigFunction('get_views', fn() => [
+                ...array_values(array_filter(
+                    $this->viewRepository->findBy([], ['title' => 'ASC']),
+                    fn(View $view) => $this->authorizationChecker->isGranted(CalendarVoter::READ, $view),
+                )),
+                ...($this->allCalendars->isUseful() ? [$this->allCalendars->build()] : []),
+            ]),
             new TwigFunction(
                 'get_calendars',
                 fn() => array_values(array_filter(

@@ -5,7 +5,9 @@
 {% set event = occurrence.event %}
 {% set multi_day = occurrence.start|date('Y-m-d') != occurrence.end|date('Y-m-d') %}
 <li class="list-group-item d-flex flex-wrap flex-sm-nowrap gap-2 gap-sm-3 phpc-day-item"
-    {% if event.color %}style="border-inline-start: .35rem solid {{ event.color }};"{% endif %}>
+    {% set calendar_color = source.calendarColor(event.calendar) %}
+    {% set stripe = calendar_color ?? event.color %}
+    {% if stripe %}style="border-inline-start: .35rem solid {{ stripe }};"{% endif %}>
     <div class="text-secondary text-nowrap phpc-day-time">
         {% if not occurrence.hasTime %}
             {{ occurrence.timeString ? occurrence.timeString|trans : 'all-day-label'|trans }}
@@ -26,6 +28,9 @@
     <div class="flex-grow-1 min-w-0">
         <div class="d-flex flex-wrap align-items-baseline gap-2">
             <a class="fw-semibold" href="{{ path('event_view', {eid: event.eid}) }}">{{ event.subject }}</a>
+            {% if calendar_color %}
+                <span class="badge text-bg-light border" style="border-color: {{ calendar_color }} !important;">{{ event.calendar.title }}</span>
+            {% endif %}
             {% if event.category %}
                 <span class="badge" style="color: {{ event.textColor }}; background: {{ event.color }};">{{ event.category.name }}</span>
             {% endif %}
@@ -45,8 +50,10 @@
         <div class="d-flex align-items-start gap-2 ms-auto">
             <a class="btn btn-sm btn-outline-primary" href="{{ path('modify_event', {eid: event.eid}) }}"
                aria-label="{{ 'edit-event-label'|trans({'%event%': event.subject}) }}">{{ 'edit-link'|trans }}</a>
-            <input name="eid[]" type="checkbox" class="form-check-input mt-1" value="{{ event.eid }}"
-                   id="eid_{{ occurrence.oid }}" aria-label="{{ 'select-event-label'|trans({'%event%': event.subject}) }}">
+            {% if selectable ?? true %}
+                <input name="eid[]" type="checkbox" class="form-check-input mt-1" value="{{ event.eid }}"
+                       id="eid_{{ occurrence.oid }}" aria-label="{{ 'select-event-label'|trans({'%event%': event.subject}) }}">
+            {% endif %}
         </div>
     {% endif %}
 </li>

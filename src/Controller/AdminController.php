@@ -19,23 +19,28 @@ namespace App\Controller;
 
 use App\Entity\Calendar;
 use App\Entity\User;
+use App\Entity\View;
 use App\Form\CalendarFormType;
 use App\Form\ThemeChoiceType;
 use App\Form\UserType;
+use App\Form\ViewFormType;
 use App\Repository\CalendarRepository;
 use App\Repository\SettingRepository;
 use App\Repository\UserRepository;
+use App\Repository\ViewRepository;
 use App\Theme\ThemeRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Site administration: calendars and user accounts
@@ -83,6 +88,66 @@ class AdminController extends AbstractController
 
         return $this->render('admin/appearance.html.twig', ['form' => $form],
             new Response(status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
+    }
+
+    #[Route('/views', name: 'admin_views', methods: ['GET'])]
+    public function views(ViewRepository $viewRepository): Response
+    {
+        return $this->render('admin/views.html.twig', ['views' => $viewRepository->findBy([], ['title' => 'ASC'])]);
+    }
+
+    /**
+     * A view: several calendars shown together (see App\Entity\View)
+     */
+    #[Route('/view/new', name: 'create_view', methods: ['GET', 'POST'])]
+    #[Route('/view/{vid}', name: 'edit_view', requirements: ['vid' => '\d+'], methods: ['GET', 'POST'])]
+    public function view(
+        Request $request,
+        ViewRepository $viewRepository,
+        CalendarRepository $calendarRepository,
+        TranslatorInterface $translator,
+        ?int $vid = null,
+    ): Response {
+        $view = $vid === null ? (new View())->setTimezone(date_default_timezone_get()) : $viewRepository->find($vid);
+        if ($view === null) {
+            throw $this->createNotFoundException();
+        }
+        $calendars = $calendarRepository->findBy([], ['title' => 'ASC']);
+        $form = $this->createForm(ViewFormType::class, $view, ['calendars' => $calendars]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted()) {
+            $chosen = ViewFormType::calendars($form, $calendars);
+            if ($chosen === []) {
+                $form->addError(new FormError($translator->trans('view-needs-calendar-error')));
+            }
+            if ($form->isValid()) {
+                $view->setCalendars($chosen);
+                $this->entityManager->persist($view);
+                $this->entityManager->flush();
+                $this->addFlash('success', $vid === null ? 'view-created-message' : 'settings-saved-message');
+
+                return $this->redirectToRoute('admin_views');
+            }
+        }
+
+        return $this->render('admin/view_form.html.twig', [
+            'form' => $form,
+            'view' => $view,
+            'calendars' => $calendars,
+        ], new Response(status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
+    }
+
+    #[Route('/view/{vid}/delete', name: 'delete_view', requirements: ['vid' => '\d+'], methods: ['POST'])]
+    public function deleteView(#[MapEntity(id: 'vid')] View $view, Request $request): Response
+    {
+        $this->checkToken($request, 'delete-view-' . $view->getVid());
+        // Its calendars and their events stay
+        $this->entityManager->remove($view);
+        $this->entityManager->flush();
+        $this->addFlash('success', 'view-deleted-message');
+
+        return $this->redirectToRoute('admin_views');
     }
 
     #[Route('/calendar/create', name: 'create_calendar', methods: ['GET', 'POST'])]

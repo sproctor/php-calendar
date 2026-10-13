@@ -17,15 +17,17 @@
 namespace App\Service;
 
 use App\Entity\Calendar;
+use App\Entity\EventSource;
 use App\Entity\User;
+use App\Entity\View;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Links calendar apps subscribe to: the public feed of a calendar anyone can read, and each user's
- * personal feed, which includes what only they can see. A personal link carries a token made from the
- * user's feed key, so it only works for that calendar and stops working when the key is reset.
+ * Links calendar apps subscribe to: the public feed of a calendar or view anyone can read, and each
+ * user's personal feed, which includes what only they can see. A personal link carries a token made from
+ * the user's feed key, so it only works for that calendar or view and stops working when the key is reset.
  */
 class CalendarFeedLinks
 {
@@ -37,55 +39,69 @@ class CalendarFeedLinks
     ) {
     }
 
-    public function isPublic(Calendar $calendar): bool
+    /**
+     * Whether anyone can read $source: the calendar, or for a view, at least one of its calendars
+     */
+    public function isPublic(EventSource $source): bool
     {
-        return $calendar->getAnonPermission() >= Calendar::ANON_READ;
+        foreach ($source->getCalendars() as $calendar) {
+            if ($calendar->getAnonPermission() >= Calendar::ANON_READ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public function publicUrl(Calendar $calendar): string
+    public function publicUrl(EventSource $source): string
     {
-        return $this->urlGenerator->generate('calendar_feed', ['slug' => $calendar->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL);
+        return $this->urlGenerator->generate(EventSourceRoutes::route($source, 'feed'),
+            EventSourceRoutes::parameters($source), UrlGeneratorInterface::ABSOLUTE_URL);
     }
 
     /**
      * May create the user's feed key, which the caller saves
      */
-    public function personalUrl(Calendar $calendar, User $user): string
+    public function personalUrl(EventSource $source, User $user): string
     {
-        return $this->urlGenerator->generate('calendar_personal_feed', [
-            'slug' => $calendar->getSlug(),
+        return $this->urlGenerator->generate(EventSourceRoutes::route($source, 'personal_feed'), EventSourceRoutes::parameters($source, [
             'uid' => $user->getUid(),
-            'token' => $this->token($calendar, $user),
-        ], UrlGeneratorInterface::ABSOLUTE_URL);
+            'token' => $this->token($source, $user),
+        ]), UrlGeneratorInterface::ABSOLUTE_URL);
     }
 
     /**
-     * The links to offer $user (or a visitor, for null) on $calendar's pages: 'public' when anyone may
+     * The links to offer $user (or a visitor, for null) on $source's pages: 'public' when anyone may
      * read it, 'personal' when logged in. Saves the user's feed key the first time.
      *
      * @return array{public: ?string, personal: ?string}
      */
-    public function linksFor(Calendar $calendar, ?User $user): array
+    public function linksFor(EventSource $source, ?User $user): array
     {
         $personal = null;
         if ($user !== null) {
             $isNew = $user->hasFeedKey() === false;
-            $personal = $this->personalUrl($calendar, $user);
-            if ($isNew) {
-                $this->entityManager->flush();
+            $personal = $this->personalUrl($source, $user);
+            if ($isNew && $user->getUid() !== null) {
+                // Saves just the key: a whole flush could save whatever else the request has half done
+                $table = $this->entityManager->getClassMetadata(User::class)->getTableName();
+                $this->entityManager->getConnection()->update($table, ['feed_key' => $user->getFeedKey()], ['uid' => $user->getUid()]);
             }
         }
 
-        return ['public' => $this->isPublic($calendar) ? $this->publicUrl($calendar) : null, 'personal' => $personal];
+        return ['public' => $this->isPublic($source) ? $this->publicUrl($source) : null, 'personal' => $personal];
     }
 
-    public function isValidToken(Calendar $calendar, User $user, string $token): bool
+    public function isValidToken(EventSource $source, User $user, string $token): bool
     {
-        return hash_equals($this->token($calendar, $user), $token);
+        return hash_equals($this->token($source, $user), $token);
     }
 
-    private function token(Calendar $calendar, User $user): string
+    private function token(EventSource $source, User $user): string
     {
-        return substr(hash_hmac('sha256', $calendar->getCid() . "\0" . $user->getFeedKey(), $this->secret), 0, 32);
+        // A calendar's ID alone, as before views existed, so its links keep working
+        $id = $source instanceof View ? 'view:' . ($source->getVid() ?? $source->getSlug()) : (string) $source->getCid();
+
+        return substr(hash_hmac('sha256', $id . "\0" . $user->getFeedKey(), $this->secret), 0, 32);
     }
 }

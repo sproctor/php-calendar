@@ -16,7 +16,7 @@
  */
 namespace App\Theme;
 
-use App\Entity\Calendar;
+use App\Entity\EventSource;
 use App\Repository\SettingRepository;
 use Doctrine\DBAL\Exception as DBALException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -98,12 +98,12 @@ class ThemeRegistry
     }
 
     /**
-     * The theme for a page about $calendar, or any other page when null. A theme whose files were
-     * removed falls back to the next choice.
+     * The theme for a page about $source (a calendar or a view), or any other page when null. A theme
+     * whose files were removed falls back to the next choice.
      */
-    public function forCalendar(?Calendar $calendar): Theme
+    public function forCalendar(?EventSource $source): Theme
     {
-        return $this->get($calendar?->getTheme()) ?? $this->getSiteDefault();
+        return $this->get($source?->getTheme()) ?? $this->getSiteDefault();
     }
 
     private function theme(string $id, string $name, string $group, string $stylesheet): Theme

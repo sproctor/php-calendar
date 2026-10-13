@@ -19,15 +19,17 @@ namespace App\Security\Voter;
 
 use App\Entity\Calendar;
 use App\Entity\User;
+use App\Entity\View;
 use App\Security\PermissionResolver;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * Calendar-wide permissions
+ * Calendar-wide permissions. For a view, reading and creating events are allowed when they are on at
+ * least one of its calendars; the rest only apply to calendars.
  *
- * @extends Voter<string, Calendar>
+ * @extends Voter<string, Calendar|View>
  */
 class CalendarVoter extends Voter
 {
@@ -43,6 +45,10 @@ class CalendarVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
+        if ($subject instanceof View) {
+            return in_array($attribute, [self::READ, self::CREATE], true);
+        }
+
         return $subject instanceof Calendar
             && in_array($attribute, [self::READ, self::CREATE, self::UPDATE, self::MODERATE, self::ADMIN], true);
     }
@@ -50,7 +56,18 @@ class CalendarVoter extends Voter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
-        $permissions = $this->resolver->getPermissions($subject, $user instanceof User ? $user : null);
+        $user = $user instanceof User ? $user : null;
+        if ($subject instanceof View) {
+            foreach ($subject->getCalendars() as $calendar) {
+                $permissions = $this->resolver->getPermissions($calendar, $user);
+                if ($attribute === self::READ ? $permissions->read : $permissions->create) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        $permissions = $this->resolver->getPermissions($subject, $user);
 
         return match ($attribute) {
             self::READ => $permissions->read,

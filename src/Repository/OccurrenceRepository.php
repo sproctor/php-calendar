@@ -17,7 +17,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Calendar;
+use App\Entity\EventSource;
 use App\Entity\Occurrence;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -34,19 +34,23 @@ class OccurrenceRepository extends ServiceEntityRepository
     }
 
     /**
-     * Occurrences on $calendar that overlap [$from, $to), in start order. Doesn't check permissions.
+     * Occurrences on $source's calendars that overlap [$from, $to), in start order. Doesn't check
+     * permissions.
      *
      * @return Occurrence[]
      */
-    public function findInRange(Calendar $calendar, DateTimeImmutable $from, DateTimeImmutable $to): array
+    public function findInRange(EventSource $source, DateTimeImmutable $from, DateTimeImmutable $to): array
     {
+        if ($source->getCalendars() === []) {
+            return [];
+        }
         // Full-day occurrences are stored as UTC dates, so widen the query by a day on each side
         // and then compare in the current timezone
         $candidates = $this->createQueryBuilder('o')
             ->join('o.event', 'e')
             ->addSelect('e')
-            ->where('e.calendar = :calendar AND o.start < :to AND o.end >= :from')
-            ->setParameter('calendar', $calendar)
+            ->where('e.calendar IN (:calendars) AND o.start < :to AND o.end >= :from')
+            ->setParameter('calendars', $source->getCalendars())
             ->setParameter('from', $from->modify('-1 day'))
             ->setParameter('to', $to->modify('+1 day'))
             ->orderBy('o.start')
@@ -63,25 +67,28 @@ class OccurrenceRepository extends ServiceEntityRepository
     }
 
     /**
-     * Occurrences on $calendar whose event's subject, description or location contains every keyword and that overlap
+     * Occurrences on $source's calendars whose event's subject, description or location contains every keyword and that overlap
      * the optional date range, in the given order. Doesn't check permissions.
      *
      * @param string[] $keywords
      * @return Occurrence[]
      */
     public function search(
-        Calendar $calendar,
+        EventSource $source,
         array $keywords,
         ?DateTimeImmutable $from,
         ?DateTimeImmutable $to,
         string $sort,
         string $order,
     ): array {
+        if ($source->getCalendars() === []) {
+            return [];
+        }
         $query = $this->createQueryBuilder('o')
             ->join('o.event', 'e')
             ->addSelect('e')
-            ->where('e.calendar = :calendar')
-            ->setParameter('calendar', $calendar);
+            ->where('e.calendar IN (:calendars)')
+            ->setParameter('calendars', $source->getCalendars());
         foreach (array_values($keywords) as $i => $keyword) {
             $query->andWhere("e.subject LIKE :kw$i OR e.description LIKE :kw$i OR e.location LIKE :kw$i")
                 ->setParameter("kw$i", '%' . addcslashes($keyword, '%_\\') . '%');

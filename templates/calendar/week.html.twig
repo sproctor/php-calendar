@@ -1,5 +1,5 @@
 {# One week of the month grid, starting at start_date #}
-{% set can_create = is_granted('CALENDAR_CREATE', calendar) %}
+{% set can_create = is_granted('CALENDAR_CREATE', source) %}
 <tr>
     <th class="phpc-date text-secondary fw-normal" scope="row">{{ start_date|week }}</th>
     {% for day_of_week in 0..6 %}
@@ -8,11 +8,11 @@
         <td class="phpc-date{% if not in_month %} phpc-shadow{% endif %}{% if is_today(cur_date) %} phpc-today{% endif %}">
             <div>
                 <a class="phpc-day-number"
-                   href="{{ path('day_view', {slug: calendar.slug}|merge(cur_date|dateparts)) }}"
+                   href="{{ source_path(source, 'day', cur_date|dateparts) }}"
                 >{% if (not in_month and day_of_week == 0) or cur_date|day == 1 %}{{ cur_date|month_abbr }}{% endif %} {{ cur_date|day }}</a>
                 {% if can_create %}
                     {% set create_label = 'create-event-on-date-label'|trans({'%date%': cur_date|day_heading}) %}
-                    <a href="{{ path('create_event', {slug: calendar.slug}|merge(cur_date|dateparts)) }}" class="phpc-add"
+                    <a href="{{ source_path(source, 'create', cur_date|dateparts) }}" class="phpc-add"
                        title="{{ create_label }}" aria-label="{{ create_label }}">{{ ux_icon('bi:plus-lg') }}</a>
                 {% endif %}
             </div>
@@ -21,14 +21,16 @@
                 <div class="occurrence-list list-group">
                     {% for occurrence in days_occurrences %}
                         {% if occurrence is null %}
-                            <a href="{{ path('day_view', {slug: calendar.slug}|merge(cur_date|dateparts)) }}"
+                            <a href="{{ source_path(source, 'day', cur_date|dateparts) }}"
                                class="list-group-item">{{ "view-additional-events-link"|trans }}</a>
                         {% else %}
                             {% set event = occurrence.event %}
-                            {% set preview %}<p class="mb-1">{{ occurrence.datetimeString|trans }}{% if event.owner %} — {{ "by-author"|trans({'%author%': event.owner.username}) }}{% endif %}</p>{% if event.location %}<p class="mb-1">{{ 'location-label'|trans }}: {{ event.location }}</p>{% endif %}{{ event.description|markdown_to_html }}{% endset %}
+                            {# In a view, each calendar's events have a stripe in its color #}
+                            {% set calendar_color = source.calendarColor(event.calendar) %}
+                            {% set preview %}{% if calendar_color %}<p class="mb-1 fw-semibold">{{ event.calendar.title }}</p>{% endif %}<p class="mb-1">{{ occurrence.datetimeString|trans }}{% if event.owner %} — {{ "by-author"|trans({'%author%': event.owner.username}) }}{% endif %}</p>{% if event.location %}<p class="mb-1">{{ 'location-label'|trans }}: {{ event.location }}</p>{% endif %}{{ event.description|markdown_to_html }}{% endset %}
                             <a class="phpc-occurrence list-group-item"
                                href="{{ path('event_view', {eid: event.eid}) }}"
-                               {% if event.color %}style="color: {{ event.textColor }} !important; background: {{ event.color }} !important;"{% endif %}
+                               {% if event.color or calendar_color %}style="{% if event.color %}color: {{ event.textColor }} !important; background: {{ event.color }} !important;{% endif %}{% if calendar_color %} border-inline-start: .35rem solid {{ calendar_color }};{% endif %}"{% endif %}
                                data-bs-toggle="popover"
                                data-bs-trigger="hover focus"
                                data-bs-html="true"

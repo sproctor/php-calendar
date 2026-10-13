@@ -17,7 +17,7 @@
 
 namespace App\Service;
 
-use App\Entity\Calendar;
+use App\Entity\EventSource;
 use App\Entity\Occurrence;
 use App\Entity\User;
 use App\Repository\OccurrenceRepository;
@@ -41,10 +41,10 @@ class OccurrenceGrid
      *
      * @return Occurrence[]
      */
-    public function findVisible(Calendar $calendar, DateTimeImmutable $from, DateTimeImmutable $to, ?User $user): array
+    public function findVisible(EventSource $source, DateTimeImmutable $from, DateTimeImmutable $to, ?User $user): array
     {
         return array_values(array_filter(
-            $this->occurrenceRepository->findInRange($calendar, $from, $to),
+            $this->occurrenceRepository->findInRange($source, $from, $to),
             fn(Occurrence $o) => $this->eventVoter->canView($o->getEvent(), $user),
         ));
     }
@@ -55,10 +55,10 @@ class OccurrenceGrid
      *
      * @return array<string, Occurrence[]>
      */
-    public function byDay(Calendar $calendar, DateTimeImmutable $from, DateTimeImmutable $to, ?User $user): array
+    public function byDay(EventSource $source, DateTimeImmutable $from, DateTimeImmutable $to, ?User $user): array
     {
         $days = [];
-        foreach ($this->findVisible($calendar, $from, $to, $user) as $occurrence) {
+        foreach ($this->findVisible($source, $from, $to, $user) as $occurrence) {
             $day = max($occurrence->getStart(), $from)->setTime(0, 0);
             $end = min($occurrence->getEndBoundary(), $to);
             // Every day the occurrence touches, at least its first. A timed occurrence ending at

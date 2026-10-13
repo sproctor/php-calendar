@@ -17,7 +17,7 @@
 
 namespace App\Service;
 
-use App\Entity\Calendar;
+use App\Entity\EventSource;
 use App\Entity\User;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,13 +87,13 @@ class LocaleService
 
     /**
      * Picks the language for a page whose URL doesn't name one: the logged-in user's setting, then the
-     * language this browser picked from the menu (the COOKIE), then $calendar's default language, then
+     * language this browser picked from the menu (the COOKIE), then $source's (a calendar's or view's) default language, then
      * the browser's Accept-Language preferences.
      */
-    public function pickLanguage(Request $request, ?User $user, ?Calendar $calendar = null): string
+    public function pickLanguage(Request $request, ?User $user, ?EventSource $source = null): string
     {
         $languages = array_keys($this->getLocaleMappings());
-        foreach ([$user?->getLocale(), $request->cookies->get(self::COOKIE), $calendar?->getLocale()] as $choice) {
+        foreach ([$user?->getLocale(), $request->cookies->get(self::COOKIE), $source?->getLocale()] as $choice) {
             if (is_string($choice) && $choice !== '') {
                 $translation = $this->translationFor($choice);
                 if ($translation !== null) {

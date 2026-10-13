@@ -127,3 +127,12 @@ col.wnumber {
 [data-phpc-color-mode="auto"] .phpc-color-mode-icon[data-mode="auto"] {
   display: inline;
 }
+
+/* A calendar's color in a view (legend, menus) */
+.phpc-calendar-swatch {
+  display: inline-block;
+  width: .75em;
+  height: .75em;
+  border-radius: 50%;
+  vertical-align: -.05em;
+}

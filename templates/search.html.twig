@@ -3,7 +3,7 @@
 {% block title %}{{ "search-results-label"|trans }}{% endblock %}
 
 {% block body %}
-    <form class="row g-2 align-items-end mb-3" method="get" action="{{ path('search', {slug: calendar.slug}) }}">
+    <form class="row g-2 align-items-end mb-3" method="get" action="{{ source_path(source, 'search') }}">
         <div class="col-md-4">
             <label class="form-label" for="search-q">{{ "search-label"|trans }}</label>
             <input class="form-control" id="search-q" type="search" name="q" value="{{ query }}">
@@ -50,6 +50,7 @@
             {% for occurrence in results %}
                 <tr>
                     <td><a href="{{ path('event_view', {eid: occurrence.event.eid}) }}">{{ occurrence.event.subject }}</a>
+                        {% if source.view %}<div class="small text-secondary">{{ occurrence.event.calendar.title }}</div>{% endif %}
                         {% if occurrence.event.location %}<div class="small text-secondary">{{ include('components/location.html.twig', {event: occurrence.event}) }}</div>{% endif %}</td>
                     <td>{{ occurrence.datetimeString|trans }}</td>
                     <td class="markdown">{{ occurrence.event.description|markdown_to_html }}</td>

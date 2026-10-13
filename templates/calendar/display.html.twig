@@ -6,8 +6,8 @@
     {% block navigation %}{% endblock %}
     <div class="ms-auto d-flex flex-wrap gap-2">
         {{ include('components/subscribe.html.twig') }}
-        {% if is_granted('CALENDAR_CREATE', calendar) %}
-            <a class="btn btn-primary btn-sm" href="{{ path('create_event', {slug: calendar.slug}|merge(create_date|dateparts)) }}">
+        {% if is_granted('CALENDAR_CREATE', source) %}
+            <a class="btn btn-primary btn-sm" href="{{ source_path(source, 'create', create_date|dateparts) }}">
                 {{ ux_icon('bi:plus') }} {{ 'create-event-label'|trans }}
             </a>
         {% endif %}
@@ -36,5 +36,14 @@
 <div class="d-md-none">
     {{ include('calendar/_agenda.html.twig') }}
 </div>
+{% if source.view %}
+    {# Which color is which calendar #}
+    <p class="small mb-2">
+        {% for calendar in source.calendars %}
+            <span class="text-nowrap me-3"><span class="phpc-calendar-swatch" style="background: {{ source.calendarColor(calendar) }};"></span>
+                <a class="link-body-emphasis" href="{{ path('default_view', {slug: calendar.slug}) }}">{{ calendar.title }}</a></span>
+        {% endfor %}
+    </p>
+{% endif %}
 {{ include('components/timezone_note.html.twig') }}
 {% endblock %}

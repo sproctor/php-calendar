@@ -1,6 +1,6 @@
 {% extends "calendar/display.html.twig" %}
 
-{% block title %}{{ date|month_year|ucfirst }} – {{ calendar.title }}{% endblock %}
+{% block title %}{{ date|month_year|ucfirst }} – {{ source.title }}{% endblock %}
 
 {% block heading %}{{ date|month_year|ucfirst }}{% endblock %}
 

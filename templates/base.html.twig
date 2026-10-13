@@ -1,7 +1,9 @@
 {%- set embedded = is_embedded() -%}
-{#- The calendar this page is about, or the last one visited, which also decides the theme -#}
+{#- The calendar or view this page shows (calendar pages also set `calendar`), and the calendar for the
+    menus: this one, or the last one visited -#}
+{%- set page_source = source is defined ? source : (calendar is defined ? calendar : null) -%}
 {%- set nav_calendar = calendar is defined ? calendar : last_calendar() -%}
-{%- set theme = page_theme(nav_calendar) -%}
+{%- set theme = page_theme(page_source ?? nav_calendar) -%}
 {#- Light, dark, or auto (follow the browser). Embedded calendars stay light to match most host pages;
     themes designed dark are always dark. -#}
 {%- set color_mode = embedded ? 'light' : app.request.cookies.get('phpc_color_mode') -%}
@@ -17,42 +19,55 @@
     {% endif %}
 
     <title>{% block title %}PHP Calendar{% endblock %}</title>
-    <meta name="description" content="{% block description %}{{ calendar is defined ? 'calendar-meta-description'|trans({'%calendar%': calendar.title}) : 'meta-description'|trans }}{% endblock %}">
+    <meta name="description" content="{% block description %}{{ page_source ? 'calendar-meta-description'|trans({'%calendar%': page_source.title}) : 'meta-description'|trans }}{% endblock %}">
 
     <link rel="icon" href="{{ asset('static/office-calendar.png') }}">
     <link rel="stylesheet" id="phpc-theme" href="{{ asset(theme.stylesheetFor(is_rtl(app.request.locale))) }}">
     <link rel="stylesheet" href="{{ asset('static/phpc.css') }}">
-    {% if calendar is defined and calendar.anonPermission >= constant('App\\Entity\\Calendar::ANON_READ') %}
-        <link rel="alternate" type="text/calendar" title="{{ calendar.title }}" href="{{ url('calendar_feed', {slug: calendar.slug}) }}">
+    {% set public_feed = page_source ? public_feed(page_source) : null %}
+    {% if public_feed %}
+        <link rel="alternate" type="text/calendar" title="{{ page_source.title }}" href="{{ public_feed }}">
     {% endif %}
     {% block structured_data %}{% endblock %}
 </head>
 <body{% if embedded %} data-embed="1"{% endif %}>
 {% if embedded %}
     <div class="d-flex align-items-center px-2 py-1 bg-body-tertiary">
-        {% if calendar is defined %}
-            <a class="fw-semibold text-decoration-none" href="{{ path('default_view', {slug: calendar.slug}) }}" target="_blank" rel="noopener">{{ calendar.title }}</a>
+        {% if page_source %}
+            <a class="fw-semibold text-decoration-none" href="{{ source_path(page_source, 'default') }}" target="_blank" rel="noopener">{{ page_source.title }}</a>
         {% endif %}
         <a class="ms-auto small" href="{{ app.request.baseUrl ~ app.request.pathInfo }}" target="_blank" rel="noopener">{{ ux_icon('bi:box-arrow-up-right') }} {{ 'open-full-calendar-link'|trans }}</a>
     </div>
 {% else %}
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            {# On pages that aren't about a calendar, link back to the one last viewed #}
-            {% if nav_calendar %}
+            {# The calendar or view shown; on other pages, the calendar last viewed. A menu switches to the
+               others, and to views. #}
+            {% set brand = page_source ?? nav_calendar %}
+            {% if brand %}
                 {% set calendars = get_calendars() %}
-                {% if calendars|length > 1 %}
+                {% set views = get_views() %}
+                {% if calendars|length > 1 or views is not empty %}
                     <div class="nav-item dropdown">
                         <button class="btn btn-link navbar-brand dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">{{ nav_calendar.title }}</button>
+                                aria-expanded="false">{{ brand.title }}</button>
                         <div class="dropdown-menu">
                             {% for cal in calendars %}
-                                <a class="dropdown-item" href="{{ path('default_view', {slug: cal.slug}) }}">{{ cal.title }}</a>
+                                <a class="dropdown-item{{ page_source and not page_source.view and page_source.slug == cal.slug ? ' active' }}"
+                                   href="{{ path('default_view', {slug: cal.slug}) }}">{{ cal.title }}</a>
                             {% endfor %}
+                            {% if views is not empty %}
+                                <div class="dropdown-divider"></div>
+                                <h6 class="dropdown-header">{{ 'views-label'|trans }}</h6>
+                                {% for view in views %}
+                                    <a class="dropdown-item{{ page_source and page_source.view and page_source.slug == view.slug ? ' active' }}"
+                                       href="{{ source_path(view, 'default') }}">{{ ux_icon('bi:collection') }} {{ view.title }}</a>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                     </div>
                 {% else %}
-                    <a class="navbar-brand" href="{{ path('default_view', {slug: nav_calendar.slug}) }}">{{ nav_calendar.title }}</a>
+                    <a class="navbar-brand" href="{{ source_path(brand, 'default') }}">{{ brand.title }}</a>
                 {% endif %}
             {% endif %}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#phpc-navbar"
@@ -61,9 +76,10 @@
             </button>
             <div class="collapse navbar-collapse" id="phpc-navbar">
                 <ul class="navbar-nav me-auto">
-                    {% if calendar is defined %}
-                        {% if app.current_route != 'month_view' and app.current_route != 'default_view' and date is defined %}
-                            {{ menu_item("month_view", "view-month-menu-link"|trans, 'calendar3', {slug: calendar.slug, month: date|month, year: date|year}) }}
+                    {% if page_source and date is defined %}
+                        {% set month_route = source_route(page_source, 'month') %}
+                        {% if app.current_route not in [month_route, source_route(page_source, 'default')] %}
+                            {{ menu_item(month_route, "view-month-menu-link"|trans, 'calendar3', {slug: page_source.slug, month: date|month, year: date|year}) }}
                         {% endif %}
                     {% endif %}
                     {% set site_admin = is_granted('ROLE_ADMIN') %}
@@ -137,8 +153,8 @@
                         </div>
                     </li>
                 </ul>
-                {% if calendar is defined %}
-                <form class="d-flex ms-auto" role="search" action="{{ path('search', {slug: calendar.slug}) }}" method="get">
+                {% if page_source %}
+                <form class="d-flex ms-auto" role="search" action="{{ source_path(page_source, 'search') }}" method="get">
                     <div class="input-group">
                         <input id="search-input" class="form-control" name="q" type="search"
                                placeholder="{{ "search-label"|trans }}" aria-label="{{ "search-label"|trans }}">

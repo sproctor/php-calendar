@@ -42,6 +42,12 @@ database host only resolves there:
   (`EVENT_VIEW/EDIT`), resolved by `PermissionResolver` from the calendar's anonymous permission, per-user
   permissions and roles. Use `EventVoter::canView($event, null)` for "can anyone see this" (feeds,
   structured data).
+- **Calendars and views**: pages showing events (month, day, search, feeds) take an `EventSource`: a
+  `Calendar`, or a `View` of several calendars (`ViewCalendar` holds each one's color). The shared page
+  code is `AbstractEventSourceController`; `EventSourceRoutes` and the Twig `source_path()` pick each
+  page's calendar or view route. Templates get `source`, and `calendar` too on calendar pages.
+  `/view/all/` is built on the fly (`AllCalendarsView`). Permissions stay per calendar: `CalendarVoter`
+  allows reading or creating on a view when it's allowed on one of its calendars.
 - **Events and dates**: an `Event` has many `Occurrence`s. Timed occurrences are stored in UTC; full-day
   and TBA ones as floating dates. `TimezoneSubscriber` sets PHP's timezone per request (user setting,
   `phpc_timezone` cookie, calendar, UTC). `OccurrenceGenerator` makes repeat series, and `update()` keeps

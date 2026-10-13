@@ -17,7 +17,7 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Calendar;
+use App\Entity\EventSource;
 use App\Entity\Event;
 use App\Entity\Occurrence;
 use App\Entity\User;
@@ -31,7 +31,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Sets PHP's default timezone, which forms and date formatting use. In order of preference: the user's
  * timezone setting; the timezone a visitor chose on this device (a cookie, so it works without logging
- * in); the timezone of the calendar the request is about, found from the controller's Calendar, Event or
+ * in); the timezone of the calendar the request is about, found from the controller's calendar or view, Event or
  * Occurrence argument; UTC. Dates are stored in UTC either way.
  */
 class TimezoneSubscriber implements EventSubscriberInterface
@@ -77,7 +77,7 @@ class TimezoneSubscriber implements EventSubscriberInterface
         }
         foreach ($event->getArguments() as $argument) {
             $calendar = match (true) {
-                $argument instanceof Calendar => $argument,
+                $argument instanceof EventSource => $argument,
                 $argument instanceof Event => $argument->getCalendar(),
                 $argument instanceof Occurrence => $argument->getEvent()->getCalendar(),
                 default => null,

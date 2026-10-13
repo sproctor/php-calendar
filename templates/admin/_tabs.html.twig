@@ -1,6 +1,6 @@
 {#
   The site admin's tabs. Calendars and Users are panes of the admin page itself (`active` is null
-  there and Bootstrap switches them); Appearance and Email are their own pages, named by `active`.
+  there and Bootstrap switches them); Views, Appearance and Email are their own pages, named by `active`.
 #}
 {% set on_index = active is null %}
 <ul class="nav nav-tabs mb-3"{% if on_index %} role="tablist"{% endif %}>
@@ -14,6 +14,10 @@
             {% endif %}
         </li>
     {% endfor %}
+    <li class="nav-item">
+        <a class="nav-link{{ active == 'views' ? ' active' }}" href="{{ path('admin_views') }}"
+           {% if active == 'views' %}aria-current="page"{% endif %}>{{ ux_icon('bi:collection') }} {{ 'views-label'|trans }}</a>
+    </li>
     <li class="nav-item">
         <a class="nav-link{{ active == 'appearance' ? ' active' }}" href="{{ path('admin_appearance') }}"
            {% if active == 'appearance' %}aria-current="page"{% endif %}>{{ ux_icon('bi:palette') }} {{ 'appearance-title'|trans }}</a>

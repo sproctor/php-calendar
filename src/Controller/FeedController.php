@@ -17,10 +17,13 @@
 namespace App\Controller;
 
 use App\Entity\Calendar;
+use App\Entity\EventSource;
 use App\Entity\User;
+use App\Entity\View;
 use App\Repository\UserRepository;
 use App\Service\CalendarFeed;
 use App\Service\CalendarFeedLinks;
+use App\View\AllCalendarsView;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,7 +33,8 @@ use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * iCalendar feeds that calendar apps subscribe to (see CalendarFeed and CalendarFeedLinks)
+ * iCalendar feeds of calendars and views that calendar apps subscribe to (see CalendarFeed and
+ * CalendarFeedLinks)
  */
 class FeedController extends AbstractController
 {
@@ -71,6 +75,38 @@ class FeedController extends AbstractController
         return $this->respond($request, $calendar, $this->feed->build($calendar, $user), false);
     }
 
+    #[Route('/view/{slug}/feed.ics', name: 'view_feed', requirements: ['slug' => Calendar::SLUG_PATTERN], methods: ['GET'])]
+    public function viewPublic(Request $request, View $view): Response
+    {
+        if (!$this->links->isPublic($view)) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->respond($request, $view, $this->feed->build($view, null), true);
+    }
+
+    #[Route('/view/{slug}/feed/{uid}-{token}.ics', name: 'view_personal_feed',
+        requirements: ['slug' => Calendar::SLUG_PATTERN, 'uid' => '\d+', 'token' => '[0-9a-f]{32}'], methods: ['GET'])]
+    public function viewPersonal(
+        Request $request,
+        View $view,
+        int $uid,
+        string $token,
+        UserRepository $userRepository,
+        AllCalendarsView $allCalendars,
+    ): Response {
+        $user = $userRepository->find($uid);
+        if ($user === null || $user->isDisabled() || !$this->links->isValidToken($view, $user, $token)) {
+            throw $this->createNotFoundException();
+        }
+        // Every calendar the link's owner can read, not the (logged out) app fetching it
+        if ($view->getSlug() === View::ALL) {
+            $view = $allCalendars->build($user);
+        }
+
+        return $this->respond($request, $view, $this->feed->build($view, $user), false);
+    }
+
     /**
      * Makes new personal feed links for every calendar, so the old ones stop working
      */
@@ -93,11 +129,11 @@ class FeedController extends AbstractController
         return $this->redirect(str_starts_with($back, '/') && !str_starts_with($back, '//') ? $back : $this->generateUrl('default'));
     }
 
-    private function respond(Request $request, Calendar $calendar, string $ics, bool $public): Response
+    private function respond(Request $request, EventSource $source, string $ics, bool $public): Response
     {
         $response = new Response($ics, Response::HTTP_OK, [
             'Content-Type' => 'text/calendar; charset=utf-8',
-            'Content-Disposition' => 'inline; filename="' . $calendar->getSlug() . '.ics"',
+            'Content-Disposition' => 'inline; filename="' . $source->getSlug() . '.ics"',
         ]);
         $response->setEtag(hash('xxh128', $ics));
         $response->setMaxAge(self::MAX_AGE);

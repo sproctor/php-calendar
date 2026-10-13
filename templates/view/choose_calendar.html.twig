@@ -1,0 +1,19 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ 'create-event-label'|trans }} – {{ source.title }}{% endblock %}
+
+{% block body %}
+    <div class="phpc-narrow">
+        <h1 class="h3">{{ 'create-event-label'|trans }}</h1>
+        <p>{{ 'choose-calendar-for-event'|trans({'%date%': date|format_date('full')}) }}</p>
+        <div class="list-group">
+            {% for calendar in calendars %}
+                <a class="list-group-item list-group-item-action d-flex align-items-center gap-2"
+                   href="{{ path('create_event', {slug: calendar.slug}|merge(date_parts)) }}">
+                    <span class="phpc-calendar-swatch" style="background: {{ source.calendarColor(calendar) }};"></span>
+                    {{ calendar.title }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

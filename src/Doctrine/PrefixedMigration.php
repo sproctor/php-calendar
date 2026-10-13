@@ -29,6 +29,18 @@ abstract class PrefixedMigration extends AbstractMigration
         return self::prefix() . $name;
     }
 
+    /**
+     * The name Doctrine gives an unnamed index or foreign key on $table's $column: the prefix and the
+     * CRC32 of the (prefixed) table and column names, as in AbstractAsset::_generateIdentifierName().
+     * Migrations write these out so the schema matches what Doctrine expects from the entities.
+     */
+    protected function generatedName(string $prefix, string $table, string $column): string
+    {
+        $hash = implode('', array_map(fn(string $name) => dechex(crc32($name)), [$this->table($table), $column]));
+
+        return strtoupper(substr($prefix . '_' . $hash, 0, 30));
+    }
+
     public static function prefix(): string
     {
         return (string) ($_SERVER['TABLE_PREFIX'] ?? $_ENV['TABLE_PREFIX'] ?? getenv('TABLE_PREFIX') ?: '');

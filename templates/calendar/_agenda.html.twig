@@ -7,7 +7,7 @@
         {% set day_date = day|date_from_key %}
         <section class="mb-3" aria-labelledby="agenda-{{ day }}">
             <h2 class="h6 mb-1 d-flex align-items-baseline gap-2{% if is_today(day_date) %} text-primary{% endif %}" id="agenda-{{ day }}">
-                <a class="text-reset text-decoration-none" href="{{ path('day_view', {slug: calendar.slug}|merge(day_date|dateparts)) }}">
+                <a class="text-reset text-decoration-none" href="{{ source_path(source, 'day', day_date|dateparts) }}">
                     {{ day_date|day_heading|ucfirst }}
                 </a>
                 {% if is_today(day_date) %}<span class="badge text-bg-primary">{{ 'today-button'|trans }}</span>{% endif %}
@@ -17,7 +17,8 @@
                     {% set event = occurrence.event %}
                     <a class="list-group-item list-group-item-action d-flex gap-2 align-items-start phpc-agenda-item"
                        href="{{ path('event_view', {eid: event.eid}) }}"
-                       {% if event.color %}style="border-inline-start: .35rem solid {{ event.color }};"{% endif %}>
+                       {% set stripe = source.calendarColor(event.calendar) ?? event.color %}
+                       {% if stripe %}style="border-inline-start: .35rem solid {{ stripe }};"{% endif %}>
                         <span class="text-secondary text-nowrap phpc-agenda-time">
                             {% set time = occurrence.timeString %}
                             {% if time is null %}{{ 'all-day-label'|trans }}{% elseif occurrence.start < day_date %}…{% else %}{{ time|trans }}{% endif %}

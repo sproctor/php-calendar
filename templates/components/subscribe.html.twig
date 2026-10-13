@@ -1,8 +1,8 @@
 {#
-  "Subscribe" button and dialog for adding `calendar` to a calendar app: the public feed when anyone can
+  "Subscribe" button and dialog for adding `source` (a calendar or view) to a calendar app: the public feed when anyone can
   read it, and the logged-in user's personal feed, which includes what only they can see.
 #}
-{% set feeds = feed_links(calendar) %}
+{% set feeds = feed_links(source) %}
 {% if feeds.public or feeds.personal %}
     <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#subscribeModal">
         {{ ux_icon('bi:calendar-plus') }} {{ 'subscribe-button'|trans }}

@@ -16,7 +16,7 @@
  */
 namespace App\Service;
 
-use App\Entity\Calendar;
+use App\Entity\EventSource;
 use App\Entity\Occurrence;
 use App\Entity\User;
 use App\Repository\OccurrenceRepository;
@@ -28,7 +28,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * A calendar as iCalendar (RFC 5545) for calendar apps to subscribe to: one VEVENT per date of each
+ * A calendar or view as iCalendar (RFC 5545) for calendar apps to subscribe to: one VEVENT per date of each
  * published event $user (or anyone, for null) can see, from a while ago to a couple of years ahead
  */
 class CalendarFeed
@@ -45,24 +45,24 @@ class CalendarFeed
     ) {
     }
 
-    public function build(Calendar $calendar, ?User $user, ?DateTimeImmutable $now = null): string
+    public function build(EventSource $source, ?User $user, ?DateTimeImmutable $now = null): string
     {
         $now ??= new DateTimeImmutable();
-        $language = $calendar->getLocale() ?? 'en';
+        $language = $source->getLocale() ?? 'en';
         $utc = new DateTimeZone('UTC');
 
         $vcalendar = new VCalendar([
             'PRODID' => '-//PHP-Calendar//PHP-Calendar 3//EN',
-            'NAME' => $calendar->getTitle(),
-            'X-WR-CALNAME' => $calendar->getTitle(),
-            'X-WR-TIMEZONE' => $calendar->getTimezone(),
+            'NAME' => $source->getTitle(),
+            'X-WR-CALNAME' => $source->getTitle(),
+            'X-WR-TIMEZONE' => $source->getTimezone(),
             // How often apps should check for changes, where they listen
             'X-PUBLISHED-TTL' => 'PT1H',
         ]);
         $vcalendar->add('REFRESH-INTERVAL', 'PT1H', ['VALUE' => 'DURATION']);
 
         $host = $this->urlGenerator->getContext()->getHost() ?: 'php-calendar';
-        $occurrences = $this->occurrenceRepository->findInRange($calendar, $now->modify(self::PAST), $now->modify(self::FUTURE));
+        $occurrences = $this->occurrenceRepository->findInRange($source, $now->modify(self::PAST), $now->modify(self::FUTURE));
         foreach ($occurrences as $occurrence) {
             $event = $occurrence->getEvent();
             if (!$event->isPublished() || !$this->eventVoter->canView($event, $user)) {

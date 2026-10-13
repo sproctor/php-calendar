@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table("calendars")]
 #[ORM\UniqueConstraint(name: 'slug', columns: ['slug'])]
 #[UniqueEntity(fields: ['slug'], message: 'slug-taken-error')]
-class Calendar
+class Calendar implements EventSource
 {
     /** What a slug may look like, for validation and route requirements */
     public const SLUG_PATTERN = '[a-z0-9]+(?:-[a-z0-9]+)*';
@@ -130,6 +130,21 @@ class Calendar
     public function getCid(): ?int
     {
         return $this->cid;
+    }
+
+    public function getCalendars(): array
+    {
+        return [$this];
+    }
+
+    public function isView(): bool
+    {
+        return false;
+    }
+
+    public function getCalendarColor(Calendar $calendar): ?string
+    {
+        return null;
     }
 
     public function getTitle(): string

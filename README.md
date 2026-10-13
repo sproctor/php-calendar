@@ -71,6 +71,13 @@ With a command line, you can instead import from any database:
 Use the table prefix from 2.0's `config.php` (`SQL_PREFIX`). Add `--dry-run` to check the import
 without saving anything. Users keep their passwords, and 2.0 groups become roles.
 
+### Views: several calendars together
+
+Under Admin → Views, site admins can combine calendars into a view, such as each department's calendar
+with the company holidays, with each calendar's events marked in its own color. A view has its own
+address (`/view/<name>/`), settings, feed and embed code; visitors see the events they could see on each
+calendar. `/view/all/` shows every calendar the visitor can read.
+
 ### Subscribing from a calendar app
 
 Each calendar has a Subscribe button that gives an iCalendar (`.ics`) link for Google Calendar, Apple

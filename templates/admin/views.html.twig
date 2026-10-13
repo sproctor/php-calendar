@@ -1,0 +1,47 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ 'views-label'|trans }}{% endblock %}
+
+{% block body %}
+    {{ include('admin/_tabs.html.twig', {active: 'views'}) }}
+    <p class="text-secondary">{{ 'views-intro'|trans }}</p>
+    {% if views is not empty %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th scope="col">{{ 'view-label'|trans }}</th>
+                    <th scope="col">{{ 'calendars-label'|trans }}</th>
+                    <th scope="col">{{ 'actions-label'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for view in views %}
+                    <tr>
+                        <td><a href="{{ source_path(view, 'default') }}">{{ view.title }}</a></td>
+                        <td>
+                            {% for member in view.members %}
+                                <span class="text-nowrap me-2"><span class="phpc-calendar-swatch" style="background: {{ member.color }};"></span> {{ member.calendar.title }}</span>
+                            {% endfor %}
+                        </td>
+                        <td class="d-flex gap-2">
+                            <a class="btn btn-sm btn-primary" href="{{ path('edit_view', {vid: view.vid}) }}">{{ ux_icon('bi:wrench') }} {{ 'settings-button'|trans }}</a>
+                            {{ include('components/confirmation.html.twig', {
+                                id: 'deleteViewModal' ~ view.vid,
+                                button: 'delete-menu-link'|trans,
+                                small: true,
+                                title: 'delete-confirmation-modal-title'|trans,
+                                question: 'delete-view-question'|trans,
+                                path: path('delete_view', {vid: view.vid}),
+                                token_id: 'delete-view-' ~ view.vid,
+                                confirm_button: 'delete-button'|trans,
+                            }) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    <a class="btn btn-primary" href="{{ path('create_view') }}">{{ ux_icon('bi:plus') }} {{ 'create-view-button'|trans }}</a>
+{% endblock %}
