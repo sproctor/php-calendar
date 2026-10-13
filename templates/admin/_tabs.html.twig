@@ -4,13 +4,14 @@
 #}
 {% set on_index = active is null %}
 <ul class="nav nav-tabs mb-3"{% if on_index %} role="tablist"{% endif %}>
-    {% for pane in ['calendars', 'users'] %}
+    {% set pane_icons = {calendars: 'bi:calendar3', users: 'bi:people'} %}
+    {% for pane, icon in pane_icons %}
         <li class="nav-item"{% if on_index %} role="presentation"{% endif %}>
             {% if on_index %}
                 <a class="nav-link{{ loop.first ? ' active' }}" id="{{ pane }}-tab" data-bs-toggle="tab" href="#{{ pane }}" role="tab"
-                   aria-controls="{{ pane }}" aria-selected="{{ loop.first ? 'true' : 'false' }}">{{ (pane ~ '-label')|trans }}</a>
+                   aria-controls="{{ pane }}" aria-selected="{{ loop.first ? 'true' : 'false' }}">{{ ux_icon(icon) }} {{ (pane ~ '-label')|trans }}</a>
             {% else %}
-                <a class="nav-link" href="{{ path('admin', {_fragment: pane}) }}">{{ (pane ~ '-label')|trans }}</a>
+                <a class="nav-link" href="{{ path('admin', {_fragment: pane}) }}">{{ ux_icon(icon) }} {{ (pane ~ '-label')|trans }}</a>
             {% endif %}
         </li>
     {% endfor %}

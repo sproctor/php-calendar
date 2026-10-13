@@ -2,10 +2,10 @@
 
 {% block title %}{{ "calendar-settings-label"|trans }}{% endblock %}
 
-{% macro tab(id, label, active = false) %}
+{% macro tab(id, label, icon, active = false) %}
     <li class="nav-item" role="presentation">
         <a class="nav-link{{ active ? ' active' }}" id="{{ id }}-tab" data-bs-toggle="tab" href="#{{ id }}" role="tab"
-           aria-controls="{{ id }}" aria-selected="{{ active ? 'true' : 'false' }}">{{ label|trans }}</a>
+           aria-controls="{{ id }}" aria-selected="{{ active ? 'true' : 'false' }}">{{ ux_icon(icon) }} {{ label|trans }}</a>
     </li>
 {% endmacro %}
 
@@ -25,11 +25,11 @@
 {% block body %}
     {% import _self as m %}
     <ul class="nav nav-tabs mb-3" role="tablist">
-        {{ m.tab('settings', 'calendar-settings-label', true) }}
-        {{ m.tab('users', 'user-permissions-label') }}
-        {{ m.tab('roles', 'roles-label') }}
-        {{ m.tab('categories', 'categories-label') }}
-        {{ m.tab('fields', 'fields-title') }}
+        {{ m.tab('settings', 'calendar-settings-label', 'bi:sliders', true) }}
+        {{ m.tab('users', 'user-permissions-label', 'bi:shield-lock') }}
+        {{ m.tab('roles', 'roles-label', 'bi:person-badge') }}
+        {{ m.tab('categories', 'categories-label', 'bi:tags') }}
+        {{ m.tab('fields', 'fields-title', 'bi:input-cursor-text') }}
     </ul>
     <div class="tab-content">
         <div class="tab-pane show active" id="settings" role="tabpanel" aria-labelledby="settings-tab">
