@@ -43,6 +43,13 @@ class Calendar
     /** Everyone can read, create and modify events */
     public const ANON_MODIFY = 3;
 
+    /** Events may be at the same time as others */
+    public const OVERLAP_ALLOW = 0;
+    /** Saving an event at the same time as another asks for confirmation */
+    public const OVERLAP_WARN = 1;
+    /** Events can't be at the same time as others, e.g. bookings of a room */
+    public const OVERLAP_DISALLOW = 2;
+
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
@@ -83,6 +90,13 @@ class Calendar
      */
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $theme = null;
+
+    /**
+     * Whether events may overlap (OVERLAP_* constants); see OverlapChecker
+     */
+    #[ORM\Column(type: 'smallint', options: ['default' => self::OVERLAP_ALLOW])]
+    #[Assert\Choice(choices: [self::OVERLAP_ALLOW, self::OVERLAP_WARN, self::OVERLAP_DISALLOW])]
+    private int $overlap_policy = self::OVERLAP_ALLOW;
 
     /**
      * Minimum permission level everyone has on this calendar, logged in or not (ANON_* constants)
@@ -198,6 +212,18 @@ class Calendar
     public function setTheme(?string $theme): self
     {
         $this->theme = $theme === '' ? null : $theme;
+
+        return $this;
+    }
+
+    public function getOverlapPolicy(): int
+    {
+        return $this->overlap_policy;
+    }
+
+    public function setOverlapPolicy(int $overlap_policy): self
+    {
+        $this->overlap_policy = $overlap_policy;
 
         return $this;
     }

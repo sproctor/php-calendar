@@ -1,0 +1,15 @@
+{#
+  Errors about the form as a whole, such as dates that overlap other events (OverlapGuard), with the
+  "Save anyway" checkbox when the calendar only warns about overlaps. Expects `form`.
+#}
+{% set warn_only = form.allow_overlap is defined %}
+{% for error in form.vars.errors %}
+    <div class="alert alert-{{ warn_only ? 'warning' : 'danger' }}" role="alert">{{ error.message }}</div>
+{% endfor %}
+{% if warn_only %}
+    {% if form.vars.errors is not empty %}
+        {{ form_row(form.allow_overlap) }}
+    {% else %}
+        {% do form.allow_overlap.setRendered %}
+    {% endif %}
+{% endif %}

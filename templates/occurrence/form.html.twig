@@ -7,6 +7,7 @@
     <h3>{{ heading|trans }}</h3>
     <p><a href="{{ path('event_view', {eid: event.eid}) }}">{{ event.subject }}</a></p>
     {{ form_start(form) }}
+    {{ include('event/_form_errors.html.twig') }}
     {{ include('event/_times.html.twig', {times: form.times}) }}
     {{ form_end(form) }}
 {% endblock %}

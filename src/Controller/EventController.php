@@ -22,6 +22,7 @@ use App\Entity\Category;
 use App\Entity\Event;
 use App\Entity\User;
 use App\Form\EventFormType;
+use App\Form\OverlapGuard;
 use App\Form\OccurrenceTimesType;
 use App\Repository\EventRepository;
 use App\Security\PermissionResolver;
@@ -47,6 +48,7 @@ class EventController extends AbstractController
         private PermissionResolver $permissionResolver,
         private TranslatorInterface $translator,
         private CalendarDates $dates,
+        private OverlapGuard $overlapGuard,
     ) {
     }
 
@@ -167,6 +169,7 @@ class EventController extends AbstractController
             'frequency' => $frequency,
             'until' => $occurrences->count() > 1 ? $occurrences->last()->getStart()->setTime(0, 0) : null,
             'delay_publish' => $event->getPubtime() !== null,
+            'calendar' => $calendar,
         ]);
         foreach ($calendar->getFieldDefinitions() as $definition) {
             $form->get('field_' . $definition->getFid())->setData($event->getFieldValue($definition));
@@ -176,7 +179,21 @@ class EventController extends AbstractController
         if ($form->isSubmitted()) {
             EventFormType::addCrossFieldErrors($form, $this->translator);
         }
-        if ($form->isSubmitted() && $form->isValid()) {
+        // The dates the form asks for, when it changes them
+        $newTimes = null;
+        if ($form->isSubmitted() && $form->isValid() && (!$modifying || $form->get('modify')->getData())) {
+            [$start, $end, $timeType] = OccurrenceTimesType::toTimes($form->get('times')->getData());
+            $newTimes = $this->occurrenceGenerator->times(
+                $start,
+                $end,
+                $timeType,
+                $form->get('repeats')->getData(),
+                $form->get('frequency')->getData() ?? 1,
+                $form->get('until')->getData(),
+            );
+        }
+        if ($form->isSubmitted() && $form->isValid()
+            && ($newTimes === null || $this->overlapGuard->allows($form, $calendar, $newTimes, $event))) {
             if (!$form->get('delay_publish')->getData()) {
                 $event->setPubtime(null);
             }
@@ -184,8 +201,7 @@ class EventController extends AbstractController
                 $event->setFieldValue($definition, $form->get('field_' . $definition->getFid())->getData());
             }
 
-            if (!$modifying || $form->get('modify')->getData()) {
-                [$start, $end, $timeType] = OccurrenceTimesType::toTimes($form->get('times')->getData());
+            if ($newTimes !== null) {
                 // Keeps the dates that stay, so calendar apps update them instead of replacing them
                 $this->occurrenceGenerator->update(
                     $event,

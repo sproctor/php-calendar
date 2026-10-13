@@ -6,6 +6,7 @@
 {% block body %}
     <h3>{{ heading|trans }}</h3>
     {{ form_start(form) }}
+    {{ include('event/_form_errors.html.twig') }}
     {{ form_row(form.subject) }}
     {{ form_row(form.location) }}
     <div class="mb-3">

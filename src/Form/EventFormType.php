@@ -172,6 +172,9 @@ class EventFormType extends AbstractType
                 'input' => 'datetime_immutable',
             ])
             ->add('save', SubmitType::class, ['label' => new TranslatableMessage('save-label')]);
+        if ($options['calendar'] !== null) {
+            OverlapGuard::addField($builder, $options['calendar']);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -188,6 +191,8 @@ class EventFormType extends AbstractType
             'frequency' => 1,
             'until' => null,
             'delay_publish' => false,
+            // For its overlap policy
+            'calendar' => null,
         ]);
         $resolver->setRequired('times');
     }

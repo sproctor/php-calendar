@@ -20,6 +20,7 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Entity\Occurrence;
 use App\Form\OccurrenceTimesType;
+use App\Form\OverlapGuard;
 use App\Security\Voter\EventVoter;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,6 +40,7 @@ class OccurrenceController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private OverlapGuard $overlapGuard,
     ) {
     }
 
@@ -106,13 +108,15 @@ class OccurrenceController extends AbstractController
 
     private function occurrenceForm(Request $request, Event $event, ?Occurrence $occurrence, array $times): Response
     {
-        $form = $this->createFormBuilder(['times' => $times])
+        $builder = $this->createFormBuilder(['times' => $times])
             ->add('times', OccurrenceTimesType::class)
-            ->add('save', SubmitType::class, ['label' => new TranslatableMessage('save-label')])
-            ->getForm();
+            ->add('save', SubmitType::class, ['label' => new TranslatableMessage('save-label')]);
+        OverlapGuard::addField($builder, $event->getCalendar());
+        $form = $builder->getForm();
 
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()
+            && $this->overlapGuard->allows($form, $event->getCalendar(), [OccurrenceTimesType::toTimes($form->get('times')->getData())], $event)) {
             [$start, $end, $timeType] = OccurrenceTimesType::toTimes($form->get('times')->getData());
             if ($occurrence === null) {
                 new Occurrence($event, $start, $end, $timeType);

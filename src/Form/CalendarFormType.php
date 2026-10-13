@@ -70,6 +70,15 @@ class CalendarFormType extends AbstractType
                     'read-create-modify-events-label' => Calendar::ANON_MODIFY,
                 ],
             ])
+            ->add('overlap_policy', ChoiceType::class, [
+                'label' => new TranslatableMessage('overlap-policy-label'),
+                'help' => new TranslatableMessage('overlap-policy-help'),
+                'choices' => [
+                    'overlap-allow-option' => Calendar::OVERLAP_ALLOW,
+                    'overlap-warn-option' => Calendar::OVERLAP_WARN,
+                    'overlap-disallow-option' => Calendar::OVERLAP_DISALLOW,
+                ],
+            ])
             ->add('timezone', TimezoneType::class, [
                 'label' => new TranslatableMessage('default-timezone-label'),
                 'help' => new TranslatableMessage('default-timezone-help'),
