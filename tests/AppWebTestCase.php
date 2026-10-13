@@ -27,11 +27,12 @@ abstract class AppWebTestCase extends WebTestCase
         $this->client = static::createClient();
         $connection = $this->em()->getConnection();
         $connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
-        // This app's tables (see App\Doctrine\TablePrefixListener), except the migrations' record
+        // This app's tables (see App\Doctrine\TablePrefixListener), except the migrations' record. DELETE
+        // rather than TRUNCATE, which recreates each table and took most of every test's time.
         $prefix = PrefixedMigration::prefix();
         foreach ($connection->fetchFirstColumn('SHOW TABLES') as $table) {
             if (str_starts_with($table, $prefix) && $table !== $prefix . 'doctrine_migration_versions') {
-                $connection->executeStatement("TRUNCATE TABLE `$table`");
+                $connection->executeStatement("DELETE FROM `$table`");
             }
         }
         $connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
