@@ -17,6 +17,7 @@
 namespace App\Controller;
 
 use App\Entity\Calendar;
+use App\Entity\Category;
 use App\Entity\EventSource;
 use App\Entity\User;
 use App\Repository\OccurrenceRepository;
@@ -39,6 +40,7 @@ abstract class AbstractEventSourceController extends AbstractController
     public function __construct(
         protected OccurrenceGrid $grid,
         protected CalendarDates $dates,
+        protected EventVoter $eventVoter,
     ) {
     }
 
@@ -85,6 +87,7 @@ abstract class AbstractEventSourceController extends AbstractController
             ),
             'start_date' => $from_date,
             'create_date' => $this->createDate($monthStart, $monthEnd),
+            'legend' => $this->legend($source),
         ]);
     }
 
@@ -142,6 +145,25 @@ abstract class AbstractEventSourceController extends AbstractController
             'order' => $order,
             'results' => $results,
         ]);
+    }
+
+    /**
+     * Which color is which category: each of the source's calendars with the categories the visitor can
+     * see in it, leaving out calendars without any
+     *
+     * @return list<array{calendar: Calendar, categories: Category[]}>
+     */
+    private function legend(EventSource $source): array
+    {
+        $legend = [];
+        foreach ($source->getCalendars() as $calendar) {
+            $categories = $this->eventVoter->visibleCategories($calendar, $this->currentUser());
+            if ($categories !== []) {
+                $legend[] = ['calendar' => $calendar, 'categories' => $categories];
+            }
+        }
+
+        return $legend;
     }
 
     /**

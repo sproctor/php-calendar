@@ -17,6 +17,8 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Calendar;
+use App\Entity\Category;
 use App\Entity\Event;
 use App\Entity\User;
 use App\Security\PermissionResolver;
@@ -61,7 +63,7 @@ class EventVoter extends Voter
 
     public function canView(Event $event, ?User $user): bool
     {
-        return $this->canSeeCategory($event, $user) && ($event->isPublished() || $this->canEdit($event, $user));
+        return $this->canSeeCategory($event->getCalendar(), $event->getCategory(), $user) && ($event->isPublished() || $this->canEdit($event, $user));
     }
 
     public function canEdit(Event $event, ?User $user): bool
@@ -70,20 +72,34 @@ class EventVoter extends Voter
         if ($permissions->admin) {
             return true;
         }
-        if (!$this->canSeeCategory($event, $user)) {
+        if (!$this->canSeeCategory($event->getCalendar(), $event->getCategory(), $user)) {
             return false;
         }
 
         return $event->isOwner($user) || ($permissions->update && !$event->isReadonly());
     }
 
-    private function canSeeCategory(Event $event, ?User $user): bool
+    /**
+     * The calendar's categories whose events $user can see: none without read access, all of them for
+     * calendar admins, else those not limited to a role they aren't in
+     *
+     * @return Category[]
+     */
+    public function visibleCategories(Calendar $calendar, ?User $user): array
     {
-        $permissions = $this->resolver->getPermissions($event->getCalendar(), $user);
+        return array_values(array_filter(
+            $calendar->getCategories()->toArray(),
+            fn(Category $category) => $this->canSeeCategory($calendar, $category, $user),
+        ));
+    }
+
+    private function canSeeCategory(Calendar $calendar, ?Category $category, ?User $user): bool
+    {
+        $permissions = $this->resolver->getPermissions($calendar, $user);
         if (!$permissions->read) {
             return false;
         }
-        $role = $event->getCategory()?->getRole();
+        $role = $category?->getRole();
 
         return $role === null || $permissions->admin || $role->hasUser($user);
     }

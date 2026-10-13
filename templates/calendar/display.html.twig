@@ -46,5 +46,18 @@
         {% endfor %}
     </p>
 {% endif %}
+{% if legend is not empty %}
+    {# Which color is which category; in a view, under each calendar's name #}
+    <div class="small mb-2" role="group" aria-label="{{ 'categories-label'|trans }}">
+        {% for group in legend %}
+            <span class="d-inline-flex flex-wrap align-items-center gap-1 me-3">
+                <span class="text-secondary">{{ source.view ? group.calendar.title : 'categories-label'|trans }}</span>
+                {% for category in group.categories %}
+                    <span class="badge" style="color: {{ category.textColor }}; background: {{ category.color }};">{{ category.name }}</span>
+                {% endfor %}
+            </span>
+        {% endfor %}
+    </div>
+{% endif %}
 {{ include('components/timezone_note.html.twig') }}
 {% endblock %}

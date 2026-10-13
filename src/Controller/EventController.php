@@ -18,7 +18,6 @@
 namespace App\Controller;
 
 use App\Entity\Calendar;
-use App\Entity\Category;
 use App\Entity\Event;
 use App\Entity\User;
 use App\Form\EventFormType;
@@ -49,6 +48,7 @@ class EventController extends AbstractController
         private TranslatorInterface $translator,
         private CalendarDates $dates,
         private OverlapGuard $overlapGuard,
+        private EventVoter $eventVoter,
     ) {
     }
 
@@ -160,7 +160,7 @@ class EventController extends AbstractController
         $occurrences = $event->getOccurrences();
         $form = $this->createForm(EventFormType::class, $event, [
             'maxlength' => $calendar->getSubjectMax(),
-            'categories' => $this->visibleCategories($calendar, $user, $permissions->admin),
+            'categories' => $this->eventVoter->visibleCategories($calendar, $user),
             'field_definitions' => $calendar->getFieldDefinitions()->toArray(),
             'can_moderate' => $permissions->moderate,
             'modifying' => $modifying,
@@ -230,19 +230,6 @@ class EventController extends AbstractController
             'event' => $event,
             'modifying' => $modifying,
         ], new Response(status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
-    }
-
-    /**
-     * The calendar's categories that aren't limited to a role the user isn't in
-     *
-     * @return Category[]
-     */
-    private function visibleCategories(Calendar $calendar, ?User $user, bool $isAdmin): array
-    {
-        return array_values(array_filter(
-            $calendar->getCategories()->toArray(),
-            fn(Category $category) => $isAdmin || $category->getRole() === null || $category->getRole()->hasUser($user),
-        ));
     }
 
     private function currentUser(): ?User
