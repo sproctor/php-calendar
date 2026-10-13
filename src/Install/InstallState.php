@@ -17,6 +17,7 @@
 
 namespace App\Install;
 
+use App\Doctrine\PrefixedMigration;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\Migrations\DependencyFactory;
 use Psr\Cache\CacheItemPoolInterface;
@@ -57,9 +58,14 @@ class InstallState
      */
     public function isConfigured(): bool
     {
+        return self::databaseUrl() !== '';
+    }
+
+    private static function databaseUrl(): string
+    {
         $url = $_SERVER['DATABASE_URL'] ?? $_ENV['DATABASE_URL'] ?? getenv('DATABASE_URL');
 
-        return is_string($url) && $url !== '';
+        return is_string($url) ? $url : '';
     }
 
     /**
@@ -99,6 +105,9 @@ class InstallState
             'TABLE_PREFIX' => $tablePrefix,
         ];
         $this->saveConfig($env);
+        // A database installed before (e.g. reinstalling after deleting .env.local.php, then emptying
+        // it) may have been remembered as up to date
+        $this->cache->delete($this->migrationStatusKey($databaseUrl, $tablePrefix));
         // The installer's own pages cached the entities' table names before there was a prefix; in
         // production that's a compiled file that would otherwise keep them
         $this->metadataCache->clear();
@@ -159,15 +168,13 @@ class InstallState
     }
 
     /**
-     * Whether the database is missing migrations. Once it's up to date, that's remembered until the
-     * set of migration files changes, so normal requests don't query the database for it.
+     * Whether the database is missing migrations. Once it's up to date, that's remembered, so normal
+     * requests don't query the database for it, until the migration files, the database or the table
+     * prefix change, or forgetMigrationStatus() is called.
      */
     public function hasPendingMigrations(): bool
     {
-        $files = glob($this->projectDir . '/migrations/*.php') ?: [];
-        $key = 'migrations_current_' . md5(implode('|', array_map('basename', $files)));
-
-        return !$this->cache->get($key, function (ItemInterface $item): bool {
+        return !$this->cache->get($this->migrationStatusKey(), function (ItemInterface $item): bool {
             $current = $this->countPendingMigrations() === 0;
             if (!$current) {
                 // Check again on the next request
@@ -176,6 +183,25 @@ class InstallState
 
             return $current;
         });
+    }
+
+    /**
+     * Makes the next hasPendingMigrations() ask the database again, e.g. when its tables went missing
+     */
+    public function forgetMigrationStatus(): void
+    {
+        $this->cache->delete($this->migrationStatusKey());
+    }
+
+    private function migrationStatusKey(?string $databaseUrl = null, ?string $tablePrefix = null): string
+    {
+        $files = glob($this->projectDir . '/migrations/*.php') ?: [];
+
+        return 'migrations_current_' . md5(implode('|', [
+            ...array_map('basename', $files),
+            $databaseUrl ?? self::databaseUrl(),
+            $tablePrefix ?? PrefixedMigration::prefix(),
+        ]));
     }
 
     private function countPendingMigrations(): int

@@ -28,6 +28,7 @@ use App\Install\InstallState;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DBALException;
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -231,6 +232,12 @@ class SetupController extends AbstractController
     {
         try {
             return $userRepository->count() > 0;
+        } catch (TableNotFoundException) {
+            // The tables are gone though the database was remembered as up to date (it was emptied or
+            // replaced): check it again, so it gets its tables
+            $this->installState->forgetMigrationStatus();
+
+            return false;
         } catch (DBALException) {
             return false;
         }

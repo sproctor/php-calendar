@@ -6,6 +6,11 @@ use App\Install\InstallState;
 use App\Tests\AppWebTestCase;
 use App\Tests\Import\Legacy20Fixture;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\TableNotFoundException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 class SetupTest extends AppWebTestCase
 {
@@ -98,6 +103,51 @@ class SetupTest extends AppWebTestCase
         static::getContainer()->get(InstallState::class)->writeConfig('mysql://app:app@database/app', 'http://localhost', 'phpc3_');
 
         $this->assertFalse($cache->getItem('App__Entity__Calendar')->isHit());
+    }
+
+    /**
+     * Runs $test with the database a migration behind, as if it had been emptied or restored under the
+     * installation, while it's remembered as up to date
+     */
+    private function withDatabaseBehind(callable $test): void
+    {
+        $installState = static::getContainer()->get(InstallState::class);
+        $connection = $this->em()->getConnection();
+        $this->assertFalse($installState->hasPendingMigrations());
+        $versions = $connection->fetchAllAssociative('SELECT * FROM test_doctrine_migration_versions');
+        $connection->executeStatement('DELETE FROM test_doctrine_migration_versions');
+        try {
+            $this->assertFalse($installState->hasPendingMigrations(), 'Still remembered as up to date');
+            $test($installState);
+        } finally {
+            foreach ($versions as $version) {
+                $connection->insert('test_doctrine_migration_versions', $version);
+            }
+            $installState->forgetMigrationStatus();
+        }
+    }
+
+    public function testReinstallingChecksTheDatabaseAgain(): void
+    {
+        $this->withDatabaseBehind(function (InstallState $installState): void {
+            $url = $_SERVER['DATABASE_URL'] ?? $_ENV['DATABASE_URL'] ?? getenv('DATABASE_URL');
+            $installState->writeConfig($url, 'http://localhost', 'test_');
+            $this->assertTrue($installState->hasPendingMigrations());
+        });
+    }
+
+    public function testMissingTableChecksTheDatabaseAgain(): void
+    {
+        $this->withDatabaseBehind(function (InstallState $installState): void {
+            $kernel = static::getContainer()->get('kernel');
+            $exception = new \RuntimeException('Request failed', previous: new TableNotFoundException(
+                new \Doctrine\DBAL\Driver\PDO\Exception('Base table or view not found', '42S02', 1146), null));
+            static::getContainer()->get('event_dispatcher')->dispatch(
+                new ExceptionEvent($kernel, new Request(), HttpKernelInterface::MAIN_REQUEST, $exception),
+                KernelEvents::EXCEPTION,
+            );
+            $this->assertTrue($installState->hasPendingMigrations());
+        });
     }
 
     public function testTablePrefix(): void

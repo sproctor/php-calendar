@@ -18,9 +18,11 @@
 namespace App\EventSubscriber;
 
 use App\Install\InstallState;
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -29,6 +31,7 @@ use Twig\Environment;
 /**
  * Sends every request to the installer until a database is configured, and shows a maintenance page
  * while the database schema is out of date (after uploading a new version) until an admin updates it.
+ * Recovers when the database loses its tables underneath a running installation.
  */
 class InstallSubscriber implements EventSubscriberInterface
 {
@@ -44,8 +47,26 @@ class InstallSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents(): array
     {
-        // After the router (32), so the route is known, and before the firewall (8)
-        return [KernelEvents::REQUEST => ['onKernelRequest', 30]];
+        return [
+            // After the router (32), so the route is known, and before the firewall (8)
+            KernelEvents::REQUEST => ['onKernelRequest', 30],
+            KernelEvents::EXCEPTION => 'onKernelException',
+        ];
+    }
+
+    /**
+     * A missing table means the database changed under the installation (e.g. it was emptied or
+     * restored) while it was remembered as up to date, so check it again on the next request
+     */
+    public function onKernelException(ExceptionEvent $event): void
+    {
+        for ($e = $event->getThrowable(); $e !== null; $e = $e->getPrevious()) {
+            if ($e instanceof TableNotFoundException) {
+                $this->installState->forgetMigrationStatus();
+
+                return;
+            }
+        }
     }
 
     public function onKernelRequest(RequestEvent $event): void
