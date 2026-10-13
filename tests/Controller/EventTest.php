@@ -227,6 +227,40 @@ class EventTest extends AppWebTestCase
         $this->assertNull($blank->getLocation());
     }
 
+    /**
+     * Issue #125: modifying an event with custom fields
+     */
+    public function testEditingCustomFields(): void
+    {
+        $calendar = $this->createCalendar();
+        $room = (new FieldDefinition($calendar))->setName('Room')->setIsRequired(true);
+        $notes = (new FieldDefinition($calendar))->setName('Notes');
+        $this->em()->persist($room);
+        $this->em()->persist($notes);
+        $event = $this->createEvent($calendar, null, 'Lecture');
+        $event->setFieldValue($room, 'B101');
+        $event->setFieldValue($notes, 'Bring slides');
+        $this->em()->flush();
+        $this->login($this->createUser('admin', admin: true));
+
+        $crawler = $this->client->request('GET', "/en/event/{$event->getEid()}/edit");
+        $this->assertSame('B101', $crawler->filter("input[name=\"event_form[field_{$room->getFid()}]\"]")->attr('value'));
+        $this->submit('Save', [
+            'event_form[subject]' => 'Lecture, moved',
+            "event_form[field_{$room->getFid()}]" => 'C202',
+            "event_form[field_{$notes->getFid()}]" => '',
+        ]);
+        $this->assertResponseRedirects("/en/event/{$event->getEid()}");
+
+        $this->em()->clear();
+        $saved = $this->em()->find(Event::class, $event->getEid());
+        $this->assertSame('Lecture, moved', $saved->getSubject());
+        $this->assertSame('C202', $saved->getFieldValue($this->fresh($room)));
+        $this->assertNull($saved->getFieldValue($this->fresh($notes)));
+        // The dates weren't touched
+        $this->assertCount(1, $saved->getOccurrences());
+    }
+
     public function testCustomFields(): void
     {
         $calendar = $this->createCalendar();
