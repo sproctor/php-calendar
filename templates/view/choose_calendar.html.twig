@@ -10,7 +10,8 @@
             {% for calendar in calendars %}
                 <a class="list-group-item list-group-item-action d-flex align-items-center gap-2"
                    href="{{ path('create_event', {slug: calendar.slug}|merge(date_parts)) }}">
-                    <span class="phpc-calendar-swatch" style="background: {{ source.calendarColor(calendar) }};"></span>
+                    {% set color = source.calendarColor(calendar) %}
+                    {% if color %}<span class="phpc-calendar-swatch" style="background: {{ color }};"></span>{% endif %}
                     {{ calendar.title }}
                 </a>
             {% endfor %}

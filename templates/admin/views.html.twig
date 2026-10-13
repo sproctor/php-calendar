@@ -21,7 +21,7 @@
                         <td><a href="{{ source_path(view, 'default') }}">{{ view.title }}</a></td>
                         <td>
                             {% for member in view.members %}
-                                <span class="text-nowrap me-2"><span class="phpc-calendar-swatch" style="background: {{ member.color }};"></span> {{ member.calendar.title }}</span>
+                                <span class="text-nowrap me-2">{% if member.color %}<span class="phpc-calendar-swatch" style="background: {{ member.color }};"></span> {% endif %}{{ member.calendar.title }}</span>
                             {% endfor %}
                         </td>
                         <td class="d-flex gap-2">

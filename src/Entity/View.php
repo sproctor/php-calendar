@@ -165,7 +165,7 @@ class View implements EventSource
     /**
      * Makes the view's calendars exactly these, in this order, keeping existing memberships
      *
-     * @param array<int, array{0: Calendar, 1: string}> $calendars calendar and color pairs
+     * @param array<int, array{0: Calendar, 1: ?string}> $calendars calendar and color (or null) pairs
      */
     public function setCalendars(array $calendars): self
     {
@@ -204,9 +204,19 @@ class View implements EventSource
 
     public function getCalendarColor(Calendar $calendar): ?string
     {
+        return $this->getMember($calendar)?->getColor();
+    }
+
+    public function hasCalendar(Calendar $calendar): bool
+    {
+        return $this->getMember($calendar) !== null;
+    }
+
+    private function getMember(Calendar $calendar): ?ViewCalendar
+    {
         foreach ($this->members as $member) {
             if ($member->getCalendar() === $calendar) {
-                return $member->getColor();
+                return $member;
             }
         }
 

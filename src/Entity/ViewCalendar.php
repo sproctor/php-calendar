@@ -20,15 +20,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A calendar in a view, and the color its events are marked with there
+ * A calendar in a view, and the color its events are marked with there, if any
  */
 #[ORM\Entity]
 #[ORM\Table('view_calendars')]
 class ViewCalendar
 {
-    #[ORM\Column(type: 'string', length: 7)]
+    #[ORM\Column(type: 'string', length: 7, nullable: true)]
     #[Assert\Regex('/^#[0-9a-fA-F]{6}$/')]
-    private string $color = '#1f6feb';
+    private ?string $color = null;
 
     #[ORM\Column(type: 'integer')]
     private int $position = 0;
@@ -55,12 +55,12 @@ class ViewCalendar
         return $this->calendar;
     }
 
-    public function getColor(): string
+    public function getColor(): ?string
     {
         return $this->color;
     }
 
-    public function setColor(string $color): self
+    public function setColor(?string $color): self
     {
         $this->color = $color;
 

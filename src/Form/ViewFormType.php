@@ -38,8 +38,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
- * A view's settings and calendars. Each calendar has an "in this view" checkbox (calendar_{cid}) and a
- * color (color_{cid}); calendars() reads them back.
+ * A view's settings and calendars. Each calendar has an "in this view" checkbox (calendar_{cid}), and
+ * optionally a color marking its events (colored_{cid} and color_{cid}); calendars() reads them back.
  */
 class ViewFormType extends AbstractType
 {
@@ -68,6 +68,12 @@ class ViewFormType extends AbstractType
                 ->add('calendar_' . $calendar->getCid(), CheckboxType::class, [
                     'label' => $calendar->getTitle(),
                     'translation_domain' => false,
+                    'required' => false,
+                    'mapped' => false,
+                    'data' => $view->hasCalendar($calendar),
+                ])
+                ->add('colored_' . $calendar->getCid(), CheckboxType::class, [
+                    'label' => new TranslatableMessage('mark-with-color-label'),
                     'required' => false,
                     'mapped' => false,
                     'data' => $color !== null,
@@ -118,14 +124,15 @@ class ViewFormType extends AbstractType
      * The calendars ticked on a submitted form, with their colors, for View::setCalendars()
      *
      * @param Calendar[] $calendars every calendar, as given to the form
-     * @return array<int, array{0: Calendar, 1: string}>
+     * @return array<int, array{0: Calendar, 1: ?string}>
      */
     public static function calendars(FormInterface $form, array $calendars): array
     {
         $chosen = [];
         foreach ($calendars as $calendar) {
             if ($form->get('calendar_' . $calendar->getCid())->getData()) {
-                $chosen[] = [$calendar, (string) $form->get('color_' . $calendar->getCid())->getData()];
+                $colored = $form->get('colored_' . $calendar->getCid())->getData();
+                $chosen[] = [$calendar, $colored ? (string) $form->get('color_' . $calendar->getCid())->getData() : null];
             }
         }
 

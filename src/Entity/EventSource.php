@@ -46,6 +46,6 @@ interface EventSource
 
     public function isView(): bool;
 
-    /** The color marking $calendar's events here, or null when they aren't marked */
+    /** The color marking $calendar's events here, or null when they aren't marked with one */
     public function getCalendarColor(Calendar $calendar): ?string;
 }

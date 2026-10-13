@@ -22,6 +22,9 @@
                         <div class="form-check mb-0 flex-grow-1">
                             {{ form_widget(form['calendar_' ~ calendar.cid]) }}
                         </div>
+                        <div class="form-check mb-0">
+                            {{ form_widget(form['colored_' ~ calendar.cid]) }}
+                        </div>
                         {{ form_widget(form['color_' ~ calendar.cid], {attr: {class: 'form-control-color', title: form['color_' ~ calendar.cid].vars.label|trans}}) }}
                     </li>
                 {% endfor %}

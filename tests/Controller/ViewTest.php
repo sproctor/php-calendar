@@ -49,12 +49,16 @@ class ViewTest extends AppWebTestCase
             'view_form[title]' => 'Club and holidays',
             "view_form[calendar_{$this->club->getCid()}]" => true,
             "view_form[calendar_{$this->holidays->getCid()}]" => true,
+            "view_form[colored_{$this->holidays->getCid()}]" => true,
             "view_form[color_{$this->holidays->getCid()}]" => '#cf222e',
         ]);
         $this->assertResponseRedirects('/en/admin/views');
         $view = $this->em()->getRepository(View::class)->findOneBy(['title' => 'Club and holidays']);
         $this->assertSame(['Club', 'Holidays'], array_map(fn(Calendar $c) => $c->getTitle(), $view->getCalendars()));
         $this->assertSame('#cf222e', $view->getCalendarColor($this->fresh($this->holidays)));
+        // In the view without a color
+        $this->assertTrue($view->hasCalendar($this->fresh($this->club)));
+        $this->assertNull($view->getCalendarColor($this->fresh($this->club)));
         $this->client->followRedirect();
         $this->assertSelectorTextContains('main table', 'Club and holidays');
 
@@ -66,7 +70,7 @@ class ViewTest extends AppWebTestCase
 
     public function testShowsItsCalendarsEventsMarkedByCalendar(): void
     {
-        $this->createView('Club and holidays', [[$this->club, '#2da44e'], [$this->holidays, '#cf222e']]);
+        $this->createView('Club and holidays', [[$this->club, null], [$this->holidays, '#cf222e']]);
 
         $this->client->request('GET', '/en/view/club-and-holidays/month/2026/10');
         $this->assertResponseIsSuccessful();
@@ -76,6 +80,9 @@ class ViewTest extends AppWebTestCase
         $this->assertStringContainsString('Columbus Day', $html);
         $this->assertStringNotContainsString('Board meeting', $html);
         $this->assertSelectorExists('.phpc-occurrence[style*="border-inline-start: .35rem solid #cf222e"]');
+        // A calendar without a color isn't marked, but events still say which calendar they're on
+        $this->assertCount(1, $this->client->getCrawler()->filter('.phpc-occurrence[style*="border-inline-start"]'));
+        $this->assertStringContainsString('Club', $this->client->getCrawler()->filter('.phpc-occurrence:contains("Picnic")')->attr('data-bs-content'));
         // The legend, and the view's timezone
         $this->assertSelectorTextContains('main', 'Holidays');
         $this->assertSelectorExists('.phpc-timezone-note[data-timezone="America/Chicago"]');
@@ -133,6 +140,9 @@ class ViewTest extends AppWebTestCase
     public function testAllCalendars(): void
     {
         $this->client->request('GET', '/en/view/all/month/2026/10');
+        // No colors: they'd differ between visitors, who each see their own set of calendars
+        $this->assertSelectorNotExists('.phpc-occurrence[style*="border-inline-start"]');
+        $this->assertSelectorNotExists('.phpc-calendar-swatch');
         $html = $this->client->getResponse()->getContent();
         $this->assertStringContainsString('Picnic', $html);
         $this->assertStringContainsString('Columbus Day', $html);

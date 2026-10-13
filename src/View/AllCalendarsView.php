@@ -26,11 +26,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * The built-in view of every calendar the visitor can read (/view/all/), made on the fly rather than
- * saved, with each calendar in a color from PALETTE
+ * saved. Its calendars aren't marked with colors, which would differ between visitors (each sees their
+ * own set of calendars); events keep their category colors and show their calendar's name.
  */
 class AllCalendarsView
 {
-    /** Distinct colors that work behind white text, in light and dark mode */
+    /** Distinct colors for marking calendars in a view, offered when admins add one */
     public const PALETTE = ['#1f6feb', '#2da44e', '#cf222e', '#8250df', '#bf8700', '#0a7ea4', '#bc4c00', '#d6336c', '#57606a', '#1a7f37'];
 
     public function __construct(
@@ -59,11 +60,7 @@ class AllCalendarsView
             ->setTimezone($calendars !== [] ? $calendars[0]->getTimezone() : 'UTC')
             ->setEventsMax(max(array_map(fn(Calendar $calendar) => $calendar->getEventsMax(), $calendars) ?: [8]));
 
-        return $view->setCalendars(array_map(
-            fn(Calendar $calendar, int $i) => [$calendar, self::PALETTE[$i % count(self::PALETTE)]],
-            $calendars,
-            array_keys($calendars),
-        ));
+        return $view->setCalendars(array_map(fn(Calendar $calendar) => [$calendar, null], $calendars));
     }
 
     /**

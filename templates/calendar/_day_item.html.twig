@@ -28,8 +28,8 @@
     <div class="flex-grow-1 min-w-0">
         <div class="d-flex flex-wrap align-items-baseline gap-2">
             <a class="fw-semibold" href="{{ path('event_view', {eid: event.eid}) }}">{{ event.subject }}</a>
-            {% if calendar_color %}
-                <span class="badge text-bg-light border" style="border-color: {{ calendar_color }} !important;">{{ event.calendar.title }}</span>
+            {% if source.view %}
+                <span class="badge text-bg-light border"{% if calendar_color %} style="border-color: {{ calendar_color }} !important;"{% endif %}>{{ event.calendar.title }}</span>
             {% endif %}
             {% if event.category %}
                 <span class="badge" style="color: {{ event.textColor }}; background: {{ event.color }};">{{ event.category.name }}</span>
