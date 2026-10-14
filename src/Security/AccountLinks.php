@@ -38,33 +38,31 @@ class AccountLinks
         private UriSigner $signer,
         #[Autowire('%kernel.secret%')]
         private string $secret,
+        #[Autowire('%env(DEFAULT_URI)%')]
+        private string $siteUri,
     ) {
     }
 
     public function resetPasswordUrl(User $user): string
     {
-        $url = $this->urlGenerator->generate('reset_password', [
+        return $this->link('reset_password', [
             'uid' => $user->getUid(),
             'h' => $this->passwordFingerprint($user),
-        ], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        return $this->signer->sign($url, new \DateInterval('PT' . self::RESET_LIFETIME . 'S'));
+        ], self::RESET_LIFETIME);
     }
 
     public function isValidResetRequest(Request $request, User $user): bool
     {
-        return $this->signer->checkRequest($request)
+        return $this->isSigned($request)
             && hash_equals($this->passwordFingerprint($user), $request->query->getString('h'));
     }
 
     public function confirmEmailUrl(User $user, string $email): string
     {
-        $url = $this->urlGenerator->generate('confirm_email', [
+        return $this->link('confirm_email', [
             'uid' => $user->getUid(),
             'email' => $email,
-        ], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        return $this->signer->sign($url, new \DateInterval('PT' . self::CONFIRM_LIFETIME . 'S'));
+        ], self::CONFIRM_LIFETIME);
     }
 
     /**
@@ -72,7 +70,40 @@ class AccountLinks
      */
     public function confirmedEmail(Request $request): ?string
     {
-        return $this->signer->checkRequest($request) ? $request->query->getString('email') : null;
+        return $this->isSigned($request) ? $request->query->getString('email') : null;
+    }
+
+    /**
+     * On the site's address saved by the installer, never the request's Host header: anyone can send that,
+     * and would get the link to someone else's account mailed to their own server. The signature leaves
+     * out the scheme and host, so a link still works after a redirect to https or another host name.
+     */
+    private function link(string $route, array $parameters, int $lifetime): string
+    {
+        $path = $this->signer->sign($this->urlGenerator->generate($route, $parameters),
+            new \DateInterval('PT' . $lifetime . 'S'));
+
+        return $this->siteOrigin() . $path;
+    }
+
+    private function isSigned(Request $request): bool
+    {
+        $query = $request->server->getString('QUERY_STRING');
+
+        return $this->signer->check($request->getBaseUrl() . $request->getPathInfo() . ($query !== '' ? '?' . $query : ''));
+    }
+
+    /**
+     * The scheme, host and port of DEFAULT_URI
+     */
+    private function siteOrigin(): string
+    {
+        $url = parse_url($this->siteUri);
+        if (!isset($url['scheme'], $url['host'])) {
+            throw new \LogicException('DEFAULT_URI must be the site\'s address, e.g. https://example.com/calendar');
+        }
+
+        return $url['scheme'] . '://' . $url['host'] . (isset($url['port']) ? ':' . $url['port'] : '');
     }
 
     /**
