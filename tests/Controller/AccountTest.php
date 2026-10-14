@@ -131,6 +131,21 @@ class AccountTest extends AppWebTestCase
         $this->assertResponseStatusCodeSame(410);
     }
 
+    public function testLinksIgnoreTheRequestsHost(): void
+    {
+        $this->createUserWithEmail('pat', 'pat@example.com');
+        $this->client->setServerParameter('HTTP_HOST', 'evil.example');
+        $this->client->request('GET', '/reset-password');
+        $this->submit('Send link', ['form[identifier]' => 'pat']);
+        $link = $this->linkInEmail();
+        $this->assertStringStartsWith('http://localhost/reset-password/', $link);
+
+        // The signature doesn't depend on the host, e.g. after a redirect to https
+        $this->client->setServerParameter('HTTP_HOST', 'localhost');
+        $this->client->request('GET', preg_replace('~^http://localhost/~', 'https://www.example.com/', $link));
+        $this->assertResponseIsSuccessful();
+    }
+
     public function testResetSaysTheSameForUnknownAccounts(): void
     {
         $this->createUser('nomail');

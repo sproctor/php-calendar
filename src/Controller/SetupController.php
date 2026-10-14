@@ -228,6 +228,10 @@ class SetupController extends AbstractController
         );
     }
 
+    /**
+     * Other database errors go up as an error page: taking them for "no users" would let anyone create an
+     * admin while the database is briefly unreachable (e.g. too many connections)
+     */
     private function hasUsers(UserRepository $userRepository): bool
     {
         try {
@@ -237,8 +241,6 @@ class SetupController extends AbstractController
             // replaced): check it again, so it gets its tables
             $this->installState->forgetMigrationStatus();
 
-            return false;
-        } catch (DBALException) {
             return false;
         }
     }
