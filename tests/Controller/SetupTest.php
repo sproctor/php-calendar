@@ -3,9 +3,11 @@
 namespace App\Tests\Controller;
 
 use App\Install\InstallState;
+use App\Repository\UserRepository;
 use App\Tests\AppWebTestCase;
 use App\Tests\Import\Legacy20Fixture;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -199,6 +201,18 @@ class SetupTest extends AppWebTestCase
         // Setup closes once an account exists
         $this->client->request('GET', '/setup');
         $this->assertResponseRedirects('/');
+    }
+
+    public function testDatabaseErrorKeepsSetupClosed(): void
+    {
+        $users = $this->createStub(UserRepository::class);
+        $users->method('count')->willThrowException(new ConnectionException(
+            new \Doctrine\DBAL\Driver\PDO\Exception('Too many connections', '08004', 1040), null));
+        static::getContainer()->set(UserRepository::class, $users);
+
+        $this->client->request('GET', '/setup');
+        $this->assertResponseStatusCodeSame(500);
+        $this->assertSelectorNotExists('input[name="form[user][username]"]');
     }
 
     public function testImportFrom20(): void
