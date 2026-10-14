@@ -69,7 +69,7 @@ col.wnumber {
 }
 
 /* A holiday or day off: a translucent layer of its category's color, over today's highlight too */
-.phpc-month-view td.phpc-marked {
+td.phpc-marked {
   --bs-table-bg-type: color-mix(in srgb, var(--phpc-mark) 30%, transparent);
 }
 
@@ -144,4 +144,54 @@ col.wnumber {
 
 .phpc-filter-menu {
   min-width: 16rem;
+}
+
+/* The mini calendar (calendar/mini.html.twig), small enough for another site's sidebar */
+.phpc-body:has(> .phpc-mini) {
+  padding: .5rem;
+}
+
+.phpc-mini-grid {
+  font-size: .8rem;
+  table-layout: fixed;
+}
+
+.phpc-mini-grid th,
+.phpc-mini-grid td {
+  padding: .125rem 0;
+}
+
+.phpc-mini-number {
+  display: inline-block;
+  min-width: 1.75em;
+  padding: .125rem;
+  border-radius: var(--bs-border-radius);
+  color: var(--bs-body-color);
+  text-decoration: none;
+}
+
+.phpc-mini-number:hover {
+  background-color: var(--bs-secondary-bg);
+}
+
+.phpc-mini-shadow .phpc-mini-number {
+  color: var(--bs-secondary-color);
+}
+
+.phpc-mini-selected .phpc-mini-number {
+  box-shadow: inset 0 0 0 1px var(--bs-primary);
+}
+
+.phpc-mini-dots {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  height: 4px;
+}
+
+.phpc-mini-dots > span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--bs-secondary-color);
 }

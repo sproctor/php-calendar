@@ -30,6 +30,7 @@
         {{ m.tab('roles', 'roles-label', 'bi:person-badge') }}
         {{ m.tab('categories', 'categories-label', 'bi:tags') }}
         {{ m.tab('fields', 'fields-title', 'bi:input-cursor-text') }}
+        {{ m.tab('embed', 'embed-label', 'bi:code-slash') }}
     </ul>
     <div class="tab-content">
         <div class="tab-pane show active" id="settings" role="tabpanel" aria-labelledby="settings-tab">
@@ -169,6 +170,90 @@
             </table>
             </div>
             <a class="btn btn-primary" href="{{ path('create_field', {slug: calendar.slug}) }}">{{ ux_icon('bi:plus') }} {{ "create-field-title"|trans }}</a>
+        </div>
+
+        {# Writes the code for embed.js; phpc.js keeps the snippet and preview up to date #}
+        <div class="tab-pane" id="embed" role="tabpanel" aria-labelledby="embed-tab">
+            <p class="text-secondary">{{ "embed-help"|trans }}</p>
+            <div class="row g-4 phpc-embed-builder" data-script="{{ absolute_url(asset('static/embed.js')) }}"
+                 data-calendar="{{ url('default_view', {slug: calendar.slug}) }}" data-mini="{{ url('mini_view', {slug: calendar.slug}) }}">
+                <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label class="form-label" for="embed-widget">{{ "embed-show-label"|trans }}</label>
+                        <select class="form-select" id="embed-widget" name="widget" aria-describedby="embed-widget-help">
+                            <option value="full">{{ "embed-full-option"|trans }}</option>
+                            <option value="mini">{{ "embed-mini-option"|trans }}</option>
+                        </select>
+                        <div class="form-text" id="embed-widget-help">{{ "embed-widget-help"|trans }}</div>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" role="switch" id="embed-header" name="header" checked>
+                        <label class="form-check-label" for="embed-header">{{ "embed-header-label"|trans }}</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="embed-bg">{{ "embed-background-label"|trans }}</label>
+                        <div class="input-group">
+                            <select class="form-select" id="embed-bg" name="bg">
+                                <option value="">{{ "embed-from-theme-option"|trans }}</option>
+                                <option value="transparent">{{ "embed-transparent-option"|trans }}</option>
+                                <option value="color">{{ "embed-color-option"|trans }}</option>
+                            </select>
+                            <input type="color" class="form-control form-control-color" name="bg_color" value="#ffffff"
+                                   aria-label="{{ "embed-background-label"|trans }}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="embed-accent">{{ "embed-accent-label"|trans }}</label>
+                        <div class="input-group">
+                            <select class="form-select" id="embed-accent" name="accent">
+                                <option value="">{{ "embed-from-theme-option"|trans }}</option>
+                                <option value="color">{{ "embed-color-option"|trans }}</option>
+                            </select>
+                            <input type="color" class="form-control form-control-color" name="accent_color" value="#0d6efd"
+                                   aria-label="{{ "embed-accent-label"|trans }}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="embed-font">{{ "embed-font-label"|trans }}</label>
+                        <input type="text" class="form-control" id="embed-font" name="font" maxlength="200"
+                               placeholder="Georgia, serif" aria-describedby="embed-font-help">
+                        <div class="form-text" id="embed-font-help">{{ "embed-font-help"|trans }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="embed-mode">{{ "color-mode-menu-label"|trans }}</label>
+                        <select class="form-select" id="embed-mode" name="mode">
+                            <option value="light">{{ "color-mode-light"|trans }}</option>
+                            <option value="dark">{{ "color-mode-dark"|trans }}</option>
+                            <option value="auto">{{ "color-mode-auto"|trans }}</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="embed-theme">{{ "theme-label"|trans }}</label>
+                        <select class="form-select" id="embed-theme" name="theme">
+                            <option value="">{{ "embed-calendar-theme-option"|trans }}</option>
+                            {% for theme in themes() %}
+                                <option value="{{ theme.id }}">{{ theme.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="embed-min-height">{{ "embed-min-height-label"|trans }}</label>
+                        <input type="number" class="form-control" id="embed-min-height" name="min_height" value="400" min="100" step="50">
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <label class="form-label" for="embed-snippet">{{ "embed-code-label"|trans }}</label>
+                    <div class="input-group mb-3">
+                        <textarea class="form-control font-monospace small phpc-embed-snippet" id="embed-snippet" rows="4" readonly></textarea>
+                        <button class="btn btn-outline-secondary" type="button" data-phpc-copy="embed-snippet"
+                                data-copied-label="{{ 'link-copied-message'|trans }}">{{ ux_icon('bi:clipboard') }} {{ 'copy-link-button'|trans }}</button>
+                    </div>
+                    <p class="form-label">{{ "embed-preview-label"|trans }}</p>
+                    <div class="border rounded p-2 bg-body-secondary">
+                        <iframe class="w-100 border-0 d-block phpc-embed-preview" title="{{ "embed-preview-label"|trans }}"></iframe>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

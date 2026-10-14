@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * The month and day views of a calendar, and search
+ * The month, mini month and day views of a calendar, and search
  */
 #[Route('/{_locale}/calendar/{slug}', requirements: ['slug' => Calendar::SLUG_PATTERN])]
 class CalendarController extends AbstractEventSourceController
@@ -45,6 +45,22 @@ class CalendarController extends AbstractEventSourceController
         }
 
         return $this->monthPage($calendar, $this->dates->date($year, $month, 1), $request);
+    }
+
+    #[Route('/mini/', name: 'mini_view', methods: ['GET'])]
+    public function miniRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, Request $request): Response
+    {
+        return $this->miniPage($calendar, new DateTimeImmutable('first day of this month midnight'), $request);
+    }
+
+    #[Route('/mini/{year}/{month}', name: 'mini_month_view', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}'], methods: ['GET'])]
+    public function miniMonthRoute(#[MapEntity(mapping: ['slug' => 'slug'])] Calendar $calendar, int $year, int $month, Request $request): Response
+    {
+        if ($month < 1 || $month > 12) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->miniPage($calendar, $this->dates->date($year, $month, 1), $request);
     }
 
     #[Route('/day/{year}/{month}/{day}', name: 'day_view', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}', 'day' => '\d{1,2}'], methods: ['GET'])]

@@ -20,8 +20,19 @@
  *   <script src="https://calendar.example.com/static/embed.js"
  *           data-src="https://calendar.example.com/en/calendar/club-events/"></script>
  *
- * data-src is any month or day view, event or search URL. Optional: data-title (the iframe's
- * accessible title) and data-min-height (pixels, default 400). The iframe grows to fit its content.
+ * data-src is any month or day view, event or search URL, or a mini calendar (…/mini/) for a sidebar.
+ * The iframe grows to fit its content. Optional:
+ *
+ *   data-title        the iframe's accessible title
+ *   data-min-height   pixels, default 400
+ *   data-header="0"   hides the bar with the calendar's name and "Open the full calendar"
+ *   data-background   "transparent" or a color like "#f8f4e8"
+ *   data-accent       a color like "#0a6" for links, today and buttons
+ *   data-font         a font-family list like "Georgia, serif"
+ *   data-mode         "light" (default), "dark" or "auto" to follow the visitor's browser
+ *   data-theme        a theme ID, instead of the calendar's theme
+ *
+ * The calendar admin page's Embed tab writes this code for you.
  */
 (function () {
     const script = document.currentScript;
@@ -31,6 +42,13 @@
     }
     const src = new URL(script.dataset.src, script.src);
     src.searchParams.set('embed', '1');
+    // data-* attribute → query parameter; see EmbedOptions
+    const options = {header: 'header', background: 'bg', accent: 'accent', font: 'font', mode: 'mode', theme: 'theme'};
+    for (const [attribute, param] of Object.entries(options)) {
+        if (script.dataset[attribute]) {
+            src.searchParams.set(param, script.dataset[attribute]);
+        }
+    }
 
     const iframe = document.createElement('iframe');
     iframe.src = src.toString();
@@ -39,6 +57,8 @@
     iframe.style.width = '100%';
     iframe.style.border = '0';
     iframe.style.minHeight = (parseInt(script.dataset.minHeight, 10) || 400) + 'px';
+    // A transparent frame only shows the page behind it when both use the same color scheme
+    iframe.style.colorScheme = {dark: 'dark', auto: 'light dark'}[script.dataset.mode] || 'light';
     script.after(iframe);
 
     window.addEventListener('message', (event) => {
