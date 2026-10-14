@@ -93,6 +93,8 @@ class EmbedTest extends AppWebTestCase
         $this->assertSelectorExists('#embed-tab');
         $builder = $this->client->getCrawler()->filter('.phpc-embed-builder');
         $this->assertSame('http://localhost/en/calendar/club-events/', $builder->attr('data-calendar'));
+        $this->assertSame('http://localhost/en/calendar/club-events/mini/', $builder->attr('data-mini'));
+        $this->assertSelectorExists('#embed-widget option[value="mini"]');
         $this->assertMatchesRegularExpression('%^http://localhost/static/embed\.js%', $builder->attr('data-script'));
         $this->assertSelectorExists('#embed-theme option[value="bootswatch:flatly"]');
     }

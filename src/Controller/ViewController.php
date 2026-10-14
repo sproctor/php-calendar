@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * The month and day views and search of a view (several calendars together), and choosing which of its
+ * The month, mini month and day views and search of a view (several calendars together), and choosing which of its
  * calendars a new event goes on. The view comes from ViewValueResolver.
  */
 #[Route('/{_locale}/view/{slug}', requirements: ['slug' => Calendar::SLUG_PATTERN])]
@@ -47,6 +47,22 @@ class ViewController extends AbstractEventSourceController
         }
 
         return $this->monthPage($view, $this->dates->date($year, $month, 1), $request);
+    }
+
+    #[Route('/mini/', name: 'view_mini', methods: ['GET'])]
+    public function miniRoute(View $view, Request $request): Response
+    {
+        return $this->miniPage($view, new DateTimeImmutable('first day of this month midnight'), $request);
+    }
+
+    #[Route('/mini/{year}/{month}', name: 'view_mini_month', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}'], methods: ['GET'])]
+    public function miniMonthRoute(View $view, int $year, int $month, Request $request): Response
+    {
+        if ($month < 1 || $month > 12) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->miniPage($view, $this->dates->date($year, $month, 1), $request);
     }
 
     #[Route('/day/{year}/{month}/{day}', name: 'view_day', requirements: ['year' => '\d{4}', 'month' => '\d{1,2}', 'day' => '\d{1,2}'], methods: ['GET'])]

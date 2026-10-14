@@ -162,14 +162,15 @@ addEventListener("DOMContentLoaded", () => {
                 options.push(['theme', 'theme', field('theme').value]);
             }
             const minHeight = parseInt(field('min_height').value, 10);
-            const attributes = [`src="${escape(builder.dataset.script)}"`, `data-src="${escape(builder.dataset.calendar)}"`,
+            const calendar = field('widget').value === 'mini' ? builder.dataset.mini : builder.dataset.calendar;
+            const attributes = [`src="${escape(builder.dataset.script)}"`, `data-src="${escape(calendar)}"`,
                 ...options.map(([attribute, , value]) => `data-${attribute}="${escape(value)}"`)];
             if (minHeight > 0 && minHeight !== 400) {
                 attributes.push(`data-min-height="${minHeight}"`);
             }
             snippet.value = `<script ${attributes.join(' ')}></script>`;
 
-            const src = new URL(builder.dataset.calendar);
+            const src = new URL(calendar);
             src.searchParams.set('embed', '1');
             options.forEach(([, param, value]) => src.searchParams.set(param, value));
             preview.style.minHeight = `${minHeight > 0 ? minHeight : 400}px`;
@@ -177,6 +178,12 @@ addEventListener("DOMContentLoaded", () => {
             clearTimeout(reload);
             reload = setTimeout(() => preview.src = src.toString(), 300);
         };
+        // The mini calendar suits a sidebar: no bar with the calendar's name, and a smaller frame to start
+        field('widget').addEventListener('input', () => {
+            const mini = field('widget').value === 'mini';
+            field('header').checked = !mini;
+            field('min_height').value = mini ? 260 : 400;
+        });
         builder.querySelectorAll('input, select').forEach((input) => input.addEventListener('input', update));
         addEventListener('message', (event) => {
             if (event.source === preview.contentWindow && event.data?.type === 'phpc-height'
@@ -208,7 +215,7 @@ addEventListener("DOMContentLoaded", () => {
 // new tab, and tell the host page our height
 if (document.body && document.body.dataset.embed === '1') {
     // Must match EmbedSubscriber::EMBEDDABLE_ROUTES
-    const embeddable = /^\/[^/]+\/((calendar|view)\/[a-z0-9-]+\/((month|day)\/[\d\/]+|search)?|event\/\d+)$/;
+    const embeddable = /^\/[^/]+\/((calendar|view)\/[a-z0-9-]+\/((month|mini|day)\/[\d\/]+|mini\/|search)?|event\/\d+)$/;
     // embed=1 and the look the embed code chose (see EmbedOptions), kept on every page in the frame
     const current = new URLSearchParams(location.search);
     const embedParams = ['embed', ...EMBED_OPTIONS].filter((name) => current.has(name))

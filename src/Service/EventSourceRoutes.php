@@ -27,6 +27,8 @@ final class EventSourceRoutes
     private const CALENDAR = [
         'default' => 'default_view',
         'month' => 'month_view',
+        'mini' => 'mini_view',
+        'mini_month' => 'mini_month_view',
         'day' => 'day_view',
         'search' => 'search',
         'create' => 'create_event',
@@ -38,6 +40,8 @@ final class EventSourceRoutes
     private const VIEW = [
         'default' => 'view_default',
         'month' => 'view_month',
+        'mini' => 'view_mini',
+        'mini_month' => 'view_mini_month',
         'day' => 'view_day',
         'search' => 'view_search',
         'create' => 'view_create_event',
@@ -47,7 +51,7 @@ final class EventSourceRoutes
     ];
 
     /**
-     * @param string $page default, month, day, search, create, feed, personal_feed or entry
+     * @param string $page default, month, mini, mini_month, day, search, create, feed, personal_feed or entry
      */
     public static function route(EventSource $source, string $page): string
     {

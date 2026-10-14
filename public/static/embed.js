@@ -20,7 +20,8 @@
  *   <script src="https://calendar.example.com/static/embed.js"
  *           data-src="https://calendar.example.com/en/calendar/club-events/"></script>
  *
- * data-src is any month or day view, event or search URL. The iframe grows to fit its content. Optional:
+ * data-src is any month or day view, event or search URL, or a mini calendar (…/mini/) for a sidebar.
+ * The iframe grows to fit its content. Optional:
  *
  *   data-title        the iframe's accessible title
  *   data-min-height   pixels, default 400

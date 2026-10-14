@@ -29,8 +29,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class EmbedSubscriber implements EventSubscriberInterface
 {
-    public const EMBEDDABLE_ROUTES = ['default_view', 'month_view', 'day_view', 'event_view', 'search',
-        'view_default', 'view_month', 'view_day', 'view_search'];
+    public const EMBEDDABLE_ROUTES = ['default_view', 'month_view', 'mini_view', 'mini_month_view', 'day_view',
+        'event_view', 'search', 'view_default', 'view_month', 'view_mini', 'view_mini_month', 'view_day', 'view_search'];
 
     public static function isEmbedded(Request $request): bool
     {

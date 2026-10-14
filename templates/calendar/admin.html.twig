@@ -176,8 +176,16 @@
         <div class="tab-pane" id="embed" role="tabpanel" aria-labelledby="embed-tab">
             <p class="text-secondary">{{ "embed-help"|trans }}</p>
             <div class="row g-4 phpc-embed-builder" data-script="{{ absolute_url(asset('static/embed.js')) }}"
-                 data-calendar="{{ url('default_view', {slug: calendar.slug}) }}">
+                 data-calendar="{{ url('default_view', {slug: calendar.slug}) }}" data-mini="{{ url('mini_view', {slug: calendar.slug}) }}">
                 <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label class="form-label" for="embed-widget">{{ "embed-show-label"|trans }}</label>
+                        <select class="form-select" id="embed-widget" name="widget" aria-describedby="embed-widget-help">
+                            <option value="full">{{ "embed-full-option"|trans }}</option>
+                            <option value="mini">{{ "embed-mini-option"|trans }}</option>
+                        </select>
+                        <div class="form-text" id="embed-widget-help">{{ "embed-widget-help"|trans }}</div>
+                    </div>
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" role="switch" id="embed-header" name="header" checked>
                         <label class="form-check-label" for="embed-header">{{ "embed-header-label"|trans }}</label>

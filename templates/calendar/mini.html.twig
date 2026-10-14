@@ -1,0 +1,85 @@
+{% extends "base.html.twig" %}
+
+{#
+  The mini calendar for embedding in other sites: a small month whose day numbers open the full day page
+  in a new tab, and whose chosen day's events show under the grid (see static/mini.js)
+#}
+
+{% block title %}{{ date|month_year|ucfirst }} – {{ source.title }}{% endblock %}
+
+{% block body %}
+<div class="phpc-mini">
+    <div class="d-flex align-items-center mb-1">
+        <a class="btn btn-sm btn-link link-body-emphasis px-1" href="{{ prev_month_url }}"
+           aria-label="{{ 'previous-month-label'|trans }}" title="{{ 'previous-month-label'|trans }}">{{ ux_icon('bi:chevron-left', {class: 'phpc-icon phpc-flip-rtl'}) }}</a>
+        <a class="flex-grow-1 text-center fw-semibold text-decoration-none link-body-emphasis" href="{{ month_url }}"
+           target="_blank" rel="noopener">{{ date|month_year|ucfirst }}</a>
+        <a class="btn btn-sm btn-link link-body-emphasis px-1" href="{{ next_month_url }}"
+           aria-label="{{ 'next-month-label'|trans }}" title="{{ 'next-month-label'|trans }}">{{ ux_icon('bi:chevron-right', {class: 'phpc-icon phpc-flip-rtl'}) }}</a>
+    </div>
+    <table class="table table-sm table-borderless text-center mb-2 phpc-mini-grid">
+        <thead>
+            <tr>
+                {% for i in 0..6 %}
+                    <th scope="col" class="fw-normal text-secondary">{{ add_days(start_date, i)|day_abbr }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for week in 0..(weeks - 1) %}
+            <tr>
+                {% for day_of_week in 0..6 %}
+                    {% set cur_date = add_days(start_date, week * 7 + day_of_week) %}
+                    {% set key = cur_date|date_index %}
+                    {% set day_occurrences = occurrences[key] ?? [] %}
+                    {% set day_marks = marks[key] ?? [] %}
+                    <td class="phpc-mini-day{% if not in_same_month(cur_date, date) %} phpc-mini-shadow{% endif %}{% if day_marks is not empty %} phpc-marked{% endif %}{% if key == selected %} phpc-mini-selected{% endif %}"
+                        data-day="{{ key }}"{% if day_marks is not empty %} style="--phpc-mark: {{ (day_marks|first).color }};"{% endif %}>
+                        <a class="phpc-mini-number{% if is_today(cur_date) %} bg-primary text-white{% endif %}{% if day_occurrences is not empty %} fw-bold{% endif %}"
+                           href="{{ source_path(source, 'day', cur_date|dateparts|merge(filter.query)) }}" target="_blank" rel="noopener"
+                           aria-label="{{ cur_date|day_heading|ucfirst }}">{{ cur_date|day }}</a>
+                        {# A dot for each of the first three events, in its calendar's or category's color #}
+                        <span class="phpc-mini-dots" aria-hidden="true">
+                            {%- for occurrence in day_occurrences|slice(0, 3) -%}
+                                {% set color = source.calendarColor(occurrence.event.calendar) ?? occurrence.event.color %}
+                                <span{% if color %} style="background: {{ color }};"{% endif %}></span>
+                            {%- endfor -%}
+                        </span>
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="phpc-mini-panel small" aria-live="polite">
+        <p class="text-secondary mb-0" data-day-panel=""{% if selected %} hidden{% endif %}>{{ 'mini-hint'|trans }}</p>
+        {% for i in 0..(weeks * 7 - 1) %}
+            {% set day_date = add_days(start_date, i) %}
+            {% set key = day_date|date_index %}
+            <div data-day-panel="{{ key }}"{% if key != selected %} hidden{% endif %}>
+                <a class="fw-semibold" href="{{ source_path(source, 'day', day_date|dateparts|merge(filter.query)) }}"
+                   target="_blank" rel="noopener">{{ day_date|day_heading|ucfirst }}</a>
+                {% set day_occurrences = occurrences[key] ?? [] %}
+                {% if day_occurrences is empty %}
+                    <p class="text-secondary mb-0">{{ 'no-events-message'|trans }}</p>
+                {% else %}
+                    <ul class="list-unstyled mb-0">
+                        {% for occurrence in day_occurrences %}
+                            {% set event = occurrence.event %}
+                            {% set time = occurrence.timeString %}
+                            <li>
+                                <span class="text-secondary">{% if time is null %}{{ 'all-day-label'|trans }}{% elseif occurrence.start < day_date %}…{% else %}{{ time|trans }}{% endif %}</span>
+                                <a href="{{ path('event_view', {eid: event.eid}) }}" target="_blank" rel="noopener">{{ event.subject }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script defer src="{{ asset('static/mini.js') }}"></script>
+{% endblock %}

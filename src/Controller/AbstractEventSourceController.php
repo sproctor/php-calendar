@@ -100,6 +100,41 @@ abstract class AbstractEventSourceController extends AbstractController
         ]);
     }
 
+    /**
+     * A small month to embed in other sites (see embed.js): a grid of days, each with its events listed
+     * under the grid when chosen. Takes the same filter as the month page.
+     */
+    protected function miniPage(EventSource $source, DateTimeImmutable $date, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted(CalendarVoter::READ, $source);
+        $legend = $this->legend($source);
+        $filter = EventFilter::fromRequest($request, self::legendCategories($legend), $this->authors($source, $legend));
+
+        $year = intval($date->format('Y'));
+        $month = intval($date->format('n'));
+        $previous = $date->modify('-1 month');
+        $next = $date->modify('+1 month');
+        $weeks = $this->dates->weeksInMonth($year, $month);
+        $from_date = $this->dates->monthGridStart($year, $month);
+        $to_date = $from_date->modify('+' . ($weeks * 7) . ' days');
+        $days = $this->grid->byDay($source, $from_date, $to_date, $this->currentUser(), $filter);
+        $today = new DateTimeImmutable('today');
+
+        return $this->render('calendar/mini.html.twig', $this->context($source) + [
+            'date' => $date,
+            'prev_month_url' => $this->monthUrl($source, (int) $previous->format('Y'), (int) $previous->format('n'), $filter, 'mini_month'),
+            'next_month_url' => $this->monthUrl($source, (int) $next->format('Y'), (int) $next->format('n'), $filter, 'mini_month'),
+            'month_url' => $this->monthUrl($source, $year, $month, $filter),
+            'weeks' => $weeks,
+            'start_date' => $from_date,
+            'occurrences' => $days,
+            'marks' => array_map(OccurrenceGrid::dayMarks(...), $days),
+            // The day whose events show at first: today, when it's in the grid
+            'selected' => $today >= $from_date && $today < $to_date ? $this->dates->dayKey($today) : null,
+            'filter' => $filter,
+        ]);
+    }
+
     protected function dayPage(EventSource $source, int $year, int $month, int $day, Request $request): Response
     {
         $this->denyAccessUnlessGranted(CalendarVoter::READ, $source);
@@ -228,9 +263,12 @@ abstract class AbstractEventSourceController extends AbstractController
         return $user instanceof User ? $user : null;
     }
 
-    private function monthUrl(EventSource $source, int $year, int $month, EventFilter $filter): string
+    /**
+     * @param string $page month, or mini_month for the mini calendar
+     */
+    private function monthUrl(EventSource $source, int $year, int $month, EventFilter $filter, string $page = 'month'): string
     {
-        return $this->generateUrl(EventSourceRoutes::route($source, 'month'),
+        return $this->generateUrl(EventSourceRoutes::route($source, $page),
             EventSourceRoutes::parameters($source, ['year' => $year, 'month' => $month] + $filter->query()));
     }
 
