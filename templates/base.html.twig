@@ -1,12 +1,14 @@
-{%- set embedded = is_embedded() -%}
+{#- How an embedded page should look (see EmbedOptions), null when not embedded -#}
+{%- set embed = embed_options() -%}
+{%- set embedded = embed is not null -%}
 {#- The calendar or view this page shows (calendar pages also set `calendar`), and the calendar for the
     menus: this one, or the last one visited -#}
 {%- set page_source = source is defined ? source : (calendar is defined ? calendar : null) -%}
 {%- set nav_calendar = calendar is defined ? calendar : last_calendar() -%}
-{%- set theme = page_theme(page_source ?? nav_calendar) -%}
-{#- Light, dark, or auto (follow the browser). Embedded calendars stay light to match most host pages;
-    themes designed dark are always dark. -#}
-{%- set color_mode = embedded ? 'light' : app.request.cookies.get('phpc_color_mode') -%}
+{%- set theme = embed.theme ?? page_theme(page_source ?? nav_calendar) -%}
+{#- Light, dark, or auto (follow the browser). Embedded calendars are light, to match most host pages,
+    unless the embed code chose a mode; themes designed dark are always dark. -#}
+{%- set color_mode = embedded ? (embed.mode ?? 'light') : app.request.cookies.get('phpc_color_mode') -%}
 {%- set color_mode = theme.darkOnly ? 'dark' : (color_mode in ['light', 'dark'] ? color_mode : 'auto') -%}
 <!doctype html>
 <html lang="{{ app.request.locale|replace({'_': '-'}) }}"{% if is_rtl(app.request.locale) %} dir="rtl"{% endif %} data-bs-theme="{{ color_mode == 'dark' ? 'dark' : 'light' }}" data-phpc-color-mode="{{ color_mode }}">
@@ -24,6 +26,10 @@
     <link rel="icon" href="{{ asset('static/office-calendar.png') }}">
     <link rel="stylesheet" id="phpc-theme" href="{{ asset(theme.stylesheetFor(is_rtl(app.request.locale))) }}">
     <link rel="stylesheet" href="{{ asset('static/phpc.css') }}">
+    {% if embed and embed.css %}
+        {# Validated colors and font names only, see EmbedOptions::css() #}
+        <style>{{ embed.css|raw }}</style>
+    {% endif %}
     {% set public_feed = page_source ? public_feed(page_source) : null %}
     {% if public_feed %}
         <link rel="alternate" type="text/calendar" title="{{ page_source.title }}" href="{{ public_feed }}">
@@ -32,12 +38,14 @@
 </head>
 <body{% if embedded %} data-embed="1"{% endif %}>
 {% if embedded %}
-    <div class="d-flex align-items-center px-2 py-1 bg-body-tertiary">
-        {% if page_source %}
-            <a class="fw-semibold text-decoration-none" href="{{ source_path(page_source, 'default') }}" target="_blank" rel="noopener">{{ page_source.title }}</a>
-        {% endif %}
-        <a class="ms-auto small" href="{{ app.request.baseUrl ~ app.request.pathInfo }}" target="_blank" rel="noopener">{{ ux_icon('bi:box-arrow-up-right') }} {{ 'open-full-calendar-link'|trans }}</a>
-    </div>
+    {% if embed.header %}
+        <div class="d-flex align-items-center px-2 py-1 bg-body-tertiary">
+            {% if page_source %}
+                <a class="fw-semibold text-decoration-none" href="{{ source_path(page_source, 'default') }}" target="_blank" rel="noopener">{{ page_source.title }}</a>
+            {% endif %}
+            <a class="ms-auto small" href="{{ app.request.baseUrl ~ app.request.pathInfo }}" target="_blank" rel="noopener">{{ ux_icon('bi:box-arrow-up-right') }} {{ 'open-full-calendar-link'|trans }}</a>
+        </div>
+    {% endif %}
 {% else %}
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">

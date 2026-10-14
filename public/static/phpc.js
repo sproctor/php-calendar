@@ -6,6 +6,9 @@ const applyColorMode = () => {
 };
 darkScheme.addEventListener('change', applyColorMode);
 
+// Query parameters for an embedded calendar's look, besides embed=1; see EmbedOptions and embed.js
+const EMBED_OPTIONS = ['header', 'bg', 'accent', 'font', 'mode', 'theme'];
+
 addEventListener("DOMContentLoaded", () => {
 
     // Open the tab named in the URL hash, e.g. /admin#users
@@ -126,6 +129,64 @@ addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // The embed code builder in calendar admin: the snippet and a preview follow the chosen options
+    document.querySelectorAll('.phpc-embed-builder').forEach((builder) => {
+        const field = (name) => builder.querySelector(`[name="${name}"]`);
+        const snippet = builder.querySelector('.phpc-embed-snippet');
+        const preview = builder.querySelector('.phpc-embed-preview');
+        const escape = (value) => value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;');
+        let reload;
+        const update = () => {
+            field('bg_color').disabled = field('bg').value !== 'color';
+            field('accent_color').disabled = field('accent').value !== 'color';
+            // data-* attribute for embed.js, and the query parameter it becomes
+            const options = [];
+            if (!field('header').checked) {
+                options.push(['header', 'header', '0']);
+            }
+            if (field('bg').value === 'transparent') {
+                options.push(['background', 'bg', 'transparent']);
+            } else if (field('bg').value === 'color') {
+                options.push(['background', 'bg', field('bg_color').value]);
+            }
+            if (field('accent').value === 'color') {
+                options.push(['accent', 'accent', field('accent_color').value]);
+            }
+            if (field('font').value.trim() !== '') {
+                options.push(['font', 'font', field('font').value.trim()]);
+            }
+            if (field('mode').value !== 'light') {
+                options.push(['mode', 'mode', field('mode').value]);
+            }
+            if (field('theme').value !== '') {
+                options.push(['theme', 'theme', field('theme').value]);
+            }
+            const minHeight = parseInt(field('min_height').value, 10);
+            const attributes = [`src="${escape(builder.dataset.script)}"`, `data-src="${escape(builder.dataset.calendar)}"`,
+                ...options.map(([attribute, , value]) => `data-${attribute}="${escape(value)}"`)];
+            if (minHeight > 0 && minHeight !== 400) {
+                attributes.push(`data-min-height="${minHeight}"`);
+            }
+            snippet.value = `<script ${attributes.join(' ')}></script>`;
+
+            const src = new URL(builder.dataset.calendar);
+            src.searchParams.set('embed', '1');
+            options.forEach(([, param, value]) => src.searchParams.set(param, value));
+            preview.style.minHeight = `${minHeight > 0 ? minHeight : 400}px`;
+            preview.style.colorScheme = {dark: 'dark', auto: 'light dark'}[field('mode').value] ?? 'light';
+            clearTimeout(reload);
+            reload = setTimeout(() => preview.src = src.toString(), 300);
+        };
+        builder.querySelectorAll('input, select').forEach((input) => input.addEventListener('input', update));
+        addEventListener('message', (event) => {
+            if (event.source === preview.contentWindow && event.data?.type === 'phpc-height'
+                && Number.isFinite(event.data.height)) {
+                preview.style.height = `${Math.ceil(event.data.height)}px`;
+            }
+        });
+        update();
+    });
+
     // Leave unchosen filters out of the address, rather than sending ?category=&author=
     document.querySelectorAll('.phpc-filter-menu').forEach((form) => {
         form.addEventListener('submit', () => {
@@ -148,13 +209,17 @@ addEventListener("DOMContentLoaded", () => {
 if (document.body && document.body.dataset.embed === '1') {
     // Must match EmbedSubscriber::EMBEDDABLE_ROUTES
     const embeddable = /^\/[^/]+\/((calendar|view)\/[a-z0-9-]+\/((month|day)\/[\d\/]+|search)?|event\/\d+)$/;
+    // embed=1 and the look the embed code chose (see EmbedOptions), kept on every page in the frame
+    const current = new URLSearchParams(location.search);
+    const embedParams = ['embed', ...EMBED_OPTIONS].filter((name) => current.has(name))
+        .map((name) => [name, current.get(name)]);
     document.querySelectorAll('a[href]').forEach((a) => {
         const url = new URL(a.href, location.href);
         if (url.origin !== location.origin || a.target) {
             return;
         }
         if (embeddable.test(url.pathname)) {
-            url.searchParams.set('embed', '1');
+            embedParams.forEach(([name, value]) => url.searchParams.set(name, value));
             a.href = url.toString();
         } else {
             a.target = '_blank';
@@ -162,11 +227,14 @@ if (document.body && document.body.dataset.embed === '1') {
         }
     });
     document.querySelectorAll('form[method="get" i]').forEach((form) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'embed';
-        input.value = '1';
-        form.append(input);
+        embedParams.forEach(([name, value]) => {
+            form.querySelector(`input[type="hidden"][name="${name}"]`)?.remove();
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.append(input);
+        });
     });
     const postHeight = () => window.parent.postMessage(
         {type: 'phpc-height', height: document.documentElement.scrollHeight}, '*');

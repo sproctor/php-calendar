@@ -30,6 +30,7 @@ use App\Security\Voter\CalendarVoter;
 use App\Service\AppVersion;
 use App\Service\CalendarDates;
 use App\Service\CalendarFeedLinks;
+use App\Service\EmbedOptions;
 use App\Service\EventSourceRoutes;
 use App\Service\EventStructuredData;
 use App\Service\LocaleService;
@@ -126,6 +127,14 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                 'is_embedded',
                 fn(array $context) => $context['app']->getRequest() !== null
                     && EmbedSubscriber::isEmbedded($context['app']->getRequest()),
+                ['needs_context' => true],
+            ),
+            // How an embedded page looks (see EmbedOptions), or null when it isn't embedded
+            new TwigFunction(
+                'embed_options',
+                fn(array $context) => $context['app']->getRequest() !== null
+                    && EmbedSubscriber::isEmbedded($context['app']->getRequest())
+                    ? EmbedOptions::fromQuery($context['app']->getRequest()->query->all(), $this->themes) : null,
                 ['needs_context' => true],
             ),
             new TwigFunction(
