@@ -29,3 +29,6 @@ phpstan.neon
 /dist/
 # Copied from Composer packages by bin/copy-assets
 /public/static/lib/
+
+# Local cache of the Cloudflare CLI (cf)
+/.cloudflare/
