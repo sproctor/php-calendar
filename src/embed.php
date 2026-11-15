@@ -37,7 +37,7 @@ try {
 $head = tag(
     'div',
     attrs('class="phpc-head"'),
-    get_header_tags("static")
+    get_header_tags(phpc_static_path())
 );
 echo $head->toString();
 echo $content->toString();

@@ -29,14 +29,23 @@
 $default_calendar_id = 1;
 
 /*
- * $phpc_root_path gives the location of the base calendar install.
- * if you move this file to a new location, modify $phpc_root_path to point
- * to the location where the support files for the calendar are located.
+ * $phpc_root_path gives the location of the base calendar install, as a
+ * folder on the server (not a URL). If you move this file to a new location,
+ * modify $phpc_root_path to point to the location where the support files for
+ * the calendar are located, e.g. dirname(__FILE__) . '/../php-calendar'.
  */
 $phpc_root_path = dirname(__FILE__);
 $phpc_includes_path = "$phpc_root_path/src";
 $phpc_config_file = "$phpc_root_path/config.php";
 $phpc_locale_path = "$phpc_root_path/locale";
+
+/*
+ * $phpc_static_path is the URL of the calendar's static folder, which holds
+ * its stylesheet and scripts. It's worked out from $phpc_root_path when the
+ * calendar is under the web site's document root; set it if the styles don't
+ * load, e.g. '/php-calendar/static'.
+ */
+$phpc_static_path = null;
 $phpc_script = htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8');
 
 // Prefer the host the browser used, which keeps a forwarded port
@@ -99,9 +108,9 @@ $html = tag(
         tag('title', $calendar_title),
         tag('link', attrs(
             'rel="icon"',
-            "href=\"static/office-calendar.png\""
+            "href=\"" . phpc_static_path() . "/office-calendar.png\""
         )),
-        get_header_tags("static"),
+        get_header_tags(phpc_static_path()),
         tag('meta', attrs(
             'http-equiv="Content-Type"',
             'content="text/html; charset=UTF-8"'
