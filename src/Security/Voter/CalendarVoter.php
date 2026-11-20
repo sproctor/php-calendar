@@ -75,6 +75,7 @@ class CalendarVoter extends Voter
             self::UPDATE => $permissions->update,
             self::MODERATE => $permissions->moderate,
             self::ADMIN => $permissions->admin,
+            default => false,
         };
     }
 }

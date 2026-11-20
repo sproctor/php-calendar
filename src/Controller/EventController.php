@@ -147,7 +147,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @param array $times OccurrenceTimesType data to start the form with
+     * @param array<string, mixed> $times OccurrenceTimesType data to start the form with
      */
     private function eventForm(Request $request, Event $event, array $times): Response
     {

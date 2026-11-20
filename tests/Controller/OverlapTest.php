@@ -31,6 +31,8 @@ class OverlapTest extends AppWebTestCase
 
     /**
      * Submits the new event form for a timed event on $date from $from to $to
+     *
+     * @param array<string, mixed> $extra
      */
     private function createAt(string $date, string $from, string $to, array $extra = []): void
     {

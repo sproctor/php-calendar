@@ -29,6 +29,7 @@ class LocaleService
     /** The language a visitor picked from the menu, remembered for pages whose URL doesn't name one */
     public const COOKIE = 'phpc_locale';
 
+    /** @var array<string, string>|null */
     private ?array $mappings = null;
 
     public function __construct(
@@ -46,6 +47,8 @@ class LocaleService
 
     /**
      * The languages that have translations, as language code => name in that language
+     *
+     * @return array<string, string>
      */
     public function getLocaleMappings(): array
     {
@@ -68,6 +71,8 @@ class LocaleService
     /**
      * Choices for a user's locale setting: each translated language, plus its regional variants,
      * which decide date formats and the first day of the week. Returned as name => locale code.
+     *
+     * @return array<string, string>
      */
     public function getLocaleChoices(): array
     {

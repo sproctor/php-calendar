@@ -44,6 +44,7 @@ class MarkedDaysTest extends AppWebTestCase
      * The days of the month grid that are shaded, as day-of-month numbers, for the month shown
      *
      * @return list<string>
+     * @phpstan-impure It reads the page the client last loaded
      */
     private function markedDays(): array
     {

@@ -55,6 +55,8 @@ class EventStructuredData
 
     /**
      * One schema.org Event per date: the upcoming ones, or the last one if they're all past
+     *
+     * @return array<mixed>|null
      */
     public function build(Event $event, \DateTimeImmutable $now): ?array
     {
@@ -94,6 +96,9 @@ class EventStructuredData
         return count($events) === 1 ? $events[0] : $events;
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function dates(Occurrence $occurrence, DateTimeZone $timezone): array
     {
         return match ($occurrence->getTimeType()) {
@@ -112,6 +117,9 @@ class EventStructuredData
         };
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function location(Event $event): array
     {
         $url = $event->getLocationUrl();

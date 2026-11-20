@@ -31,6 +31,9 @@ class CalendarDatesTest extends TestCase
         $this->assertSame('00:00 America/New_York', $this->dates->date(2026, 10, 15)->format('H:i e'));
     }
 
+    /**
+     * @return iterable<string, array{string, int, string, int}>
+     */
     public static function monthGrids(): iterable
     {
         // locale, first day of week, grid start for October 2026, weeks
@@ -56,6 +59,9 @@ class CalendarDatesTest extends TestCase
         $this->assertSame(4, $this->dates->weeksInMonth(2027, 2));
     }
 
+    /**
+     * @return iterable<array{string, string, int}>
+     */
     public static function weeks(): iterable
     {
         // US weeks start on Sunday and week 1 contains January 1st

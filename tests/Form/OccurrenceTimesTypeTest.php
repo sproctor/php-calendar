@@ -17,6 +17,9 @@ class OccurrenceTimesTypeTest extends TestCase
         Clock::set(new \Symfony\Component\Clock\NativeClock());
     }
 
+    /**
+     * @return iterable<string, array{string, string, string}>
+     */
     public static function nowCases(): iterable
     {
         yield 'mid-afternoon' => ['14:20', '15:00', '16:00'];

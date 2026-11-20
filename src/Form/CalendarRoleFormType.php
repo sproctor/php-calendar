@@ -28,6 +28,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<CalendarRole>
+ */
 class CalendarRoleFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

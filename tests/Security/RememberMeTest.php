@@ -4,6 +4,7 @@ namespace App\Tests\Security;
 
 use App\Entity\User;
 use App\Tests\AppWebTestCase;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
 class RememberMeTest extends AppWebTestCase
 {
@@ -15,7 +16,9 @@ class RememberMeTest extends AppWebTestCase
             '_password' => 'password',
         ]);
         if (!$remember) {
-            $form['_remember_me']->untick();
+            $checkbox = $form['_remember_me'];
+            $this->assertInstanceOf(ChoiceFormField::class, $checkbox);
+            $checkbox->untick();
         }
         $this->client->submit($form);
         $this->assertResponseRedirects();

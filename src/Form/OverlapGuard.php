@@ -47,6 +47,9 @@ class OverlapGuard
     ) {
     }
 
+    /**
+     * @param FormBuilderInterface<mixed> $builder
+     */
     public static function addField(FormBuilderInterface $builder, Calendar $calendar): void
     {
         if ($calendar->getOverlapPolicy() === Calendar::OVERLAP_WARN) {
@@ -61,6 +64,7 @@ class OverlapGuard
     /**
      * Whether $times may be saved; if not, adds an error to $form naming the events they overlap
      *
+     * @param FormInterface<mixed> $form
      * @param list<array{0: \DateTimeInterface, 1: \DateTimeInterface, 2: int}> $times
      */
     public function allows(FormInterface $form, Calendar $calendar, array $times, ?Event $event): bool

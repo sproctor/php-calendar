@@ -10,6 +10,9 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class LocaleServiceTest extends TestCase
 {
+    /**
+     * @return iterable<string, array{string, ?string, ?string, string}>
+     */
     public static function formattingLocaleCases(): iterable
     {
         yield 'user region wins' => ['en', 'en_GB', 'en-US,en;q=0.9', 'en_GB'];
@@ -34,6 +37,9 @@ class LocaleServiceTest extends TestCase
         $this->assertSame($expected, $service->getFormattingLocale($request, $userLocale));
     }
 
+    /**
+     * @return iterable<string, array{string, ?string}>
+     */
     public static function translationCases(): iterable
     {
         yield 'exact language' => ['de', 'de'];
@@ -55,6 +61,9 @@ class LocaleServiceTest extends TestCase
         $this->assertSame($expected, $service->translationFor($locale));
     }
 
+    /**
+     * @return iterable<string, array{?string, string}>
+     */
     public static function pickLanguageCases(): iterable
     {
         yield 'browser language' => ['de-DE,de;q=0.9', 'de'];

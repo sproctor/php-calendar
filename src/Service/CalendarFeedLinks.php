@@ -100,7 +100,11 @@ class CalendarFeedLinks
     private function token(EventSource $source, User $user): string
     {
         // A calendar's ID alone, as before views existed, so its links keep working
-        $id = $source instanceof View ? 'view:' . ($source->getVid() ?? $source->getSlug()) : (string) $source->getCid();
+        $id = match (true) {
+            $source instanceof Calendar => (string) $source->getCid(),
+            $source instanceof View => 'view:' . ($source->getVid() ?? $source->getSlug()),
+            default => throw new \LogicException('Feeds are for calendars and views'),
+        };
 
         return substr(hash_hmac('sha256', $id . "\0" . $user->getFeedKey(), $this->secret), 0, 32);
     }

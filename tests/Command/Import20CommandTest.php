@@ -28,6 +28,9 @@ class Import20CommandTest extends AppWebTestCase
         parent::tearDown();
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     private function runImport(array $options = []): CommandTester
     {
         $params = $this->em()->getConnection()->getParams();

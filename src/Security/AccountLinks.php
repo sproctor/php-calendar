@@ -77,6 +77,8 @@ class AccountLinks
      * On the site's address saved by the installer, never the request's Host header: anyone can send that,
      * and would get the link to someone else's account mailed to their own server. The signature leaves
      * out the scheme and host, so a link still works after a redirect to https or another host name.
+     *
+     * @param array<string, mixed> $parameters
      */
     private function link(string $route, array $parameters, int $lifetime): string
     {

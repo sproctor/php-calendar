@@ -177,6 +177,8 @@ class SetupController extends AbstractController
     /**
      * Connects with the submitted settings. Returns the DATABASE_URL to save, or null after adding the
      * connection error to the form.
+     *
+     * @param FormInterface<mixed> $form
      */
     private function testConnection(FormInterface $form): ?string
     {

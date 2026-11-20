@@ -50,9 +50,8 @@ class UserSettingsController extends AbstractController
         AccountLinks                $links,
     ): Response
     {
-        /* @var ?User $user */
         $user = $this->getUser();
-        if ($user === null) {
+        if (!$user instanceof User) {
             throw $this->createAccessDeniedException();
         }
 

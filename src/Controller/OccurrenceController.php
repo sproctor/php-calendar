@@ -106,6 +106,9 @@ class OccurrenceController extends AbstractController
         return $this->redirectToRoute('event_view', ['eid' => $event->getEid()]);
     }
 
+    /**
+     * @param array<string, mixed> $times OccurrenceTimesType data to start the form with
+     */
     private function occurrenceForm(Request $request, Event $event, ?Occurrence $occurrence, array $times): Response
     {
         $builder = $this->createFormBuilder(['times' => $times])

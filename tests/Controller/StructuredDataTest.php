@@ -25,6 +25,8 @@ class StructuredDataTest extends AppWebTestCase
 
     /**
      * The JSON-LD on $event's page, or null
+     *
+     * @return array<mixed>|null
      */
     private function jsonLd(Event $event): ?array
     {

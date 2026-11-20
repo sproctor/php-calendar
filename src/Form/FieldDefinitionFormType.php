@@ -26,6 +26,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<FieldDefinition>
+ */
 class FieldDefinitionFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
