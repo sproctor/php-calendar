@@ -36,11 +36,12 @@ class ViewCalendar
     public function __construct(
         #[ORM\Id]
         #[ORM\ManyToOne(targetEntity: View::class, inversedBy: 'members')]
-        #[ORM\JoinColumn(name: 'vid', referencedColumnName: 'vid', nullable: false, onDelete: 'CASCADE')]
+        // No "nullable": columns in the primary key are never null
+        #[ORM\JoinColumn(name: 'vid', referencedColumnName: 'vid', onDelete: 'CASCADE')]
         private View $view,
         #[ORM\Id]
         #[ORM\ManyToOne(targetEntity: Calendar::class)]
-        #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid', nullable: false, onDelete: 'CASCADE')]
+        #[ORM\JoinColumn(name: 'cid', referencedColumnName: 'cid', onDelete: 'CASCADE')]
         private Calendar $calendar,
     ) {
     }

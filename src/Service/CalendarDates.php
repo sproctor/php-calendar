@@ -151,7 +151,7 @@ class CalendarDates
     {
         $calendar = IntlCalendar::createInstance('UTC', Locale::getDefault());
         $calendar->clear();
-        $calendar->set((int) $date->format('Y'), (int) $date->format('n') - 1, (int) $date->format('j'));
+        $calendar->setDate((int) $date->format('Y'), (int) $date->format('n') - 1, (int) $date->format('j'));
 
         return $calendar;
     }
