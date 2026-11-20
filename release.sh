@@ -5,7 +5,7 @@
 #                                      messages.po, commit, tag v<version> and build
 #                                      dist/php-calendar-<version>.{zip,tar.gz}.
 #                                      Nothing is pushed.
-#   ./release.sh <version> --publish   Push master and the tag, then create a draft
+#   ./release.sh <version> --publish   Push v2.0 and the tag, then create a draft
 #                                      GitHub release with the packages attached.
 #                                      Runs the steps above first if the tag
 #                                      doesn't exist yet.
@@ -26,6 +26,8 @@ if [ $# -eq 2 ]; then
 fi
 [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "version must look like 2.0.0"
 
+# 2.0 releases come from the v2.0 branch; main is 3.x
+branch=v2.0
 tag="v$version"
 name="php-calendar-$version"
 version_re=${version//./[.]}
@@ -40,7 +42,7 @@ for tool in php xgettext msgfmt zip; do
 done
 
 prepare() {
-    [ "$(git branch --show-current)" = master ] || die "releases are made from master"
+    [ "$(git branch --show-current)" = "$branch" ] || die "releases are made from $branch"
     git diff --quiet && git diff --cached --quiet \
         || die "commit or stash your changes first"
     grep -qE "$news_re" NEWS.md \
@@ -121,7 +123,7 @@ build
 
 if $publish; then
     command -v gh >/dev/null || die "gh (GitHub CLI) is required to publish"
-    git push origin master "$tag"
+    git push origin "$branch" "$tag"
     gh release create "$tag" "dist/$name.zip" "dist/$name.tar.gz" \
         --draft --title "PHP-Calendar $version" --notes "$(release_notes)"
     echo "Created a draft GitHub release for $tag. Review it and publish it on GitHub."
