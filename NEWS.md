@@ -1,7 +1,7 @@
 NEWS
 -----
 
-2.0.15:
+2.0.15 (19 November 2026):
 	- Fixed the installer rejecting database names with a dash, as some hosts (e.g. StackCP) create (#203)
 	- Fixed the calendar's styles not loading when index.php is copied to another folder or the calendar is embedded in a page elsewhere on the site. If they still don't load, set $phpc_static_path to the URL of the calendar's static folder (#204)
 	- Fixed the menus breaking (month and year lists shown down the side) when a browser or host kept 2.0.13's copy of phpc.js after upgrading; the URLs of its stylesheet and script now change whenever those files do (#206)

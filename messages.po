@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PHP-Calendar 2.0.14\n"
+"Project-Id-Version: PHP-Calendar 2.0.15\n"
 "Report-Msgid-Bugs-To: sproctor@gmail.com\n"
-"POT-Creation-Date: 2026-10-09 17:11-0400\n"
+"POT-Creation-Date: 2026-11-19 23:01-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -403,30 +403,30 @@ msgstr ""
 msgid "Secret token mismatch. Possible request forgery attempt."
 msgstr ""
 
-#: src/calendar.php:1349
+#: src/calendar.php:1365
 msgid "Unsupported config type"
 msgstr ""
 
-#: src/calendar.php:1371
+#: src/calendar.php:1387
 #, php-format
 msgid "Required field \"%s\" was not set."
 msgstr ""
 
-#: src/calendar.php:1383
+#: src/calendar.php:1399
 #, php-format
 msgid "Malformed \"%s\" time: \"%s\""
 msgstr ""
 
-#: src/calendar.php:1400
+#: src/calendar.php:1416
 msgid "Unrecognized period: "
 msgstr ""
 
-#: src/calendar.php:1412
+#: src/calendar.php:1428
 #, php-format
 msgid "Malformed \"%s\" date: \"%s\""
 msgstr ""
 
-#: src/calendar.php:1435
+#: src/calendar.php:1451
 msgid "Invalid date_format."
 msgstr ""
 
