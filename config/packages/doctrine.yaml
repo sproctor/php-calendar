@@ -13,7 +13,8 @@ doctrine:
         # Only this calendar's tables, when the database is shared (see App\Doctrine\TablePrefixListener)
         schema_filter: '~^%env(TABLE_PREFIX)%~'
     orm:
-        # How entities are loaded lazily depends on the PHP version: see doctrine_lazy_objects.php
+        auto_generate_proxy_classes: true
+        enable_lazy_ghost_objects: true
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         identity_generation_preferences:
@@ -38,6 +39,8 @@ when@test:
 when@prod:
     doctrine:
         orm:
+            auto_generate_proxy_classes: false
+            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
             query_cache_driver:
                 type: pool
                 pool: doctrine.system_cache_pool
