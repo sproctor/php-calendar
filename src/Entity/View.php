@@ -69,7 +69,7 @@ class View implements EventSource
 
     /** @var Collection<int, ViewCalendar> */
     #[ORM\OneToMany(targetEntity: ViewCalendar::class, mappedBy: 'view', cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => \SortDirection::Ascending])]
     private Collection $members;
 
     public function __construct()
