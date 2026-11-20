@@ -33,6 +33,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<Calendar>
+ */
 class CalendarFormType extends AbstractType
 {
     public function __construct(

@@ -61,6 +61,9 @@
         "twig/twig": "^3.30"
     },
     "require-dev": {
+        "phpstan/phpstan": "^2.3",
+        "phpstan/phpstan-doctrine": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
         "phpunit/phpunit": "^12.5",
         "rector/rector": "^2.7",
         "symfony/browser-kit": "7.4.*",

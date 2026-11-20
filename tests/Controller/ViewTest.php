@@ -26,6 +26,9 @@ class ViewTest extends AppWebTestCase
         $this->createEvent($this->holidays, null, 'Columbus Day', '2026-10-12', '2026-10-12', 1);
     }
 
+    /**
+     * @param list<array{Calendar, ?string}> $calendars each calendar, with its color in the view
+     */
     private function createView(string $title, array $calendars): View
     {
         $view = (new View())->setTitle($title)->setSlug(strtolower(str_replace(' ', '-', $title)))->setTimezone('America/Chicago');

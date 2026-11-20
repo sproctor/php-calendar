@@ -20,6 +20,7 @@ namespace App\Form;
 use App\Entity\Category;
 use App\Entity\Event;
 use App\Entity\FieldDefinition;
+use App\Entity\Occurrence;
 use App\Service\OccurrenceGenerator;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -46,6 +47,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Creates or edits an event. The subject, description, category, read-only flag and publish time map to
  * the Event; custom fields (field_<fid>), the occurrence times, and the repeat rule are unmapped and
  * handled by the controller.
+ *
+ * @extends AbstractType<Event>
  */
 class EventFormType extends AbstractType
 {
@@ -199,6 +202,8 @@ class EventFormType extends AbstractType
 
     /**
      * Checks the rules that span several unmapped fields, adding errors to the submitted form
+     *
+     * @param FormInterface<mixed> $form
      */
     public static function addCrossFieldErrors(FormInterface $form, TranslatorInterface $translator): void
     {
@@ -209,7 +214,8 @@ class EventFormType extends AbstractType
             if ($until === null) {
                 $form->get('until')->addError(new FormError($translator->trans('missing-until-error')));
             } elseif (is_array($times)) {
-                [$start] = OccurrenceTimesType::toTimes($times);
+                // Not validated yet, so unlike toTimes(), this allows a missing start
+                $start = $times[($times['time_type'] ?? null) === Occurrence::TIME_NORMAL ? 'start' : 'start_date'] ?? null;
                 if ($start !== null && $until->format('Y-m-d') < $start->format('Y-m-d')) {
                     $form->get('until')->addError(new FormError($translator->trans('until-before-start-error')));
                 }

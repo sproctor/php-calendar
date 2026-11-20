@@ -28,6 +28,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * A theme from ThemeRegistry, grouped by where it comes from. phpc.js previews the selected theme on the
  * page. With `site_default` true, it can also be left empty to use the site's default theme.
+ *
+ * @extends AbstractType<?string>
  */
 class ThemeChoiceType extends AbstractType
 {
@@ -80,6 +82,9 @@ class ThemeChoiceType extends AbstractType
         return ChoiceType::class;
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function previewAttributes(?Theme $theme): array
     {
         if ($theme === null) {

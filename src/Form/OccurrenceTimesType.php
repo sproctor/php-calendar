@@ -34,6 +34,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * The time type, start and end of an occurrence. Normal occurrences use the start and end date-times;
  * full-day and TBA occurrences use the start and end dates. The data is an array with the keys
  * time_type, start, end, start_date and end_date; see fromOccurrence() and toTimes().
+ *
+ * @extends AbstractType<array<string, mixed>>
  */
 class OccurrenceTimesType extends AbstractType
 {
@@ -75,6 +77,9 @@ class OccurrenceTimesType extends AbstractType
         ]);
     }
 
+    /**
+     * @param array<string, mixed>|null $data
+     */
     public static function validate(?array $data, ExecutionContextInterface $context): void
     {
         if ($data === null) {
@@ -99,6 +104,8 @@ class OccurrenceTimesType extends AbstractType
     /**
      * Form data for a new hour-long occurrence on $date, starting at the next whole hour (e.g. 3:00 at
      * 2:20). Late in the evening it's 22:00–23:00, so it stays within the day.
+     *
+     * @return array<string, mixed>
      */
     public static function defaults(DateTimeImmutable $date): array
     {
@@ -114,6 +121,9 @@ class OccurrenceTimesType extends AbstractType
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public static function fromOccurrence(Occurrence $occurrence): array
     {
         $data = self::defaults($occurrence->getStart());
@@ -131,6 +141,9 @@ class OccurrenceTimesType extends AbstractType
     }
 
     /**
+     * From validated form data
+     *
+     * @param array<string, mixed> $data
      * @return array{0: DateTimeImmutable, 1: DateTimeImmutable, 2: int} start, end and time type
      */
     public static function toTimes(array $data): array

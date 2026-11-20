@@ -35,6 +35,9 @@ class ViewValueResolver implements ValueResolverInterface
     ) {
     }
 
+    /**
+     * @return iterable<View>
+     */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         if ($argument->getType() !== View::class) {

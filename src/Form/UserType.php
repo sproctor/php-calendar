@@ -36,6 +36,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 /**
  * A user account. The password is unmapped (the controller hashes it); when editing, it's optional and
  * leaving it blank keeps the current one.
+ *
+ * @extends AbstractType<User>
  */
 class UserType extends AbstractType
 {

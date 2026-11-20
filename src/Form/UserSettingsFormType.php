@@ -13,6 +13,9 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 
+/**
+ * @extends AbstractType<array<string, mixed>>
+ */
 class UserSettingsFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

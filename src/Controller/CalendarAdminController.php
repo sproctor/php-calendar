@@ -195,6 +195,10 @@ class CalendarAdminController extends AbstractController
         return $this->deleteItem($request, $calendar, FieldDefinition::class, $fid, 'field', 'fields');
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     * @param array<string, mixed> $parameters
+     */
     private function handleItemForm(
         Request $request,
         FormInterface $form,
