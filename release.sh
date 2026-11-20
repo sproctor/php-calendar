@@ -123,7 +123,8 @@ build
 
 if $publish; then
     command -v gh >/dev/null || die "gh (GitHub CLI) is required to publish"
-    git push origin "$branch" "$tag"
+    # Full ref names: there is also an old tag named v2.0, which makes "v2.0" ambiguous
+    git push origin "refs/heads/$branch" "refs/tags/$tag"
     gh release create "$tag" "dist/$name.zip" "dist/$name.tar.gz" \
         --draft --title "PHP-Calendar $version" --notes "$(release_notes)"
     echo "Created a draft GitHub release for $tag. Review it and publish it on GitHub."
