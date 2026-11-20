@@ -48,8 +48,5 @@ when@prod:
                 type: console
                 process_psr_3_messages: false
                 channels: ["!event", "!doctrine"]
-            deprecation:
-                type: stream
-                channels: [deprecation]
-                path: php://stderr
-                formatter: monolog.formatter.json
+            # No handler for the deprecation channel: on installed sites they would only fill the
+            # server's error log (and every console command's output), and nobody there can act on them
