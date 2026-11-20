@@ -10,6 +10,12 @@ parameters:
     # Where the web installer saves the configuration; Symfony loads it in place of the .env files
     app.local_env_file: '%kernel.project_dir%/.env.local.php'
 
+    # Defaults for settings added after the first installer. Symfony loads .env.local.php instead of .env,
+    # not on top of it, and upgrades keep that file, so an older site's file lacks these; without a
+    # default, every request would fail. Give each new setting one here (tests/Install/SettingDefaultsTest).
+    env(MAILER_FROM): ''
+    env(TABLE_PREFIX): ''
+
 services:
     # default configuration for services in *this* file
     _defaults:
