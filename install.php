@@ -331,12 +331,14 @@ function install_base()
         'SQL_TYPE'     => 'mysqli',
     );
 
-    // The prefix and database name are used unquoted in SQL identifiers.
+    // The prefix is used unquoted in SQL identifiers.
     if (!preg_match('/^\w*$/', $config['SQL_PREFIX'])) {
         soft_error('The table prefix may only contain letters, numbers and underscores.');
     }
-    if (!preg_match('/^\w+$/', $config['SQL_DATABASE'])) {
-        soft_error('The database name may only contain letters, numbers and underscores.');
+    // The database name is part of the cookie names, which can't have spaces, dots or =,;. Some hosts
+    // (e.g. StackCP) name databases with a dash.
+    if (!preg_match('/^[\w$-]+$/', $config['SQL_DATABASE'])) {
+        soft_error('The database name may only contain letters, numbers, underscores, dashes and dollar signs.');
     }
 
     // Make the database connection.

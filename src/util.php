@@ -353,3 +353,35 @@ function phpc_html_escape($str)
     // null (an empty database field) is escaped as an empty string
     return htmlspecialchars($str ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
+
+/**
+ * The URL of the calendar's static folder (stylesheet, scripts, icon). $phpc_static_path overrides
+ * it. Pages in the calendar's own folder use "static", relative to the page, as before. Other pages (a
+ * copied index.php, or a page embedding the calendar) get it from where the calendar sits under the
+ * document root, if it does.
+ *
+ * @return string
+ */
+function phpc_static_path()
+{
+    global $phpc_static_path, $phpc_root_path;
+
+    if (!empty($phpc_static_path)) {
+        return phpc_html_escape(rtrim($phpc_static_path, '/'));
+    }
+
+    $root = realpath($phpc_root_path);
+    $script = realpath($_SERVER['SCRIPT_FILENAME'] ?? '');
+    $docroot = realpath($_SERVER['DOCUMENT_ROOT'] ?? '');
+    if ($root === false || $script === false || $docroot === false || dirname($script) === $root) {
+        return 'static';
+    }
+    $root = str_replace('\\', '/', $root);
+    $docroot = rtrim(str_replace('\\', '/', $docroot), '/');
+    if ($root !== $docroot && !str_starts_with($root, "$docroot/")) {
+        return 'static';
+    }
+
+    $segments = explode('/', substr($root, strlen($docroot)));
+    return implode('/', array_map('rawurlencode', $segments)) . '/static';
+}

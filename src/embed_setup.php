@@ -33,9 +33,15 @@ if (!defined('IN_PHPC')) {
 $default_calendar_id = 1;
 
 /*
- * $phpc_root_path gives the location of the base calendar install.
- * if you move this file to a new location, modify $phpc_root_path to point
- * to the location where the support files for the calendar are located.
+ * $phpc_root_path gives the location of the base calendar install, as a
+ * folder on the server (not a URL). If you move this file to a new location,
+ * modify $phpc_root_path to point to the location where the support files for
+ * the calendar are located.
+ *
+ * The page embedding the calendar may set $phpc_static_path, the URL of the
+ * calendar's static folder, before including this file, if the calendar's
+ * styles don't load (e.g. '/php-calendar/static'). Otherwise it's worked out
+ * from $phpc_root_path when the calendar is under the document root.
  */
 $phpc_includes_path = dirname(__FILE__);
 $phpc_root_path = dirname($phpc_includes_path);

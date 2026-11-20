@@ -1,6 +1,10 @@
 NEWS
 -----
 
+2.0.15:
+	- Fixed the installer rejecting database names with a dash, as some hosts (e.g. StackCP) create (#203)
+	- Fixed the calendar's styles not loading when index.php is copied to another folder or the calendar is embedded in a page elsewhere on the site. If they still don't load, set $phpc_static_path to the URL of the calendar's static folder (#204)
+
 2.0.14 (9 October 2026):
 	- Requires PHP 8.1 or later
 	- To upgrade, upload the new files, run install.php and choose Upgrade to update the database, then delete install.php. Upgrading from versions before 2.0.0 is no longer supported; upgrade to 2.0.13 first
