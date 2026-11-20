@@ -30,7 +30,8 @@ class LanguageTest extends AppWebTestCase
         $this->assertResponseRedirects('/fr/calendar/club/');
         // A link naming a language keeps it
         $this->client->request('GET', '/en/calendar/club/', server: self::ENGLISH);
-        $this->assertSelectorTextContains('h1', 'October');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('html[lang="en"]');
     }
 
     public function testMenuChoiceIsRemembered(): void
