@@ -1258,6 +1258,22 @@ function verify_token()
 }
 
 /**
+ * A query string that changes whenever a file in static/ does, so browsers and hosts' caches don't
+ * keep using an old copy after an upgrade (an old phpc.js breaks the menus). When $phpc_static_path
+ * points elsewhere, the files served aren't the ones here, so it changes with the version instead.
+ *
+ * @param string $file
+ * @return string
+ */
+function static_file_version($file)
+{
+    global $phpc_root_path, $phpc_static_path, $phpc_version;
+
+    $mtime = empty($phpc_static_path) ? @filemtime("$phpc_root_path/static/$file") : false;
+    return '?v=' . ($mtime === false ? rawurlencode($phpc_version) : $mtime);
+}
+
+/**
  * @param string $path
  * @return array
  */
@@ -1286,7 +1302,7 @@ function get_header_tags($path)
         tag('link', attrs(
             'rel="stylesheet"',
             'type="text/css"',
-            "href=\"$path/phpc.css\""
+            "href=\"$path/phpc.css" . static_file_version('phpc.css') . "\""
         )),
         tag('link', attrs(
             'rel="stylesheet"',
@@ -1295,7 +1311,7 @@ function get_header_tags($path)
         )),
         tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/$jquery_version/jquery$jq_min.js\""), ''),
         tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/jqueryui/$jqueryui_version/jquery-ui$jq_min.js\""), ''),
-        tag('script', attrs("src=\"$path/phpc.js\""), ''),
+        tag('script', attrs("src=\"$path/phpc.js" . static_file_version('phpc.js') . "\""), ''),
         tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery.hoverintent/$hoverintent_version/jquery.hoverIntent.min.js\""), ''),
         tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/showdown/$showdown_version/showdown.min.js\""), ''),
         tag("script", attrs("src=\"https://cdnjs.cloudflare.com/ajax/libs/dompurify/$dompurify_version/purify.min.js\""), ''),

@@ -45,7 +45,7 @@ echo '<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<link rel="stylesheet" type="text/css" href="static/phpc.css"/>
+<link rel="stylesheet" type="text/css" href="static/phpc.css?v=' . @filemtime("$phpc_root_path/static/phpc.css") . '"/>
 <title>PHP Calendar Installation</title>
 </head>
 <body>
