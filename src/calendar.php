@@ -1259,16 +1259,17 @@ function verify_token()
 
 /**
  * A query string that changes whenever a file in static/ does, so browsers and hosts' caches don't
- * keep using an old copy after an upgrade (an old phpc.js breaks the menus)
+ * keep using an old copy after an upgrade (an old phpc.js breaks the menus). When $phpc_static_path
+ * points elsewhere, the files served aren't the ones here, so it changes with the version instead.
  *
  * @param string $file
  * @return string
  */
 function static_file_version($file)
 {
-    global $phpc_root_path, $phpc_version;
+    global $phpc_root_path, $phpc_static_path, $phpc_version;
 
-    $mtime = @filemtime("$phpc_root_path/static/$file");
+    $mtime = empty($phpc_static_path) ? @filemtime("$phpc_root_path/static/$file") : false;
     return '?v=' . ($mtime === false ? rawurlencode($phpc_version) : $mtime);
 }
 
