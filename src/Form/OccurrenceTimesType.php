@@ -148,11 +148,19 @@ class OccurrenceTimesType extends AbstractType
      */
     public static function toTimes(array $data): array
     {
-        $type = $data['time_type'];
-        if ($type === Occurrence::TIME_NORMAL) {
-            return [$data['start'], $data['end'], $type];
-        }
+        [$start, $end] = self::fields($data);
 
-        return [$data['start_date'], $data['end_date'], $type];
+        return [$data[$start], $data[$end], $data['time_type']];
+    }
+
+    /**
+     * The fields holding the start and end: times for timed occurrences, dates otherwise
+     *
+     * @param array<string, mixed> $data
+     * @return array{0: string, 1: string}
+     */
+    public static function fields(array $data): array
+    {
+        return ($data['time_type'] ?? null) === Occurrence::TIME_NORMAL ? ['start', 'end'] : ['start_date', 'end_date'];
     }
 }

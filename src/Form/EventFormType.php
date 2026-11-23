@@ -20,7 +20,6 @@ namespace App\Form;
 use App\Entity\Category;
 use App\Entity\Event;
 use App\Entity\FieldDefinition;
-use App\Entity\Occurrence;
 use App\Service\OccurrenceGenerator;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -215,7 +214,7 @@ class EventFormType extends AbstractType
                 $form->get('until')->addError(new FormError($translator->trans('missing-until-error')));
             } elseif (is_array($times)) {
                 // Not validated yet, so unlike toTimes(), this allows a missing start
-                $start = $times[($times['time_type'] ?? null) === Occurrence::TIME_NORMAL ? 'start' : 'start_date'] ?? null;
+                $start = $times[OccurrenceTimesType::fields($times)[0]] ?? null;
                 if ($start !== null && $until->format('Y-m-d') < $start->format('Y-m-d')) {
                     $form->get('until')->addError(new FormError($translator->trans('until-before-start-error')));
                 }
