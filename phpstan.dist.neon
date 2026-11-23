@@ -1,3 +1,7 @@
+includes:
+    - vendor/phpstan/phpstan-doctrine/extension.neon
+    - vendor/phpstan/phpstan-symfony/extension.neon
+
 parameters:
     level: 6
     paths:
@@ -6,3 +10,11 @@ parameters:
         - public/
         - src/
         - tests/
+    # Properties read through __get()
+    universalObjectCratesClasses:
+        - Sabre\VObject\Component
+    doctrine:
+        objectManagerLoader: tests/phpstan-object-manager.php
+    symfony:
+        # Built by bin/console cache:warmup --env=dev (.env defaults to prod; Docker sets dev)
+        containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml

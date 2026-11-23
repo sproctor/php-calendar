@@ -25,6 +25,9 @@ class MailSettingsTest extends AppWebTestCase
         parent::tearDown();
     }
 
+    /**
+     * @param array<string, string> $env
+     */
     private function writeConfig(array $env): void
     {
         @mkdir(dirname($this->configFile), 0777, true);

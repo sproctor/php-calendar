@@ -71,7 +71,7 @@ class CalendarFeed
             $url = $this->urlGenerator->generate('event_view', ['_locale' => $language, 'eid' => $event->getEid()], UrlGeneratorInterface::ABSOLUTE_URL);
             $description = $this->markdownText->toPlainText($event->getDescription());
 
-            $vevent = $vcalendar->add('VEVENT', [
+            $vevent = $vcalendar->createComponent('VEVENT', [
                 // Stable, so an app updates its copy instead of adding another
                 'UID' => 'occurrence-' . $occurrence->getOid() . '@' . $host,
                 'DTSTAMP' => ($event->getModified() ?? $event->getCreated())->setTimezone($utc),
@@ -79,6 +79,7 @@ class CalendarFeed
                 'SUMMARY' => $event->getSubject(),
                 'URL' => $url,
             ]);
+            $vcalendar->add($vevent);
             if ($event->getModified() !== null) {
                 $vevent->add('LAST-MODIFIED', $event->getModified()->setTimezone($utc));
             }

@@ -40,6 +40,8 @@ use Symfony\Component\Translation\TranslatableMessage;
 /**
  * A view's settings and calendars. Each calendar has an "in this view" checkbox (calendar_{cid}), and
  * optionally a color marking its events (colored_{cid} and color_{cid}); calendars() reads them back.
+ *
+ * @extends AbstractType<View>
  */
 class ViewFormType extends AbstractType
 {
@@ -123,6 +125,7 @@ class ViewFormType extends AbstractType
     /**
      * The calendars ticked on a submitted form, with their colors, for View::setCalendars()
      *
+     * @param FormInterface<mixed> $form
      * @param Calendar[] $calendars every calendar, as given to the form
      * @return array<int, array{0: Calendar, 1: ?string}>
      */

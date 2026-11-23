@@ -61,6 +61,9 @@ final class EventSourceRoutes
 
     /**
      * The route parameters naming $source, plus $parameters
+     *
+     * @param array<string, mixed> $parameters
+     * @return array<string, mixed>
      */
     public static function parameters(EventSource $source, array $parameters = []): array
     {

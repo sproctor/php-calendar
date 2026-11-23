@@ -27,6 +27,8 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * The calendar settings asked for during setup
+ *
+ * @extends AbstractType<Calendar>
  */
 class CalendarType extends AbstractType
 {

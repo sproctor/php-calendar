@@ -30,6 +30,8 @@ use Symfony\Component\Validator\Constraints\Regex;
 
 /**
  * The MySQL or MariaDB connection asked for by the installer, and the prefix for the calendar's tables
+ *
+ * @extends AbstractType<array<string, mixed>>
  */
 class DatabaseFormType extends AbstractType
 {

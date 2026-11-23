@@ -161,6 +161,8 @@ class MailSettingsController extends AbstractController
 
     /**
      * MAILER_DSN and MAILER_FROM as saved in .env.local.php, else as the app is running with
+     *
+     * @return array{0: string, 1: string}
      */
     private function currentSettings(): array
     {
@@ -179,6 +181,8 @@ class MailSettingsController extends AbstractController
 
     /**
      * The form's fields from a MAILER_DSN
+     *
+     * @return array<string, mixed>
      */
     private static function fromDsn(string $value): array
     {
@@ -202,6 +206,9 @@ class MailSettingsController extends AbstractController
         };
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private static function toDsn(array $data): string
     {
         return match ($data['transport']) {

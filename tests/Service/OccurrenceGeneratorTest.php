@@ -21,6 +21,10 @@ class OccurrenceGeneratorTest extends TestCase
         $this->event = new Event(new Calendar(), null);
     }
 
+    /**
+     * @param Occurrence[] $occurrences
+     * @return list<string>
+     */
     private function starts(array $occurrences): array
     {
         return array_map(fn(Occurrence $o) => $o->getStart()->format('Y-m-d H:i'), $occurrences);

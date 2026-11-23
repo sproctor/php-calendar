@@ -69,6 +69,7 @@ class Mailing
      * Sends the email made from templates/emails/$template.{html,txt}.twig to $address, in $user's
      * language (or the current one). The subject is the translation of $subject in the "account" domain.
      *
+     * @param array<string, mixed> $context the templates' variables
      * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface when the mail server fails
      */
     public function send(string $address, ?User $user, string $subject, string $template, array $context = []): void

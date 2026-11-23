@@ -118,6 +118,8 @@ abstract class AppWebTestCase extends WebTestCase
 
     /**
      * Submits the form containing the button with the given label on the current page
+     *
+     * @param array<string, mixed> $values
      */
     protected function submit(string $button, array $values = []): void
     {
@@ -126,6 +128,8 @@ abstract class AppWebTestCase extends WebTestCase
 
     /**
      * Posts to $url with a valid CSRF token for $tokenId, taken from the page at $pageUrl
+     *
+     * @param array<string, mixed> $data
      */
     protected function postWithToken(string $pageUrl, string $actionUrl, array $data = []): void
     {

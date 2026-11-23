@@ -151,6 +151,9 @@ class InstallState
         $this->saveConfig(array_merge($this->readConfig(), $changes));
     }
 
+    /**
+     * @param array<string, string> $env
+     */
     private function saveConfig(array $env): void
     {
         $content = "<?php\n\n// Written by the PHP-Calendar installer. Keep this file private.\n\nreturn "

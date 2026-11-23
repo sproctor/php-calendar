@@ -10,7 +10,9 @@ use App\Entity\Occurrence;
 use App\Entity\User;
 use App\Tests\AppWebTestCase;
 use DateTimeImmutable;
+use Sabre\VObject\Component;
 use Sabre\VObject\Component\VCalendar;
+use Sabre\VObject\Parameter;
 use Sabre\VObject\Reader;
 
 class FeedTest extends AppWebTestCase
@@ -31,11 +33,16 @@ class FeedTest extends AppWebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Type', 'text/calendar; charset=utf-8');
 
-        return Reader::read($this->client->getResponse()->getContent());
+        $feed = Reader::read((string) $this->client->getResponse()->getContent());
+        $this->assertInstanceOf(VCalendar::class, $feed);
+
+        return $feed;
     }
 
     /**
      * SUMMARY => VEVENT
+     *
+     * @return array<string, Component>
      */
     private function events(VCalendar $feed): array
     {
@@ -101,7 +108,9 @@ class FeedTest extends AppWebTestCase
 
         // All day: dates, with DTEND the day after the last one
         $retreat = $events['Retreat'];
-        $this->assertSame('DATE', (string) $retreat->DTSTART['VALUE']);
+        $valueType = $retreat->DTSTART['VALUE'];
+        $this->assertInstanceOf(Parameter::class, $valueType);
+        $this->assertSame('DATE', (string) $valueType);
         $this->assertSame((new DateTimeImmutable("$near +3 days"))->format('Ymd'), (string) $retreat->DTEND);
 
         $this->assertStringStartsWith('TBA', (string) $events['Speaker']->DESCRIPTION);

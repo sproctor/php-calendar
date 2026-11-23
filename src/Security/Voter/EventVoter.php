@@ -58,6 +58,7 @@ class EventVoter extends Voter
         return match ($attribute) {
             self::VIEW => $this->canView($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
+            default => false,
         };
     }
 

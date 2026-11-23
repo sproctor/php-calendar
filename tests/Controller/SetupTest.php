@@ -19,6 +19,7 @@ class SetupTest extends AppWebTestCase
     private ?string $databaseUrl = null;
     private string $configFile;
     private bool $legacyTables = false;
+    /** @var array<string, mixed>|null */
     private ?array $connectionParams = null;
 
     protected function setUp(): void

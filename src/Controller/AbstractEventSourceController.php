@@ -242,6 +242,8 @@ abstract class AbstractEventSourceController extends AbstractController
     /**
      * What every page about $source passes its template: `source`, and for a calendar `calendar` too,
      * which the layout uses for the calendar's menus
+     *
+     * @return array<string, EventSource>
      */
     protected function context(EventSource $source): array
     {
